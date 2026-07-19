@@ -1,89 +1,142 @@
+# Foodular1 — MVP 概念文档
+
+> **状态**: Draft — 基于 foodula-1-concept.md 的 MVP 范围裁剪
+> **替代**: game-concept-ARCHIVED-2026-07-19.md（已退役的原型行为审计文档）
+> **日期**: 2026-07-19
+> **范围**: 单场 HEAT 核心循环验证
+
 ---
-status: reverse-documented
-source: Assets/Scripts/
-date: 2026-07-19
-verified-by: User
----
 
-# Foodular1 — Game Concept
+## 1. 概述
 
-> **Note**: This document was reverse-engineered from the existing implementation.
-> It captures current behavior. Some sections may be incomplete where
-> design intent was not yet formalized.
+Foodular1 MVP 是一个单人、单场次的卡牌驱动策略竞速游戏，改编自 HEAT 桌游的核心循环。
+玩家在一条简化赛道上管理档位选择、出牌和热量积累，完成 3 圈比赛并与一个 AI 对手竞速。
+本 MVP 的目标是验证 HEAT 核心机制（档位驱动出牌 + 热量牌循环 + 按弯道段判定）是否好玩，
+然后再叠加上车队、车手、天气和多人模式。
 
-## 1. Overview
+**这是什么**: 最小可玩版本，回答"核心循环能跑通吗？"
+**这不是什么**: 商业产品。完整愿景见 foodula-1-concept.md。
 
-Foodular1 is a 2D card-driven food truck racing game. The player manages a food
-truck racing along an 85-node circuit track. Movement is determined by playing
-cards from a hand — each card has a step value (1–4). The core strategic
-mechanic is **speed limits** at specific corners: if the total steps of played
-cards exceeds a corner's speed limit, the truck's "cold storage" (冰鲜库) takes
-a heat penalty. Run out of cold storage and the truck overheats, ending the game.
+## 2. 玩家体验（Player Fantasy）
 
-The name blends "food" + "formula" — a food truck racing concept.
+玩家扮演一位策略型车手，在每个弯道前做出风险决策。每回合都是一次档位选择——
+挂 4 档全力冲刺能拉开距离，但会抽到热量牌堵塞手牌；降档可以冷却热量，但会被 AI 甩开。
+赛道的弯道是紧张感的核心来源：超过弯道限速会产生热量牌，拖累后续回合的表现。
+核心体验是**有计算的激进**——知道什么时候该冲，什么时候该收。
 
-## 2. Player Fantasy
+## 3. 详细规则
 
-The player feels like a strategic food truck racer who must balance speed
-against preservation of their cold storage. Push too hard through corners and
-risk overheating; play too conservatively and never reach the finish line.
+### 3.1 赛道
+- 一条简化赛道，约 35-45 个节点，闭合环线
+- 4-5 个命名弯道，每个弯道占据 1-3 个连续节点，共享同一个 `cornerId`
+- 每个弯道有限速值（2-4，数字越小弯越急）
+- 直道默认限速：99（实际等于无限制）
+- 3 圈比赛，在起点/终点线判定完赛
 
-## 3. Detailed Rules
+### 3.2 牌组与手牌
+- 15 张初始牌组：12 张速度牌（1×3、2×5、3×3、4×1）+ 3 张热量牌（值为 0）
+- 手牌上限：7 张。每回合开始补至 7 张
+- 牌组抽空时：将弃牌堆洗入形成新牌组（热量牌不进入弃牌堆——回到公共热量池）
+- 速度牌打出 = 移动；热量牌占据手牌位，打出 = 0 移动
 
-- **Track**: 85 nodes (indices 0–84) forming a closed circuit
-- **Starting Position**: Node 51 (configurable)
-- **Starting Hand**: 5 cards with values [1, 2, 3, 4, 1]
-- **Card Play**: Click cards to toggle selection (green = selected). Click
-  "Next Round" to play all selected cards and move the truck
-- **Movement**: Truck advances by the sum of selected card values, capped at
-  node 84
-- **Speed Limits**: Five corners have speed limits (1–3). If the card total
-  exceeds a corner's limit, the difference is subtracted from Cold Storage
-- **Cold Storage (冰鲜库)**: Starts at 6. When it drops below 0, the truck
-  overheats — game over
-- **Win Condition**: Not yet defined in code (likely: reach/finish the track)
+### 3.3 档位系统
+- 4 个档位（1-4）。档位决定该回合必须打出几张速度牌
+- 1 档：打 1 张速度牌。4 档：打 4 张速度牌
+- 升档：每回合最多 +1 档。无消耗
+- 降档：可跳任意级。每降 1 档 → 从手牌移除 1 张热量牌回公共热量池
+- 最低 1 档，最高 4 档
 
-## 4. Formulas
+### 3.4 回合流程（7 步）
+1. **换档** — 玩家选择目标档位：升档最多 +1，降档任意级
+2. **抽牌** — 从牌组抽牌至手牌满 7 张
+3. **出牌** — 选择等于当前档位数量的速度牌；也可额外打出任意热量牌
+4. **移动** — 按打出的速度牌数值之和前进（热量牌 = 0）
+5. **弯道判定** — 对每个经过的 unique cornerId：如果总移动力 > 弯道限速，从公共热量池抽 (移动力 - 限速) 张热量牌放入弃牌堆
+6. **尾流** — MVP 不做
+7. **收尾** — 打出的速度牌 → 弃牌堆。打出的热量牌 → 公共热量池。回合结束。
 
-| Formula | Definition |
-|---------|------------|
-| Target Position | `min(currentPosition + sum(selectedCards), 84)` |
-| Penalty | `sum(max(0, moveSteps - node.speedLimit))` for each traversed node |
-| Overheat Check | `currentHeat < 0` → game over |
+### 3.5 热量系统
+- 公共热量池（初始 N 张热量牌，N = 玩家数 × 6）
+- 弯道惩罚产生的热量牌进入弃牌堆（而非直接进手牌）
+- 后续回合中，热量牌会和速度牌一起从弃牌堆洗入牌组
+- 热量牌在手牌中：可打出（产生 0 移动），可通过降档移除
+- 爆缸条件：需要抽牌时牌组+弃牌堆均为空，且从热量池抽牌时热量池也为空 → 爆缸淘汰
 
-## 5. Edge Cases
+### 3.6 胜负条件
+- **胜利**: 完成 3 圈后率先通过终点线
+- **失败**: AI 率先完成 3 圈，或玩家爆缸淘汰
+- 完赛排名：按圈数排序，同圈按赛道位置排序
 
-- **Movement cap**: Player cannot move beyond node 84 (track end)
-- **Zero cards selected**: PlayTurn() shows warning, no movement
-- **Moving during animation**: isMoving flag blocks concurrent moves
-- **Overheat mid-move**: Penalty calculated after movement completes;
-  game-over state blocks further turns
+### 3.7 AI 对手
+- 简单行为树，4 个优先级节点（来自 foodula-1-ai.md）：
+  - P1（生存检查）：热量 ≥ 70% → 降到 1 档全力冷却；手牌不足 → 降档
+  - P2（弯道策略）：预判前方弯道限速 → 选择档位/出牌保持在限速内
+  - P3（尾流）：MVP 不做
+  - P4（常规推进）：热量低 → 升档冲刺；正常 → 保持档位 + 随机变化
+- AI 使用简单难度：保守热量管理，在约束范围内随机选牌
 
-## 6. Dependencies
+## 4. 公式
 
-- TextMesh Pro (UI text rendering)
-- UGUI (buttons, canvas, layout groups)
-- Unity 2D (SpriteRenderer, LineRenderer)
+| 公式 | 定义 | 变量 |
+|------|------|------|
+| 移动距离 | `sum(已打速度牌数值)` | 速度牌 1-4 |
+| 弯道惩罚 | 对每个穿过的 unique `cornerId`: `max(0, 移动距离 - 弯道限速)` 张热量牌 → 弃牌堆 | 移动距离: 本回合总步数; 弯道限速: 2-4 |
+| 热量抽取 | 从公共热量池抽 N 张热量牌，放入弃牌堆 | N = 本回合所有弯道惩罚之和 |
+| 降档冷却 | 从手牌移除 N 张热量牌 → 公共热量池 | N = 降档级数（如 4→1 移除 3 张） |
+| 补牌 | 抽牌至 hand.size == 7。牌组空 → 洗入弃牌堆形成新牌组 | 手牌上限 = 7 |
+| 圈数计算 | 通过起点/终点线时圈数 +1。第 3 圈通过 → 比赛结束 | |
+| 爆缸 | 需抽牌时牌组+弃牌堆均空，且热量池也为空 → 淘汰 | |
 
-## 7. Tuning Knobs
+## 5. 边界情况
 
-| Knob | Default | Location |
-|------|---------|----------|
-| Starting Position | 51 | GameManager.currentCarPosition (serialized) |
-| Cold Storage | 6 | GameManager.currentHeat (serialized) |
-| Move Speed (animation) | 8f | GameManager.moveSpeed (serialized) |
-| Starting Hand | [1,2,3,4,1] | DealStartingHand() (hardcoded — should be data-driven) |
-| Speed Limits | See track-system.md | InitializeTrack() (hardcoded — should be data-driven) |
+- **弯道段去重**: 一个弯道占据节点 [53, 54, 55]、cornerId="chicane"，只判定一次——使用经过该弯道段期间的最高移动力值，而非每节点判定一次
+- **一次移动穿过多弯道**: 如果移动穿过两个不同 cornerId 的弯道，各自独立判定，惩罚求和
+- **精确匹配**: 移动距离 == 弯道限速 → 零惩罚
+- **热量池不足**: 弯道惩罚所需热量牌超出公共热量池剩余 → 取走全部剩余热量牌；玩家可继续比赛但后续抽牌面临爆缸风险
+- **空牌组 + 空弃牌堆**: 罕见——只有大量降档移除热量牌后才可能发生。从热量池抽牌；如果热量池也为空 → 爆缸
+- **1 档无速度牌**: 降档移除热量牌直到能抽到速度牌；如果不可能 → 强制爆缸
+- **起点位置**: 位于起点/终点线上或紧邻之前
+- **圈数计数**: 仅正向通过终点线时触发，倒车不算
 
-## 8. Acceptance Criteria
+## 6. 依赖
 
-- [x] Cards can be selected/deselected by clicking
-- [x] Selected card total is displayed in UI
-- [x] "Next Round" button moves the truck by selected steps
-- [x] Speed limit penalties are calculated correctly
-- [x] Cold storage depletes on penalties
-- [x] Game over when cold storage < 0
-- [x] Reset button restores initial state
-- [ ] Win condition implemented
-- [ ] Card values and starting hand are data-driven
-- [ ] Speed limits and track data are data-driven
+| 依赖 | 类型 | 状态 |
+|------|------|------|
+| Unity 2022.3.62f2 | 引擎 | ✅ 已配置 |
+| TextMesh Pro 3.0.7 | UI 文本 | ✅ 已集成 |
+| UGUI | UI 系统 | ✅ 已集成 |
+| Unity 2D (LineRenderer, SpriteRenderer) | 渲染 | ✅ 已集成 |
+| HEAT 桌游规则 | 设计参考 | 📖 参考来源 |
+| foodula-1-core-mechanics.md | 完整设计 | 📄 已存在 |
+| foodula-1-ai.md | AI 设计 | 📄 已存在 |
+| foodula-1-tracks.md | 赛道设计 | 📄 参考赛道形状 |
+
+## 7. 可调参数
+
+| 参数 | 默认值 | 范围 | 说明 |
+|------|--------|------|------|
+| 赛道节点数 | 35-45 | 20-60 | 越少 = 比赛越快 |
+| 弯道数量 | 4-5 | 3-8 | 越多 = 热量压力越大 |
+| 弯道限速 | 2-4 | 2-4 | 数字越小弯越急。MVP 最低为 2 |
+| 手牌上限 | 7 | 5-9 | 影响策略深度 |
+| 牌组构成 | 12 速度 + 3 热量 | 可变 | 影响热量压力 |
+| 热量池大小 | 6（单人） | 4-12 | 越小越危险 |
+| 圈数 | 3 | 1-5 | HEAT 标准比赛长度 |
+| AI 难度 | 简单 | 简单/中等/困难 | 保守热量管理 |
+
+## 8. 验收标准
+
+- [ ] 玩家可以在回合开始时切换档位（1-4）
+- [ ] 降档时从手牌移除正确数量的热量牌
+- [ ] 每回合开始自动补牌至 7 张
+- [ ] 牌组循环正常：牌组空 → 洗入弃牌堆 → 继续抽牌
+- [ ] 打出速度牌使卡车按数值之和移动
+- [ ] 手牌中的热量牌打出产生 0 移动
+- [ ] 按弯道段判定：每个唯一 cornerId 每回合只判定一次
+- [ ] 弯道惩罚从公共热量池抽取正确数量的热量牌放入弃牌堆
+- [ ] 通过起点/终点线时圈数递增
+- [ ] 3 圈后比赛结束，显示完赛排名（玩家 vs AI）
+- [ ] AI 使用 4 优先级行为树选择档位和出牌
+- [ ] 爆缸：热量池耗尽时淘汰玩家/AI
+- [ ] 重置按钮恢复完整比赛状态
+- [ ] 所有游戏数值通过 ScriptableObject 配置
