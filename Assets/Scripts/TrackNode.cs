@@ -2,19 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// System.Serializable 标签让这个类可以在 Unity 的 Inspector 面板中显示和编辑
+/// <summary>
+/// 赛道节点数据。含有弯道分组信息，支持 per-corner-segment 判定。
+/// </summary>
 [System.Serializable]
 public class TrackNode
 {
-    public int nodeIndex;       // 节点编号 (0 - 65)
-    public int speedLimit;      // 该节点的限速。如果没有限速，我们可以设为一个很大的值，比如 99
-    public string nodeName;     // 节点名称（用于在控制台打印调试信息）
+    public int nodeIndex;
+    public int speedLimit;
+    public string nodeName;
 
-    // 构造函数，用于快速创建节点
-    public TrackNode(int index, int limit, string name = "普通直道")
+    /// <summary>
+    /// 弯道分段 ID。同一弯道占据多个连续节点时共享同一个 cornerId。
+    /// 0 = 直道（不限速），>0 = 弯道段编号。
+    /// </summary>
+    public int cornerId;
+
+    /// <summary>
+    /// 是否为起点/终点线所在节点。
+    /// </summary>
+    public bool isStartFinish;
+
+    public TrackNode(int index, int limit, string name = "Straight", int cornerId = 0, bool isStartFinish = false)
     {
         nodeIndex = index;
         speedLimit = limit;
         nodeName = name;
+        this.cornerId = cornerId;
+        this.isStartFinish = isStartFinish;
     }
 }

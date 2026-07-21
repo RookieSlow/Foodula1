@@ -2,37 +2,65 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// 单张卡牌的 UI 表现。挂载在 CardPrefab 上。
+/// 支持速度牌（显示数值）和热量牌（显示 🔥）。
+/// </summary>
 public class CardUI : MonoBehaviour
 {
     [Header("UI 组件")]
-    public TMP_Text valueText;   // 显示卡牌点数的文字
-    public Image backgroundImage; // 卡牌的背景图（用于变色提示选中）
+    public TMP_Text valueText;
+    public Image backgroundImage;
 
     [Header("卡牌数据")]
-    public int cardValue;        // 这张牌代表移动几格
-    public bool isSelected = false; // 是否被玩家选中
+    public CardData cardData;
+    public bool isSelected;
 
-    private GameManager gameManager;
+    private System.Action<CardUI> onClickCallback;
 
-    // 初始化这张卡牌
-    public void SetupCard(int value, GameManager gm)
+    // 颜色常量
+    private static readonly Color COLOR_DEFAULT = new Color(1f, 1f, 1f, 1f);
+    private static readonly Color COLOR_SELECTED = new Color(0.3f, 0.9f, 0.3f, 1f);
+    private static readonly Color COLOR_HEAT = new Color(1f, 0.5f, 0.2f, 1f);       // 橙色底
+    private static readonly Color COLOR_HEAT_SELECTED = new Color(1f, 0.3f, 0.1f, 1f);
+
+    public void SetupCard(CardData data, System.Action<CardUI> callback)
     {
-        cardValue = value;
-        gameManager = gm;
-        valueText.text = value.ToString();
-        backgroundImage.color = Color.white; // 默认白色
+        cardData = data;
+        onClickCallback = callback;
+        isSelected = false;
+
+        if (valueText != null)
+        {
+            valueText.text = data.IsHeat ? "H" : data.value.ToString();
+            valueText.color = data.IsHeat ? Color.white : new Color(0.1f, 0.1f, 0.1f);
+        }
+
+        UpdateVisual();
     }
 
-    // 绑定给卡牌自身 Button 的点击事件
     public void OnCardClicked()
     {
-        // 切换选中状态
         isSelected = !isSelected;
+        UpdateVisual();
+        onClickCallback?.Invoke(this);
+    }
 
-        // 选中时变成绿色，取消选中变回白色
-        backgroundImage.color = isSelected ? Color.green : Color.white;
+    private void UpdateVisual()
+    {
+        if (backgroundImage != null)
+        {
+            if (cardData.IsHeat)
+                backgroundImage.color = isSelected ? COLOR_HEAT_SELECTED : COLOR_HEAT;
+            else
+                backgroundImage.color = isSelected ? COLOR_SELECTED : COLOR_DEFAULT;
+        }
+    }
 
-        // 告诉 GameManager 重新计算当前选中的总步数
-        gameManager.CalculateSelectedSteps();
+    /// <summary>程序化设置选中状态（不触发回调）。</summary>
+    public void SetSelectedWithoutNotify(bool selected)
+    {
+        isSelected = selected;
+        UpdateVisual();
     }
 }

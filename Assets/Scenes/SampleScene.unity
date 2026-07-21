@@ -441,7 +441,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Next Round
+  m_text: "\u51FA\u724C"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -602,8 +602,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1138746646}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: PlayTurn
+        m_TargetAssemblyTypeName: MVPGameManager, Assembly-CSharp
+        m_MethodName: OnPlayCardsButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -661,6 +661,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1138746647}
   - component: {fileID: 1138746646}
+  - component: {fileID: 1138746648}
+  - component: {fileID: 1138746649}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -677,19 +679,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1138746645}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 508d1e86742f66f448b3d630bc4c6ed7, type: 3}
+  m_Script: {fileID: 11500000, guid: f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trackNodes: []
-  nodePrefab: {fileID: 2889663933207979727, guid: 7e50747a5916cd242bbe9991ec5e957f, type: 3}
+  config: {fileID: 0}
+  trackManager: {fileID: 1138746648}
+  aiController: {fileID: 1138746649}
+  cardHandUI: {fileID: 0}
+  hudUI: {fileID: 0}
   carPrefab: {fileID: 5612381487196478950, guid: 1453583dc521df044a5081d2b06c06c3, type: 3}
-  statusText: {fileID: 1975454825}
-  cardPrefab: {fileID: 2374102367528724774, guid: 28e4d86eac331cf4894730654193ecaa, type: 3}
-  handContainer: {fileID: 594128760}
-  readyStepsText: {fileID: 1406249574}
-  currentCarPosition: 43
-  currentHeat: 6
-  moveSpeed: 8
 --- !u!4 &1138746647
 Transform:
   m_ObjectHideFlags: 0
@@ -705,6 +703,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1138746648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1138746645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodePrefab: {fileID: 2889663933207979727, guid: 7e50747a5916cd242bbe9991ec5e957f, type: 3}
+  lineWidth: 0.5
+  lineColor: {r: 1, g: 1, b: 1, a: 1}
+  cornerNodeColor: {r: 1, g: 1, b: 0, a: 1}
+--- !u!114 &1138746649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1138746645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1406249572
 GameObject:
   m_ObjectHideFlags: 0
@@ -1163,7 +1189,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1138746646}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: MVPGameManager, Assembly-CSharp
         m_MethodName: ResetGame
         m_Mode: 1
         m_Arguments:
@@ -1343,7 +1369,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -374, y: 125.33}
+  m_AnchoredPosition: {x: -393, y: 81}
   m_SizeDelta: {x: 300, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1660057539 &9223372036854775807
