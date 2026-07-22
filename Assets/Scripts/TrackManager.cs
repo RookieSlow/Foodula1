@@ -36,16 +36,13 @@ public class TrackManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 构建 42 节点简化赛道，5 个命名弯道段。
-    /// 弯道段用连续节点共享同一个 cornerId，确保 per-corner-segment 判定正确。
+    /// 构建 42 节点简化赛道，5 个弯道弯心。
+    /// 每个弯道仅在一个"弯心"节点上判定 — 只有踩到弯心才触发超速检查。
+    /// 分两次过弯不会导致双重判定。
     /// </summary>
     private void BuildTrack()
     {
         nodes.Clear();
-
-        // === 赛道定义: 42 节点，使用旧版 GetTrackShape() 的子采样版本 ===
-        // 简化说明: 保留原 85 节点赛道的形状骨架，每隔约 2 个点取 1 个，
-        // 并在弯道位置保留足够的节点密度。
 
         Vector2[] rawShape = GetTrackShape42();
 
@@ -54,13 +51,13 @@ public class TrackManager : MonoBehaviour
             nodes.Add(new TrackNode(i, 99, $"Straight {i}"));
         }
 
-        // === 弯道段定义: (起始节点, 结束节点, cornerId, 限速, 名称) ===
-        // cornerId 相同的连续节点属于同一弯道段，每回合只判定一次。
-        DefineCorner(8,  10,  1, 3, "T1 Parabolica");
-        DefineCorner(16, 18,  2, 2, "T2 Grand Hotel");
-        DefineCorner(24, 26,  3, 4, "T3 Copse");
-        DefineCorner(30, 33,  4, 2, "T4 Chicane");
-        DefineCorner(36, 38,  5, 3, "T5 Lesmo");
+        // === 弯心定义: (节点索引, cornerId, 限速, 名称) ===
+        // 每个弯道只有一个弯心节点。踩到弯心 → 判定一次。
+        DefineApex(9,  1, 3, "T1 Parabolica");
+        DefineApex(17, 2, 2, "T2 Grand Hotel");
+        DefineApex(25, 3, 4, "T3 Copse");
+        DefineApex(31, 4, 2, "T4 Chicane");
+        DefineApex(37, 5, 3, "T5 Lesmo");
 
         // 起点/终点线
         nodes[0].isStartFinish = true;
@@ -80,21 +77,19 @@ public class TrackManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 将指定范围的节点标记为同一弯道段。
+    /// 将单个节点标记为弯心（apex）。只有踩到弯心才触发弯道判定。
     /// </summary>
-    private void DefineCorner(int fromIndex, int toIndex, int cornerId, int speedLimit, string name)
+    private void DefineApex(int nodeIndex, int cornerId, int speedLimit, string name)
     {
-        for (int i = fromIndex; i <= toIndex; i++)
-        {
-            nodes[i].cornerId = cornerId;
-            nodes[i].speedLimit = speedLimit;
-            nodes[i].nodeName = name;
-        }
+        nodes[nodeIndex].cornerId = cornerId;
+        nodes[nodeIndex].speedLimit = speedLimit;
+        nodes[nodeIndex].nodeName = name;
     }
 
     /// <summary>
-    /// 获取从 fromPos 移动到 toPos 路径上经过的唯一弯道 ID 集合。
-    /// 这是 per-corner-segment 判定的核心 — 同一 cornerId 只出现一次。
+    /// 获取从 fromPos 移动到 toPos 路径上踩到的弯心 ID 集合。
+    /// 弯心判定 — 只有踩到弯心节点才触发超速检查。
+    /// HashSet 去重防止极端情况（如同一回合绕过一圈踩到同一弯心两次）。
     /// </summary>
     public HashSet<int> GetUniqueCornersCrossed(int fromPos, int toPos)
     {
@@ -131,6 +126,19 @@ public class TrackManager : MonoBehaviour
             }
         }
         return false;
+    }
+
+    /// <summary>
+    /// 获取弯心在赛道中的节点索引。用于失控回退。
+    /// </summary>
+    public int GetApexNodeIndex(int cornerId)
+    {
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            if (nodes[i].cornerId == cornerId)
+                return i;
+        }
+        return -1;
     }
 
     /// <summary>

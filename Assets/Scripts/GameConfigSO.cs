@@ -27,7 +27,7 @@ public class GameConfigSO : ScriptableObject
     [Tooltip("初始牌组中的热量牌数量")]
     public int initialHeatCards = 3;
 
-    [Tooltip("每玩家对应的公共热量池大小（总池 = 玩家数 × 此值）")]
+    [Tooltip("每玩家的独立引擎牌库大小（热量牌数量）")]
     public int heatPoolPerPlayer = 6;
 
     [Header("档位")]

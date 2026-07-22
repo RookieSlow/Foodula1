@@ -21,8 +21,7 @@ public class CardUI : MonoBehaviour
     // 颜色常量
     private static readonly Color COLOR_DEFAULT = new Color(1f, 1f, 1f, 1f);
     private static readonly Color COLOR_SELECTED = new Color(0.3f, 0.9f, 0.3f, 1f);
-    private static readonly Color COLOR_HEAT = new Color(1f, 0.5f, 0.2f, 1f);       // 橙色底
-    private static readonly Color COLOR_HEAT_SELECTED = new Color(1f, 0.3f, 0.1f, 1f);
+    private static readonly Color COLOR_HEAT = new Color(0.55f, 0.35f, 0.28f, 1f);   // 暗棕橙色 — 不可打出，视觉上"沉重"
 
     public void SetupCard(CardData data, System.Action<CardUI> callback)
     {
@@ -41,6 +40,9 @@ public class CardUI : MonoBehaviour
 
     public void OnCardClicked()
     {
+        // 热量牌不可打出 — 点击无响应
+        if (cardData != null && cardData.IsHeat) return;
+
         isSelected = !isSelected;
         UpdateVisual();
         onClickCallback?.Invoke(this);
@@ -51,7 +53,7 @@ public class CardUI : MonoBehaviour
         if (backgroundImage != null)
         {
             if (cardData.IsHeat)
-                backgroundImage.color = isSelected ? COLOR_HEAT_SELECTED : COLOR_HEAT;
+                backgroundImage.color = COLOR_HEAT; // 热量牌永远不可选中，统一暗色
             else
                 backgroundImage.color = isSelected ? COLOR_SELECTED : COLOR_DEFAULT;
         }

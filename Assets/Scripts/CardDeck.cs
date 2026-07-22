@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 共享热量池 — 玩家和 AI 共用。包装类以支持引用传递。
+/// 引擎牌库 — 每玩家独立。弯道超速/急刹/引擎故障时从此抽取热量牌放入弃牌堆。
+/// 冷却时热量牌归还至此。包装类以支持引用传递。
 /// </summary>
 public class HeatPool
 {
@@ -16,9 +17,9 @@ public class HeatPool
 
 /// <summary>
 /// 牌组系统 — 纯 C# 逻辑类（非 MonoBehaviour）。
-/// 管理牌组（drawPile）、手牌（hand）、弃牌堆（discardPile）和共享热量池引用。
+/// 管理牌组（drawPile）、手牌（hand）、弃牌堆（discardPile）和该玩家持有的引擎牌库引用。
 ///
-/// 热量牌生命周期: 热量池 →(弯道惩罚)→ 弃牌堆 →(洗牌)→ 牌组 →(抽牌)→ 手牌 →(降档冷却)→ 热量池
+/// 热量牌生命周期: 热量池 →(弯道超速/急刹/引擎故障)→ 弃牌堆 →(洗牌)→ 牌组 →(抽牌)→ 手牌(不可打出!) →(降档冷却/G1散热)→ 热量池
 /// </summary>
 public class CardDeck
 {
@@ -26,7 +27,7 @@ public class CardDeck
     private List<CardData> hand = new List<CardData>();
     private List<CardData> discardPile = new List<CardData>();
 
-    /// <summary>共享热量池引用 — 两个 PlayerState 指向同一个 HeatPool 实例。</summary>
+    /// <summary>该玩家的引擎牌库 — 每玩家独立的 HeatPool 实例。弯道超速/急刹/引擎故障从此抽取。</summary>
     public HeatPool heatPool;
 
     // --- 只读属性 ---
@@ -42,9 +43,9 @@ public class CardDeck
     /// 用配置初始化牌组。
     /// 速度牌 + 热量牌 → 全部放入牌组，然后洗牌。
     /// </summary>
-    public void InitializeDeck(GameConfigSO config, HeatPool sharedHeatPool)
+    public void InitializeDeck(GameConfigSO config, HeatPool enginePool)
     {
-        heatPool = sharedHeatPool;
+        heatPool = enginePool;
         drawPile.Clear();
         hand.Clear();
         discardPile.Clear();
@@ -140,7 +141,7 @@ public class CardDeck
     }
 
     /// <summary>
-    /// 将打出的热量牌归还到公共热量池。
+    /// 将热量牌归还到该玩家的引擎牌库。
     /// </summary>
     public void ReturnHeatCardsToPool(List<CardData> cards)
     {
@@ -154,7 +155,7 @@ public class CardDeck
     }
 
     /// <summary>
-    /// 从公共热量池抽取 count 张热量牌，加入弃牌堆。
+    /// 从该玩家的引擎牌库抽取 count 张热量牌，放入弃牌堆。
     /// 返回实际抽到的数量（热量池不足时取走全部剩余）。
     /// </summary>
     public int DrawHeatFromPool(int count)
@@ -252,6 +253,41 @@ public class CardDeck
         speeds.Sort((a, b) => a.value.CompareTo(b.value));
         if (speeds.Count <= n) return speeds;
         return speeds.GetRange(0, n);
+    }
+
+    /// <summary>
+    /// 失控恢复 — 回收所有热量牌（手牌 + 牌组 + 弃牌堆）到引擎牌库。
+    /// 引擎重新点火，散落在外的热量全部收回。
+    /// </summary>
+    public void RecoverAllHeatToPool()
+    {
+        // 手牌
+        for (int i = hand.Count - 1; i >= 0; i--)
+        {
+            if (hand[i].IsHeat)
+            {
+                heatPool.remaining++;
+                hand.RemoveAt(i);
+            }
+        }
+        // 牌组
+        for (int i = drawPile.Count - 1; i >= 0; i--)
+        {
+            if (drawPile[i].IsHeat)
+            {
+                heatPool.remaining++;
+                drawPile.RemoveAt(i);
+            }
+        }
+        // 弃牌堆
+        for (int i = discardPile.Count - 1; i >= 0; i--)
+        {
+            if (discardPile[i].IsHeat)
+            {
+                heatPool.remaining++;
+                discardPile.RemoveAt(i);
+            }
+        }
     }
 
     /// <summary>

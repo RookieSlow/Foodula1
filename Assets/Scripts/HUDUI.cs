@@ -77,7 +77,13 @@ public class HUDUI : MonoBehaviour
             gearText.text = $"Gear: {player.gear}";
 
         if (heatText != null)
-            heatText.text = $"HeatPool: {gm.SharedHeatPool.remaining} | Hand Heat: {player.deck.CountHeatInHand()}";
+        {
+            int handHeat = player.deck.CountHeatInHand();
+            int engineRemaining = player.deck.heatPool.remaining;
+            string heatWarning = handHeat >= 4 ? " <color=orange>⚠</color>" : "";
+            string spinInfo = player.spinCounter > 0 ? $" | ⚠×{player.spinCounter}/3" : "";
+            heatText.text = $"Engine: {engineRemaining} | Hand Heat: {handHeat}{heatWarning}{spinInfo}";
+        }
 
         if (lapText != null)
             lapText.text = $"Lap: {player.lap}/{gm.Config.totalLaps}";
@@ -91,7 +97,7 @@ public class HUDUI : MonoBehaviour
                 ? "<color=red>AI: BLOWN!</color>"
                 : ai.hasFinished
                     ? "<color=green>AI: FINISHED!</color>"
-                    : $"AI: G{ai.gear} | Lap {ai.lap} | Pos {ai.position}";
+                    : $"AI: G{ai.gear} | Eng:{ai.deck.heatPool.remaining} | Lap {ai.lap} | Pos {ai.position}";
         }
     }
 

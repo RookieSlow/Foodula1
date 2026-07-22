@@ -15,7 +15,9 @@ public class PlayerState
     public int position;       // 赛道节点索引
     public int lap;            // 已完成的圈数 (0, 1, 2)
     public bool hasFinished;   // 已完成第 3 圈
-    public bool isBlown;       // 爆缸淘汰
+    public bool isBlown;       // 退赛淘汰（失控计数器 = 3）
+    public int spinCounter;    // 失控计数器 0-3，到 3 淘汰
+    public bool skipNextTurn;  // 失控恢复，跳过下一回合
     public CardDeck deck;      // 牌组/手牌/弃牌堆管理
 
     // --- 每回合临时状态 ---

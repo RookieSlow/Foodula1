@@ -36,7 +36,6 @@ public class MVPGameManager : MonoBehaviour
     // --- 运行时状态 ---
     private PlayerState player;
     private PlayerState ai;
-    private HeatPool sharedHeatPool;
     private GamePhase phase;
 
     private GameObject playerCarInstance;
@@ -45,6 +44,7 @@ public class MVPGameManager : MonoBehaviour
     private WaitForSeconds nodeWait;
     private bool waitingForPlayerGear;
     private bool waitingForPlayerCards;
+    private bool waitingForPlayerDiscard;
     private int playerGearChoice;
     private int pendingGear;
     private Dictionary<int, Image> gearButtonImages = new Dictionary<int, Image>();
@@ -56,7 +56,6 @@ public class MVPGameManager : MonoBehaviour
     // --- 属性 ---
     public PlayerState Player => player;
     public PlayerState AI => ai;
-    public HeatPool SharedHeatPool => sharedHeatPool;
     public GamePhase CurrentPhase => phase;
     public GameConfigSO Config => config;
     public TrackManager Track => trackManager;
@@ -314,14 +313,13 @@ public class MVPGameManager : MonoBehaviour
 
     private void InitializeGame()
     {
-        int poolSize = config.heatPoolPerPlayer * 2;
-        sharedHeatPool = new HeatPool(poolSize);
+        int poolSize = config.heatPoolPerPlayer;
 
         player = new PlayerState("You", false, config.startFinishNodeIndex, config.minGear);
-        player.deck.InitializeDeck(config, sharedHeatPool);
+        player.deck.InitializeDeck(config, new HeatPool(poolSize));
 
         ai = new PlayerState("AI", true, config.startFinishNodeIndex, config.minGear);
-        ai.deck.InitializeDeck(config, sharedHeatPool);
+        ai.deck.InitializeDeck(config, new HeatPool(poolSize));
 
         player.deck.DrawToHand(config.handSize);
         ai.deck.DrawToHand(config.handSize);
@@ -378,62 +376,76 @@ public class MVPGameManager : MonoBehaviour
             player.ClearTurnState();
             ai.ClearTurnState();
 
+            bool playerSkip = player.skipNextTurn && !player.isBlown && !player.hasFinished;
+            bool aiSkip = ai.skipNextTurn && !ai.isBlown && !ai.hasFinished;
+
             // ====== PHASE A: 决策阶段 ======
 
-            // Step 1a: 等待玩家选档位（点击 G1-G4 预览，点 CONFIRM 确认）
-            phase = GamePhase.WaitingForGear;
-            waitingForPlayerGear = true;
-            pendingGear = player.gear;
-            // 重置档位按钮高亮
-            foreach (var kv in gearButtonImages)
-                kv.Value.color = (kv.Key == player.gear) ? new Color(0.3f, 0.8f, 0.3f, 0.9f) : new Color(1f, 1f, 1f, 0.8f);
-            if (hudUI != null) hudUI.SetStatus($"Select gear (current: G{player.gear})");
-            if (cardHandUI != null)
+            if (playerSkip)
             {
-                cardHandUI.SetGearSelectionMode(true);
-                // 显示牌堆信息
-                cardHandUI.UpdateDeckInfo(player);
+                // 失控恢复 — 跳过本回合，G1 冷却仍生效
+                player.skipNextTurn = false;
+                player.gear = config.minGear;
+                if (hudUI != null)
+                    hudUI.AppendLog($"{player.name} sits out this turn (spin recovery).");
+            }
+            else
+            {
+                // Step 1a: 等待玩家选档位
+                phase = GamePhase.WaitingForGear;
+                waitingForPlayerGear = true;
+                pendingGear = player.gear;
+                foreach (var kv in gearButtonImages)
+                    kv.Value.color = (kv.Key == player.gear) ? new Color(0.3f, 0.8f, 0.3f, 0.9f) : new Color(1f, 1f, 1f, 0.8f);
+                if (hudUI != null) hudUI.SetStatus($"Select gear (current: G{player.gear})");
+                if (cardHandUI != null) { cardHandUI.SetGearSelectionMode(true); cardHandUI.UpdateDeckInfo(player); }
+
+                yield return new WaitWhile(() => waitingForPlayerGear);
+                ApplyGearShift(player, playerGearChoice);
             }
 
-            yield return new WaitWhile(() => waitingForPlayerGear);
-
-            ApplyGearShift(player, playerGearChoice);
-
             // Step 1b: AI 选档位
-            if (!ai.isBlown && !ai.hasFinished)
+            if (aiSkip)
+            {
+                ai.skipNextTurn = false;
+                ai.gear = config.minGear;
+                if (hudUI != null)
+                    hudUI.AppendLog($"{ai.name} sits out this turn (spin recovery).");
+            }
+            else if (!ai.isBlown && !ai.hasFinished)
             {
                 int aiGearChoice = aiController.DecideGear();
                 ApplyGearShift(ai, aiGearChoice);
             }
 
             // Step 2: 双方抽牌
-            bool playerCanDraw = player.deck.DrawToHand(config.handSize);
-            if (!playerCanDraw)
+            if (!playerSkip)
             {
-                player.isBlown = true;
-                if (hudUI != null) hudUI.AppendLog("<color=red>BLOWN ENGINE! No cards to draw - you are eliminated!</color>");
-                break;
+                bool playerCanDraw = player.deck.DrawToHand(config.handSize);
+                if (!playerCanDraw)
+                {
+                    if (hudUI != null)
+                        hudUI.AppendLog($"<color=orange>{player.name}: deck exhausted! Playing with {player.deck.HandCount} cards.</color>");
+                }
             }
 
-            if (!ai.isBlown && !ai.hasFinished)
+            if (!aiSkip && !ai.isBlown && !ai.hasFinished)
             {
                 bool aiCanDraw = ai.deck.DrawToHand(config.handSize);
                 if (!aiCanDraw)
                 {
-                    ai.isBlown = true;
-                    if (hudUI != null) hudUI.AppendLog($"<color=orange>{ai.name} blown engine!</color>");
+                    if (hudUI != null)
+                        hudUI.AppendLog($"<color=orange>{ai.name}: deck exhausted!</color>");
                 }
             }
 
-            // G1 冷却奖励：1 档时抽牌后自动消除 1 张热量（手牌优先，否则从牌组删）
-            ApplyGear1Cooling(player);
-            ApplyGear1Cooling(ai);
+            // G1 自动散热已移除 — 改用步骤 5 反应阶段的档位冷却
 
             // 更新手牌 UI
             if (cardHandUI != null) cardHandUI.ShowHand(this, player);
 
-            // 全热手牌 → 强制 1 档（避免卡死），免费降档（无激进惩罚）
-            if (player.deck.CountSpeedInHand() == 0 && player.gear > config.minGear)
+            // 全热手牌 → 强制 1 档
+            if (!playerSkip && player.deck.CountSpeedInHand() == 0 && player.gear > config.minGear)
             {
                 player.gear = config.minGear;
                 if (hudUI != null)
@@ -441,21 +453,24 @@ public class MVPGameManager : MonoBehaviour
             }
 
             // Step 3a: 等待玩家选牌
-            phase = GamePhase.WaitingForCards;
-            waitingForPlayerCards = true;
-            if (cardHandUI != null)
+            if (!playerSkip)
             {
-                cardHandUI.SetGearSelectionMode(false);
-                cardHandUI.ShowHand(this, player);
-                cardHandUI.UpdateDeckInfo(player);
-            }
-            if (hudUI != null)
-                hudUI.SetStatus($"Gear {player.gear} - select up to {player.gear} speed cards (missing = +Heat)");
+                phase = GamePhase.WaitingForCards;
+                waitingForPlayerCards = true;
+                if (cardHandUI != null)
+                {
+                    cardHandUI.SetGearSelectionMode(false);
+                    cardHandUI.ShowHand(this, player);
+                    cardHandUI.UpdateDeckInfo(player);
+                }
+                if (hudUI != null)
+                    hudUI.SetStatus($"Gear {player.gear} - select {player.gear} speed card(s) (heat cards stay in hand)");
 
-            yield return new WaitWhile(() => waitingForPlayerCards);
+                yield return new WaitWhile(() => waitingForPlayerCards);
+            }
 
             // Step 3b: AI 选牌
-            if (!ai.isBlown && !ai.hasFinished)
+            if (!aiSkip && !ai.isBlown && !ai.hasFinished)
             {
                 aiController.SelectCards();
             }
@@ -473,21 +488,29 @@ public class MVPGameManager : MonoBehaviour
             int playerRawEnd = player.position + player.totalMovementThisTurn;
             int aiRawEnd = ai.position + ai.totalMovementThisTurn;
 
-            // 玩家移动 + 弯道判定
+            // 玩家：移动 → 反应(冷却) → 弯道判定
             if (!player.hasFinished && !player.isBlown)
             {
                 yield return StartCoroutine(AnimateMovement(player, playerCarInstance));
+                ReactStep(player);  // G1=冷却3, G2=冷却1
                 ResolveCorners(player, playerOldPosition, playerRawEnd);
             }
 
-            // AI 移动 + 弯道判定
+            // AI：移动 → 反应(冷却) → 弯道判定
             if (!ai.hasFinished && !ai.isBlown)
             {
                 yield return StartCoroutine(AnimateMovement(ai, aiCarInstance));
+                ReactStep(ai);
                 ResolveCorners(ai, aiOldPosition, aiRawEnd);
             }
 
-            // Step 7: 收尾
+            // Step 8: 弃牌（可选，仅玩家）
+            if (!player.hasFinished && !player.isBlown)
+            {
+                yield return StartCoroutine(DiscardStep());
+            }
+
+            // Step 9: 收尾 + 补牌
             CleanupTurn(player);
             CleanupTurn(ai);
 
@@ -503,63 +526,114 @@ public class MVPGameManager : MonoBehaviour
         ShowGameOver();
     }
 
+    // ====== 失控处理 ======
+
+    /// <summary>
+    /// 统一失控处理 — 引擎不足支付时触发。
+    /// 弯心超速/引擎故障/急刹→引擎干了→失控。
+    /// 计数器 3 次 → 退赛淘汰。
+    /// </summary>
+    public void HandleSpin(PlayerState p, int rewindPos, string reason)
+    {
+        if (p.isBlown) return;
+
+        p.spinCounter++;
+        bool eliminated = p.spinCounter >= 3;
+
+        // 回收全部热量回引擎
+        p.deck.RecoverAllHeatToPool();
+
+        // 回退位置
+        p.position = rewindPos;
+
+        // 强制 1 档
+        p.gear = config.minGear;
+
+        // 跳过下回合
+        p.skipNextTurn = true;
+
+        // 移动赛车回退位置
+        if (p == player && playerCarInstance != null)
+            playerCarInstance.transform.position = trackManager.GetNodePosition(rewindPos);
+        else if (p == ai && aiCarInstance != null)
+            aiCarInstance.transform.position = trackManager.GetNodePosition(rewindPos);
+
+        string tag = eliminated ? "<color=red>ELIMINATED!</color>" : $"<color=orange>[{p.spinCounter}/3]</color>";
+        if (hudUI != null)
+            hudUI.AppendLog($"{p.name} <color=red>SPINS OUT!</color> Reason: {reason}. {tag}");
+
+        if (eliminated)
+        {
+            p.isBlown = true;
+            if (hudUI != null)
+                hudUI.AppendLog($"<color=red><b>{p.name} has retired from the race!</b></color>");
+        }
+    }
+
+    /// <summary>
+    /// 尝试从引擎支付热量。若引擎不足 → 触发失控。
+    /// 返回 true 表示支付成功，false 表示已触发失控。
+    /// </summary>
+    private bool TryPayHeat(PlayerState p, int amount, int rewindPos, string reason)
+    {
+        if (amount <= 0) return true;
+        int drawn = p.deck.DrawHeatFromPool(amount);
+        if (drawn < amount)
+        {
+            HandleSpin(p, rewindPos, reason);
+            return false;
+        }
+        return true;
+    }
+
     // ====== 档位处理 ======
 
     private void ApplyGearShift(PlayerState p, int targetGear)
     {
         targetGear = Mathf.Clamp(targetGear, config.minGear, config.maxGear);
         int oldGear = p.gear;
+        int delta = targetGear - oldGear;
+        int absDelta = Mathf.Abs(delta);
 
-        if (targetGear > oldGear)
+        if (absDelta <= 1)
         {
-            p.gear = Mathf.Min(oldGear + 1, targetGear);
-        }
-        else if (targetGear < oldGear)
-        {
-            int gearsDropped = oldGear - targetGear;
-
-            if (gearsDropped <= 2)
-            {
-                // 降 1-2 档：正常冷却，无惩罚
-                p.deck.RemoveHeatFromHand(gearsDropped);
-            }
-            else
-            {
-                // 降 3+ 档：急刹冲击引擎 → 反而产生热量，无冷却
-                p.deck.DrawHeatFromPool(gearsDropped);
-            }
-
+            // ±1 档：免费
             p.gear = targetGear;
+        }
+        else
+        {
+            // ±2 档：支付 1 热
+            int actualTarget = oldGear + System.Math.Sign(delta) * 2;
+            actualTarget = Mathf.Clamp(actualTarget, config.minGear, config.maxGear);
+            if (TryPayHeat(p, 1, p.position, "shift 2 gears"))
+            {
+                p.gear = actualTarget;
+            }
+            // 若 TryPayHeat 失败（失控），HandleSpin 已将档位设为 1
         }
 
         p.selectedGearThisTurn = p.gear;
     }
 
-    // ====== G1 冷却奖励 ======
+    // ====== 步骤 5：反应（冷却） ======
 
     /// <summary>
-    /// 1 档专属：抽牌后自动消除 1 张热量牌。
-    /// 优先从手牌移除 → 回热量池；如果手牌无 H，从牌组/弃牌堆删除 → 回热量池。
+    /// HEAT 规则书步骤 5：根据档位执行冷却。
+    /// G1 = 冷却 3，G2 = 冷却 1，G3/G4 = 无冷却。
     /// </summary>
-    private void ApplyGear1Cooling(PlayerState p)
+    private void ReactStep(PlayerState p)
     {
         if (p.isBlown || p.hasFinished) return;
-        if (p.gear != config.minGear) return;
 
-        // 优先从手牌消除
-        int removed = p.deck.RemoveHeatFromHand(1);
-        if (removed > 0)
-        {
-            if (hudUI != null)
-                hudUI.AppendLog($"{p.name} (G1): cooled 1 Heat from hand.");
-            return;
-        }
+        int cooldown = 0;
+        if (p.gear == 1) cooldown = 3;
+        else if (p.gear == 2) cooldown = 1;
 
-        // 手牌没有 → 从牌组/弃牌堆删除
-        if (p.deck.RemoveOneHeatFromDeck())
+        if (cooldown > 0)
         {
-            if (hudUI != null)
-                hudUI.AppendLog($"{p.name} (G1): removed 1 Heat from deck.");
+            int removed = p.deck.RemoveHeatFromHand(cooldown);
+            if (removed > 0 && hudUI != null)
+                hudUI.AppendLog($"{p.name} (G{p.gear}): cools {removed} Heat → engine.");
         }
     }
 
@@ -612,8 +686,8 @@ public class MVPGameManager : MonoBehaviour
     private void ResolveCorners(PlayerState p, int oldPos, int rawEndPos)
     {
         if (p.totalMovementThisTurn <= 0) return;
+        if (p.isBlown) return;
 
-        // 使用取模前的位置确保路径遍历方向正确
         HashSet<int> corners = trackManager.GetUniqueCornersCrossed(oldPos, rawEndPos);
 
         int totalSpeed = SumCardValues(p.playedSpeedCardsThisTurn);
@@ -625,12 +699,16 @@ public class MVPGameManager : MonoBehaviour
             if (totalSpeed > limit)
             {
                 int overspeed = totalSpeed - limit;
-                int drawn = p.deck.DrawHeatFromPool(overspeed);
                 string cname = trackManager.GetCornerName(cornerId);
-                log += $"{p.name} overspeeds at {cname} by {overspeed}! +{drawn} Heat.\n";
 
-                if (drawn < overspeed)
-                    log += $"<color=orange>Heat pool low! Missing {overspeed - drawn}.</color>\n";
+                // 尝试支付热量；引擎不足 → 失控
+                if (!TryPayHeat(p, overspeed, oldPos, $"overspeed at {cname} ({totalSpeed}>{limit})"))
+                {
+                    if (hudUI != null) hudUI.AppendLog(log);
+                    return; // 失控中断后续弯道判定
+                }
+
+                log += $"{p.name} overspeeds at {cname} by {overspeed}! +{overspeed} Heat.\n";
             }
             else
             {
@@ -644,13 +722,49 @@ public class MVPGameManager : MonoBehaviour
         if (hudUI != null) hudUI.AppendLog(log);
     }
 
+    // ====== 步骤 8：弃牌 ======
+
+    /// <summary>
+    /// 弃牌步骤 — 玩家可选择弃掉手中任意非热量牌，之后补牌至 7 张。
+    /// </summary>
+    private System.Collections.IEnumerator DiscardStep()
+    {
+        if (cardHandUI == null) yield break;
+
+        waitingForPlayerDiscard = true;
+        if (cardHandUI != null)
+        {
+            cardHandUI.SetDiscardMode(true);
+            cardHandUI.ShowHand(this, player);
+        }
+        if (hudUI != null)
+            hudUI.SetStatus("Discard: click cards to discard (non-heat only), then PLAY.");
+
+        yield return new WaitWhile(() => waitingForPlayerDiscard);
+
+        // 收集选中牌并弃掉
+        if (cardHandUI != null)
+        {
+            List<CardData> toDiscard = cardHandUI.GetSelectedCards();
+            foreach (var card in toDiscard)
+            {
+                if (!card.IsHeat)
+                {
+                    player.deck.RemoveFromHand(new List<CardData> { card });
+                    player.deck.DiscardSpeedCards(new List<CardData> { card });
+                }
+            }
+            if (toDiscard.Count > 0 && hudUI != null)
+                hudUI.AppendLog($"{player.name} discards {toDiscard.Count} card(s).");
+        }
+    }
+
     // ====== 收尾 ======
 
     private void CleanupTurn(PlayerState p)
     {
-        // 所有打出的牌都进弃牌堆（含热量牌），只有降档冷却才能把热量归还池
+        // 速度牌 → 弃牌堆。热量牌始终留在手牌中，只能通过降档冷却或 G1 散热移除。
         p.deck.DiscardSpeedCards(p.playedSpeedCardsThisTurn);
-        p.deck.DiscardSpeedCards(p.playedHeatCardsThisTurn);
     }
 
     // ====== 圈数与完赛 ======
@@ -752,12 +866,19 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnPlayCardsButtonClicked()
     {
+        // 弃牌模式 — 点击 PLAY 确认弃牌
+        if (waitingForPlayerDiscard)
+        {
+            waitingForPlayerDiscard = false;
+            return;
+        }
+
         if (phase != GamePhase.WaitingForCards) return;
         if (cardHandUI == null) return;
 
         List<CardData> selected = cardHandUI.GetSelectedCards();
-        int speedCount = 0, heatCount = 0;
-        foreach (var c in selected) { if (c.IsSpeed) speedCount++; else heatCount++; }
+        // selected 已经只包含速度牌（热量牌不可选中）
+        int speedCount = selected.Count;
 
         // 不能超出档位要求
         if (speedCount > player.gear)
@@ -766,18 +887,19 @@ public class MVPGameManager : MonoBehaviour
                 hudUI.SetStatus($"<color=orange>Too many speed cards! Gear {player.gear} max.</color>");
             return;
         }
-        if (heatCount > player.gear)
-        {
-            if (hudUI != null)
-                hudUI.SetStatus($"<color=orange>Too many heat cards! Max {player.gear} at gear {player.gear}.</color>");
-            return;
-        }
 
-        // 引擎故障：速度牌不足时，每缺 1 张 → +1 热量到弃牌堆
+        // 引擎故障：速度牌不足时，每缺 1 张 → +1 热量到弃牌堆。引擎不足 → 失控
         int missing = player.gear - speedCount;
         if (missing > 0)
         {
-            player.deck.DrawHeatFromPool(missing);
+            if (!TryPayHeat(player, missing, player.position, "engine failure"))
+            {
+                // 失控发生，跳过出牌收尾
+                player.playedSpeedCardsThisTurn.Clear();
+                player.playedHeatCardsThisTurn.Clear();
+                waitingForPlayerCards = false;
+                return;
+            }
             if (hudUI != null)
                 hudUI.AppendLog($"Engine failure! Missing {missing} speed card(s). +{missing} Heat to discard.");
         }
@@ -789,10 +911,7 @@ public class MVPGameManager : MonoBehaviour
         foreach (var card in selected)
         {
             toRemove.Add(card);
-            if (card.IsSpeed)
-                player.playedSpeedCardsThisTurn.Add(card);
-            else
-                player.playedHeatCardsThisTurn.Add(card);
+            player.playedSpeedCardsThisTurn.Add(card);
         }
 
         player.deck.RemoveFromHand(toRemove);

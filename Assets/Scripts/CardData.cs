@@ -4,7 +4,7 @@
 public enum CardType
 {
     Speed,  // 速度牌 — 打出产生移动
-    Heat    // 热量牌 — 打出 = 0 移动，占手牌位
+    Heat    // 热量牌 — 不可打出，仅占手牌位。只能通过降档冷却或 G1 散热移除
 }
 
 /// <summary>

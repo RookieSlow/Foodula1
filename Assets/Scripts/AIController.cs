@@ -152,27 +152,21 @@ public class AIController : MonoBehaviour
             ai.playedSpeedCardsThisTurn.Add(card);
         }
 
-        // 引擎故障：速度牌不足时，每缺 1 张 +1 热量到弃牌堆
+        // 引擎故障：速度牌不足时，每缺 1 张 +1 热量到弃牌堆。引擎不足 → 失控
         int missing = gear - chosen.Count;
         if (missing > 0)
         {
-            ai.deck.DrawHeatFromPool(missing);
-        }
-
-        // 热量高时主动打出热量牌清手牌（最多 gear 张）
-        if (heatRatio >= 0.5f)
-        {
-            int heatToPlay = Mathf.Min(ai.deck.CountHeatInHand(), gear);
-            List<CardData> heatCards = new List<CardData>();
-            foreach (var card in ai.deck.Hand)
+            int drawn = ai.deck.DrawHeatFromPool(missing);
+            if (drawn < missing)
             {
-                if (card.IsHeat && heatCards.Count < heatToPlay)
-                    heatCards.Add(card);
+                // 失控！归还已取出的牌，清空本回合
+                ai.playedSpeedCardsThisTurn.Clear();
+                ai.playedHeatCardsThisTurn.Clear();
+                game.HandleSpin(ai, ai.position, "engine failure");
+                return;
             }
-            ai.deck.RemoveFromHand(heatCards);
-            foreach (var card in heatCards)
-                ai.playedHeatCardsThisTurn.Add(card);
         }
+        // 热量牌不可打出 — 始终留在手牌中，等待降档冷却或 G1 散热移除
     }
 
     // ====== 辅助方法 ======

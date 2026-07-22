@@ -23,6 +23,7 @@ public class CardHandUI : MonoBehaviour
     private MVPGameManager gameManager;
     private List<CardUI> cardUIs = new List<CardUI>();
     private bool isGearSelectionMode;
+    private bool isDiscardMode;
 
     void Start()
     {
@@ -93,20 +94,33 @@ public class CardHandUI : MonoBehaviour
         if (gearPromptText != null)
         {
             gearPromptText.text = isGearMode
-                ? "Select gear (+1 up, any down)"
+                ? "Select gear (+1 free, +2 costs 1 Heat)"
                 : "";
         }
     }
 
     /// <summary>
-    /// 获取当前选中的卡牌列表。
+    /// 切换弃牌模式 — 可选中任意非热量牌弃掉。
+    /// </summary>
+    public void SetDiscardMode(bool isDiscard)
+    {
+        isDiscardMode = isDiscard;
+        isGearSelectionMode = false;
+        if (gearSelectionPanel != null)
+            gearSelectionPanel.SetActive(false);
+        if (playCardsButton != null)
+            playCardsButton.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// 获取当前选中的速度牌列表（热量牌不可选中）。
     /// </summary>
     public List<CardData> GetSelectedCards()
     {
         List<CardData> selected = new List<CardData>();
         foreach (CardUI ui in cardUIs)
         {
-            if (ui != null && ui.isSelected)
+            if (ui != null && ui.isSelected && ui.cardData.IsSpeed)
             {
                 selected.Add(ui.cardData);
             }
@@ -135,47 +149,36 @@ public class CardHandUI : MonoBehaviour
         if (gameManager == null) return;
         if (isGearSelectionMode) return;
 
+        // 热量牌不可打出/不可弃掉 — 忽略点击
+        if (card.cardData.IsHeat) return;
+
+        // 弃牌模式：无数量限制，任意选
+        if (isDiscardMode) return;
+
         int gear = gameManager.Player.gear;
 
         // card.isSelected 已在 CardUI.OnCardClicked 中翻转完毕
         if (card.isSelected)
         {
-            // 刚刚被选中 → 检查是否超出限制
+            // 刚刚被选中 → 检查是否超出速度牌限制
             int speedCount = GetSelectedSpeedCount();
-            int heatCount = GetSelectedHeatCount();
 
-            if (card.cardData.IsSpeed && speedCount > gear)
-            {
-                card.SetSelectedWithoutNotify(false); // 超限，撤销
-                return;
-            }
-            if (card.cardData.IsHeat && heatCount > gear)
+            if (speedCount > gear)
             {
                 card.SetSelectedWithoutNotify(false); // 超限，撤销
                 return;
             }
 
             if (gameManager.hudUI != null)
-                gameManager.hudUI.SetStatus($"Gear {gear} - {speedCount}/{gear} speed, {heatCount}/{gear} heat");
+                gameManager.hudUI.SetStatus($"Gear {gear} - {speedCount}/{gear} speed cards selected");
         }
         else
         {
             // 取消选中
             int speedCount = GetSelectedSpeedCount();
             if (gameManager.hudUI != null)
-                gameManager.hudUI.SetStatus($"Gear {gear} - {speedCount}/{gear} speed");
+                gameManager.hudUI.SetStatus($"Gear {gear} - {speedCount}/{gear} speed cards selected");
         }
-    }
-
-    private int GetSelectedHeatCount()
-    {
-        int count = 0;
-        foreach (CardUI ui in cardUIs)
-        {
-            if (ui != null && ui.isSelected && ui.cardData.IsHeat)
-                count++;
-        }
-        return count;
     }
 
     private void OnPlayClicked()
@@ -189,7 +192,8 @@ public class CardHandUI : MonoBehaviour
         {
             int spd = player.deck.CountSpeedInDeck();
             int heat = player.deck.CountHeatInDeck();
-            deckInfoText.text = $"Deck: {spd}S + {heat}H";
+            int handHeat = player.deck.CountHeatInHand();
+            deckInfoText.text = $"Deck: {spd}S + {heat}H | Hand Heat: {handHeat}";
         }
     }
 }
