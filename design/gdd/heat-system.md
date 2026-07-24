@@ -1,5 +1,7 @@
+> ⚠️ **已废弃 (RETIRED)** — 本文件为 MVP 原型逆向文档，已被 `foodula-1-core-mechanics.md` 取代。保留仅供历史参考。
+
 ---
-status: reverse-documented
+status: reverse-documented (RETIRED)
 source: Assets/Scripts/GameManager.cs (lines 186-253)
 date: 2026-07-19
 verified-by: User
