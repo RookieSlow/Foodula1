@@ -11,6 +11,8 @@ public class CardHandUI : MonoBehaviour
     [Header("Prefab & 容器")]
     public GameObject cardPrefab;
     public Transform handContainer;
+    [Tooltip("卡牌实例化后的尺寸覆盖（原 CardPrefab 是 160×30 线条，太窄）。")]
+    public Vector2 cardSizeOverride = new Vector2(180, 240);
 
     [Header("档位选择 UI")]
     public GameObject gearSelectionPanel;
@@ -48,10 +50,22 @@ public class CardHandUI : MonoBehaviour
         foreach (CardData card in player.deck.Hand)
         {
             GameObject cardObj = Instantiate(cardPrefab, handContainer);
+
+            // 覆盖卡牌尺寸 — CardPrefab 原始 160×30 太小
+            RectTransform crt = cardObj.GetComponent<RectTransform>();
+            if (crt != null)
+            {
+                crt.sizeDelta = cardSizeOverride;
+                // 添加 LayoutElement 锁定尺寸，防止 LayoutGroup 覆盖
+                var le = cardObj.GetComponent<UnityEngine.UI.LayoutElement>();
+                if (le == null) le = cardObj.AddComponent<UnityEngine.UI.LayoutElement>();
+                le.preferredWidth = cardSizeOverride.x;
+                le.preferredHeight = cardSizeOverride.y;
+            }
+
             CardUI ui = cardObj.GetComponent<CardUI>();
             if (ui != null)
             {
-                // 如果档位已决定且需要选牌，设为可选
                 ui.SetupCard(card, OnCardClicked);
             }
             cardUIs.Add(ui);

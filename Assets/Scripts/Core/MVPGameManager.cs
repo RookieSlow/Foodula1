@@ -33,6 +33,12 @@ public class MVPGameManager : MonoBehaviour
     [Header("赛车 Prefab")]
     public GameObject carPrefab;
 
+    [Header("UI Prefab (Demo模式)")]
+    [Tooltip("拖入 RaceCanvas Prefab 以使用预制 UI；留空则回退到硬编码 MVP UI。")]
+    public GameObject raceCanvasPrefab;
+    [Tooltip("卡牌预制体引用，Prefab 模式下会自动传给 CardHandUI。")]
+    public GameObject cardUIPrefab;
+
     // --- 运行时状态 ---
     private PlayerState player;
     private PlayerState ai;
@@ -74,12 +80,67 @@ public class MVPGameManager : MonoBehaviour
             trackManager = GetComponent<TrackManager>();
         if (aiController == null)
             aiController = GetComponent<AIController>();
-        if (hudUI == null || cardHandUI == null)
+
+        // UI 初始化：Prefab 优先，硬编码回退
+        if (raceCanvasPrefab != null)
+        {
+            InstantiateUIFromPrefab();
+        }
+        else if (hudUI == null || cardHandUI == null)
+        {
             AutoCreateUI();
+        }
+
+        // 收集档位按钮图片引用（Prefab 模式从 HUDUI 获取，硬编码模式在 AutoCreateUI 中已填充）
+        if (raceCanvasPrefab != null)
+        {
+            CollectGearButtonImages();
+        }
 
         nodeWait = new WaitForSeconds(config.nodeDelay);
         InitializeGame();
         StartCoroutine(GameLoop());
+    }
+
+    /// <summary>
+    /// 从 Prefab 实例化 UI — Demo 模式的主路径。
+    /// 实例化后自动查找 HUDUI 和 CardHandUI 组件。
+    /// </summary>
+    private void InstantiateUIFromPrefab()
+    {
+        // 禁用场景中已有的所有 Canvas（避免双份 UI）
+        foreach (var oldCanvas in FindObjectsOfType<Canvas>())
+            oldCanvas.gameObject.SetActive(false);
+
+        GameObject instance = Instantiate(raceCanvasPrefab);
+        instance.name = "RaceCanvas";
+
+        hudUI = instance.GetComponentInChildren<HUDUI>();
+        cardHandUI = instance.GetComponentInChildren<CardHandUI>();
+
+        // 将 CardPrefab 引用从 Manager 传给 CardHandUI（Editor 脚本赋值可能在运行时丢失）
+        if (cardHandUI != null && cardHandUI.cardPrefab == null && cardUIPrefab != null)
+            cardHandUI.cardPrefab = cardUIPrefab;
+
+        if (hudUI == null)
+            Debug.LogError("MVPGameManager: RaceCanvas Prefab has no HUDUI in children!");
+        if (cardHandUI == null)
+            Debug.LogError("MVPGameManager: RaceCanvas Prefab has no CardHandUI in children!");
+    }
+
+    /// <summary>
+    /// 从 HUDUI 的 public 按钮字段收集档位按钮 Image 引用，
+    /// 用于选中高亮和重置颜色。
+    /// </summary>
+    private void CollectGearButtonImages()
+    {
+        gearButtonImages.Clear();
+        if (hudUI == null) return;
+
+        if (hudUI.gear1Button != null) gearButtonImages[1] = hudUI.gear1Button.GetComponent<Image>();
+        if (hudUI.gear2Button != null) gearButtonImages[2] = hudUI.gear2Button.GetComponent<Image>();
+        if (hudUI.gear3Button != null) gearButtonImages[3] = hudUI.gear3Button.GetComponent<Image>();
+        if (hudUI.gear4Button != null) gearButtonImages[4] = hudUI.gear4Button.GetComponent<Image>();
     }
 
     /// <summary>

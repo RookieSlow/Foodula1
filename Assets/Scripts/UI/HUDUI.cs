@@ -26,6 +26,7 @@ public class HUDUI : MonoBehaviour
     public UnityEngine.UI.Button gear4Button;
 
     [Header("操作按钮")]
+    public UnityEngine.UI.Button confirmGearButton;
     public UnityEngine.UI.Button resetButton;
 
     [Header("游戏结束面板")]
@@ -42,6 +43,9 @@ public class HUDUI : MonoBehaviour
         BindGearButton(gear2Button, 2);
         BindGearButton(gear3Button, 3);
         BindGearButton(gear4Button, 4);
+
+        if (confirmGearButton != null)
+            confirmGearButton.onClick.AddListener(OnConfirmGearClicked);
 
         if (resetButton != null)
             resetButton.onClick.AddListener(OnResetClicked);
@@ -140,6 +144,11 @@ public class HUDUI : MonoBehaviour
     private void OnGearClicked(int gear)
     {
         gameManager?.OnGearButtonClicked(gear);
+    }
+
+    private void OnConfirmGearClicked()
+    {
+        gameManager?.OnConfirmGearClicked();
     }
 
     private void OnResetClicked()
