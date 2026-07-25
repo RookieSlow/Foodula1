@@ -1,0 +1,3661 @@
+{
+  "schemaVersion": 1,
+  "trackId": "nurburgring_24h_endurance",
+  "trackName": "纽伯格林 24 小时耐力赛布局",
+  "trackNameEn": "Nürburgring 24H Endurance Layout",
+  "country": "DE",
+  "homeTeam": null,
+  "realCircuit": {
+    "name": "Nürburgring 24 Hours Combination",
+    "layoutYear": "24H full GP + Nordschleife",
+    "lengthMeters": 25378,
+    "direction": "clockwise"
+  },
+  "gameCellCount": 267,
+  "metersPerCell": 95.048689,
+  "laps": 1,
+  "hasPitLane": false,
+  "weatherPool": [],
+  "defaultWeather": "cloudy",
+  "weatherConfigurationStatus": "pending_design",
+  "layout": {
+    "coordinateSpace": "normalized_2d_schematic",
+    "fidelity": "topology and relative proportions based on the referenced circuit; not survey-grade coordinates",
+    "pathClosed": true
+  },
+  "referenceSources": [
+    "https://www.24h-rennen.de/en/2026/05/26/the-event-in-figures/",
+    "https://www.nuerburgring.de/info/nuerburgring/race-tracks/nordschleife"
+  ],
+  "cells": [
+    {
+      "index": 0,
+      "type": "start_finish",
+      "name": "起点/终点线",
+      "segmentId": "start_finish",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.83,
+        "y": 0.5
+      }
+    },
+    {
+      "index": 1,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.836961,
+        "y": 0.508698
+      }
+    },
+    {
+      "index": 2,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.843692,
+        "y": 0.517341
+      }
+    },
+    {
+      "index": 3,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.850147,
+        "y": 0.525876
+      }
+    },
+    {
+      "index": 4,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.856281,
+        "y": 0.53425
+      }
+    },
+    {
+      "index": 5,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.86205,
+        "y": 0.542414
+      }
+    },
+    {
+      "index": 6,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.86741,
+        "y": 0.55032
+      }
+    },
+    {
+      "index": 7,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.872322,
+        "y": 0.557928
+      }
+    },
+    {
+      "index": 8,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.876747,
+        "y": 0.565197
+      }
+    },
+    {
+      "index": 9,
+      "type": "corner",
+      "name": "Mercedes Arena",
+      "segmentId": "mercedes_arena",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.880648,
+        "y": 0.572096
+      },
+      "cornerId": "mercedes_arena",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 10,
+      "type": "corner",
+      "name": "Mercedes Arena",
+      "segmentId": "mercedes_arena",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.883994,
+        "y": 0.578598
+      },
+      "cornerId": "mercedes_arena",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 11,
+      "type": "corner",
+      "name": "Mercedes Arena",
+      "segmentId": "mercedes_arena",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.886754,
+        "y": 0.58468
+      },
+      "cornerId": "mercedes_arena",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 12,
+      "type": "corner",
+      "name": "Mercedes Arena",
+      "segmentId": "mercedes_arena",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.888902,
+        "y": 0.590329
+      },
+      "cornerId": "mercedes_arena",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 13,
+      "type": "corner",
+      "name": "Mercedes Arena",
+      "segmentId": "mercedes_arena",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.890415,
+        "y": 0.595536
+      },
+      "cornerId": "mercedes_arena",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 14,
+      "type": "corner",
+      "name": "Mercedes Arena",
+      "segmentId": "mercedes_arena",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.891274,
+        "y": 0.600301
+      },
+      "cornerId": "mercedes_arena",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 15,
+      "type": "corner",
+      "name": "Mercedes Arena",
+      "segmentId": "mercedes_arena",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.891463,
+        "y": 0.604628
+      },
+      "cornerId": "mercedes_arena",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 16,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.890972,
+        "y": 0.608531
+      }
+    },
+    {
+      "index": 17,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.889793,
+        "y": 0.612029
+      }
+    },
+    {
+      "index": 18,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.887924,
+        "y": 0.615147
+      }
+    },
+    {
+      "index": 19,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.885367,
+        "y": 0.617917
+      }
+    },
+    {
+      "index": 20,
+      "type": "corner",
+      "name": "Müllenbachschleife",
+      "segmentId": "mullenbach",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.882126,
+        "y": 0.620376
+      },
+      "cornerId": "mullenbach",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 21,
+      "type": "corner",
+      "name": "Müllenbachschleife",
+      "segmentId": "mullenbach",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.878211,
+        "y": 0.622567
+      },
+      "cornerId": "mullenbach",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 22,
+      "type": "corner",
+      "name": "Müllenbachschleife",
+      "segmentId": "mullenbach",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.873636,
+        "y": 0.624536
+      },
+      "cornerId": "mullenbach",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 23,
+      "type": "corner",
+      "name": "Müllenbachschleife",
+      "segmentId": "mullenbach",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.868418,
+        "y": 0.626335
+      },
+      "cornerId": "mullenbach",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 24,
+      "type": "corner",
+      "name": "Schumacher S",
+      "segmentId": "schumacher_s",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.86258,
+        "y": 0.628017
+      },
+      "cornerId": "schumacher_s",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 25,
+      "type": "corner",
+      "name": "Schumacher S",
+      "segmentId": "schumacher_s",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.856145,
+        "y": 0.629637
+      },
+      "cornerId": "schumacher_s",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 26,
+      "type": "corner",
+      "name": "Schumacher S",
+      "segmentId": "schumacher_s",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.849141,
+        "y": 0.631254
+      },
+      "cornerId": "schumacher_s",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 27,
+      "type": "corner",
+      "name": "Schumacher S",
+      "segmentId": "schumacher_s",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.841601,
+        "y": 0.632926
+      },
+      "cornerId": "schumacher_s",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 28,
+      "type": "corner",
+      "name": "Schumacher S",
+      "segmentId": "schumacher_s",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.833558,
+        "y": 0.63471
+      },
+      "cornerId": "schumacher_s",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 29,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.825049,
+        "y": 0.636663
+      }
+    },
+    {
+      "index": 30,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.816112,
+        "y": 0.63884
+      }
+    },
+    {
+      "index": 31,
+      "type": "corner",
+      "name": "Warsteiner 弯",
+      "segmentId": "warsteiner",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.806789,
+        "y": 0.641293
+      },
+      "cornerId": "warsteiner",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 32,
+      "type": "corner",
+      "name": "Warsteiner 弯",
+      "segmentId": "warsteiner",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.797121,
+        "y": 0.644068
+      },
+      "cornerId": "warsteiner",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 33,
+      "type": "corner",
+      "name": "Warsteiner 弯",
+      "segmentId": "warsteiner",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.787152,
+        "y": 0.647211
+      },
+      "cornerId": "warsteiner",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 34,
+      "type": "corner",
+      "name": "Warsteiner 弯",
+      "segmentId": "warsteiner",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.776927,
+        "y": 0.65076
+      },
+      "cornerId": "warsteiner",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 35,
+      "type": "corner",
+      "name": "Warsteiner 弯",
+      "segmentId": "warsteiner",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.766489,
+        "y": 0.654746
+      },
+      "cornerId": "warsteiner",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 36,
+      "type": "corner",
+      "name": "Warsteiner 弯",
+      "segmentId": "warsteiner",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.755885,
+        "y": 0.659197
+      },
+      "cornerId": "warsteiner",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 37,
+      "type": "corner",
+      "name": "Veedol 减速弯",
+      "segmentId": "veedol",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.745157,
+        "y": 0.664132
+      },
+      "cornerId": "veedol",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 38,
+      "type": "corner",
+      "name": "Veedol 减速弯",
+      "segmentId": "veedol",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.734351,
+        "y": 0.669562
+      },
+      "cornerId": "veedol",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 39,
+      "type": "corner",
+      "name": "Veedol 减速弯",
+      "segmentId": "veedol",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.72351,
+        "y": 0.675493
+      },
+      "cornerId": "veedol",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 40,
+      "type": "corner",
+      "name": "Veedol 减速弯",
+      "segmentId": "veedol",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.712674,
+        "y": 0.68192
+      },
+      "cornerId": "veedol",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 41,
+      "type": "corner",
+      "name": "Veedol 减速弯",
+      "segmentId": "veedol",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.701883,
+        "y": 0.688833
+      },
+      "cornerId": "veedol",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 42,
+      "type": "corner",
+      "name": "Veedol 减速弯",
+      "segmentId": "veedol",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.691176,
+        "y": 0.696212
+      },
+      "cornerId": "veedol",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 43,
+      "type": "corner",
+      "name": "Veedol 减速弯",
+      "segmentId": "veedol",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.680588,
+        "y": 0.704031
+      },
+      "cornerId": "veedol",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 44,
+      "type": "corner",
+      "name": "Veedol 减速弯",
+      "segmentId": "veedol",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.670152,
+        "y": 0.712255
+      },
+      "cornerId": "veedol",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 45,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.659898,
+        "y": 0.720843
+      }
+    },
+    {
+      "index": 46,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.649853,
+        "y": 0.729745
+      }
+    },
+    {
+      "index": 47,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.640041,
+        "y": 0.738907
+      }
+    },
+    {
+      "index": 48,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.630483,
+        "y": 0.748269
+      }
+    },
+    {
+      "index": 49,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.621197,
+        "y": 0.757766
+      }
+    },
+    {
+      "index": 50,
+      "type": "corner",
+      "name": "Hatzenbach",
+      "segmentId": "hatzenbach",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.612194,
+        "y": 0.767327
+      },
+      "cornerId": "hatzenbach",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 51,
+      "type": "corner",
+      "name": "Hatzenbach",
+      "segmentId": "hatzenbach",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.603485,
+        "y": 0.77688
+      },
+      "cornerId": "hatzenbach",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 52,
+      "type": "corner",
+      "name": "Hatzenbach",
+      "segmentId": "hatzenbach",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.595076,
+        "y": 0.786349
+      },
+      "cornerId": "hatzenbach",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 53,
+      "type": "corner",
+      "name": "Hatzenbach",
+      "segmentId": "hatzenbach",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.58697,
+        "y": 0.795657
+      },
+      "cornerId": "hatzenbach",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 54,
+      "type": "corner",
+      "name": "Hatzenbach",
+      "segmentId": "hatzenbach",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.579165,
+        "y": 0.804726
+      },
+      "cornerId": "hatzenbach",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 55,
+      "type": "corner",
+      "name": "Hatzenbach",
+      "segmentId": "hatzenbach",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.571656,
+        "y": 0.813479
+      },
+      "cornerId": "hatzenbach",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 56,
+      "type": "corner",
+      "name": "Hatzenbach",
+      "segmentId": "hatzenbach",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.564434,
+        "y": 0.82184
+      },
+      "cornerId": "hatzenbach",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 57,
+      "type": "corner",
+      "name": "Hocheichen",
+      "segmentId": "hocheichen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.557488,
+        "y": 0.829734
+      },
+      "cornerId": "hocheichen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 58,
+      "type": "corner",
+      "name": "Hocheichen",
+      "segmentId": "hocheichen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.550804,
+        "y": 0.83709
+      },
+      "cornerId": "hocheichen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 59,
+      "type": "corner",
+      "name": "Hocheichen",
+      "segmentId": "hocheichen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.544362,
+        "y": 0.843842
+      },
+      "cornerId": "hocheichen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 60,
+      "type": "corner",
+      "name": "Hocheichen",
+      "segmentId": "hocheichen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.538143,
+        "y": 0.849926
+      },
+      "cornerId": "hocheichen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 61,
+      "type": "corner",
+      "name": "Hocheichen",
+      "segmentId": "hocheichen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.532123,
+        "y": 0.855288
+      },
+      "cornerId": "hocheichen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 62,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.526277,
+        "y": 0.859876
+      }
+    },
+    {
+      "index": 63,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.520578,
+        "y": 0.863647
+      }
+    },
+    {
+      "index": 64,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.514995,
+        "y": 0.866566
+      }
+    },
+    {
+      "index": 65,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.509501,
+        "y": 0.868604
+      }
+    },
+    {
+      "index": 66,
+      "type": "corner",
+      "name": "Schwedenkreuz",
+      "segmentId": "schwedenkreuz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.504062,
+        "y": 0.869743
+      },
+      "cornerId": "schwedenkreuz",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": false
+    },
+    {
+      "index": 67,
+      "type": "corner",
+      "name": "Schwedenkreuz",
+      "segmentId": "schwedenkreuz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.498647,
+        "y": 0.869971
+      },
+      "cornerId": "schwedenkreuz",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": false
+    },
+    {
+      "index": 68,
+      "type": "corner",
+      "name": "Schwedenkreuz",
+      "segmentId": "schwedenkreuz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.493224,
+        "y": 0.869287
+      },
+      "cornerId": "schwedenkreuz",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": false
+    },
+    {
+      "index": 69,
+      "type": "corner",
+      "name": "Schwedenkreuz",
+      "segmentId": "schwedenkreuz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.487761,
+        "y": 0.867696
+      },
+      "cornerId": "schwedenkreuz",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": false
+    },
+    {
+      "index": 70,
+      "type": "corner",
+      "name": "Schwedenkreuz",
+      "segmentId": "schwedenkreuz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.482226,
+        "y": 0.865215
+      },
+      "cornerId": "schwedenkreuz",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": true
+    },
+    {
+      "index": 71,
+      "type": "corner",
+      "name": "Schwedenkreuz",
+      "segmentId": "schwedenkreuz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.476589,
+        "y": 0.861866
+      },
+      "cornerId": "schwedenkreuz",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": false
+    },
+    {
+      "index": 72,
+      "type": "corner",
+      "name": "Schwedenkreuz",
+      "segmentId": "schwedenkreuz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.47082,
+        "y": 0.857681
+      },
+      "cornerId": "schwedenkreuz",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": false
+    },
+    {
+      "index": 73,
+      "type": "corner",
+      "name": "Schwedenkreuz",
+      "segmentId": "schwedenkreuz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.46489,
+        "y": 0.852701
+      },
+      "cornerId": "schwedenkreuz",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": false
+    },
+    {
+      "index": 74,
+      "type": "corner",
+      "name": "Aremberg",
+      "segmentId": "aremberg",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.458774,
+        "y": 0.846971
+      },
+      "cornerId": "aremberg",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 75,
+      "type": "corner",
+      "name": "Aremberg",
+      "segmentId": "aremberg",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.452446,
+        "y": 0.840545
+      },
+      "cornerId": "aremberg",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 76,
+      "type": "corner",
+      "name": "Aremberg",
+      "segmentId": "aremberg",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.445886,
+        "y": 0.833483
+      },
+      "cornerId": "aremberg",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 77,
+      "type": "corner",
+      "name": "Aremberg",
+      "segmentId": "aremberg",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.439072,
+        "y": 0.82585
+      },
+      "cornerId": "aremberg",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 78,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.431991,
+        "y": 0.817713
+      }
+    },
+    {
+      "index": 79,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.424626,
+        "y": 0.809147
+      }
+    },
+    {
+      "index": 80,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.41697,
+        "y": 0.800226
+      }
+    },
+    {
+      "index": 81,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.409015,
+        "y": 0.791028
+      }
+    },
+    {
+      "index": 82,
+      "type": "corner",
+      "name": "Adenauer Forst",
+      "segmentId": "adenauer_forst",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.400757,
+        "y": 0.78163
+      },
+      "cornerId": "adenauer_forst",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 83,
+      "type": "corner",
+      "name": "Adenauer Forst",
+      "segmentId": "adenauer_forst",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.392198,
+        "y": 0.772109
+      },
+      "cornerId": "adenauer_forst",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 84,
+      "type": "corner",
+      "name": "Adenauer Forst",
+      "segmentId": "adenauer_forst",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.383341,
+        "y": 0.762543
+      },
+      "cornerId": "adenauer_forst",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 85,
+      "type": "corner",
+      "name": "Adenauer Forst",
+      "segmentId": "adenauer_forst",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.374195,
+        "y": 0.753005
+      },
+      "cornerId": "adenauer_forst",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 86,
+      "type": "corner",
+      "name": "Metzgesfeld",
+      "segmentId": "metzgesfeld",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.364771,
+        "y": 0.743567
+      },
+      "cornerId": "metzgesfeld",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 87,
+      "type": "corner",
+      "name": "Metzgesfeld",
+      "segmentId": "metzgesfeld",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.355084,
+        "y": 0.734297
+      },
+      "cornerId": "metzgesfeld",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 88,
+      "type": "corner",
+      "name": "Metzgesfeld",
+      "segmentId": "metzgesfeld",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.345153,
+        "y": 0.725258
+      },
+      "cornerId": "metzgesfeld",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 89,
+      "type": "corner",
+      "name": "Metzgesfeld",
+      "segmentId": "metzgesfeld",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.335,
+        "y": 0.716506
+      },
+      "cornerId": "metzgesfeld",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 90,
+      "type": "corner",
+      "name": "Metzgesfeld",
+      "segmentId": "metzgesfeld",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.324651,
+        "y": 0.708095
+      },
+      "cornerId": "metzgesfeld",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 91,
+      "type": "corner",
+      "name": "Kallenhard",
+      "segmentId": "kallenhard",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.314135,
+        "y": 0.700069
+      },
+      "cornerId": "kallenhard",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 92,
+      "type": "corner",
+      "name": "Kallenhard",
+      "segmentId": "kallenhard",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.303483,
+        "y": 0.692466
+      },
+      "cornerId": "kallenhard",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 93,
+      "type": "corner",
+      "name": "Kallenhard",
+      "segmentId": "kallenhard",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.29273,
+        "y": 0.685317
+      },
+      "cornerId": "kallenhard",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 94,
+      "type": "corner",
+      "name": "Kallenhard",
+      "segmentId": "kallenhard",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.281912,
+        "y": 0.678645
+      },
+      "cornerId": "kallenhard",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 95,
+      "type": "corner",
+      "name": "Kallenhard",
+      "segmentId": "kallenhard",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.271068,
+        "y": 0.672465
+      },
+      "cornerId": "kallenhard",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 96,
+      "type": "corner",
+      "name": "Wehrseifen",
+      "segmentId": "wehrseifen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.260238,
+        "y": 0.666784
+      },
+      "cornerId": "wehrseifen",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 97,
+      "type": "corner",
+      "name": "Wehrseifen",
+      "segmentId": "wehrseifen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.249466,
+        "y": 0.661603
+      },
+      "cornerId": "wehrseifen",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 98,
+      "type": "corner",
+      "name": "Wehrseifen",
+      "segmentId": "wehrseifen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.238795,
+        "y": 0.656912
+      },
+      "cornerId": "wehrseifen",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 99,
+      "type": "corner",
+      "name": "Wehrseifen",
+      "segmentId": "wehrseifen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.228268,
+        "y": 0.652696
+      },
+      "cornerId": "wehrseifen",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 100,
+      "type": "corner",
+      "name": "Wehrseifen",
+      "segmentId": "wehrseifen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.217931,
+        "y": 0.648933
+      },
+      "cornerId": "wehrseifen",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 101,
+      "type": "corner",
+      "name": "Wehrseifen",
+      "segmentId": "wehrseifen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.207829,
+        "y": 0.645591
+      },
+      "cornerId": "wehrseifen",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 102,
+      "type": "corner",
+      "name": "Wehrseifen",
+      "segmentId": "wehrseifen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.198005,
+        "y": 0.642637
+      },
+      "cornerId": "wehrseifen",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 103,
+      "type": "corner",
+      "name": "Wehrseifen",
+      "segmentId": "wehrseifen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.188504,
+        "y": 0.640029
+      },
+      "cornerId": "wehrseifen",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 104,
+      "type": "corner",
+      "name": "Wehrseifen",
+      "segmentId": "wehrseifen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.179369,
+        "y": 0.637721
+      },
+      "cornerId": "wehrseifen",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 105,
+      "type": "corner",
+      "name": "Wehrseifen",
+      "segmentId": "wehrseifen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.170641,
+        "y": 0.635662
+      },
+      "cornerId": "wehrseifen",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 106,
+      "type": "corner",
+      "name": "Wehrseifen",
+      "segmentId": "wehrseifen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.16236,
+        "y": 0.633801
+      },
+      "cornerId": "wehrseifen",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 107,
+      "type": "corner",
+      "name": "Breidscheid",
+      "segmentId": "breidscheid",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.154564,
+        "y": 0.63208
+      },
+      "cornerId": "breidscheid",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 108,
+      "type": "corner",
+      "name": "Breidscheid",
+      "segmentId": "breidscheid",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.147288,
+        "y": 0.630443
+      },
+      "cornerId": "breidscheid",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 109,
+      "type": "corner",
+      "name": "Breidscheid",
+      "segmentId": "breidscheid",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.140565,
+        "y": 0.628831
+      },
+      "cornerId": "breidscheid",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 110,
+      "type": "corner",
+      "name": "Breidscheid",
+      "segmentId": "breidscheid",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.134425,
+        "y": 0.627187
+      },
+      "cornerId": "breidscheid",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 111,
+      "type": "corner",
+      "name": "Breidscheid",
+      "segmentId": "breidscheid",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.128894,
+        "y": 0.625454
+      },
+      "cornerId": "breidscheid",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 112,
+      "type": "corner",
+      "name": "Ex-Mühle",
+      "segmentId": "ex_muhle",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.123995,
+        "y": 0.623576
+      },
+      "cornerId": "ex_muhle",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 113,
+      "type": "corner",
+      "name": "Ex-Mühle",
+      "segmentId": "ex_muhle",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.119748,
+        "y": 0.621502
+      },
+      "cornerId": "ex_muhle",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 114,
+      "type": "corner",
+      "name": "Ex-Mühle",
+      "segmentId": "ex_muhle",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.116169,
+        "y": 0.619183
+      },
+      "cornerId": "ex_muhle",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 115,
+      "type": "corner",
+      "name": "Ex-Mühle",
+      "segmentId": "ex_muhle",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.113269,
+        "y": 0.616573
+      },
+      "cornerId": "ex_muhle",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 116,
+      "type": "corner",
+      "name": "Ex-Mühle",
+      "segmentId": "ex_muhle",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.111055,
+        "y": 0.613634
+      },
+      "cornerId": "ex_muhle",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 117,
+      "type": "corner",
+      "name": "Ex-Mühle",
+      "segmentId": "ex_muhle",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.109531,
+        "y": 0.610329
+      },
+      "cornerId": "ex_muhle",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 118,
+      "type": "corner",
+      "name": "Ex-Mühle",
+      "segmentId": "ex_muhle",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.108697,
+        "y": 0.606632
+      },
+      "cornerId": "ex_muhle",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 119,
+      "type": "corner",
+      "name": "Bergwerk",
+      "segmentId": "bergwerk",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.108547,
+        "y": 0.602519
+      },
+      "cornerId": "bergwerk",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 120,
+      "type": "corner",
+      "name": "Bergwerk",
+      "segmentId": "bergwerk",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.109073,
+        "y": 0.597974
+      },
+      "cornerId": "bergwerk",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 121,
+      "type": "corner",
+      "name": "Bergwerk",
+      "segmentId": "bergwerk",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.110261,
+        "y": 0.592988
+      },
+      "cornerId": "bergwerk",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 122,
+      "type": "corner",
+      "name": "Bergwerk",
+      "segmentId": "bergwerk",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.112094,
+        "y": 0.58756
+      },
+      "cornerId": "bergwerk",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 123,
+      "type": "corner",
+      "name": "Bergwerk",
+      "segmentId": "bergwerk",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.114551,
+        "y": 0.581692
+      },
+      "cornerId": "bergwerk",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 124,
+      "type": "corner",
+      "name": "Bergwerk",
+      "segmentId": "bergwerk",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.117607,
+        "y": 0.575398
+      },
+      "cornerId": "bergwerk",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 125,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.121235,
+        "y": 0.568695
+      }
+    },
+    {
+      "index": 126,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.125402,
+        "y": 0.561607
+      }
+    },
+    {
+      "index": 127,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.130075,
+        "y": 0.554164
+      }
+    },
+    {
+      "index": 128,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.135217,
+        "y": 0.546402
+      }
+    },
+    {
+      "index": 129,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.140786,
+        "y": 0.538361
+      }
+    },
+    {
+      "index": 130,
+      "type": "corner",
+      "name": "Klostertal",
+      "segmentId": "klostertal",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.146743,
+        "y": 0.530086
+      },
+      "cornerId": "klostertal",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 131,
+      "type": "corner",
+      "name": "Klostertal",
+      "segmentId": "klostertal",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.153043,
+        "y": 0.521625
+      },
+      "cornerId": "klostertal",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 132,
+      "type": "corner",
+      "name": "Klostertal",
+      "segmentId": "klostertal",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.159642,
+        "y": 0.51303
+      },
+      "cornerId": "klostertal",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 133,
+      "type": "corner",
+      "name": "Klostertal",
+      "segmentId": "klostertal",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.166494,
+        "y": 0.504352
+      },
+      "cornerId": "klostertal",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 134,
+      "type": "corner",
+      "name": "Klostertal",
+      "segmentId": "klostertal",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.173552,
+        "y": 0.495648
+      },
+      "cornerId": "klostertal",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 135,
+      "type": "corner",
+      "name": "Klostertal",
+      "segmentId": "klostertal",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.180769,
+        "y": 0.48697
+      },
+      "cornerId": "klostertal",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 136,
+      "type": "corner",
+      "name": "Klostertal",
+      "segmentId": "klostertal",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.188098,
+        "y": 0.478375
+      },
+      "cornerId": "klostertal",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 137,
+      "type": "corner",
+      "name": "Klostertal",
+      "segmentId": "klostertal",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.195494,
+        "y": 0.469914
+      },
+      "cornerId": "klostertal",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 138,
+      "type": "corner",
+      "name": "Karussell",
+      "segmentId": "karussell",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.202911,
+        "y": 0.461639
+      },
+      "cornerId": "karussell",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 139,
+      "type": "corner",
+      "name": "Karussell",
+      "segmentId": "karussell",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.210304,
+        "y": 0.453598
+      },
+      "cornerId": "karussell",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 140,
+      "type": "corner",
+      "name": "Karussell",
+      "segmentId": "karussell",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.217631,
+        "y": 0.445836
+      },
+      "cornerId": "karussell",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 141,
+      "type": "corner",
+      "name": "Karussell",
+      "segmentId": "karussell",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.22485,
+        "y": 0.438393
+      },
+      "cornerId": "karussell",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 142,
+      "type": "corner",
+      "name": "Karussell",
+      "segmentId": "karussell",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.231925,
+        "y": 0.431305
+      },
+      "cornerId": "karussell",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 143,
+      "type": "corner",
+      "name": "Karussell",
+      "segmentId": "karussell",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.238817,
+        "y": 0.424602
+      },
+      "cornerId": "karussell",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 144,
+      "type": "corner",
+      "name": "Karussell",
+      "segmentId": "karussell",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.245495,
+        "y": 0.418308
+      },
+      "cornerId": "karussell",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 145,
+      "type": "corner",
+      "name": "Karussell",
+      "segmentId": "karussell",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.251927,
+        "y": 0.41244
+      },
+      "cornerId": "karussell",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 146,
+      "type": "corner",
+      "name": "Hohe Acht",
+      "segmentId": "hohe_acht",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.258088,
+        "y": 0.407012
+      },
+      "cornerId": "hohe_acht",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 147,
+      "type": "corner",
+      "name": "Hohe Acht",
+      "segmentId": "hohe_acht",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.263954,
+        "y": 0.402026
+      },
+      "cornerId": "hohe_acht",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 148,
+      "type": "corner",
+      "name": "Hohe Acht",
+      "segmentId": "hohe_acht",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.269504,
+        "y": 0.397481
+      },
+      "cornerId": "hohe_acht",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 149,
+      "type": "corner",
+      "name": "Hohe Acht",
+      "segmentId": "hohe_acht",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.274723,
+        "y": 0.393368
+      },
+      "cornerId": "hohe_acht",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 150,
+      "type": "corner",
+      "name": "Hohe Acht",
+      "segmentId": "hohe_acht",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.2796,
+        "y": 0.389671
+      },
+      "cornerId": "hohe_acht",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 151,
+      "type": "corner",
+      "name": "Hohe Acht",
+      "segmentId": "hohe_acht",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.284125,
+        "y": 0.386366
+      },
+      "cornerId": "hohe_acht",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 152,
+      "type": "corner",
+      "name": "Hohe Acht",
+      "segmentId": "hohe_acht",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.288295,
+        "y": 0.383427
+      },
+      "cornerId": "hohe_acht",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 153,
+      "type": "corner",
+      "name": "Wippermann / Brünnchen",
+      "segmentId": "wippermann_bruennchen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.29211,
+        "y": 0.380817
+      },
+      "cornerId": "wippermann_bruennchen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 154,
+      "type": "corner",
+      "name": "Wippermann / Brünnchen",
+      "segmentId": "wippermann_bruennchen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.295573,
+        "y": 0.378498
+      },
+      "cornerId": "wippermann_bruennchen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 155,
+      "type": "corner",
+      "name": "Wippermann / Brünnchen",
+      "segmentId": "wippermann_bruennchen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.298693,
+        "y": 0.376424
+      },
+      "cornerId": "wippermann_bruennchen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 156,
+      "type": "corner",
+      "name": "Wippermann / Brünnchen",
+      "segmentId": "wippermann_bruennchen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.301481,
+        "y": 0.374546
+      },
+      "cornerId": "wippermann_bruennchen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 157,
+      "type": "corner",
+      "name": "Wippermann / Brünnchen",
+      "segmentId": "wippermann_bruennchen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.303952,
+        "y": 0.372813
+      },
+      "cornerId": "wippermann_bruennchen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 158,
+      "type": "corner",
+      "name": "Wippermann / Brünnchen",
+      "segmentId": "wippermann_bruennchen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.306124,
+        "y": 0.371169
+      },
+      "cornerId": "wippermann_bruennchen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 159,
+      "type": "corner",
+      "name": "Wippermann / Brünnchen",
+      "segmentId": "wippermann_bruennchen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.30802,
+        "y": 0.369557
+      },
+      "cornerId": "wippermann_bruennchen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 160,
+      "type": "corner",
+      "name": "Wippermann / Brünnchen",
+      "segmentId": "wippermann_bruennchen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.309665,
+        "y": 0.36792
+      },
+      "cornerId": "wippermann_bruennchen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 161,
+      "type": "corner",
+      "name": "Wippermann / Brünnchen",
+      "segmentId": "wippermann_bruennchen",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.311087,
+        "y": 0.366199
+      },
+      "cornerId": "wippermann_bruennchen",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 162,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.312315,
+        "y": 0.364338
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 163,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.313382,
+        "y": 0.362279
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 164,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.314323,
+        "y": 0.359971
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 165,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.315174,
+        "y": 0.357363
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 166,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.315971,
+        "y": 0.354409
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 167,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.316753,
+        "y": 0.351067
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 168,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.317558,
+        "y": 0.347304
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 169,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.318426,
+        "y": 0.343088
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 170,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.319394,
+        "y": 0.338397
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 171,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.320499,
+        "y": 0.333216
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 172,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.32178,
+        "y": 0.327535
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 173,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.323272,
+        "y": 0.321355
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 174,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.325008,
+        "y": 0.314683
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 175,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.32702,
+        "y": 0.307534
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 176,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.329339,
+        "y": 0.299931
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 177,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.331991,
+        "y": 0.291905
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 178,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.335,
+        "y": 0.283494
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 179,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.338388,
+        "y": 0.274742
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 180,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.342173,
+        "y": 0.265703
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 181,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.34637,
+        "y": 0.256433
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 182,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.350989,
+        "y": 0.246995
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 183,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.356039,
+        "y": 0.237457
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 184,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.361522,
+        "y": 0.227891
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 185,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.36744,
+        "y": 0.21837
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 186,
+      "type": "corner",
+      "name": "Pflanzgarten",
+      "segmentId": "pflanzgarten",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.373787,
+        "y": 0.208972
+      },
+      "cornerId": "pflanzgarten",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 187,
+      "type": "corner",
+      "name": "Schwalbenschwanz",
+      "segmentId": "schwalbenschwanz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.380557,
+        "y": 0.199774
+      },
+      "cornerId": "schwalbenschwanz",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 188,
+      "type": "corner",
+      "name": "Schwalbenschwanz",
+      "segmentId": "schwalbenschwanz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.387737,
+        "y": 0.190853
+      },
+      "cornerId": "schwalbenschwanz",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 189,
+      "type": "corner",
+      "name": "Schwalbenschwanz",
+      "segmentId": "schwalbenschwanz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.395314,
+        "y": 0.182287
+      },
+      "cornerId": "schwalbenschwanz",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 190,
+      "type": "corner",
+      "name": "Schwalbenschwanz",
+      "segmentId": "schwalbenschwanz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.403269,
+        "y": 0.17415
+      },
+      "cornerId": "schwalbenschwanz",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 191,
+      "type": "corner",
+      "name": "Schwalbenschwanz",
+      "segmentId": "schwalbenschwanz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.41158,
+        "y": 0.166517
+      },
+      "cornerId": "schwalbenschwanz",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 192,
+      "type": "corner",
+      "name": "Schwalbenschwanz",
+      "segmentId": "schwalbenschwanz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.420223,
+        "y": 0.159455
+      },
+      "cornerId": "schwalbenschwanz",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 193,
+      "type": "corner",
+      "name": "Schwalbenschwanz",
+      "segmentId": "schwalbenschwanz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.429169,
+        "y": 0.153029
+      },
+      "cornerId": "schwalbenschwanz",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 194,
+      "type": "corner",
+      "name": "Schwalbenschwanz",
+      "segmentId": "schwalbenschwanz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.438388,
+        "y": 0.147299
+      },
+      "cornerId": "schwalbenschwanz",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 195,
+      "type": "corner",
+      "name": "Schwalbenschwanz",
+      "segmentId": "schwalbenschwanz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.447847,
+        "y": 0.142319
+      },
+      "cornerId": "schwalbenschwanz",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 196,
+      "type": "corner",
+      "name": "Schwalbenschwanz",
+      "segmentId": "schwalbenschwanz",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.457512,
+        "y": 0.138134
+      },
+      "cornerId": "schwalbenschwanz",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 197,
+      "type": "corner",
+      "name": "Galgenkopf",
+      "segmentId": "galgenkopf",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.467346,
+        "y": 0.134785
+      },
+      "cornerId": "galgenkopf",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 198,
+      "type": "corner",
+      "name": "Galgenkopf",
+      "segmentId": "galgenkopf",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.47731,
+        "y": 0.132304
+      },
+      "cornerId": "galgenkopf",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 199,
+      "type": "corner",
+      "name": "Galgenkopf",
+      "segmentId": "galgenkopf",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.487365,
+        "y": 0.130713
+      },
+      "cornerId": "galgenkopf",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 200,
+      "type": "corner",
+      "name": "Galgenkopf",
+      "segmentId": "galgenkopf",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.49747,
+        "y": 0.130029
+      },
+      "cornerId": "galgenkopf",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 201,
+      "type": "corner",
+      "name": "Galgenkopf",
+      "segmentId": "galgenkopf",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.507586,
+        "y": 0.130257
+      },
+      "cornerId": "galgenkopf",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 202,
+      "type": "corner",
+      "name": "Galgenkopf",
+      "segmentId": "galgenkopf",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.517672,
+        "y": 0.131396
+      },
+      "cornerId": "galgenkopf",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 203,
+      "type": "corner",
+      "name": "Galgenkopf",
+      "segmentId": "galgenkopf",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.527686,
+        "y": 0.133434
+      },
+      "cornerId": "galgenkopf",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 204,
+      "type": "corner",
+      "name": "Galgenkopf",
+      "segmentId": "galgenkopf",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.53759,
+        "y": 0.136353
+      },
+      "cornerId": "galgenkopf",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 205,
+      "type": "corner",
+      "name": "Galgenkopf",
+      "segmentId": "galgenkopf",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.547344,
+        "y": 0.140124
+      },
+      "cornerId": "galgenkopf",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 206,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.556911,
+        "y": 0.144712
+      }
+    },
+    {
+      "index": 207,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.566254,
+        "y": 0.150074
+      }
+    },
+    {
+      "index": 208,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.575341,
+        "y": 0.156158
+      }
+    },
+    {
+      "index": 209,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.584138,
+        "y": 0.16291
+      }
+    },
+    {
+      "index": 210,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.592618,
+        "y": 0.170266
+      }
+    },
+    {
+      "index": 211,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.600754,
+        "y": 0.17816
+      }
+    },
+    {
+      "index": 212,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.608523,
+        "y": 0.186521
+      }
+    },
+    {
+      "index": 213,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.615904,
+        "y": 0.195274
+      }
+    },
+    {
+      "index": 214,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.622881,
+        "y": 0.204343
+      }
+    },
+    {
+      "index": 215,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.62944,
+        "y": 0.213651
+      }
+    },
+    {
+      "index": 216,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.635573,
+        "y": 0.22312
+      }
+    },
+    {
+      "index": 217,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.641274,
+        "y": 0.232673
+      }
+    },
+    {
+      "index": 218,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.64654,
+        "y": 0.242234
+      }
+    },
+    {
+      "index": 219,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.651374,
+        "y": 0.251731
+      }
+    },
+    {
+      "index": 220,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.655781,
+        "y": 0.261093
+      }
+    },
+    {
+      "index": 221,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.65977,
+        "y": 0.270255
+      }
+    },
+    {
+      "index": 222,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.663354,
+        "y": 0.279157
+      }
+    },
+    {
+      "index": 223,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.666551,
+        "y": 0.287745
+      }
+    },
+    {
+      "index": 224,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.669378,
+        "y": 0.295969
+      }
+    },
+    {
+      "index": 225,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.67186,
+        "y": 0.303788
+      }
+    },
+    {
+      "index": 226,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.674022,
+        "y": 0.311167
+      }
+    },
+    {
+      "index": 227,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.675893,
+        "y": 0.31808
+      }
+    },
+    {
+      "index": 228,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.677502,
+        "y": 0.324507
+      }
+    },
+    {
+      "index": 229,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.678884,
+        "y": 0.330438
+      }
+    },
+    {
+      "index": 230,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.680073,
+        "y": 0.335868
+      }
+    },
+    {
+      "index": 231,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.681105,
+        "y": 0.340803
+      }
+    },
+    {
+      "index": 232,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.682018,
+        "y": 0.345254
+      }
+    },
+    {
+      "index": 233,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.68285,
+        "y": 0.34924
+      }
+    },
+    {
+      "index": 234,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.683639,
+        "y": 0.352789
+      }
+    },
+    {
+      "index": 235,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.684423,
+        "y": 0.355932
+      }
+    },
+    {
+      "index": 236,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.685243,
+        "y": 0.358707
+      }
+    },
+    {
+      "index": 237,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.686134,
+        "y": 0.36116
+      }
+    },
+    {
+      "index": 238,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.687134,
+        "y": 0.363337
+      }
+    },
+    {
+      "index": 239,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.688277,
+        "y": 0.36529
+      }
+    },
+    {
+      "index": 240,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.689598,
+        "y": 0.367074
+      }
+    },
+    {
+      "index": 241,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.691127,
+        "y": 0.368746
+      }
+    },
+    {
+      "index": 242,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.692895,
+        "y": 0.370363
+      }
+    },
+    {
+      "index": 243,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.694926,
+        "y": 0.371983
+      }
+    },
+    {
+      "index": 244,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.697245,
+        "y": 0.373665
+      }
+    },
+    {
+      "index": 245,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.699872,
+        "y": 0.375464
+      }
+    },
+    {
+      "index": 246,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.702825,
+        "y": 0.377433
+      }
+    },
+    {
+      "index": 247,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.706115,
+        "y": 0.379624
+      }
+    },
+    {
+      "index": 248,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.709753,
+        "y": 0.382083
+      }
+    },
+    {
+      "index": 249,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.713746,
+        "y": 0.384853
+      }
+    },
+    {
+      "index": 250,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.718093,
+        "y": 0.387971
+      }
+    },
+    {
+      "index": 251,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.722795,
+        "y": 0.391469
+      }
+    },
+    {
+      "index": 252,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.727844,
+        "y": 0.395372
+      }
+    },
+    {
+      "index": 253,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.733231,
+        "y": 0.399699
+      }
+    },
+    {
+      "index": 254,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.738941,
+        "y": 0.404464
+      }
+    },
+    {
+      "index": 255,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.744957,
+        "y": 0.409671
+      }
+    },
+    {
+      "index": 256,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.751256,
+        "y": 0.41532
+      }
+    },
+    {
+      "index": 257,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.757815,
+        "y": 0.421402
+      }
+    },
+    {
+      "index": 258,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.764604,
+        "y": 0.427904
+      }
+    },
+    {
+      "index": 259,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.771592,
+        "y": 0.434803
+      }
+    },
+    {
+      "index": 260,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.778744,
+        "y": 0.442072
+      }
+    },
+    {
+      "index": 261,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.786022,
+        "y": 0.44968
+      }
+    },
+    {
+      "index": 262,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.793387,
+        "y": 0.457586
+      }
+    },
+    {
+      "index": 263,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.800797,
+        "y": 0.46575
+      }
+    },
+    {
+      "index": 264,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.808209,
+        "y": 0.474124
+      }
+    },
+    {
+      "index": 265,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.815578,
+        "y": 0.482659
+      }
+    },
+    {
+      "index": 266,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.822857,
+        "y": 0.491302
+      }
+    }
+  ]
+}

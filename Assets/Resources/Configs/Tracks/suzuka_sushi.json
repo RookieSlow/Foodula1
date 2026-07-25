@@ -1,0 +1,639 @@
+{
+  "schemaVersion": 1,
+  "trackId": "suzuka_sushi",
+  "trackName": "铃鹿寿司赛道",
+  "trackNameEn": "Suzuka Sushi Circuit",
+  "country": "JP",
+  "homeTeam": "jpn_sushi_ramen",
+  "realCircuit": {
+    "name": "Suzuka International Racing Course",
+    "layoutYear": "current Grand Prix layout",
+    "lengthMeters": 5807,
+    "direction": "clockwise",
+    "corners": 18,
+    "note": "Figure-8 layout with crossover bridge between Degner 2 and Hairpin"
+  },
+  "gameCellCount": 62,
+  "metersPerCell": 93.66129,
+  "laps": 3,
+  "hasPitLane": false,
+  "weatherPool": [
+    "light_rain", "light_rain", "light_rain", "light_rain",
+    "heavy_rain", "heavy_rain", "heavy_rain",
+    "sunny", "sunny", "sunny",
+    "cloudy", "cloudy"
+  ],
+  "defaultWeather": "light_rain",
+  "weatherConfigurationStatus": "configured",
+  "layout": {
+    "coordinateSpace": "normalized_2d_schematic",
+    "fidelity": "topology and relative proportions based on the referenced circuit; not survey-grade coordinates",
+    "pathClosed": true
+  },
+  "referenceSources": [
+    "https://www.suzukacircuit.jp/eng/course_s/",
+    "https://f1chronicle.com/suzuka-international-racing-course-corners-guide/"
+  ],
+  "cells": [
+    {
+      "index": 0,
+      "type": "start_finish",
+      "name": "起点/终点线",
+      "segmentId": "start_finish",
+      "distanceMeters": 94,
+      "position": { "x": 0.75, "y": 0.50 }
+    },
+    {
+      "index": 1,
+      "type": "straight",
+      "name": "寿司吧台直道",
+      "segmentId": "straight",
+      "distanceMeters": 94,
+      "position": { "x": 0.79, "y": 0.48 }
+    },
+    {
+      "index": 2,
+      "type": "straight",
+      "name": "寿司吧台直道",
+      "segmentId": "straight",
+      "distanceMeters": 94,
+      "position": { "x": 0.822, "y": 0.465 }
+    },
+    {
+      "index": 3,
+      "type": "straight",
+      "name": "寿司吧台直道",
+      "segmentId": "straight",
+      "distanceMeters": 94,
+      "position": { "x": 0.85, "y": 0.455 }
+    },
+    {
+      "index": 4,
+      "type": "straight",
+      "name": "寿司吧台直道",
+      "segmentId": "straight",
+      "distanceMeters": 94,
+      "position": { "x": 0.87, "y": 0.45 }
+    },
+    {
+      "index": 5,
+      "type": "straight",
+      "name": "寿司吧台直道",
+      "segmentId": "straight",
+      "distanceMeters": 94,
+      "position": { "x": 0.885, "y": 0.448 }
+    },
+    {
+      "index": 6,
+      "type": "corner",
+      "name": "三文鱼开胃第一弯",
+      "segmentId": "sake_first_curve",
+      "distanceMeters": 94,
+      "position": { "x": 0.888, "y": 0.435 },
+      "cornerId": "sake_first_curve",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": false
+    },
+    {
+      "index": 7,
+      "type": "corner",
+      "name": "三文鱼开胃第一弯",
+      "segmentId": "sake_first_curve",
+      "distanceMeters": 94,
+      "position": { "x": 0.875, "y": 0.415 },
+      "cornerId": "sake_first_curve",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": true
+    },
+    {
+      "index": 8,
+      "type": "corner",
+      "name": "金枪鱼重刹第二弯",
+      "segmentId": "maguro_second_curve",
+      "distanceMeters": 94,
+      "position": { "x": 0.85, "y": 0.385 },
+      "cornerId": "maguro_second_curve",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 9,
+      "type": "corner",
+      "name": "金枪鱼重刹第二弯",
+      "segmentId": "maguro_second_curve",
+      "distanceMeters": 94,
+      "position": { "x": 0.815, "y": 0.355 },
+      "cornerId": "maguro_second_curve",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 10,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 94,
+      "position": { "x": 0.775, "y": 0.335 }
+    },
+    {
+      "index": 11,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 94,
+      "position": { "x": 0.73, "y": 0.318 }
+    },
+    {
+      "index": 12,
+      "type": "corner",
+      "name": "五贯S曲线",
+      "segmentId": "five_piece_esses",
+      "distanceMeters": 94,
+      "position": { "x": 0.68, "y": 0.305 },
+      "cornerId": "five_piece_esses",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": false
+    },
+    {
+      "index": 13,
+      "type": "corner",
+      "name": "五贯S曲线",
+      "segmentId": "five_piece_esses",
+      "distanceMeters": 94,
+      "position": { "x": 0.625, "y": 0.298 },
+      "cornerId": "five_piece_esses",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 14,
+      "type": "corner",
+      "name": "五贯S曲线",
+      "segmentId": "five_piece_esses",
+      "distanceMeters": 94,
+      "position": { "x": 0.57, "y": 0.305 },
+      "cornerId": "five_piece_esses",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 15,
+      "type": "corner",
+      "name": "五贯S曲线",
+      "segmentId": "five_piece_esses",
+      "distanceMeters": 94,
+      "position": { "x": 0.515, "y": 0.29 },
+      "cornerId": "five_piece_esses",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 16,
+      "type": "corner",
+      "name": "五贯S曲线",
+      "segmentId": "five_piece_esses",
+      "distanceMeters": 94,
+      "position": { "x": 0.465, "y": 0.27 },
+      "cornerId": "five_piece_esses",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 17,
+      "type": "corner",
+      "name": "海胆弯",
+      "segmentId": "uni_dunlop",
+      "distanceMeters": 94,
+      "position": { "x": 0.415, "y": 0.255 },
+      "cornerId": "uni_dunlop",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 18,
+      "type": "corner",
+      "name": "海胆弯",
+      "segmentId": "uni_dunlop",
+      "distanceMeters": 94,
+      "position": { "x": 0.365, "y": 0.25 },
+      "cornerId": "uni_dunlop",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 19,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 94,
+      "position": { "x": 0.318, "y": 0.258 }
+    },
+    {
+      "index": 20,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 94,
+      "position": { "x": 0.278, "y": 0.278 }
+    },
+    {
+      "index": 21,
+      "type": "corner",
+      "name": "鲷鱼第一弯",
+      "segmentId": "tai_degner_1",
+      "distanceMeters": 94,
+      "position": { "x": 0.252, "y": 0.305 },
+      "cornerId": "tai_degner_1",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 22,
+      "type": "corner",
+      "name": "鲷鱼第二弯",
+      "segmentId": "tai_degner_2",
+      "distanceMeters": 94,
+      "position": { "x": 0.238, "y": 0.34 },
+      "cornerId": "tai_degner_2",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 23,
+      "type": "corner",
+      "name": "鲷鱼第二弯",
+      "segmentId": "tai_degner_2",
+      "distanceMeters": 93,
+      "position": { "x": 0.228, "y": 0.38 },
+      "cornerId": "tai_degner_2",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 24,
+      "type": "straight",
+      "name": "筷子雕塑十字交叉隧道",
+      "segmentId": "hashigo_crossover",
+      "distanceMeters": 93,
+      "position": { "x": 0.215, "y": 0.425 }
+    },
+    {
+      "index": 25,
+      "type": "straight",
+      "name": "筷子雕塑十字交叉隧道",
+      "segmentId": "hashigo_crossover",
+      "distanceMeters": 93,
+      "position": { "x": 0.20, "y": 0.47 }
+    },
+    {
+      "index": 26,
+      "type": "corner",
+      "name": "拉面发卡",
+      "segmentId": "ramen_hairpin",
+      "distanceMeters": 93,
+      "position": { "x": 0.188, "y": 0.515 },
+      "cornerId": "ramen_hairpin",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 27,
+      "type": "corner",
+      "name": "拉面发卡",
+      "segmentId": "ramen_hairpin",
+      "distanceMeters": 93,
+      "position": { "x": 0.185, "y": 0.56 },
+      "cornerId": "ramen_hairpin",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 28,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.195, "y": 0.60 }
+    },
+    {
+      "index": 29,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.21, "y": 0.64 }
+    },
+    {
+      "index": 30,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.225, "y": 0.675 }
+    },
+    {
+      "index": 31,
+      "type": "corner",
+      "name": "200R烤鳗弯",
+      "segmentId": "unagi_200r",
+      "distanceMeters": 93,
+      "position": { "x": 0.245, "y": 0.705 },
+      "cornerId": "unagi_200r",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": true
+    },
+    {
+      "index": 32,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.27, "y": 0.73 }
+    },
+    {
+      "index": 33,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.30, "y": 0.75 }
+    },
+    {
+      "index": 34,
+      "type": "corner",
+      "name": "汤匙双顶点弯",
+      "segmentId": "spoon_double_apex",
+      "distanceMeters": 93,
+      "position": { "x": 0.335, "y": 0.765 },
+      "cornerId": "spoon_double_apex",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 35,
+      "type": "corner",
+      "name": "汤匙双顶点弯",
+      "segmentId": "spoon_double_apex",
+      "distanceMeters": 93,
+      "position": { "x": 0.375, "y": 0.775 },
+      "cornerId": "spoon_double_apex",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 36,
+      "type": "corner",
+      "name": "汤匙双顶点弯",
+      "segmentId": "spoon_double_apex",
+      "distanceMeters": 93,
+      "position": { "x": 0.415, "y": 0.78 },
+      "cornerId": "spoon_double_apex",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 37,
+      "type": "corner",
+      "name": "汤匙双顶点弯",
+      "segmentId": "spoon_double_apex",
+      "distanceMeters": 93,
+      "position": { "x": 0.455, "y": 0.775 },
+      "cornerId": "spoon_double_apex",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 38,
+      "type": "straight",
+      "name": "味增后直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.495, "y": 0.762 }
+    },
+    {
+      "index": 39,
+      "type": "straight",
+      "name": "味增后直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.535, "y": 0.742 }
+    },
+    {
+      "index": 40,
+      "type": "straight",
+      "name": "味增后直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.572, "y": 0.718 }
+    },
+    {
+      "index": 41,
+      "type": "straight",
+      "name": "味增后直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.605, "y": 0.692 }
+    },
+    {
+      "index": 42,
+      "type": "straight",
+      "name": "味增后直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.635, "y": 0.665 }
+    },
+    {
+      "index": 43,
+      "type": "straight",
+      "name": "味增后直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.66, "y": 0.638 }
+    },
+    {
+      "index": 44,
+      "type": "straight",
+      "name": "味增后直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.682, "y": 0.61 }
+    },
+    {
+      "index": 45,
+      "type": "straight",
+      "name": "味增后直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.70, "y": 0.582 }
+    },
+    {
+      "index": 46,
+      "type": "straight",
+      "name": "味增后直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.715, "y": 0.555 }
+    },
+    {
+      "index": 47,
+      "type": "corner",
+      "name": "130R和牛弯",
+      "segmentId": "wagyu_130r",
+      "distanceMeters": 93,
+      "position": { "x": 0.72, "y": 0.53 },
+      "cornerId": "wagyu_130r",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": false
+    },
+    {
+      "index": 48,
+      "type": "corner",
+      "name": "130R和牛弯",
+      "segmentId": "wagyu_130r",
+      "distanceMeters": 93,
+      "position": { "x": 0.71, "y": 0.51 },
+      "cornerId": "wagyu_130r",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": true
+    },
+    {
+      "index": 49,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.72, "y": 0.49 }
+    },
+    {
+      "index": 50,
+      "type": "corner",
+      "name": "酱油减速弯",
+      "segmentId": "shoyu_chicane",
+      "distanceMeters": 93,
+      "position": { "x": 0.735, "y": 0.478 },
+      "cornerId": "shoyu_chicane",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 51,
+      "type": "corner",
+      "name": "酱油减速弯",
+      "segmentId": "shoyu_chicane",
+      "distanceMeters": 93,
+      "position": { "x": 0.732, "y": 0.462 },
+      "cornerId": "shoyu_chicane",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 52,
+      "type": "corner",
+      "name": "酱油减速弯",
+      "segmentId": "shoyu_chicane",
+      "distanceMeters": 93,
+      "position": { "x": 0.74, "y": 0.452 },
+      "cornerId": "shoyu_chicane",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 53,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.745, "y": 0.458 }
+    },
+    {
+      "index": 54,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.748, "y": 0.468 }
+    },
+    {
+      "index": 55,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.75, "y": 0.478 }
+    },
+    {
+      "index": 56,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.75, "y": 0.485 }
+    },
+    {
+      "index": 57,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.75, "y": 0.492 }
+    },
+    {
+      "index": 58,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.75, "y": 0.497 }
+    },
+    {
+      "index": 59,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.75, "y": 0.50 }
+    },
+    {
+      "index": 60,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.75, "y": 0.50 }
+    },
+    {
+      "index": 61,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": { "x": 0.75, "y": 0.50 }
+    }
+  ]
+}

@@ -1,0 +1,1686 @@
+{
+  "schemaVersion": 1,
+  "trackId": "le_mans_old_mulsanne",
+  "trackName": "勒芒旧慕尚赛道",
+  "trackNameEn": "Le Mans Old Mulsanne Circuit",
+  "country": "FR",
+  "homeTeam": null,
+  "realCircuit": {
+    "name": "Circuit des 24 Heures du Mans",
+    "layoutYear": "1987–1989 pre-chicane Mulsanne layout",
+    "lengthMeters": 13535,
+    "direction": "clockwise"
+  },
+  "gameCellCount": 142,
+  "metersPerCell": 95.316901,
+  "laps": 2,
+  "hasPitLane": false,
+  "weatherPool": [],
+  "defaultWeather": "cloudy",
+  "weatherConfigurationStatus": "pending_design",
+  "layout": {
+    "coordinateSpace": "normalized_2d_schematic",
+    "fidelity": "topology and relative proportions based on the referenced circuit; not survey-grade coordinates",
+    "pathClosed": true
+  },
+  "referenceSources": [
+    "https://assets.lemans.org/explorer/pdf/courses/2018/24-heures-du-mans/press-kit/fr/statistiques-historiques-fr.pdf",
+    "https://www.24h-lemans.com/en/news/24-hours-centenary-the-mulsanne-straight-a-stage-for-speed-records-57142"
+  ],
+  "cells": [
+    {
+      "index": 0,
+      "type": "start_finish",
+      "name": "起点/终点线",
+      "segmentId": "start_finish",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.95,
+        "y": 0.5
+      }
+    },
+    {
+      "index": 1,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.94956,
+        "y": 0.512823
+      }
+    },
+    {
+      "index": 2,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.948239,
+        "y": 0.525596
+      }
+    },
+    {
+      "index": 3,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.946041,
+        "y": 0.538266
+      }
+    },
+    {
+      "index": 4,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.94297,
+        "y": 0.550785
+      }
+    },
+    {
+      "index": 5,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.939032,
+        "y": 0.563102
+      }
+    },
+    {
+      "index": 6,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.934234,
+        "y": 0.575171
+      }
+    },
+    {
+      "index": 7,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.928587,
+        "y": 0.586943
+      }
+    },
+    {
+      "index": 8,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.9221,
+        "y": 0.598375
+      }
+    },
+    {
+      "index": 9,
+      "type": "corner",
+      "name": "Dunlop 弯",
+      "segmentId": "dunlop",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.914787,
+        "y": 0.609424
+      },
+      "cornerId": "dunlop",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 10,
+      "type": "corner",
+      "name": "Dunlop 弯",
+      "segmentId": "dunlop",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.906662,
+        "y": 0.620049
+      },
+      "cornerId": "dunlop",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 11,
+      "type": "corner",
+      "name": "Esses",
+      "segmentId": "esses",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.897741,
+        "y": 0.630211
+      },
+      "cornerId": "esses",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 12,
+      "type": "corner",
+      "name": "Esses",
+      "segmentId": "esses",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.888042,
+        "y": 0.639876
+      },
+      "cornerId": "esses",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 13,
+      "type": "corner",
+      "name": "Esses",
+      "segmentId": "esses",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.877582,
+        "y": 0.649011
+      },
+      "cornerId": "esses",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 14,
+      "type": "corner",
+      "name": "Tertre Rouge",
+      "segmentId": "tertre_rouge",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.866384,
+        "y": 0.657586
+      },
+      "cornerId": "tertre_rouge",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 15,
+      "type": "corner",
+      "name": "Tertre Rouge",
+      "segmentId": "tertre_rouge",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.854469,
+        "y": 0.665576
+      },
+      "cornerId": "tertre_rouge",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 16,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.841859,
+        "y": 0.672956
+      }
+    },
+    {
+      "index": 17,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.828581,
+        "y": 0.679709
+      }
+    },
+    {
+      "index": 18,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.814659,
+        "y": 0.685816
+      }
+    },
+    {
+      "index": 19,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.800121,
+        "y": 0.691266
+      }
+    },
+    {
+      "index": 20,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.784996,
+        "y": 0.696051
+      }
+    },
+    {
+      "index": 21,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.769313,
+        "y": 0.700163
+      }
+    },
+    {
+      "index": 22,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.753102,
+        "y": 0.703603
+      }
+    },
+    {
+      "index": 23,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.736396,
+        "y": 0.706371
+      }
+    },
+    {
+      "index": 24,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.719228,
+        "y": 0.708473
+      }
+    },
+    {
+      "index": 25,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.70163,
+        "y": 0.709917
+      }
+    },
+    {
+      "index": 26,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.683638,
+        "y": 0.710715
+      }
+    },
+    {
+      "index": 27,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.665286,
+        "y": 0.710882
+      }
+    },
+    {
+      "index": 28,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.64661,
+        "y": 0.710436
+      }
+    },
+    {
+      "index": 29,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.627648,
+        "y": 0.709397
+      }
+    },
+    {
+      "index": 30,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.608435,
+        "y": 0.707788
+      }
+    },
+    {
+      "index": 31,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.589011,
+        "y": 0.705635
+      }
+    },
+    {
+      "index": 32,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.569412,
+        "y": 0.702966
+      }
+    },
+    {
+      "index": 33,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.549677,
+        "y": 0.699811
+      }
+    },
+    {
+      "index": 34,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.529845,
+        "y": 0.696199
+      }
+    },
+    {
+      "index": 35,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.509955,
+        "y": 0.692165
+      }
+    },
+    {
+      "index": 36,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.490045,
+        "y": 0.687742
+      }
+    },
+    {
+      "index": 37,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.470155,
+        "y": 0.682964
+      }
+    },
+    {
+      "index": 38,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.450323,
+        "y": 0.677867
+      }
+    },
+    {
+      "index": 39,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.430588,
+        "y": 0.672486
+      }
+    },
+    {
+      "index": 40,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.410989,
+        "y": 0.666857
+      }
+    },
+    {
+      "index": 41,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.391565,
+        "y": 0.661015
+      }
+    },
+    {
+      "index": 42,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.372352,
+        "y": 0.654995
+      }
+    },
+    {
+      "index": 43,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.35339,
+        "y": 0.648831
+      }
+    },
+    {
+      "index": 44,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.334714,
+        "y": 0.642557
+      }
+    },
+    {
+      "index": 45,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.316362,
+        "y": 0.636204
+      }
+    },
+    {
+      "index": 46,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.29837,
+        "y": 0.629803
+      }
+    },
+    {
+      "index": 47,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.280772,
+        "y": 0.623383
+      }
+    },
+    {
+      "index": 48,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.263604,
+        "y": 0.616971
+      }
+    },
+    {
+      "index": 49,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.246898,
+        "y": 0.610593
+      }
+    },
+    {
+      "index": 50,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.230687,
+        "y": 0.604271
+      }
+    },
+    {
+      "index": 51,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.215004,
+        "y": 0.598026
+      }
+    },
+    {
+      "index": 52,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.199879,
+        "y": 0.591878
+      }
+    },
+    {
+      "index": 53,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.185341,
+        "y": 0.58584
+      }
+    },
+    {
+      "index": 54,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.171419,
+        "y": 0.579929
+      }
+    },
+    {
+      "index": 55,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.158141,
+        "y": 0.574153
+      }
+    },
+    {
+      "index": 56,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.145531,
+        "y": 0.568523
+      }
+    },
+    {
+      "index": 57,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.133616,
+        "y": 0.563043
+      }
+    },
+    {
+      "index": 58,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.122418,
+        "y": 0.557717
+      }
+    },
+    {
+      "index": 59,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.111958,
+        "y": 0.552546
+      }
+    },
+    {
+      "index": 60,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.102259,
+        "y": 0.547528
+      }
+    },
+    {
+      "index": 61,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.093338,
+        "y": 0.54266
+      }
+    },
+    {
+      "index": 62,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.085213,
+        "y": 0.537935
+      }
+    },
+    {
+      "index": 63,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.0779,
+        "y": 0.533346
+      }
+    },
+    {
+      "index": 64,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.071413,
+        "y": 0.528883
+      }
+    },
+    {
+      "index": 65,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.065766,
+        "y": 0.524533
+      }
+    },
+    {
+      "index": 66,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.060968,
+        "y": 0.520284
+      }
+    },
+    {
+      "index": 67,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.05703,
+        "y": 0.516121
+      }
+    },
+    {
+      "index": 68,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.053959,
+        "y": 0.512028
+      }
+    },
+    {
+      "index": 69,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.051761,
+        "y": 0.507989
+      }
+    },
+    {
+      "index": 70,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.05044,
+        "y": 0.503985
+      }
+    },
+    {
+      "index": 71,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.05,
+        "y": 0.5
+      }
+    },
+    {
+      "index": 72,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.05044,
+        "y": 0.496015
+      }
+    },
+    {
+      "index": 73,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.051761,
+        "y": 0.492011
+      }
+    },
+    {
+      "index": 74,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.053959,
+        "y": 0.487972
+      }
+    },
+    {
+      "index": 75,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.05703,
+        "y": 0.483879
+      }
+    },
+    {
+      "index": 76,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.060968,
+        "y": 0.479716
+      }
+    },
+    {
+      "index": 77,
+      "type": "corner",
+      "name": "慕尚发卡",
+      "segmentId": "mulsanne_corner",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.065766,
+        "y": 0.475467
+      },
+      "cornerId": "mulsanne_corner",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 78,
+      "type": "corner",
+      "name": "Indianapolis 弯",
+      "segmentId": "indianapolis",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.071413,
+        "y": 0.471117
+      },
+      "cornerId": "indianapolis",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 79,
+      "type": "corner",
+      "name": "Indianapolis 弯",
+      "segmentId": "indianapolis",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.0779,
+        "y": 0.466654
+      },
+      "cornerId": "indianapolis",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 80,
+      "type": "corner",
+      "name": "Arnage 弯",
+      "segmentId": "arnage",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.085213,
+        "y": 0.462065
+      },
+      "cornerId": "arnage",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 81,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.093338,
+        "y": 0.45734
+      }
+    },
+    {
+      "index": 82,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.102259,
+        "y": 0.452472
+      }
+    },
+    {
+      "index": 83,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.111958,
+        "y": 0.447454
+      }
+    },
+    {
+      "index": 84,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.122418,
+        "y": 0.442283
+      }
+    },
+    {
+      "index": 85,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.133616,
+        "y": 0.436957
+      }
+    },
+    {
+      "index": 86,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.145531,
+        "y": 0.431477
+      }
+    },
+    {
+      "index": 87,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.158141,
+        "y": 0.425847
+      }
+    },
+    {
+      "index": 88,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.171419,
+        "y": 0.420071
+      }
+    },
+    {
+      "index": 89,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.185341,
+        "y": 0.41416
+      }
+    },
+    {
+      "index": 90,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.199879,
+        "y": 0.408122
+      }
+    },
+    {
+      "index": 91,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.215004,
+        "y": 0.401974
+      }
+    },
+    {
+      "index": 92,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.230687,
+        "y": 0.395729
+      }
+    },
+    {
+      "index": 93,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.246898,
+        "y": 0.389407
+      }
+    },
+    {
+      "index": 94,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.263604,
+        "y": 0.383029
+      }
+    },
+    {
+      "index": 95,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.280772,
+        "y": 0.376617
+      }
+    },
+    {
+      "index": 96,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.29837,
+        "y": 0.370197
+      }
+    },
+    {
+      "index": 97,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.316362,
+        "y": 0.363796
+      }
+    },
+    {
+      "index": 98,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.334714,
+        "y": 0.357443
+      }
+    },
+    {
+      "index": 99,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.35339,
+        "y": 0.351169
+      }
+    },
+    {
+      "index": 100,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.372352,
+        "y": 0.345005
+      }
+    },
+    {
+      "index": 101,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.391565,
+        "y": 0.338985
+      }
+    },
+    {
+      "index": 102,
+      "type": "corner",
+      "name": "保时捷弯",
+      "segmentId": "porsche_curves",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.410989,
+        "y": 0.333143
+      },
+      "cornerId": "porsche_curves",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 103,
+      "type": "corner",
+      "name": "保时捷弯",
+      "segmentId": "porsche_curves",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.430588,
+        "y": 0.327514
+      },
+      "cornerId": "porsche_curves",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 104,
+      "type": "corner",
+      "name": "保时捷弯",
+      "segmentId": "porsche_curves",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.450323,
+        "y": 0.322133
+      },
+      "cornerId": "porsche_curves",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 105,
+      "type": "corner",
+      "name": "保时捷弯",
+      "segmentId": "porsche_curves",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.470155,
+        "y": 0.317036
+      },
+      "cornerId": "porsche_curves",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 106,
+      "type": "corner",
+      "name": "保时捷弯",
+      "segmentId": "porsche_curves",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.490045,
+        "y": 0.312258
+      },
+      "cornerId": "porsche_curves",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 107,
+      "type": "corner",
+      "name": "保时捷弯",
+      "segmentId": "porsche_curves",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.509955,
+        "y": 0.307835
+      },
+      "cornerId": "porsche_curves",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
+    },
+    {
+      "index": 108,
+      "type": "corner",
+      "name": "保时捷弯",
+      "segmentId": "porsche_curves",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.529845,
+        "y": 0.303801
+      },
+      "cornerId": "porsche_curves",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 109,
+      "type": "corner",
+      "name": "保时捷弯",
+      "segmentId": "porsche_curves",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.549677,
+        "y": 0.300189
+      },
+      "cornerId": "porsche_curves",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 110,
+      "type": "corner",
+      "name": "保时捷弯",
+      "segmentId": "porsche_curves",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.569412,
+        "y": 0.297034
+      },
+      "cornerId": "porsche_curves",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 111,
+      "type": "corner",
+      "name": "保时捷弯",
+      "segmentId": "porsche_curves",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.589011,
+        "y": 0.294365
+      },
+      "cornerId": "porsche_curves",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": false
+    },
+    {
+      "index": 112,
+      "type": "corner",
+      "name": "福特减速弯",
+      "segmentId": "ford_chicane",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.608435,
+        "y": 0.292212
+      },
+      "cornerId": "ford_chicane",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
+    },
+    {
+      "index": 113,
+      "type": "corner",
+      "name": "福特减速弯",
+      "segmentId": "ford_chicane",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.627648,
+        "y": 0.290603
+      },
+      "cornerId": "ford_chicane",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 114,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.64661,
+        "y": 0.289564
+      }
+    },
+    {
+      "index": 115,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.665286,
+        "y": 0.289118
+      }
+    },
+    {
+      "index": 116,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.683638,
+        "y": 0.289285
+      }
+    },
+    {
+      "index": 117,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.70163,
+        "y": 0.290083
+      }
+    },
+    {
+      "index": 118,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.719228,
+        "y": 0.291527
+      }
+    },
+    {
+      "index": 119,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.736396,
+        "y": 0.293629
+      }
+    },
+    {
+      "index": 120,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.753102,
+        "y": 0.296397
+      }
+    },
+    {
+      "index": 121,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.769313,
+        "y": 0.299837
+      }
+    },
+    {
+      "index": 122,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.784996,
+        "y": 0.303949
+      }
+    },
+    {
+      "index": 123,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.800121,
+        "y": 0.308734
+      }
+    },
+    {
+      "index": 124,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.814659,
+        "y": 0.314184
+      }
+    },
+    {
+      "index": 125,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.828581,
+        "y": 0.320291
+      }
+    },
+    {
+      "index": 126,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.841859,
+        "y": 0.327044
+      }
+    },
+    {
+      "index": 127,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.854469,
+        "y": 0.334424
+      }
+    },
+    {
+      "index": 128,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.866384,
+        "y": 0.342414
+      }
+    },
+    {
+      "index": 129,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.877582,
+        "y": 0.350989
+      }
+    },
+    {
+      "index": 130,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.888042,
+        "y": 0.360124
+      }
+    },
+    {
+      "index": 131,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.897741,
+        "y": 0.369789
+      }
+    },
+    {
+      "index": 132,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.906662,
+        "y": 0.379951
+      }
+    },
+    {
+      "index": 133,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.914787,
+        "y": 0.390576
+      }
+    },
+    {
+      "index": 134,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.9221,
+        "y": 0.401625
+      }
+    },
+    {
+      "index": 135,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.928587,
+        "y": 0.413057
+      }
+    },
+    {
+      "index": 136,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.934234,
+        "y": 0.424829
+      }
+    },
+    {
+      "index": 137,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.939032,
+        "y": 0.436898
+      }
+    },
+    {
+      "index": 138,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.94297,
+        "y": 0.449215
+      }
+    },
+    {
+      "index": 139,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.946041,
+        "y": 0.461734
+      }
+    },
+    {
+      "index": 140,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.948239,
+        "y": 0.474404
+      }
+    },
+    {
+      "index": 141,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 95,
+      "position": {
+        "x": 0.94956,
+        "y": 0.487177
+      }
+    }
+  ]
+}
