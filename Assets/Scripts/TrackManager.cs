@@ -3,10 +3,15 @@ using UnityEngine;
 using TMPro;
 
 /// <summary>
-/// 赛道管理器 — 生成/管理赛道节点、渲染 LineRenderer、提供弯道段查询。
+/// 赛道管理器 — 支持从 JSON 加载赛道或使用硬编码赛道。
+/// JSON 模式：从 Resources/Configs/Tracks/[trackId].json 加载。
+/// 硬编码模式：使用 42 节点的 MVP 测试赛道。
 /// </summary>
 public class TrackManager : MonoBehaviour
 {
+    [Header("配置")]
+    public GameConfigSO config;
+
     [Header("Prefab")]
     public GameObject nodePrefab;
 
@@ -15,15 +20,19 @@ public class TrackManager : MonoBehaviour
     public Color lineColor = Color.white;
     public Color cornerNodeColor = Color.yellow;
 
+    // --- 运行时数据 ---
     private List<TrackNode> nodes = new List<TrackNode>();
     private List<GameObject> nodeObjects = new List<GameObject>();
     private LineRenderer lineRenderer;
 
-    /// <summary>弯道 ID → 限速 的快速查找表。</summary>
+    /// <summary>弯道 ID → 限速的快速查找表。</summary>
     private Dictionary<int, int> cornerSpeedLimits = new Dictionary<int, int>();
 
     /// <summary>弯道 ID → 名称。</summary>
     private Dictionary<int, string> cornerNames = new Dictionary<int, string>();
+
+    /// <summary>当前加载的赛道配置（JSON 模式非 null）。</summary>
+    public TrackConfig LoadedTrackConfig { get; private set; }
 
     // --- 公开属性 ---
     public int TotalNodes => nodes.Count;
@@ -31,16 +40,69 @@ public class TrackManager : MonoBehaviour
 
     void Awake()
     {
-        BuildTrack();
+        if (config == null)
+        {
+            Debug.LogError("[TrackManager] GameConfigSO reference is missing!");
+            BuildHardcodedTrack();
+        }
+        else if (!string.IsNullOrEmpty(config.trackId))
+        {
+            if (!LoadTrackFromJson(config.trackId))
+            {
+                Debug.LogWarning($"[TrackManager] Failed to load '{config.trackId}', falling back to hardcoded track.");
+                BuildHardcodedTrack();
+            }
+        }
+        else
+        {
+            BuildHardcodedTrack();
+        }
+
         RenderTrack();
     }
 
+    // ===================================================================
+    // JSON TRACK LOADING
+    // ===================================================================
+
     /// <summary>
-    /// 构建 42 节点简化赛道，5 个弯道弯心。
-    /// 每个弯道仅在一个"弯心"节点上判定 — 只有踩到弯心才触发超速检查。
-    /// 分两次过弯不会导致双重判定。
+    /// 尝试从 JSON 加载赛道。成功返回 true。
     /// </summary>
-    private void BuildTrack()
+    private bool LoadTrackFromJson(string trackId)
+    {
+        TrackConfig cfg = TrackDataLoader.LoadConfig(trackId);
+        if (cfg == null) return false;
+
+        LoadedTrackConfig = cfg;
+        nodes = TrackDataLoader.ConfigToNodes(cfg);
+
+        // 覆盖配置中的圈数
+        if (config != null)
+        {
+            config.totalLaps = cfg.laps;
+            config.trackNodeCount = cfg.gameCellCount;
+        }
+
+        TrackDataLoader.BuildCornerMaps(cfg, nodes, out cornerSpeedLimits, out cornerNames);
+
+        Debug.Log($"[TrackManager] JSON track loaded: {cfg.trackName} ({nodes.Count} nodes, {cfg.laps} laps, " +
+                  $"Lv1={CountCornerLevel(cfg, 1)} Lv2={CountCornerLevel(cfg, 2)} Lv3={CountCornerLevel(cfg, 3)})");
+        return true;
+    }
+
+    private static int CountCornerLevel(TrackConfig cfg, int level)
+    {
+        int count = 0;
+        foreach (var c in cfg.cells)
+            if (c.IsCorner && c.cornerLevel == level) count++;
+        return count;
+    }
+
+    // ===================================================================
+    // HARDCODED FALLBACK TRACK (42 nodes)
+    // ===================================================================
+
+    private void BuildHardcodedTrack()
     {
         nodes.Clear();
 
@@ -51,19 +113,15 @@ public class TrackManager : MonoBehaviour
             nodes.Add(new TrackNode(i, 99, $"Straight {i}"));
         }
 
-        // === 弯心定义: (节点索引, cornerId, 限速, 名称) ===
-        // 每个弯道只有一个弯心节点。踩到弯心 → 判定一次。
-        DefineApex(9,  1, 3, "T1 Parabolica");
+        DefineApex(9, 1, 3, "T1 Parabolica");
         DefineApex(17, 2, 2, "T2 Grand Hotel");
         DefineApex(25, 3, 4, "T3 Copse");
         DefineApex(31, 4, 2, "T4 Chicane");
         DefineApex(37, 5, 3, "T5 Lesmo");
 
-        // 起点/终点线
         nodes[0].isStartFinish = true;
         nodes[0].nodeName = "Start/Finish";
 
-        // 构建弯道查找字典
         cornerSpeedLimits.Clear();
         cornerNames.Clear();
         foreach (var node in nodes)
@@ -76,9 +134,6 @@ public class TrackManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 将单个节点标记为弯心（apex）。只有踩到弯心才触发弯道判定。
-    /// </summary>
     private void DefineApex(int nodeIndex, int cornerId, int speedLimit, string name)
     {
         nodes[nodeIndex].cornerId = cornerId;
@@ -86,11 +141,10 @@ public class TrackManager : MonoBehaviour
         nodes[nodeIndex].nodeName = name;
     }
 
-    /// <summary>
-    /// 获取从 fromPos 移动到 toPos 路径上踩到的弯心 ID 集合。
-    /// 弯心判定 — 只有踩到弯心节点才触发超速检查。
-    /// HashSet 去重防止极端情况（如同一回合绕过一圈踩到同一弯心两次）。
-    /// </summary>
+    // ===================================================================
+    // PUBLIC API
+    // ===================================================================
+
     public HashSet<int> GetUniqueCornersCrossed(int fromPos, int toPos)
     {
         HashSet<int> corners = new HashSet<int>();
@@ -107,10 +161,6 @@ public class TrackManager : MonoBehaviour
         return corners;
     }
 
-    /// <summary>
-    /// 检查从 fromPos 到 toPos 的路径是否穿过起点/终点线（正向）。
-    /// 用于圈数计数。
-    /// </summary>
     public bool CrossesStartFinish(int fromPos, int toPos, out int startFinishIndex)
     {
         startFinishIndex = -1;
@@ -128,9 +178,6 @@ public class TrackManager : MonoBehaviour
         return false;
     }
 
-    /// <summary>
-    /// 获取弯心在赛道中的节点索引。用于失控回退。
-    /// </summary>
     public int GetApexNodeIndex(int cornerId)
     {
         for (int i = 0; i < nodes.Count; i++)
@@ -141,9 +188,6 @@ public class TrackManager : MonoBehaviour
         return -1;
     }
 
-    /// <summary>
-    /// 获取弯道限速。cornerId=0 或不存在时返回 99（无限制）。
-    /// </summary>
     public int GetCornerSpeedLimit(int cornerId)
     {
         if (cornerSpeedLimits.TryGetValue(cornerId, out int limit))
@@ -151,9 +195,6 @@ public class TrackManager : MonoBehaviour
         return 99;
     }
 
-    /// <summary>
-    /// 获取弯道名称。
-    /// </summary>
     public string GetCornerName(int cornerId)
     {
         if (cornerNames.TryGetValue(cornerId, out string name))
@@ -161,9 +202,6 @@ public class TrackManager : MonoBehaviour
         return "Unknown";
     }
 
-    /// <summary>
-    /// 获取节点的世界坐标。
-    /// </summary>
     public Vector3 GetNodePosition(int index)
     {
         int clamped = index % nodes.Count;
@@ -172,29 +210,25 @@ public class TrackManager : MonoBehaviour
         return Vector3.zero;
     }
 
-    /// <summary>
-    /// 获取指定位置节点（处理环绕）。
-    /// </summary>
     public TrackNode GetNode(int index)
     {
         return nodes[index % nodes.Count];
     }
 
-    /// <summary>
-    /// 检查位置是否在弯道段内。
-    /// </summary>
     public bool IsInCorner(int position)
     {
         return nodes[position % nodes.Count].cornerId > 0;
     }
 
-    // ====== 赛道渲染 ======
+    // ===================================================================
+    // RENDERING
+    // ===================================================================
 
     private void RenderTrack()
     {
-        Vector2[] pathCoords = GetTrackShape42();
+        Vector2[] pathCoords = GetPathCoordinates();
 
-        // 生成节点 GameObject
+        // Spawn node GameObjects
         for (int i = 0; i < nodes.Count; i++)
         {
             Vector3 spawnPos = new Vector3(pathCoords[i].x, pathCoords[i].y, 0);
@@ -203,23 +237,19 @@ public class TrackManager : MonoBehaviour
                 : new GameObject($"Node_{i}") { transform = { position = spawnPos } };
             obj.name = $"Node_{i}";
 
-            // 弯道节点标黄色
             SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
-            if (sr != null && nodes[i].cornerId > 0)
+            if (sr != null)
             {
-                sr.color = cornerNodeColor;
-            }
-
-            // 起点/终点线标绿色
-            if (nodes[i].isStartFinish && sr != null)
-            {
-                sr.color = Color.green;
+                if (nodes[i].isStartFinish)
+                    sr.color = Color.green;
+                else if (nodes[i].cornerId > 0)
+                    sr.color = cornerNodeColor;
             }
 
             nodeObjects.Add(obj);
         }
 
-        // LineRenderer 画赛道线
+        // LineRenderer
         GameObject lineObj = new GameObject("TrackLine");
         lineRenderer = lineObj.AddComponent<LineRenderer>();
         lineRenderer.positionCount = pathCoords.Length + 1;
@@ -237,16 +267,24 @@ public class TrackManager : MonoBehaviour
         }
         lineRenderer.SetPosition(pathCoords.Length, new Vector3(pathCoords[0].x, pathCoords[0].y, 0));
 
-        // 标注弯道限速
         AddCornerLabels(pathCoords);
     }
 
     /// <summary>
-    /// 在每个弯道段中间节点的外侧放置限速标签。
+    /// 获取赛道坐标。JSON 模式下从配置中读取并缩放；硬编码模式使用旧坐标。
     /// </summary>
+    private Vector2[] GetPathCoordinates()
+    {
+        if (LoadedTrackConfig != null)
+        {
+            float worldSize = config != null ? config.trackWorldSize : 30f;
+            return TrackDataLoader.ConfigToWorldPositions(LoadedTrackConfig, worldSize);
+        }
+        return GetTrackShape42();
+    }
+
     private void AddCornerLabels(Vector2[] pathCoords)
     {
-        // 收集每个弯道的节点范围
         var cornerRanges = new Dictionary<int, (int first, int last, int limit)>();
         for (int i = 0; i < nodes.Count; i++)
         {
@@ -264,7 +302,6 @@ public class TrackManager : MonoBehaviour
             }
         }
 
-        // 获取字体
         TMP_Text existingTmp = FindObjectOfType<TMP_Text>();
         TMP_FontAsset font = existingTmp != null ? existingTmp.font : null;
 
@@ -272,35 +309,21 @@ public class TrackManager : MonoBehaviour
         {
             int midIdx = (kv.Value.first + kv.Value.last) / 2;
             Vector3 centerPos = new Vector3(pathCoords[midIdx].x, pathCoords[midIdx].y, 0);
-
-            // 计算标签偏移（弯道外侧）
             Vector3 offset = GetCornerLabelOffset(midIdx, pathCoords);
 
-            // 创建标签
             GameObject label = new GameObject($"CornerLabel_{kv.Key}");
             label.transform.position = centerPos + offset;
 
-            // 背景圆点
             SpriteRenderer bg = label.AddComponent<SpriteRenderer>();
             bg.sprite = nodePrefab != null ? nodePrefab.GetComponent<SpriteRenderer>()?.sprite : null;
             bg.color = new Color(1f, 0.3f, 0.3f, 0.9f);
             bg.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
             bg.sortingOrder = 5;
 
-            // 限速数字
             GameObject textGO = new GameObject("Text");
             textGO.transform.SetParent(label.transform, false);
             textGO.transform.localPosition = Vector3.zero;
 
-            TMP_Text tmp = textGO.AddComponent<TMPro.TextMeshProUGUI>();
-            tmp.text = kv.Value.limit.ToString();
-            tmp.fontSize = 10;
-            tmp.alignment = TMPro.TextAlignmentOptions.Center;
-            tmp.color = Color.white;
-            if (font != null) tmp.font = font;
-
-            // TextMeshProUGUI 需要 Canvas，改用 TextMeshPro
-            Destroy(tmp);
             TMPro.TextMeshPro tmpWorld = textGO.AddComponent<TMPro.TextMeshPro>();
             tmpWorld.text = kv.Value.limit.ToString();
             tmpWorld.fontSize = 6;
@@ -311,59 +334,36 @@ public class TrackManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 计算弯道标签的外侧偏移方向（粗略法线）。
-    /// </summary>
     private Vector3 GetCornerLabelOffset(int nodeIdx, Vector2[] coords)
     {
         int prev = (nodeIdx - 1 + coords.Length) % coords.Length;
         int next = (nodeIdx + 1) % coords.Length;
         Vector2 dir = (coords[next] - coords[prev]).normalized;
-        Vector2 normal = new Vector2(-dir.y, dir.x); // 顺时针旋转 90°
+        Vector2 normal = new Vector2(-dir.y, dir.x);
         return new Vector3(normal.x, normal.y, 0) * 2.5f;
     }
 
-    // ====== 42 节点赛道坐标 ======
+    // ===================================================================
+    // HARDCODED 42-NODE SHAPE
+    // ===================================================================
 
     private Vector2[] GetTrackShape42()
     {
-        // 在原 85 节点赛道基础上采样/简化为 42 节点
         return new Vector2[]
         {
-            // 起点直道 (0-7): 8 nodes
             new Vector2(10, -5), new Vector2(8.5f, -5), new Vector2(7, -5), new Vector2(5.5f, -5),
             new Vector2(4, -5), new Vector2(2.5f, -5), new Vector2(1, -5), new Vector2(-0.5f, -5),
-
-            // T1 中速弯 (8-10): 3 nodes, limit=3
             new Vector2(-2.3f, -4.2f), new Vector2(-3.5f, -3.0f), new Vector2(-3.9f, -1.5f),
-
-            // 短直道 (11-15): 5 nodes
             new Vector2(-3.8f, -0.3f), new Vector2(-3.5f, 0.8f), new Vector2(-2.8f, 1.8f),
             new Vector2(-1.8f, 2.5f), new Vector2(-0.5f, 3.1f),
-
-            // T2 发卡弯 (16-18): 3 nodes, limit=2
             new Vector2(1.0f, 3.4f), new Vector2(2.5f, 3.2f), new Vector2(3.8f, 2.6f),
-
-            // 短直道 (19-23): 5 nodes
             new Vector2(5.0f, 2.5f), new Vector2(6.2f, 2.8f), new Vector2(7.1f, 3.6f),
             new Vector2(7.7f, 4.8f), new Vector2(8.5f, 6.0f),
-
-            // T3 高速弯 (24-26): 3 nodes, limit=4
             new Vector2(9.5f, 6.8f), new Vector2(10.5f, 7.3f), new Vector2(11.8f, 7.1f),
-
-            // 短直道 (27-29): 3 nodes (top section of original)
             new Vector2(12.5f, 6.2f), new Vector2(13.1f, 5.0f), new Vector2(13.3f, 3.5f),
-
-            // T4 减速弯 (30-33): 4 nodes, limit=2
             new Vector2(13.3f, 2.2f), new Vector2(13.3f, 0.8f), new Vector2(13.3f, -0.8f), new Vector2(13.5f, -2.2f),
-
-            // 短直道 (34-35): 2 nodes (right vertical)
             new Vector2(14.5f, -3.3f), new Vector2(16.0f, -3.3f),
-
-            // T5 中速弯 (36-38): 3 nodes, limit=3
             new Vector2(17.5f, -2.8f), new Vector2(18.8f, -2.4f), new Vector2(19.8f, -3.3f),
-
-            // 终点直道 (39-41): 3 nodes → 回到起点
             new Vector2(22.0f, -3.3f), new Vector2(25.0f, -3.3f), new Vector2(28.0f, -3.8f),
         };
     }

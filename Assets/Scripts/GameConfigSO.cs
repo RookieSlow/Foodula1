@@ -8,10 +8,16 @@ using UnityEngine;
 public class GameConfigSO : ScriptableObject
 {
     [Header("赛道")]
-    [Tooltip("赛道总节点数（闭合环线）")]
+    [Tooltip("从 Resources/Configs/Tracks/ 加载的赛道ID（留空则使用硬编码42节点赛道）")]
+    public string trackId = "";
+
+    [Tooltip("JSON 赛道世界空间缩放")]
+    public float trackWorldSize = 30f;
+
+    [Tooltip("赛道总节点数（硬编码赛道模式）")]
     public int trackNodeCount = 42;
 
-    [Tooltip("比赛总圈数")]
+    [Tooltip("比赛总圈数（硬编码赛道模式；JSON 赛道自动读取）")]
     public int totalLaps = 3;
 
     [Tooltip("起点/终点线所在节点索引")]
