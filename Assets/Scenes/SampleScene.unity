@@ -282,6 +282,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &764244323 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6809798222734507742, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
+  m_PrefabInstance: {fileID: 1604990511}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1138746645
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,13 +324,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  config: {fileID: 0}
+  config: {fileID: 11400000, guid: 78baec65901526848bf3d9e3129baf44, type: 2}
   trackManager: {fileID: 1138746648}
   aiController: {fileID: 1138746649}
-  cardHandUI: {fileID: 0}
-  hudUI: {fileID: 0}
+  cardHandUI: {fileID: 1712232890}
+  hudUI: {fileID: 764244323}
+  speedBgSprite: {fileID: 21300000, guid: ff6046687bb7916409c66cbecd4012c5, type: 3}
+  heatBgSprite: {fileID: 21300000, guid: 1ff70847aeb1db84b9ec961578f41672, type: 3}
+  selectedOverlaySprite: {fileID: 21300000, guid: 1efe02941669b6044909dffc4a2a3afb, type: 3}
+  numberSprites:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  heatIconSprite: {fileID: 21300000, guid: 46b93086ec2ff754ba4f48258dc673e5, type: 3}
   carPrefab: {fileID: 5612381487196478950, guid: 1453583dc521df044a5081d2b06c06c3, type: 3}
-  raceCanvasPrefab: {fileID: 357386197833830871, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
+  carSprites:
+  - {fileID: 21300000, guid: 5d5fdeff4d2bd9b4a9da34ca5d5a8ed0, type: 3}
+  - {fileID: 21300000, guid: 8d2dba1516d4b694998fe02f0c3bbf70, type: 3}
+  - {fileID: 21300000, guid: f73afa439af11f547914ca10fe6e5baa, type: 3}
+  - {fileID: 21300000, guid: f011f87eb33759e4b9636e28e3e1d99f, type: 3}
+  - {fileID: 21300000, guid: 32570438ebb2d3a4dbd1432ca4c727ad, type: 3}
+  - {fileID: 21300000, guid: 93221d2d0a0035340aa959d1c39c61f4, type: 3}
+  raceCanvasPrefab: {fileID: 2007955398}
   cardUIPrefab: {fileID: 2374102367528724774, guid: 28e4d86eac331cf4894730654193ecaa, type: 3}
 --- !u!4 &1138746647
 Transform:
@@ -485,6 +512,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RaceCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 6771357815486799239, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 7822183370481817311, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
@@ -494,6 +525,22 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
+--- !u!114 &1712232890 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5823791798990450127, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
+  m_PrefabInstance: {fileID: 1604990511}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &2007955398 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6550973439868099031, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
+  m_PrefabInstance: {fileID: 1604990511}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -11,6 +11,7 @@ public static class RaceCanvasBuilder
 {
     private const string PREFAB_PATH = "Assets/Prefabs/UI/RaceCanvas.prefab";
     private const string CARD_PREFAB_PATH = "Assets/Prefab/CardPrefab.prefab";
+    private const string MSYH_SDF_GUID = "dc5fd1e0eb79f5e4b921552ceb9c30a8";
 
     [MenuItem("Foodular1/Build RaceCanvas Prefab")]
     public static void Build()
@@ -20,6 +21,7 @@ public static class RaceCanvasBuilder
 
         // ── Canvas Root ──
         GameObject root = NewGO("RaceCanvas", null, typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+        root.transform.localScale = Vector3.one; // 防止序列化为 (0,0,0)
         root.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
         var scaler = root.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -136,6 +138,19 @@ public static class RaceCanvasBuilder
 
         ch.handContainer = hc.transform;
 
+        // -- 加载卡牌精灵图 --
+        ch.speedBgSprite = LoadSprite("Assets/Sprites/Cards/card_speed_bg.png");
+        ch.heatBgSprite = LoadSprite("Assets/Sprites/Cards/card_heat_bg.png");
+        ch.selectedOverlaySprite = LoadSprite("Assets/Sprites/Cards/card_selected_overlay.png");
+        ch.heatIconSprite = LoadSprite("Assets/Sprites/Cards/card_heat_icon.png");
+        ch.numberSprites = new Sprite[]
+        {
+            LoadSprite("Assets/Sprites/Cards/card_num_1.png"),
+            LoadSprite("Assets/Sprites/Cards/card_num_2.png"),
+            LoadSprite("Assets/Sprites/Cards/card_num_3.png"),
+            LoadSprite("Assets/Sprites/Cards/card_num_4.png"),
+        };
+
         // -- 牌堆信息：左下角 --
         ch.deckInfoText = MakeText(parent, "DeckInfo", "Deck: 12S + 3H", 15,
             BL(), BL(), new Vector2(20, 50), V2(280, 26), TextAlignmentOptions.Left);
@@ -171,7 +186,31 @@ public static class RaceCanvasBuilder
         tmp.fontSize = size;
         tmp.alignment = align;
         tmp.color = new Color(0.88f, 0.9f, 0.94f);
+
+        // 显式设置字体，避免回退到 LiberationSans (Mobile shader → 模糊)
+        var fontPath = AssetDatabase.GUIDToAssetPath(MSYH_SDF_GUID);
+        var fontAsset = AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>(fontPath);
+        if (fontAsset != null) tmp.font = fontAsset;
+
         return tmp;
+    }
+
+    /// <summary>
+    /// 加载 msyh SDF 字体，用于 MakeBtn 中的 Label。
+    /// </summary>
+    static TMP_FontAsset LoadDefaultFont()
+    {
+        var fontPath = AssetDatabase.GUIDToAssetPath(MSYH_SDF_GUID);
+        return AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(fontPath);
+    }
+
+    /// <summary>从 Assets 路径加载精灵图。文件不存在时返回 null（不报错）。</summary>
+    static Sprite LoadSprite(string path)
+    {
+        var sp = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        if (sp == null)
+            Debug.LogWarning($"RaceCanvasBuilder: Sprite not found: {path} (will use color fallback)");
+        return sp;
     }
 
     static Button MakeBtn(GameObject parent, string name, string label,
@@ -195,6 +234,8 @@ public static class RaceCanvasBuilder
         ltmp.fontSize = 18;
         ltmp.alignment = TextAlignmentOptions.Center;
         ltmp.color = new Color(0.06f, 0.08f, 0.14f);
+        var font = LoadDefaultFont();
+        if (font != null) ltmp.font = font;
 
         return go.GetComponent<Button>();
     }

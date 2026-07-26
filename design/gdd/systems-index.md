@@ -8,18 +8,31 @@
 | # | System | File | Status | Notes |
 |---|--------|------|--------|-------|
 | 1 | Game Concept (MVP) | `game-concept.md` | In Review | Updated 2026-07-22 — aligned heat lifecycle with HEAT rules. 12 ACs all met in code |
-| 2 | Card System | `card-system.md` | ⚠ Retired | Reverse-documented from old prototype — use foodula-1-core-mechanics.md |
-| 3 | Heat System | `heat-system.md` | ⚠ Retired | Reverse-documented from old prototype — use foodula-1-core-mechanics.md |
-| 4 | Track System | `track-system.md` | ⚠ Retired | Reverse-documented from old prototype — use foodula-1-core-mechanics.md |
 
-## Prototype Archive
+## Archived Systems
+
+| # | System | Archived To | Reason |
+|---|--------|-------------|--------|
+| 2 | Card System | `design/archive/2026-07-21/` | Replaced by foodula-1-core-mechanics.md |
+| 3 | Heat System | `design/archive/2026-07-21/` | Replaced by foodula-1-core-mechanics.md |
+| 4 | Track System | `design/archive/2026-07-21/` | Replaced by foodula-1-core-mechanics.md |
+
+## Project Planning
 
 | File | Description |
 |------|-------------|
-| `game-concept-ARCHIVED-2026-07-19.md` | Old prototype behavior audit — retired 2026-07-19 per design review |
-| `foodula-1-tech-tree.md` | Tech tree design — generic + per-team exclusive skills |
-| `../demo-framework.md` | Demo project framework — architecture, scripts, UI, assets |
-| `../asset-requirements.md` | Art asset requirements — specs for cards, cars, UI, track |
+| `design/planning/demo-framework.md` | Demo project framework — architecture, scripts, UI, assets. Phase 1 ✅ |
+| `design/planning/asset-manifest.md` | Master asset checklist — 58 items with status, priority, readiness |
+| `design/planning/ai-art-prompts.md` | AI image generation prompts for all art assets |
+| `docs/reference/熱力狂飆_規則書_完整文本.md` | HEAT rulebook — Chinese translation (external reference) |
+
+## Document Archive
+
+| Path | Description |
+|------|-------------|
+| `design/archive/2026-07-19/` | Old prototype behavior audit |
+| `design/archive/2026-07-21/` | Retired GDDs (card/heat/track systems) |
+| `design/archive/2026-07-24/` | Snapshot backup of all GDDs before July 24 updates |
 
 ## Full Vision Systems (forward-looking design)
 

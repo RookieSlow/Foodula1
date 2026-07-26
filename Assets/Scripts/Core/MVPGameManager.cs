@@ -30,8 +30,20 @@ public class MVPGameManager : MonoBehaviour
     public CardHandUI cardHandUI;
     public HUDUI hudUI;
 
+    [Header("卡牌精灵图")]
+    [Tooltip("卡面底图、选中叠加、数字图标、热量图标。Inspector 中拖入。")]
+    public Sprite speedBgSprite;
+    public Sprite heatBgSprite;
+    public Sprite selectedOverlaySprite;
+    public Sprite[] numberSprites = new Sprite[4];
+    public Sprite heatIconSprite;
+
     [Header("赛车 Prefab")]
     public GameObject carPrefab;
+
+    [Header("赛车精灵图")]
+    [Tooltip("6 辆赛车精灵，按车队索引: 0=UK, 1=DE, 2=IT, 3=US, 4=CN, 5=JP。留空则回退到颜色区分。")]
+    public Sprite[] carSprites = new Sprite[6];
 
     [Header("UI Prefab (Demo模式)")]
     [Tooltip("拖入 RaceCanvas Prefab 以使用预制 UI；留空则回退到硬编码 MVP UI。")]
@@ -66,8 +78,13 @@ public class MVPGameManager : MonoBehaviour
     public GameConfigSO Config => config;
     public TrackManager Track => trackManager;
 
+    void Awake()
+    {
+    }
+
     void Start()
     {
+
         // 自动创建默认配置
         if (config == null)
         {
@@ -114,6 +131,9 @@ public class MVPGameManager : MonoBehaviour
 
         GameObject instance = Instantiate(raceCanvasPrefab);
         instance.name = "RaceCanvas";
+        instance.SetActive(true);
+        // 修复 Prefab 序列化导致的 scale 归零问题
+        instance.transform.localScale = Vector3.one;
 
         hudUI = instance.GetComponentInChildren<HUDUI>();
         cardHandUI = instance.GetComponentInChildren<CardHandUI>();
@@ -121,6 +141,16 @@ public class MVPGameManager : MonoBehaviour
         // 将 CardPrefab 引用从 Manager 传给 CardHandUI（Editor 脚本赋值可能在运行时丢失）
         if (cardHandUI != null && cardHandUI.cardPrefab == null && cardUIPrefab != null)
             cardHandUI.cardPrefab = cardUIPrefab;
+
+        // 注入卡牌精灵图引用
+        if (cardHandUI != null)
+        {
+            if (cardHandUI.speedBgSprite == null) cardHandUI.speedBgSprite = speedBgSprite;
+            if (cardHandUI.heatBgSprite == null) cardHandUI.heatBgSprite = heatBgSprite;
+            if (cardHandUI.selectedOverlaySprite == null) cardHandUI.selectedOverlaySprite = selectedOverlaySprite;
+            if (cardHandUI.numberSprites == null || cardHandUI.numberSprites.Length == 0) cardHandUI.numberSprites = numberSprites;
+            if (cardHandUI.heatIconSprite == null) cardHandUI.heatIconSprite = heatIconSprite;
+        }
 
         if (hudUI == null)
             Debug.LogError("MVPGameManager: RaceCanvas Prefab has no HUDUI in children!");
@@ -416,14 +446,27 @@ public class MVPGameManager : MonoBehaviour
         playerCarInstance = Instantiate(carPrefab, startPos, Quaternion.identity);
         playerCarInstance.name = "PlayerCar";
         SpriteRenderer psr = playerCarInstance.GetComponent<SpriteRenderer>();
-        if (psr != null) { psr.color = Color.red; }
+        if (psr != null)
+        {
+            // 精灵图优先；没有则回退到颜色
+            if (carSprites.Length > 0 && carSprites[0] != null)
+                psr.sprite = carSprites[0];
+            else
+                psr.color = Color.red;
+        }
         playerCarInstance.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
 
         Vector3 aiStartPos = startPos + new Vector3(0.3f, 0.3f, 0);
         aiCarInstance = Instantiate(carPrefab, aiStartPos, Quaternion.identity);
         aiCarInstance.name = "AICar";
         SpriteRenderer asr = aiCarInstance.GetComponent<SpriteRenderer>();
-        if (asr != null) { asr.color = Color.blue; }
+        if (asr != null)
+        {
+            if (carSprites.Length > 1 && carSprites[1] != null)
+                asr.sprite = carSprites[1];
+            else
+                asr.color = Color.blue;
+        }
         aiCarInstance.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
     }
 

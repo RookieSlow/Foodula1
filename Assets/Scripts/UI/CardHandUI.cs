@@ -11,8 +11,15 @@ public class CardHandUI : MonoBehaviour
     [Header("Prefab & 容器")]
     public GameObject cardPrefab;
     public Transform handContainer;
-    [Tooltip("卡牌实例化后的尺寸覆盖（原 CardPrefab 是 160×30 线条，太窄）。")]
-    public Vector2 cardSizeOverride = new Vector2(180, 240);
+    [Tooltip("卡牌实例化后的尺寸覆盖。")]
+    public Vector2 cardSizeOverride = new Vector2(170, 255);
+
+    [Header("卡牌精灵图")]
+    public Sprite speedBgSprite;
+    public Sprite heatBgSprite;
+    public Sprite selectedOverlaySprite;
+    public Sprite[] numberSprites = new Sprite[4];
+    public Sprite heatIconSprite;
 
     [Header("档位选择 UI")]
     public GameObject gearSelectionPanel;
@@ -66,6 +73,9 @@ public class CardHandUI : MonoBehaviour
             CardUI ui = cardObj.GetComponent<CardUI>();
             if (ui != null)
             {
+                // 注入精灵图引用
+                ui.SetSprites(speedBgSprite, heatBgSprite, selectedOverlaySprite,
+                    numberSprites, heatIconSprite);
                 ui.SetupCard(card, OnCardClicked);
             }
             cardUIs.Add(ui);

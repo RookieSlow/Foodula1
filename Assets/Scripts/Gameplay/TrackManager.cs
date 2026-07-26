@@ -42,7 +42,7 @@ public class TrackManager : MonoBehaviour
     {
         if (config == null)
         {
-            Debug.LogError("[TrackManager] GameConfigSO reference is missing!");
+            Debug.LogWarning("[TrackManager] GameConfigSO reference is missing — using defaults.");
             BuildHardcodedTrack();
         }
         else if (!string.IsNullOrEmpty(config.trackId))
