@@ -204,33 +204,33 @@ public class MVPGameManager : MonoBehaviour
             hudUI = hudGO.AddComponent<HUDUI>();
 
             // 创建子 TMP 文本（G按钮下方，拉开间距）
-            hudUI.statusText = CreateTMPText(hudGO.transform, "StatusText", "Select Gear (1-4)", 22,
+            hudUI.statusText = CreateTMPText(hudGO.transform, "StatusText", "选择档位 (1-4)", 22,
                 new Vector2(-300, 180), new Vector2(420, 30), fontAsset);
-            hudUI.gearText = CreateTMPText(hudGO.transform, "GearText", "Gear: 1", 18,
+            hudUI.gearText = CreateTMPText(hudGO.transform, "GearText", "档位: 1", 18,
                 new Vector2(-400, 150), new Vector2(150, 25), fontAsset);
-            hudUI.heatText = CreateTMPText(hudGO.transform, "HeatText", "Heat Pool: 12", 18,
+            hudUI.heatText = CreateTMPText(hudGO.transform, "HeatText", "引擎热量: 12", 18,
                 new Vector2(-400, 125), new Vector2(280, 25), fontAsset);
-            hudUI.lapText = CreateTMPText(hudGO.transform, "LapText", "Lap: 0/3", 18,
+            hudUI.lapText = CreateTMPText(hudGO.transform, "LapText", "圈数: 0/3", 18,
                 new Vector2(-400, 100), new Vector2(200, 25), fontAsset);
-            hudUI.positionText = CreateTMPText(hudGO.transform, "PositionText", "Pos: 0/42", 18,
+            hudUI.positionText = CreateTMPText(hudGO.transform, "PositionText", "位置: 0/42", 18,
                 new Vector2(-400, 75), new Vector2(200, 25), fontAsset);
-            hudUI.aiStatusText = CreateTMPText(hudGO.transform, "AIStatusText", "AI: ready", 16,
+            hudUI.aiStatusText = CreateTMPText(hudGO.transform, "AIStatusText", "AI: 就绪", 16,
                 new Vector2(250, 50), new Vector2(200, 25), fontAsset);
             hudUI.logText = CreateTMPText(hudGO.transform, "LogText", "", 13,
                 new Vector2(0, -160), new Vector2(750, 180), fontAsset);
 
-            // 创建 4 个档位按钮 + CONFIRM 按钮（屏幕顶部）
+            // 创建 4 个档位按钮 + 确认按钮（屏幕顶部）
             CreateGearButton(canvas.transform, "Gear1Btn", "G1", new Vector2(-380, 220), 1);
             CreateGearButton(canvas.transform, "Gear2Btn", "G2", new Vector2(-290, 220), 2);
             CreateGearButton(canvas.transform, "Gear3Btn", "G3", new Vector2(-200, 220), 3);
             CreateGearButton(canvas.transform, "Gear4Btn", "G4", new Vector2(-110, 220), 4);
-            CreateActionButton(canvas.transform, "ConfirmGearBtn", "CONFIRM", new Vector2(10, 220),
+            CreateActionButton(canvas.transform, "ConfirmGearBtn", "确认", new Vector2(10, 220),
                 new Color(0.4f, 0.7f, 1f), () => OnConfirmGearClicked());
 
-            // 创建 PLAY 和 RESET 按钮（替代旧的 NextRound/Reset）
-            CreateActionButton(canvas.transform, "PlayBtn", "PLAY", new Vector2(-300, -185), Color.green,
+            // 创建 出牌 和 重新开始 按钮
+            CreateActionButton(canvas.transform, "PlayBtn", "出牌", new Vector2(-300, -185), Color.green,
                 () => OnPlayCardsButtonClicked());
-            CreateActionButton(canvas.transform, "ResetBtn", "RESET", new Vector2(-150, -185), Color.yellow,
+            CreateActionButton(canvas.transform, "ResetBtn", "重新开始", new Vector2(-150, -185), Color.yellow,
                 () => ResetGame());
 
             // 创建游戏结束面板
@@ -258,7 +258,7 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI = cardHandGO.AddComponent<CardHandUI>();
             cardHandUI.handContainer = handContainer;
             cardHandUI.deckInfoText = CreateTMPText(cardHandGO.transform, "DeckInfo",
-                "Deck: 12S + 3H", 14, new Vector2(-300, -100), new Vector2(200, 25), fontAsset);
+                "牌堆: 12速 + 3热", 14, new Vector2(-300, -100), new Vector2(200, 25), fontAsset);
 
             // 尝试从 Assets/Prefab/CardPrefab.prefab 加载
 #if UNITY_EDITOR
@@ -454,7 +454,7 @@ public class MVPGameManager : MonoBehaviour
             else
                 psr.color = Color.red;
         }
-        playerCarInstance.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+        playerCarInstance.transform.localScale = new Vector3(0.2f, 0.2f, 1f);
 
         Vector3 aiStartPos = startPos + new Vector3(0.3f, 0.3f, 0);
         aiCarInstance = Instantiate(carPrefab, aiStartPos, Quaternion.identity);
@@ -467,7 +467,7 @@ public class MVPGameManager : MonoBehaviour
             else
                 asr.color = Color.blue;
         }
-        aiCarInstance.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+        aiCarInstance.transform.localScale = new Vector3(0.2f, 0.2f, 1f);
     }
 
     // ====== 主游戏循环 ======
@@ -501,7 +501,7 @@ public class MVPGameManager : MonoBehaviour
                 pendingGear = player.gear;
                 foreach (var kv in gearButtonImages)
                     kv.Value.color = (kv.Key == player.gear) ? new Color(0.3f, 0.8f, 0.3f, 0.9f) : new Color(1f, 1f, 1f, 0.8f);
-                if (hudUI != null) hudUI.SetStatus($"Select gear (current: G{player.gear})");
+                if (hudUI != null) hudUI.SetStatus($"选择档位 (当前: G{player.gear})");
                 if (cardHandUI != null) { cardHandUI.SetGearSelectionMode(true); cardHandUI.UpdateDeckInfo(player); }
 
                 yield return new WaitWhile(() => waitingForPlayerGear);
@@ -568,7 +568,7 @@ public class MVPGameManager : MonoBehaviour
                     cardHandUI.UpdateDeckInfo(player);
                 }
                 if (hudUI != null)
-                    hudUI.SetStatus($"Gear {player.gear} - select {player.gear} speed card(s) (heat cards stay in hand)");
+                    hudUI.SetStatus($"G{player.gear} 档 - 选择 {player.gear} 张速度牌 (热量牌留在手中)");
 
                 yield return new WaitWhile(() => waitingForPlayerCards);
             }
@@ -842,7 +842,7 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.ShowHand(this, player);
         }
         if (hudUI != null)
-            hudUI.SetStatus("Discard: click cards to discard (non-heat only), then PLAY.");
+            hudUI.SetStatus("弃牌: 点击要弃掉的牌 (非热量牌), 然后点出牌");
 
         yield return new WaitWhile(() => waitingForPlayerDiscard);
 
@@ -902,23 +902,23 @@ public class MVPGameManager : MonoBehaviour
 
     private void ShowGameOver()
     {
-        string result = "=== RACE OVER ===\n\n";
+        string result = "=== 比赛结束 ===\n\n";
 
         if (player.isBlown)
-            result += "<color=red>BLOWN ENGINE!</color>\n";
+            result += "<color=red>引擎爆缸!</color>\n";
         else if (player.hasFinished)
-            result += $"<color=green>You finished {config.totalLaps} laps!</color>\n";
+            result += $"<color=green>你完成了 {config.totalLaps} 圈!</color>\n";
         else
-            result += $"You: {player.lap} laps, pos {player.position}\n";
+            result += $"你: {player.lap} 圈, 位置 {player.position}\n";
 
         if (ai.isBlown)
-            result += $"<color=orange>{ai.name} BLOWN</color>\n";
+            result += $"<color=orange>{ai.name} 爆缸</color>\n";
         else if (ai.hasFinished)
-            result += $"{ai.name} finished {config.totalLaps} laps\n";
+            result += $"{ai.name} 完成 {config.totalLaps} 圈\n";
         else
-            result += $"{ai.name}: {ai.lap} laps, pos {ai.position}\n";
+            result += $"{ai.name}: {ai.lap} 圈, 位置 {ai.position}\n";
 
-        result += "\nRanking:\n";
+        result += "\n排名:\n";
         result += GetRanking();
 
         if (hudUI != null) hudUI.ShowGameOver(result);
@@ -939,8 +939,8 @@ public class MVPGameManager : MonoBehaviour
         int rank = 1;
         foreach (var p in players)
         {
-            string status = p.isBlown ? " (BLOWN)" : p.hasFinished ? " (FIN)" : "";
-            ranking += $"{rank}. {p.name} - Lap {p.lap} Pos {p.position}{status}\n";
+            string status = p.isBlown ? " (爆缸)" : p.hasFinished ? " (完赛)" : "";
+            ranking += $"{rank}. {p.name} - 圈{p.lap} 位{p.position}{status}\n";
             rank++;
         }
         return ranking;
@@ -958,7 +958,7 @@ public class MVPGameManager : MonoBehaviour
             kv.Value.color = (kv.Key == gear) ? new Color(0.3f, 0.8f, 0.3f, 0.9f) : new Color(1f, 1f, 1f, 0.8f);
         }
         if (hudUI != null)
-            hudUI.SetStatus($"Gear {gear} selected - click CONFIRM to lock in");
+            hudUI.SetStatus($"已选 G{gear} 档 - 点击确认锁定");
     }
 
     public void OnConfirmGearClicked()
@@ -988,7 +988,7 @@ public class MVPGameManager : MonoBehaviour
         if (speedCount > player.gear)
         {
             if (hudUI != null)
-                hudUI.SetStatus($"<color=orange>Too many speed cards! Gear {player.gear} max.</color>");
+                hudUI.SetStatus($"<color=orange>速度牌太多! 最多选 {player.gear} 张</color>");
             return;
         }
 

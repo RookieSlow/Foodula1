@@ -1,9 +1,24 @@
 # AI 美术生成 Prompt 手册
 
 > **用途**: 复制 Prompt → 粘贴到 AI 绘图工具，生成游戏美术资源  
-> **推荐工具**: Midjourney / DALL·E 3 / Stable Diffusion (SDXL) / 通义万相  
+> **当前工具**: GPT Image (ChatGPT 内置)  
 > **输出格式**: PNG, RGBA (需手动去底)  
 > **关联文档**: `design/gdd/foodula-1-visual-style.md` (配色与风格), `design/asset-manifest.md` (完整清单)
+
+---
+
+## ⚠️ GPT Image 关键规则
+
+GPT Image 默认倾向生成 **3D 透视照片**，但本项目所有资源都是 **2D 平面游戏精灵**。
+每条 Prompt 必须遵守以下规则，否则 AI 会自作主张加 3D 效果：
+
+| 规则 | 说明 |
+|------|------|
+| **必须写 "2D flat"** | 每条 prompt 开头声明这是 2D 平面资源 |
+| **必须写否定词** | "NO 3D, NO perspective, NO shadows, NO depth, NO gradients" |
+| **用实物类比** | "like a printed board game" / "like a flat sticker" / "like wallpaper" |
+| **不要用触发 3D 的词** | 避免 "texture"（改用 "pattern"）、"feel"、"looks like"、"curb/kerb"（改用 "stripe marking"） |
+| **透明度在 Unity 处理** | 不要要求 AI 输出半透明，生成全不透明图，透明度在 Unity 中设置 |
 
 ---
 
@@ -12,7 +27,7 @@
 1. 每条 Prompt 已经过尺寸、配色、风格调优，**直接复制使用**
 2. 生成后需要：**去底 (remove background)** → **裁切到精确尺寸** → 放入 `Assets/Sprites/[类别]/`
 3. 九宫格 UI 元素（按钮、面板）建议用 Unity Sprite Editor 手动设置 border
-4. 标注 `[MJ]` = Midjourney 优化 / `[DL]` = DALL·E 3 优化 / `[通用]` = 两者通用
+4. 所有 Prompt 均为 GPT Image 优化（也兼容 DALL·E 3）
 
 ---
 
@@ -228,44 +243,47 @@ Background: transparent. Style: Pixar Cars meets board game token.
 ### 档位旋钮 `gear_knob_bg.png`
 
 ```
-[通用] A flat-design stove knob viewed from top-down, 200x200px canvas.
-Circular shape centered.
-Dark background #161B22 with an arc of 4 tick marks:
-- Bottom-left: "G1" label
-- Bottom-right: "G4" label  
-- Arc path from G1 through top to G4
-Tick marks in tech blue #58A6FF, thin lines.
-One tick is highlighted in green #3FB950 (the current gear position marker).
-Style: minimalist F1 steering wheel rotary dial meets kitchen stove knob.
-No 3D effects, flat design. Background: transparent.
+[GPT Image] A 2D flat circular dial graphic, 200x200px canvas. Pure 2D — NO 3D, NO depth, NO shadows.
+A simple flat circle outline (thin stroke #30363D) centered on a dark #161B22 filled circle.
+Four small tick marks arranged in a left-to-right arc across the top half of the circle:
+- G1 at bottom-left of the arc, G4 at bottom-right of the arc
+- Each tick is a short thin line in tech blue #58A6FF
+- One tick (middle position) is bright green #3FB950
+All elements are flat geometric shapes — like a simple diagram drawn in a vector graphics program.
+The circle itself has a fully transparent background outside it.
+Style: flat 2D UI icon, like a minimalist settings icon. Pure graphic design.
 ```
 
 ---
 
 ## 🟢 P2 — 赛道资源（8 项）
 
+> ⚠️ 所有赛道资源都是 **纯 2D 平面图**，不是 3D 渲染。生成后需要在 Unity 中设置为 Sprite (2D and UI)。
+
 ### 赛道贴图
 
 #### 沥青路面 `track_surface_tile.png`
 
 ```
-[通用] A tileable top-down asphalt road texture, 256x256px.
-Dark gray asphalt #3A3D42 with subtle noise/grain.
-A white dashed lane marking line down the center (#FFFFFF, 2px wide,
-dashes: 12px dash, 8px gap).
-The texture should tile seamlessly in all 4 directions.
-Style: clean, minimal racing surface. Not photorealistic — stylized
-to match a board game aesthetic.
+[GPT Image] A 2D flat seamless repeating pattern for a board game race track surface, 256x256px.
+This is a PURELY 2D FLAT image — NO 3D, NO perspective, NO shadows, NO depth, NO lighting, NO gradients.
+The entire image is a solid flat dark gray #3A3D42 fill, with tiny random scattered noise dots in slightly lighter gray for subtle variation (like static on an old TV, but very faint).
+A white dashed line runs vertically through the exact center: #FFFFFF, 2px wide per dash, each dash 12px long with 8px gaps between them.
+The pattern tiles seamlessly — the left edge must match the right edge, and the top edge must match the bottom edge exactly.
+Style: flat printed board game surface, like the paper map in Monopoly or Catan. Pure 2D.
 ```
 
-#### 弯道路缘 `track_curb_tile.png`
+#### 弯道路肩条纹 `track_curb_tile.png`
 
 ```
-[通用] A tileable top-down racetrack curb/kerb texture, 256x256px.
-Alternating red #E5533B and white #FFFFFF stripes running vertically.
-Each stripe ~16px wide. The curb has a slight inner shadow on one side.
-Seamless tiling.
-Style: F1 circuit curb, stylized for top-down view.
+[GPT Image] A 2D flat seamless repeating pattern of alternating colored stripes, 256x256px.
+This is a PURELY 2D FLAT image — like striped wrapping paper or a flat wallpaper pattern.
+NO 3D, NO perspective, NO shadows, NO depth, NO lighting, NO bevel, NO rounded edges.
+Just flat vertical stripes: red #E5533B and white #FFFFFF, alternating left to right.
+Each stripe is exactly 16px wide, with sharp straight edges between colors.
+That's it — a simple flat stripe pattern. Nothing more.
+The pattern tiles seamlessly — left edge matches right edge, top matches bottom.
+Style: flat 2D board game marking, like painted lines on a game board. Pure graphic design, zero depth.
 ```
 
 ### 赛道标记
@@ -273,219 +291,208 @@ Style: F1 circuit curb, stylized for top-down view.
 #### 弯心标记 `track_apex_marker.png`
 
 ```
-[通用] A circular track marker for corner apex, 64x64px canvas.
-Red circle #F78166 with 2px white outline.
-A large bold number "[X]" centered inside, white with dark shadow.
-The marker has a subtle glow effect (outer blur in red, ~8px radius).
-Style: clean racing telemetry marker, reads clearly at small sizes.
-Background: transparent. Generate three variants with speed limits 1, 2, 3.
+[GPT Image] A 2D flat circular game token marker, 64x64px canvas.
+A simple flat circle filled with orange-red #F78166, with a solid white 2px outline stroke around it.
+A bold white number is centered inside the circle, filling about 60% of the circle's height.
+The entire graphic is completely flat — like a printed cardboard board game chit or a flat sticker.
+NO 3D bevel, NO shadows, NO glow effects, NO gradients, NO depth at all.
+Outside the circle: fully transparent background.
+Style: flat board game token, pure 2D icon.
 ```
 
 #### 起终点线 `track_start_finish.png`
 
 ```
-[通用] A start/finish line marker for a top-down racing game, 128x64px.
-Checkered pattern: 8×4 grid of alternating black #1B1F2B and white #FFFFFF
-squares (each ~16×16px). Below the checkered band: a thin green #3FB950 bar
-(height 8px).
-The marker has pole-position style: the checkered section leans slightly
-forward (~10° tilt) for a dynamic racing feel.
-Background: the bottom portion is semi-transparent so it can overlay
-on the track surface.
+[GPT Image] A 2D flat start/finish line graphic for a board game track, 128x64px canvas.
+A rectangular checkered band: 8 columns × 4 rows of alternating black #1B1F2B and white #FFFFFF squares, each square exactly 16×16px, perfectly aligned in a grid.
+Below the checkered band: a solid green #3FB950 horizontal bar, 8px tall, full width.
+The entire graphic is completely flat — like a printed board game space marker.
+NO 3D, NO tilt, NO perspective, NO shadows, NO depth.
+Everything else outside the checkered band and green bar is fully transparent.
+Style: flat board game start space, pure 2D, like the "GO" square in Monopoly.
 ```
 
 ### 赛道环境背景
 
 > 每条赛道一张背景图，铺在赛道下方做视觉区分。
+> 这些是纯色底 + 少量散落小元素的**平面地图纹理**，不是风景画。
+> 透明度在 Unity 中设置（修改 SpriteRenderer Color.a），AI 不需要输出半透明。
 
 #### 英国银石 `track_env_uk.png`
 
 ```
-[通用] A subtle top-down environment backdrop for a UK racetrack, 2048x2048px.
-Muted gray-green grass texture base #7B8C7B, with scattered:
-- Small white geometric tent shapes (afternoon tea tents)
-- Occasional dark green tree clusters (English countryside hedgerows)
-- Faint gray cloud shadows
-The overall look should be UNDERSTATED — this is a background that sits
-behind the racetrack, should not distract from gameplay elements.
-Style: soft watercolor meets board game map. Low contrast, muted palette.
-Opacity at 40% strength — more of a texture suggestion than a detailed illustration.
+[GPT Image] A 2D flat background map for a board game, 2048x2048px. Pure 2D top-down view.
+The entire image is a solid flat fill of muted gray-green #7B8C7B.
+Scattered sparsely across this flat green field: a few small white triangles (like simple geometric tent shapes), and a few small dark green rounded circle clusters (like top-down tree blobs).
+The elements should be minimal — maybe 8-12 small shapes total across the entire 2048px canvas. Mostly empty green space.
+NO 3D, NO perspective, NO shadows, NO gradients, NO depth. No painting, no watercolor effect.
+Style: flat board game map, like the printed surface of a Catan board. Pure 2D vector-graphic look.
 ```
 
 #### 德国纽博格林 `track_env_de.png`
 
 ```
-[通用] A subtle top-down environment backdrop for a German racetrack, 2048x2048px.
-Dark green pine forest base #3A5C3A, with scattered:
-- Clusters of conical evergreen trees (Black Forest style)
-- Occasional small amber/gold clearing patches
-- Faint castle ruin silhouette in one corner (extremely subtle)
-Low contrast, muted forest tones. Board game map aesthetic.
-Opacity at 40% — background texture only, not a detailed scene.
+[GPT Image] A 2D flat background map for a board game, 2048x2048px. Pure 2D top-down view.
+The entire image is a solid flat fill of dark forest green #3A5C3A.
+Scattered sparsely: a few small dark green triangle clusters (like top-down pine trees), and 2-3 small amber #B8860B patches (clearings).
+In one corner, a very simple flat gray geometric shape suggesting a castle ruin — just a few gray rectangles.
+NO 3D, NO perspective, NO shadows, NO gradients, NO depth. No painting, no watercolor effect.
+Style: flat board game map, pure 2D vector-graphic look.
 ```
 
 #### 意大利蒙扎 `track_env_it.png`
 
 ```
-[通用] A subtle top-down environment backdrop for an Italian racetrack, 2048x2048px.
-Warm golden-olive green base #8B9A6B (Tuscan hills), with scattered:
-- Gentle rolling hill contour lines in slightly darker green
-- Occasional small cypress tree dots (tall thin dark green)
-- Warm terracotta #C4956A subtle patches
-Low contrast, warm Mediterranean palette. Board game map aesthetic.
-Opacity at 40% — background texture only.
+[GPT Image] A 2D flat background map for a board game, 2048x2048px. Pure 2D top-down view.
+The entire image is a solid flat fill of warm olive green #8B9A6B.
+A few gentle curved lines in slightly darker green across the surface (like contour lines on a simple map).
+A few small dark green tall thin oval dots (cypress trees), and 2-3 warm terracotta #C4956A rounded patches.
+NO 3D, NO perspective, NO shadows, NO gradients, NO depth. No painting, no watercolor effect.
+Style: flat board game map, pure 2D vector-graphic look.
 ```
 
 #### 美国印第安纳波利斯 `track_env_us.png`
 
 ```
-[通用] A subtle top-down environment backdrop for a US racetrack, 2048x2048px.
-Flat plain base in warm beige-tan #C4B896 (Midwest prairie), with:
-- A subtle red-white checkerboard pattern in one corner (very faint)
-- Geometric grid pattern suggesting the famous oval layout (barely visible)
-- Sparse small brown dots
-Low contrast, open flat feel. Board game map aesthetic.
-Opacity at 40% — very minimal, the oval track itself is the star.
+[GPT Image] A 2D flat background map for a board game, 2048x2048px. Pure 2D top-down view.
+The entire image is a solid flat fill of warm beige-tan #C4B896.
+In one corner: a small faint red-white checkerboard pattern (like a tiny 4×4 grid, very subdued).
+A few small brown dots scattered sparsely.
+NO 3D, NO perspective, NO shadows, NO gradients, NO depth. No painting, no watercolor effect.
+Style: flat board game map, pure 2D vector-graphic look. Very minimal — mostly empty beige space.
 ```
 
 #### 中国上海 `track_env_cn.png`
 
 ```
-[通用] A subtle top-down environment backdrop for a Chinese racetrack, 2048x2048px.
-Pale gray-blue base #C8CCD0 (Shanghai overcast sky reflected), with:
-- Subtle "上" character shape embedded in the texture (very faint, like a watermark)
-- Occasional small red #C41E3A accent dots
-- Faint geometric grid suggesting modern urban layout
-- Bamboo green #50C878 subtle streaks
-Low contrast, modern sleek feel. Board game map aesthetic.
-Opacity at 40% — background texture only.
+[GPT Image] A 2D flat background map for a board game, 2048x2048px. Pure 2D top-down view.
+The entire image is a solid flat fill of pale gray-blue #C8CCD0.
+In the center: a very faint, large "上" character shape in slightly darker gray (like a subtle watermark).
+A few small red #C41E3A dots scattered sparsely.
+A few bamboo green #50C878 subtle horizontal streaks.
+NO 3D, NO perspective, NO shadows, NO gradients, NO depth. No painting, no watercolor effect.
+Style: flat board game map, pure 2D vector-graphic look.
 ```
 
 #### 日本铃鹿 `track_env_jp.png`
 
 ```
-[通用] A subtle top-down environment backdrop for a Japanese racetrack, 2048x2048px.
-Deep blue-green base #4A6B5C, with scattered:
-- Small pink cherry blossom dots #FFB7C5 (very subtle, scattered)
-- Faint figure-8 pattern embedded in texture (Suzuka crossover reference)
-- Occasional dark green tree clusters
-- A subtle Mount Fuji silhouette in one corner (extremely faint)
-Low contrast, serene Japanese garden aesthetic. Board game map.
-Opacity at 40% — background texture only.
+[GPT Image] A 2D flat background map for a board game, 2048x2048px. Pure 2D top-down view.
+The entire image is a solid flat fill of deep blue-green #4A6B5C.
+A few small pink #FFB7C5 dots scattered very sparsely (cherry blossom suggestion).
+A very faint figure-8 loop line embedded in the background (slightly darker green, like a subtle map marking).
+In one corner: a simple flat geometric triangle shape in white with a gray top (Mount Fuji silhouette — just a flat shape, no shading).
+NO 3D, NO perspective, NO shadows, NO gradients, NO depth. No painting, no watercolor effect.
+Style: flat board game map, pure 2D vector-graphic look.
 ```
 
 ---
 
 ## 🟡 P1 — UI 装饰资源（4 项）
 
+> ⚠️ UI 元素本质上都是简单几何图形。Prompt 要求极简 —— AI 容易画蛇添足加纹理、渐变、阴影。**效果不理想时建议直接用 Unity Image + 纯色替代。**
+
 ### 面板底图 `panel_bg.png`
 
 ```
-[通用] A dark UI panel background with subtle tech texture, 256x256px.
-Base color: deep navy-charcoal #161B22.
-Texture: extremely subtle diagonal grid lines in #30363D (~10% opacity),
-giving a "carbon fiber" feel without being obvious.
-A thin 1px border in #30363D.
-The panel should tile cleanly via 9-slice (border 24px).
-Style: F1 telemetry screen meets premium board game card table.
-Dark, elegant, understated. No bright elements, no gradients.
-This is a BACKGROUND for text and UI elements to sit on top of.
+[GPT Image] A 2D flat UI panel background, 256x256px. Pure 2D — NO 3D, NO shadows, NO gradients, NO texture.
+The entire image is a solid flat rectangle filled with dark navy-charcoal #161B22.
+A thin 1px border line in #30363D on all four edges.
+That's it — just a flat colored rectangle with a border. Nothing else.
+No grid lines, no carbon fiber pattern, no texture of any kind.
+Style: flat UI rectangle, like a simple colored <div> in a webpage. Absolute minimalism.
 ```
 
 ### 面板标题栏 `panel_header.png`
 
 ```
-[通用] A UI panel header bar, 256×40px.
-Left-aligned accent bar in tech blue #58A6FF (4px wide, full height).
-The rest is transparent gradient fading right from #161B22 at 50% to fully transparent.
-A thin 1px bottom border line in #30363D full width.
-Style: sleek F1 dashboard panel header. Minimal, functional.
-Background: the right side is fully transparent so it blends with panel_bg.
+[GPT Image] A 2D flat UI header bar, 256×40px. Pure 2D — NO 3D, NO shadows, NO gradients.
+On the left edge: a solid vertical bar in tech blue #58A6FF, 4px wide, full 40px height.
+A thin 1px solid line in #30363D runs across the bottom edge, full width.
+Everything else is fully transparent.
+That's it — a flat colored accent bar on the left + a bottom border line. Nothing else.
+Style: flat UI element, like a simple CSS border-left + border-bottom. Absolute minimalism.
 ```
 
 ### HUD 底栏 `hud_bottom_bar.png`
 
 ```
-[通用] A UI bottom bar / card hand area background, 1920×120px.
-Full width dark bar, gradient from #0D1117 at top (90% opacity)
-to #0D1117 at bottom (100% opacity).
-Top edge: a thin 1px accent line in tech blue #58A6FF (subtle glow).
-The bar has extremely subtle horizontal rule lines at 30% and 70% height
-in #30363D (barely visible, for visual structure).
-Style: premium card game hand area — like a velvet card table edge.
-This bar sits at the bottom of the screen behind the player's hand cards.
+[GPT Image] A 2D flat horizontal bar for a card game hand area, 1920×120px. Pure 2D — NO 3D, NO gradients, NO texture.
+The entire bar is a solid flat fill of dark #0D1117.
+A thin 1px solid line in tech blue #58A6FF runs across the top edge, full width.
+That's it — a flat dark bar with a blue top line. Nothing else.
+No horizontal rule lines, no velvet texture, no glow.
+Style: flat UI bar, like a solid colored rectangle in a 2D game HUD. Absolute minimalism.
 ```
 
 ### 分隔线 `ui_divider.png`
 
 ```
-[通用] A thin horizontal UI divider line, 256×4px.
-Center: a 1px line in #30363D.
-Fades to fully transparent at both ends (gradient).
-That's it — pure minimalism.
-Background: fully transparent except the center line.
+[GPT Image] A 2D flat horizontal divider line, 256×4px. Pure 2D.
+A single solid 1px line in #30363D running horizontally across the center.
+The line is shorter than the full width — about 200px centered, with 28px of fully transparent space on each side.
+That's it — one flat line. Nothing else. Fully transparent everywhere except the line itself.
+Style: flat UI divider, like an <hr> tag in HTML. Absolute minimalism.
 ```
 
 ---
 
 ## 🔵 P3 — 特效资源（5 项）
 
+> ⚠️ 特效精灵都是极小尺寸的简单几何图形。AI 容易过度设计。保持极简。
+
 ### 尾流箭头 `fx_slipstream.png`
 
 ```
-[通用] A slipstream trail arrow for a racing game, 128×32px.
-Three dashed segments followed by an arrowhead → pointing RIGHT.
-Color: tech blue #58A6FF at 60% opacity.
-Each dash: 16×4px rounded rectangle. Arrow: simple triangle.
-The dashes should have a subtle glow (outer blur, 4px).
-Background: fully transparent.
-Style: clean, F1 telemetry overlay.
+[GPT Image] A 2D flat UI arrow icon, 128×32px. Pure 2D — NO 3D, NO shadows, NO glow, NO gradients.
+Three short horizontal dash segments (each 16×4px flat rectangle, tech blue #58A6FF) followed by a simple right-pointing triangle arrowhead (same blue, ~12px wide).
+The dashes and arrow are arranged in a horizontal line pointing RIGHT.
+All shapes are solid flat fill, no outline, no glow.
+Fully transparent background everywhere except the blue shapes.
+Style: flat 2D UI icon, like a simple arrow glyph from a font icon set. Absolute minimalism.
 ```
 
 ### 冷却粒子 `fx_cool.png`
 
 ```
-[通用] A single small cooling particle / spark for a game effect, 16×16px.
-A soft blue-white glowing dot, center bright white #FFFFFF, outer glow
-in tech blue #58A6FF fading to transparent at edges.
-Simple radial gradient. No shapes, just a soft light point.
-Background: fully transparent.
-Style: subtle UI feedback particle.
+[GPT Image] A 2D flat small glowing dot, 16×16px. Pure 2D — NO 3D.
+A simple flat circle in bright white #FFFFFF, 8px diameter, centered.
+Surrounding it: a slightly larger circle in tech blue #58A6FF, 16px diameter, with the center cut out (a flat ring around the white dot).
+Both shapes are solid flat fill.
+Fully transparent everywhere else.
+Style: flat 2D particle, like a simple dot from a minimalist UI. Absolute minimalism.
 ```
 
 ### 弯道判定脉冲 `fx_corner_flash.png`
 
 ```
-[通用] A corner judgment flash effect, 64×64px.
-A hollow circle ring (4px wide) in warning orange #F78166, with outer glow.
-The ring is NOT filled — it's just the outline with a soft pulse glow.
-Fades to fully transparent both inward and outward from the ring.
-Background: fully transparent.
-Style: minimap ping effect, clean and readable.
+[GPT Image] A 2D flat hollow circle ring icon, 64×64px. Pure 2D — NO 3D, NO glow, NO gradients.
+A simple flat circle outline ring in warning orange #F78166, 4px thick stroke, about 48px diameter, centered.
+The ring is NOT filled — just the outline stroke.
+Fully transparent everywhere else (inside the ring and outside it).
+Style: flat 2D icon, like a thin circle outline from a UI library. Absolute minimalism.
 ```
 
 ### 过热警告边框 `fx_overheat_border.png`
 
 ```
-[通用] A screen-edge warning indicator for overheat, 1920×16px.
-A thin horizontal bar, gradient from transparent at edges to
-warning red #E5533B at center (the center ~40% is visible red).
-Soft glow on the red portion.
-This is placed at screen edges as a subtle "danger" indicator.
-Background: fully transparent.
-Style: diegetic F1 warning light, understated not alarmist.
+[GPT Image] A 2D flat horizontal warning bar, 1920×16px. Pure 2D — NO 3D, NO glow, NO gradients.
+The center 40% of the bar is solid flat fill in warning red #E5533B.
+The left 30% and right 30% are fully transparent.
+That's it — a flat red rectangle in the middle, transparent on the sides.
+No gradient fade, no glow — just a solid colored bar.
+Style: flat 2D UI element, like a simple health bar segment. Absolute minimalism.
 ```
 
 ### 完赛旗帜 `fx_finish_flag.png`
 
 ```
-[通用] A finish line celebration flag icon, 128×128px.
-A waving checkered flag (black #1B1F2B + white #FFFFFF squares)
-on a small flagpole, angled ~30° as if waving.
-The flag has 2-3 wave folds with simple shading.
-Green #3FB950 accent glow behind the flag.
-Style: victory icon, celebratory but not cartoonish.
-Background: fully transparent.
+[GPT Image] A 2D flat checkered flag icon, 128×128px. Pure 2D — NO 3D, NO wave folds, NO shading, NO glow.
+A simple straight flagpole: a thin dark gray vertical line on the left.
+A flat rectangular flag attached to the pole, filled with a checkered pattern: 4×3 grid of alternating black #1B1F2B and white #FFFFFF squares.
+The flag does NOT wave — it's a flat rectangle. No folds, no curves.
+Fully transparent background everywhere else.
+Style: flat 2D icon, like a checkered flag emoji but simpler. Absolute minimalism.
 ```
 
 ---

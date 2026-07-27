@@ -28,6 +28,7 @@ public class HUDUI : MonoBehaviour
     [Header("操作按钮")]
     public UnityEngine.UI.Button confirmGearButton;
     public UnityEngine.UI.Button resetButton;
+    public UnityEngine.UI.Button backToMenuButton;
 
     [Header("游戏结束面板")]
     public GameObject gameOverPanel;
@@ -49,6 +50,9 @@ public class HUDUI : MonoBehaviour
 
         if (resetButton != null)
             resetButton.onClick.AddListener(OnResetClicked);
+
+        if (backToMenuButton != null)
+            backToMenuButton.onClick.AddListener(OnBackToMenuClicked);
 
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
@@ -78,7 +82,7 @@ public class HUDUI : MonoBehaviour
         gameManager = gm;
 
         if (gearText != null)
-            gearText.text = $"Gear: {player.gear}";
+            gearText.text = $"档位: {player.gear}";
 
         if (heatText != null)
         {
@@ -86,22 +90,22 @@ public class HUDUI : MonoBehaviour
             int engineRemaining = player.deck.heatPool.remaining;
             string heatWarning = handHeat >= 4 ? " <color=orange>⚠</color>" : "";
             string spinInfo = player.spinCounter > 0 ? $" | ⚠×{player.spinCounter}/3" : "";
-            heatText.text = $"Engine: {engineRemaining} | Hand Heat: {handHeat}{heatWarning}{spinInfo}";
+            heatText.text = $"引擎: {engineRemaining} | 手牌热量: {handHeat}{heatWarning}{spinInfo}";
         }
 
         if (lapText != null)
-            lapText.text = $"Lap: {player.lap}/{gm.Config.totalLaps}";
+            lapText.text = $"圈数: {player.lap}/{gm.Config.totalLaps}";
 
         if (positionText != null)
-            positionText.text = $"Pos: {player.position}/{gm.Track.TotalNodes}";
+            positionText.text = $"位置: {player.position}/{gm.Track.TotalNodes}";
 
         if (aiStatusText != null)
         {
             aiStatusText.text = ai.isBlown
-                ? "<color=red>AI: BLOWN!</color>"
+                ? "<color=red>AI: 爆缸!</color>"
                 : ai.hasFinished
-                    ? "<color=green>AI: FINISHED!</color>"
-                    : $"AI: G{ai.gear} | Eng:{ai.deck.heatPool.remaining} | Lap {ai.lap} | Pos {ai.position}";
+                    ? "<color=green>AI: 完赛!</color>"
+                    : $"AI: G{ai.gear} | 引擎:{ai.deck.heatPool.remaining} | 圈{ai.lap} | 位{ai.position}";
         }
     }
 
@@ -156,5 +160,10 @@ public class HUDUI : MonoBehaviour
         gameManager?.ResetGame();
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
+    }
+
+    private void OnBackToMenuClicked()
+    {
+        SceneLoader.LoadMainMenu();
     }
 }

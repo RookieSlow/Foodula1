@@ -194,14 +194,14 @@ public class CardHandUI : MonoBehaviour
             }
 
             if (gameManager.hudUI != null)
-                gameManager.hudUI.SetStatus($"Gear {gear} - {speedCount}/{gear} speed cards selected");
+                gameManager.hudUI.SetStatus($"G{gear} 档 - 已选 {speedCount}/{gear} 张速度牌");
         }
         else
         {
             // 取消选中
             int speedCount = GetSelectedSpeedCount();
             if (gameManager.hudUI != null)
-                gameManager.hudUI.SetStatus($"Gear {gear} - {speedCount}/{gear} speed cards selected");
+                gameManager.hudUI.SetStatus($"G{gear} 档 - 已选 {speedCount}/{gear} 张速度牌");
         }
     }
 
@@ -217,7 +217,7 @@ public class CardHandUI : MonoBehaviour
             int spd = player.deck.CountSpeedInDeck();
             int heat = player.deck.CountHeatInDeck();
             int handHeat = player.deck.CountHeatInHand();
-            deckInfoText.text = $"Deck: {spd}S + {heat}H | Hand Heat: {handHeat}";
+            deckInfoText.text = $"牌堆: {spd}速 + {heat}热 | 手牌热量: {handHeat}";
         }
     }
 }

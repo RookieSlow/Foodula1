@@ -12,7 +12,7 @@ public static class FixBlurryText
 {
     // ── 已知 GUID ──
     private const string LIBERATION_SANS_GUID  = "8f586378b4e144a9851e7b34d9b748ee";
-    private const string MSYH_SDF_GUID         = "dc5fd1e0eb79f5e4b921552ceb9c30a8";
+    private const string MSYH_SDF_GUID         = "67393bfc3a860b042baa08f7fbeadd93";
     private const string TMP_SDF_SHADER_GUID   = "68e6db2ebdc24f95958faec2be5558d6";   // TextMeshPro/Distance Field (标准桌面版)
     private const string TMP_SDF_MOBILE_GUID   = "fe393ace9b354375a9cb14cdbbc28be4";   // TextMeshPro/Mobile/Distance Field (移动版，无平滑)
 

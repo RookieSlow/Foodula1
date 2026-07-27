@@ -11,7 +11,7 @@ public static class RaceCanvasBuilder
 {
     private const string PREFAB_PATH = "Assets/Prefabs/UI/RaceCanvas.prefab";
     private const string CARD_PREFAB_PATH = "Assets/Prefab/CardPrefab.prefab";
-    private const string MSYH_SDF_GUID = "dc5fd1e0eb79f5e4b921552ceb9c30a8";
+    private const string FONT_SDF_GUID = "67393bfc3a860b042baa08f7fbeadd93"; // 思源黑體-Medium
 
     [MenuItem("Foodular1/Build RaceCanvas Prefab")]
     public static void Build()
@@ -58,17 +58,17 @@ public static class RaceCanvasBuilder
     static void BuildHUD(GameObject parent, HUDUI hud)
     {
         // -- 提示文本：顶部居中，锚点 (0.5, 1) --
-        hud.statusText = MakeText(parent, "StatusText", "Select Gear (1-4)", 24,
+        hud.statusText = MakeText(parent, "StatusText", "选择档位 (1-4)", 24,
             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
             new Vector2(0, -35), new Vector2(700, 36), TextAlignmentOptions.Center);
 
         // -- 状态文本：右上角，锚点 (1, 1)，垂直堆叠 --
         float rowH = 34;
-        hud.gearText      = MakeText(parent, "GearText",      "Gear: 1",    18, TR(), TR(), new Vector2(-200, -80),              V2(220, 26));
-        hud.heatText      = MakeText(parent, "HeatText",      "Engine: 12", 18, TR(), TR(), new Vector2(-200, -80 - rowH),     V2(280, 26));
-        hud.lapText       = MakeText(parent, "LapText",       "Lap: 0/3",   18, TR(), TR(), new Vector2(-200, -80 - rowH*2),  V2(200, 26));
-        hud.positionText  = MakeText(parent, "PositionText",  "Pos: 0/42",  18, TR(), TR(), new Vector2(-200, -80 - rowH*3),  V2(200, 26));
-        hud.aiStatusText  = MakeText(parent, "AIStatusText",  "AI: ready",  16, TR(), TR(), new Vector2(-200, -80 - rowH*4),  V2(260, 24));
+        hud.gearText      = MakeText(parent, "GearText",      "档位: 1",    18, TR(), TR(), new Vector2(-200, -80),              V2(220, 26));
+        hud.heatText      = MakeText(parent, "HeatText",      "引擎: 12",   18, TR(), TR(), new Vector2(-200, -80 - rowH),     V2(280, 26));
+        hud.lapText       = MakeText(parent, "LapText",       "圈数: 0/3",  18, TR(), TR(), new Vector2(-200, -80 - rowH*2),  V2(200, 26));
+        hud.positionText  = MakeText(parent, "PositionText",  "位置: 0/42", 18, TR(), TR(), new Vector2(-200, -80 - rowH*3),  V2(200, 26));
+        hud.aiStatusText  = MakeText(parent, "AIStatusText",  "AI: 就绪",   16, TR(), TR(), new Vector2(-200, -80 - rowH*4),  V2(260, 24));
 
         // -- 档位按钮：左上角，锚点 (0, 1) 水平排列 --
         BuildGearButtons(parent, hud);
@@ -78,7 +78,7 @@ public static class RaceCanvasBuilder
             BL(), BL(), new Vector2(20, 220), new Vector2(540, 200), TextAlignmentOptions.Left);
 
         // -- Reset 按钮：右下角，锚点 (1, 0) --
-        hud.resetButton = MakeBtn(parent, "ResetBtn", "RESET", BR(), BR(), new Vector2(-140, 50), V2(120, 44));
+        hud.resetButton = MakeBtn(parent, "ResetBtn", "重新开始", BR(), BR(), new Vector2(-140, 50), V2(120, 44));
         if (hud.resetButton != null)
             hud.resetButton.GetComponent<Image>().color = new Color(0.9f, 0.75f, 0.2f);
 
@@ -91,8 +91,14 @@ public static class RaceCanvasBuilder
         goPanel.SetActive(false);
 
         hud.gameOverPanel = goPanel;
-        hud.gameOverText = MakeText(goPanel, "GameOverText", "=== RACE OVER ===", 26,
-            CC(), CC(), Vector2.zero, new Vector2(500, 280), TextAlignmentOptions.Center);
+        hud.gameOverText = MakeText(goPanel, "GameOverText", "=== 比赛结束 ===", 26,
+            CC(), CC(), Vector2.zero, new Vector2(500, 240), TextAlignmentOptions.Center);
+
+        // -- 返回主菜单 按钮（GameOver 面板内） --
+        hud.backToMenuButton = MakeBtn(goPanel, "BackToMenuBtn", "返回主菜单",
+            CC(), CC(), new Vector2(0, -110), V2(200, 50));
+        if (hud.backToMenuButton != null)
+            hud.backToMenuButton.GetComponent<Image>().color = new Color(0.3f, 0.6f, 0.9f);
     }
 
     static void BuildGearButtons(GameObject parent, HUDUI hud)
@@ -111,7 +117,7 @@ public static class RaceCanvasBuilder
         hud.gear2Button        = MakeBtn(ct, "Gear2Btn",        "G2", TL(), TL(), new Vector2(x, 0), V2(w, h)); x += w + gap;
         hud.gear3Button        = MakeBtn(ct, "Gear3Btn",        "G3", TL(), TL(), new Vector2(x, 0), V2(w, h)); x += w + gap;
         hud.gear4Button        = MakeBtn(ct, "Gear4Btn",        "G4", TL(), TL(), new Vector2(x, 0), V2(w, h)); x += w + gap * 2;
-        hud.confirmGearButton  = MakeBtn(ct, "ConfirmGearBtn",  "CONFIRM", TL(), TL(), new Vector2(x, 0), V2(120, h));
+        hud.confirmGearButton  = MakeBtn(ct, "ConfirmGearBtn",  "确认", TL(), TL(), new Vector2(x, 0), V2(120, h));
 
         if (hud.confirmGearButton != null)
             hud.confirmGearButton.GetComponent<Image>().color = new Color(0.3f, 0.6f, 0.9f);
@@ -152,11 +158,11 @@ public static class RaceCanvasBuilder
         };
 
         // -- 牌堆信息：左下角 --
-        ch.deckInfoText = MakeText(parent, "DeckInfo", "Deck: 12S + 3H", 15,
+        ch.deckInfoText = MakeText(parent, "DeckInfo", "牌堆: 12速 + 3热", 15,
             BL(), BL(), new Vector2(20, 50), V2(280, 26), TextAlignmentOptions.Left);
 
-        // -- PLAY 按钮：底栏靠右 --
-        ch.playCardsButton = MakeBtn(parent, "PlayBtn", "PLAY", BR(), BR(), new Vector2(-280, 40), V2(130, 50));
+        // -- 出牌 按钮：底栏靠右 --
+        ch.playCardsButton = MakeBtn(parent, "PlayBtn", "出牌", BR(), BR(), new Vector2(-280, 40), V2(130, 50));
         if (ch.playCardsButton != null)
             ch.playCardsButton.GetComponent<Image>().color = new Color(0.2f, 0.8f, 0.3f);
 
@@ -188,7 +194,7 @@ public static class RaceCanvasBuilder
         tmp.color = new Color(0.88f, 0.9f, 0.94f);
 
         // 显式设置字体，避免回退到 LiberationSans (Mobile shader → 模糊)
-        var fontPath = AssetDatabase.GUIDToAssetPath(MSYH_SDF_GUID);
+        var fontPath = AssetDatabase.GUIDToAssetPath(FONT_SDF_GUID);
         var fontAsset = AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>(fontPath);
         if (fontAsset != null) tmp.font = fontAsset;
 
@@ -200,7 +206,7 @@ public static class RaceCanvasBuilder
     /// </summary>
     static TMP_FontAsset LoadDefaultFont()
     {
-        var fontPath = AssetDatabase.GUIDToAssetPath(MSYH_SDF_GUID);
+        var fontPath = AssetDatabase.GUIDToAssetPath(FONT_SDF_GUID);
         return AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(fontPath);
     }
 
