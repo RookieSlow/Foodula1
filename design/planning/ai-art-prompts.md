@@ -437,6 +437,448 @@ Style: flat UI divider, like an <hr> tag in HTML. Absolute minimalism.
 
 ---
 
+## 🟢 P2.5 — 赛道布局背景图（6 项）NEW
+
+> 🎯 **用途不同于 `track_env_*.png`**：这些是带完整赛道线路的布局图，
+> 直接铺在游戏场景中作为赛道本体。赛道线路清晰可见，节点沿线路布设。
+> **尺寸**: 4096×4096px — 需要足够大的分辨率来容纳 42-62 个节点的细节。
+> **视图**: 完全俯视 (top-down)，纯 2D 平面。
+
+### 通用规则（6 条赛道全部遵守）
+
+```
+ALL tracks must follow these rules:
+- PURE 2D top-down flat view — NO 3D perspective, NO isometric tilt,
+  NO shadows, NO depth of field, NO gradients
+- The RACING CIRCUIT must be clearly visible as a wide road/path
+  (dark gray asphalt #3A3D42, ~80-120px wide for the track surface)
+- White dashed center line running along the entire track
+- Red-white curb stripes (#E5533B + #FFFFFF) on both edges of corners
+- The track shape should be recognizable based on the real circuit layout
+- Surrounding environment: flat colored terrain with simple geometric
+  shapes for buildings, trees, landmarks (board game map style)
+- Start/Finish line: a checkered band across the track at the start position
+- The track should fill ~70% of the canvas, leaving margins for environment
+- Style: like a printed board game map — clean, flat, readable at game scale
+- NO text labels, NO numbers on the track itself
+```
+
+---
+
+### 🇬🇧 英国 — 银石下午茶赛道 `track_layout_uk.png`
+
+```
+[UK Silverstone] A 2D flat top-down board game race track map, 4096x4096px.
+Pure 2D — NO 3D, NO perspective, NO shadows, NO gradients.
+
+TRACK LAYOUT (Silverstone Circuit shape):
+- The circuit is a roughly triangular/oval hybrid shape, clockwise direction.
+- Start/Finish on a long straight at the bottom-left area (Hamilton Straight).
+- After Start: a quick right-left flick (Abbey T1 + Farm T2, fast sweeping).
+- Then a tight right-hand hairpin complex (Village + The Loop — two tight
+  right turns forming a hook shape).
+- A medium straight (Wellington Straight) leading to a left-hand sweep
+  (Brooklands) followed by another left (Luffield).
+- Then the track sweeps right through Woodcote and into the signature
+  HIGH-SPEED S-COMPLEX: Maggotts-Becketts-Chapel — a sequence of
+  quick direction changes (left-right-left-right-left) through fast curves.
+- A long straight (Hangar Straight) follows, then a right-hand corner (Stowe).
+- A tight left-right chicane (Vale) before the final right-hander (Club)
+  bringing cars back to the Start/Finish straight.
+- Total track character: FAST and FLOWING, with the iconic S-complex as
+  the visual centerpiece.
+
+ENVIRONMENT (British afternoon tea + Silverstone):
+- Surrounding terrain: muted gray-green #7B8C7B flat fill.
+- Scattered white geometric triangles (tea tents) near the track edges.
+- In the distance (top-left): a simplified Windsor Castle silhouette —
+  flat gray rectangle with crenellations.
+- A few dark green rounded tree clusters.
+- Sparse rain streak hints (very thin, subtle diagonal white lines,
+  low opacity) — typical British weather.
+- The overall feel: elegant, classic, slightly moody.
+
+TRACK MARKINGS:
+- The Maggotts-Becketts S-complex should be visually emphasized with
+  slightly wider curb markings.
+- Start/Finish line: prominent checkered band across the track.
+- The tight hairpin (Village/Loop) should clearly narrow.
+```
+
+---
+
+### 🇩🇪 德国 — 纽博格林啤酒赛道 `track_layout_de.png`
+
+```
+[Germany Nürburgring] A 2D flat top-down board game race track map, 4096x4096px.
+Pure 2D — NO 3D, NO perspective, NO shadows, NO gradients.
+
+TRACK LAYOUT (Nürburgring GP-Strecke shape):
+- A compact, technical circuit, clockwise direction.
+- Start/Finish on a medium straight at the bottom.
+- After Start: a tight RIGHT hairpin (Castrol-S, almost 180°).
+- Immediately into the MERCEDES ARENA complex: a tight right-left-right
+  sequence of connected corners, forming a stadium-like bowl shape.
+- A medium left (Valvoline) then right (Ford Kurve).
+- A downhill-feeling straight (suggested by terrain getting slightly darker
+  green below the track).
+- A tight hairpin left (Dunlop Kehre, ~180°).
+- Then the SCHUMACHER S: a fast right-left flick — the fastest section
+  of this circuit.
+- A medium straight, then a series of medium-speed corners (Kumho, Bit).
+- A technical chicane (Veedol) followed by NGK Chicane (tight left-right).
+- Final medium right (Coca-Cola) back to Start/Finish.
+- Total track character: COMPACT and TECHNICAL, rhythm of
+  straight → heavy braking → complex corner → repeat.
+
+ENVIRONMENT (German beer garden + Black Forest):
+- Surrounding terrain: dark forest green #3A5C3A flat fill.
+- Dense clusters of dark green triangle shapes (pine trees — Black Forest)
+  surrounding the circuit closely.
+- A few amber #B8860B rectangular patches (beer garden clearings with
+  long wooden tables — simple brown rectangles with dots for seats).
+- In one corner: a simple flat gray geometric castle ruin silhouette
+  (Nürburg castle — just a few gray rectangle blocks).
+- Sparse fog/mist suggestion: very subtle white translucent streaks
+  across low areas.
+- The overall feel: dense, enclosed, atmospheric, precision-focused.
+```
+
+---
+
+### 🇮🇹 意大利 — 蒙扎意面赛道 `track_layout_it.png`
+
+```
+[Italy Monza] A 2D flat top-down board game race track map, 4096x4096px.
+Pure 2D — NO 3D, NO perspective, NO shadows, NO gradients.
+
+TRACK LAYOUT (Monza Circuit shape):
+- The TEMPLE OF SPEED — long straights, few corners, clockwise.
+- Start/Finish on a VERY LONG straight at the bottom (~25% of track length).
+- After the long start straight: a tight RIGHT-LEFT chicane
+  (Variante del Rettifilo — sharp, narrow, the hardest braking zone).
+- A medium straight, then the sweeping CURVA GRANDE: a long,
+  gradual right-hand curve spanning a large arc — almost a quarter-circle.
+- Another straight, then a tight RIGHT-LEFT chicane (Variante della Roggia).
+- More straight into two medium left-handers in sequence:
+  Lesmo 1 and Lesmo 2 (gentle curves, close together).
+- Another straight, then the VARIANTE ASCARI: a quick left-right-left
+  flick — the most technical section of Monza.
+- A LONG curved straight leading to the iconic PARABOLICA:
+  a huge sweeping right-hand curve (~quarter-circle) that brings
+  cars back onto the Start/Finish straight.
+- Total track character: LONG STRAIGHTS + SWEEPING CURVES.
+  The straights dominate. Curva Grande and Parabolica are the
+  signature visual elements — two massive arcs.
+
+ENVIRONMENT (Tuscan countryside + Italian pasta culture):
+- Surrounding terrain: warm olive green #8B9A6B flat fill.
+- Gentle rolling hill contour lines (slightly darker green curved lines).
+- Tall thin dark green cypress tree shapes scattered around.
+- A few warm terracotta #C4956A rounded patches (Tuscan rooftops).
+- In the top-right distance: a simplified Colosseum silhouette —
+  flat beige oval with arched cutouts.
+- A few wooden pasta-drying rack structures near the track
+  (simple geometric: two vertical brown lines with horizontal cross-bars).
+- The overall feel: SUNNY, open, glamorous, speed-focused.
+```
+
+---
+
+### 🇺🇸 美国 — 印第安纳波利斯汉堡赛道 `track_layout_us.png`
+
+```
+[USA Indianapolis] A 2D flat top-down board game race track map, 4096x4096px.
+Pure 2D — NO 3D, NO perspective, NO shadows, NO gradients.
+
+TRACK LAYOUT (Indianapolis Motor Speedway Oval shape):
+- A PURE OVAL — the simplest and most iconic shape in racing.
+- Counter-clockwise direction (Indy 500 tradition).
+- The oval is a rounded rectangle: two long parallel straights
+  (front straight and back straight), connected by four identical
+  banked turns at the corners.
+- Each turn is a wide, sweeping 90° curve — all four are identical
+  in radius and width.
+- The front straight (bottom) is slightly longer than the back straight.
+- Start/Finish line: prominent checkered band across the front straight,
+  near the exit of Turn 4.
+- The track is WIDER than other circuits (representing the wide oval).
+- Total track character: BRUTALLY SIMPLE — 4 identical turns,
+  2 long straights, pure speed. NOT a road course.
+
+ENVIRONMENT (American BBQ + Midwest):
+- Surrounding terrain: warm beige-tan #C4B896 flat fill (Midwest plains).
+- The INFIELD (inside the oval): a large rectangular area filled with
+  small BBQ-themed elements —
+  - Tiny orange-red dot clusters (charcoal grills)
+  - Small red-white checkered tablecloth squares (picnic tables)
+  - A simplified Indy Pagoda silhouette at the center:
+    a tall rectangular tower with layered tiers, flat gray
+- The OUTSIDE: mostly empty beige space with scattered small
+  grandstand shapes (simple gray rectangles with tiny colored dots for seats).
+- A few subtle heat-wave shimmer lines across the far straight
+  (very faint, thin horizontal wavy lines — hot Midwest sun).
+- The overall feel: VAST, open, American-scale, BBQ party atmosphere.
+```
+
+---
+
+### 🇨🇳 中国 — 上海点心赛道 `track_layout_cn.png`
+
+```
+[China Shanghai] A 2D flat top-down board game race track map, 4096x4096px.
+Pure 2D — NO 3D, NO perspective, NO shadows, NO gradients.
+
+TRACK LAYOUT (Shanghai International Circuit shape):
+- The track is shaped like the Chinese character "上" (shàng) —
+  this is the most distinctive circuit silhouette in the game.
+- Clockwise direction.
+- Start/Finish on a medium straight at the bottom.
+- After Start, the track immediately enters the YIN-YANG SPIRAL
+  (Turns 1-3): a 270° tightening right-hand spiral that coils inward.
+  Visually, this should look like a snail-shell spiral — the track
+  curves right and keeps tightening until it faces downward.
+- A short left flick (Turn 4) to exit the spiral.
+- A short straight, then a medium right kink (Turn 5).
+- Another short straight into a tight RIGHT HAIRPIN (Turn 6, ~180°).
+- A short connecting section with two fast left-right sweeps (Turns 7-8).
+- Two medium left-handers (Turns 9-10).
+- A medium straight into the ANTING SPIRAL (Turns 11-13):
+  a REVERSE spiral — starts TIGHT and gradually WIDENS.
+  Visually: small radius → expanding radius, like a conch shell opening up.
+- After the spiral exits: THE LONGEST STRAIGHT IN THE GAME
+  (Dragon Beard Straight) — spanning ~30% of the entire track length,
+  running horizontally across the canvas.
+- At the end of the long straight: a TIGHT RIGHT HAIRPIN (Turn 14) —
+  the heaviest braking zone. Visually dramatic contrast:
+  long fast arrow → sudden sharp turn.
+- A short straight, a medium right kink (Turn 15), and the final
+  left curve (Turn 16) back to Start/Finish.
+- Total track character: EXTREME CONTRAST — the tightest spirals
+  next to the longest straight. The "上" shape should be subtly
+  readable from above.
+
+ENVIRONMENT (Shanghai skyline + dim sum culture):
+- Surrounding terrain: pale gray-blue #C8CCD0 flat fill
+  (urban/overcast Shanghai feel).
+- A very faint, large "上" watermark character in slightly darker gray
+  across the background — subtle, like a texture, not distracting.
+- In the top-right distance: Lujiazui skyline silhouette —
+  simplified flat geometric shapes:
+  - Oriental Pearl Tower: two spheres on a tall spike
+  - Shanghai Tower: a twisting tapered rectangle
+  - Other buildings: flat rectangles of varying heights
+- The PIT AREA (near the Anting Spiral exit): a cylindrical
+  bamboo steamer building shape — large round structure with
+  horizontal line texture (bamboo weave suggestion).
+- Red #C41E3A neon accent lines following the track edges
+  (thin, like LED strips).
+- The overall feel: MODERN meets traditional, technical precision,
+  dramatic scale contrasts.
+```
+
+---
+
+### 🇯🇵 日本 — 铃鹿寿司赛道 `track_layout_jp.png`
+
+```
+[Japan Suzuka] A 2D flat top-down board game race track map, 4096x4096px.
+Pure 2D — NO 3D, NO perspective, NO shadows, NO gradients.
+
+TRACK LAYOUT (Suzuka Circuit shape):
+- The ONLY FIGURE-8 CIRCUIT in the game — the track CROSSES ITSELF.
+  This must be clearly visible: two sections of track overlapping,
+  with the crossover point visually distinct.
+- Clockwise direction overall, but the figure-8 means half the lap
+  goes one way and half goes the other relative to the crossing.
+- Start/Finish on a medium straight at the bottom-right.
+- After Start: a fast sweeping RIGHT (First Curve, T1).
+- Then a tighter RIGHT (Second Curve, T2) — heavy braking.
+- Immediately into THE ESSES (S-Curves, T3-T7): a legendary sequence
+  of 5-7 quick left-right direction changes.
+  Visually: a snake-like wiggle — left, right, left, right, left —
+  flowing up the canvas like a ribbon. This is Suzuka's signature.
+- A short straight, then DEGNER CURVES (T8-T9): a medium right
+  followed by a tight right — two-step increasing difficulty.
+- Immediately after Degner: the CROSSOVER POINT. The track passes
+  UNDER the earlier section (the back straight crosses OVER via a bridge).
+  Visually: the track dips into a tunnel/darker section, while another
+  track segment passes above it.
+- After the crossover: a TIGHT LEFT HAIRPIN (T11, Ramen Hairpin).
+- A short straight, then 200R: a FAST sweeping right curve.
+- A short connecting section into SPOON CURVE (T13-14): a long
+  double-apex left-hander — two connected left curves forming
+  a spoon-like shape.
+- A LONG BACK STRAIGHT — running across the top of the canvas,
+  crossing OVER the earlier section at the figure-8 crossover bridge.
+- After the back straight: the legendary 130R — a VERY FAST
+  sweeping left curve. Wide, flowing, the fastest corner on the track.
+- A short braking zone into the CASIO TRIANGLE CHICANE (T16-18):
+  a tight right-left-right flick just before the finish.
+- Back to Start/Finish.
+- Total track character: THE ULTIMATE DRIVER'S CIRCUIT —
+  figure-8 uniqueness, high corner density, the Esses + 130R +
+  Spoon as three iconic sequences.
+
+ENVIRONMENT (Japanese sushi culture + Suzuka surroundings):
+- Surrounding terrain: deep blue-green #4A6B5C flat fill.
+- At the CROSSOVER POINT: a GIANT PAIR OF CHOPSTICKS sculpture —
+  two long flat brown rectangles crossing in an X or parallel
+  arrangement, marking the figure-8 intersection.
+- At the Start/Finish area: a simplified vermillion TORII GATE —
+  two vertical red-orange #E60012 posts with a horizontal curved top bar.
+- Scattered pink #FFB7C5 dot clusters (cherry blossom trees) —
+  small pink circles with slightly lighter centers.
+- In the top-left distance: MOUNT FUJI silhouette — a simple flat
+  white triangle with a flat gray top (snow cap). Clean geometric shape.
+- A few subtle curved line patterns in the background suggesting
+  Japanese wave motifs (Seigaiha — very faint, just texture).
+- The overall feel: SACRED racing ground, precision and tradition,
+  beautiful but unforgiving. The most technical and visually
+  distinctive circuit.
+```
+
+---
+
+### 🇩🇪 德国 — 纽博格林北环耐力赛 `track_layout_de_endurance.png`
+
+```
+[Germany Nürburgring Nordschleife] A 2D flat top-down board game race track map,
+4096x4096px. Pure 2D — NO 3D, NO perspective, NO shadows, NO gradients.
+
+TRACK LAYOUT (Nürburgring Nordschleife — "Green Hell"):
+- THE LONGEST TRACK IN THE GAME. ~20.8km, 73+ corners.
+  The track should fill ~85% of the canvas — it's massive and sprawling.
+- Clockwise direction.
+- The layout is a wild, serpentine ribbon winding through dense forest.
+  Unlike modern GP circuits, this is an old-school road circuit:
+  NO long straights, NO rhythm — just corner after corner after corner,
+  like a roller coaster drawn by a madman.
+- Start/Finish at the bottom-left area (near the old pits).
+- KEY SECTIONS (from Start):
+  - After Start: a sequence of fast sweeping curves climbing upward —
+    Flugplatz (the "airport" — a crest where cars nearly lift off),
+    then a series of linked fast bends winding through the forest.
+  - Adenauer Forst: a tight hairpin-like section in a forest clearing.
+  - Fuchsröhre ("Fox Hole"): the track dips into a deep compression —
+    visually, the road narrows between steep banks.
+  - Bergwerk: a tight right-hander at the lowest point, then the climb begins.
+  - THE KARUSSELL: the most famous corner in motorsport —
+    a steeply banked concrete bowl corner. Visually distinctive:
+    a circular carousel-like curve with banked inner wall (suggested
+    by a wider, darker inner edge).
+  - After Karussell: a relentless climb through Hohe Acht, Wippermann,
+    Brünnchen (a spectator-favorite sweeping right with a viewing area),
+    Pflanzgarten (a series of jumps and compressions).
+  - Schwalbenschwanz ("Swallow's Tail"): a complex multi-apex section
+    near the end.
+  - A final sweeping section through Galgenkopf back to the start.
+- The Nordschleife overlaps partially with the GP-Strecke layout —
+  they share the Start/Finish area and final corners. But the Nordschleife
+  immediately diverges into the forest while the GP circuit stays compact.
+- Total track character: BRUTAL, RELENTLESS, terrifying. A narrow ribbon
+  of asphalt through dense dark forest, constantly turning, climbing,
+  and falling. No rest, no respite. "Green Hell."
+
+ENVIRONMENT (German Black Forest + dark fairy tale):
+- Surrounding terrain: deep dark forest green #2D4A2D flat fill
+  (darker and more ominous than the GP circuit).
+- EXTREMELY DENSE tree cover — the track is hemmed in by forest
+  on all sides. Use tight clusters of dark green triangles (pine trees)
+  crowding right up to the track edges.
+- Patches of fog/mist: very subtle translucent white streaks weaving
+  through the forest sections (low opacity).
+- A few small amber #B8860B glowing dots scattered in the forest
+  (campfires / torch lights of spectators camping in the woods —
+  a Nordschleife tradition).
+- At the KARUSSELL: a small spectator viewing area — simple
+  geometric shapes suggesting a wooden platform with tiny colorful dots.
+- Castle ruins visible at two points:
+  - Nürburg castle (gray geometric ruins) near the top of the circuit
+  - A second smaller ruin deeper in the forest
+- The overall feel: DARK, MYSTERIOUS, intimidating.
+  Like a Grimm fairy tale forest that happens to have a race track
+  running through it. The track should look DANGEROUS just from
+  its visual density.
+```
+
+---
+
+### 🏁 勒芒拉萨尔特赛道 `track_layout_fr_lemans.png`
+
+> ℹ️ **设计说明**：勒芒作为测试/中立赛道，不对应任何国家队。法国美食主题仅用于赛道环境的视觉包装。
+
+```
+[France Le Mans] A 2D flat top-down board game race track map, 4096x4096px.
+Pure 2D — NO 3D, NO perspective, NO shadows, NO gradients.
+
+TRACK LAYOUT (Circuit de la Sarthe — Le Mans 24 Hours):
+- A SEMI-PERMANENT circuit: part dedicated race track, part public roads.
+  This means some sections should look more "road-like" (narrower, with
+  subtle road markings instead of full curb stripes).
+- Clockwise direction. ~13.6km, 38 corners.
+- The defining feature: THE MULSANNE STRAIGHT — one of the longest
+  straights in motorsport (~6km in real life). But unlike modern Le Mans
+  which has 2 chicanes breaking it up, this should show the classic
+  CONFIGURATION: a MASSIVE unbroken straight with two small chicane
+  interruptions.
+- TRACK SHAPE (roughly a stretched triangle/oval hybrid):
+  - Start/Finish on the bottom section, a medium straight with pit buildings.
+  - Through the DUNLOP CHICANE: a quick right-left flick just after start,
+    then a sweeping right curve (Dunlop Curve) climbing slightly.
+  - TERTRE ROUGE: a fast right-hand sweeper marking the transition
+    from permanent circuit to public road section.
+  - MULSANNE STRAIGHT: THE defining feature. A dead-straight line
+    running horizontally across almost HALF the canvas width.
+    Two small chicanes (Mulsanne Chicane 1 & 2) interrupt it —
+    each is a tight left-right flick, like small speed bumps on a highway.
+    The straight should visually dominate the top half of the canvas.
+  - MULSANNE CORNER: a tight right-hand turn at the end of the straight.
+  - INDIANAPOLIS: a fast left-hand sweeper (named after the banked
+    Indianapolis-like curve, but flat).
+  - ARNAGE: the slowest corner on the track — a tight right-angle right
+    turn in the village of Arnage (a few small geometric building shapes
+    clustered here).
+  - PORSCHE CURVES: a sequence of high-speed sweeping right-left-right
+    curves — the most flowing section of the track, like a ribbon undulating
+    through the countryside. Visually dramatic.
+  - FORD CHICANES: a tight left-right-left-right flick just before
+    the finish line.
+  - Back to Start/Finish.
+- Visual distinction: the PUBLIC ROAD sections (Mulsanne Straight area)
+  should have slightly lighter gray asphalt than the permanent circuit,
+  with subtle road markings (dashed lines) rather than full curb stripes.
+- Total track character: THE ENDURANCE LEGEND — the longest
+  single straight in the game (Mulsanne), dramatic transitions between
+  permanent track and public roads, day-into-night-into-day atmosphere.
+
+ENVIRONMENT (French countryside + wine/cheese culture):
+- Surrounding terrain: warm golden-green #8A9A5E flat fill
+  (French countryside in summer).
+- TERRE ROUGE area: a patch of reddish-brown #A0522D soil
+  near the corner (the real corner is named after the red earth here).
+- Along the Mulsanne Straight: rows of poplar trees — thin tall
+  geometric green ovals in neat lines (French roadside tree rows).
+- Small geometric village shapes at ARNAGE and MULSANNE CORNER:
+  clusters of beige/tan rectangles with red-brown triangle roofs
+  (French village houses).
+- Scattered vineyard patches: small green grids of tiny dots
+  (grape vines in rows) near the Porsche Curves area.
+- The PIT COMPLEX (Start/Finish): a long rectangular structure
+  with a simple geometric grandstand.
+- In one corner of the canvas: a subtle, very faint French tricolor
+  watermark (three vertical bands: blue, white, red) — almost like
+  a stain in the countryside texture, not prominent.
+- A few small cheese-wheel shapes (flat beige circles with slightly
+  darker rims — subtle, like decorative elements near the track).
+- The overall feel: TIMELESS, elegant, pastoral but grand.
+  The track feels woven into the French countryside rather than
+  carved through it. The Mulsanne Straight is the visual anchor —
+  an impossibly long line through the rural landscape.
+```
+
+---
+
 ## 🔵 P3 — 特效资源（5 项）
 
 > ⚠️ 特效精灵都是极小尺寸的简单几何图形。AI 容易过度设计。保持极简。
@@ -516,6 +958,8 @@ Style: flat 2D icon, like a checkered flag emoji but simpler. Absolute minimalis
 | 18 | `track_apex_marker.png` | 弯心标记 | 64×64 | ✅ AI |
 | 19 | `track_start_finish.png` | 起终点线 | 128×64 | ✅ AI |
 | 20-25 | `track_env_*.png` ×6 | 赛道环境 | 2048×2048 | ✅ AI |
+| **赛道布局** |
+| 36-43 | `track_layout_*.png` ×8 | 赛道布局背景 | 4096×4096 | ✅ AI |
 | **UI** |
 | 26 | `panel_bg.png` | 面板底图 | 256×256 | ✅ AI |
 | 27 | `panel_header.png` | 面板标题 | 256×40 | ✅ AI |
@@ -534,7 +978,7 @@ Style: flat 2D icon, like a checkered flag emoji but simpler. Absolute minimalis
 | — | 热量温度计 | UI | 48×256 | ❌ Unity Image.Filled |
 | — | 字体 ×2 | 字体 | — | ❌ Google Fonts |
 
-**AI 生成总计: 35 张**（9 卡牌 + 6 赛车 + 10 赛道 + 5 UI + 5 特效）
+**AI 生成总计: 43 张**（9 卡牌 + 6 赛车 + 10 赛道 + 8 赛道布局 + 5 UI + 5 特效）
 
 ---
 

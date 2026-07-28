@@ -21,12 +21,16 @@ public class CardUI : MonoBehaviour
     public Sprite[] numberSprites = new Sprite[4]; // card_num_1~4.png
     public Sprite heatIconSprite;        // card_heat_icon.png
 
+    [Header("图标设置")]
+    public Vector2 iconSize = new Vector2(100, 100);
+
     [Header("卡牌数据")]
     public CardData cardData;
     public bool isSelected;
 
     private System.Action<CardUI> onClickCallback;
     private Image overlayImage; // 运行时动态创建的选中态叠加层
+    private Image iconImage;    // 运行时动态创建的速度数字/热量图标
 
     // 颜色常量（精灵图缺失时的回退方案）
     private static readonly Color COLOR_DEFAULT = new Color(1f, 1f, 1f, 1f);
@@ -35,7 +39,7 @@ public class CardUI : MonoBehaviour
 
     void Awake()
     {
-        // 创建选中态叠加层（覆盖在背景之上，文字之下）
+        // 创建选中态叠加层（覆盖在背景之上，图标之下）
         if (overlayImage == null)
         {
             GameObject overlayGO = new GameObject("Overlay", typeof(RectTransform));
@@ -50,6 +54,22 @@ public class CardUI : MonoBehaviour
             overlayImage.raycastTarget = false; // 不拦截点击
             overlayImage.color = new Color(1, 1, 1, 0); // 默认透明
             overlayImage.preserveAspect = true;
+        }
+
+        // 创建中央图标（显示速度数字或热量图标）
+        if (iconImage == null)
+        {
+            GameObject iconGO = new GameObject("Icon", typeof(RectTransform));
+            iconGO.transform.SetParent(transform, false);
+            RectTransform irt = iconGO.GetComponent<RectTransform>();
+            irt.anchorMin = new Vector2(0.5f, 0.5f);
+            irt.anchorMax = new Vector2(0.5f, 0.5f);
+            irt.sizeDelta = iconSize;
+            irt.anchoredPosition = Vector2.zero;
+
+            iconImage = iconGO.AddComponent<Image>();
+            iconImage.raycastTarget = false;
+            iconImage.preserveAspect = true;
         }
     }
 
@@ -74,11 +94,36 @@ public class CardUI : MonoBehaviour
                 backgroundImage.color = Color.white;
         }
 
-        // 设置中央图标/数字
+        // 设置中央图标（精灵图优先，文字回退）
+        Sprite iconSprite = null;
+        if (!data.IsHeat && numberSprites != null
+            && data.value >= 1 && data.value <= numberSprites.Length)
+        {
+            iconSprite = numberSprites[data.value - 1];
+        }
+        else if (data.IsHeat && heatIconSprite != null)
+        {
+            iconSprite = heatIconSprite;
+        }
+
+        if (iconImage != null)
+        {
+            iconImage.sprite = iconSprite;
+            iconImage.enabled = iconSprite != null;
+        }
+
+        // 文字回退：精灵图不可用时显示文字
         if (valueText != null)
         {
-            valueText.text = data.IsHeat ? "" : data.value.ToString();
-            valueText.color = Color.white;
+            if (iconSprite != null)
+            {
+                valueText.text = "";
+            }
+            else
+            {
+                valueText.text = data.IsHeat ? "" : data.value.ToString();
+                valueText.color = Color.white;
+            }
         }
 
         // 选中覆盖层初始隐藏
