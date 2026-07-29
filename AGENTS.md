@@ -56,3 +56,21 @@ See `docs/COLLABORATIVE-DESIGN-PRINCIPLE.md` for full protocol and examples.
 ## Context Management
 
 @.Codex/docs/context-management.md
+
+## Project Continuity
+
+Before planning, reviewing, or implementing project work, read the following
+project-local continuity documents:
+
+@docs/memory/project-overview.md
+
+@docs/memory/game-mechanics.md
+
+@docs/memory/current-task-list.md
+
+@production/session-state/active.md
+
+The files under `.claude/agent-memory/` and
+`production/session-logs/session-log.md` are historical Claude Code sources.
+Use them for provenance, but prefer the maintained documents under
+`docs/memory/` when information conflicts.

@@ -14,6 +14,9 @@ public class GameConfigSO : ScriptableObject
     [Tooltip("JSON 赛道世界空间缩放")]
     public float trackWorldSize = 30f;
 
+    [Tooltip("JSON track world-space height; defaults to the width for square layouts.")]
+    public float trackWorldHeight = 30f;
+
     [Tooltip("赛道总节点数（硬编码赛道模式）")]
     public int trackNodeCount = 42;
 

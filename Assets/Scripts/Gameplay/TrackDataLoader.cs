@@ -95,19 +95,31 @@ public static class TrackDataLoader
     /// Extract world-space positions from a TrackConfig's cells.
     /// Normalized coordinates (0-1) are mapped to world space:
     ///   center (0.5, 0.5) → worldOrigin
-    ///   size = worldSize units across
+    ///   size = worldWidth x worldHeight units
     /// </summary>
     public static Vector2[] ConfigToWorldPositions(TrackConfig config, float worldSize = 30f, Vector2? worldOrigin = null)
     {
+        return ConfigToWorldPositions(config, worldSize, worldSize, worldOrigin);
+    }
+
+    /// <summary>
+    /// Extract world-space positions using independent width and height values.
+    /// This preserves non-square source layouts without changing their normalized coordinates.
+    /// </summary>
+    public static Vector2[] ConfigToWorldPositions(
+        TrackConfig config,
+        float worldWidth,
+        float worldHeight,
+        Vector2? worldOrigin = null)
+    {
         Vector2 origin = worldOrigin ?? Vector2.zero;
-        float halfSize = worldSize * 0.5f;
 
         Vector2[] positions = new Vector2[config.cells.Length];
         for (int i = 0; i < config.cells.Length; i++)
         {
             var cell = config.cells[i];
-            float wx = (cell.position.x - 0.5f) * worldSize + origin.x;
-            float wy = (cell.position.y - 0.5f) * worldSize + origin.y;
+            float wx = (cell.position.x - 0.5f) * worldWidth + origin.x;
+            float wy = (cell.position.y - 0.5f) * worldHeight + origin.y;
             positions[i] = new Vector2(wx, wy);
         }
 

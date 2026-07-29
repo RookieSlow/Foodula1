@@ -277,8 +277,9 @@ public class TrackManager : MonoBehaviour
     {
         if (LoadedTrackConfig != null)
         {
-            float worldSize = config != null ? config.trackWorldSize : 30f;
-            return TrackDataLoader.ConfigToWorldPositions(LoadedTrackConfig, worldSize);
+            float worldWidth = config != null ? config.trackWorldSize : 30f;
+            float worldHeight = config != null ? config.trackWorldHeight : worldWidth;
+            return TrackDataLoader.ConfigToWorldPositions(LoadedTrackConfig, worldWidth, worldHeight);
         }
         return GetTrackShape42();
     }
