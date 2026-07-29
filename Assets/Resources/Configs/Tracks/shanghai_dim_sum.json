@@ -18,10 +18,17 @@
   "laps": 3,
   "hasPitLane": true,
   "weatherPool": [
-    "cloudy", "cloudy", "cloudy", "cloudy",
-    "light_rain", "light_rain", "light_rain",
-    "heavy_rain", "heavy_rain",
-    "sunny", "sunny"
+    "cloudy",
+    "cloudy",
+    "cloudy",
+    "cloudy",
+    "light_rain",
+    "light_rain",
+    "light_rain",
+    "heavy_rain",
+    "heavy_rain",
+    "sunny",
+    "sunny"
   ],
   "defaultWeather": "cloudy",
   "weatherConfigurationStatus": "configured",
@@ -41,7 +48,10 @@
       "name": "起点/终点线",
       "segmentId": "start_finish",
       "distanceMeters": 88,
-      "position": { "x": 0.50, "y": 0.42 }
+      "position": {
+        "x": 0.316535,
+        "y": 0.298892
+      }
     },
     {
       "index": 1,
@@ -49,7 +59,10 @@
       "name": "蒸笼起点直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.56, "y": 0.45 }
+      "position": {
+        "x": 0.305067,
+        "y": 0.354973
+      }
     },
     {
       "index": 2,
@@ -57,7 +70,10 @@
       "name": "蒸笼起点直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.62, "y": 0.485 }
+      "position": {
+        "x": 0.293599,
+        "y": 0.411054
+      }
     },
     {
       "index": 3,
@@ -65,7 +81,10 @@
       "name": "蒸笼起点直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.675, "y": 0.525 }
+      "position": {
+        "x": 0.28213,
+        "y": 0.467134
+      }
     },
     {
       "index": 4,
@@ -73,7 +92,10 @@
       "name": "蒸笼起点直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.725, "y": 0.57 }
+      "position": {
+        "x": 0.270662,
+        "y": 0.523215
+      }
     },
     {
       "index": 5,
@@ -81,7 +103,10 @@
       "name": "蒸笼起点直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.765, "y": 0.62 }
+      "position": {
+        "x": 0.259284,
+        "y": 0.579314
+      }
     },
     {
       "index": 6,
@@ -89,7 +114,10 @@
       "name": "阴阳弯",
       "segmentId": "yin_yang_spiral",
       "distanceMeters": 88,
-      "position": { "x": 0.795, "y": 0.672 },
+      "position": {
+        "x": 0.248474,
+        "y": 0.635525
+      },
       "cornerId": "yin_yang_spiral",
       "cornerLevel": 2,
       "cornerLimit": 3,
@@ -101,7 +129,10 @@
       "name": "阴阳弯",
       "segmentId": "yin_yang_spiral",
       "distanceMeters": 88,
-      "position": { "x": 0.818, "y": 0.725 },
+      "position": {
+        "x": 0.236883,
+        "y": 0.691578
+      },
       "cornerId": "yin_yang_spiral",
       "cornerLevel": 2,
       "cornerLimit": 3,
@@ -113,7 +144,10 @@
       "name": "阴阳弯",
       "segmentId": "yin_yang_spiral",
       "distanceMeters": 88,
-      "position": { "x": 0.83, "y": 0.778 },
+      "position": {
+        "x": 0.224987,
+        "y": 0.74757
+      },
       "cornerId": "yin_yang_spiral",
       "cornerLevel": 3,
       "cornerLimit": 2,
@@ -125,7 +159,10 @@
       "name": "阴阳弯",
       "segmentId": "yin_yang_spiral",
       "distanceMeters": 88,
-      "position": { "x": 0.828, "y": 0.805 },
+      "position": {
+        "x": 0.228144,
+        "y": 0.803008
+      },
       "cornerId": "yin_yang_spiral",
       "cornerLevel": 2,
       "cornerLimit": 3,
@@ -137,7 +174,10 @@
       "name": "赛道直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.815, "y": 0.79 }
+      "position": {
+        "x": 0.275662,
+        "y": 0.831306
+      }
     },
     {
       "index": 11,
@@ -145,7 +185,10 @@
       "name": "赛道直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.79, "y": 0.76 }
+      "position": {
+        "x": 0.323742,
+        "y": 0.809323
+      }
     },
     {
       "index": 12,
@@ -153,7 +196,10 @@
       "name": "出阴阳左弯",
       "segmentId": "yin_exit",
       "distanceMeters": 88,
-      "position": { "x": 0.76, "y": 0.725 },
+      "position": {
+        "x": 0.304696,
+        "y": 0.767869
+      },
       "cornerId": "yin_exit",
       "cornerLevel": 2,
       "cornerLimit": 3,
@@ -165,7 +211,10 @@
       "name": "虾饺短直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.732, "y": 0.688 }
+      "position": {
+        "x": 0.254319,
+        "y": 0.761053
+      }
     },
     {
       "index": 14,
@@ -173,7 +222,10 @@
       "name": "虾饺短直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.708, "y": 0.648 }
+      "position": {
+        "x": 0.288945,
+        "y": 0.725052
+      }
     },
     {
       "index": 15,
@@ -181,7 +233,10 @@
       "name": "烧麦右纽",
       "segmentId": "siu_mai_kink",
       "distanceMeters": 88,
-      "position": { "x": 0.69, "y": 0.605 },
+      "position": {
+        "x": 0.340409,
+        "y": 0.741884
+      },
       "cornerId": "siu_mai_kink",
       "cornerLevel": 2,
       "cornerLimit": 3,
@@ -193,7 +248,10 @@
       "name": "春卷下坡直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.68, "y": 0.56 }
+      "position": {
+        "x": 0.385397,
+        "y": 0.777277
+      }
     },
     {
       "index": 17,
@@ -201,7 +259,10 @@
       "name": "春卷下坡直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.675, "y": 0.512 }
+      "position": {
+        "x": 0.430385,
+        "y": 0.81267
+      }
     },
     {
       "index": 18,
@@ -209,7 +270,10 @@
       "name": "春卷下坡直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.678, "y": 0.462 }
+      "position": {
+        "x": 0.476661,
+        "y": 0.846143
+      }
     },
     {
       "index": 19,
@@ -217,7 +281,10 @@
       "name": "叉烧发卡",
       "segmentId": "char_siu_hairpin",
       "distanceMeters": 88,
-      "position": { "x": 0.69, "y": 0.415 },
+      "position": {
+        "x": 0.53069,
+        "y": 0.864943
+      },
       "cornerId": "char_siu_hairpin",
       "cornerLevel": 3,
       "cornerLimit": 2,
@@ -229,7 +296,10 @@
       "name": "叉烧发卡",
       "segmentId": "char_siu_hairpin",
       "distanceMeters": 88,
-      "position": { "x": 0.71, "y": 0.375 },
+      "position": {
+        "x": 0.585174,
+        "y": 0.882478
+      },
       "cornerId": "char_siu_hairpin",
       "cornerLevel": 3,
       "cornerLimit": 2,
@@ -241,7 +311,10 @@
       "name": "烧鹅短直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.735, "y": 0.342 }
+      "position": {
+        "x": 0.632776,
+        "y": 0.877173
+      }
     },
     {
       "index": 22,
@@ -249,7 +322,10 @@
       "name": "烧鹅短直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.762, "y": 0.315 }
+      "position": {
+        "x": 0.597145,
+        "y": 0.833871
+      }
     },
     {
       "index": 23,
@@ -257,7 +333,10 @@
       "name": "肠粉S弯",
       "segmentId": "cheung_fun_s",
       "distanceMeters": 88,
-      "position": { "x": 0.788, "y": 0.292 },
+      "position": {
+        "x": 0.547695,
+        "y": 0.805106
+      },
       "cornerId": "cheung_fun_s",
       "cornerLevel": 1,
       "cornerLimit": 4,
@@ -269,7 +348,10 @@
       "name": "肠粉S弯",
       "segmentId": "cheung_fun_s",
       "distanceMeters": 88,
-      "position": { "x": 0.808, "y": 0.275 },
+      "position": {
+        "x": 0.497853,
+        "y": 0.776957
+      },
       "cornerId": "cheung_fun_s",
       "cornerLevel": 2,
       "cornerLimit": 3,
@@ -281,7 +363,10 @@
       "name": "凤爪短直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.825, "y": 0.262 }
+      "position": {
+        "x": 0.449984,
+        "y": 0.746046
+      }
     },
     {
       "index": 26,
@@ -289,7 +374,10 @@
       "name": "凤爪短直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.838, "y": 0.255 }
+      "position": {
+        "x": 0.427492,
+        "y": 0.694544
+      }
     },
     {
       "index": 27,
@@ -297,7 +385,10 @@
       "name": "豉汁连续左弯",
       "segmentId": "black_bean_lefts",
       "distanceMeters": 88,
-      "position": { "x": 0.835, "y": 0.242 },
+      "position": {
+        "x": 0.447578,
+        "y": 0.642355
+      },
       "cornerId": "black_bean_lefts",
       "cornerLevel": 2,
       "cornerLimit": 3,
@@ -309,7 +400,10 @@
       "name": "豉汁连续左弯",
       "segmentId": "black_bean_lefts",
       "distanceMeters": 88,
-      "position": { "x": 0.815, "y": 0.235 },
+      "position": {
+        "x": 0.493985,
+        "y": 0.609435
+      },
       "cornerId": "black_bean_lefts",
       "cornerLevel": 2,
       "cornerLimit": 3,
@@ -321,7 +415,10 @@
       "name": "糯米鸡技术直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.79, "y": 0.24 }
+      "position": {
+        "x": 0.540556,
+        "y": 0.577572
+      }
     },
     {
       "index": 30,
@@ -329,7 +426,10 @@
       "name": "糯米鸡技术直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.76, "y": 0.25 }
+      "position": {
+        "x": 0.543249,
+        "y": 0.522616
+      }
     },
     {
       "index": 31,
@@ -337,7 +437,10 @@
       "name": "糯米鸡技术直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.73, "y": 0.265 }
+      "position": {
+        "x": 0.497293,
+        "y": 0.490007
+      }
     },
     {
       "index": 32,
@@ -345,7 +448,10 @@
       "name": "安亭弯",
       "segmentId": "anting_spiral",
       "distanceMeters": 88,
-      "position": { "x": 0.698, "y": 0.285 },
+      "position": {
+        "x": 0.460548,
+        "y": 0.456913
+      },
       "cornerId": "anting_spiral",
       "cornerLevel": 3,
       "cornerLimit": 2,
@@ -357,7 +463,10 @@
       "name": "安亭弯",
       "segmentId": "anting_spiral",
       "distanceMeters": 88,
-      "position": { "x": 0.665, "y": 0.31 },
+      "position": {
+        "x": 0.503331,
+        "y": 0.419617
+      },
       "cornerId": "anting_spiral",
       "cornerLevel": 2,
       "cornerLimit": 3,
@@ -369,7 +478,10 @@
       "name": "安亭弯",
       "segmentId": "anting_spiral",
       "distanceMeters": 88,
-      "position": { "x": 0.635, "y": 0.34 },
+      "position": {
+        "x": 0.555002,
+        "y": 0.43819
+      },
       "cornerId": "anting_spiral",
       "cornerLevel": 1,
       "cornerLimit": 4,
@@ -381,7 +493,10 @@
       "name": "安亭弯",
       "segmentId": "anting_spiral",
       "distanceMeters": 88,
-      "position": { "x": 0.608, "y": 0.372 },
+      "position": {
+        "x": 0.605139,
+        "y": 0.465809
+      },
       "cornerId": "anting_spiral",
       "cornerLevel": 1,
       "cornerLimit": 4,
@@ -393,7 +508,10 @@
       "name": "维修区入口",
       "segmentId": "pit_entry",
       "distanceMeters": 88,
-      "position": { "x": 0.582, "y": 0.405 }
+      "position": {
+        "x": 0.655276,
+        "y": 0.493429
+      }
     },
     {
       "index": 37,
@@ -401,7 +519,10 @@
       "name": "维修区出口",
       "segmentId": "pit_exit",
       "distanceMeters": 88,
-      "position": { "x": 0.558, "y": 0.438 }
+      "position": {
+        "x": 0.705413,
+        "y": 0.521049
+      }
     },
     {
       "index": 38,
@@ -409,7 +530,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.535, "y": 0.47 }
+      "position": {
+        "x": 0.75555,
+        "y": 0.548669
+      }
     },
     {
       "index": 39,
@@ -417,7 +541,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.508, "y": 0.50 }
+      "position": {
+        "x": 0.766515,
+        "y": 0.58845
+      }
     },
     {
       "index": 40,
@@ -425,7 +552,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.478, "y": 0.528 }
+      "position": {
+        "x": 0.7727,
+        "y": 0.6317
+      }
     },
     {
       "index": 41,
@@ -433,7 +563,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.445, "y": 0.552 }
+      "position": {
+        "x": 0.827144,
+        "y": 0.635938
+      }
     },
     {
       "index": 42,
@@ -441,7 +574,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.41, "y": 0.572 }
+      "position": {
+        "x": 0.855535,
+        "y": 0.588618
+      }
     },
     {
       "index": 43,
@@ -449,7 +585,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.372, "y": 0.588 }
+      "position": {
+        "x": 0.836607,
+        "y": 0.536433
+      }
     },
     {
       "index": 44,
@@ -457,7 +596,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.332, "y": 0.60 }
+      "position": {
+        "x": 0.792271,
+        "y": 0.500644
+      }
     },
     {
       "index": 45,
@@ -465,7 +607,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.29, "y": 0.608 }
+      "position": {
+        "x": 0.743401,
+        "y": 0.47084
+      }
     },
     {
       "index": 46,
@@ -473,7 +618,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.248, "y": 0.612 }
+      "position": {
+        "x": 0.694532,
+        "y": 0.441035
+      }
     },
     {
       "index": 47,
@@ -481,7 +629,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.205, "y": 0.612 }
+      "position": {
+        "x": 0.645662,
+        "y": 0.411231
+      }
     },
     {
       "index": 48,
@@ -489,7 +640,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.165, "y": 0.608 }
+      "position": {
+        "x": 0.596792,
+        "y": 0.381426
+      }
     },
     {
       "index": 49,
@@ -497,7 +651,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.128, "y": 0.60 }
+      "position": {
+        "x": 0.547922,
+        "y": 0.351622
+      }
     },
     {
       "index": 50,
@@ -505,7 +662,10 @@
       "name": "龙须糖超长直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.095, "y": 0.588 }
+      "position": {
+        "x": 0.499089,
+        "y": 0.321756
+      }
     },
     {
       "index": 51,
@@ -513,7 +673,10 @@
       "name": "奶黄包重刹发卡",
       "segmentId": "custard_bun_hairpin",
       "distanceMeters": 88,
-      "position": { "x": 0.068, "y": 0.572 },
+      "position": {
+        "x": 0.450328,
+        "y": 0.291775
+      },
       "cornerId": "custard_bun_hairpin",
       "cornerLevel": 3,
       "cornerLimit": 2,
@@ -525,7 +688,10 @@
       "name": "奶黄包重刹发卡",
       "segmentId": "custard_bun_hairpin",
       "distanceMeters": 88,
-      "position": { "x": 0.048, "y": 0.548 },
+      "position": {
+        "x": 0.401567,
+        "y": 0.261793
+      },
       "cornerId": "custard_bun_hairpin",
       "cornerLevel": 3,
       "cornerLimit": 2,
@@ -537,7 +703,10 @@
       "name": "奶黄包重刹发卡",
       "segmentId": "custard_bun_hairpin",
       "distanceMeters": 88,
-      "position": { "x": 0.038, "y": 0.522 },
+      "position": {
+        "x": 0.352806,
+        "y": 0.231811
+      },
       "cornerId": "custard_bun_hairpin",
       "cornerLevel": 3,
       "cornerLimit": 2,
@@ -549,7 +718,10 @@
       "name": "萝卜丝饼短直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.035, "y": 0.492 }
+      "position": {
+        "x": 0.304044,
+        "y": 0.201829
+      }
     },
     {
       "index": 55,
@@ -557,7 +729,10 @@
       "name": "萝卜丝饼短直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.042, "y": 0.46 }
+      "position": {
+        "x": 0.255283,
+        "y": 0.171847
+      }
     },
     {
       "index": 56,
@@ -565,7 +740,10 @@
       "name": "马拉糕右纽",
       "segmentId": "malay_cake_kink",
       "distanceMeters": 88,
-      "position": { "x": 0.058, "y": 0.432 },
+      "position": {
+        "x": 0.206522,
+        "y": 0.141865
+      },
       "cornerId": "malay_cake_kink",
       "cornerLevel": 2,
       "cornerLimit": 3,
@@ -577,7 +755,10 @@
       "name": "蛋挞衔接直道",
       "segmentId": "straight",
       "distanceMeters": 88,
-      "position": { "x": 0.078, "y": 0.41 }
+      "position": {
+        "x": 0.157761,
+        "y": 0.111883
+      }
     },
     {
       "index": 58,
@@ -585,7 +766,10 @@
       "name": "蛋挞衔接直道",
       "segmentId": "straight",
       "distanceMeters": 87,
-      "position": { "x": 0.102, "y": 0.392 }
+      "position": {
+        "x": 0.160815,
+        "y": 0.151224
+      }
     },
     {
       "index": 59,
@@ -593,7 +777,10 @@
       "name": "杏仁饼终点左弯",
       "segmentId": "almond_cookie_final",
       "distanceMeters": 87,
-      "position": { "x": 0.132, "y": 0.38 },
+      "position": {
+        "x": 0.206953,
+        "y": 0.184914
+      },
       "cornerId": "almond_cookie_final",
       "cornerLevel": 2,
       "cornerLimit": 3,
@@ -605,7 +792,10 @@
       "name": "回到蒸笼起点",
       "segmentId": "straight",
       "distanceMeters": 87,
-      "position": { "x": 0.172, "y": 0.378 }
+      "position": {
+        "x": 0.254229,
+        "y": 0.217189
+      }
     },
     {
       "index": 61,
@@ -613,7 +803,10 @@
       "name": "回到蒸笼起点",
       "segmentId": "straight",
       "distanceMeters": 87,
-      "position": { "x": 0.22, "y": 0.385 }
+      "position": {
+        "x": 0.301504,
+        "y": 0.249463
+      }
     }
   ]
 }

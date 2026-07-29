@@ -19,10 +19,17 @@
   "laps": 3,
   "hasPitLane": false,
   "weatherPool": [
-    "sunny", "sunny", "sunny", "sunny", "sunny",
-    "cloudy", "cloudy",
-    "heavy_rain", "heavy_rain",
-    "hot", "hot"
+    "sunny",
+    "sunny",
+    "sunny",
+    "sunny",
+    "sunny",
+    "cloudy",
+    "cloudy",
+    "heavy_rain",
+    "heavy_rain",
+    "hot",
+    "hot"
   ],
   "defaultWeather": "sunny",
   "weatherConfigurationStatus": "configured",
@@ -41,7 +48,10 @@
       "name": "起点/终点线",
       "segmentId": "start_finish",
       "distanceMeters": 96,
-      "position": { "x": 0.95, "y": 0.50 }
+      "position": {
+        "x": 0.620989,
+        "y": 0.706103
+      }
     },
     {
       "index": 1,
@@ -49,7 +59,10 @@
       "name": "炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.94, "y": 0.535 }
+      "position": {
+        "x": 0.676569,
+        "y": 0.704969
+      }
     },
     {
       "index": 2,
@@ -57,7 +70,10 @@
       "name": "炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.925, "y": 0.568 }
+      "position": {
+        "x": 0.73215,
+        "y": 0.703853
+      }
     },
     {
       "index": 3,
@@ -65,7 +81,10 @@
       "name": "炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.905, "y": 0.60 }
+      "position": {
+        "x": 0.787727,
+        "y": 0.702645
+      }
     },
     {
       "index": 4,
@@ -73,7 +92,10 @@
       "name": "炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.88, "y": 0.628 }
+      "position": {
+        "x": 0.842389,
+        "y": 0.693718
+      }
     },
     {
       "index": 5,
@@ -81,7 +103,10 @@
       "name": "炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.85, "y": 0.652 }
+      "position": {
+        "x": 0.889563,
+        "y": 0.664972
+      }
     },
     {
       "index": 6,
@@ -89,7 +114,10 @@
       "name": "炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.818, "y": 0.672 }
+      "position": {
+        "x": 0.923841,
+        "y": 0.621572
+      }
     },
     {
       "index": 7,
@@ -97,7 +125,10 @@
       "name": "炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.782, "y": 0.688 }
+      "position": {
+        "x": 0.939326,
+        "y": 0.56866
+      }
     },
     {
       "index": 8,
@@ -105,7 +136,10 @@
       "name": "炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.745, "y": 0.70 }
+      "position": {
+        "x": 0.939288,
+        "y": 0.513092
+      }
     },
     {
       "index": 9,
@@ -113,7 +147,10 @@
       "name": "炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.705, "y": 0.708 }
+      "position": {
+        "x": 0.938332,
+        "y": 0.457509
+      }
     },
     {
       "index": 10,
@@ -121,7 +158,10 @@
       "name": "炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.665, "y": 0.712 }
+      "position": {
+        "x": 0.934499,
+        "y": 0.402147
+      }
     },
     {
       "index": 11,
@@ -129,7 +169,10 @@
       "name": "炭火第一弯",
       "segmentId": "charcoal_turn_1",
       "distanceMeters": 96,
-      "position": { "x": 0.625, "y": 0.71 },
+      "position": {
+        "x": 0.912478,
+        "y": 0.35151
+      },
       "cornerId": "charcoal_turn_1",
       "cornerLevel": 1,
       "cornerLimit": 4,
@@ -141,7 +184,10 @@
       "name": "炭火第一弯",
       "segmentId": "charcoal_turn_1",
       "distanceMeters": 96,
-      "position": { "x": 0.588, "y": 0.702 },
+      "position": {
+        "x": 0.873674,
+        "y": 0.31206
+      },
       "cornerId": "charcoal_turn_1",
       "cornerLevel": 1,
       "cornerLimit": 4,
@@ -153,7 +199,10 @@
       "name": "培根短直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.552, "y": 0.69 }
+      "position": {
+        "x": 0.823482,
+        "y": 0.289003
+      }
     },
     {
       "index": 14,
@@ -161,7 +210,10 @@
       "name": "培根短直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.52, "y": 0.675 }
+      "position": {
+        "x": 0.768177,
+        "y": 0.285809
+      }
     },
     {
       "index": 15,
@@ -169,7 +221,10 @@
       "name": "培根短直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.49, "y": 0.658 }
+      "position": {
+        "x": 0.71259,
+        "y": 0.286534
+      }
     },
     {
       "index": 16,
@@ -177,7 +232,10 @@
       "name": "培根短直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.465, "y": 0.638 }
+      "position": {
+        "x": 0.657015,
+        "y": 0.287863
+      }
     },
     {
       "index": 17,
@@ -185,7 +243,10 @@
       "name": "培根第二弯",
       "segmentId": "bacon_turn_2",
       "distanceMeters": 96,
-      "position": { "x": 0.442, "y": 0.615 },
+      "position": {
+        "x": 0.601439,
+        "y": 0.289189
+      },
       "cornerId": "bacon_turn_2",
       "cornerLevel": 1,
       "cornerLimit": 4,
@@ -197,7 +258,10 @@
       "name": "培根第二弯",
       "segmentId": "bacon_turn_2",
       "distanceMeters": 96,
-      "position": { "x": 0.425, "y": 0.588 },
+      "position": {
+        "x": 0.545862,
+        "y": 0.290463
+      },
       "cornerId": "bacon_turn_2",
       "cornerLevel": 1,
       "cornerLimit": 4,
@@ -209,7 +273,10 @@
       "name": "芝士后直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.412, "y": 0.558 }
+      "position": {
+        "x": 0.490285,
+        "y": 0.291715
+      }
     },
     {
       "index": 20,
@@ -217,7 +284,10 @@
       "name": "芝士后直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.402, "y": 0.525 }
+      "position": {
+        "x": 0.434707,
+        "y": 0.292975
+      }
     },
     {
       "index": 21,
@@ -225,7 +295,10 @@
       "name": "芝士后直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.395, "y": 0.492 }
+      "position": {
+        "x": 0.379131,
+        "y": 0.294274
+      }
     },
     {
       "index": 22,
@@ -233,7 +306,10 @@
       "name": "芝士后直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.392, "y": 0.458 }
+      "position": {
+        "x": 0.323555,
+        "y": 0.295605
+      }
     },
     {
       "index": 23,
@@ -241,7 +317,10 @@
       "name": "芝士后直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.39, "y": 0.425 }
+      "position": {
+        "x": 0.267977,
+        "y": 0.296811
+      }
     },
     {
       "index": 24,
@@ -249,7 +328,10 @@
       "name": "芝士后直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.39, "y": 0.392 }
+      "position": {
+        "x": 0.212396,
+        "y": 0.297872
+      }
     },
     {
       "index": 25,
@@ -257,7 +339,10 @@
       "name": "芝士后直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.39, "y": 0.36 }
+      "position": {
+        "x": 0.157716,
+        "y": 0.306609
+      }
     },
     {
       "index": 26,
@@ -265,7 +350,10 @@
       "name": "芝士后直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.392, "y": 0.328 }
+      "position": {
+        "x": 0.110524,
+        "y": 0.335323
+      }
     },
     {
       "index": 27,
@@ -273,7 +361,10 @@
       "name": "芝士第三弯",
       "segmentId": "cheese_turn_3",
       "distanceMeters": 96,
-      "position": { "x": 0.398, "y": 0.298 },
+      "position": {
+        "x": 0.075898,
+        "y": 0.378474
+      },
       "cornerId": "cheese_turn_3",
       "cornerLevel": 1,
       "cornerLimit": 4,
@@ -285,7 +376,10 @@
       "name": "芝士第三弯",
       "segmentId": "cheese_turn_3",
       "distanceMeters": 96,
-      "position": { "x": 0.41, "y": 0.27 },
+      "position": {
+        "x": 0.060652,
+        "y": 0.431436
+      },
       "cornerId": "cheese_turn_3",
       "cornerLevel": 1,
       "cornerLimit": 4,
@@ -297,7 +391,10 @@
       "name": "可乐短直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.425, "y": 0.245 }
+      "position": {
+        "x": 0.060632,
+        "y": 0.487007
+      }
     },
     {
       "index": 30,
@@ -305,7 +402,10 @@
       "name": "可乐短直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.445, "y": 0.225 }
+      "position": {
+        "x": 0.061698,
+        "y": 0.542588
+      }
     },
     {
       "index": 31,
@@ -313,7 +413,10 @@
       "name": "可乐短直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.47, "y": 0.208 }
+      "position": {
+        "x": 0.06527,
+        "y": 0.597949
+      }
     },
     {
       "index": 32,
@@ -321,7 +424,10 @@
       "name": "可乐短直道",
       "segmentId": "straight",
       "distanceMeters": 96,
-      "position": { "x": 0.50, "y": 0.195 }
+      "position": {
+        "x": 0.087277,
+        "y": 0.64867
+      }
     },
     {
       "index": 33,
@@ -329,7 +435,10 @@
       "name": "可乐第四弯",
       "segmentId": "cola_turn_4",
       "distanceMeters": 95,
-      "position": { "x": 0.532, "y": 0.188 },
+      "position": {
+        "x": 0.126189,
+        "y": 0.687849
+      },
       "cornerId": "cola_turn_4",
       "cornerLevel": 1,
       "cornerLimit": 4,
@@ -341,7 +450,10 @@
       "name": "可乐第四弯",
       "segmentId": "cola_turn_4",
       "distanceMeters": 95,
-      "position": { "x": 0.568, "y": 0.192 },
+      "position": {
+        "x": 0.176644,
+        "y": 0.71044
+      },
       "cornerId": "cola_turn_4",
       "cornerLevel": 1,
       "cornerLimit": 4,
@@ -353,7 +465,10 @@
       "name": "回到炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 95,
-      "position": { "x": 0.605, "y": 0.202 }
+      "position": {
+        "x": 0.231939,
+        "y": 0.71443
+      }
     },
     {
       "index": 36,
@@ -361,7 +476,10 @@
       "name": "回到炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 95,
-      "position": { "x": 0.645, "y": 0.218 }
+      "position": {
+        "x": 0.287509,
+        "y": 0.712884
+      }
     },
     {
       "index": 37,
@@ -369,7 +487,10 @@
       "name": "回到炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 95,
-      "position": { "x": 0.685, "y": 0.24 }
+      "position": {
+        "x": 0.343087,
+        "y": 0.711643
+      }
     },
     {
       "index": 38,
@@ -377,7 +498,10 @@
       "name": "回到炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 95,
-      "position": { "x": 0.725, "y": 0.268 }
+      "position": {
+        "x": 0.398666,
+        "y": 0.710497
+      }
     },
     {
       "index": 39,
@@ -385,7 +509,10 @@
       "name": "回到炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 95,
-      "position": { "x": 0.765, "y": 0.30 }
+      "position": {
+        "x": 0.454247,
+        "y": 0.709389
+      }
     },
     {
       "index": 40,
@@ -393,7 +520,10 @@
       "name": "回到炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 95,
-      "position": { "x": 0.805, "y": 0.338 }
+      "position": {
+        "x": 0.509828,
+        "y": 0.7083
+      }
     },
     {
       "index": 41,
@@ -401,7 +531,10 @@
       "name": "回到炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 95,
-      "position": { "x": 0.842, "y": 0.378 }
+      "position": {
+        "x": 0.565409,
+        "y": 0.707211
+      }
     }
   ]
 }

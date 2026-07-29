@@ -234,8 +234,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 520814733}
+  - component: {fileID: 520814734}
   m_Layer: 0
-  m_Name: SilverstoneEnvironment
+  m_Name: TrackEnvironment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -257,6 +258,28 @@ Transform:
   - {fileID: 1201744435}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &520814734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 520814732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5241511aa24a1b42bf679b0dfffe0c4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  config: {fileID: 11400000, guid: 49b01623e9368194aa67395f679c44b8, type: 2}
+  backgroundRenderer: {fileID: 1201744434}
+  silverstone: {fileID: 21300000, guid: ffc663c8502ad3d47acb529af533a89a, type: 3}
+  nurburgringGrandPrix: {fileID: 21300000, guid: 53f70cc50c7f79e44b59b578a4321e98, type: 3}
+  monza: {fileID: 21300000, guid: 2295a460db34c37489e459213e99a1cf, type: 3}
+  indianapolis: {fileID: 21300000, guid: 9d777fd68b87ce94faa2721671e4d61a, type: 3}
+  shanghai: {fileID: 21300000, guid: 7de6aaa8ff459cf44bd07cb6582c72f5, type: 3}
+  suzuka: {fileID: 21300000, guid: 03f77ce066b49e246be7a02c0b21eaa9, type: 3}
+  nurburgringEndurance: {fileID: 21300000, guid: a99bc344dec091f47835c5ef4fff39ff, type: 3}
+  leMansOldMulsanne: {fileID: 21300000, guid: c7f2d94bc472cf345ab23c9c8410c2d3, type: 3}
 --- !u!1 &574494848
 GameObject:
   m_ObjectHideFlags: 0
@@ -446,7 +469,7 @@ GameObject:
   - component: {fileID: 1201744435}
   - component: {fileID: 1201744434}
   m_Layer: 0
-  m_Name: Silverstone_Background
+  m_Name: Track_Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -35,8 +35,8 @@
       "segmentId": "start_finish",
       "distanceMeters": 96,
       "position": {
-        "x": 0.83,
-        "y": 0.5
+        "x": 0.080706,
+        "y": 0.365412
       }
     },
     {
@@ -46,8 +46,8 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.836961,
-        "y": 0.508698
+        "x": 0.077238,
+        "y": 0.353273
       }
     },
     {
@@ -57,8 +57,8 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.843692,
-        "y": 0.517341
+        "x": 0.07377,
+        "y": 0.341135
       }
     },
     {
@@ -68,8 +68,8 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.850147,
-        "y": 0.525876
+        "x": 0.070302,
+        "y": 0.328997
       }
     },
     {
@@ -79,8 +79,8 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.856281,
-        "y": 0.53425
+        "x": 0.066834,
+        "y": 0.316859
       }
     },
     {
@@ -90,8 +90,8 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.86205,
-        "y": 0.542414
+        "x": 0.063365,
+        "y": 0.30472
       }
     },
     {
@@ -101,8 +101,8 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.86741,
-        "y": 0.55032
+        "x": 0.060167,
+        "y": 0.292607
       }
     },
     {
@@ -112,8 +112,8 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.872322,
-        "y": 0.557928
+        "x": 0.065813,
+        "y": 0.281316
       }
     },
     {
@@ -123,8 +123,8 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.876747,
-        "y": 0.565197
+        "x": 0.071458,
+        "y": 0.270025
       }
     },
     {
@@ -134,8 +134,8 @@
       "segmentId": "mercedes_arena",
       "distanceMeters": 96,
       "position": {
-        "x": 0.880648,
-        "y": 0.572096
+        "x": 0.077104,
+        "y": 0.258733
       },
       "cornerId": "mercedes_arena",
       "cornerLevel": 2,
@@ -149,8 +149,8 @@
       "segmentId": "mercedes_arena",
       "distanceMeters": 96,
       "position": {
-        "x": 0.883994,
-        "y": 0.578598
+        "x": 0.08275,
+        "y": 0.247442
       },
       "cornerId": "mercedes_arena",
       "cornerLevel": 2,
@@ -164,8 +164,8 @@
       "segmentId": "mercedes_arena",
       "distanceMeters": 96,
       "position": {
-        "x": 0.886754,
-        "y": 0.58468
+        "x": 0.088395,
+        "y": 0.236151
       },
       "cornerId": "mercedes_arena",
       "cornerLevel": 2,
@@ -179,8 +179,8 @@
       "segmentId": "mercedes_arena",
       "distanceMeters": 96,
       "position": {
-        "x": 0.888902,
-        "y": 0.590329
+        "x": 0.096777,
+        "y": 0.227393
       },
       "cornerId": "mercedes_arena",
       "cornerLevel": 2,
@@ -194,8 +194,8 @@
       "segmentId": "mercedes_arena",
       "distanceMeters": 95,
       "position": {
-        "x": 0.890415,
-        "y": 0.595536
+        "x": 0.107602,
+        "y": 0.220898
       },
       "cornerId": "mercedes_arena",
       "cornerLevel": 2,
@@ -209,8 +209,8 @@
       "segmentId": "mercedes_arena",
       "distanceMeters": 95,
       "position": {
-        "x": 0.891274,
-        "y": 0.600301
+        "x": 0.118427,
+        "y": 0.214403
       },
       "cornerId": "mercedes_arena",
       "cornerLevel": 2,
@@ -224,8 +224,8 @@
       "segmentId": "mercedes_arena",
       "distanceMeters": 95,
       "position": {
-        "x": 0.891463,
-        "y": 0.604628
+        "x": 0.129252,
+        "y": 0.207908
       },
       "cornerId": "mercedes_arena",
       "cornerLevel": 2,
@@ -239,8 +239,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.890972,
-        "y": 0.608531
+        "x": 0.140077,
+        "y": 0.201413
       }
     },
     {
@@ -250,8 +250,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.889793,
-        "y": 0.612029
+        "x": 0.150902,
+        "y": 0.204612
       }
     },
     {
@@ -261,8 +261,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.887924,
-        "y": 0.615147
+        "x": 0.161727,
+        "y": 0.211107
       }
     },
     {
@@ -272,8 +272,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.885367,
-        "y": 0.617917
+        "x": 0.172552,
+        "y": 0.217602
       }
     },
     {
@@ -283,8 +283,8 @@
       "segmentId": "mullenbach",
       "distanceMeters": 95,
       "position": {
-        "x": 0.882126,
-        "y": 0.620376
+        "x": 0.183377,
+        "y": 0.224097
       },
       "cornerId": "mullenbach",
       "cornerLevel": 2,
@@ -298,8 +298,8 @@
       "segmentId": "mullenbach",
       "distanceMeters": 95,
       "position": {
-        "x": 0.878211,
-        "y": 0.622567
+        "x": 0.194202,
+        "y": 0.230592
       },
       "cornerId": "mullenbach",
       "cornerLevel": 2,
@@ -313,8 +313,8 @@
       "segmentId": "mullenbach",
       "distanceMeters": 95,
       "position": {
-        "x": 0.873636,
-        "y": 0.624536
+        "x": 0.199109,
+        "y": 0.242126
       },
       "cornerId": "mullenbach",
       "cornerLevel": 2,
@@ -328,8 +328,8 @@
       "segmentId": "mullenbach",
       "distanceMeters": 95,
       "position": {
-        "x": 0.868418,
-        "y": 0.626335
+        "x": 0.203798,
+        "y": 0.253847
       },
       "cornerId": "mullenbach",
       "cornerLevel": 2,
@@ -343,8 +343,8 @@
       "segmentId": "schumacher_s",
       "distanceMeters": 95,
       "position": {
-        "x": 0.86258,
-        "y": 0.628017
+        "x": 0.208486,
+        "y": 0.265568
       },
       "cornerId": "schumacher_s",
       "cornerLevel": 2,
@@ -358,8 +358,8 @@
       "segmentId": "schumacher_s",
       "distanceMeters": 95,
       "position": {
-        "x": 0.856145,
-        "y": 0.629637
+        "x": 0.213175,
+        "y": 0.277289
       },
       "cornerId": "schumacher_s",
       "cornerLevel": 2,
@@ -373,8 +373,8 @@
       "segmentId": "schumacher_s",
       "distanceMeters": 95,
       "position": {
-        "x": 0.849141,
-        "y": 0.631254
+        "x": 0.211735,
+        "y": 0.288519
       },
       "cornerId": "schumacher_s",
       "cornerLevel": 2,
@@ -388,8 +388,8 @@
       "segmentId": "schumacher_s",
       "distanceMeters": 95,
       "position": {
-        "x": 0.841601,
-        "y": 0.632926
+        "x": 0.20524,
+        "y": 0.299344
       },
       "cornerId": "schumacher_s",
       "cornerLevel": 2,
@@ -403,8 +403,8 @@
       "segmentId": "schumacher_s",
       "distanceMeters": 95,
       "position": {
-        "x": 0.833558,
-        "y": 0.63471
+        "x": 0.198745,
+        "y": 0.310169
       },
       "cornerId": "schumacher_s",
       "cornerLevel": 2,
@@ -418,8 +418,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.825049,
-        "y": 0.636663
+        "x": 0.19225,
+        "y": 0.320994
       }
     },
     {
@@ -429,8 +429,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.816112,
-        "y": 0.63884
+        "x": 0.185755,
+        "y": 0.331819
       }
     },
     {
@@ -440,8 +440,8 @@
       "segmentId": "warsteiner",
       "distanceMeters": 95,
       "position": {
-        "x": 0.806789,
-        "y": 0.641293
+        "x": 0.174754,
+        "y": 0.336249
       },
       "cornerId": "warsteiner",
       "cornerLevel": 2,
@@ -455,8 +455,8 @@
       "segmentId": "warsteiner",
       "distanceMeters": 95,
       "position": {
-        "x": 0.797121,
-        "y": 0.644068
+        "x": 0.162375,
+        "y": 0.338725
       },
       "cornerId": "warsteiner",
       "cornerLevel": 2,
@@ -470,8 +470,8 @@
       "segmentId": "warsteiner",
       "distanceMeters": 95,
       "position": {
-        "x": 0.787152,
-        "y": 0.647211
+        "x": 0.149996,
+        "y": 0.341201
       },
       "cornerId": "warsteiner",
       "cornerLevel": 2,
@@ -485,8 +485,8 @@
       "segmentId": "warsteiner",
       "distanceMeters": 95,
       "position": {
-        "x": 0.776927,
-        "y": 0.65076
+        "x": 0.137617,
+        "y": 0.343677
       },
       "cornerId": "warsteiner",
       "cornerLevel": 2,
@@ -500,8 +500,8 @@
       "segmentId": "warsteiner",
       "distanceMeters": 95,
       "position": {
-        "x": 0.766489,
-        "y": 0.654746
+        "x": 0.129731,
+        "y": 0.351554
       },
       "cornerId": "warsteiner",
       "cornerLevel": 2,
@@ -515,8 +515,8 @@
       "segmentId": "warsteiner",
       "distanceMeters": 95,
       "position": {
-        "x": 0.755885,
-        "y": 0.659197
+        "x": 0.125043,
+        "y": 0.363275
       },
       "cornerId": "warsteiner",
       "cornerLevel": 2,
@@ -530,8 +530,8 @@
       "segmentId": "veedol",
       "distanceMeters": 95,
       "position": {
-        "x": 0.745157,
-        "y": 0.664132
+        "x": 0.120354,
+        "y": 0.374996
       },
       "cornerId": "veedol",
       "cornerLevel": 3,
@@ -545,8 +545,8 @@
       "segmentId": "veedol",
       "distanceMeters": 95,
       "position": {
-        "x": 0.734351,
-        "y": 0.669562
+        "x": 0.115666,
+        "y": 0.386717
       },
       "cornerId": "veedol",
       "cornerLevel": 3,
@@ -560,8 +560,8 @@
       "segmentId": "veedol",
       "distanceMeters": 95,
       "position": {
-        "x": 0.72351,
-        "y": 0.675493
+        "x": 0.113089,
+        "y": 0.398126
       },
       "cornerId": "veedol",
       "cornerLevel": 3,
@@ -575,8 +575,8 @@
       "segmentId": "veedol",
       "distanceMeters": 95,
       "position": {
-        "x": 0.712674,
-        "y": 0.68192
+        "x": 0.120975,
+        "y": 0.407983
       },
       "cornerId": "veedol",
       "cornerLevel": 3,
@@ -590,8 +590,8 @@
       "segmentId": "veedol",
       "distanceMeters": 95,
       "position": {
-        "x": 0.701883,
-        "y": 0.688833
+        "x": 0.128861,
+        "y": 0.417841
       },
       "cornerId": "veedol",
       "cornerLevel": 3,
@@ -605,8 +605,8 @@
       "segmentId": "veedol",
       "distanceMeters": 95,
       "position": {
-        "x": 0.691176,
-        "y": 0.696212
+        "x": 0.136747,
+        "y": 0.427699
       },
       "cornerId": "veedol",
       "cornerLevel": 3,
@@ -620,8 +620,8 @@
       "segmentId": "veedol",
       "distanceMeters": 95,
       "position": {
-        "x": 0.680588,
-        "y": 0.704031
+        "x": 0.144633,
+        "y": 0.437556
       },
       "cornerId": "veedol",
       "cornerLevel": 3,
@@ -635,8 +635,8 @@
       "segmentId": "veedol",
       "distanceMeters": 95,
       "position": {
-        "x": 0.670152,
-        "y": 0.712255
+        "x": 0.152519,
+        "y": 0.447414
       },
       "cornerId": "veedol",
       "cornerLevel": 3,
@@ -650,8 +650,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.659898,
-        "y": 0.720843
+        "x": 0.164591,
+        "y": 0.446333
       }
     },
     {
@@ -661,8 +661,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.649853,
-        "y": 0.729745
+        "x": 0.177044,
+        "y": 0.444257
       }
     },
     {
@@ -672,8 +672,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.640041,
-        "y": 0.738907
+        "x": 0.189496,
+        "y": 0.442182
       }
     },
     {
@@ -683,8 +683,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.630483,
-        "y": 0.748269
+        "x": 0.201948,
+        "y": 0.440107
       }
     },
     {
@@ -694,8 +694,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.621197,
-        "y": 0.757766
+        "x": 0.2144,
+        "y": 0.438031
       }
     },
     {
@@ -705,8 +705,8 @@
       "segmentId": "hatzenbach",
       "distanceMeters": 95,
       "position": {
-        "x": 0.612194,
-        "y": 0.767327
+        "x": 0.220535,
+        "y": 0.427402
       },
       "cornerId": "hatzenbach",
       "cornerLevel": 2,
@@ -720,8 +720,8 @@
       "segmentId": "hatzenbach",
       "distanceMeters": 95,
       "position": {
-        "x": 0.603485,
-        "y": 0.77688
+        "x": 0.22618,
+        "y": 0.41611
       },
       "cornerId": "hatzenbach",
       "cornerLevel": 2,
@@ -735,8 +735,8 @@
       "segmentId": "hatzenbach",
       "distanceMeters": 95,
       "position": {
-        "x": 0.595076,
-        "y": 0.786349
+        "x": 0.231826,
+        "y": 0.404819
       },
       "cornerId": "hatzenbach",
       "cornerLevel": 2,
@@ -750,8 +750,8 @@
       "segmentId": "hatzenbach",
       "distanceMeters": 95,
       "position": {
-        "x": 0.58697,
-        "y": 0.795657
+        "x": 0.237471,
+        "y": 0.393528
       },
       "cornerId": "hatzenbach",
       "cornerLevel": 2,
@@ -765,8 +765,8 @@
       "segmentId": "hatzenbach",
       "distanceMeters": 95,
       "position": {
-        "x": 0.579165,
-        "y": 0.804726
+        "x": 0.243117,
+        "y": 0.382237
       },
       "cornerId": "hatzenbach",
       "cornerLevel": 2,
@@ -780,8 +780,8 @@
       "segmentId": "hatzenbach",
       "distanceMeters": 95,
       "position": {
-        "x": 0.571656,
-        "y": 0.813479
+        "x": 0.244649,
+        "y": 0.370653
       },
       "cornerId": "hatzenbach",
       "cornerLevel": 2,
@@ -795,8 +795,8 @@
       "segmentId": "hatzenbach",
       "distanceMeters": 95,
       "position": {
-        "x": 0.564434,
-        "y": 0.82184
+        "x": 0.240657,
+        "y": 0.358677
       },
       "cornerId": "hatzenbach",
       "cornerLevel": 2,
@@ -810,8 +810,8 @@
       "segmentId": "hocheichen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.557488,
-        "y": 0.829734
+        "x": 0.236665,
+        "y": 0.346701
       },
       "cornerId": "hocheichen",
       "cornerLevel": 2,
@@ -825,8 +825,8 @@
       "segmentId": "hocheichen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.550804,
-        "y": 0.83709
+        "x": 0.232673,
+        "y": 0.334724
       },
       "cornerId": "hocheichen",
       "cornerLevel": 2,
@@ -840,8 +840,8 @@
       "segmentId": "hocheichen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.544362,
-        "y": 0.843842
+        "x": 0.228681,
+        "y": 0.322748
       },
       "cornerId": "hocheichen",
       "cornerLevel": 2,
@@ -855,8 +855,8 @@
       "segmentId": "hocheichen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.538143,
-        "y": 0.849926
+        "x": 0.22779,
+        "y": 0.311504
       },
       "cornerId": "hocheichen",
       "cornerLevel": 2,
@@ -870,8 +870,8 @@
       "segmentId": "hocheichen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.532123,
-        "y": 0.855288
+        "x": 0.236717,
+        "y": 0.302578
       },
       "cornerId": "hocheichen",
       "cornerLevel": 2,
@@ -885,8 +885,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.526277,
-        "y": 0.859876
+        "x": 0.245643,
+        "y": 0.293651
       }
     },
     {
@@ -896,8 +896,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.520578,
-        "y": 0.863647
+        "x": 0.25457,
+        "y": 0.284725
       }
     },
     {
@@ -907,8 +907,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.514995,
-        "y": 0.866566
+        "x": 0.263496,
+        "y": 0.275798
       }
     },
     {
@@ -918,8 +918,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.509501,
-        "y": 0.868604
+        "x": 0.273127,
+        "y": 0.276787
       }
     },
     {
@@ -929,8 +929,8 @@
       "segmentId": "schwedenkreuz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.504062,
-        "y": 0.869743
+        "x": 0.283227,
+        "y": 0.284361
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
@@ -944,8 +944,8 @@
       "segmentId": "schwedenkreuz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.498647,
-        "y": 0.869971
+        "x": 0.293326,
+        "y": 0.291935
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
@@ -959,8 +959,8 @@
       "segmentId": "schwedenkreuz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.493224,
-        "y": 0.869287
+        "x": 0.303425,
+        "y": 0.29951
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
@@ -974,8 +974,8 @@
       "segmentId": "schwedenkreuz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.487761,
-        "y": 0.867696
+        "x": 0.306735,
+        "y": 0.309368
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
@@ -989,8 +989,8 @@
       "segmentId": "schwedenkreuz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.482226,
-        "y": 0.865215
+        "x": 0.303267,
+        "y": 0.321506
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
@@ -1004,8 +1004,8 @@
       "segmentId": "schwedenkreuz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.476589,
-        "y": 0.861866
+        "x": 0.299799,
+        "y": 0.333645
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
@@ -1019,8 +1019,8 @@
       "segmentId": "schwedenkreuz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.47082,
-        "y": 0.857681
+        "x": 0.296331,
+        "y": 0.345783
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
@@ -1034,8 +1034,8 @@
       "segmentId": "schwedenkreuz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.46489,
-        "y": 0.852701
+        "x": 0.292863,
+        "y": 0.357921
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
@@ -1049,8 +1049,8 @@
       "segmentId": "aremberg",
       "distanceMeters": 95,
       "position": {
-        "x": 0.458774,
-        "y": 0.846971
+        "x": 0.289395,
+        "y": 0.370059
       },
       "cornerId": "aremberg",
       "cornerLevel": 3,
@@ -1064,8 +1064,8 @@
       "segmentId": "aremberg",
       "distanceMeters": 95,
       "position": {
-        "x": 0.452446,
-        "y": 0.840545
+        "x": 0.284054,
+        "y": 0.381332
       },
       "cornerId": "aremberg",
       "cornerLevel": 3,
@@ -1079,8 +1079,8 @@
       "segmentId": "aremberg",
       "distanceMeters": 95,
       "position": {
-        "x": 0.445886,
-        "y": 0.833483
+        "x": 0.277051,
+        "y": 0.391835
       },
       "cornerId": "aremberg",
       "cornerLevel": 3,
@@ -1094,8 +1094,8 @@
       "segmentId": "aremberg",
       "distanceMeters": 95,
       "position": {
-        "x": 0.439072,
-        "y": 0.82585
+        "x": 0.270048,
+        "y": 0.402339
       },
       "cornerId": "aremberg",
       "cornerLevel": 3,
@@ -1109,8 +1109,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.431991,
-        "y": 0.817713
+        "x": 0.263046,
+        "y": 0.412843
       }
     },
     {
@@ -1120,8 +1120,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.424626,
-        "y": 0.809147
+        "x": 0.256043,
+        "y": 0.423347
       }
     },
     {
@@ -1131,8 +1131,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.41697,
-        "y": 0.800226
+        "x": 0.249041,
+        "y": 0.433851
       }
     },
     {
@@ -1142,8 +1142,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.409015,
-        "y": 0.791028
+        "x": 0.249832,
+        "y": 0.44484
       }
     },
     {
@@ -1153,8 +1153,8 @@
       "segmentId": "adenauer_forst",
       "distanceMeters": 95,
       "position": {
-        "x": 0.400757,
-        "y": 0.78163
+        "x": 0.255477,
+        "y": 0.456131
       },
       "cornerId": "adenauer_forst",
       "cornerLevel": 3,
@@ -1168,8 +1168,8 @@
       "segmentId": "adenauer_forst",
       "distanceMeters": 95,
       "position": {
-        "x": 0.392198,
-        "y": 0.772109
+        "x": 0.261123,
+        "y": 0.467422
       },
       "cornerId": "adenauer_forst",
       "cornerLevel": 3,
@@ -1183,8 +1183,8 @@
       "segmentId": "adenauer_forst",
       "distanceMeters": 95,
       "position": {
-        "x": 0.383341,
-        "y": 0.762543
+        "x": 0.266768,
+        "y": 0.478713
       },
       "cornerId": "adenauer_forst",
       "cornerLevel": 3,
@@ -1198,8 +1198,8 @@
       "segmentId": "adenauer_forst",
       "distanceMeters": 95,
       "position": {
-        "x": 0.374195,
-        "y": 0.753005
+        "x": 0.272414,
+        "y": 0.490005
       },
       "cornerId": "adenauer_forst",
       "cornerLevel": 3,
@@ -1213,8 +1213,8 @@
       "segmentId": "metzgesfeld",
       "distanceMeters": 95,
       "position": {
-        "x": 0.364771,
-        "y": 0.743567
+        "x": 0.278708,
+        "y": 0.500648
       },
       "cornerId": "metzgesfeld",
       "cornerLevel": 2,
@@ -1228,8 +1228,8 @@
       "segmentId": "metzgesfeld",
       "distanceMeters": 95,
       "position": {
-        "x": 0.355084,
-        "y": 0.734297
+        "x": 0.289999,
+        "y": 0.506294
       },
       "cornerId": "metzgesfeld",
       "cornerLevel": 2,
@@ -1243,8 +1243,8 @@
       "segmentId": "metzgesfeld",
       "distanceMeters": 95,
       "position": {
-        "x": 0.345153,
-        "y": 0.725258
+        "x": 0.30129,
+        "y": 0.511939
       },
       "cornerId": "metzgesfeld",
       "cornerLevel": 2,
@@ -1258,8 +1258,8 @@
       "segmentId": "metzgesfeld",
       "distanceMeters": 95,
       "position": {
-        "x": 0.335,
-        "y": 0.716506
+        "x": 0.312581,
+        "y": 0.517585
       },
       "cornerId": "metzgesfeld",
       "cornerLevel": 2,
@@ -1273,8 +1273,8 @@
       "segmentId": "metzgesfeld",
       "distanceMeters": 95,
       "position": {
-        "x": 0.324651,
-        "y": 0.708095
+        "x": 0.323873,
+        "y": 0.52323
       },
       "cornerId": "metzgesfeld",
       "cornerLevel": 2,
@@ -1288,8 +1288,8 @@
       "segmentId": "kallenhard",
       "distanceMeters": 95,
       "position": {
-        "x": 0.314135,
-        "y": 0.700069
+        "x": 0.335164,
+        "y": 0.528876
       },
       "cornerId": "kallenhard",
       "cornerLevel": 2,
@@ -1303,8 +1303,8 @@
       "segmentId": "kallenhard",
       "distanceMeters": 95,
       "position": {
-        "x": 0.303483,
-        "y": 0.692466
+        "x": 0.345576,
+        "y": 0.535896
       },
       "cornerId": "kallenhard",
       "cornerLevel": 2,
@@ -1318,8 +1318,8 @@
       "segmentId": "kallenhard",
       "distanceMeters": 95,
       "position": {
-        "x": 0.29273,
-        "y": 0.685317
+        "x": 0.355434,
+        "y": 0.543782
       },
       "cornerId": "kallenhard",
       "cornerLevel": 2,
@@ -1333,8 +1333,8 @@
       "segmentId": "kallenhard",
       "distanceMeters": 95,
       "position": {
-        "x": 0.281912,
-        "y": 0.678645
+        "x": 0.365291,
+        "y": 0.551668
       },
       "cornerId": "kallenhard",
       "cornerLevel": 2,
@@ -1348,8 +1348,8 @@
       "segmentId": "kallenhard",
       "distanceMeters": 95,
       "position": {
-        "x": 0.271068,
-        "y": 0.672465
+        "x": 0.375149,
+        "y": 0.559554
       },
       "cornerId": "kallenhard",
       "cornerLevel": 2,
@@ -1363,8 +1363,8 @@
       "segmentId": "wehrseifen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.260238,
-        "y": 0.666784
+        "x": 0.385007,
+        "y": 0.567441
       },
       "cornerId": "wehrseifen",
       "cornerLevel": 3,
@@ -1378,8 +1378,8 @@
       "segmentId": "wehrseifen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.249466,
-        "y": 0.661603
+        "x": 0.394527,
+        "y": 0.575704
       },
       "cornerId": "wehrseifen",
       "cornerLevel": 3,
@@ -1393,8 +1393,8 @@
       "segmentId": "wehrseifen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.238795,
-        "y": 0.656912
+        "x": 0.403454,
+        "y": 0.58463
       },
       "cornerId": "wehrseifen",
       "cornerLevel": 3,
@@ -1408,8 +1408,8 @@
       "segmentId": "wehrseifen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.228268,
-        "y": 0.652696
+        "x": 0.41238,
+        "y": 0.593557
       },
       "cornerId": "wehrseifen",
       "cornerLevel": 3,
@@ -1423,8 +1423,8 @@
       "segmentId": "wehrseifen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.217931,
-        "y": 0.648933
+        "x": 0.421307,
+        "y": 0.602483
       },
       "cornerId": "wehrseifen",
       "cornerLevel": 3,
@@ -1438,8 +1438,8 @@
       "segmentId": "wehrseifen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.207829,
-        "y": 0.645591
+        "x": 0.430233,
+        "y": 0.61141
       },
       "cornerId": "wehrseifen",
       "cornerLevel": 3,
@@ -1453,8 +1453,8 @@
       "segmentId": "wehrseifen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.198005,
-        "y": 0.642637
+        "x": 0.43916,
+        "y": 0.620336
       },
       "cornerId": "wehrseifen",
       "cornerLevel": 3,
@@ -1468,8 +1468,8 @@
       "segmentId": "wehrseifen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.188504,
-        "y": 0.640029
+        "x": 0.4475,
+        "y": 0.629787
       },
       "cornerId": "wehrseifen",
       "cornerLevel": 3,
@@ -1483,8 +1483,8 @@
       "segmentId": "wehrseifen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.179369,
-        "y": 0.637721
+        "x": 0.455387,
+        "y": 0.639645
       },
       "cornerId": "wehrseifen",
       "cornerLevel": 3,
@@ -1498,8 +1498,8 @@
       "segmentId": "wehrseifen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.170641,
-        "y": 0.635662
+        "x": 0.463273,
+        "y": 0.649503
       },
       "cornerId": "wehrseifen",
       "cornerLevel": 3,
@@ -1513,8 +1513,8 @@
       "segmentId": "wehrseifen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.16236,
-        "y": 0.633801
+        "x": 0.471159,
+        "y": 0.65936
       },
       "cornerId": "wehrseifen",
       "cornerLevel": 3,
@@ -1528,8 +1528,8 @@
       "segmentId": "breidscheid",
       "distanceMeters": 95,
       "position": {
-        "x": 0.154564,
-        "y": 0.63208
+        "x": 0.479045,
+        "y": 0.669218
       },
       "cornerId": "breidscheid",
       "cornerLevel": 2,
@@ -1543,8 +1543,8 @@
       "segmentId": "breidscheid",
       "distanceMeters": 95,
       "position": {
-        "x": 0.147288,
-        "y": 0.630443
+        "x": 0.487748,
+        "y": 0.678185
       },
       "cornerId": "breidscheid",
       "cornerLevel": 2,
@@ -1558,8 +1558,8 @@
       "segmentId": "breidscheid",
       "distanceMeters": 95,
       "position": {
-        "x": 0.140565,
-        "y": 0.628831
+        "x": 0.498252,
+        "y": 0.685187
       },
       "cornerId": "breidscheid",
       "cornerLevel": 2,
@@ -1573,8 +1573,8 @@
       "segmentId": "breidscheid",
       "distanceMeters": 95,
       "position": {
-        "x": 0.134425,
-        "y": 0.627187
+        "x": 0.508756,
+        "y": 0.69219
       },
       "cornerId": "breidscheid",
       "cornerLevel": 2,
@@ -1588,8 +1588,8 @@
       "segmentId": "breidscheid",
       "distanceMeters": 95,
       "position": {
-        "x": 0.128894,
-        "y": 0.625454
+        "x": 0.519259,
+        "y": 0.699192
       },
       "cornerId": "breidscheid",
       "cornerLevel": 2,
@@ -1603,8 +1603,8 @@
       "segmentId": "ex_muhle",
       "distanceMeters": 95,
       "position": {
-        "x": 0.123995,
-        "y": 0.623576
+        "x": 0.529763,
+        "y": 0.706195
       },
       "cornerId": "ex_muhle",
       "cornerLevel": 2,
@@ -1618,8 +1618,8 @@
       "segmentId": "ex_muhle",
       "distanceMeters": 95,
       "position": {
-        "x": 0.119748,
-        "y": 0.621502
+        "x": 0.540267,
+        "y": 0.713198
       },
       "cornerId": "ex_muhle",
       "cornerLevel": 2,
@@ -1633,8 +1633,8 @@
       "segmentId": "ex_muhle",
       "distanceMeters": 95,
       "position": {
-        "x": 0.116169,
-        "y": 0.619183
+        "x": 0.550143,
+        "y": 0.720966
       },
       "cornerId": "ex_muhle",
       "cornerLevel": 2,
@@ -1648,8 +1648,8 @@
       "segmentId": "ex_muhle",
       "distanceMeters": 95,
       "position": {
-        "x": 0.113269,
-        "y": 0.616573
+        "x": 0.559069,
+        "y": 0.729893
       },
       "cornerId": "ex_muhle",
       "cornerLevel": 2,
@@ -1663,8 +1663,8 @@
       "segmentId": "ex_muhle",
       "distanceMeters": 95,
       "position": {
-        "x": 0.111055,
-        "y": 0.613634
+        "x": 0.567996,
+        "y": 0.738819
       },
       "cornerId": "ex_muhle",
       "cornerLevel": 2,
@@ -1678,8 +1678,8 @@
       "segmentId": "ex_muhle",
       "distanceMeters": 95,
       "position": {
-        "x": 0.109531,
-        "y": 0.610329
+        "x": 0.576922,
+        "y": 0.747746
       },
       "cornerId": "ex_muhle",
       "cornerLevel": 2,
@@ -1693,8 +1693,8 @@
       "segmentId": "ex_muhle",
       "distanceMeters": 95,
       "position": {
-        "x": 0.108697,
-        "y": 0.606632
+        "x": 0.585849,
+        "y": 0.756672
       },
       "cornerId": "ex_muhle",
       "cornerLevel": 2,
@@ -1708,8 +1708,8 @@
       "segmentId": "bergwerk",
       "distanceMeters": 95,
       "position": {
-        "x": 0.108547,
-        "y": 0.602519
+        "x": 0.594775,
+        "y": 0.765599
       },
       "cornerId": "bergwerk",
       "cornerLevel": 2,
@@ -1723,8 +1723,8 @@
       "segmentId": "bergwerk",
       "distanceMeters": 95,
       "position": {
-        "x": 0.109073,
-        "y": 0.597974
+        "x": 0.605119,
+        "y": 0.772559
       },
       "cornerId": "bergwerk",
       "cornerLevel": 2,
@@ -1738,8 +1738,8 @@
       "segmentId": "bergwerk",
       "distanceMeters": 95,
       "position": {
-        "x": 0.110261,
-        "y": 0.592988
+        "x": 0.61641,
+        "y": 0.778205
       },
       "cornerId": "bergwerk",
       "cornerLevel": 2,
@@ -1753,8 +1753,8 @@
       "segmentId": "bergwerk",
       "distanceMeters": 95,
       "position": {
-        "x": 0.112094,
-        "y": 0.58756
+        "x": 0.627701,
+        "y": 0.783851
       },
       "cornerId": "bergwerk",
       "cornerLevel": 2,
@@ -1768,8 +1768,8 @@
       "segmentId": "bergwerk",
       "distanceMeters": 95,
       "position": {
-        "x": 0.114551,
-        "y": 0.581692
+        "x": 0.638993,
+        "y": 0.789496
       },
       "cornerId": "bergwerk",
       "cornerLevel": 2,
@@ -1783,8 +1783,8 @@
       "segmentId": "bergwerk",
       "distanceMeters": 95,
       "position": {
-        "x": 0.117607,
-        "y": 0.575398
+        "x": 0.650284,
+        "y": 0.795142
       },
       "cornerId": "bergwerk",
       "cornerLevel": 2,
@@ -1798,8 +1798,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.121235,
-        "y": 0.568695
+        "x": 0.66153,
+        "y": 0.7996
       }
     },
     {
@@ -1809,8 +1809,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.125402,
-        "y": 0.561607
+        "x": 0.672355,
+        "y": 0.793105
       }
     },
     {
@@ -1820,8 +1820,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.130075,
-        "y": 0.554164
+        "x": 0.68318,
+        "y": 0.78661
       }
     },
     {
@@ -1831,8 +1831,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.135217,
-        "y": 0.546402
+        "x": 0.694005,
+        "y": 0.780115
       }
     },
     {
@@ -1842,8 +1842,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.140786,
-        "y": 0.538361
+        "x": 0.70483,
+        "y": 0.77362
       }
     },
     {
@@ -1853,8 +1853,8 @@
       "segmentId": "klostertal",
       "distanceMeters": 95,
       "position": {
-        "x": 0.146743,
-        "y": 0.530086
+        "x": 0.714287,
+        "y": 0.765757
       },
       "cornerId": "klostertal",
       "cornerLevel": 2,
@@ -1868,8 +1868,8 @@
       "segmentId": "klostertal",
       "distanceMeters": 95,
       "position": {
-        "x": 0.153043,
-        "y": 0.521625
+        "x": 0.720782,
+        "y": 0.754932
       },
       "cornerId": "klostertal",
       "cornerLevel": 2,
@@ -1883,8 +1883,8 @@
       "segmentId": "klostertal",
       "distanceMeters": 95,
       "position": {
-        "x": 0.159642,
-        "y": 0.51303
+        "x": 0.727277,
+        "y": 0.744107
       },
       "cornerId": "klostertal",
       "cornerLevel": 2,
@@ -1898,8 +1898,8 @@
       "segmentId": "klostertal",
       "distanceMeters": 95,
       "position": {
-        "x": 0.166494,
-        "y": 0.504352
+        "x": 0.733772,
+        "y": 0.733282
       },
       "cornerId": "klostertal",
       "cornerLevel": 2,
@@ -1913,8 +1913,8 @@
       "segmentId": "klostertal",
       "distanceMeters": 95,
       "position": {
-        "x": 0.173552,
-        "y": 0.495648
+        "x": 0.740267,
+        "y": 0.722457
       },
       "cornerId": "klostertal",
       "cornerLevel": 2,
@@ -1928,8 +1928,8 @@
       "segmentId": "klostertal",
       "distanceMeters": 95,
       "position": {
-        "x": 0.180769,
-        "y": 0.48697
+        "x": 0.749552,
+        "y": 0.714909
       },
       "cornerId": "klostertal",
       "cornerLevel": 2,
@@ -1943,8 +1943,8 @@
       "segmentId": "klostertal",
       "distanceMeters": 95,
       "position": {
-        "x": 0.188098,
-        "y": 0.478375
+        "x": 0.761273,
+        "y": 0.71022
       },
       "cornerId": "klostertal",
       "cornerLevel": 2,
@@ -1958,8 +1958,8 @@
       "segmentId": "klostertal",
       "distanceMeters": 95,
       "position": {
-        "x": 0.195494,
-        "y": 0.469914
+        "x": 0.772994,
+        "y": 0.705532
       },
       "cornerId": "klostertal",
       "cornerLevel": 2,
@@ -1973,8 +1973,8 @@
       "segmentId": "karussell",
       "distanceMeters": 95,
       "position": {
-        "x": 0.202911,
-        "y": 0.461639
+        "x": 0.784715,
+        "y": 0.700843
       },
       "cornerId": "karussell",
       "cornerLevel": 3,
@@ -1988,8 +1988,8 @@
       "segmentId": "karussell",
       "distanceMeters": 95,
       "position": {
-        "x": 0.210304,
-        "y": 0.453598
+        "x": 0.796108,
+        "y": 0.697755
       },
       "cornerId": "karussell",
       "cornerLevel": 3,
@@ -2003,8 +2003,8 @@
       "segmentId": "karussell",
       "distanceMeters": 95,
       "position": {
-        "x": 0.217631,
-        "y": 0.445836
+        "x": 0.805035,
+        "y": 0.706682
       },
       "cornerId": "karussell",
       "cornerLevel": 3,
@@ -2018,8 +2018,8 @@
       "segmentId": "karussell",
       "distanceMeters": 95,
       "position": {
-        "x": 0.22485,
-        "y": 0.438393
+        "x": 0.813961,
+        "y": 0.715608
       },
       "cornerId": "karussell",
       "cornerLevel": 3,
@@ -2033,8 +2033,8 @@
       "segmentId": "karussell",
       "distanceMeters": 95,
       "position": {
-        "x": 0.231925,
-        "y": 0.431305
+        "x": 0.822888,
+        "y": 0.724535
       },
       "cornerId": "karussell",
       "cornerLevel": 3,
@@ -2048,8 +2048,8 @@
       "segmentId": "karussell",
       "distanceMeters": 95,
       "position": {
-        "x": 0.238817,
-        "y": 0.424602
+        "x": 0.831814,
+        "y": 0.733461
       },
       "cornerId": "karussell",
       "cornerLevel": 3,
@@ -2063,8 +2063,8 @@
       "segmentId": "karussell",
       "distanceMeters": 95,
       "position": {
-        "x": 0.245495,
-        "y": 0.418308
+        "x": 0.842077,
+        "y": 0.735875
       },
       "cornerId": "karussell",
       "cornerLevel": 3,
@@ -2078,8 +2078,8 @@
       "segmentId": "karussell",
       "distanceMeters": 95,
       "position": {
-        "x": 0.251927,
-        "y": 0.41244
+        "x": 0.853799,
+        "y": 0.731186
       },
       "cornerId": "karussell",
       "cornerLevel": 3,
@@ -2093,8 +2093,8 @@
       "segmentId": "hohe_acht",
       "distanceMeters": 95,
       "position": {
-        "x": 0.258088,
-        "y": 0.407012
+        "x": 0.86552,
+        "y": 0.726498
       },
       "cornerId": "hohe_acht",
       "cornerLevel": 2,
@@ -2108,8 +2108,8 @@
       "segmentId": "hohe_acht",
       "distanceMeters": 95,
       "position": {
-        "x": 0.263954,
-        "y": 0.402026
+        "x": 0.877241,
+        "y": 0.72181
       },
       "cornerId": "hohe_acht",
       "cornerLevel": 2,
@@ -2123,8 +2123,8 @@
       "segmentId": "hohe_acht",
       "distanceMeters": 95,
       "position": {
-        "x": 0.269504,
-        "y": 0.397481
+        "x": 0.888669,
+        "y": 0.716761
       },
       "cornerId": "hohe_acht",
       "cornerLevel": 2,
@@ -2138,8 +2138,8 @@
       "segmentId": "hohe_acht",
       "distanceMeters": 95,
       "position": {
-        "x": 0.274723,
-        "y": 0.393368
+        "x": 0.895672,
+        "y": 0.706257
       },
       "cornerId": "hohe_acht",
       "cornerLevel": 2,
@@ -2153,8 +2153,8 @@
       "segmentId": "hohe_acht",
       "distanceMeters": 95,
       "position": {
-        "x": 0.2796,
-        "y": 0.389671
+        "x": 0.902674,
+        "y": 0.695753
       },
       "cornerId": "hohe_acht",
       "cornerLevel": 2,
@@ -2168,8 +2168,8 @@
       "segmentId": "hohe_acht",
       "distanceMeters": 95,
       "position": {
-        "x": 0.284125,
-        "y": 0.386366
+        "x": 0.909677,
+        "y": 0.685249
       },
       "cornerId": "hohe_acht",
       "cornerLevel": 2,
@@ -2183,8 +2183,8 @@
       "segmentId": "hohe_acht",
       "distanceMeters": 95,
       "position": {
-        "x": 0.288295,
-        "y": 0.383427
+        "x": 0.91668,
+        "y": 0.674745
       },
       "cornerId": "hohe_acht",
       "cornerLevel": 2,
@@ -2198,8 +2198,8 @@
       "segmentId": "wippermann_bruennchen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.29211,
-        "y": 0.380817
+        "x": 0.923682,
+        "y": 0.664242
       },
       "cornerId": "wippermann_bruennchen",
       "cornerLevel": 2,
@@ -2213,8 +2213,8 @@
       "segmentId": "wippermann_bruennchen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.295573,
-        "y": 0.378498
+        "x": 0.929133,
+        "y": 0.653496
       },
       "cornerId": "wippermann_bruennchen",
       "cornerLevel": 2,
@@ -2228,8 +2228,8 @@
       "segmentId": "wippermann_bruennchen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.298693,
-        "y": 0.376424
+        "x": 0.925665,
+        "y": 0.641357
       },
       "cornerId": "wippermann_bruennchen",
       "cornerLevel": 2,
@@ -2243,8 +2243,8 @@
       "segmentId": "wippermann_bruennchen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.301481,
-        "y": 0.374546
+        "x": 0.922197,
+        "y": 0.629219
       },
       "cornerId": "wippermann_bruennchen",
       "cornerLevel": 2,
@@ -2258,8 +2258,8 @@
       "segmentId": "wippermann_bruennchen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.303952,
-        "y": 0.372813
+        "x": 0.918729,
+        "y": 0.617081
       },
       "cornerId": "wippermann_bruennchen",
       "cornerLevel": 2,
@@ -2273,8 +2273,8 @@
       "segmentId": "wippermann_bruennchen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.306124,
-        "y": 0.371169
+        "x": 0.915261,
+        "y": 0.604942
       },
       "cornerId": "wippermann_bruennchen",
       "cornerLevel": 2,
@@ -2288,8 +2288,8 @@
       "segmentId": "wippermann_bruennchen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.30802,
-        "y": 0.369557
+        "x": 0.911793,
+        "y": 0.592804
       },
       "cornerId": "wippermann_bruennchen",
       "cornerLevel": 2,
@@ -2303,8 +2303,8 @@
       "segmentId": "wippermann_bruennchen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.309665,
-        "y": 0.36792
+        "x": 0.907189,
+        "y": 0.581422
       },
       "cornerId": "wippermann_bruennchen",
       "cornerLevel": 2,
@@ -2318,8 +2318,8 @@
       "segmentId": "wippermann_bruennchen",
       "distanceMeters": 95,
       "position": {
-        "x": 0.311087,
-        "y": 0.366199
+        "x": 0.897331,
+        "y": 0.573536
       },
       "cornerId": "wippermann_bruennchen",
       "cornerLevel": 2,
@@ -2333,8 +2333,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.312315,
-        "y": 0.364338
+        "x": 0.887473,
+        "y": 0.565649
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2348,8 +2348,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.313382,
-        "y": 0.362279
+        "x": 0.877616,
+        "y": 0.557763
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2363,8 +2363,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.314323,
-        "y": 0.359971
+        "x": 0.867758,
+        "y": 0.549877
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2378,8 +2378,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.315174,
-        "y": 0.357363
+        "x": 0.8579,
+        "y": 0.541991
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2393,8 +2393,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.315971,
-        "y": 0.354409
+        "x": 0.863195,
+        "y": 0.531382
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2408,8 +2408,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.316753,
-        "y": 0.351067
+        "x": 0.86969,
+        "y": 0.520557
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2423,8 +2423,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.317558,
-        "y": 0.347304
+        "x": 0.876185,
+        "y": 0.509732
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2438,8 +2438,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.318426,
-        "y": 0.343088
+        "x": 0.88268,
+        "y": 0.498907
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2453,8 +2453,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.319394,
-        "y": 0.338397
+        "x": 0.889661,
+        "y": 0.488507
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2468,8 +2468,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.320499,
-        "y": 0.333216
+        "x": 0.899518,
+        "y": 0.480621
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2483,8 +2483,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.32178,
-        "y": 0.327535
+        "x": 0.909376,
+        "y": 0.472734
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2498,8 +2498,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.323272,
-        "y": 0.321355
+        "x": 0.919234,
+        "y": 0.464848
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2513,8 +2513,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.325008,
-        "y": 0.314683
+        "x": 0.929092,
+        "y": 0.456962
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2528,8 +2528,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.32702,
-        "y": 0.307534
+        "x": 0.938949,
+        "y": 0.449076
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2543,8 +2543,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.329339,
-        "y": 0.299931
+        "x": 0.936433,
+        "y": 0.437536
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2558,8 +2558,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.331991,
-        "y": 0.291905
+        "x": 0.932441,
+        "y": 0.425559
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2573,8 +2573,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.335,
-        "y": 0.283494
+        "x": 0.928449,
+        "y": 0.413583
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2588,8 +2588,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.338388,
-        "y": 0.274742
+        "x": 0.924457,
+        "y": 0.401607
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2603,8 +2603,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.342173,
-        "y": 0.265703
+        "x": 0.920465,
+        "y": 0.389631
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2618,8 +2618,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.34637,
-        "y": 0.256433
+        "x": 0.912328,
+        "y": 0.380545
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2633,8 +2633,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.350989,
-        "y": 0.246995
+        "x": 0.902471,
+        "y": 0.372659
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2648,8 +2648,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.356039,
-        "y": 0.237457
+        "x": 0.892613,
+        "y": 0.364773
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2663,8 +2663,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.361522,
-        "y": 0.227891
+        "x": 0.882755,
+        "y": 0.356886
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2678,8 +2678,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.36744,
-        "y": 0.21837
+        "x": 0.872897,
+        "y": 0.349
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2693,8 +2693,8 @@
       "segmentId": "pflanzgarten",
       "distanceMeters": 95,
       "position": {
-        "x": 0.373787,
-        "y": 0.208972
+        "x": 0.861891,
+        "y": 0.345833
       },
       "cornerId": "pflanzgarten",
       "cornerLevel": 2,
@@ -2708,8 +2708,8 @@
       "segmentId": "schwalbenschwanz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.380557,
-        "y": 0.199774
+        "x": 0.849513,
+        "y": 0.348309
       },
       "cornerId": "schwalbenschwanz",
       "cornerLevel": 2,
@@ -2723,8 +2723,8 @@
       "segmentId": "schwalbenschwanz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.387737,
-        "y": 0.190853
+        "x": 0.837134,
+        "y": 0.350785
       },
       "cornerId": "schwalbenschwanz",
       "cornerLevel": 2,
@@ -2738,8 +2738,8 @@
       "segmentId": "schwalbenschwanz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.395314,
-        "y": 0.182287
+        "x": 0.824755,
+        "y": 0.353261
       },
       "cornerId": "schwalbenschwanz",
       "cornerLevel": 2,
@@ -2753,8 +2753,8 @@
       "segmentId": "schwalbenschwanz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.403269,
-        "y": 0.17415
+        "x": 0.813606,
+        "y": 0.35236
       },
       "cornerId": "schwalbenschwanz",
       "cornerLevel": 2,
@@ -2768,8 +2768,8 @@
       "segmentId": "schwalbenschwanz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.41158,
-        "y": 0.166517
+        "x": 0.80572,
+        "y": 0.342503
       },
       "cornerId": "schwalbenschwanz",
       "cornerLevel": 2,
@@ -2783,8 +2783,8 @@
       "segmentId": "schwalbenschwanz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.420223,
-        "y": 0.159455
+        "x": 0.797834,
+        "y": 0.332645
       },
       "cornerId": "schwalbenschwanz",
       "cornerLevel": 2,
@@ -2798,8 +2798,8 @@
       "segmentId": "schwalbenschwanz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.429169,
-        "y": 0.153029
+        "x": 0.789947,
+        "y": 0.322787
       },
       "cornerId": "schwalbenschwanz",
       "cornerLevel": 2,
@@ -2813,8 +2813,8 @@
       "segmentId": "schwalbenschwanz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.438388,
-        "y": 0.147299
+        "x": 0.782061,
+        "y": 0.312929
       },
       "cornerId": "schwalbenschwanz",
       "cornerLevel": 2,
@@ -2828,8 +2828,8 @@
       "segmentId": "schwalbenschwanz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.447847,
-        "y": 0.142319
+        "x": 0.774072,
+        "y": 0.303247
       },
       "cornerId": "schwalbenschwanz",
       "cornerLevel": 2,
@@ -2843,8 +2843,8 @@
       "segmentId": "schwalbenschwanz",
       "distanceMeters": 95,
       "position": {
-        "x": 0.457512,
-        "y": 0.138134
+        "x": 0.76162,
+        "y": 0.301172
       },
       "cornerId": "schwalbenschwanz",
       "cornerLevel": 2,
@@ -2858,8 +2858,8 @@
       "segmentId": "galgenkopf",
       "distanceMeters": 95,
       "position": {
-        "x": 0.467346,
-        "y": 0.134785
+        "x": 0.749168,
+        "y": 0.299097
       },
       "cornerId": "galgenkopf",
       "cornerLevel": 2,
@@ -2873,8 +2873,8 @@
       "segmentId": "galgenkopf",
       "distanceMeters": 95,
       "position": {
-        "x": 0.47731,
-        "y": 0.132304
+        "x": 0.736715,
+        "y": 0.297021
       },
       "cornerId": "galgenkopf",
       "cornerLevel": 2,
@@ -2888,8 +2888,8 @@
       "segmentId": "galgenkopf",
       "distanceMeters": 95,
       "position": {
-        "x": 0.487365,
-        "y": 0.130713
+        "x": 0.724263,
+        "y": 0.294946
       },
       "cornerId": "galgenkopf",
       "cornerLevel": 2,
@@ -2903,8 +2903,8 @@
       "segmentId": "galgenkopf",
       "distanceMeters": 95,
       "position": {
-        "x": 0.49747,
-        "y": 0.130029
+        "x": 0.711899,
+        "y": 0.29321
       },
       "cornerId": "galgenkopf",
       "cornerLevel": 2,
@@ -2918,8 +2918,8 @@
       "segmentId": "galgenkopf",
       "distanceMeters": 95,
       "position": {
-        "x": 0.507586,
-        "y": 0.130257
+        "x": 0.702042,
+        "y": 0.301096
       },
       "cornerId": "galgenkopf",
       "cornerLevel": 2,
@@ -2933,8 +2933,8 @@
       "segmentId": "galgenkopf",
       "distanceMeters": 95,
       "position": {
-        "x": 0.517672,
-        "y": 0.131396
+        "x": 0.692184,
+        "y": 0.308982
       },
       "cornerId": "galgenkopf",
       "cornerLevel": 2,
@@ -2948,8 +2948,8 @@
       "segmentId": "galgenkopf",
       "distanceMeters": 95,
       "position": {
-        "x": 0.527686,
-        "y": 0.133434
+        "x": 0.682326,
+        "y": 0.316868
       },
       "cornerId": "galgenkopf",
       "cornerLevel": 2,
@@ -2963,8 +2963,8 @@
       "segmentId": "galgenkopf",
       "distanceMeters": 95,
       "position": {
-        "x": 0.53759,
-        "y": 0.136353
+        "x": 0.672468,
+        "y": 0.324755
       },
       "cornerId": "galgenkopf",
       "cornerLevel": 2,
@@ -2978,8 +2978,8 @@
       "segmentId": "galgenkopf",
       "distanceMeters": 95,
       "position": {
-        "x": 0.547344,
-        "y": 0.140124
+        "x": 0.662611,
+        "y": 0.332641
       },
       "cornerId": "galgenkopf",
       "cornerLevel": 2,
@@ -2993,8 +2993,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.556911,
-        "y": 0.144712
+        "x": 0.651996,
+        "y": 0.329268
       }
     },
     {
@@ -3004,8 +3004,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.566254,
-        "y": 0.150074
+        "x": 0.641171,
+        "y": 0.322773
       }
     },
     {
@@ -3015,8 +3015,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.575341,
-        "y": 0.156158
+        "x": 0.630346,
+        "y": 0.316278
       }
     },
     {
@@ -3026,8 +3026,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.584138,
-        "y": 0.16291
+        "x": 0.619521,
+        "y": 0.309783
       }
     },
     {
@@ -3037,8 +3037,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.592618,
-        "y": 0.170266
+        "x": 0.608697,
+        "y": 0.303301
       }
     },
     {
@@ -3048,8 +3048,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.600754,
-        "y": 0.17816
+        "x": 0.598839,
+        "y": 0.311188
       }
     },
     {
@@ -3059,8 +3059,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.608523,
-        "y": 0.186521
+        "x": 0.588981,
+        "y": 0.319074
       }
     },
     {
@@ -3070,8 +3070,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.615904,
-        "y": 0.195274
+        "x": 0.579124,
+        "y": 0.32696
       }
     },
     {
@@ -3081,8 +3081,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.622881,
-        "y": 0.204343
+        "x": 0.569266,
+        "y": 0.334846
       }
     },
     {
@@ -3092,8 +3092,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.62944,
-        "y": 0.213651
+        "x": 0.559408,
+        "y": 0.342732
       }
     },
     {
@@ -3103,8 +3103,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.635573,
-        "y": 0.22312
+        "x": 0.550249,
+        "y": 0.338013
       }
     },
     {
@@ -3114,8 +3114,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.641274,
-        "y": 0.232673
+        "x": 0.541322,
+        "y": 0.329087
       }
     },
     {
@@ -3125,8 +3125,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.64654,
-        "y": 0.242234
+        "x": 0.532396,
+        "y": 0.32016
       }
     },
     {
@@ -3136,8 +3136,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.651374,
-        "y": 0.251731
+        "x": 0.523469,
+        "y": 0.311234
       }
     },
     {
@@ -3147,8 +3147,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.655781,
-        "y": 0.261093
+        "x": 0.51444,
+        "y": 0.304166
       }
     },
     {
@@ -3158,8 +3158,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.65977,
-        "y": 0.270255
+        "x": 0.504582,
+        "y": 0.312052
       }
     },
     {
@@ -3169,8 +3169,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.663354,
-        "y": 0.279157
+        "x": 0.494724,
+        "y": 0.319938
       }
     },
     {
@@ -3180,8 +3180,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.666551,
-        "y": 0.287745
+        "x": 0.484866,
+        "y": 0.327824
       }
     },
     {
@@ -3191,8 +3191,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.669378,
-        "y": 0.295969
+        "x": 0.475009,
+        "y": 0.335711
       }
     },
     {
@@ -3202,8 +3202,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.67186,
-        "y": 0.303788
+        "x": 0.465151,
+        "y": 0.343597
       }
     },
     {
@@ -3213,8 +3213,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.674022,
-        "y": 0.311167
+        "x": 0.454462,
+        "y": 0.339124
       }
     },
     {
@@ -3224,8 +3224,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.675893,
-        "y": 0.31808
+        "x": 0.443637,
+        "y": 0.332629
       }
     },
     {
@@ -3235,8 +3235,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.677502,
-        "y": 0.324507
+        "x": 0.432812,
+        "y": 0.326134
       }
     },
     {
@@ -3246,8 +3246,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.678884,
-        "y": 0.330438
+        "x": 0.421987,
+        "y": 0.319639
       }
     },
     {
@@ -3257,8 +3257,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.680073,
-        "y": 0.335868
+        "x": 0.411237,
+        "y": 0.314257
       }
     },
     {
@@ -3268,8 +3268,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.681105,
-        "y": 0.340803
+        "x": 0.401379,
+        "y": 0.322144
       }
     },
     {
@@ -3279,8 +3279,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.682018,
-        "y": 0.345254
+        "x": 0.391522,
+        "y": 0.33003
       }
     },
     {
@@ -3290,8 +3290,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.68285,
-        "y": 0.34924
+        "x": 0.381664,
+        "y": 0.337916
       }
     },
     {
@@ -3301,8 +3301,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.683639,
-        "y": 0.352789
+        "x": 0.371806,
+        "y": 0.345802
       }
     },
     {
@@ -3312,8 +3312,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.684423,
-        "y": 0.355932
+        "x": 0.361949,
+        "y": 0.353688
       }
     },
     {
@@ -3323,8 +3323,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.685243,
-        "y": 0.358707
+        "x": 0.351891,
+        "y": 0.348801
       }
     },
     {
@@ -3334,8 +3334,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.686134,
-        "y": 0.36116
+        "x": 0.341792,
+        "y": 0.341226
       }
     },
     {
@@ -3345,8 +3345,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.687134,
-        "y": 0.363337
+        "x": 0.331693,
+        "y": 0.333652
       }
     },
     {
@@ -3356,8 +3356,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.688277,
-        "y": 0.36529
+        "x": 0.321594,
+        "y": 0.326078
       }
     },
     {
@@ -3367,8 +3367,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.689598,
-        "y": 0.367074
+        "x": 0.312345,
+        "y": 0.330478
       }
     },
     {
@@ -3378,8 +3378,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.691127,
-        "y": 0.368746
+        "x": 0.303419,
+        "y": 0.339405
       }
     },
     {
@@ -3389,8 +3389,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.692895,
-        "y": 0.370363
+        "x": 0.294492,
+        "y": 0.348331
       }
     },
     {
@@ -3400,8 +3400,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.694926,
-        "y": 0.371983
+        "x": 0.285566,
+        "y": 0.357258
       }
     },
     {
@@ -3411,8 +3411,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.697245,
-        "y": 0.373665
+        "x": 0.276923,
+        "y": 0.366389
       }
     },
     {
@@ -3422,8 +3422,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.699872,
-        "y": 0.375464
+        "x": 0.271278,
+        "y": 0.37768
       }
     },
     {
@@ -3433,8 +3433,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.702825,
-        "y": 0.377433
+        "x": 0.265632,
+        "y": 0.388971
       }
     },
     {
@@ -3444,8 +3444,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.706115,
-        "y": 0.379624
+        "x": 0.259986,
+        "y": 0.400263
       }
     },
     {
@@ -3455,8 +3455,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.709753,
-        "y": 0.382083
+        "x": 0.254341,
+        "y": 0.411554
       }
     },
     {
@@ -3466,8 +3466,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.713746,
-        "y": 0.384853
+        "x": 0.248695,
+        "y": 0.422845
       }
     },
     {
@@ -3477,8 +3477,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.718093,
-        "y": 0.387971
+        "x": 0.24113,
+        "y": 0.432753
       }
     },
     {
@@ -3488,8 +3488,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.722795,
-        "y": 0.391469
+        "x": 0.232203,
+        "y": 0.441679
       }
     },
     {
@@ -3499,8 +3499,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.727844,
-        "y": 0.395372
+        "x": 0.223277,
+        "y": 0.450606
       }
     },
     {
@@ -3510,8 +3510,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.733231,
-        "y": 0.399699
+        "x": 0.21435,
+        "y": 0.459532
       }
     },
     {
@@ -3521,8 +3521,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.738941,
-        "y": 0.404464
+        "x": 0.205424,
+        "y": 0.468459
       }
     },
     {
@@ -3532,8 +3532,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.744957,
-        "y": 0.409671
+        "x": 0.19426,
+        "y": 0.463601
       }
     },
     {
@@ -3543,8 +3543,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.751256,
-        "y": 0.41532
+        "x": 0.182969,
+        "y": 0.457955
       }
     },
     {
@@ -3554,8 +3554,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.757815,
-        "y": 0.421402
+        "x": 0.171678,
+        "y": 0.452309
       }
     },
     {
@@ -3565,8 +3565,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.764604,
-        "y": 0.427904
+        "x": 0.161045,
+        "y": 0.44575
       }
     },
     {
@@ -3576,8 +3576,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.771592,
-        "y": 0.434803
+        "x": 0.152118,
+        "y": 0.436824
       }
     },
     {
@@ -3587,8 +3587,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.778744,
-        "y": 0.442072
+        "x": 0.143192,
+        "y": 0.427897
       }
     },
     {
@@ -3598,8 +3598,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.786022,
-        "y": 0.44968
+        "x": 0.134265,
+        "y": 0.418971
       }
     },
     {
@@ -3609,8 +3609,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.793387,
-        "y": 0.457586
+        "x": 0.125339,
+        "y": 0.410044
       }
     },
     {
@@ -3620,8 +3620,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.800797,
-        "y": 0.46575
+        "x": 0.116412,
+        "y": 0.401118
       }
     },
     {
@@ -3631,8 +3631,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.808209,
-        "y": 0.474124
+        "x": 0.107485,
+        "y": 0.392191
       }
     },
     {
@@ -3642,8 +3642,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.815578,
-        "y": 0.482659
+        "x": 0.098559,
+        "y": 0.383265
       }
     },
     {
@@ -3653,8 +3653,8 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.822857,
-        "y": 0.491302
+        "x": 0.089632,
+        "y": 0.374338
       }
     }
   ]
