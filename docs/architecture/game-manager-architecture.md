@@ -9,7 +9,7 @@ verified-by: User
 
 ## Status
 
-Accepted
+Superseded by [ADR-002](adr-002-layered-pure-function-architecture.md) (2026-07-30)
 
 ## Context
 
