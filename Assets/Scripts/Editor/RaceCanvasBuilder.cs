@@ -67,7 +67,7 @@ public static class RaceCanvasBuilder
         hud.gearText      = MakeText(parent, "GearText",      "档位: 1",    18, TR(), TR(), new Vector2(-200, -80),              V2(220, 26));
         hud.heatText      = MakeText(parent, "HeatText",      "引擎: 12",   18, TR(), TR(), new Vector2(-200, -80 - rowH),     V2(280, 26));
         hud.lapText       = MakeText(parent, "LapText",       "圈数: 0/3",  18, TR(), TR(), new Vector2(-200, -80 - rowH*2),  V2(200, 26));
-        hud.positionText  = MakeText(parent, "PositionText",  "位置: 0/42", 18, TR(), TR(), new Vector2(-200, -80 - rowH*3),  V2(200, 26));
+        hud.positionText  = MakeText(parent, "PositionText",  "位置: 0/--", 18, TR(), TR(), new Vector2(-200, -80 - rowH*3),  V2(200, 26));
         hud.aiStatusText  = MakeText(parent, "AIStatusText",  "AI: 就绪",   16, TR(), TR(), new Vector2(-200, -80 - rowH*4),  V2(260, 24));
 
         // -- 档位按钮：左上角，锚点 (0, 1) 水平排列 --

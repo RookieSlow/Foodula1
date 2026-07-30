@@ -1,4 +1,4 @@
-﻿# Game Mechanics
+# Game Mechanics
 
 This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
@@ -26,9 +26,9 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 - Gear 2 removes up to one heat card from the hand.
 - Higher gears provide no automatic cooling.
 
-The gear-shift and cooling constants are still embedded in
-`MVPGameManager.cs`; moving them into configuration or `RaceRules` is part of
-the pending Scheme A refactor.
+Gear-shift heat cost and gear-one/gear-two cooling values are configured in
+`GameConfigSO`. `MVPGameManager` resolves these rules through `RaceRules` for
+both the player and AI race flow.
 
 ## Heat
 
@@ -44,20 +44,26 @@ prototype and is no longer the authoritative model.
 
 ## Track and Race
 
-- The current fallback track contains 42 nodes and runs for 3 laps by
-  default.
-- When `GameConfigSO.trackId` is populated, `TrackManager` attempts to load
+- The Race scene currently loads the 60-node, 3-lap Silverstone JSON track;
+  a 42-node hard-coded track remains as a fallback only.
+- When `GameConfigSO.trackId` is populated, `TrackManager` loads
   `Resources/Configs/Tracks/<trackId>.json`.
 - JSON tracks may define their own node count, lap count, start/finish node,
-  corners, speed limits, pit entry/exit, weather pool, and layout cells.
-- `TrackManager` already contains JSON conversion, corner lookup,
-  start/finish crossing, arbitrary-node positioning, and LineRenderer support.
-- Full scene configuration, data validation, vehicle orientation, pit
-  behavior, and weather integration remain incomplete.
+  corners, apex cells, speed limits, pit entry/exit, weather pool, and layout.
+- Corner-speed resolution triggers only when movement crosses an `isApex`
+  cell. Repeated apex cells for the same corner are deduplicated per move.
+- Player initialization and lap crossing use the runtime node marked
+  `isStartFinish`, including when that node is not index 0.
+- HUD position totals and LineRenderer coordinates use the loaded track data.
+- Authoring workflow, vehicle orientation, pit behavior, weather integration,
+  and a full multi-lap manual playthrough remain incomplete.
 
 ## Opponents and Win Condition
 
 - The current demo includes the player and one AI-controlled opponent.
+- AI speed-card selection uses configurable normal, heat-warning, and
+  corner-risk behavior. Its variation probability and random source are
+  injectable so seeded runs can be reproduced in tests.
 - A race ends when a participant reaches the configured lap count.
 - Final ranking compares completed laps and track position.
 

@@ -37,6 +37,7 @@ public class TrackManager : MonoBehaviour
     // --- 公开属性 ---
     public int TotalNodes => nodes.Count;
     public IReadOnlyList<TrackNode> Nodes => nodes;
+    public int StartFinishNodeIndex => TrackRules.FindStartFinishNodeIndex(nodes);
 
     void Awake()
     {
@@ -139,6 +140,7 @@ public class TrackManager : MonoBehaviour
         nodes[nodeIndex].cornerId = cornerId;
         nodes[nodeIndex].speedLimit = speedLimit;
         nodes[nodeIndex].nodeName = name;
+        nodes[nodeIndex].isApex = true;
     }
 
     // ===================================================================
@@ -147,42 +149,19 @@ public class TrackManager : MonoBehaviour
 
     public HashSet<int> GetUniqueCornersCrossed(int fromPos, int toPos)
     {
-        HashSet<int> corners = new HashSet<int>();
-        int totalNodes = nodes.Count;
-
-        for (int i = fromPos + 1; i <= toPos; i++)
-        {
-            int idx = i % totalNodes;
-            if (nodes[idx].cornerId > 0)
-            {
-                corners.Add(nodes[idx].cornerId);
-            }
-        }
-        return corners;
+        return TrackRules.GetUniqueApexCornersCrossed(nodes, fromPos, toPos);
     }
 
     public bool CrossesStartFinish(int fromPos, int toPos, out int startFinishIndex)
     {
-        startFinishIndex = -1;
-        int totalNodes = nodes.Count;
-
-        for (int i = fromPos + 1; i <= toPos; i++)
-        {
-            int idx = i % totalNodes;
-            if (nodes[idx].isStartFinish)
-            {
-                startFinishIndex = idx;
-                return true;
-            }
-        }
-        return false;
+        return TrackRules.CrossesStartFinish(nodes, fromPos, toPos, out startFinishIndex);
     }
 
     public int GetApexNodeIndex(int cornerId)
     {
         for (int i = 0; i < nodes.Count; i++)
         {
-            if (nodes[i].cornerId == cornerId)
+            if (nodes[i].cornerId == cornerId && nodes[i].isApex)
                 return i;
         }
         return -1;

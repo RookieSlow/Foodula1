@@ -23,12 +23,24 @@ public class TrackNode
     /// </summary>
     public bool isStartFinish;
 
-    public TrackNode(int index, int limit, string name = "Straight", int cornerId = 0, bool isStartFinish = false)
+    /// <summary>
+    /// Whether this node is an apex that triggers corner-speed resolution.
+    /// </summary>
+    public bool isApex;
+
+    public TrackNode(
+        int index,
+        int limit,
+        string name = "Straight",
+        int cornerId = 0,
+        bool isStartFinish = false,
+        bool isApex = false)
     {
         nodeIndex = index;
         speedLimit = limit;
         nodeName = name;
         this.cornerId = cornerId;
         this.isStartFinish = isStartFinish;
+        this.isApex = isApex;
     }
 }

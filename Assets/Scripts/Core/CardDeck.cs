@@ -26,6 +26,7 @@ public class CardDeck
     private List<CardData> drawPile = new List<CardData>();
     private List<CardData> hand = new List<CardData>();
     private List<CardData> discardPile = new List<CardData>();
+    private IRandomSource randomSource = new UnityRandomSource();
 
     /// <summary>该玩家的引擎牌库 — 每玩家独立的 HeatPool 实例。弯道超速/急刹/引擎故障从此抽取。</summary>
     public HeatPool heatPool;
@@ -43,9 +44,10 @@ public class CardDeck
     /// 用配置初始化牌组。
     /// 速度牌 + 热量牌 → 全部放入牌组，然后洗牌。
     /// </summary>
-    public void InitializeDeck(GameConfigSO config, HeatPool enginePool)
+    public void InitializeDeck(GameConfigSO config, HeatPool enginePool, IRandomSource source = null)
     {
         heatPool = enginePool;
+        randomSource = source ?? new UnityRandomSource();
         drawPile.Clear();
         hand.Clear();
         discardPile.Clear();
@@ -72,7 +74,7 @@ public class CardDeck
     {
         for (int i = drawPile.Count - 1; i > 0; i--)
         {
-            int j = Random.Range(0, i + 1);
+            int j = randomSource.NextInt(0, i + 1);
             CardData temp = drawPile[i];
             drawPile[i] = drawPile[j];
             drawPile[j] = temp;

@@ -1,4 +1,4 @@
-﻿# Project Overview
+# Project Overview
 
 Foodular1 is a Unity 2022.3.62f2 2D card-driven food truck racing game using
 the CCGS project framework.
@@ -43,11 +43,19 @@ The verified scene flow is:
   sprites, and the main-menu flow have been implemented.
 - The custom Track Node Editor experiment was reverted after Scene View
   interaction problems.
-- The track system still needs a reliable authoring workflow and full
-  data-driven integration.
-- Four Scheme A refactor files currently exist as untracked work and are not
-  integrated into the runtime: `AIPlanner.cs`, `IRandomSource.cs`,
-  `RaceRules.cs`, and `RandomSources.cs`.
+- The Race scene is configured for the 60-node Silverstone JSON track. Runtime
+  apex traversal, start/finish lookup, arbitrary-node HUD display, and loaded
+  LineRenderer coordinates are integrated and verified; authoring workflow,
+  vehicle orientation, pit behavior, weather, and full-lap playtesting remain.
+- The four Scheme A refactor sources were committed in `58d1bba`.
+  `RaceRules.cs` and `AIPlanner.cs` are integrated into the runtime.
+  `AIController` and `CardDeck` accept injectable `IRandomSource`
+  implementations for deterministic tests. The reviewed refactor currently
+  passes its original 16 EditMode tests with no Unity warnings or errors.
+- `Gameplay/TrackRules.cs` now provides pure, tested track traversal rules.
+  Together with four new track tests, the project currently passes 20 EditMode
+  tests. A Play Mode smoke test loaded Silverstone (60 nodes, 3 laps) with no
+  warnings or errors.
 
 ## Memory Provenance
 

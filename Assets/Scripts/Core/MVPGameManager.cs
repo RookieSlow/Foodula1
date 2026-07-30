@@ -212,7 +212,7 @@ public class MVPGameManager : MonoBehaviour
                 new Vector2(-400, 125), new Vector2(280, 25), fontAsset);
             hudUI.lapText = CreateTMPText(hudGO.transform, "LapText", "圈数: 0/3", 18,
                 new Vector2(-400, 100), new Vector2(200, 25), fontAsset);
-            hudUI.positionText = CreateTMPText(hudGO.transform, "PositionText", "位置: 0/42", 18,
+            hudUI.positionText = CreateTMPText(hudGO.transform, "PositionText", $"位置: 0/{trackManager.TotalNodes}", 18,
                 new Vector2(-400, 75), new Vector2(200, 25), fontAsset);
             hudUI.aiStatusText = CreateTMPText(hudGO.transform, "AIStatusText", "AI: 就绪", 16,
                 new Vector2(250, 50), new Vector2(200, 25), fontAsset);
@@ -405,11 +405,12 @@ public class MVPGameManager : MonoBehaviour
     private void InitializeGame()
     {
         int poolSize = config.heatPoolPerPlayer;
+        int startFinishNodeIndex = trackManager.StartFinishNodeIndex;
 
-        player = new PlayerState("You", false, config.startFinishNodeIndex, config.minGear);
+        player = new PlayerState("You", false, startFinishNodeIndex, config.minGear);
         player.deck.InitializeDeck(config, new HeatPool(poolSize));
 
-        ai = new PlayerState("AI", true, config.startFinishNodeIndex, config.minGear);
+        ai = new PlayerState("AI", true, startFinishNodeIndex, config.minGear);
         ai.deck.InitializeDeck(config, new HeatPool(poolSize));
 
         player.deck.DrawToHand(config.handSize);
@@ -441,7 +442,7 @@ public class MVPGameManager : MonoBehaviour
         if (playerCarInstance != null) Destroy(playerCarInstance);
         if (aiCarInstance != null) Destroy(aiCarInstance);
 
-        Vector3 startPos = trackManager.GetNodePosition(config.startFinishNodeIndex);
+        Vector3 startPos = trackManager.GetNodePosition(trackManager.StartFinishNodeIndex);
 
         playerCarInstance = Instantiate(carPrefab, startPos, Quaternion.identity);
         playerCarInstance.name = "PlayerCar";
@@ -580,8 +581,8 @@ public class MVPGameManager : MonoBehaviour
             }
 
             // 计算双方移动力
-            player.totalMovementThisTurn = SumCardValues(player.playedSpeedCardsThisTurn);
-            ai.totalMovementThisTurn = SumCardValues(ai.playedSpeedCardsThisTurn);
+            player.totalMovementThisTurn = RaceRules.SumCardValues(player.playedSpeedCardsThisTurn);
+            ai.totalMovementThisTurn = RaceRules.SumCardValues(ai.playedSpeedCardsThisTurn);
 
             // ====== PHASE B: 执行阶段 ======
             phase = GamePhase.Animating;
@@ -694,27 +695,18 @@ public class MVPGameManager : MonoBehaviour
 
     private void ApplyGearShift(PlayerState p, int targetGear)
     {
-        targetGear = Mathf.Clamp(targetGear, config.minGear, config.maxGear);
-        int oldGear = p.gear;
-        int delta = targetGear - oldGear;
-        int absDelta = Mathf.Abs(delta);
+        GearShiftResult shift = RaceRules.ResolveGearShift(
+            p.gear,
+            targetGear,
+            config.minGear,
+            config.maxGear,
+            config.twoGearShiftHeatCost);
 
-        if (absDelta <= 1)
+        if (TryPayHeat(p, shift.HeatCost, p.position, "shift 2 gears"))
         {
-            // ±1 档：免费
-            p.gear = targetGear;
+            p.gear = shift.TargetGear;
         }
-        else
-        {
-            // ±2 档：支付 1 热
-            int actualTarget = oldGear + System.Math.Sign(delta) * 2;
-            actualTarget = Mathf.Clamp(actualTarget, config.minGear, config.maxGear);
-            if (TryPayHeat(p, 1, p.position, "shift 2 gears"))
-            {
-                p.gear = actualTarget;
-            }
-            // 若 TryPayHeat 失败（失控），HandleSpin 已将档位设为 1
-        }
+        // 若 TryPayHeat 失败（失控），HandleSpin 已将档位设为最低档
 
         p.selectedGearThisTurn = p.gear;
     }
@@ -729,9 +721,10 @@ public class MVPGameManager : MonoBehaviour
     {
         if (p.isBlown || p.hasFinished) return;
 
-        int cooldown = 0;
-        if (p.gear == 1) cooldown = 3;
-        else if (p.gear == 2) cooldown = 1;
+        int cooldown = RaceRules.GetCooldown(
+            p.gear,
+            config.gearOneCooldown,
+            config.gearTwoCooldown);
 
         if (cooldown > 0)
         {
@@ -741,14 +734,6 @@ public class MVPGameManager : MonoBehaviour
         }
     }
 
-    // ====== 卡牌工具 ======
-
-    private int SumCardValues(List<CardData> cards)
-    {
-        int sum = 0;
-        foreach (var c in cards) sum += c.value;
-        return sum;
-    }
 
     // ====== 移动动画（含圈数检测） ======
 
@@ -774,7 +759,7 @@ public class MVPGameManager : MonoBehaviour
             carInstance.transform.position = target;
 
             // 检测跨过起点/终点线
-            if (nodeIdx == config.startFinishNodeIndex)
+            if (trackManager.GetNode(nodeIdx).isStartFinish)
             {
                 OnPlayerCrossedStartFinish(p);
             }
@@ -794,7 +779,7 @@ public class MVPGameManager : MonoBehaviour
 
         HashSet<int> corners = trackManager.GetUniqueCornersCrossed(oldPos, rawEndPos);
 
-        int totalSpeed = SumCardValues(p.playedSpeedCardsThisTurn);
+        int totalSpeed = RaceRules.SumCardValues(p.playedSpeedCardsThisTurn);
         string log = "";
 
         foreach (int cornerId in corners)
@@ -993,7 +978,7 @@ public class MVPGameManager : MonoBehaviour
         }
 
         // 引擎故障：速度牌不足时，每缺 1 张 → +1 热量到弃牌堆。引擎不足 → 失控
-        int missing = player.gear - speedCount;
+        int missing = RaceRules.GetMissingSpeedCardCount(player.gear, speedCount);
         if (missing > 0)
         {
             if (!TryPayHeat(player, missing, player.position, "engine failure"))

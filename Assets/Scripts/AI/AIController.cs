@@ -12,14 +12,15 @@ public class AIController : MonoBehaviour
     private GameConfigSO config;
     private TrackManager track;
 
-    private System.Random rng = new System.Random();
+    private IRandomSource randomSource = new UnityRandomSource();
 
-    public void Initialize(MVPGameManager gameManager, PlayerState aiState)
+    public void Initialize(MVPGameManager gameManager, PlayerState aiState, IRandomSource source = null)
     {
         game = gameManager;
         ai = aiState;
         config = gameManager.Config;
         track = gameManager.Track;
+        randomSource = source ?? new UnityRandomSource();
     }
 
     // ====== 档位决策 ======
@@ -114,46 +115,18 @@ public class AIController : MonoBehaviour
         ai.playedHeatCardsThisTurn.Clear();
 
         int gear = ai.gear;
-        List<CardData> speedCards = ai.deck.GetSpeedCardsSortedDesc();
-        float heatRatio = ai.HeatRatio;
-
-        List<CardData> chosen;
-
-        // 热量高 → 选最小牌
-        if (heatRatio >= config.aiHeatWarningThreshold)
-        {
-            chosen = ai.deck.GetBottomNSpeedCards(gear);
-        }
-        // 弯道风险 → 偏保守
-        else if (HasCornerRisk(gear) && heatRatio >= 0.5f)
-        {
-            chosen = ai.deck.GetBottomNSpeedCards(gear);
-        }
-        // 常规：选最大的 N 张速度牌
-        else
-        {
-            chosen = new List<CardData>();
-            for (int i = 0; i < gear && i < speedCards.Count; i++)
-            {
-                chosen.Add(speedCards[i]);
-            }
-
-            // 10% 概率随机洗牌增加变化
-            if (rng.NextDouble() < 0.1f && chosen.Count > 1)
-            {
-                ShuffleList(chosen);
-            }
-        }
-
-        // 从手牌移除选中卡牌
-        ai.deck.RemoveFromHand(chosen);
-        foreach (var card in chosen)
-        {
-            ai.playedSpeedCardsThisTurn.Add(card);
-        }
+        List<CardData> chosen = AIPlanner.ChooseSpeedCards(
+            ai.deck,
+            gear,
+            ai.HeatRatio,
+            HasCornerRisk(gear),
+            config.aiHeatWarningThreshold,
+            config.aiCautiousHeatThreshold,
+            config.aiCardVariationChance,
+            randomSource);
 
         // 引擎故障：速度牌不足时，每缺 1 张 +1 热量到弃牌堆。引擎不足 → 失控
-        int missing = gear - chosen.Count;
+        int missing = RaceRules.GetMissingSpeedCardCount(gear, chosen.Count);
         if (missing > 0)
         {
             int drawn = ai.deck.DrawHeatFromPool(missing);
@@ -165,6 +138,13 @@ public class AIController : MonoBehaviour
                 game.HandleSpin(ai, ai.position, "engine failure");
                 return;
             }
+        }
+
+        // 支付成功后再提交选牌，避免失控时速度牌从手牌永久丢失。
+        ai.deck.RemoveFromHand(chosen);
+        foreach (var card in chosen)
+        {
+            ai.playedSpeedCardsThisTurn.Add(card);
         }
         // 热量牌不可打出 — 始终留在手牌中，等待降档冷却或 G1 散热移除
     }
@@ -187,6 +167,11 @@ public class AIController : MonoBehaviour
     /// </summary>
     private bool HasCornerRisk(int gear)
     {
+        if (track == null || track.TotalNodes == 0)
+        {
+            return false;
+        }
+
         int estimatedMove = EstimateMovement(gear);
         int lookAhead = config.aiLookAheadNodes;
 
@@ -203,14 +188,4 @@ public class AIController : MonoBehaviour
         return false;
     }
 
-    private void ShuffleList<T>(List<T> list)
-    {
-        for (int i = list.Count - 1; i > 0; i--)
-        {
-            int j = rng.Next(i + 1);
-            T temp = list[i];
-            list[i] = list[j];
-            list[j] = temp;
-        }
-    }
 }

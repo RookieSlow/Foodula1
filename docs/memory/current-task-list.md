@@ -1,28 +1,43 @@
 # Current Task List
 
-> Updated: 2026-07-29
+> Updated: 2026-07-30
 > Sources: Claude Code project memory, active session state, session history,
 > current Git worktree, and current Unity project structure.
 
 ## P0 - Resume Approved Scheme A Refactor
 
-- [ ] Review all current C# files and reconcile the earlier whole-project
+- [x] Review all current C# files and reconcile the earlier whole-project
   review with the latest project state.
-- [ ] Integrate `Assets/Scripts/Core/RaceRules.cs` into
+- [x] Integrate `Assets/Scripts/Core/RaceRules.cs` into
   `MVPGameManager.cs` so shared gear, cooling, movement, and selection rules
   have one source of truth.
-- [ ] Integrate `Assets/Scripts/AI/AIPlanner.cs` into `AIController.cs`.
-- [ ] Inject `IRandomSource` where deterministic gameplay or AI behavior is
+- [x] Integrate `Assets/Scripts/AI/AIPlanner.cs` into `AIController.cs`.
+- [x] Inject `IRandomSource` where deterministic gameplay or AI behavior is
   required.
-- [ ] Add EditMode tests for `RaceRules`, `AIPlanner`, and deterministic
-  random behavior.
-- [ ] Validate every changed script, wait for Unity compilation, and confirm
-  that the Unity console has no errors.
-- [ ] Review the final diff and commit only the approved refactor changes.
+- [x] Add EditMode tests for `RaceRules` (9 cases passing in Unity).
+- [x] Add EditMode tests for `AIPlanner`, deterministic random behavior,
+  and the AI spin-out card-conservation regression (7 cases passing in Unity).
+- [x] Validate every changed script, wait for Unity compilation, and confirm
+  that the Unity console has no errors (16 EditMode tests, 0 warnings/errors).
+- [x] Review the final diff for the approved refactor changes.
+- [ ] Commit only with explicit user instruction; scheduled-task authorization
+  does not include Git commits.
 
-The four Scheme A source files and their `.meta` files currently exist as
-untracked work. They are not referenced by the existing runtime and must not
-be treated as a completed refactor.
+The four Scheme A source files and their `.meta` files were committed in
+`58d1bba`. `RaceRules` and `AIPlanner` are now integrated into the runtime.
+`AIController` and `CardDeck` accept injectable random sources, and the
+refactor currently has 16 passing EditMode tests. The final review also fixed an
+AI spin-out path that could remove selected speed cards without discarding them,
+and standardized `IRandomSource.NextDouble` to the [0, 1) contract.
+Manager-level seeded replay and broader integration coverage remain useful
+follow-ups, but are not blocking the current Demo path.
+
+The first data-driven track completion slice is also verified. `TrackNode` now
+preserves JSON apex metadata, pure `TrackRules` owns wrapping traversal and
+start/finish lookup, and `MVPGameManager` initializes and counts laps from the
+runtime track rather than the legacy config index. Silverstone loads in the
+Race scene with 60 nodes and 3 laps. Unity currently passes 20 EditMode tests
+with 0 failures, warnings, or errors.
 
 ## P0 - Protect and Reconcile the Current Worktree
 
@@ -41,14 +56,19 @@ be treated as a completed refactor.
   Editor script, or another explicitly approved approach.
 - [ ] Decide whether AI-generated `track_layout_*.png` images are authoring
   references, runtime backgrounds, or both.
-- [ ] Configure `GameConfigSO.trackId` and verify JSON track loading in the
-  Race scene.
-- [ ] Validate arbitrary node counts throughout movement and UI; remove
+- [x] Configure `GameConfigSO.trackId` and verify JSON track loading in the
+  Race scene (Silverstone, 60 nodes, 3 laps).
+- [x] Validate arbitrary node counts throughout movement and UI; remove
   remaining hard-coded `42` display assumptions.
-- [ ] Validate unique-corner crossing and speed-limit penalties.
-- [ ] Validate start/finish crossing and lap counting from track data.
+- [x] Preserve JSON `isApex` metadata and validate apex-only, deduplicated
+  corner crossing across the lap boundary.
+- [ ] Playtest speed-limit heat penalties through the full Race interaction.
+- [x] Drive start/finish lookup and crossing from runtime track-node data;
+  validate wrapping and a non-zero start/finish index in EditMode tests.
+- [ ] Complete a multi-lap manual playthrough to validate finish timing.
 - [ ] Implement or verify pit entry and pit exit behavior.
-- [ ] Drive LineRenderer positions from loaded track coordinates.
+- [x] Drive LineRenderer positions from loaded track coordinates and verify
+  the Silverstone path in Play Mode.
 - [ ] Rotate vehicles to follow the tangent between track nodes.
 - [ ] Integrate track weather-pool selection after the core track path is
   stable.

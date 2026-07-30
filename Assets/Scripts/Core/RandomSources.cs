@@ -10,7 +10,7 @@ public sealed class UnityRandomSource : IRandomSource
 
     public double NextDouble()
     {
-        return UnityEngine.Random.value;
+        return UnityEngine.Random.Range(0, int.MaxValue) / (double)int.MaxValue;
     }
 }
 

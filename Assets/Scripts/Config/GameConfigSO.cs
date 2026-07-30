@@ -46,6 +46,18 @@ public class GameConfigSO : ScriptableObject
     [Tooltip("最高档位")]
     public int maxGear = 4;
 
+    [Tooltip("一次跨两档时消耗的引擎热量")]
+    [Min(0)]
+    public int twoGearShiftHeatCost = 1;
+
+    [Tooltip("1 档反应步骤最多冷却的热量牌数量")]
+    [Min(0)]
+    public int gearOneCooldown = 3;
+
+    [Tooltip("2 档反应步骤最多冷却的热量牌数量")]
+    [Min(0)]
+    public int gearTwoCooldown = 1;
+
     [Header("动画")]
     [Tooltip("赛车每步移动速度 (单位/秒)")]
     public float moveAnimSpeed = 12f;
@@ -64,6 +76,14 @@ public class GameConfigSO : ScriptableObject
     [Tooltip("AI 激进推进的热量阈值 (热量牌数/手牌上限)")]
     [Range(0f, 1f)]
     public float aiAggressiveHeatThreshold = 0.3f;
+
+    [Tooltip("AI 在弯道风险下改用保守选牌的热量阈值")]
+    [Range(0f, 1f)]
+    public float aiCautiousHeatThreshold = 0.5f;
+
+    [Tooltip("AI 对已选速度牌顺序进行随机变化的概率")]
+    [Range(0f, 1f)]
+    public float aiCardVariationChance = 0.1f;
 
     /// <summary>
     /// 速度牌总数（从分布数组计算）。

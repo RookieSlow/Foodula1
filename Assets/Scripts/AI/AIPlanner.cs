@@ -23,6 +23,7 @@ public static class AIPlanner
 
         if (chosen.Count > 1 &&
             variationChance > 0f &&
+            randomSource != null &&
             randomSource.NextDouble() < variationChance)
         {
             Shuffle(chosen, randomSource);

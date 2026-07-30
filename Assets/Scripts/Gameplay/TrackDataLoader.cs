@@ -82,7 +82,8 @@ public static class TrackDataLoader
                 speedLimit,
                 cell.name,
                 cornerId,
-                cell.IsStartFinish
+                cell.IsStartFinish,
+                cell.isApex
             );
 
             nodes.Add(node);
