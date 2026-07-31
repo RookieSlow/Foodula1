@@ -77,6 +77,10 @@ public class MVPGameManager : MonoBehaviour
     public GamePhase CurrentPhase => phase;
     public GameConfigSO Config => config;
     public TrackManager Track => trackManager;
+    /// <summary>The currently rendered player car, if it has been spawned.</summary>
+    public Transform PlayerCarTransform => playerCarInstance != null ? playerCarInstance.transform : null;
+    /// <summary>The currently rendered AI car, if it has been spawned.</summary>
+    public Transform AICarTransform => aiCarInstance != null ? aiCarInstance.transform : null;
 
     void Awake()
     {
@@ -116,7 +120,29 @@ public class MVPGameManager : MonoBehaviour
 
         nodeWait = new WaitForSeconds(config.nodeDelay);
         InitializeGame();
+        InitializeRaceCamera();
         StartCoroutine(GameLoop());
+    }
+
+    private void InitializeRaceCamera()
+    {
+        Camera raceCamera = Camera.main;
+        if (raceCamera == null)
+        {
+            Debug.LogWarning("[MVPGameManager] Main camera not found; race camera setup skipped.");
+            return;
+        }
+
+        RaceCameraController controller = raceCamera.GetComponent<RaceCameraController>();
+        if (controller == null)
+        {
+            controller = raceCamera.gameObject.AddComponent<RaceCameraController>();
+        }
+
+        Canvas raceCanvas = hudUI != null
+            ? hudUI.GetComponentInParent<Canvas>()
+            : FindObjectOfType<Canvas>();
+        controller.Initialize(this, raceCanvas);
     }
 
     /// <summary>

@@ -9,6 +9,7 @@ public class PlayerState
 {
     public string name;
     public bool isAI;
+    public TeamId teamId;
 
     // --- 持久状态 ---
     public int gear;           // 当前档位 1-4
@@ -18,6 +19,7 @@ public class PlayerState
     public bool isBlown;       // 退赛淘汰（失控计数器 = 3）
     public int spinCounter;    // 失控计数器 0-3，到 3 淘汰
     public bool skipNextTurn;  // 失控恢复，跳过下一回合
+    public int finishOrder;    // 完赛顺序（0=未完赛, 1=第一, 2=第二...）
     public CardDeck deck;      // 牌组/手牌/弃牌堆管理
 
     // --- 每回合临时状态 ---

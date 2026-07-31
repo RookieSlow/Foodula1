@@ -12,8 +12,8 @@ from the project JSON track coordinates.
 | `nurburgring_gp.svg` | Nurburgring Grand Prix layout, 2002+ | Pitlane02 | CC BY-SA 3.0 / GFDL | https://commons.wikimedia.org/wiki/File:Circuit_N%C3%BCrburgring-2002-GP.svg |
 | `monza_centerline.csv` | Monza Grand Prix centerline | TUMFTM racetrack-database contributors; derived from OpenStreetMap and satellite imagery | LGPL-3.0 | https://github.com/TUMFTM/racetrack-database/blob/master/tracks/Monza.csv |
 | `indianapolis_centerline.csv` | Indianapolis Motor Speedway oval centerline | TUMFTM racetrack-database contributors; derived from OpenStreetMap and satellite imagery | LGPL-3.0 | https://github.com/TUMFTM/racetrack-database/blob/master/tracks/IMS.csv |
-| `nurburgring24hReference` in `apply_real_layouts.cjs` | Nurburgring 24-hour combined layout | Digitized from Pitlane02 reference | CC BY-SA 3.0 / GFDL for the reference | https://commons.wikimedia.org/wiki/File:Circuit_N%C3%BCrburgring-2002-24h.svg |
+| `nurburgring_nordschleife_2013.svg` | Nürburgring Nordschleife, current layout | Pitlane02 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Circuit_N%C3%BCrburgring-2013-Nordschleife.svg |
 | `le_mans_1987_1989.png` | Circuit de la Sarthe, 1987-1989 | Hmdwgf | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Circuit_de_la_Sarthe_Le_Mans_1987-1989.png |
 
-Downloaded or digitized on 2026-07-29. Check each source page for the complete
+Downloaded or digitized on 2026-07-29 and 2026-07-31. Check each source page for the complete
 license text and attribution requirements before redistributing a reference file.

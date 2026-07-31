@@ -41,11 +41,12 @@ public sealed class TrackEnvironmentController : MonoBehaviour
             return;
         }
 
-        Sprite selectedSprite = ResolveSprite(config.trackId);
+        string trackId = TrackSelectionState.ResolveTrackId(config.trackId);
+        Sprite selectedSprite = ResolveSprite(trackId);
         if (selectedSprite == null)
         {
             Debug.LogWarning(
-                $"[TrackEnvironmentController] No background is configured for track '{config.trackId}'.",
+                $"[TrackEnvironmentController] No background is configured for track '{trackId}'.",
                 this);
             return;
         }

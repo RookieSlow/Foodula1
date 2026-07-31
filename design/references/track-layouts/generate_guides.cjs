@@ -17,8 +17,13 @@ const trackIds = [
 
 fs.mkdirSync(outputDirectory, { recursive: true });
 
+const requestedTrackIds = new Set(process.argv.slice(3));
+
 async function main() {
   for (const trackId of trackIds) {
+    if (requestedTrackIds.size > 0 && !requestedTrackIds.has(trackId)) {
+      continue;
+    }
     const config = JSON.parse(
       fs.readFileSync(path.join(sourceDirectory, `${trackId}.json`), "utf8"),
     );

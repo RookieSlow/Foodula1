@@ -83,7 +83,9 @@ public static class TrackDataLoader
                 cell.name,
                 cornerId,
                 cell.IsStartFinish,
-                cell.isApex
+                cell.isApex,
+                cell.IsPitEntry,
+                cell.IsPitExit
             );
 
             nodes.Add(node);

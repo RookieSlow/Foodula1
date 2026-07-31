@@ -445,7 +445,10 @@ MonoBehaviour:
   nodePrefab: {fileID: 2889663933207979727, guid: 7e50747a5916cd242bbe9991ec5e957f, type: 3}
   lineWidth: 0.18
   lineColor: {r: 0.95, g: 0.78, b: 0.28, a: 0.95}
-  cornerNodeColor: {r: 1, g: 0.35, b: 0.12, a: 1}
+  straightNodeColor: {r: 1, g: 1, b: 1, a: 1}
+  cornerNodeColor: {r: 1, g: 0.5, b: 0, a: 1}
+  apexNodeColor: {r: 1, g: 0, b: 0, a: 1}
+  startFinishNodeColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!114 &1138746649
 MonoBehaviour:
   m_ObjectHideFlags: 0

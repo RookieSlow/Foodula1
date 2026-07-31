@@ -1,6 +1,6 @@
 # Current Task List
 
-> Updated: 2026-07-30
+> Updated: 2026-07-31
 > Sources: Claude Code project memory, active session state, session history,
 > current Git worktree, and current Unity project structure.
 
@@ -69,6 +69,12 @@ with 0 failures, warnings, or errors.
 - [ ] Implement or verify pit entry and pit exit behavior.
 - [x] Drive LineRenderer positions from loaded track coordinates and verify
   the Silverstone path in Play Mode.
+- [x] Replace the inaccurate Nürburgring 24H combined bonus layout with a
+  219-node standalone Nordschleife sampled from the referenced real layout;
+  verify zero self-intersections and regenerate its guide/background.
+- [x] Standardize node colors across all tracks: apex red, other corner
+  nodes orange, straights white, and start/finish green; enforce exactly one
+  apex per corner group across every track config.
 - [ ] Rotate vehicles to follow the tangent between track nodes.
 - [ ] Integrate track weather-pool selection after the core track path is
   stable.

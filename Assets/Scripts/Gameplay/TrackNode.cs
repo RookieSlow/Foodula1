@@ -28,13 +28,21 @@ public class TrackNode
     /// </summary>
     public bool isApex;
 
+    /// <summary>Whether this node is a pit lane entry point.</summary>
+    public bool isPitEntry;
+
+    /// <summary>Whether this node is a pit lane exit point.</summary>
+    public bool isPitExit;
+
     public TrackNode(
         int index,
         int limit,
         string name = "Straight",
         int cornerId = 0,
         bool isStartFinish = false,
-        bool isApex = false)
+        bool isApex = false,
+        bool isPitEntry = false,
+        bool isPitExit = false)
     {
         nodeIndex = index;
         speedLimit = limit;
@@ -42,5 +50,7 @@ public class TrackNode
         this.cornerId = cornerId;
         this.isStartFinish = isStartFinish;
         this.isApex = isApex;
+        this.isPitEntry = isPitEntry;
+        this.isPitExit = isPitExit;
     }
 }

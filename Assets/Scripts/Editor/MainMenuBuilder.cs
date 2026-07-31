@@ -15,7 +15,7 @@ public static class MainMenuBuilder
     private const string SCENE_PATH = "Assets/Scenes/MainMenu.unity";
     private const string FONT_SDF_GUID = "67393bfc3a860b042baa08f7fbeadd93"; // 思源黑體-Medium
 
-    [MenuItem("Foodular1/Build MainMenu + Setup Scenes")]
+    [MenuItem("Tools/Build MainMenu + Setup Scenes")]
     public static void Build()
     {
         // ── 创建新场景（含 Main Camera + Directional Light） ──

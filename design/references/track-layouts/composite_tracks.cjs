@@ -91,8 +91,13 @@ function createTrackOverlay(config) {
     </svg>`);
 }
 
+const requestedTrackIds = new Set(process.argv.slice(3));
+
 async function main() {
   for (const track of tracks) {
+    if (requestedTrackIds.size > 0 && !requestedTrackIds.has(track.id)) {
+      continue;
+    }
     const configPath = path.join(
       projectRoot,
       "Assets/Resources/Configs/Tracks",

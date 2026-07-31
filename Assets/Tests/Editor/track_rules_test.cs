@@ -25,6 +25,34 @@ public class TrackRulesTests
     }
 
     [Test]
+    public void LoadConfig_Nordschleife_UsesStandaloneRealLayout()
+    {
+        TrackConfig config = TrackDataLoader.LoadConfig("nurburgring_24h_endurance");
+
+        Assert.That(config, Is.Not.Null);
+        Assert.That(config.trackNameEn, Is.EqualTo("Nürburgring Nordschleife"));
+        Assert.That(config.gameCellCount, Is.EqualTo(219));
+        Assert.That(config.cells.Length, Is.EqualTo(config.gameCellCount));
+        Assert.That(config.realCircuit.lengthMeters, Is.EqualTo(20832f));
+
+        int startFinishCount = 0;
+        float distanceSum = 0f;
+        foreach (CellData cell in config.cells)
+        {
+            if (cell.IsStartFinish)
+            {
+                startFinishCount++;
+            }
+
+            Assert.That(cell.segmentId, Is.Not.EqualTo("mercedes_arena"));
+            distanceSum += cell.distanceMeters;
+        }
+
+        Assert.That(startFinishCount, Is.EqualTo(1));
+        Assert.That(distanceSum, Is.EqualTo(config.realCircuit.lengthMeters));
+    }
+
+    [Test]
     public void GetUniqueApexCornersCrossed_IgnoresNonApexCornerCells()
     {
         var nodes = new List<TrackNode>
@@ -54,6 +82,40 @@ public class TrackRulesTests
         HashSet<int> corners = TrackRules.GetUniqueApexCornersCrossed(nodes, 2, 6);
 
         Assert.That(corners, Is.EquivalentTo(new[] { 2, 3 }));
+    }
+
+    [Test]
+    public void AllTrackConfigs_HaveExactlyOneApexPerCorner()
+    {
+        foreach (string trackId in TrackDataLoader.GetAvailableTrackIds())
+        {
+            TrackConfig config = TrackDataLoader.LoadConfig(trackId);
+            var apexCounts = new Dictionary<string, int>();
+
+            foreach (CellData cell in config.cells)
+            {
+                if (!cell.IsCorner)
+                {
+                    continue;
+                }
+
+                Assert.That(cell.cornerId, Is.Not.Null.And.Not.Empty, $"{trackId} has a corner cell without cornerId");
+                if (!apexCounts.ContainsKey(cell.cornerId))
+                {
+                    apexCounts[cell.cornerId] = 0;
+                }
+
+                if (cell.isApex)
+                {
+                    apexCounts[cell.cornerId]++;
+                }
+            }
+
+            foreach (KeyValuePair<string, int> pair in apexCounts)
+            {
+                Assert.That(pair.Value, Is.EqualTo(1), $"{trackId}/{pair.Key} must have exactly one apex");
+            }
+        }
     }
 
     [Test]

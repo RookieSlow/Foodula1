@@ -26,6 +26,69 @@ public class GameConfigSO : ScriptableObject
     [Tooltip("起点/终点线所在节点索引")]
     public int startFinishNodeIndex = 0;
 
+    [Header("Race Camera")]
+    [Tooltip("Track cells visible behind the player's nearest cell.")]
+    [Min(0)]
+    public int cameraCellsBehind = 15;
+
+    [Tooltip("Track cells visible ahead of the player's nearest cell.")]
+    [Min(0)]
+    public int cameraCellsAhead = 15;
+
+    [Tooltip("Extra space around the local track window.")]
+    [Min(1f)]
+    public float cameraPaddingMultiplier = 1.15f;
+
+    [Tooltip("Minimum orthographic half-height for the main camera.")]
+    [Min(0.01f)]
+    public float cameraMinimumOrthographicSize = 0.75f;
+
+    [Tooltip("Seconds used to smooth main camera position changes.")]
+    [Min(0.01f)]
+    public float cameraPositionSmoothTime = 0.18f;
+
+    [Tooltip("Seconds used to smooth main camera zoom changes.")]
+    [Min(0.01f)]
+    public float cameraZoomSmoothTime = 0.2f;
+
+    [Tooltip("Minimap size in reference-resolution pixels.")]
+    public Vector2 minimapSize = new Vector2(320f, 180f);
+
+    [Tooltip("Minimap distance from the top-right corner.")]
+    public Vector2 minimapMargin = new Vector2(20f, 20f);
+
+    [Tooltip("Extra world-space framing around the complete track.")]
+    [Min(1f)]
+    public float minimapWorldPaddingMultiplier = 1.08f;
+
+    [Tooltip("Minimap border thickness in reference-resolution pixels.")]
+    [Min(0f)]
+    public float minimapFrameThickness = 5f;
+
+    [Tooltip("Player and AI marker size in reference-resolution pixels.")]
+    [Min(1f)]
+    public float minimapMarkerSize = 16f;
+
+    [Tooltip("Minimap render texture width.")]
+    [Min(64)]
+    public int minimapRenderWidth = 640;
+
+    [Tooltip("Minimap render texture height.")]
+    [Min(64)]
+    public int minimapRenderHeight = 360;
+
+    [Tooltip("Maximum fraction of median cell spacing occupied by a node visual.")]
+    [Range(0.1f, 1f)]
+    public float trackNodeSpacingFillRatio = 0.65f;
+
+    [Tooltip("Smallest scale multiplier allowed for dense-track nodes and labels.")]
+    [Range(0.01f, 1f)]
+    public float trackNodeMinimumScaleMultiplier = 0.03f;
+
+    [Tooltip("Maximum fraction of median cell spacing occupied by the track line.")]
+    [Range(0.05f, 1f)]
+    public float trackLineSpacingFillRatio = 0.3f;
+
     [Header("牌组")]
     [Tooltip("手牌上限")]
     public int handSize = 7;

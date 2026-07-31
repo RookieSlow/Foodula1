@@ -543,7 +543,7 @@
       "cornerId": "spoon_double_apex",
       "cornerLevel": 2,
       "cornerLimit": 3,
-      "isApex": true
+      "isApex": false
     },
     {
       "index": 38,

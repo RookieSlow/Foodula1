@@ -13,7 +13,7 @@ public static class RaceCanvasBuilder
     private const string CARD_PREFAB_PATH = "Assets/Prefab/CardPrefab.prefab";
     private const string FONT_SDF_GUID = "67393bfc3a860b042baa08f7fbeadd93"; // 思源黑體-Medium
 
-    [MenuItem("Foodular1/Build RaceCanvas Prefab")]
+    [MenuItem("Tools/Build RaceCanvas Prefab")]
     public static void Build()
     {
         if (AssetDatabase.LoadAssetAtPath<GameObject>(PREFAB_PATH) != null)

@@ -19,7 +19,7 @@
 | `nurburgring_bier` | 纽博格林啤酒 | 55 | 3 | 综合型 |
 | `indianapolis_burger` | 印第安纳波利斯汉堡 | 42 | 3 | 纯椭圆，仅Lv1弯 |
 | `le_mans_old_mulsanne` | 勒芒旧慕尚 | 142 | 2 | Bonus，天气待配 |
-| `nurburgring_24h_endurance` | 纽北24H | 267 | 1 | Bonus，天气待配 |
+| `nurburgring_24h_endurance` | 纽博格林北环 | 219 | 1 | 绿色地狱，天气待配 |
 
 3. **Track Id 留空** → 回退到硬编码 42 节点测试赛道（MVP 兼容）
 
@@ -109,4 +109,4 @@ Demo 制作时需要确认以下系统正确对接：
 - **`cornerId`（JSON 字符串）→ `cornerId`（运行时 int）**：加载器自动 hash 映射，同 `segmentId` 的格子共享同一 int ID
 - **归一化坐标**：JSON 中 position 是 0~1 范围的拓扑示意，不用于物理计算
 - **双顶点弯**（如 Spoon）：允许 2 个 `isApex: true`，这是正确的——每个顶点独立判定
-- **Le Mans / Nürburgring 24H**：`weatherConfigurationStatus: "pending_design"`，天气池为空，暂不可用
+- **Le Mans / Nürburgring Nordschleife**：`weatherConfigurationStatus: "pending_design"`，天气池为空，暂不可用

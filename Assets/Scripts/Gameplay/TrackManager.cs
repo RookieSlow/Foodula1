@@ -18,7 +18,10 @@ public class TrackManager : MonoBehaviour
     [Header("赛道渲染")]
     public float lineWidth = 0.5f;
     public Color lineColor = Color.white;
-    public Color cornerNodeColor = Color.yellow;
+    public Color straightNodeColor = Color.white;
+    public Color cornerNodeColor = new Color(1f, 0.5f, 0f, 1f);
+    public Color apexNodeColor = Color.red;
+    public Color startFinishNodeColor = Color.green;
 
     // --- 运行时数据 ---
     private List<TrackNode> nodes = new List<TrackNode>();
@@ -41,16 +44,19 @@ public class TrackManager : MonoBehaviour
 
     void Awake()
     {
+        string configuredTrackId = config != null ? config.trackId : string.Empty;
+        string trackId = TrackSelectionState.ResolveTrackId(configuredTrackId);
+
         if (config == null)
         {
             Debug.LogWarning("[TrackManager] GameConfigSO reference is missing — using defaults.");
             BuildHardcodedTrack();
         }
-        else if (!string.IsNullOrEmpty(config.trackId))
+        else if (!string.IsNullOrEmpty(trackId))
         {
-            if (!LoadTrackFromJson(config.trackId))
+            if (!LoadTrackFromJson(trackId))
             {
-                Debug.LogWarning($"[TrackManager] Failed to load '{config.trackId}', falling back to hardcoded track.");
+                Debug.LogWarning($"[TrackManager] Failed to load '{trackId}', falling back to hardcoded track.");
                 BuildHardcodedTrack();
             }
         }
@@ -206,6 +212,17 @@ public class TrackManager : MonoBehaviour
     private void RenderTrack()
     {
         Vector2[] pathCoords = GetPathCoordinates();
+        float medianSpacing = TrackPresentationRules.CalculateMedianNeighborDistance(pathCoords);
+        float nodeScaleMultiplier = TrackPresentationRules.CalculateNodeScaleMultiplier(
+            medianSpacing,
+            GetNodeVisualDiameter(),
+            config != null ? config.trackNodeSpacingFillRatio : 0.65f,
+            config != null ? config.trackNodeMinimumScaleMultiplier : 0.03f);
+        float adaptiveLineWidth = medianSpacing > 0f
+            ? Mathf.Min(
+                lineWidth,
+                medianSpacing * (config != null ? config.trackLineSpacingFillRatio : 0.3f))
+            : lineWidth;
 
         // Spawn node GameObjects
         for (int i = 0; i < nodes.Count; i++)
@@ -215,14 +232,19 @@ public class TrackManager : MonoBehaviour
                 ? Instantiate(nodePrefab, spawnPos, Quaternion.identity)
                 : new GameObject($"Node_{i}") { transform = { position = spawnPos } };
             obj.name = $"Node_{i}";
+            obj.transform.localScale = Vector3.Scale(
+                obj.transform.localScale,
+                new Vector3(nodeScaleMultiplier, nodeScaleMultiplier, 1f));
 
             SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
             if (sr != null)
             {
-                if (nodes[i].isStartFinish)
-                    sr.color = Color.green;
-                else if (nodes[i].cornerId > 0)
-                    sr.color = cornerNodeColor;
+                sr.color = TrackPresentationRules.GetNodeColor(
+                    nodes[i],
+                    straightNodeColor,
+                    cornerNodeColor,
+                    apexNodeColor,
+                    startFinishNodeColor);
             }
 
             nodeObjects.Add(obj);
@@ -232,8 +254,8 @@ public class TrackManager : MonoBehaviour
         GameObject lineObj = new GameObject("TrackLine");
         lineRenderer = lineObj.AddComponent<LineRenderer>();
         lineRenderer.positionCount = pathCoords.Length + 1;
-        lineRenderer.startWidth = lineWidth;
-        lineRenderer.endWidth = lineWidth;
+        lineRenderer.startWidth = adaptiveLineWidth;
+        lineRenderer.endWidth = adaptiveLineWidth;
         lineRenderer.useWorldSpace = true;
         lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
         lineRenderer.startColor = lineColor;
@@ -246,12 +268,25 @@ public class TrackManager : MonoBehaviour
         }
         lineRenderer.SetPosition(pathCoords.Length, new Vector3(pathCoords[0].x, pathCoords[0].y, 0));
 
-        AddCornerLabels(pathCoords);
+        AddCornerLabels(pathCoords, nodeScaleMultiplier);
     }
 
     /// <summary>
     /// 获取赛道坐标。JSON 模式下从配置中读取并缩放；硬编码模式使用旧坐标。
     /// </summary>
+    private float GetNodeVisualDiameter()
+    {
+        if (nodePrefab == null)
+        {
+            return 0f;
+        }
+
+        Vector3 prefabScale = nodePrefab.transform.localScale;
+        return Mathf.Max(
+            Mathf.Abs(prefabScale.x),
+            Mathf.Abs(prefabScale.y));
+    }
+
     private Vector2[] GetPathCoordinates()
     {
         if (LoadedTrackConfig != null)
@@ -263,7 +298,7 @@ public class TrackManager : MonoBehaviour
         return GetTrackShape42();
     }
 
-    private void AddCornerLabels(Vector2[] pathCoords)
+    private void AddCornerLabels(Vector2[] pathCoords, float nodeScaleMultiplier)
     {
         var cornerRanges = new Dictionary<int, (int first, int last, int limit)>();
         for (int i = 0; i < nodes.Count; i++)
@@ -297,7 +332,7 @@ public class TrackManager : MonoBehaviour
             SpriteRenderer bg = label.AddComponent<SpriteRenderer>();
             bg.sprite = nodePrefab != null ? nodePrefab.GetComponent<SpriteRenderer>()?.sprite : null;
             bg.color = new Color(1f, 0.3f, 0.3f, 0.9f);
-            bg.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
+            bg.transform.localScale = new Vector3(0.8f, 0.8f, 1f) * nodeScaleMultiplier;
             bg.sortingOrder = 5;
 
             GameObject textGO = new GameObject("Text");

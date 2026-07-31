@@ -11,8 +11,17 @@ public class MainMenuUI : MonoBehaviour
     public Button startRaceButton;
     public Button quitButton;
 
+    private TrackSelectionUI trackSelectionUI;
+
     void Start()
     {
+        trackSelectionUI = GetComponent<TrackSelectionUI>();
+        if (trackSelectionUI == null)
+        {
+            trackSelectionUI = gameObject.AddComponent<TrackSelectionUI>();
+        }
+        trackSelectionUI.Initialize(OnTrackSelected);
+
         if (startRaceButton != null)
         {
             startRaceButton.onClick.AddListener(OnStartRace);
@@ -33,6 +42,13 @@ public class MainMenuUI : MonoBehaviour
     /// <summary>开始比赛 → 加载 Race 场景。</summary>
     public void OnStartRace()
     {
+        trackSelectionUI.Show();
+    }
+
+    /// <summary>Loads the Race scene after a valid track has been selected.</summary>
+    public void OnTrackSelected(string trackId)
+    {
+        Debug.Log($"[MainMenuUI] Starting race on track: {trackId}");
         SceneLoader.LoadRace();
     }
 

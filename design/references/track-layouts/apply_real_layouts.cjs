@@ -41,8 +41,8 @@ const trackSources = [
   },
   {
     id: "nurburgring_24h_endurance",
-    source: "Circuit Nürburgring-2002-24h.svg reference",
-    points: () => nurburgring24hReference,
+    source: "nurburgring_nordschleife_2013.svg",
+    points: () => readSvgClosedPathByIndex("nurburgring_nordschleife_2013.svg", 9),
     rotate: 0,
   },
   {
@@ -51,26 +51,6 @@ const trackSources = [
     points: () => leMans1987Reference,
     rotate: 0,
   },
-];
-
-// Digitized from the Wikimedia 24-hour combined-layout reference. The short,
-// dense loop at the left is the GP-Strecke; the long eastern loop is the
-// Nordschleife. More points are intentionally kept around the GP connection.
-const nurburgring24hReference = [
-  [0.09, 0.59], [0.07, 0.66], [0.10, 0.72], [0.15, 0.75],
-  [0.20, 0.72], [0.22, 0.67], [0.19, 0.62], [0.14, 0.61],
-  [0.12, 0.56], [0.16, 0.51], [0.22, 0.52], [0.25, 0.58],
-  [0.23, 0.64], [0.27, 0.68], [0.31, 0.65], [0.29, 0.58],
-  [0.25, 0.52], [0.28, 0.46], [0.34, 0.43], [0.39, 0.39],
-  [0.44, 0.34], [0.48, 0.29], [0.54, 0.25], [0.59, 0.20],
-  [0.65, 0.17], [0.70, 0.20], [0.73, 0.25], [0.78, 0.27],
-  [0.82, 0.23], [0.87, 0.25], [0.91, 0.31], [0.89, 0.38],
-  [0.84, 0.42], [0.87, 0.47], [0.92, 0.51], [0.90, 0.57],
-  [0.85, 0.61], [0.80, 0.60], [0.76, 0.65], [0.70, 0.66],
-  [0.65, 0.62], [0.60, 0.65], [0.55, 0.61], [0.51, 0.65],
-  [0.46, 0.61], [0.41, 0.64], [0.36, 0.60], [0.32, 0.63],
-  [0.28, 0.59], [0.25, 0.53], [0.21, 0.49], [0.17, 0.51],
-  [0.13, 0.55],
 ];
 
 // Digitized from the 1987–1989 Circuit de la Sarthe map. This is the historic
@@ -113,6 +93,19 @@ function readSvgPathByIndex(fileName, index) {
     throw new Error(`SVG path index ${index} not found in ${fileName}`);
   }
   return sampleSvgPath(readAttribute(tags[index], "d"));
+}
+
+function readSvgClosedPathByIndex(fileName, index) {
+  const tags = extractPathTags(fileName);
+  if (!tags[index]) {
+    throw new Error(`SVG path index ${index} not found in ${fileName}`);
+  }
+  const pathData = readAttribute(tags[index], "d");
+  const closedPath = pathData.match(/^[\s\S]*?\b[zZ]\b/);
+  if (!closedPath) {
+    throw new Error(`Closed SVG path index ${index} not found in ${fileName}`);
+  }
+  return sampleSvgPath(closedPath[0]);
 }
 
 function extractPathTags(fileName) {
@@ -358,12 +351,21 @@ function countSelfIntersections(points) {
   return intersections;
 }
 
+const requestedTrackIds = new Set(process.argv.slice(2));
+
 for (const track of trackSources) {
+  if (requestedTrackIds.size > 0 && !requestedTrackIds.has(track.id)) {
+    continue;
+  }
   const configPath = path.join(configRoot, `${track.id}.json`);
   const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
   const sourcePoints = rotate(track.points(), track.rotate);
   const normalized = normalize(sourcePoints);
   const sampled = resampleClosed(normalized, config.cells.length);
+  const crossings = countSelfIntersections(sampled);
+  if (track.id === "nurburgring_24h_endurance" && crossings !== 0) {
+    throw new Error(`Nordschleife source produced ${crossings} self-intersections`);
+  }
 
   config.cells.forEach((cell, index) => {
     cell.position = {
@@ -374,6 +376,6 @@ for (const track of trackSources) {
   fs.writeFileSync(configPath, `${JSON.stringify(config, null, 2)}\n`);
   console.log(
     `${track.id}: ${track.source}, ${sourcePoints.length} source points -> ` +
-      `${sampled.length} cells, ${countSelfIntersections(sampled)} crossings`,
+      `${sampled.length} cells, ${crossings} crossings`,
   );
 }

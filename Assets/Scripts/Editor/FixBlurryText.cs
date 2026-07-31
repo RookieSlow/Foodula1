@@ -19,7 +19,7 @@ public static class FixBlurryText
     // ── 已知路径 ──
     private const string RACE_CANVAS_PATH = "Assets/Prefabs/UI/RaceCanvas.prefab";
 
-    [MenuItem("Foodular1/Fix Blurry Text")]
+    [MenuItem("Tools/Fix Blurry Text")]
     public static void Fix()
     {
         bool anyFix = false;
