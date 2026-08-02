@@ -75,6 +75,9 @@ with 0 failures, warnings, or errors.
 - [x] Standardize node colors across all tracks: apex red, other corner
   nodes orange, straights white, and start/finish green; enforce exactly one
   apex per corner group across every track config.
+- [x] Add presentation-only lane slots to every track: two lanes for standard
+  tracks and four lanes for Indianapolis; keep gameplay, camera, and minimap
+  positions centerline-based, and regenerate backgrounds with matching lanes.
 - [ ] Rotate vehicles to follow the tangent between track nodes.
 - [ ] Integrate track weather-pool selection after the core track path is
   stable.

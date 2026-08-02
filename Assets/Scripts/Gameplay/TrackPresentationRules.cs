@@ -6,6 +6,26 @@ using UnityEngine;
 /// </summary>
 public static class TrackPresentationRules
 {
+    public const string IndianapolisTrackId = "indianapolis_burger";
+
+    public static int GetLaneCount(string trackId)
+    {
+        return trackId == IndianapolisTrackId ? 4 : 2;
+    }
+
+    public static float[] CalculateCenteredLaneOffsets(int laneCount, float laneSpacing)
+    {
+        int safeLaneCount = Mathf.Max(1, laneCount);
+        float safeSpacing = Mathf.Max(0f, laneSpacing);
+        float[] offsets = new float[safeLaneCount];
+        float center = (safeLaneCount - 1) * 0.5f;
+        for (int i = 0; i < safeLaneCount; i++)
+        {
+            offsets[i] = (i - center) * safeSpacing;
+        }
+        return offsets;
+    }
+
     /// <summary>
     /// Maps track-node gameplay semantics to their presentation color.
     /// Start/finish remains a separate landmark; apex nodes are the only
@@ -81,4 +101,3 @@ public static class TrackPresentationRules
         return Mathf.Clamp(multiplier, Mathf.Clamp01(minimumMultiplier), 1f);
     }
 }
-

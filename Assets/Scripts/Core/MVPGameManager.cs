@@ -58,6 +58,8 @@ public class MVPGameManager : MonoBehaviour
 
     private GameObject playerCarInstance;
     private GameObject aiCarInstance;
+    private int playerLaneIndex;
+    private int aiLaneIndex;
 
     private WaitForSeconds nodeWait;
     private bool waitingForPlayerGear;
@@ -468,7 +470,9 @@ public class MVPGameManager : MonoBehaviour
         if (playerCarInstance != null) Destroy(playerCarInstance);
         if (aiCarInstance != null) Destroy(aiCarInstance);
 
-        Vector3 startPos = trackManager.GetNodePosition(trackManager.StartFinishNodeIndex);
+        playerLaneIndex = trackManager.GetDefaultLaneIndex(false);
+        aiLaneIndex = trackManager.GetDefaultLaneIndex(true);
+        Vector3 startPos = trackManager.GetNodePosition(trackManager.StartFinishNodeIndex, playerLaneIndex);
 
         playerCarInstance = Instantiate(carPrefab, startPos, Quaternion.identity);
         playerCarInstance.name = "PlayerCar";
@@ -483,7 +487,7 @@ public class MVPGameManager : MonoBehaviour
         }
         playerCarInstance.transform.localScale = new Vector3(0.2f, 0.2f, 1f);
 
-        Vector3 aiStartPos = startPos + new Vector3(0.3f, 0.3f, 0);
+        Vector3 aiStartPos = trackManager.GetNodePosition(trackManager.StartFinishNodeIndex, aiLaneIndex);
         aiCarInstance = Instantiate(carPrefab, aiStartPos, Quaternion.identity);
         aiCarInstance.name = "AICar";
         SpriteRenderer asr = aiCarInstance.GetComponent<SpriteRenderer>();
@@ -622,7 +626,7 @@ public class MVPGameManager : MonoBehaviour
             // 玩家：移动 → 反应(冷却) → 弯道判定
             if (!player.hasFinished && !player.isBlown)
             {
-                yield return StartCoroutine(AnimateMovement(player, playerCarInstance));
+                yield return StartCoroutine(AnimateMovement(player, playerCarInstance, playerLaneIndex));
                 ReactStep(player);  // G1=冷却3, G2=冷却1
                 ResolveCorners(player, playerOldPosition, playerRawEnd);
             }
@@ -630,7 +634,7 @@ public class MVPGameManager : MonoBehaviour
             // AI：移动 → 反应(冷却) → 弯道判定
             if (!ai.hasFinished && !ai.isBlown)
             {
-                yield return StartCoroutine(AnimateMovement(ai, aiCarInstance));
+                yield return StartCoroutine(AnimateMovement(ai, aiCarInstance, aiLaneIndex));
                 ReactStep(ai);
                 ResolveCorners(ai, aiOldPosition, aiRawEnd);
             }
@@ -685,9 +689,9 @@ public class MVPGameManager : MonoBehaviour
 
         // 移动赛车回退位置
         if (p == player && playerCarInstance != null)
-            playerCarInstance.transform.position = trackManager.GetNodePosition(rewindPos);
+            playerCarInstance.transform.position = trackManager.GetNodePosition(rewindPos, playerLaneIndex);
         else if (p == ai && aiCarInstance != null)
-            aiCarInstance.transform.position = trackManager.GetNodePosition(rewindPos);
+            aiCarInstance.transform.position = trackManager.GetNodePosition(rewindPos, aiLaneIndex);
 
         string tag = eliminated ? "<color=red>ELIMINATED!</color>" : $"<color=orange>[{p.spinCounter}/3]</color>";
         if (hudUI != null)
@@ -763,7 +767,7 @@ public class MVPGameManager : MonoBehaviour
 
     // ====== 移动动画（含圈数检测） ======
 
-    private IEnumerator AnimateMovement(PlayerState p, GameObject carInstance)
+    private IEnumerator AnimateMovement(PlayerState p, GameObject carInstance, int laneIndex)
     {
         if (carInstance == null) yield break;
 
@@ -774,7 +778,7 @@ public class MVPGameManager : MonoBehaviour
         for (int i = p.position + 1; i <= targetPos; i++)
         {
             int nodeIdx = i % totalNodes;
-            Vector3 target = trackManager.GetNodePosition(nodeIdx);
+            Vector3 target = trackManager.GetNodePosition(nodeIdx, laneIndex);
 
             while (Vector3.Distance(carInstance.transform.position, target) > 0.02f)
             {

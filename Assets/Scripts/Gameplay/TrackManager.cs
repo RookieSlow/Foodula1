@@ -26,7 +26,9 @@ public class TrackManager : MonoBehaviour
     // --- 运行时数据 ---
     private List<TrackNode> nodes = new List<TrackNode>();
     private List<GameObject> nodeObjects = new List<GameObject>();
-    private LineRenderer lineRenderer;
+    private List<LineRenderer> laneLineRenderers = new List<LineRenderer>();
+    private Vector2[] worldPathCoordinates = new Vector2[0];
+    private float[] laneOffsets = new float[0];
 
     /// <summary>弯道 ID → 限速的快速查找表。</summary>
     private Dictionary<int, int> cornerSpeedLimits = new Dictionary<int, int>();
@@ -39,6 +41,7 @@ public class TrackManager : MonoBehaviour
 
     // --- 公开属性 ---
     public int TotalNodes => nodes.Count;
+    public int LaneCount => laneOffsets.Length > 0 ? laneOffsets.Length : 1;
     public IReadOnlyList<TrackNode> Nodes => nodes;
     public int StartFinishNodeIndex => TrackRules.FindStartFinishNodeIndex(nodes);
 
@@ -189,10 +192,38 @@ public class TrackManager : MonoBehaviour
 
     public Vector3 GetNodePosition(int index)
     {
+        if (nodes.Count == 0)
+            return Vector3.zero;
+
         int clamped = index % nodes.Count;
+        if (clamped < 0) clamped += nodes.Count;
+        if (clamped < worldPathCoordinates.Length)
+        {
+            Vector2 centerline = worldPathCoordinates[clamped];
+            return new Vector3(centerline.x, centerline.y, 0f);
+        }
         if (clamped < nodeObjects.Count)
             return nodeObjects[clamped].transform.position;
         return Vector3.zero;
+    }
+
+    public Vector3 GetNodePosition(int index, int laneIndex)
+    {
+        if (nodes.Count == 0 || worldPathCoordinates.Length == 0)
+            return Vector3.zero;
+
+        int clamped = index % nodes.Count;
+        if (clamped < 0) clamped += nodes.Count;
+        int safeLane = Mathf.Clamp(laneIndex, 0, LaneCount - 1);
+        Vector2 position = worldPathCoordinates[clamped] + GetPathNormal(clamped) * laneOffsets[safeLane];
+        return new Vector3(position.x, position.y, 0f);
+    }
+
+    public int GetDefaultLaneIndex(bool isAi)
+    {
+        if (LaneCount <= 1) return 0;
+        int leftMiddle = (LaneCount - 1) / 2;
+        return isAi ? Mathf.Min(LaneCount - 1, leftMiddle + 1) : leftMiddle;
     }
 
     public TrackNode GetNode(int index)
@@ -212,6 +243,13 @@ public class TrackManager : MonoBehaviour
     private void RenderTrack()
     {
         Vector2[] pathCoords = GetPathCoordinates();
+        worldPathCoordinates = pathCoords;
+        string trackId = LoadedTrackConfig != null
+            ? LoadedTrackConfig.trackId
+            : (config != null ? config.trackId : string.Empty);
+        laneOffsets = TrackPresentationRules.CalculateCenteredLaneOffsets(
+            TrackPresentationRules.GetLaneCount(trackId),
+            config != null ? config.trackLaneSpacing : 0.28f);
         float medianSpacing = TrackPresentationRules.CalculateMedianNeighborDistance(pathCoords);
         float nodeScaleMultiplier = TrackPresentationRules.CalculateNodeScaleMultiplier(
             medianSpacing,
@@ -250,23 +288,28 @@ public class TrackManager : MonoBehaviour
             nodeObjects.Add(obj);
         }
 
-        // LineRenderer
-        GameObject lineObj = new GameObject("TrackLine");
-        lineRenderer = lineObj.AddComponent<LineRenderer>();
-        lineRenderer.positionCount = pathCoords.Length + 1;
-        lineRenderer.startWidth = adaptiveLineWidth;
-        lineRenderer.endWidth = adaptiveLineWidth;
-        lineRenderer.useWorldSpace = true;
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        lineRenderer.startColor = lineColor;
-        lineRenderer.endColor = lineColor;
-        lineRenderer.sortingOrder = -1;
-
-        for (int i = 0; i < pathCoords.Length; i++)
+        // Render one parallel centerline per visual lane.
+        laneLineRenderers.Clear();
+        for (int laneIndex = 0; laneIndex < LaneCount; laneIndex++)
         {
-            lineRenderer.SetPosition(i, new Vector3(pathCoords[i].x, pathCoords[i].y, 0));
+            GameObject lineObj = new GameObject($"TrackLane_{laneIndex + 1}");
+            LineRenderer laneRenderer = lineObj.AddComponent<LineRenderer>();
+            laneRenderer.positionCount = pathCoords.Length + 1;
+            laneRenderer.startWidth = adaptiveLineWidth;
+            laneRenderer.endWidth = adaptiveLineWidth;
+            laneRenderer.useWorldSpace = true;
+            laneRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            laneRenderer.startColor = lineColor;
+            laneRenderer.endColor = lineColor;
+            laneRenderer.sortingOrder = -1;
+
+            for (int i = 0; i < pathCoords.Length; i++)
+            {
+                laneRenderer.SetPosition(i, GetNodePosition(i, laneIndex));
+            }
+            laneRenderer.SetPosition(pathCoords.Length, GetNodePosition(0, laneIndex));
+            laneLineRenderers.Add(laneRenderer);
         }
-        lineRenderer.SetPosition(pathCoords.Length, new Vector3(pathCoords[0].x, pathCoords[0].y, 0));
 
         AddCornerLabels(pathCoords, nodeScaleMultiplier);
     }
@@ -385,7 +428,18 @@ public class TrackManager : MonoBehaviour
 
     void OnDestroy()
     {
-        if (lineRenderer != null)
-            Destroy(lineRenderer.gameObject);
+        foreach (LineRenderer laneRenderer in laneLineRenderers)
+        {
+            if (laneRenderer != null)
+                Destroy(laneRenderer.gameObject);
+        }
+    }
+
+    private Vector2 GetPathNormal(int index)
+    {
+        int previous = (index - 1 + worldPathCoordinates.Length) % worldPathCoordinates.Length;
+        int next = (index + 1) % worldPathCoordinates.Length;
+        Vector2 tangent = (worldPathCoordinates[next] - worldPathCoordinates[previous]).normalized;
+        return new Vector2(-tangent.y, tangent.x);
     }
 }

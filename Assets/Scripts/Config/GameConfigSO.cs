@@ -89,6 +89,10 @@ public class GameConfigSO : ScriptableObject
     [Range(0.05f, 1f)]
     public float trackLineSpacingFillRatio = 0.3f;
 
+    [Tooltip("横向车道中心间距（世界单位）。普通赛道使用 2 条车道，印第安纳波利斯使用 4 条车道。")]
+    [Min(0.01f)]
+    public float trackLaneSpacing = 0.28f;
+
     [Header("牌组")]
     [Tooltip("手牌上限")]
     public int handSize = 7;

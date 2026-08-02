@@ -55,6 +55,9 @@ prototype and is no longer the authoritative model.
 - Player initialization and lap crossing use the runtime node marked
   `isStartFinish`, including when that node is not index 0.
 - HUD position totals and LineRenderer coordinates use the loaded track data.
+- Track presentation renders two lateral lane slots on standard layouts and
+  four on `indianapolis_burger`; vehicle positions, corner checks, lap counts,
+  camera framing, and minimap tracking remain centerline-based.
 - Authoring workflow, vehicle orientation, pit behavior, weather integration,
   and a full multi-lap manual playthrough remain incomplete.
 

@@ -4,6 +4,19 @@ using UnityEngine;
 public class TrackPresentationRulesTests
 {
     [Test]
+    public void test_lane_counts_and_offsets_match_track_classes()
+    {
+        Assert.That(TrackPresentationRules.GetLaneCount("silverstone_afternoon_tea"), Is.EqualTo(2));
+        Assert.That(TrackPresentationRules.GetLaneCount("indianapolis_burger"), Is.EqualTo(4));
+
+        float[] normalOffsets = TrackPresentationRules.CalculateCenteredLaneOffsets(2, 0.28f);
+        Assert.That(normalOffsets, Is.EqualTo(new[] { -0.14f, 0.14f }));
+
+        float[] ovalOffsets = TrackPresentationRules.CalculateCenteredLaneOffsets(4, 0.28f);
+        Assert.That(ovalOffsets, Is.EqualTo(new[] { -0.42f, -0.14f, 0.14f, 0.42f }));
+    }
+
+    [Test]
     public void test_node_colors_distinguish_apex_corner_and_straight()
     {
         Color straight = Color.white;
