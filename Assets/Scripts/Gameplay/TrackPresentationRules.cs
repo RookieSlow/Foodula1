@@ -13,6 +13,38 @@ public static class TrackPresentationRules
         return trackId == IndianapolisTrackId ? 4 : 2;
     }
 
+    public static bool AllowsStartFinishLaneChange(string trackId)
+    {
+        return trackId == IndianapolisTrackId;
+    }
+
+    /// <summary>
+    /// Converts the renderer's lane index (outer-to-inner for the
+    /// counter-clockwise Indianapolis path) to an inner-to-outer rank.
+    /// </summary>
+    public static int GetLaneRankFromInside(string trackId, int laneIndex)
+    {
+        int laneCount = GetLaneCount(trackId);
+        int safeLane = Mathf.Clamp(laneIndex, 0, laneCount - 1);
+        return trackId == IndianapolisTrackId
+            ? laneCount - 1 - safeLane
+            : 0;
+    }
+
+    public static int GetLaneAdjustedCornerSpeedLimit(
+        string trackId,
+        int baseLimit,
+        int laneIndex)
+    {
+        if (trackId != IndianapolisTrackId)
+            return baseLimit;
+
+        int laneCount = GetLaneCount(trackId);
+        int outerLaneLimit = Mathf.Max(1, baseLimit + (laneCount - 1));
+        int innerLaneLimit = Mathf.Max(1, outerLaneLimit - (laneCount - 1));
+        return innerLaneLimit + GetLaneRankFromInside(trackId, laneIndex);
+    }
+
     public static float[] CalculateCenteredLaneOffsets(int laneCount, float laneSpacing)
     {
         int safeLaneCount = Mathf.Max(1, laneCount);

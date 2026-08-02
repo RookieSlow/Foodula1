@@ -21,6 +21,13 @@ public class TrackConfig
     public string[] weatherPool;
     public string defaultWeather;
     public string weatherConfigurationStatus;
+    /// <summary>
+    /// Optional corner speed limits ordered from the inner lane to the outer
+    /// lane. Indianapolis uses [4, 5, 6, 7].
+    /// </summary>
+    public int[] laneCornerSpeedLimits;
+    /// <summary>Whether the player may change one lane at start/finish.</summary>
+    public bool allowStartFinishLaneChange;
     public LayoutMeta layout;
     public string[] referenceSources;
     public CellData[] cells;

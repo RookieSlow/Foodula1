@@ -53,6 +53,16 @@ public class TrackRulesTests
     }
 
     [Test]
+    public void LoadConfig_Indianapolis_UsesProgressiveLaneLimitsAndStartFinishChange()
+    {
+        TrackConfig config = TrackDataLoader.LoadConfig("indianapolis_burger");
+
+        Assert.That(config, Is.Not.Null);
+        Assert.That(config.laneCornerSpeedLimits, Is.EqualTo(new[] { 4, 5, 6, 7 }));
+        Assert.That(config.allowStartFinishLaneChange, Is.True);
+    }
+
+    [Test]
     public void GetUniqueApexCornersCrossed_IgnoresNonApexCornerCells()
     {
         var nodes = new List<TrackNode>

@@ -60,6 +60,11 @@ public class MVPGameManager : MonoBehaviour
     private GameObject aiCarInstance;
     private int playerLaneIndex;
     private int aiLaneIndex;
+    private bool waitingForPlayerLaneChange;
+    private GameObject laneChangePanel;
+    private Button laneInButton;
+    private Button laneKeepButton;
+    private Button laneOutButton;
 
     private WaitForSeconds nodeWait;
     private bool waitingForPlayerGear;
@@ -119,6 +124,8 @@ public class MVPGameManager : MonoBehaviour
         {
             CollectGearButtonImages();
         }
+
+        CreateLaneChangeUI();
 
         nodeWait = new WaitForSeconds(config.nodeDelay);
         InitializeGame();
@@ -305,6 +312,41 @@ public class MVPGameManager : MonoBehaviour
 
     }
 
+    private void CreateLaneChangeUI()
+    {
+        if (trackManager == null || !trackManager.AllowsStartFinishLaneChange)
+            return;
+
+        Canvas canvas = hudUI != null
+            ? hudUI.GetComponentInParent<Canvas>()
+            : FindObjectOfType<Canvas>();
+        if (canvas == null)
+            return;
+
+        laneChangePanel = new GameObject("IndianapolisLaneChangePanel", typeof(RectTransform));
+        laneChangePanel.transform.SetParent(canvas.transform, false);
+        RectTransform panelRect = laneChangePanel.GetComponent<RectTransform>();
+        panelRect.anchorMin = panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.anchoredPosition = new Vector2(0f, 135f);
+        panelRect.sizeDelta = new Vector2(520f, 105f);
+
+        CreateTMPText(panelRect, "LaneChangePrompt", "通过起点：选择车道", 18,
+            new Vector2(0f, 32f), new Vector2(500f, 28f),
+            FindObjectOfType<TMP_Text>()?.font);
+
+        laneInButton = CreateActionButton(panelRect, "LaneInButton", "向内一格",
+            new Vector2(-150f, -15f), new Color(0.55f, 0.85f, 1f),
+            () => ChooseIndianapolisLaneChange(1));
+        laneKeepButton = CreateActionButton(panelRect, "LaneKeepButton", "保持车道",
+            new Vector2(0f, -15f), new Color(0.8f, 0.8f, 0.8f),
+            () => ChooseIndianapolisLaneChange(0));
+        laneOutButton = CreateActionButton(panelRect, "LaneOutButton", "向外一格",
+            new Vector2(150f, -15f), new Color(1f, 0.75f, 0.45f),
+            () => ChooseIndianapolisLaneChange(-1));
+
+        laneChangePanel.SetActive(false);
+    }
+
     private TMP_Text CreateTMPText(Transform parent, string name, string text, int fontSize,
         Vector2 anchoredPos, Vector2 size, TMP_FontAsset font = null)
     {
@@ -356,7 +398,7 @@ public class MVPGameManager : MonoBehaviour
         ltmp.color = Color.black;
     }
 
-    private void CreateActionButton(Transform parent, string name, string label, Vector2 pos, Color color,
+    private Button CreateActionButton(Transform parent, string name, string label, Vector2 pos, Color color,
         UnityEngine.Events.UnityAction callback)
     {
         GameObject go = new GameObject(name, typeof(RectTransform));
@@ -388,6 +430,8 @@ public class MVPGameManager : MonoBehaviour
         // Use built-in Arial font
         Font arial = Font.CreateDynamicFontFromOSFont("Arial", 16);
         if (arial != null) labelText.font = arial;
+
+        return btn;
     }
 
     private void BindGearButton(string name, int gear)
@@ -792,6 +836,8 @@ public class MVPGameManager : MonoBehaviour
             if (trackManager.GetNode(nodeIdx).isStartFinish)
             {
                 OnPlayerCrossedStartFinish(p);
+                if (p == player && !p.hasFinished && trackManager.AllowsStartFinishLaneChange)
+                    yield return StartCoroutine(WaitForIndianapolisLaneChoice());
             }
 
             yield return nodeWait;
@@ -812,9 +858,10 @@ public class MVPGameManager : MonoBehaviour
         int totalSpeed = RaceRules.SumCardValues(p.playedSpeedCardsThisTurn);
         string log = "";
 
+        int laneIndex = p == player ? playerLaneIndex : aiLaneIndex;
         foreach (int cornerId in corners)
         {
-            int limit = trackManager.GetCornerSpeedLimit(cornerId);
+            int limit = trackManager.GetCornerSpeedLimit(cornerId, laneIndex);
             if (totalSpeed > limit)
             {
                 int overspeed = totalSpeed - limit;
@@ -827,11 +874,11 @@ public class MVPGameManager : MonoBehaviour
                     return; // 失控中断后续弯道判定
                 }
 
-                log += $"{p.name} overspeeds at {cname} by {overspeed}! +{overspeed} Heat.\n";
+                log += $"{p.name} overspeeds at {cname} (lane {laneIndex + 1}, limit {limit}) by {overspeed}! +{overspeed} Heat.\n";
             }
             else
             {
-                log += $"{p.name} safely passes {trackManager.GetCornerName(cornerId)} ({totalSpeed}<={limit}).\n";
+                log += $"{p.name} safely passes {trackManager.GetCornerName(cornerId)} (lane {laneIndex + 1}, {totalSpeed}<={limit}).\n";
             }
         }
 
@@ -839,6 +886,52 @@ public class MVPGameManager : MonoBehaviour
             log = $"{p.name} straight - no corners.\n";
 
         if (hudUI != null) hudUI.AppendLog(log);
+    }
+
+    private IEnumerator WaitForIndianapolisLaneChoice()
+    {
+        if (laneChangePanel == null)
+            yield break;
+
+        waitingForPlayerLaneChange = true;
+        laneInButton.interactable = trackManager.GetLaneTowardsInside(playerLaneIndex) != playerLaneIndex;
+        laneOutButton.interactable = trackManager.GetLaneTowardsOutside(playerLaneIndex) != playerLaneIndex;
+        laneKeepButton.interactable = true;
+        laneChangePanel.SetActive(true);
+
+        if (hudUI != null)
+            hudUI.SetStatus("通过印地起点：选择向内、保持或向外一格");
+
+        yield return new WaitWhile(() => waitingForPlayerLaneChange);
+
+        laneChangePanel.SetActive(false);
+        if (hudUI != null)
+            hudUI.SetStatus("车道已确定，继续比赛");
+    }
+
+    /// <summary>
+    /// direction: +1 toward the inside, 0 keep the lane, -1 toward the outside.
+    /// </summary>
+    public void ChooseIndianapolisLaneChange(int direction)
+    {
+        if (!waitingForPlayerLaneChange || trackManager == null)
+            return;
+
+        int oldLane = playerLaneIndex;
+        if (direction > 0)
+            playerLaneIndex = trackManager.GetLaneTowardsInside(playerLaneIndex);
+        else if (direction < 0)
+            playerLaneIndex = trackManager.GetLaneTowardsOutside(playerLaneIndex);
+
+        if (direction != 0 && oldLane == playerLaneIndex)
+            return;
+
+        waitingForPlayerLaneChange = false;
+        string choice = playerLaneIndex == oldLane
+            ? "保持当前车道"
+            : playerLaneIndex > oldLane ? "向内一格" : "向外一格";
+        if (hudUI != null)
+            hudUI.AppendLog($"印地起点换道：{choice}（第 {playerLaneIndex + 1} 道）");
     }
 
     // ====== 步骤 8：弃牌 ======

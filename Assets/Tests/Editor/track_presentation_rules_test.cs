@@ -17,6 +17,20 @@ public class TrackPresentationRulesTests
     }
 
     [Test]
+    public void test_indianapolis_corner_limits_rise_from_inside_to_outside()
+    {
+        Assert.That(TrackPresentationRules.AllowsStartFinishLaneChange("indianapolis_burger"), Is.True);
+        Assert.That(TrackPresentationRules.GetLaneRankFromInside("indianapolis_burger", 3), Is.EqualTo(0));
+        Assert.That(TrackPresentationRules.GetLaneRankFromInside("indianapolis_burger", 0), Is.EqualTo(3));
+
+        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("indianapolis_burger", 4, 3), Is.EqualTo(4));
+        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("indianapolis_burger", 4, 2), Is.EqualTo(5));
+        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("indianapolis_burger", 4, 1), Is.EqualTo(6));
+        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("indianapolis_burger", 4, 0), Is.EqualTo(7));
+        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("silverstone_afternoon_tea", 3, 0), Is.EqualTo(3));
+    }
+
+    [Test]
     public void test_node_colors_distinguish_apex_corner_and_straight()
     {
         Color straight = Color.white;

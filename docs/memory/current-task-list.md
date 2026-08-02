@@ -78,6 +78,12 @@ with 0 failures, warnings, or errors.
 - [x] Add presentation-only lane slots to every track: two lanes for standard
   tracks and four lanes for Indianapolis; keep gameplay, camera, and minimap
   positions centerline-based, and regenerate backgrounds with matching lanes.
+- [x] Add Indianapolis lane-specific corner limits (inner-to-outer 4/5/6/7,
+  with outer-lane limit 7)
+  and a player one-lane inward/outward choice at each start/finish crossing.
+- [x] Replace runtime grid-like track visuals with selected layout backgrounds,
+  yellow corner masks, red apex masks, visible speed-limit labels, and
+  editor-only node metadata.
 - [ ] Rotate vehicles to follow the tangent between track nodes.
 - [ ] Integrate track weather-pool selection after the core track path is
   stable.

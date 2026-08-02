@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /// <summary>
 /// 赛道管理器 — 支持从 JSON 加载赛道或使用硬编码赛道。
@@ -23,10 +26,25 @@ public class TrackManager : MonoBehaviour
     public Color apexNodeColor = Color.red;
     public Color startFinishNodeColor = Color.green;
 
+    [Header("游玩时赛道蒙版")]
+    [Tooltip("游玩时覆盖弯道道路区域的黄色半透明蒙版。")]
+    public Color cornerMaskColor = new Color(1f, 0.82f, 0.05f, 0.34f);
+    [Tooltip("游玩时覆盖弯心的红色半透明蒙版。")]
+    public Color apexMaskColor = new Color(1f, 0.12f, 0.08f, 0.72f);
+    [Min(0.01f)]
+    public float cornerMaskWidth = 1.05f;
+    [Min(0.01f)]
+    public float apexMaskDiameter = 0.72f;
+    [Tooltip("仅用于调试；默认游玩时隐藏所有结点和车道线。")]
+    public bool showDebugTrackNodesInPlay;
+
     // --- 运行时数据 ---
     private List<TrackNode> nodes = new List<TrackNode>();
     private List<GameObject> nodeObjects = new List<GameObject>();
     private List<LineRenderer> laneLineRenderers = new List<LineRenderer>();
+    private List<LineRenderer> cornerMaskRenderers = new List<LineRenderer>();
+    private List<GameObject> apexMaskObjects = new List<GameObject>();
+    private List<GameObject> speedLimitLabelObjects = new List<GameObject>();
     private Vector2[] worldPathCoordinates = new Vector2[0];
     private float[] laneOffsets = new float[0];
 
@@ -44,6 +62,18 @@ public class TrackManager : MonoBehaviour
     public int LaneCount => laneOffsets.Length > 0 ? laneOffsets.Length : 1;
     public IReadOnlyList<TrackNode> Nodes => nodes;
     public int StartFinishNodeIndex => TrackRules.FindStartFinishNodeIndex(nodes);
+    public bool AllowsStartFinishLaneChange
+    {
+        get
+        {
+            string trackId = LoadedTrackConfig != null
+                ? LoadedTrackConfig.trackId
+                : (config != null ? config.trackId : string.Empty);
+            return LoadedTrackConfig != null
+                ? LoadedTrackConfig.allowStartFinishLaneChange
+                : TrackPresentationRules.AllowsStartFinishLaneChange(trackId);
+        }
+    }
 
     void Awake()
     {
@@ -183,6 +213,31 @@ public class TrackManager : MonoBehaviour
         return 99;
     }
 
+    public int GetCornerSpeedLimit(int cornerId, int laneIndex)
+    {
+        int baseLimit = GetCornerSpeedLimit(cornerId);
+        if (baseLimit >= 99)
+            return baseLimit;
+
+        if (LoadedTrackConfig != null &&
+            LoadedTrackConfig.laneCornerSpeedLimits != null &&
+            LoadedTrackConfig.laneCornerSpeedLimits.Length >= LaneCount)
+        {
+            int innerToOuterIndex = TrackPresentationRules.GetLaneRankFromInside(
+                LoadedTrackConfig.trackId,
+                laneIndex);
+            return LoadedTrackConfig.laneCornerSpeedLimits[innerToOuterIndex];
+        }
+
+        string trackId = LoadedTrackConfig != null
+            ? LoadedTrackConfig.trackId
+            : (config != null ? config.trackId : string.Empty);
+        return TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit(
+            trackId,
+            baseLimit,
+            laneIndex);
+    }
+
     public string GetCornerName(int cornerId)
     {
         if (cornerNames.TryGetValue(cornerId, out string name))
@@ -226,6 +281,18 @@ public class TrackManager : MonoBehaviour
         return isAi ? Mathf.Min(LaneCount - 1, leftMiddle + 1) : leftMiddle;
     }
 
+    public int GetLaneTowardsInside(int laneIndex)
+    {
+        if (LaneCount <= 1) return 0;
+        return Mathf.Min(LaneCount - 1, laneIndex + 1);
+    }
+
+    public int GetLaneTowardsOutside(int laneIndex)
+    {
+        if (LaneCount <= 1) return 0;
+        return Mathf.Max(0, laneIndex - 1);
+    }
+
     public TrackNode GetNode(int index)
     {
         return nodes[index % nodes.Count];
@@ -262,56 +329,73 @@ public class TrackManager : MonoBehaviour
                 medianSpacing * (config != null ? config.trackLineSpacingFillRatio : 0.3f))
             : lineWidth;
 
-        // Spawn node GameObjects
-        for (int i = 0; i < nodes.Count; i++)
+        bool showDebugNodes = !Application.isPlaying || showDebugTrackNodesInPlay;
+
+        // Spawn node GameObjects only for editor/debug visualization. The
+        // playable scene uses the track background plus corner masks instead.
+        if (showDebugNodes)
         {
-            Vector3 spawnPos = new Vector3(pathCoords[i].x, pathCoords[i].y, 0);
-            GameObject obj = nodePrefab != null
-                ? Instantiate(nodePrefab, spawnPos, Quaternion.identity)
-                : new GameObject($"Node_{i}") { transform = { position = spawnPos } };
-            obj.name = $"Node_{i}";
-            obj.transform.localScale = Vector3.Scale(
-                obj.transform.localScale,
-                new Vector3(nodeScaleMultiplier, nodeScaleMultiplier, 1f));
-
-            SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
-            if (sr != null)
+            for (int i = 0; i < nodes.Count; i++)
             {
-                sr.color = TrackPresentationRules.GetNodeColor(
-                    nodes[i],
-                    straightNodeColor,
-                    cornerNodeColor,
-                    apexNodeColor,
-                    startFinishNodeColor);
-            }
+                Vector3 spawnPos = new Vector3(pathCoords[i].x, pathCoords[i].y, 0);
+                GameObject obj = nodePrefab != null
+                    ? Instantiate(nodePrefab, spawnPos, Quaternion.identity)
+                    : new GameObject($"Node_{i}") { transform = { position = spawnPos } };
+                obj.name = $"Node_{i}";
+                obj.transform.localScale = Vector3.Scale(
+                    obj.transform.localScale,
+                    new Vector3(nodeScaleMultiplier, nodeScaleMultiplier, 1f));
 
-            nodeObjects.Add(obj);
+                SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
+                if (sr != null)
+                {
+                    sr.color = TrackPresentationRules.GetNodeColor(
+                        nodes[i],
+                        straightNodeColor,
+                        cornerNodeColor,
+                        apexNodeColor,
+                        startFinishNodeColor);
+                }
+
+                nodeObjects.Add(obj);
+            }
         }
 
-        // Render one parallel centerline per visual lane.
-        laneLineRenderers.Clear();
-        for (int laneIndex = 0; laneIndex < LaneCount; laneIndex++)
+        // Keep lane lines as an editor/debug aid only. In play mode the
+        // generated background sprite is the sole road surface.
+        if (showDebugNodes)
         {
-            GameObject lineObj = new GameObject($"TrackLane_{laneIndex + 1}");
-            LineRenderer laneRenderer = lineObj.AddComponent<LineRenderer>();
-            laneRenderer.positionCount = pathCoords.Length + 1;
-            laneRenderer.startWidth = adaptiveLineWidth;
-            laneRenderer.endWidth = adaptiveLineWidth;
-            laneRenderer.useWorldSpace = true;
-            laneRenderer.material = new Material(Shader.Find("Sprites/Default"));
-            laneRenderer.startColor = lineColor;
-            laneRenderer.endColor = lineColor;
-            laneRenderer.sortingOrder = -1;
-
-            for (int i = 0; i < pathCoords.Length; i++)
+            laneLineRenderers.Clear();
+            for (int laneIndex = 0; laneIndex < LaneCount; laneIndex++)
             {
-                laneRenderer.SetPosition(i, GetNodePosition(i, laneIndex));
+                GameObject lineObj = new GameObject($"TrackLane_{laneIndex + 1}");
+                LineRenderer laneRenderer = lineObj.AddComponent<LineRenderer>();
+                laneRenderer.positionCount = pathCoords.Length + 1;
+                laneRenderer.startWidth = adaptiveLineWidth;
+                laneRenderer.endWidth = adaptiveLineWidth;
+                laneRenderer.useWorldSpace = true;
+                laneRenderer.material = new Material(Shader.Find("Sprites/Default"));
+                laneRenderer.startColor = lineColor;
+                laneRenderer.endColor = lineColor;
+                laneRenderer.sortingOrder = -1;
+
+                for (int i = 0; i < pathCoords.Length; i++)
+                {
+                    laneRenderer.SetPosition(i, GetNodePosition(i, laneIndex));
+                }
+                laneRenderer.SetPosition(pathCoords.Length, GetNodePosition(0, laneIndex));
+                laneLineRenderers.Add(laneRenderer);
             }
-            laneRenderer.SetPosition(pathCoords.Length, GetNodePosition(0, laneIndex));
-            laneLineRenderers.Add(laneRenderer);
         }
 
-        AddCornerLabels(pathCoords, nodeScaleMultiplier);
+        if (Application.isPlaying)
+        {
+            RenderCornerMasks(pathCoords);
+        }
+        else
+        {
+            AddCornerLabels(pathCoords, nodeScaleMultiplier);
+        }
     }
 
     /// <summary>
@@ -392,6 +476,138 @@ public class TrackManager : MonoBehaviour
         }
     }
 
+    private void RenderCornerMasks(Vector2[] pathCoords)
+    {
+        cornerMaskRenderers.Clear();
+        apexMaskObjects.Clear();
+
+        var cornerIndices = new Dictionary<int, List<int>>();
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            int cornerId = nodes[i].cornerId;
+            if (cornerId <= 0)
+                continue;
+
+            if (!cornerIndices.TryGetValue(cornerId, out List<int> indices))
+            {
+                indices = new List<int>();
+                cornerIndices.Add(cornerId, indices);
+            }
+            indices.Add(i);
+        }
+
+        foreach (KeyValuePair<int, List<int>> pair in cornerIndices)
+        {
+            List<int> indices = pair.Value;
+            if (indices.Count == 0)
+                continue;
+
+            GameObject maskObject = new GameObject($"CornerMask_{pair.Key}");
+            LineRenderer mask = maskObject.AddComponent<LineRenderer>();
+            mask.useWorldSpace = true;
+            mask.material = new Material(Shader.Find("Sprites/Default"));
+            mask.startColor = cornerMaskColor;
+            mask.endColor = cornerMaskColor;
+            float effectiveMaskWidth = GetEffectiveCornerMaskWidth();
+            mask.startWidth = effectiveMaskWidth;
+            mask.endWidth = effectiveMaskWidth;
+            mask.numCapVertices = 4;
+            mask.numCornerVertices = 4;
+            mask.sortingOrder = -2;
+
+            int pointCount = indices.Count + 1;
+            mask.positionCount = pointCount;
+            for (int i = 0; i < indices.Count; i++)
+            {
+                mask.SetPosition(i, new Vector3(
+                    pathCoords[indices[i]].x,
+                    pathCoords[indices[i]].y,
+                    0f));
+            }
+
+            int exitIndex = (indices[indices.Count - 1] + 1) % pathCoords.Length;
+            mask.SetPosition(pointCount - 1, new Vector3(
+                pathCoords[exitIndex].x,
+                pathCoords[exitIndex].y,
+                0f));
+            cornerMaskRenderers.Add(mask);
+
+            int apexIndex = -1;
+            foreach (int index in indices)
+            {
+                if (nodes[index].isApex)
+                {
+                    apexIndex = index;
+                    break;
+                }
+            }
+
+            if (apexIndex >= 0)
+            {
+                CreateApexMask(pathCoords[apexIndex], pair.Key);
+                CreateSpeedLimitLabels(pathCoords, apexIndex, pair.Key);
+            }
+        }
+    }
+
+    private float GetEffectiveCornerMaskWidth()
+    {
+        float configuredWidth = Mathf.Max(0.01f, cornerMaskWidth);
+        float laneSpan = LaneCount > 1
+            ? (LaneCount - 1) * (config != null ? config.trackLaneSpacing : 0.28f)
+            : 0f;
+        return Mathf.Max(configuredWidth, laneSpan + 0.45f);
+    }
+
+    private void CreateApexMask(Vector2 position, int cornerId)
+    {
+        GameObject apex = new GameObject($"ApexMask_{cornerId}");
+        apex.transform.position = new Vector3(position.x, position.y, 0f);
+        SpriteRenderer renderer = apex.AddComponent<SpriteRenderer>();
+        renderer.sprite = nodePrefab != null
+            ? nodePrefab.GetComponent<SpriteRenderer>()?.sprite
+            : null;
+        renderer.color = apexMaskColor;
+        renderer.sortingOrder = -1;
+        apex.transform.localScale = Vector3.one * apexMaskDiameter;
+        apexMaskObjects.Add(apex);
+    }
+
+    private void CreateSpeedLimitLabels(Vector2[] pathCoords, int apexIndex, int cornerId)
+    {
+        bool hasLaneSpecificLimits = LoadedTrackConfig != null &&
+            LoadedTrackConfig.laneCornerSpeedLimits != null &&
+            LoadedTrackConfig.laneCornerSpeedLimits.Length >= LaneCount;
+        int labelCount = hasLaneSpecificLimits ? LaneCount : 1;
+        for (int laneIndex = 0; laneIndex < labelCount; laneIndex++)
+        {
+            Vector3 labelPosition = hasLaneSpecificLimits
+                ? GetNodePosition(apexIndex, laneIndex)
+                : new Vector3(pathCoords[apexIndex].x, pathCoords[apexIndex].y, 0f);
+            int speedLimit = hasLaneSpecificLimits
+                ? GetCornerSpeedLimit(cornerId, laneIndex)
+                : GetCornerSpeedLimit(cornerId);
+            CreateSpeedLimitLabel(labelPosition, speedLimit, cornerId, laneIndex);
+        }
+    }
+
+    private void CreateSpeedLimitLabel(Vector3 position, int speedLimit, int cornerId, int laneIndex)
+    {
+        GameObject labelObject = new GameObject($"SpeedLimit_{cornerId}_{laneIndex + 1}");
+        labelObject.transform.position = position;
+
+        TextMeshPro label = labelObject.AddComponent<TextMeshPro>();
+        label.text = speedLimit.ToString();
+        label.alignment = TextAlignmentOptions.Center;
+        label.fontSize = 3.2f;
+        label.fontStyle = FontStyles.Bold;
+        label.color = Color.white;
+        label.outlineWidth = 0.22f;
+        label.outlineColor = new Color(0.05f, 0.05f, 0.05f, 0.95f);
+        label.sortingOrder = 2;
+        speedLimitLabelObjects.Add(labelObject);
+    }
+
     private Vector3 GetCornerLabelOffset(int nodeIdx, Vector2[] coords)
     {
         int prev = (nodeIdx - 1 + coords.Length) % coords.Length;
@@ -433,7 +649,66 @@ public class TrackManager : MonoBehaviour
             if (laneRenderer != null)
                 Destroy(laneRenderer.gameObject);
         }
+        foreach (LineRenderer mask in cornerMaskRenderers)
+        {
+            if (mask != null)
+                Destroy(mask.gameObject);
+        }
+        foreach (GameObject apex in apexMaskObjects)
+        {
+            if (apex != null)
+                Destroy(apex);
+        }
+        foreach (GameObject label in speedLimitLabelObjects)
+        {
+            if (label != null)
+                Destroy(label);
+        }
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (Application.isPlaying || config == null)
+            return;
+
+        string trackId = TrackSelectionState.ResolveTrackId(config.trackId);
+        TrackConfig editorConfig = string.IsNullOrEmpty(trackId)
+            ? null
+            : TrackDataLoader.LoadConfig(trackId);
+        Vector2[] editorPath = editorConfig != null
+            ? TrackDataLoader.ConfigToWorldPositions(
+                editorConfig,
+                config.trackWorldSize,
+                config.trackWorldHeight > 0f ? config.trackWorldHeight : config.trackWorldSize)
+            : GetTrackShape42();
+        if (editorPath == null || editorPath.Length == 0)
+            return;
+
+        for (int i = 0; i < editorPath.Length; i++)
+        {
+            CellData cell = editorConfig != null && editorConfig.cells != null && i < editorConfig.cells.Length
+                ? editorConfig.cells[i]
+                : null;
+            Color color = cell != null && cell.IsStartFinish
+                ? startFinishNodeColor
+                : cell != null && cell.IsCorner && cell.isApex
+                    ? apexNodeColor
+                    : cell != null && cell.IsCorner
+                        ? cornerNodeColor
+                        : straightNodeColor;
+            Gizmos.color = color;
+            Gizmos.DrawSphere(editorPath[i], 0.11f);
+            Handles.color = color;
+            string label = cell == null
+                ? $"{i}"
+                : cell.IsCorner
+                    ? $"{i} {cell.cornerId}{(cell.isApex ? " apex" : "")} limit {cell.cornerLimit}"
+                    : $"{i} {cell.type}";
+            Handles.Label(editorPath[i] + Vector2.up * 0.16f, label);
+        }
+    }
+#endif
 
     private Vector2 GetPathNormal(int index)
     {

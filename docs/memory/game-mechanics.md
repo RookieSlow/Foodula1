@@ -55,9 +55,18 @@ prototype and is no longer the authoritative model.
 - Player initialization and lap crossing use the runtime node marked
   `isStartFinish`, including when that node is not index 0.
 - HUD position totals and LineRenderer coordinates use the loaded track data.
-- Track presentation renders two lateral lane slots on standard layouts and
-  four on `indianapolis_burger`; vehicle positions, corner checks, lap counts,
-  camera framing, and minimap tracking remain centerline-based.
+- Track presentation uses the selected layout background in Play Mode, with
+  translucent yellow corner masks, red apex masks, and visible speed-limit
+  labels. Runtime grid nodes, lane lines, and debug corner text are hidden;
+  tracks with explicit lane-specific limits show the effective limit above each
+  lane's apex. Editor Scene view retains node metadata and limits for authoring.
+  Vehicle positions, corner checks, lap counts, camera framing, and minimap
+  tracking remain centerline-based.
+- On `indianapolis_burger`, corner limits are lane-specific from inner to outer:
+  `4/5/6/7`; the outer lane therefore accommodates a speed total well above 4
+  before overspeed heat. At each start/finish crossing, the player may move one lane
+  inward, keep the current lane, or move one lane outward; boundary choices
+  are disabled and the AI keeps its lane.
 - Authoring workflow, vehicle orientation, pit behavior, weather integration,
   and a full multi-lap manual playthrough remain incomplete.
 
