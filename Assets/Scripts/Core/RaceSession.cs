@@ -1,0 +1,424 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+/// <summary>
+/// 单场比赛的完整运行时状态 — 纯 C# 层（ADR-002 分层架构）。
+/// 聚合 5 个核心系统：多车排名（RaceRanking）、天气（WeatherRules）、
+/// 维修区（PitLaneRules）、特技牌（TrickCardRules）、科技树（TechTreeRules）。
+///
+/// MVPGameManager 在比赛循环中驱动本类；EditMode 测试可直接构造验证，
+/// 不依赖任何 MonoBehaviour / Unity API（Random 源注入保证确定性）。
+/// </summary>
+public class RaceSession
+{
+    /// <summary>参赛车辆。Players[0] 恒为人类玩家。</summary>
+    public List<PlayerState> Players = new List<PlayerState>();
+
+    /// <summary>当前天气。</summary>
+    public WeatherType Weather = WeatherType.Sunny;
+
+    /// <summary>赛道天气池（来自 TrackConfig.weatherPool，换圈掷骰用）。</summary>
+    public string[] WeatherPool;
+
+    /// <summary>特技牌数据库（12 张，6 队 × 攻/守）。</summary>
+    public TrickCardDatabase TrickDb;
+
+    /// <summary>科技树数据库（36 节点）。</summary>
+    public TechTreeDatabase TechDb;
+
+    /// <summary>下一名完赛者的顺位（1 起）。</summary>
+    public int NextFinishOrder = 1;
+
+    /// <summary>确定性随机源（测试注入种子）。</summary>
+    public IRandomSource Random;
+
+    /// <summary>尾流基础加成（紧跟前方赛车获得的额外移动）。</summary>
+    public const int SLIPSTREAM_BASE_BONUS = 2;
+
+    public RaceSession(IRandomSource random = null)
+    {
+        Random = random ?? new UnityRandomSource();
+        TrickDb = TrickCardDatabaseFactory.CreateDefault();
+        TechDb = TechTreeDatabaseFactory.CreateDefault();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 多车 / 排名（RaceRanking）
+    // ═══════════════════════════════════════════════════════════════════
+
+    public PlayerState Human => Players.Count > 0 ? Players[0] : null;
+
+    /// <summary>当前排名（完赛者优先 → 圈数 → 位置）。</summary>
+    public List<RaceRanking.RankEntry> GetRankings() => RaceRanking.GetRankings(Players);
+
+    /// <summary>本回合行动顺序 — 末位先行（追赶优势）。</summary>
+    public List<PlayerState> GetTurnOrder() => RaceRanking.GetTurnOrder(Players);
+
+    /// <summary>所有人完赛或爆缸。</summary>
+    public bool IsRaceOver() => RaceRanking.IsRaceOver(Players);
+
+    /// <summary>指定玩家的当前名次（1 起）。</summary>
+    public int GetRank(PlayerState p) => RaceRanking.GetCurrentRank(p, Players);
+
+    /// <summary>分配完赛顺位（调用方负责设置 hasFinished）。</summary>
+    public int AssignFinish(PlayerState p) => RaceRanking.AssignFinishOrder(p, ref NextFinishOrder);
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 天气（WeatherRules）
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>比赛开始时从赛道天气池抽取初始天气。</summary>
+    public void InitializeWeather(string[] weatherPool, string defaultWeather)
+    {
+        WeatherPool = weatherPool;
+        Weather = WeatherRules.SelectInitialWeather(weatherPool, defaultWeather, Random);
+    }
+
+    /// <summary>每圈结束时掷骰是否换天（30% 概率）。返回新天气。</summary>
+    public WeatherType RollWeatherForLap()
+    {
+        Weather = WeatherRules.RollWeatherChange(Weather, WeatherPool, Random);
+        return Weather;
+    }
+
+    public string WeatherLabel => Weather == WeatherType.Rainy ? "🌧️ 雨天" : "☀️ 晴天";
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 科技树（TechTreeRules）
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// 创建带 demo 预算的科技树状态：解锁 4 个 L1 通用 + 本队 L1 专属，并全部激活。
+    /// 正式版由科技树 UI（用户）负责选择激活节点。
+    /// </summary>
+    public TechTreeState CreateDemoTechState(TeamId teamId)
+    {
+        var state = TechTreeRules.CreateDemoState(teamId);
+        UnlockDemoTech(state);
+        TechTreeRules.ActivateAllUnlocked(state);
+        return state;
+    }
+
+    private void UnlockDemoTech(TechTreeState state)
+    {
+        string[] commons =
+        {
+            "common-l1-heat-coating",
+            "common-l1-lightweight-chassis",
+            "common-l1-track-memory",
+            "common-l1-expanded-tank"
+        };
+        foreach (var id in commons)
+            TechTreeRules.UnlockNode(state, id, TechDb);
+
+        var uniques = TechDb.GetUniqueInTier(state.teamId, TechTreeTier.L1);
+        if (uniques.Count > 0)
+            TechTreeRules.UnlockNode(state, uniques[0].id, TechDb);
+    }
+
+    /// <summary>
+    /// 该玩家当前生效的全部科技修正。
+    /// UK L3 日不落：若已选择目标国，将目标国 L2/L3 专属 flag 合并进来。
+    /// </summary>
+    public TechModifiers GetModifiers(PlayerState p)
+    {
+        var m = TechTreeRules.ComputeModifiers(p.techState, TechDb);
+
+        // 日不落：复制目标国 L2+L3 专属科技 flag（数值类效果由调用方手动合并）
+        if (m.hasSunNeverSets && p.techState != null && p.techState.sunNeverSetsTarget.HasValue)
+        {
+            var targetTechs = TechTreeRules.GetSunNeverSetsTargetTechs(p.techState, TechDb);
+            foreach (var node in targetTechs)
+            {
+                foreach (var effect in node.effects)
+                    ApplyEffectFlag(ref m, effect);
+            }
+        }
+        return m;
+    }
+
+    /// <summary>将单个效果写入 TechModifiers（日不落合并用）。</summary>
+    private static void ApplyEffectFlag(ref TechModifiers m, TechEffect effect)
+    {
+        switch (effect.type)
+        {
+            case TechEffectType.FishAndChips: m.hasFishAndChips = true; break;
+            case TechEffectType.FullEnglish: m.hasFullEnglish = true; break;
+            case TechEffectType.SunNeverSets: m.hasSunNeverSets = true; break;
+            case TechEffectType.SchwarzbierFuel: m.hasSchwarzbierFuel = true; break;
+            case TechEffectType.WurstplatteSuspension: m.hasWurstplatteSuspension = true; break;
+            case TechEffectType.GrillSpezial: m.hasGrillSpezial = true; break;
+            case TechEffectType.CavallinoRampante: m.hasCavallinoRampante = true; break;
+            case TechEffectType.DriveThru: m.hasDriveThru = true; break;
+            case TechEffectType.SmokedBBQ: m.hasSmokedBBQ = true; break;
+            case TechEffectType.MotherRoad: m.hasMotherRoad = true; break;
+            case TechEffectType.YinYangTea: m.hasYinYangTea = true; break;
+            case TechEffectType.DimSumCombo: m.hasDimSumCombo = true; break;
+            case TechEffectType.SomersaultCloud: m.hasSomersaultCloud = true; break;
+            case TechEffectType.Nigiri: m.hasNigiri = true; break;
+            case TechEffectType.BrothSelection: m.hasBrothSelection = true; break;
+            case TechEffectType.Bankuruwase: m.hasBankuruwase = true; break;
+            case TechEffectType.HeatReductionPerLap:
+                m.heatReductionPerLap = System.Math.Max(m.heatReductionPerLap, (int)effect.value);
+                break;
+            case TechEffectType.CornerLimitBonus:
+                m.cornerLimitBonus = System.Math.Max(m.cornerLimitBonus, (int)effect.value);
+                break;
+            case TechEffectType.SpeedBonusStraight:
+                m.speedBonusStraight = System.Math.Max(m.speedBonusStraight, (int)effect.value);
+                break;
+            case TechEffectType.DurabilityBonus:
+                m.durabilityBonus = System.Math.Max(m.durabilityBonus, (int)effect.value);
+                break;
+            case TechEffectType.SlipstreamRangeBonus:
+                m.slipstreamRangeBonus = System.Math.Max(m.slipstreamRangeBonus, (int)effect.value);
+                break;
+        }
+    }
+
+    /// <summary>有效手牌上限 = 基础 + 科技加成。</summary>
+    public int EffectiveHandSize(PlayerState p, int baseHandSize)
+    {
+        if (p.techState == null) return baseHandSize;
+        return baseHandSize + GetModifiers(p).handSizeBonus;
+    }
+
+    /// <summary>有效引擎热量池 = 基础 + 耐久/容量加成（含 SmokedBBQ +2）。</summary>
+    public int EffectiveHeatPoolSize(PlayerState p, int basePoolSize)
+    {
+        if (p.techState == null) return basePoolSize;
+        var m = GetModifiers(p);
+        return basePoolSize + m.durabilityBonus + m.EffectiveEngineCapacityBonus;
+    }
+
+    /// <summary>有效失控淘汰阈值（基础 3 + 科技加成，IT L2 上限 4）。</summary>
+    public int EffectiveSpinMax(PlayerState p)
+    {
+        return p.techState == null ? 3 : GetModifiers(p).EffectiveSpinCounterMax;
+    }
+
+    /// <summary>
+    /// 弯道判定限速 = 基础限速 + 科技弯速加成（GDD 堆叠公式） − 天气惩罚。
+    /// baseLimit &gt;= 99 视为无弯道（不修正）。
+    /// </summary>
+    public int EffectiveCornerLimit(PlayerState p, int baseLimit)
+    {
+        if (baseLimit >= 99) return baseLimit;
+        int bonus = 0;
+        if (p.techState != null)
+        {
+            var m = GetModifiers(p);
+            bonus = TechTreeRules.ComputeEffectiveCornerLimitBonus(
+                m.cornerLimitBonus,
+                0,
+                0,
+                m.hasSomersaultCloud ? 1 : 0,
+                m.hasBankuruwase && p.techState.bankuruwaseActive ? 1 : 0);
+        }
+        int limit = baseLimit + bonus;
+        limit = WeatherRules.ApplyWeatherToCornerLimit(limit, Weather);
+        return Mathf.Max(1, limit);
+    }
+
+    /// <summary>本圈弯道超速热量减免（科技，每圈 1 次）。返回本次减免量并消耗。</summary>
+    public int ConsumeHeatReduction(PlayerState p)
+    {
+        if (p.techState == null) return 0;
+        int reduction = TechTreeRules.GetHeatReductionThisLap(p.techState, TechDb);
+        if (reduction > 0)
+            TechTreeRules.ConsumeHeatReduction(p.techState);
+        return reduction;
+    }
+
+    /// <summary>新的一圈开始 — 重置每圈科技跟踪。</summary>
+    public void OnNewLap(PlayerState p)
+    {
+        if (p.techState != null)
+            TechTreeRules.ResetHeatReductionForLap(p.techState);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 特技牌（TrickCardRules）
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>Go 模式：高挡位激进驾驶（火锅底料前置）。</summary>
+    public bool IsGoMode(PlayerState p) => p.gear >= 3;
+
+    /// <summary>Recover 模式：低挡位冷却驾驶（冰糕前置）。</summary>
+    public bool IsRecoverMode(PlayerState p) => p.gear <= 2;
+
+    /// <summary>
+    /// 尝试打出特技牌。校验顺序：类型 → 定义 → 每回合限 1 → 模式前置。
+    /// 成功时在 trickState 上设置回合标志并返回效果结果。
+    /// </summary>
+    public TrickPlayResult PlayTrick(PlayerState p, CardData card)
+    {
+        if (card == null || !card.IsTrick)
+            return TrickPlayResult.Fail("不是特技牌");
+        var def = TrickDb.Get(card.trickId);
+        if (def == null)
+            return TrickPlayResult.Fail($"未知特技牌: {card.trickId}");
+        if (!TrickCardRules.CanPlayTrick(p.trickState))
+            return TrickPlayResult.Fail("本回合已打出过特技牌（每回合限 1）");
+        if (!TrickCardRules.CanPlaySpecificTrick(def, IsGoMode(p), IsRecoverMode(p)))
+            return TrickPlayResult.Fail("当前驾驶模式无法使用该特技牌");
+        return TrickCardRules.ResolvePlay(
+            def, p.trickState,
+            p.deck.heatPool != null && p.deck.heatPool.remaining > 0,
+            p.deck.CountHeatInHand() > 0,
+            p.deck.CountSpeedInHand() > 0,
+            p.trickState.crossedLandmarkLastTurn);
+    }
+
+    /// <summary>开局特技牌（每队 4 张：2 攻 2 守）。</summary>
+    public List<CardData> CreateInitialTrickCards(TeamId teamId)
+    {
+        return TrickCardRules.CreateInitialTrickCards(teamId, TrickDb);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 移动力计算（科技 + 特技牌粘合）
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// 本回合移动加成 = 科技直道加成（未过弯时） + 特技牌加成（酸菜）。
+    /// crossedCorner: 本回合移动是否经过弯道（决定直道加成与酸菜结算）。
+    /// 帕尔玛干酪的尾流加成都计入 ComputeSlipstreamBonus（只有吃到尾流才生效）。
+    /// </summary>
+    public int ComputeMovementBonus(PlayerState p, bool crossedCorner)
+    {
+        int bonus = 0;
+        if (p.techState != null && !crossedCorner)
+            bonus += GetModifiers(p).EffectiveSpeedBonusStraight;
+        bonus += TrickCardRules.GetSauerkrautBonus(p.trickState, crossedCorner);
+        return bonus;
+    }
+
+    /// <summary>本回合是否跨过起点/终点线（US 特技牌/科技以起点线为地标 1）。</summary>
+    public static bool CrossedStartLine(int oldPos, int newPos, int totalCells)
+    {
+        return TechTreeRules.CrossedPositionForward(oldPos, newPos, 0, totalCells);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 尾流系统（Slipstream）
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// 计算本回合尾流加成。条件：模拟移动后，前方最近的车在尾流距离内（基础 1 格，
+    /// 科技 slipstreamRangeBonus / FullEnglish 临时加成可扩展）。
+    /// 加成 = 基础 +2 + 帕尔玛干酪 +2 + 筋斗云 +2（本回合打过 ATTACK 特技）。
+    /// 前方车的冰糕会阻断尾流（CN 特技牌）。
+    /// </summary>
+    public int ComputeSlipstreamBonus(PlayerState p, IReadOnlyList<PlayerState> players, int totalNodes)
+    {
+        if (p.isBlown || p.hasFinished) return 0;
+
+        int mySim = p.position + p.cornerTotalThisTurn;
+        PlayerState leader = null;
+        int bestGap = int.MaxValue;
+
+        foreach (var q in players)
+        {
+            if (q == p || q.isBlown || q.hasFinished) continue;
+            int qSim = q.position + q.cornerTotalThisTurn;
+            int gap = ForwardDistance(mySim, qSim, totalNodes);
+            if (gap < bestGap)
+            {
+                bestGap = gap;
+                leader = q;
+            }
+        }
+
+        if (leader == null) return 0;
+
+        // 距离判定：最近的前车必须在尾流距离内（≤ 半圈才算"前方"）
+        if (bestGap > totalNodes / 2) return 0;
+        int range = 1 + GetModifiers(p).slipstreamRangeBonus + p.slipstreamRangeBonusThisTurn;
+        if (bestGap > range) return 0;
+
+        // 冰糕：前车开启 → 身后赛车无法享受尾流
+        if (TrickCardRules.IsIceJellyActive(leader.trickState)) return 0;
+
+        int bonus = SLIPSTREAM_BASE_BONUS;
+        bonus += TrickCardRules.GetParmigianoBonus(p.trickState);
+        // 筋斗云：本回合打过 ATTACK 特技牌 → 尾流 +2
+        if (p.techState != null &&
+            TechTreeRules.HasSomersaultCloud(p.techState, TechDb) &&
+            PlayedAttackTrickThisTurn(p))
+        {
+            bonus += TechTreeRules.GetSomersaultCloudSlipstreamBonus();
+        }
+        return bonus;
+    }
+
+    /// <summary>环形赛道前向距离（a 到 b 沿赛道方向）。</summary>
+    public static int ForwardDistance(int fromPos, int toPos, int totalNodes)
+    {
+        return (toPos - fromPos + totalNodes) % totalNodes;
+    }
+
+    /// <summary>本回合是否打出过 ATTACK 类特技牌。</summary>
+    private bool PlayedAttackTrickThisTurn(PlayerState p)
+    {
+        if (string.IsNullOrEmpty(p.trickState.trickPlayedThisTurnId)) return false;
+        var def = TrickDb.Get(p.trickState.trickPlayedThisTurnId);
+        return def != null && def.IsAttack;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 地标（US 科技/特技）：地标 1 = 起点线，地标 2 = 赛道中点
+    // ═══════════════════════════════════════════════════════════════════
+
+    public static (int lm1, int lm2) GetLandmarks(int totalCells)
+    {
+        return TechTreeRules.GetLandmarkPositions(totalCells);
+    }
+
+    /// <summary>本回合移动是否跨过某地标（前进方向）。</summary>
+    public static bool CrossedLandmark(int oldPos, int newPos, int landmark, int totalCells)
+    {
+        return TechTreeRules.CrossedPositionForward(oldPos, newPos, landmark, totalCells);
+    }
+
+    /// <summary>是否处于 BBQ 区（美式烧烤：地标周围 5 格）。</summary>
+    public static bool IsInBBQZone(int position, int totalCells)
+    {
+        var (lm1, lm2) = GetLandmarks(totalCells);
+        return TechTreeRules.IsInBBQZone(position, lm1, lm2, totalCells);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 回合结算（CN 阴阳茶 / DE 烤肉拼盘）
+    // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>回合结束时结算 CN 阴阳茶。返回触发的效果（调用方应用热量支付/冷却）。</summary>
+    public YinYangResult ResolveEndOfTurn(PlayerState p)
+    {
+        if (p.techState == null) return YinYangResult.NoTrigger;
+        return TechTreeRules.ResolveYinYang(p.techState, TechDb, p.deck.CountHeatInHand() > 0);
+    }
+
+    /// <summary>回合结束时可用的 DE 烤肉拼盘冷却量（本回合已支付的热量）。</summary>
+    public int GetGrillSpezialCooldown(PlayerState p)
+    {
+        if (p.techState == null) return 0;
+        return TechTreeRules.CanUseGrillSpezial(p.techState, TechDb)
+            ? TechTreeRules.GetGrillSpezialCooldown(p.techState)
+            : 0;
+    }
+
+    /// <summary>标记烤肉拼盘已使用（调用方随后应用冷却）。</summary>
+    public void ActivateGrillSpezial(PlayerState p)
+    {
+        if (p.techState != null)
+            TechTreeRules.ActivateGrillSpezial(p.techState);
+    }
+
+    /// <summary>记录本回合支付的热量（烤肉拼盘跟踪）。</summary>
+    public void TrackHeatPaid(PlayerState p, int heatPaid)
+    {
+        if (p.techState != null && heatPaid > 0)
+            TechTreeRules.TrackGrillSpezialHeat(p.techState, heatPaid);
+    }
+}

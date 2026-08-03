@@ -73,7 +73,7 @@ public class CardUI : MonoBehaviour
         }
     }
 
-    public void SetupCard(CardData data, System.Action<CardUI> callback)
+    public void SetupCard(CardData data, System.Action<CardUI> callback, string labelOverride = null)
     {
         cardData = data;
         onClickCallback = callback;
@@ -82,7 +82,14 @@ public class CardUI : MonoBehaviour
         // 设置背景精灵图
         if (backgroundImage != null)
         {
-            if (data.IsHeat && heatBgSprite != null)
+            if (data.IsTrick)
+            {
+                // 特技牌复用速度牌背景 + 金色调
+                backgroundImage.sprite = speedBgSprite;
+                if (backgroundImage.sprite == null)
+                    backgroundImage.color = new Color(1f, 0.85f, 0.4f, 1f);
+            }
+            else if (data.IsHeat && heatBgSprite != null)
                 backgroundImage.sprite = heatBgSprite;
             else if (!data.IsHeat && speedBgSprite != null)
                 backgroundImage.sprite = speedBgSprite;
@@ -94,35 +101,48 @@ public class CardUI : MonoBehaviour
                 backgroundImage.color = Color.white;
         }
 
-        // 设置中央图标（精灵图优先，文字回退）
-        Sprite iconSprite = null;
-        if (!data.IsHeat && numberSprites != null
-            && data.value >= 1 && data.value <= numberSprites.Length)
+        // 特技牌：直接显示名称（不显示数字/图标）
+        if (data.IsTrick)
         {
-            iconSprite = numberSprites[data.value - 1];
-        }
-        else if (data.IsHeat && heatIconSprite != null)
-        {
-            iconSprite = heatIconSprite;
-        }
-
-        if (iconImage != null)
-        {
-            iconImage.sprite = iconSprite;
-            iconImage.enabled = iconSprite != null;
-        }
-
-        // 文字回退：精灵图不可用时显示文字
-        if (valueText != null)
-        {
-            if (iconSprite != null)
+            if (iconImage != null) iconImage.enabled = false;
+            if (valueText != null)
             {
-                valueText.text = "";
+                valueText.text = labelOverride ?? "特技";
+                valueText.color = new Color(0.45f, 0.25f, 0f, 1f);
             }
-            else
+        }
+        else
+        {
+            // 设置中央图标（精灵图优先，文字回退）
+            Sprite iconSprite = null;
+            if (!data.IsHeat && numberSprites != null
+                && data.value >= 1 && data.value <= numberSprites.Length)
             {
-                valueText.text = data.IsHeat ? "" : data.value.ToString();
-                valueText.color = Color.white;
+                iconSprite = numberSprites[data.value - 1];
+            }
+            else if (data.IsHeat && heatIconSprite != null)
+            {
+                iconSprite = heatIconSprite;
+            }
+
+            if (iconImage != null)
+            {
+                iconImage.sprite = iconSprite;
+                iconImage.enabled = iconSprite != null;
+            }
+
+            // 文字回退：精灵图不可用时显示文字
+            if (valueText != null)
+            {
+                if (iconSprite != null)
+                {
+                    valueText.text = "";
+                }
+                else
+                {
+                    valueText.text = data.IsHeat ? "" : data.value.ToString();
+                    valueText.color = Color.white;
+                }
             }
         }
 
@@ -140,6 +160,13 @@ public class CardUI : MonoBehaviour
     {
         // 热量牌不可打出 — 点击无响应
         if (cardData != null && cardData.IsHeat) return;
+
+        // 特技牌 — 直接打出（不进入选中状态）
+        if (cardData != null && cardData.IsTrick)
+        {
+            onClickCallback?.Invoke(this);
+            return;
+        }
 
         isSelected = !isSelected;
         UpdateVisual();

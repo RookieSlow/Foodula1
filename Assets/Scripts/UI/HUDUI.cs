@@ -15,6 +15,10 @@ public class HUDUI : MonoBehaviour
     public TMP_Text positionText;
     public TMP_Text aiStatusText;
 
+    [Header("5 系统接入显示 (可选，未赋值则跳过)")]
+    public TMP_Text weatherText;
+    public TMP_Text standingsText;
+
     [Header("日志")]
     public TMP_Text logText;
     public int maxLogLines = 6;
@@ -75,9 +79,17 @@ public class HUDUI : MonoBehaviour
     // ====== 刷新 ======
 
     /// <summary>
-    /// 刷新所有 HUD 显示。
+    /// 刷新所有 HUD 显示（2 人兼容重载）。
     /// </summary>
     public void Refresh(MVPGameManager gm, PlayerState player, PlayerState ai)
+    {
+        Refresh(gm, player, ai, null);
+    }
+
+    /// <summary>
+    /// 刷新所有 HUD 显示 — 多车模式传入全部玩家以显示排名。
+    /// </summary>
+    public void Refresh(MVPGameManager gm, PlayerState player, PlayerState ai, System.Collections.Generic.IReadOnlyList<PlayerState> allPlayers)
     {
         gameManager = gm;
 
@@ -97,9 +109,19 @@ public class HUDUI : MonoBehaviour
             lapText.text = $"圈数: {player.lap}/{gm.Config.totalLaps}";
 
         if (positionText != null)
-            positionText.text = $"位置: {player.position}/{gm.Track.TotalNodes}";
+        {
+            if (allPlayers != null && allPlayers.Count > 0)
+            {
+                int rank = RaceRanking.GetCurrentRank(player, new System.Collections.Generic.List<PlayerState>(allPlayers));
+                positionText.text = $"位置: {player.position}/{gm.Track.TotalNodes} | 排名: {rank}/{allPlayers.Count}";
+            }
+            else
+            {
+                positionText.text = $"位置: {player.position}/{gm.Track.TotalNodes}";
+            }
+        }
 
-        if (aiStatusText != null)
+        if (aiStatusText != null && ai != null)
         {
             aiStatusText.text = ai.isBlown
                 ? "<color=red>AI: 爆缸!</color>"
@@ -107,6 +129,27 @@ public class HUDUI : MonoBehaviour
                     ? "<color=green>AI: 完赛!</color>"
                     : $"AI: G{ai.gear} | 引擎:{ai.deck.heatPool.remaining} | 圈{ai.lap} | 位{ai.position}";
         }
+
+        // 天气显示
+        if (weatherText != null)
+            weatherText.text = gm.WeatherLabel;
+
+        // 多车排行榜
+        if (standingsText != null && allPlayers != null && allPlayers.Count > 1)
+            standingsText.text = FormatStandings(allPlayers, player);
+    }
+
+    /// <summary>生成多车排行榜文本（含自己的标记）。</summary>
+    private string FormatStandings(System.Collections.Generic.IReadOnlyList<PlayerState> all, PlayerState self)
+    {
+        var rankings = RaceRanking.GetRankings(new System.Collections.Generic.List<PlayerState>(all));
+        var sb = new System.Text.StringBuilder();
+        foreach (var e in rankings)
+        {
+            string mark = e.player == self ? " ←你" : "";
+            sb.AppendLine($"{e.rank}. {e.player.name} 圈{e.player.lap} 位{e.player.position}{mark}");
+        }
+        return sb.ToString();
     }
 
     public void SetStatus(string msg)

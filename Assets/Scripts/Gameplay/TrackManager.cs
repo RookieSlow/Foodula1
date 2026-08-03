@@ -57,6 +57,11 @@ public class TrackManager : MonoBehaviour
     /// <summary>当前加载的赛道配置（JSON 模式非 null）。</summary>
     public TrackConfig LoadedTrackConfig { get; private set; }
 
+    /// <summary>统一硬编码赛道为 JSON 后的回退赛道 ID（roadmap P1 #9）。</summary>
+    public const string FallbackTrackId = "fallback_42";
+    private const float FallbackWorldWidth = 31.9f;   // 原始 42 节点形状包围盒
+    private const float FallbackWorldHeight = 12.3f;
+
     // --- 公开属性 ---
     public int TotalNodes => nodes.Count;
     public int LaneCount => laneOffsets.Length > 0 ? laneOffsets.Length : 1;
@@ -95,7 +100,12 @@ public class TrackManager : MonoBehaviour
         }
         else
         {
-            BuildHardcodedTrack();
+            // 无配置赛道 → 使用 JSON 回退赛道（原硬编码 42 节点导出，roadmap P1 #9）
+            if (!LoadTrackFromJson(FallbackTrackId))
+            {
+                Debug.LogWarning($"[TrackManager] {FallbackTrackId}.json 加载失败，退回代码内建赛道。");
+                BuildHardcodedTrack();
+            }
         }
 
         RenderTrack();
@@ -121,6 +131,13 @@ public class TrackManager : MonoBehaviour
         {
             config.totalLaps = cfg.laps;
             config.trackNodeCount = cfg.gameCellCount;
+
+            // fallback 赛道使用自身包围盒尺寸，保持与旧硬编码渲染一致
+            if (trackId == FallbackTrackId)
+            {
+                config.trackWorldSize = FallbackWorldWidth;
+                config.trackWorldHeight = FallbackWorldHeight;
+            }
         }
 
         TrackDataLoader.BuildCornerMaps(cfg, nodes, out cornerSpeedLimits, out cornerNames);

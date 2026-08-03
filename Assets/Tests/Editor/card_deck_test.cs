@@ -1,0 +1,302 @@
+using System.Collections.Generic;
+using NUnit.Framework;
+using UnityEngine;
+
+/// <summary>
+/// CardDeck 单元测试 — 抽牌/弃牌/热量管理/牌库耗尽边界 + 特技牌扩展。
+/// 使用种子随机源保证确定性。
+/// </summary>
+public class CardDeckTest
+{
+    private GameConfigSO CreateConfig()
+    {
+        var config = ScriptableObject.CreateInstance<GameConfigSO>();
+        config.speedCardDistribution = new[] { 1, 1, 2, 2, 3, 3, 4 };
+        config.initialHeatCards = 2;
+        config.heatPoolPerPlayer = 5;
+        config.handSize = 4;
+        return config;
+    }
+
+    private CardDeck CreateDeck(GameConfigSO config, int seed = 42, int poolSize = 5)
+    {
+        var deck = new CardDeck();
+        deck.InitializeDeck(config, new HeatPool(poolSize), new SystemRandomSource(seed));
+        return deck;
+    }
+
+    // ===== 初始化 =====
+
+    [Test]
+    public void test_deck_init_builds_expected_piles()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+
+        Assert.AreEqual(7, deck.DrawPileCount);            // 7 速度
+        Assert.AreEqual(0, deck.HandCount);                // 未抽牌
+        Assert.AreEqual(0, deck.DiscardPileCount);
+        Assert.IsNotNull(deck.heatPool);
+        Assert.AreEqual(5, deck.heatPool.remaining);
+    }
+
+    [Test]
+    public void test_draw_to_hand_fills_to_hand_size()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+
+        bool ok = deck.DrawToHand(config.handSize);
+
+        Assert.IsTrue(ok);
+        Assert.AreEqual(4, deck.HandCount);
+        Assert.AreEqual(3, deck.DrawPileCount); // 7 - 4
+    }
+
+    // ===== 抽牌与牌库耗尽 =====
+
+    [Test]
+    public void test_draw_exhausts_deck_then_shuffles_discard_back()
+    {
+        var config = CreateConfig();
+        config.handSize = 3;
+        var deck = CreateDeck(config);
+        deck.DrawToHand(3); // 抽 3
+
+        // 打出并弃掉手牌 → 弃牌堆有牌
+        var cards = new List<CardData>(deck.Hand);
+        deck.RemoveFromHand(cards);
+        deck.DiscardSpeedCards(cards);
+        Assert.AreEqual(3, deck.DiscardPileCount);
+
+        // 抽到牌组抽干（剩余 6 张）
+        bool ok1 = deck.DrawToHand(6);
+        Assert.IsTrue(ok1);
+        Assert.AreEqual(0, deck.DrawPileCount);
+
+        // 再抽 → 自动洗入弃牌堆，全部 9 张回到手牌
+        bool ok2 = deck.DrawToHand(9);
+        Assert.IsTrue(ok2);
+        Assert.AreEqual(9, deck.HandCount);
+        Assert.AreEqual(0, deck.DrawPileCount);
+        Assert.AreEqual(0, deck.DiscardPileCount);
+
+        // 超出总量 → false
+        Assert.IsFalse(deck.DrawToHand(10));
+    }
+
+    [Test]
+    public void test_draw_returns_false_when_everything_exhausted()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+
+        // 抽完所有牌
+        while (deck.DrawPileCount > 0 || deck.DiscardPileCount > 0)
+        {
+            if (!deck.DrawToHand(deck.HandCount + 1)) break;
+        }
+
+        // 再要求更大手牌 → false
+        bool ok = deck.DrawToHand(deck.HandCount + 1);
+        Assert.IsFalse(ok);
+    }
+
+    // ===== 热量管理 =====
+
+    [Test]
+    public void test_draw_heat_from_pool_adds_to_discard_and_reduces_pool()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+
+        int drawn = deck.DrawHeatFromPool(3);
+
+        Assert.AreEqual(3, drawn);
+        Assert.AreEqual(2, deck.heatPool.remaining);
+        Assert.AreEqual(3, deck.DiscardPileCount);
+    }
+
+    [Test]
+    public void test_draw_heat_from_pool_caps_at_pool_remaining()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config, poolSize: 2);
+
+        int drawn = deck.DrawHeatFromPool(5);
+
+        Assert.AreEqual(2, drawn);
+        Assert.AreEqual(0, deck.heatPool.remaining);
+    }
+
+    [Test]
+    public void test_remove_heat_from_hand_returns_to_pool()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        deck.DrawToHand(config.handSize);
+
+        // 手牌热量数可能为 0（取决于种子）— 先确保有热量：从池抽 1 张热量直接进弃牌堆再洗入
+        if (deck.CountHeatInHand() == 0)
+        {
+            deck.DrawHeatFromPool(1);
+            // 热量在弃牌堆 — 洗回牌组
+            deck.ShuffleDrawPile(); // 弃牌堆不会自动洗入，手动构造：抽出牌组已有牌
+        }
+
+        // 更直接的方式：手牌全是热量时移除
+        while (deck.HandCount > 0)
+            deck.RemoveFromHand(new List<CardData>(deck.Hand));
+
+        // 现在手牌空 → 洗入弃牌堆（含刚抽的热量）→ 抽到手牌
+        int poolBefore = deck.heatPool.remaining;
+        bool ok = deck.DrawToHand(config.handSize);
+        Assert.IsTrue(ok);
+
+        int heatInHand = deck.CountHeatInHand();
+        int removed = deck.RemoveHeatFromHand(10);
+
+        Assert.AreEqual(heatInHand, removed);
+        Assert.AreEqual(poolBefore + removed, deck.heatPool.remaining);
+    }
+
+    [Test]
+    public void test_recover_all_heat_to_pool_returns_everything()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        deck.DrawToHand(config.handSize);
+
+        // 从池抽热量制造散落热量
+        deck.DrawHeatFromPool(3);
+        // 弃牌堆现有 3 张热量；手牌也可能有初始热量
+
+        int poolBefore = deck.heatPool.remaining;
+        deck.RecoverAllHeatToPool();
+
+        // 系统内热量总量 = 池 + 初始热量牌 = 5 + 2
+        Assert.AreEqual(5 + config.initialHeatCards, deck.heatPool.remaining);
+        Assert.AreEqual(0, deck.CountHeatInHand());
+        Assert.AreEqual(0, deck.CountHeatInDeck());
+        Assert.IsTrue(poolBefore <= 5);
+    }
+
+    [Test]
+    public void test_remove_one_heat_from_deck_prefers_draw_pile()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+
+        deck.DrawHeatFromPool(2); // 2 张热量入弃牌堆（初始 2 张热量仍在牌组）
+        int before = deck.heatPool.remaining;
+
+        bool ok = deck.RemoveOneHeatFromDeck();
+
+        Assert.IsTrue(ok);
+        Assert.AreEqual(before + 1, deck.heatPool.remaining);
+        // 优先从牌组移除：牌组 2 → 1，弃牌堆 2 不变
+        Assert.AreEqual(3, deck.CountHeatInDeck());
+    }
+
+    [Test]
+    public void test_remove_one_heat_from_deck_returns_false_when_none()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        deck.DrawToHand(config.handSize);
+
+        // 手动把热量全部清走：抽干热量池以外路径不可行 — 构造无热量牌组
+        var noHeatConfig = CreateConfig();
+        noHeatConfig.initialHeatCards = 0;
+        var cleanDeck = new CardDeck();
+        cleanDeck.InitializeDeck(noHeatConfig, new HeatPool(0), new SystemRandomSource(1));
+
+        bool ok = cleanDeck.RemoveOneHeatFromDeck();
+        Assert.IsFalse(ok);
+    }
+
+    // ===== 速度牌辅助 =====
+
+    [Test]
+    public void test_get_top_n_speed_cards_returns_largest()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        deck.DrawToHand(config.handSize);
+
+        var top2 = deck.GetTopNSpeedCards(2);
+        Assert.AreEqual(2, top2.Count);
+        Assert.IsTrue(top2[0].value >= top2[1].value);
+    }
+
+    [Test]
+    public void test_get_bottom_n_speed_cards_returns_smallest()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        deck.DrawToHand(config.handSize);
+
+        var bottom2 = deck.GetBottomNSpeedCards(2);
+        Assert.AreEqual(2, bottom2.Count);
+        Assert.IsTrue(bottom2[0].value <= bottom2[1].value);
+    }
+
+    // ===== 特技牌扩展 =====
+
+    [Test]
+    public void test_add_trick_cards_to_hand_ignores_non_tricks()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+
+        deck.AddTrickCardsToHand(new List<CardData>
+        {
+            CardData.CreateTrick("uk-scone"),
+            new CardData(CardType.Speed, 2),
+            CardData.CreateTrick("uk-english-breakfast-tea")
+        });
+
+        Assert.AreEqual(2, deck.GetTricksInHand().Count);
+    }
+
+    [Test]
+    public void test_discard_trick_card_removes_from_hand_to_discard()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        var trick = CardData.CreateTrick("cn-hotpot-base");
+        deck.AddTrickCardsToHand(new List<CardData> { trick });
+
+        bool ok = deck.DiscardTrickCard(trick);
+
+        Assert.IsTrue(ok);
+        Assert.AreEqual(0, deck.GetTricksInHand().Count);
+        Assert.AreEqual(1, deck.DiscardPileCount);
+    }
+
+    [Test]
+    public void test_discard_trick_card_fails_for_unknown_card()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+
+        bool ok = deck.DiscardTrickCard(new CardData(CardType.Speed, 1));
+
+        Assert.IsFalse(ok);
+    }
+
+    [Test]
+    public void test_remove_temp_cards_from_hand_removes_only_temp()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        var temp = CardData.CreateTempHeat();
+        deck.AddTrickCardsToHand(new List<CardData> { temp });
+        deck.AddTrickCardsToHand(new List<CardData> { new CardData(CardType.Heat, 0) });
+
+        int removed = deck.RemoveTempCardsFromHand();
+
+        Assert.AreEqual(1, removed);
+        Assert.AreEqual(1, deck.CountHeatInHand());
+    }
+}

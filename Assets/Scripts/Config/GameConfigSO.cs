@@ -132,6 +132,45 @@ public class GameConfigSO : ScriptableObject
     [Tooltip("每节点移动后的暂停时间 (秒)")]
     public float nodeDelay = 0.02f;
 
+    [Tooltip("赛车精灵朝向 (度)：0=向右, 90=向上。用于赛车随赛道方向旋转")]
+    [Range(0, 359)]
+    public float carSpriteFacingAngle = 90f;
+
+    [Tooltip("赛车随赛道方向旋转的速度 (度/秒)")]
+    [Min(1f)]
+    public float carRotateSpeed = 540f;
+
+    [Header("比赛规模 (多车)")]
+    [Tooltip("AI 对手数量 (0-3)。多车系统：玩家 + N 名 AI 同场竞技")]
+    [Range(0, 3)]
+    public int aiOpponentCount = 1;
+
+    [Tooltip("玩家所属车队 (决定科技树与特技牌)")]
+    public TeamId playerTeam = TeamId.CN;
+
+    [Tooltip("AI 车队分配 — 数组前 N 个按顺序分配给 AI 对手")]
+    public TeamId[] aiTeams = { TeamId.UK, TeamId.DE, TeamId.IT };
+
+    [Header("系统开关 (5 核心系统)")]
+    [Tooltip("天气系统：弯道限速修正 + 每圈换天")]
+    public bool enableWeather = true;
+
+    [Tooltip("维修区系统：进站/出站/冷却 (赛道需有 pit_entry/pit_exit)")]
+    public bool enablePitLane = true;
+
+    [Tooltip("特技牌系统：开局 4 张车队特技牌，每回合限 1")]
+    public bool enableTrickCards = true;
+
+    [Tooltip("科技树系统：demo 预算解锁 L1 节点，修正手牌/热量池/弯速等")]
+    public bool enableTechTree = true;
+
+    [Tooltip("JP L2 汤底选择（demo：科技树解锁 L2 后自动选用；None=不选）")]
+    public BrothType jpDemoBroth = BrothType.None;
+
+    [Tooltip("UK L3 日不落 demo：自动复制该目标国的 L2/L3 专属科技")]
+    public bool enableUkSunNeverSetsDemo = false;
+    public TeamId ukSunNeverSetsTargetTeam = TeamId.DE;
+
     [Header("AI")]
     [Tooltip("AI 热量警告阈值 (热量牌数/手牌上限)")]
     [Range(0f, 1f)]

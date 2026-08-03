@@ -22,11 +22,36 @@ public class PlayerState
     public int finishOrder;    // 完赛顺序（0=未完赛, 1=第一, 2=第二...）
     public CardDeck deck;      // 牌组/手牌/弃牌堆管理
 
+    // --- 扩展系统状态（5 系统接入） ---
+    /// <summary>科技树运行时状态（enableTechTree=false 时为 null）。</summary>
+    public TechTreeState techState;
+
+    /// <summary>特技牌运行时状态（每回合/每场跟踪）。</summary>
+    public TrickCardState trickState = new TrickCardState();
+
     // --- 每回合临时状态 ---
     public int selectedGearThisTurn;
     public List<CardData> playedSpeedCardsThisTurn = new List<CardData>();
     public List<CardData> playedHeatCardsThisTurn = new List<CardData>();
     public int totalMovementThisTurn;
+
+    /// <summary>本回合特技牌附加移动（司康 / 关东慢煮前等）。</summary>
+    public int trickMoveBonusThisTurn;
+
+    /// <summary>弯道判定用总速度（火锅底料 ATTACK 牌的 +1 不计入弯道判定）。</summary>
+    public int cornerTotalThisTurn;
+
+    /// <summary>额外出牌槽（KantoOden 累加 / 火锅底料 ATTACK 牌）。</summary>
+    public int extraCardSlotsThisTurn;
+
+    /// <summary>关东慢煮：本回合剩余部分跳过（仅本回合，回合开始清除）。</summary>
+    public bool kantoOdenSkipThisTurn;
+
+    /// <summary>本回合尾流距离加成（FullEnglish / 其他临时来源）。</summary>
+    public int slipstreamRangeBonusThisTurn;
+
+    /// <summary>回合开始时的位置（失控回退 / 阴阳茶结算用）。</summary>
+    public int positionAtTurnStart;
 
     public PlayerState(string name, bool isAI, int startPosition, int startGear)
     {
@@ -67,5 +92,11 @@ public class PlayerState
         playedHeatCardsThisTurn.Clear();
         totalMovementThisTurn = 0;
         selectedGearThisTurn = gear;
+        trickMoveBonusThisTurn = 0;
+        cornerTotalThisTurn = 0;
+        extraCardSlotsThisTurn = 0;
+        kantoOdenSkipThisTurn = false;
+        slipstreamRangeBonusThisTurn = 0;
+        positionAtTurnStart = position;
     }
 }

@@ -338,4 +338,52 @@ public class CardDeck
         foreach (var c in discardPile) if (c.IsHeat) count++;
         return count;
     }
+
+    // ====== 特技牌（Trick Cards） ======
+
+    /// <summary>
+    /// 将开局特技牌直接加入手牌（每队 4 张：2 攻 2 守，不占档位出牌数）。
+    /// </summary>
+    public void AddTrickCardsToHand(IReadOnlyList<CardData> tricks)
+    {
+        if (tricks == null) return;
+        foreach (var t in tricks)
+            if (t.IsTrick) hand.Add(t);
+    }
+
+    /// <summary>手牌中所有特技牌。</summary>
+    public List<CardData> GetTricksInHand()
+    {
+        var result = new List<CardData>();
+        foreach (var c in hand)
+            if (c.IsTrick) result.Add(c);
+        return result;
+    }
+
+    /// <summary>打出特技牌：从手牌移除并放入弃牌堆。返回是否成功。</summary>
+    public bool DiscardTrickCard(CardData trick)
+    {
+        if (trick == null || !trick.IsTrick) return false;
+        if (hand.Remove(trick))
+        {
+            discardPile.Add(trick);
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>将限时卡牌（Fries 临时热量牌）从手牌移除并销毁。返回移除数量。</summary>
+    public int RemoveTempCardsFromHand()
+    {
+        int removed = 0;
+        for (int i = hand.Count - 1; i >= 0; i--)
+        {
+            if (hand[i].isTemp)
+            {
+                hand.RemoveAt(i);
+                removed++;
+            }
+        }
+        return removed;
+    }
 }

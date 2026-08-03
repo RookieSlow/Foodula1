@@ -1,7 +1,8 @@
 # Foodular1 开发路线图
 
-> 最后更新: 2026-07-30
+> 最后更新: 2026-08-03
 > 关联: ADR-002 (当前架构)
+> 新模块接入指引: `docs/module-integration-guide.md`
 
 ---
 
@@ -10,10 +11,12 @@
 - ✅ Demo 框架：主菜单 → 比赛 → 返回
 - ✅ 核心 HEAT 循环：选档 → 选牌 → 移动 → 冷却 → 弯道判定
 - ✅ 数据驱动赛道：8 条 JSON 赛道（含银石 60 格验证通过）
-- ✅ 纯函数层：RaceRules / TrackRules / AIPlanner（20 个 EditMode 测试全过）
+- ✅ 纯函数层：RaceRules / TrackRules / AIPlanner / WeatherRules / PitLaneRules
 - ✅ 确定性随机：IRandomSource 注入，种子可重现
 - ✅ AI 对手：热量感知选牌 + 弯道风险判断
 - ✅ UI 系统：Prefab 模式 + 硬编码回退模式双路径
+- ✅ **5 核心系统接入（2026-08-03）**：多车 / 天气 / 维修区 / 特技牌 / 科技树
+  全部接入 MVPGameManager 比赛循环，新增 RaceSession 纯 C# 聚合层
 
 ---
 
@@ -21,9 +24,9 @@
 
 | # | 任务 | 类型 | 说明 |
 |---|------|------|------|
-| 1 | 删除 `Assets/Data/` | 清理 | Editor 工具残留，已不使用 |
-| 2 | 补充 `CardDeck` 单元测试 | 测试 | 抽牌、弃牌、热量管理、牌库耗尽边界条件 |
-| 3 | 补充 `TrackDataLoader` 单元测试 | 测试 | JSON 解析、ConfigToNodes 转换、坐标映射 |
+| 1 | ~~删除 `Assets/Data/`~~ | 清理 | ✅ 已完成（目录 + Data.meta 已删） |
+| 2 | ~~补充 `CardDeck` 单元测试~~ | 测试 | ✅ 已完成（`card_deck_test.cs`） |
+| 3 | ~~补充 `TrackDataLoader` 单元测试~~ | 测试 | ✅ 已完成（`track_data_loader_test.cs`） |
 
 ---
 
@@ -33,10 +36,11 @@
 |---|------|------|------|
 | 4 | 从 `MVPGameManager` 抽取 `UIFactory` | 重构 | `AutoCreateUI()` ~200 行单独成类，减轻 Manager 负担 |
 | 5 | 填充 `tr-registry.yaml` | 文档 | 从 GDD 提取技术需求 ID，建立可追溯性 |
-| 6 | 赛道 JSON schema 校验工具 | 工具 | Editor 脚本：验证 JSON 节点连续性、弯心标注完整性 |
-| 7 | 写 `PlayerState` 状态机测试 | 测试 | 覆盖爆缸、完赛、失控计数、跳回合等边界状态 |
-| 8 | 集成测试：完整比赛流程 | 测试 | Play Mode 测试 — 自动跑一场比赛并验证结果一致性 |
-| 9 | 统一硬编码赛道为 JSON | 重构 | 将 `GetTrackShape42()` 导出为 JSON，移除硬编码坐标 |
+| 6 | ~~赛道 JSON schema 校验工具~~ | 工具 | ✅ 已完成（`Assets/Scripts/Editor/TrackJsonValidator.cs`，Foodular1 > Tools 菜单） |
+| 7 | ~~写 `PlayerState` 状态机测试~~ | 测试 | ✅ 已完成（`player_state_test.cs`） |
+| 8 | ~~集成测试：完整比赛流程~~ | 测试 | ✅ 已完成纯层版本（`race_simulation_test.cs`，3 玩家全比赛模拟）；Play Mode 版本待许可证 |
+| 9 | ~~统一硬编码赛道为 JSON~~ | 重构 | ✅ 已完成（`fallback_42.json` 导出 42 节点赛道，无配置时自动加载；代码内建保留作双保险） |
+| 10 | 运行全部 EditMode 测试 | 验证 | ⚠️ 需 Unity 许可证（机器无 ULF）— 交互式 Test Runner 或激活许可证 |
 
 ---
 
@@ -44,12 +48,15 @@
 
 | # | 任务 | 类型 | 说明 |
 |---|------|------|------|
-| 10 | 多车支持 | 功能 | 当前仅 2 玩家；扩展到 4-6 车同场竞技 |
-| 11 | 天气系统 | 功能 | JSON 已有 weatherPool；实现晴天/雨天对限速的影响 |
-| 12 | 维修区进站 | 功能 | JSON 已有 pit_entry/pit_exit；中国车队特有机制 |
-| 13 | 车队特技 | 功能 | 各国车队特殊能力（见 `foodula-1-teams-cars.md`） |
-| 14 | 赛车随赛道方向旋转 | 视觉 | 动画插值赛车朝向，沿赛道切线方向 |
-| 15 | 赛道背景图 | 视觉 | 集成 AI 生成的赛道俯视图作为背景 |
+| 11 | ~~多车支持~~ | 功能 | ✅ 已完成：`RaceRanking` + N 玩家循环，`aiOpponentCount` 可配 |
+| 12 | ~~天气系统~~ | 功能 | ✅ 已完成：开局抽天气 + 每圈换天，雨天弯速 -1 |
+| 13 | ~~维修区进站~~ | 功能 | ✅ 已完成：pit_entry 弹窗选择，冷却全部热量 + 停 1 回合 |
+| 14 | ~~车队特技~~ | 功能 | ✅ 已完成：12 张特技牌接入比赛（`docs/module-integration-guide.md` §6.4） |
+| 15 | ~~尾流系统~~ | 功能 | ✅ 已完成（`ComputeSlipstreamBonus`；帕尔玛/冰糕/筋斗云/范围科技全接入） |
+| 16 | 科技树 UI | 功能 | 用户自行处理；`SelectActiveNodes` 替换 demo 固定解锁 |
+| 17 | ~~赛车随赛道方向旋转~~ | 视觉 | ✅ 已完成（`carSpriteFacingAngle`/`carRotateSpeed` 配置，出生朝向 + 移动平滑旋转 + 传送后朝向） |
+| 18 | 赛道背景图 | 视觉 | 集成 AI 生成的赛道俯视图作为背景 |
+| 19 | ~~独特科技补充~~ | 功能 | ✅ 已完成（MotherRoad / SchwarzbierFuel / FullEnglish / SunNeverSets / Broth / DriveThru / SmokedBBQ，见接入文档 §8） |
 
 ---
 
@@ -57,11 +64,11 @@
 
 | # | 任务 | 类型 | 说明 |
 |---|------|------|------|
-| 16 | 音效系统 | 音频 | 引擎声、弯道尖叫声、观众欢呼 |
-| 17 | 粒子特效 | 视觉 | 轮胎烟尘、引擎火花、雨滴 |
-| 18 | 存档系统 | 功能 | 比赛进度存档 / 读取 |
-| 19 | 难度选择 | 功能 | AI 强度调节、赛道复杂度选择 |
-| 20 | Steam Deck / 手柄支持 | 平台 | 输入适配 |
+| 20 | 音效系统 | 音频 | 引擎声、弯道尖叫声、观众欢呼 |
+| 21 | 粒子特效 | 视觉 | 轮胎烟尘、引擎火花、雨滴 |
+| 22 | 存档系统 | 功能 | 比赛进度存档 / 读取 |
+| 23 | 难度选择 | 功能 | AI 强度调节、赛道复杂度选择 |
+| 24 | Steam Deck / 手柄支持 | 平台 | 输入适配 |
 
 ---
 

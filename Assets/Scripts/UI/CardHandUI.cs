@@ -76,7 +76,15 @@ public class CardHandUI : MonoBehaviour
                 // 注入精灵图引用
                 ui.SetSprites(speedBgSprite, heatBgSprite, selectedOverlaySprite,
                     numberSprites, heatIconSprite);
-                ui.SetupCard(card, OnCardClicked);
+
+                // 特技牌显示名称（icon + 中文名）
+                string label = null;
+                if (card.IsTrick && gameManager != null && gameManager.Session != null)
+                {
+                    var def = gameManager.Session.TrickDb.Get(card.trickId);
+                    if (def != null) label = $"{def.icon} {def.name}";
+                }
+                ui.SetupCard(card, OnCardClicked, label);
             }
             cardUIs.Add(ui);
         }
@@ -176,10 +184,19 @@ public class CardHandUI : MonoBehaviour
         // 热量牌不可打出/不可弃掉 — 忽略点击
         if (card.cardData.IsHeat) return;
 
+        // 特技牌：点击直接打出（每回合限 1，不进入选中状态）
+        if (card.cardData.IsTrick)
+        {
+            gameManager.OnTrickCardClicked(card.cardData);
+            return;
+        }
+
         // 弃牌模式：无数量限制，任意选
         if (isDiscardMode) return;
 
-        int gear = gameManager.Player.gear;
+        var player = gameManager.Player;
+        int gear = player.gear;
+        int maxCards = gameManager.GetMaxSpeedCardsThisTurn(player);
 
         // card.isSelected 已在 CardUI.OnCardClicked 中翻转完毕
         if (card.isSelected)
@@ -187,21 +204,21 @@ public class CardHandUI : MonoBehaviour
             // 刚刚被选中 → 检查是否超出速度牌限制
             int speedCount = GetSelectedSpeedCount();
 
-            if (speedCount > gear)
+            if (speedCount > maxCards)
             {
                 card.SetSelectedWithoutNotify(false); // 超限，撤销
                 return;
             }
 
             if (gameManager.hudUI != null)
-                gameManager.hudUI.SetStatus($"G{gear} 档 - 已选 {speedCount}/{gear} 张速度牌");
+                gameManager.hudUI.SetStatus($"G{gear} 档 - 已选 {speedCount}/{maxCards} 张速度牌");
         }
         else
         {
             // 取消选中
             int speedCount = GetSelectedSpeedCount();
             if (gameManager.hudUI != null)
-                gameManager.hudUI.SetStatus($"G{gear} 档 - 已选 {speedCount}/{gear} 张速度牌");
+                gameManager.hudUI.SetStatus($"G{gear} 档 - 已选 {speedCount}/{maxCards} 张速度牌");
         }
     }
 
