@@ -619,11 +619,13 @@ public class MVPGameManager : MonoBehaviour
             int lane = trackManager.GetDefaultLaneIndex(p.isAI);
             laneIndices.Add(lane);
 
-            Vector3 startPos = trackManager.GetNodePosition(trackManager.StartFinishNodeIndex, lane);
+            int visualLane = GetVisualLaneIndex(p);
+            laneIndices[i] = visualLane;
+            Vector3 startPos = trackManager.GetNodePosition(trackManager.StartFinishNodeIndex, visualLane);
             // 出生即朝向赛道前进方向（P2 #17 赛车随赛道方向旋转）
             int nextIdx = (trackManager.StartFinishNodeIndex + 1) % trackManager.TotalNodes;
             Quaternion startRot = GetFacingRotation(
-                trackManager.GetNodePosition(nextIdx, lane) - startPos);
+                trackManager.GetNodePosition(nextIdx, visualLane) - startPos);
             GameObject instance = Instantiate(carPrefab, startPos, startRot);
             instance.name = $"Car_{p.name}";
             instance.transform.localScale = new Vector3(0.2f, 0.2f, 1f);
@@ -640,6 +642,8 @@ public class MVPGameManager : MonoBehaviour
 
             carInstances.Add(instance);
         }
+
+        RefreshVisualCarLanes();
     }
 
     // ====== 主游戏循环 ======
@@ -722,7 +726,7 @@ public class MVPGameManager : MonoBehaviour
                         TrickCardRules.CountTricksInHand(p.deck) > 0))
                 {
                     p.slipstreamRangeBonusThisTurn = 1;
-                    p.deck.AddTrickCardsToHand(new List<CardData> { CardData.CreateTempHeat() });
+                    p.deck.AddCardsToHand(new List<CardData> { CardData.CreateTempHeat() });
                     if (hudUI != null)
                         hudUI.AppendLog($"{p.name} 英式全餐：尾流距离+1，获得 1 张限时热量牌。");
                 }
@@ -989,7 +993,8 @@ public class MVPGameManager : MonoBehaviour
         if (carIndex < 0 || carIndex >= carInstances.Count || carInstances[carIndex] == null) yield break;
 
         GameObject car = carInstances[carIndex];
-        int laneIndex = laneIndices[carIndex];
+        int laneIndex = GetVisualLaneIndex(p);
+        laneIndices[carIndex] = laneIndex;
         int totalMove = p.totalMovementThisTurn;
         int totalNodes = trackManager.TotalNodes;
         int targetPos = p.position + totalMove;
@@ -1022,6 +1027,7 @@ public class MVPGameManager : MonoBehaviour
         }
 
         p.position = targetPos % totalNodes;
+        RefreshVisualCarLanes();
     }
 
     // ====== 移动力计算（科技 + 特技加成） ======
@@ -1032,6 +1038,12 @@ public class MVPGameManager : MonoBehaviour
         int max = p.gear + p.extraCardSlotsThisTurn;
         if (TrickCardRules.HasHotpotAttack(p.trickState)) max += 1;
         return max;
+    }
+
+    /// <summary>Returns the lane currently used to render and judge a racer.</summary>
+    public int GetLaneIndexForPlayer(PlayerState p)
+    {
+        return GetVisualLaneIndex(p);
     }
 
     private void ComputeMovements(List<PlayerState> turnOrder, HashSet<PlayerState> turnSkipped)
@@ -1397,7 +1409,7 @@ public class MVPGameManager : MonoBehaviour
         // 限时热量牌（薯条：上回合过地标才可触发）
         if (TrickCardRules.HasTempHeat(p.trickState))
         {
-            p.deck.AddTrickCardsToHand(new List<CardData> { CardData.CreateTempHeat() });
+            p.deck.AddCardsToHand(new List<CardData> { CardData.CreateTempHeat() });
             TrickCardRules.ConsumeTempHeat(p.trickState);
             if (hudUI != null)
                 hudUI.AppendLog($"{p.name} 获得 1 张限时热量牌（回合结束销毁）。");
@@ -1480,6 +1492,7 @@ public class MVPGameManager : MonoBehaviour
             return;
 
         laneIndices[0] = playerLaneIndex;
+        MoveCarToNode(Player, trackManager.StartFinishNodeIndex, playerLaneIndex);
         waitingForPlayerLaneChange = false;
         string choice = playerLaneIndex == oldLane
             ? "保持当前车道"
@@ -1711,12 +1724,75 @@ public class MVPGameManager : MonoBehaviour
 
     // ====== 辅助 ======
 
-    private int GetCarIndex(PlayerState p) => session.Players.IndexOf(p);
+    private int GetCarIndex(PlayerState p)
+    {
+        if (session == null || p == null || session.Players == null)
+            return -1;
+        return session.Players.IndexOf(p);
+    }
 
     private int GetLane(PlayerState p)
     {
+        return GetVisualLaneIndex(p);
+    }
+
+    private int GetVisualLaneIndex(PlayerState p)
+    {
         int idx = GetCarIndex(p);
-        return idx >= 0 && idx < laneIndices.Count ? laneIndices[idx] : 0;
+        if (idx < 0 || idx >= laneIndices.Count || trackManager == null)
+            return trackManager != null && p != null
+                ? trackManager.GetDefaultLaneIndex(p.isAI)
+                : 0;
+
+        if (TrackPresentationRules.IsIndianapolis(trackManager.TrackId))
+            return Mathf.Clamp(laneIndices[idx], 0, trackManager.LaneCount - 1);
+
+        bool trailingInParallel = IsTrailingInParallel(p);
+        return TrackPresentationRules.GetStandardTrafficLaneIndex(
+            trackManager.TrackId,
+            trailingInParallel);
+    }
+
+    private bool IsTrailingInParallel(PlayerState candidate)
+    {
+        if (session == null || candidate == null || candidate.hasFinished || candidate.isBlown)
+            return false;
+
+        int candidateIndex = GetCarIndex(candidate);
+        if (candidateIndex < 0)
+            return false;
+
+        for (int i = 0; i < session.Players.Count; i++)
+        {
+            PlayerState other = session.Players[i];
+            if (other == candidate || other == null || other.hasFinished || other.isBlown)
+                continue;
+
+            // Discrete cells have no longitudinal tie-breaker; session order
+            // keeps the side-by-side assignment deterministic.
+            if (other.lap == candidate.lap && other.position == candidate.position &&
+                i < candidateIndex)
+                return true;
+        }
+
+        return false;
+    }
+
+    private void RefreshVisualCarLanes()
+    {
+        if (session == null || trackManager == null)
+            return;
+
+        for (int i = 0; i < session.Players.Count && i < carInstances.Count; i++)
+        {
+            PlayerState p = session.Players[i];
+            if (p == null || carInstances[i] == null)
+                continue;
+
+            int lane = GetVisualLaneIndex(p);
+            laneIndices[i] = lane;
+            MoveCarToNode(p, p.position, lane);
+        }
     }
 
     private AIController GetAIController(PlayerState p)
@@ -1729,11 +1805,20 @@ public class MVPGameManager : MonoBehaviour
     {
         int idx = GetCarIndex(p);
         if (idx < 0 || idx >= carInstances.Count || carInstances[idx] == null) return;
+        int lane = GetVisualLaneIndex(p);
+        laneIndices[idx] = lane;
+        MoveCarToNode(p, position, lane);
+    }
+
+    private void MoveCarToNode(PlayerState p, int position, int lane)
+    {
+        int idx = GetCarIndex(p);
+        if (idx < 0 || idx >= carInstances.Count || carInstances[idx] == null) return;
         var car = carInstances[idx];
-        car.transform.position = trackManager.GetNodePosition(position, laneIndices[idx]);
+        car.transform.position = trackManager.GetNodePosition(position, lane);
         // 传送后朝向下一节点（失控回退 / 进站出口 / 阴阳茶 +1）
         int nextIdx = (position + 1) % trackManager.TotalNodes;
-        RotateCarTowards(car, trackManager.GetNodePosition(nextIdx, laneIndices[idx]));
+        RotateCarTowards(car, trackManager.GetNodePosition(nextIdx, lane));
     }
 
     // ====== 赛车朝向（P2 #17 随赛道方向旋转） ======

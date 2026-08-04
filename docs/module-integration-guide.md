@@ -240,3 +240,17 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
    `isApex: true` 节点（判定只在 apex 触发，多节点弯段不会重复判罚）。
 10. **赛车旋转**：`config.carSpriteFacingAngle`（默认 90=精灵朝上）与
     `carRotateSpeed` 控制随赛道方向旋转；换新车精灵时先确认朝向角度。
+
+---
+
+## 10. 2026-08-05 integration audit
+
+- Temporary heat cards now use `CardDeck.AddCardsToHand`; `AddTrickCardsToHand`
+  remains restricted to actual trick cards.
+- AI card selection uses the effective per-turn card-slot limit, including
+  temporary slots and Hotpot effects.
+- AI corner-risk checks use lane-specific limits plus active tech/weather
+  modifiers through `RaceSession.EffectiveCornerLimit`.
+- Track weather aliases (`cloudy`, `hot`, `light_rain`, `heavy_rain`) are mapped
+  to the current Sunny/Rainy runtime model, and fixed-default tracks are valid
+  when their weather pool is intentionally empty.

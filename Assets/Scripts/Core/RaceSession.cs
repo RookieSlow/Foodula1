@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 /// <summary>
 /// 单场比赛的完整运行时状态 — 纯 C# 层（ADR-002 分层架构）。
@@ -217,7 +216,7 @@ public class RaceSession
         }
         int limit = baseLimit + bonus;
         limit = WeatherRules.ApplyWeatherToCornerLimit(limit, Weather);
-        return Mathf.Max(1, limit);
+        return System.Math.Max(1, limit);
     }
 
     /// <summary>本圈弯道超速热量减免（科技，每圈 1 次）。返回本次减免量并消耗。</summary>

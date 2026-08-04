@@ -5,7 +5,7 @@ public static class AIPlanner
 {
     public static List<CardData> ChooseSpeedCards(
         CardDeck deck,
-        int gear,
+        int maxCards,
         float heatRatio,
         bool hasCornerRisk,
         float heatWarningThreshold,
@@ -18,8 +18,8 @@ public static class AIPlanner
             (hasCornerRisk && heatRatio >= cautiousHeatThreshold);
 
         List<CardData> chosen = chooseLowCards
-            ? deck.GetBottomNSpeedCards(gear)
-            : deck.GetTopNSpeedCards(gear);
+            ? deck.GetBottomNSpeedCards(maxCards)
+            : deck.GetTopNSpeedCards(maxCards);
 
         if (chosen.Count > 1 &&
             variationChance > 0f &&

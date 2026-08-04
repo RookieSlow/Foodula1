@@ -135,6 +135,13 @@ secrets.json
 # *.exr
 # *.hdr
 
+# === Local review material ===
+# Unity editor captures and reference documents stay local and are not game assets.
+/Assets/Screenshots/
+/Assets/Screenshots.meta
+/ht_diary.pdf
+/熱力狂飆_水印.pdf
+
 # === OS Generated ===
 ehthumbs.db
 ehthumbs_vista.db

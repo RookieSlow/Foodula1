@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 /// <summary>
 /// TrackDataLoader 单元测试 — JSON 解析、ConfigToNodes 转换、坐标映射、弯道映射。
@@ -23,6 +24,8 @@ public class TrackDataLoaderTest
     [Test]
     public void test_load_config_missing_track_returns_null()
     {
+        LogAssert.Expect(LogType.Error,
+            "[TrackDataLoader] Track config not found: Resources/Configs/Tracks/no_such_track.json");
         TrackConfig cfg = TrackDataLoader.LoadConfig("no_such_track");
         Assert.IsNull(cfg);
     }
@@ -89,10 +92,18 @@ public class TrackDataLoaderTest
     [Test]
     public void test_config_to_nodes_maps_pit_flags_when_present()
     {
-        // 银石有维修区
-        TrackConfig silverstone = TrackDataLoader.LoadConfig("silverstone_afternoon_tea");
-        List<TrackNode> nodes = TrackDataLoader.ConfigToNodes(silverstone);
-        Assert.IsTrue(PitLaneRules.HasPitLane(nodes), "银石应有维修区");
+        // 用最小配置验证映射契约；真实赛道是否启用维修区由各自 JSON 决定。
+        var config = new TrackConfig
+        {
+            cells = new[]
+            {
+                new CellData { index = 0, type = "start_finish", name = "Start" },
+                new CellData { index = 1, type = "pit_entry", name = "Pit Entry" },
+                new CellData { index = 2, type = "pit_exit", name = "Pit Exit" }
+            }
+        };
+        List<TrackNode> nodes = TrackDataLoader.ConfigToNodes(config);
+        Assert.IsTrue(PitLaneRules.HasPitLane(nodes), "含 pit_entry/pit_exit 的配置应识别为维修区");
         Assert.IsTrue(PitLaneRules.FindPitEntry(nodes) >= 0);
         Assert.IsTrue(PitLaneRules.FindPitExit(nodes) >= 0);
     }

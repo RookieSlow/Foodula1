@@ -150,7 +150,10 @@ public static class TrackJsonValidator
         }
         else
         {
-            errors.Add("weatherPool 缺失或为空（应至少包含 sunny）");
+            // Tracks may intentionally use a fixed default while weather
+            // configuration is pending (e.g. endurance layouts).
+            if (WeatherRules.ParseWeather(cfg.defaultWeather) == null)
+                errors.Add("weatherPool 缺失或为空，且 defaultWeather 无法解析");
         }
 
         // 9. 布局元数据

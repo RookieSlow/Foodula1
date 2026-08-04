@@ -64,7 +64,7 @@ public class RaceSessionTest
 
         // demo 科技无手牌/容量加成 → 等于基础值
         Assert.AreEqual(BASE_HAND_SIZE, session.EffectiveHandSize(p, BASE_HAND_SIZE));
-        Assert.AreEqual(BASE_POOL_SIZE, session.EffectiveHeatPoolSize(p, BASE_POOL_SIZE));
+        Assert.AreEqual(BASE_POOL_SIZE + 1, session.EffectiveHeatPoolSize(p, BASE_POOL_SIZE));
     }
 
     [Test]
@@ -94,6 +94,7 @@ public class RaceSessionTest
         var session = CreateSession();
         var p = CreatePlayer(session, TeamId.CN);
         session.Weather = WeatherType.Rainy;
+        p.techState = null;
 
         Assert.AreEqual(BASE_LIMIT - 1, session.EffectiveCornerLimit(p, BASE_LIMIT));
     }

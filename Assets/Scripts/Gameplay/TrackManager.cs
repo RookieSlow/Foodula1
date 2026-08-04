@@ -67,6 +67,9 @@ public class TrackManager : MonoBehaviour
     public int LaneCount => laneOffsets.Length > 0 ? laneOffsets.Length : 1;
     public IReadOnlyList<TrackNode> Nodes => nodes;
     public int StartFinishNodeIndex => TrackRules.FindStartFinishNodeIndex(nodes);
+    public string TrackId => LoadedTrackConfig != null
+        ? LoadedTrackConfig.trackId
+        : (config != null ? TrackSelectionState.ResolveTrackId(config.trackId) : FallbackTrackId);
     public bool AllowsStartFinishLaneChange
     {
         get
@@ -294,6 +297,9 @@ public class TrackManager : MonoBehaviour
     public int GetDefaultLaneIndex(bool isAi)
     {
         if (LaneCount <= 1) return 0;
+        if (!TrackPresentationRules.IsIndianapolis(TrackId))
+            return TrackPresentationRules.GetInnerLaneIndex(TrackId);
+
         int leftMiddle = (LaneCount - 1) / 2;
         return isAi ? Mathf.Min(LaneCount - 1, leftMiddle + 1) : leftMiddle;
     }

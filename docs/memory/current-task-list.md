@@ -84,6 +84,9 @@ with 0 failures, warnings, or errors.
 - [x] Replace runtime grid-like track visuals with selected layout backgrounds,
   yellow corner masks, red apex masks, visible speed-limit labels, and
   editor-only node metadata.
+- [x] Make ordinary tracks use the inside lane by default, move only the
+  trailing car outside when cars share a node, and keep Indianapolis vehicle
+  placement tied to the player's explicit lane choice.
 - [ ] Rotate vehicles to follow the tangent between track nodes.
 - [ ] Integrate track weather-pool selection after the core track path is
   stable.
@@ -129,3 +132,11 @@ Update this file whenever a task is completed, superseded, or blocked.
 Historical Claude Code files under `.claude/agent-memory/` and
 `production/session-logs/` remain provenance only; this task list is the
 maintained source for current work.
+
+## 2026-08-05 Module Audit
+
+- [x] Audited the modules introduced by the previous AI integration commit.
+- [x] Fixed temporary-heat card injection and AI effective card-slot handling.
+- [x] Connected AI corner risk to lane-specific limits and active weather/tech modifiers.
+- [x] Accepted the existing fixed-default weather tracks in the JSON validator.
+- [x] Run Unity EditMode/Play Mode tests through the open Unity instance or MCP (EditMode 262 passed; no PlayMode tests configured).

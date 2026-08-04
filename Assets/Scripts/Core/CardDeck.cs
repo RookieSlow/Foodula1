@@ -348,7 +348,19 @@ public class CardDeck
     {
         if (tricks == null) return;
         foreach (var t in tricks)
-            if (t.IsTrick) hand.Add(t);
+            if (t != null && t.IsTrick) hand.Add(t);
+    }
+
+    /// <summary>
+    /// Adds runtime-created cards directly to the hand. This is intentionally
+    /// broader than <see cref="AddTrickCardsToHand"/> for temporary heat cards
+    /// granted by trick/technology effects.
+    /// </summary>
+    public void AddCardsToHand(IReadOnlyList<CardData> cards)
+    {
+        if (cards == null) return;
+        foreach (var card in cards)
+            if (card != null) hand.Add(card);
     }
 
     /// <summary>手牌中所有特技牌。</summary>

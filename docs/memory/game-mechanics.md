@@ -60,8 +60,12 @@ prototype and is no longer the authoritative model.
   labels. Runtime grid nodes, lane lines, and debug corner text are hidden;
   tracks with explicit lane-specific limits show the effective limit above each
   lane's apex. Editor Scene view retains node metadata and limits for authoring.
-  Vehicle positions, corner checks, lap counts, camera framing, and minimap
-  tracking remain centerline-based.
+  Ordinary tracks place all cars on the inside lane by default; when cars share
+  the same lap and node, the stable-order trailing car uses the outside lane
+  for the side-by-side visual. This is presentation-only: gameplay positions,
+  corner checks, lap counts, camera framing, and minimap tracking are unchanged.
+  Indianapolis keeps explicit per-car lane choices, and the player's start/finish
+  lane selection immediately repositions the player car.
 - On `indianapolis_burger`, corner limits are lane-specific from inner to outer:
   `4/5/6/7`; the outer lane therefore accommodates a speed total well above 4
   before overspeed heat. At each start/finish crossing, the player may move one lane

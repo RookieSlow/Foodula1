@@ -137,6 +137,14 @@ public class WeatherRulesTests
     }
 
     [Test]
+    public void test_parse_track_weather_aliases()
+    {
+        Assert.That(WeatherRules.ParseWeather("cloudy"), Is.EqualTo(WeatherType.Sunny));
+        Assert.That(WeatherRules.ParseWeather("light_rain"), Is.EqualTo(WeatherType.Rainy));
+        Assert.That(WeatherRules.ParseWeather("heavy_rain"), Is.EqualTo(WeatherType.Rainy));
+    }
+
+    [Test]
     public void test_parse_case_insensitive()
     {
         Assert.That(WeatherRules.ParseWeather("SUNNY"), Is.EqualTo(WeatherType.Sunny));

@@ -91,8 +91,12 @@ public static class WeatherRules
         switch (name.ToLowerInvariant())
         {
             case "sunny": return WeatherType.Sunny;
+            case "cloudy":
+            case "hot": return WeatherType.Sunny;
             case "rainy":
-            case "rain": return WeatherType.Rainy;
+            case "rain":
+            case "light_rain":
+            case "heavy_rain": return WeatherType.Rainy;
             default: return null;
         }
     }

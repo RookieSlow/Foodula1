@@ -140,56 +140,76 @@ public static class TrickCardRules
         bool hasHeatInEngine, bool hasHeatInHand,
         bool hasSpeedInHand, bool crossedLandmarkLastTurn)
     {
-        state.trickPlayedThisTurn = true;
-        state.trickPlayedThisTurnId = def.id;
-
+        TrickPlayResult result;
         switch (def.effectType)
         {
             // ── UK ──
             case TrickEffectType.Scone:
-                return ResolveScone(hasHeatInEngine);
+                result = ResolveScone(hasHeatInEngine);
+                break;
 
             case TrickEffectType.EnglishBreakfastTea:
-                return ResolveEnglishBreakfastTea(hasHeatInHand);
+                result = ResolveEnglishBreakfastTea(hasHeatInHand);
+                break;
 
             // ── DE ──
             case TrickEffectType.Sauerkraut:
-                return ResolveSauerkraut(state);
+                result = ResolveSauerkraut(state);
+                break;
 
             case TrickEffectType.Schwarzbrot:
-                return ResolveSchwarzbrot(state);
+                result = ResolveSchwarzbrot(state);
+                break;
 
             // ── IT ──
             case TrickEffectType.Parmigiano:
-                return ResolveParmigiano(state);
+                result = ResolveParmigiano(state);
+                break;
 
             case TrickEffectType.Chianti:
-                return ResolveChianti(hasSpeedInHand, hasHeatInHand);
+                result = ResolveChianti(hasSpeedInHand, hasHeatInHand);
+                break;
 
             // ── US ──
             case TrickEffectType.Fries:
-                return ResolveFries(state, crossedLandmarkLastTurn);
+                result = ResolveFries(state, crossedLandmarkLastTurn);
+                break;
 
             case TrickEffectType.Cola:
-                return ResolveCola(state, crossedLandmarkLastTurn);
+                result = ResolveCola(state, crossedLandmarkLastTurn);
+                break;
 
             // ── CN ──
             case TrickEffectType.HotpotBase:
-                return ResolveHotpotBase(state);
+                result = ResolveHotpotBase(state);
+                break;
 
             case TrickEffectType.IceJelly:
-                return ResolveIceJelly(state);
+                result = ResolveIceJelly(state);
+                break;
 
             // ── JP ──
             case TrickEffectType.TorpedoTempura:
-                return ResolveTorpedoTempura(state);
+                result = ResolveTorpedoTempura(state);
+                break;
 
             case TrickEffectType.KantoOden:
-                return ResolveKantoOden(state, hasHeatInHand); // card count = gear
+                result = ResolveKantoOden(state, hasHeatInHand); // card count = gear
+                break;
 
             default:
-                return TrickPlayResult.Fail($"Unknown trick effect: {def.effectType}");
+                result = TrickPlayResult.Fail($"Unknown trick effect: {def.effectType}");
+                break;
         }
+
+        // A failed play must not consume the once-per-turn trick slot.  This is
+        // especially important for resource-gated cards such as Scone and Tea.
+        if (result.success)
+        {
+            state.trickPlayedThisTurn = true;
+            state.trickPlayedThisTurnId = def.id;
+        }
+        return result;
     }
 
     // ── UK Attack: Scone — pay 1 heat from engine → +2 move ──

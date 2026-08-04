@@ -33,7 +33,7 @@ public class CardDeckTest
         var config = CreateConfig();
         var deck = CreateDeck(config);
 
-        Assert.AreEqual(7, deck.DrawPileCount);            // 7 速度
+        Assert.AreEqual(9, deck.DrawPileCount);            // 7 速度 + 2 初始热量
         Assert.AreEqual(0, deck.HandCount);                // 未抽牌
         Assert.AreEqual(0, deck.DiscardPileCount);
         Assert.IsNotNull(deck.heatPool);
@@ -50,7 +50,7 @@ public class CardDeckTest
 
         Assert.IsTrue(ok);
         Assert.AreEqual(4, deck.HandCount);
-        Assert.AreEqual(3, deck.DrawPileCount); // 7 - 4
+        Assert.AreEqual(5, deck.DrawPileCount); // 9 - 4（含 2 张初始热量）
     }
 
     // ===== 抽牌与牌库耗尽 =====
@@ -291,8 +291,8 @@ public class CardDeckTest
         var config = CreateConfig();
         var deck = CreateDeck(config);
         var temp = CardData.CreateTempHeat();
-        deck.AddTrickCardsToHand(new List<CardData> { temp });
-        deck.AddTrickCardsToHand(new List<CardData> { new CardData(CardType.Heat, 0) });
+        deck.AddCardsToHand(new List<CardData> { temp });
+        deck.AddCardsToHand(new List<CardData> { new CardData(CardType.Heat, 0) });
 
         int removed = deck.RemoveTempCardsFromHand();
 

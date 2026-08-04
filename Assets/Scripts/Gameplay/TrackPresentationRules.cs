@@ -13,9 +13,41 @@ public static class TrackPresentationRules
         return trackId == IndianapolisTrackId ? 4 : 2;
     }
 
-    public static bool AllowsStartFinishLaneChange(string trackId)
+    public static bool IsIndianapolis(string trackId)
     {
         return trackId == IndianapolisTrackId;
+    }
+
+    /// <summary>
+    /// Returns the lane used by default on ordinary clockwise layouts. The
+    /// generated normals put the inside of those layouts on lane 0.
+    /// Indianapolis is counter-clockwise, so its inside lane is lane 3.
+    /// </summary>
+    public static int GetInnerLaneIndex(string trackId)
+    {
+        return IsIndianapolis(trackId) ? GetLaneCount(trackId) - 1 : 0;
+    }
+
+    public static int GetOuterLaneIndex(string trackId)
+    {
+        return IsIndianapolis(trackId) ? 0 : GetLaneCount(trackId) - 1;
+    }
+
+    /// <summary>
+    /// Ordinary tracks keep all cars on the inside unless two cars share a
+    /// track cell. The trailing car then uses the outside lane to render a
+    /// side-by-side pass.
+    /// </summary>
+    public static int GetStandardTrafficLaneIndex(string trackId, bool isTrailingInParallel)
+    {
+        return isTrailingInParallel
+            ? GetOuterLaneIndex(trackId)
+            : GetInnerLaneIndex(trackId);
+    }
+
+    public static bool AllowsStartFinishLaneChange(string trackId)
+    {
+        return IsIndianapolis(trackId);
     }
 
     /// <summary>

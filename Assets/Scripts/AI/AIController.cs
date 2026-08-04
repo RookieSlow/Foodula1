@@ -66,7 +66,7 @@ public class AIController : MonoBehaviour
 
             if (node.cornerId > 0)
             {
-                int limit = node.speedLimit;
+                int limit = GetEffectiveCornerLimit(node.cornerId);
 
                 // 当前档位超速？
                 if (estCurrentGear > limit)
@@ -115,18 +115,19 @@ public class AIController : MonoBehaviour
         ai.playedHeatCardsThisTurn.Clear();
 
         int gear = ai.gear;
+        int maxCards = game.GetMaxSpeedCardsThisTurn(ai);
         List<CardData> chosen = AIPlanner.ChooseSpeedCards(
             ai.deck,
-            gear,
+            maxCards,
             ai.HeatRatio,
-            HasCornerRisk(gear),
+            HasCornerRisk(maxCards),
             config.aiHeatWarningThreshold,
             config.aiCautiousHeatThreshold,
             config.aiCardVariationChance,
             randomSource);
 
         // 引擎故障：速度牌不足时，每缺 1 张 +1 热量到弃牌堆。引擎不足 → 失控
-        int missing = RaceRules.GetMissingSpeedCardCount(gear, chosen.Count);
+        int missing = RaceRules.GetMissingSpeedCardCount(maxCards, chosen.Count);
         if (missing > 0)
         {
             int drawn = ai.deck.DrawHeatFromPool(missing);
@@ -154,9 +155,9 @@ public class AIController : MonoBehaviour
     /// <summary>
     /// 预估本回合移动力 = 手牌中最大 N 张速度牌之和。
     /// </summary>
-    private int EstimateMovement(int gear)
+    private int EstimateMovement(int cardLimit)
     {
-        List<CardData> topN = ai.deck.GetTopNSpeedCards(gear);
+        List<CardData> topN = ai.deck.GetTopNSpeedCards(cardLimit);
         int sum = 0;
         foreach (var c in topN) sum += c.value;
         return sum;
@@ -165,14 +166,14 @@ public class AIController : MonoBehaviour
     /// <summary>
     /// 检查前方第一个弯道是否有超速风险。
     /// </summary>
-    private bool HasCornerRisk(int gear)
+    private bool HasCornerRisk(int cardLimit)
     {
         if (track == null || track.TotalNodes == 0)
         {
             return false;
         }
 
-        int estimatedMove = EstimateMovement(gear);
+        int estimatedMove = EstimateMovement(cardLimit);
         int lookAhead = config.aiLookAheadNodes;
 
         for (int i = 1; i <= lookAhead; i++)
@@ -182,10 +183,22 @@ public class AIController : MonoBehaviour
 
             if (node.cornerId > 0)
             {
-                return estimatedMove > node.speedLimit;
+                return estimatedMove > GetEffectiveCornerLimit(node.cornerId);
             }
         }
         return false;
+    }
+
+    private int GetEffectiveCornerLimit(int cornerId)
+    {
+        if (track == null || cornerId <= 0)
+            return 99;
+
+        int lane = game != null ? game.GetLaneIndexForPlayer(ai) : track.GetDefaultLaneIndex(true);
+        int baseLimit = track.GetCornerSpeedLimit(cornerId, lane);
+        return game != null && game.Session != null
+            ? game.Session.EffectiveCornerLimit(ai, baseLimit)
+            : baseLimit;
     }
 
 }

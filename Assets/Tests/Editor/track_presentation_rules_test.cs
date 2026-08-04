@@ -10,10 +10,32 @@ public class TrackPresentationRulesTests
         Assert.That(TrackPresentationRules.GetLaneCount("indianapolis_burger"), Is.EqualTo(4));
 
         float[] normalOffsets = TrackPresentationRules.CalculateCenteredLaneOffsets(2, 0.28f);
-        Assert.That(normalOffsets, Is.EqualTo(new[] { -0.14f, 0.14f }));
+        Assert.That(normalOffsets, Is.EqualTo(new[] { -0.14f, 0.14f }).Within(0.0001f));
 
         float[] ovalOffsets = TrackPresentationRules.CalculateCenteredLaneOffsets(4, 0.28f);
-        Assert.That(ovalOffsets, Is.EqualTo(new[] { -0.42f, -0.14f, 0.14f, 0.42f }));
+        Assert.That(ovalOffsets, Is.EqualTo(new[] { -0.42f, -0.14f, 0.14f, 0.42f }).Within(0.0001f));
+    }
+
+    [Test]
+    public void test_standard_tracks_keep_inner_lane_until_parallel()
+    {
+        Assert.That(TrackPresentationRules.GetInnerLaneIndex("silverstone_afternoon_tea"), Is.EqualTo(0));
+        Assert.That(TrackPresentationRules.GetOuterLaneIndex("silverstone_afternoon_tea"), Is.EqualTo(1));
+        Assert.That(
+            TrackPresentationRules.GetStandardTrafficLaneIndex("silverstone_afternoon_tea", false),
+            Is.EqualTo(0));
+        Assert.That(
+            TrackPresentationRules.GetStandardTrafficLaneIndex("silverstone_afternoon_tea", true),
+            Is.EqualTo(1));
+    }
+
+    [Test]
+    public void test_indianapolis_inside_lane_is_distinct_and_lane_selection_is_preserved()
+    {
+        Assert.That(TrackPresentationRules.IsIndianapolis("indianapolis_burger"), Is.True);
+        Assert.That(TrackPresentationRules.GetInnerLaneIndex("indianapolis_burger"), Is.EqualTo(3));
+        Assert.That(TrackPresentationRules.GetOuterLaneIndex("indianapolis_burger"), Is.EqualTo(0));
+        Assert.That(TrackPresentationRules.GetStandardTrafficLaneIndex("indianapolis_burger", false), Is.EqualTo(3));
     }
 
     [Test]

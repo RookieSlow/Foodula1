@@ -184,15 +184,15 @@ public class CardHandUI : MonoBehaviour
         // 热量牌不可打出/不可弃掉 — 忽略点击
         if (card.cardData.IsHeat) return;
 
+        // 弃牌阶段只允许选择要弃掉的速度牌；特技牌不能在此阶段打出。
+        if (isDiscardMode) return;
+
         // 特技牌：点击直接打出（每回合限 1，不进入选中状态）
         if (card.cardData.IsTrick)
         {
             gameManager.OnTrickCardClicked(card.cardData);
             return;
         }
-
-        // 弃牌模式：无数量限制，任意选
-        if (isDiscardMode) return;
 
         var player = gameManager.Player;
         int gear = player.gear;
