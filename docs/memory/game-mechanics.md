@@ -67,10 +67,11 @@ prototype and is no longer the authoritative model.
   Indianapolis keeps explicit per-car lane choices, and the player's start/finish
   lane selection immediately repositions the player car.
 - On `indianapolis_burger`, corner limits are lane-specific from inner to outer:
-  `4/5/6/7`; the outer lane therefore accommodates a speed total well above 4
-  before overspeed heat. At each start/finish crossing, the player may move one lane
-  inward, keep the current lane, or move one lane outward; boundary choices
-  are disabled and the AI keeps its lane.
+  `4/5/6/7`; in the Unity path data lane 0 is the inside lane and lane 3 is
+  the outside lane, so the outer lane accommodates a speed total well above 4
+  before overspeed heat. At each start/finish crossing, the player may move one
+  lane inward, keep the current lane, or move one lane outward; boundary
+  choices are disabled and the AI keeps its lane.
 - Authoring workflow, vehicle orientation, pit behavior, weather integration,
   and a full multi-lap manual playthrough remain incomplete.
 

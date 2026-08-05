@@ -21,16 +21,17 @@ public static class TrackPresentationRules
     /// <summary>
     /// Returns the lane used by default on ordinary clockwise layouts. The
     /// generated normals put the inside of those layouts on lane 0.
-    /// Indianapolis is counter-clockwise, so its inside lane is lane 3.
+    /// Indianapolis uses the same clockwise winding in Unity world
+    /// coordinates, so its inside lane is also lane 0.
     /// </summary>
     public static int GetInnerLaneIndex(string trackId)
     {
-        return IsIndianapolis(trackId) ? GetLaneCount(trackId) - 1 : 0;
+        return 0;
     }
 
     public static int GetOuterLaneIndex(string trackId)
     {
-        return IsIndianapolis(trackId) ? 0 : GetLaneCount(trackId) - 1;
+        return GetLaneCount(trackId) - 1;
     }
 
     /// <summary>
@@ -51,16 +52,15 @@ public static class TrackPresentationRules
     }
 
     /// <summary>
-    /// Converts the renderer's lane index (outer-to-inner for the
-    /// counter-clockwise Indianapolis path) to an inner-to-outer rank.
+    /// Converts the renderer's lane index to an inner-to-outer rank. The
+    /// Indianapolis path is clockwise in Unity world coordinates, and its
+    /// centered lane offsets therefore place lane 0 inside and lane 3 outside.
     /// </summary>
     public static int GetLaneRankFromInside(string trackId, int laneIndex)
     {
         int laneCount = GetLaneCount(trackId);
         int safeLane = Mathf.Clamp(laneIndex, 0, laneCount - 1);
-        return trackId == IndianapolisTrackId
-            ? laneCount - 1 - safeLane
-            : 0;
+        return trackId == IndianapolisTrackId ? safeLane : 0;
     }
 
     public static int GetLaneAdjustedCornerSpeedLimit(

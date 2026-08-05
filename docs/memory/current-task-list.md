@@ -140,3 +140,4 @@ maintained source for current work.
 - [x] Connected AI corner risk to lane-specific limits and active weather/tech modifiers.
 - [x] Accepted the existing fixed-default weather tracks in the JSON validator.
 - [x] Run Unity EditMode/Play Mode tests through the open Unity instance or MCP (EditMode 262 passed; no PlayMode tests configured).
+- [x] Corrected Indianapolis lane winding so lane 0 is inside and limits rise from 4 (inside) to 7 (outside).

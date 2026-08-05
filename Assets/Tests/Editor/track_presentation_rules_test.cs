@@ -33,22 +33,22 @@ public class TrackPresentationRulesTests
     public void test_indianapolis_inside_lane_is_distinct_and_lane_selection_is_preserved()
     {
         Assert.That(TrackPresentationRules.IsIndianapolis("indianapolis_burger"), Is.True);
-        Assert.That(TrackPresentationRules.GetInnerLaneIndex("indianapolis_burger"), Is.EqualTo(3));
-        Assert.That(TrackPresentationRules.GetOuterLaneIndex("indianapolis_burger"), Is.EqualTo(0));
-        Assert.That(TrackPresentationRules.GetStandardTrafficLaneIndex("indianapolis_burger", false), Is.EqualTo(3));
+        Assert.That(TrackPresentationRules.GetInnerLaneIndex("indianapolis_burger"), Is.EqualTo(0));
+        Assert.That(TrackPresentationRules.GetOuterLaneIndex("indianapolis_burger"), Is.EqualTo(3));
+        Assert.That(TrackPresentationRules.GetStandardTrafficLaneIndex("indianapolis_burger", false), Is.EqualTo(0));
     }
 
     [Test]
     public void test_indianapolis_corner_limits_rise_from_inside_to_outside()
     {
         Assert.That(TrackPresentationRules.AllowsStartFinishLaneChange("indianapolis_burger"), Is.True);
-        Assert.That(TrackPresentationRules.GetLaneRankFromInside("indianapolis_burger", 3), Is.EqualTo(0));
-        Assert.That(TrackPresentationRules.GetLaneRankFromInside("indianapolis_burger", 0), Is.EqualTo(3));
+        Assert.That(TrackPresentationRules.GetLaneRankFromInside("indianapolis_burger", 0), Is.EqualTo(0));
+        Assert.That(TrackPresentationRules.GetLaneRankFromInside("indianapolis_burger", 3), Is.EqualTo(3));
 
-        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("indianapolis_burger", 4, 3), Is.EqualTo(4));
-        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("indianapolis_burger", 4, 2), Is.EqualTo(5));
-        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("indianapolis_burger", 4, 1), Is.EqualTo(6));
-        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("indianapolis_burger", 4, 0), Is.EqualTo(7));
+        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("indianapolis_burger", 4, 0), Is.EqualTo(4));
+        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("indianapolis_burger", 4, 1), Is.EqualTo(5));
+        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("indianapolis_burger", 4, 2), Is.EqualTo(6));
+        Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("indianapolis_burger", 4, 3), Is.EqualTo(7));
         Assert.That(TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit("silverstone_afternoon_tea", 3, 0), Is.EqualTo(3));
     }
 
