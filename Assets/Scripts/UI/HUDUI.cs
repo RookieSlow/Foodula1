@@ -100,8 +100,10 @@ public class HUDUI : MonoBehaviour
         {
             int handHeat = player.deck.CountHeatInHand();
             int engineRemaining = player.deck.heatPool.remaining;
-            string heatWarning = handHeat >= 4 ? " <color=orange>⚠</color>" : "";
-            string spinInfo = player.spinCounter > 0 ? $" | ⚠×{player.spinCounter}/3" : "";
+            // Keep runtime HUD text within the configured CJK font's glyph set.
+            // Emoji warning symbols were rendered as empty boxes in the editor.
+            string heatWarning = handHeat >= 4 ? " <color=orange>警告</color>" : "";
+            string spinInfo = player.spinCounter > 0 ? $" | 失控 {player.spinCounter}/3" : "";
             heatText.text = $"引擎: {engineRemaining} | 手牌热量: {handHeat}{heatWarning}{spinInfo}";
         }
 

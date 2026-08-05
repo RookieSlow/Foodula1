@@ -10,6 +10,22 @@ public class PlayerState
     public string name;
     public bool isAI;
     public TeamId teamId;
+    /// <summary>Selected driver catalog ID; empty means use the team default.</summary>
+    public string driverId;
+    /// <summary>Persistent driver XP carried by a campaign/save layer.</summary>
+    public int driverXp;
+
+    public DriverProfile DriverProfile
+    {
+        get
+        {
+            return DriverCatalog.TryGet(driverId, out DriverProfile profile)
+                ? profile
+                : DriverCatalog.GetDefaultForTeam(teamId);
+        }
+    }
+
+    public int DriverLevel => DriverProgression.GetLevel(driverXp);
 
     // --- 持久状态 ---
     public int gear;           // 当前档位 1-4
@@ -59,6 +75,8 @@ public class PlayerState
         this.isAI = isAI;
         this.position = startPosition;
         this.gear = startGear;
+        this.driverId = string.Empty;
+        this.driverXp = 0;
         this.lap = 0;
         this.hasFinished = false;
         this.isBlown = false;

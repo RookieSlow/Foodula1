@@ -65,7 +65,7 @@ public class TrickCardDef
     /// <summary>Flavor description.</summary>
     public string description;
 
-    /// <summary>Emoji icon (for UI reference).</summary>
+    /// <summary>Compact glyph-free icon label used by the UI.</summary>
     public string icon;
 
     public bool IsAttack => cardType == TrickCardType.Attack;

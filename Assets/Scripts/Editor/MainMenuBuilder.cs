@@ -87,10 +87,9 @@ public static class MainMenuBuilder
             new Vector2(0, 10), new Color(0.18f, 0.72f, 0.22f))
             .GetComponent<Button>();
 
-        // ── 车队选择 按钮（灰色不可交互，后续开发） ──
-        var garageBtn = MakeMenuBtn(canvasGO, "GarageBtn", "车队选择（开发中）",
-            new Vector2(0, -80), new Color(0.25f, 0.25f, 0.28f));
-        garageBtn.GetComponent<Button>().interactable = false;
+        // ── 车手选择按钮 ──
+        MakeMenuBtn(canvasGO, "GarageBtn", "车手选择",
+            new Vector2(0, -80), new Color(0.18f, 0.42f, 0.62f));
 
         // ── 退出游戏 按钮 ──
         menuUI.quitButton = MakeMenuBtn(canvasGO, "QuitBtn", "退出游戏",

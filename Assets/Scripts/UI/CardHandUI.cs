@@ -103,6 +103,23 @@ public class CardHandUI : MonoBehaviour
     }
 
     /// <summary>
+    /// 从 UI 中移除单张卡牌（不重建整个手牌，保留已有选中状态）。
+    /// 调用方负责确保该卡已在数据层被移除。
+    /// </summary>
+    public void RemoveCardUI(CardData card)
+    {
+        for (int i = cardUIs.Count - 1; i >= 0; i--)
+        {
+            if (cardUIs[i] != null && cardUIs[i].cardData == card)
+            {
+                Destroy(cardUIs[i].gameObject);
+                cardUIs.RemoveAt(i);
+                break; // 只移除第一个匹配的（同一 CardData 引用不会重复出现）
+            }
+        }
+    }
+
+    /// <summary>
     /// 隐藏所有 UI（游戏结束时调用）。
     /// </summary>
     public void HideAll()
@@ -114,10 +131,15 @@ public class CardHandUI : MonoBehaviour
 
     /// <summary>
     /// 切换档位选择模式 / 卡牌选择模式。
+    /// 进入正常选牌模式（isGearMode=false）时清除残留的弃牌标记，
+    /// 防止 Turn 2+ 的选牌阶段被  Turn 1 结束时 SetDiscardMode 锁死。
     /// </summary>
     public void SetGearSelectionMode(bool isGearMode)
     {
         isGearSelectionMode = isGearMode;
+        if (!isGearMode)
+            isDiscardMode = false; // 离开档位模式 → 一定是正常选牌，清除弃牌残留
+
         if (gearSelectionPanel != null)
             gearSelectionPanel.SetActive(isGearMode);
         if (playCardsButton != null)

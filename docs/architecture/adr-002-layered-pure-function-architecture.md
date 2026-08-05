@@ -6,7 +6,7 @@ Accepted
 
 ## Date
 
-2026-07-30
+2026-08-05
 
 ## Last Verified
 
@@ -99,6 +99,7 @@ refactoring. This ADR formalizes that structure.
 │  TrackRules   — apex corner detection, start/finish     │
 │  AIPlanner    — card selection strategy                 │
 │  TrackDataLoader — JSON→TrackConfig→TrackNode pipeline  │
+│  DriverProgression — XP, level and skill-tier rules     │
 └──────────────────────┬──────────────────────────────────┘
                        │ reads / produces
 ┌──────────────────────▼──────────────────────────────────┐
@@ -108,6 +109,7 @@ refactoring. This ADR formalizes that structure.
 │  TrackNode     — runtime track node (cornerId, isApex)  │
 │  CardData      — card value + type                      │
 │  CardDeck / PlayerState — runtime mutable state         │
+│  DriverProfile / DriverCatalog — driver selection data  │
 └─────────────────────────────────────────────────────────┘
 
 Data Flow (per turn):

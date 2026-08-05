@@ -80,7 +80,7 @@ public class RaceSession
         return Weather;
     }
 
-    public string WeatherLabel => Weather == WeatherType.Rainy ? "🌧️ 雨天" : "☀️ 晴天";
+    public string WeatherLabel => Weather == WeatherType.Rainy ? "雨天" : "晴天";
 
     // ═══════════════════════════════════════════════════════════════════
     // 科技树（TechTreeRules）

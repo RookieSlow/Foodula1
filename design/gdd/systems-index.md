@@ -38,14 +38,22 @@
 
 | # | System | File | Status | Notes |
 |---|--------|------|--------|-------|
-| 5 | Foodula 1 Concept | `foodula-1-concept.md` | Draft | Full vision — 6 teams, 12 drivers, 6 tracks. Pending: open items in §10 |
-| 6 | Core Mechanics | `foodula-1-core-mechanics.md` | Draft | HEAT board game adaptation — **§1.6 heat lifecycle rewritten 2026-07-22** to match HEAT rules |
-| 7 | Teams & Cars | `foodula-1-teams-cars.md` | Draft | 6 national food-themed teams with stats and skill trees |
-| 8 | Drivers | `foodula-1-drivers.md` | Draft | 12 drivers with passive + active skills |
-| 9 | Tracks | `foodula-1-tracks.md` | Draft | 6 themed tracks with weather and corner sequences |
-| 10 | AI | `foodula-1-ai.md` | Draft | AI behavior tree with 4 priority nodes |
-| 11 | Visual Style | `foodula-1-visual-style.md` | Draft | UI / world / VFX art direction |
-| 12 | Tech Tree | `foodula-1-tech-tree.md` | Draft | UK/DE/IT done, US/CN/JP pending |
+| 5 | Foodula 1 Concept | `foodula-1-concept.md` | In Progress | Full vision — 6 teams, 12 drivers, 8 selectable tracks; open items in §10 remain |
+| 6 | Core Mechanics | `foodula-1-core-mechanics.md` | In Progress | HEAT board game adaptation; runtime card/heat/gear loop is implemented and tested |
+| 7 | Teams & Cars | `foodula-1-teams-cars.md` | In Progress | 6 national food-themed teams; car sprites and team tech modifiers are wired, full team-selection UI remains |
+| 8 | Drivers | `foodula-1-drivers.md` | In Progress | 12 driver catalog entries, XP/tier rules and menu selection are implemented; signature effects remain |
+| 9 | Tracks | `foodula-1-tracks.md` | In Progress | 8 JSON tracks with real-layout presentation, lanes, apex masks and limits; full pit/weather playthrough remains |
+| 10 | AI | `foodula-1-ai.md` | In Progress | Deterministic planner and one-opponent controller are implemented; multi-opponent personality tuning remains |
+| 11 | Visual Style | `foodula-1-visual-style.md` | In Progress | Main menu, race backgrounds, masks, minimap and card visuals are integrated; polish remains |
+| 12 | Tech Tree | `foodula-1-tech-tree.md` | In Progress | Rules/database are integrated for all teams; pre-race tech-tree configuration UI remains |
+
+## 2026-08-05 Implementation Snapshot
+
+The index was stale relative to the Unity project and is now aligned with the
+current implementation stage. `production/stage.txt` is `Production`. The
+project has 273 passing EditMode tests; the remaining `In Progress` items are
+deliberate feature gaps, not missing source files accidentally hidden by this
+index.
 
 ## Design Dependencies
 

@@ -23,6 +23,8 @@ the CCGS project framework.
   world positions.
 - `AI/AIController.cs` controls the current opponent.
 - `UI/` contains the card hand, HUD, card, and main-menu views.
+- `Drivers/` contains the immutable driver catalog and progression rules;
+  `Core/DriverSelectionState.cs` stores the current menu choice.
 - `Config/GameConfigSO.cs` contains tunable race, deck, gear, animation, and
   AI parameters.
 
@@ -39,6 +41,11 @@ The verified scene flow is:
 
 - Demo framework Phase 1 is complete.
 - Phase 2 asset replacement is in progress.
+- The project is in Production stage. A full audit on 2026-08-05 verified the
+  MainMenu-to-Race flow, corrected race card/icon references, and cleared
+  unsupported-glyph runtime warnings.
+- The driver-selection vertical slice is now implemented: 12 catalog entries,
+  XP/tier rules, main-menu selection UI, and race initialization integration.
 - Card number and heat icons, Chinese UI, Chinese font support, team car
   sprites, and the main-menu flow have been implemented.
 - The custom Track Node Editor experiment was reverted after Scene View

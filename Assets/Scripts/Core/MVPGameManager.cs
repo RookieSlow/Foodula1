@@ -110,7 +110,7 @@ public class MVPGameManager : MonoBehaviour
     public GameConfigSO Config => config;
     public TrackManager Track => trackManager;
     /// <summary>当前天气显示名。</summary>
-    public string WeatherLabel => session != null ? session.WeatherLabel : "☀️ 晴天";
+    public string WeatherLabel => session != null ? session.WeatherLabel : "晴天";
     /// <summary>The currently rendered human car, if it has been spawned.</summary>
     public Transform PlayerCarTransform => carInstances.Count > 0 ? carInstances[0].transform : null;
     /// <summary>The currently rendered first AI car, if it has been spawned.</summary>
@@ -278,7 +278,7 @@ public class MVPGameManager : MonoBehaviour
                 new Vector2(-400, 75), new Vector2(250, 25), fontAsset);
             hudUI.aiStatusText = CreateTMPText(hudGO.transform, "AIStatusText", "AI: 就绪", 16,
                 new Vector2(250, 50), new Vector2(200, 25), fontAsset);
-            hudUI.weatherText = CreateTMPText(hudGO.transform, "WeatherText", "☀️ 晴天", 16,
+            hudUI.weatherText = CreateTMPText(hudGO.transform, "WeatherText", "晴天", 16,
                 new Vector2(250, 180), new Vector2(200, 25), fontAsset);
             hudUI.standingsText = CreateTMPText(hudGO.transform, "StandingsText", "", 14,
                 new Vector2(250, 75), new Vector2(320, 100), fontAsset);
@@ -525,8 +525,10 @@ public class MVPGameManager : MonoBehaviour
         weatherRolledLap = 0;
 
         // 人类玩家（Players[0]）
+        DriverProfile humanDriver = DriverSelectionState.ResolveDriver(config.playerDriverId, config.playerTeam);
         var human = new PlayerState("你", false, startFinishNodeIndex, config.minGear);
-        SetupPlayerForRace(human, config.playerTeam);
+        human.driverId = humanDriver.Id;
+        SetupPlayerForRace(human, humanDriver.Team);
         session.Players.Add(human);
 
         // AI 对手
@@ -534,7 +536,9 @@ public class MVPGameManager : MonoBehaviour
         for (int i = 0; i < aiCount; i++)
         {
             TeamId team = i < config.aiTeams.Length ? config.aiTeams[i] : TeamId.JP;
+            DriverProfile aiDriver = DriverCatalog.GetDefaultForTeam(team);
             var aiState = new PlayerState($"AI{i + 1}", true, startFinishNodeIndex, config.minGear);
+            aiState.driverId = aiDriver.Id;
             SetupPlayerForRace(aiState, team);
             session.Players.Add(aiState);
             var ctrl = gameObject.AddComponent<AIController>();
@@ -543,6 +547,9 @@ public class MVPGameManager : MonoBehaviour
         }
 
         SpawnCars();
+
+        if (hudUI != null)
+            hudUI.AppendLog($"车手: {humanDriver.DisplayName}（{humanDriver.Style}，XP {humanDriver.TalentMultiplier:0.0}x）");
 
         // 天气：比赛开始时从赛道天气池抽取
         if (config.enableWeather)
@@ -1335,26 +1342,29 @@ public class MVPGameManager : MonoBehaviour
         if (!config.enableTrickCards) return;
         if (Player == null) return;
 
-        PlayTrickCard(Player, card);
+        bool success = PlayTrickCard(Player, card);
 
         // 关东慢煮：跳过本回合选牌与移动
         if (Player.kantoOdenSkipThisTurn)
         {
             Player.playedSpeedCardsThisTurn.Clear();
             waitingForPlayerCards = false;
-            if (cardHandUI != null) cardHandUI.ShowHand(this, Player);
         }
+
+        // 打出成功后从 UI 移除该卡（精确移除，保留其他卡牌的选中状态）
+        if (success && cardHandUI != null)
+            cardHandUI.RemoveCardUI(card);
     }
 
-    /// <summary>玩家与 AI 共用的特技牌结算入口。</summary>
-    private void PlayTrickCard(PlayerState p, CardData card)
+    /// <summary>玩家与 AI 共用的特技牌结算入口。返回 true 表示打出成功。</summary>
+    private bool PlayTrickCard(PlayerState p, CardData card)
     {
         var result = session.PlayTrick(p, card);
         if (!result.success)
         {
             if (!p.isAI && hudUI != null)
                 hudUI.SetStatus($"<color=orange>{result.message}</color>");
-            return;
+            return false;
         }
 
         p.deck.DiscardTrickCard(card);
@@ -1366,6 +1376,7 @@ public class MVPGameManager : MonoBehaviour
         // CN L2 连击追踪：特技
         if (p.techState != null)
             TechTreeRules.TrackDimSumCombo(p.techState, true, false, false);
+        return true;
     }
 
     /// <summary>应用特技牌效果：热量支付/冷却、移动、抽牌、弃牌、限时热量、跳过回合。</summary>
@@ -1620,7 +1631,7 @@ public class MVPGameManager : MonoBehaviour
             WeatherType after = session.RollWeatherForLap();
             if (after != before && hudUI != null)
             {
-                string bLabel = before == WeatherType.Rainy ? "🌧️ 雨天" : "☀️ 晴天";
+                string bLabel = before == WeatherType.Rainy ? "雨天" : "晴天";
                 hudUI.AppendLog($"<color=cyan>天气变化: {bLabel} → {session.WeatherLabel} (雨天弯道限速 -1)</color>");
             }
         }
@@ -1653,6 +1664,7 @@ public class MVPGameManager : MonoBehaviour
 
         string result = RaceRanking.FormatResults(session.Players);
         result += "\n\n" + BuildRPReport();
+        result += "\n\n" + BuildDriverXpReport();
 
         if (hudUI != null) hudUI.ShowGameOver(result);
         if (cardHandUI != null) cardHandUI.HideAll();
@@ -1673,7 +1685,7 @@ public class MVPGameManager : MonoBehaviour
     /// <summary>按最终名次发放 RP（含 IT L3 骏马图腾加成），记入各队科技树。</summary>
     private string BuildRPReport()
     {
-        var lines = new List<string> { "🏆 RP 奖励:" };
+        var lines = new List<string> { "RP 奖励:" };
         var rankings = session.GetRankings();
         foreach (var e in rankings)
         {
@@ -1692,6 +1704,26 @@ public class MVPGameManager : MonoBehaviour
             }
             lines.Add($"{e.rank}. {p.name}: +{rp} RP{(p.techState != null ? $" (余额 {p.techState.rpBalance})" : "")}");
         }
+        return string.Join("\n", lines);
+    }
+
+    private string BuildDriverXpReport()
+    {
+        var lines = new List<string> { "车手 XP:" };
+        foreach (RaceRanking.RankEntry entry in session.GetRankings())
+        {
+            PlayerState player = entry.player;
+            DriverProfile driver = player.DriverProfile;
+            int earned = player.isBlown
+                ? 0
+                : DriverProgression.CalculateRaceXp(entry.rank, driver.TalentMultiplier, driver.Team);
+            int previousLevel = player.DriverLevel;
+            player.driverXp += earned;
+            lines.Add($"{player.name}（{driver.ShortName}）: +{earned} XP → Lv{player.DriverLevel}");
+            if (player.DriverLevel > previousLevel)
+                lines.Add($"  {driver.ShortName} 解锁了新的车手技能层级。");
+        }
+
         return string.Join("\n", lines);
     }
 

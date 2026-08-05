@@ -1,6 +1,6 @@
 # Current Task List
 
-> Updated: 2026-07-31
+> Updated: 2026-08-05
 > Sources: Claude Code project memory, active session state, session history,
 > current Git worktree, and current Unity project structure.
 
@@ -105,7 +105,8 @@ with 0 failures, warnings, or errors.
 - [ ] Add multiple AI opponents.
 - [ ] Implement slipstream.
 - [ ] Implement team attributes.
-- [ ] Implement the driver-selection flow.
+- [x] Implement the driver-selection flow as a catalog, session state, and
+  runtime-built main-menu panel; connect the selected driver to race setup.
 - [ ] Add sound effects.
 - [ ] Add card-play, vehicle movement, bounce, and spin-out animations.
 - [ ] Add weather gameplay after track data and race rules are stable.
@@ -141,3 +142,11 @@ maintained source for current work.
 - [x] Accepted the existing fixed-default weather tracks in the JSON validator.
 - [x] Run Unity EditMode/Play Mode tests through the open Unity instance or MCP (EditMode 262 passed; no PlayMode tests configured).
 - [x] Corrected Indianapolis lane winding so lane 0 is inside and limits rise from 4 (inside) to 7 (outside).
+- [x] Completed a full static + runtime audit: corrected stale stage metadata,
+  restored Race speed-card/heat icon references, and removed unsupported emoji
+  glyphs from runtime UI labels.
+- [x] Added the driver data slice from `foodula-1-drivers.md`: 12 profiles,
+  XP thresholds, tier unlocks, UK active-use bonus, XP reward calculation,
+  selection state, menu panel, and 5 EditMode regression tests.
+- [x] Re-ran Unity EditMode tests after the audit and driver slice: 273/273
+  passed with no failures or skips; dotnet build has 0 errors.

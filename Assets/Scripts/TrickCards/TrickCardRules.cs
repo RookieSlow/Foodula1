@@ -16,67 +16,67 @@ public static class TrickCardDatabaseFactory
         db.Add(new TrickCardDef(
             "uk-scone", "司康", "Scone", TeamId.UK, TrickCardType.Attack,
             TrickEffectType.Scone,
-            "从引擎支付1张热量牌 → 本回合前进+2格", "🍪"));
+            "从引擎支付1张热量牌 → 本回合前进+2格", "攻"));
 
         db.Add(new TrickCardDef(
             "uk-english-breakfast-tea", "英式红茶", "English Breakfast Tea",
             TeamId.UK, TrickCardType.Defense, TrickEffectType.EnglishBreakfastTea,
-            "冷却手牌中1张热量牌", "☕"));
+            "冷却手牌中1张热量牌", "防"));
 
         // ── DE: 啤酒黑面包车队 ──
         db.Add(new TrickCardDef(
             "de-sauerkraut", "酸菜发酵", "Sauerkraut", TeamId.DE, TrickCardType.Attack,
             TrickEffectType.Sauerkraut,
-            "本回合经过了弯道→出弯后额外+2移动。未经过弯道→仅+1", "🥬"));
+            "本回合经过了弯道→出弯后额外+2移动。未经过弯道→仅+1", "攻"));
 
         db.Add(new TrickCardDef(
             "de-schwarzbrot", "黑面包垫底", "Schwarzbrot", TeamId.DE, TrickCardType.Defense,
             TrickEffectType.Schwarzbrot,
-            "本回合下一次从引擎支付热量时，少付1张（最少为1）", "🍞"));
+            "本回合下一次从引擎支付热量时，少付1张（最少为1）", "防"));
 
         // ── IT: 意面披萨车队 ──
         db.Add(new TrickCardDef(
             "it-parmigiano", "帕尔马干酪", "Parmigiano", TeamId.IT, TrickCardType.Attack,
             TrickEffectType.Parmigiano,
-            "本回合尾流加成+2（基础+2→总共+4）", "🧀"));
+            "本回合尾流加成+2（基础+2→总共+4）", "攻"));
 
         db.Add(new TrickCardDef(
             "it-chianti", "基安蒂红酒", "Chianti", TeamId.IT, TrickCardType.Defense,
             TrickEffectType.Chianti,
-            "弃掉手中任意1张速度牌→冷却1张热量牌", "🍷"));
+            "弃掉手中任意1张速度牌→冷却1张热量牌", "防"));
 
         // ── US: 汉堡烤肉车队 ──
         db.Add(new TrickCardDef(
             "us-fries", "薯条", "Fries", TeamId.US, TrickCardType.Attack,
             TrickEffectType.Fries,
-            "若上回合经过了地标所在格→获得1张限时热量牌（本回合可用，回合结束销毁）", "🍟"));
+            "若上回合经过了地标所在格→获得1张限时热量牌（本回合可用，回合结束销毁）", "攻"));
 
         db.Add(new TrickCardDef(
             "us-cola", "可乐", "Cola", TeamId.US, TrickCardType.Defense,
             TrickEffectType.Cola,
-            "若上回合经过了地标所在格→抽1张牌", "🥤"));
+            "若上回合经过了地标所在格→抽1张牌", "防"));
 
         // ── CN: 茶点车队 ──
         db.Add(new TrickCardDef(
             "cn-hotpot-base", "火锅底料", "Hotpot Base", TeamId.CN, TrickCardType.Attack,
             TrickEffectType.HotpotBase,
-            "Go模式→再出1张速度牌标记为ATTACK牌：该牌速度+1，且+1不计入弯道限速判定", "🍲"));
+            "Go模式→再出1张速度牌标记为ATTACK牌：该牌速度+1，且+1不计入弯道限速判定", "攻"));
 
         db.Add(new TrickCardDef(
             "cn-ice-jelly", "冰糕", "Ice Jelly", TeamId.CN, TrickCardType.Defense,
             TrickEffectType.IceJelly,
-            "Recover模式→身后赛车无法享受尾流", "🍧"));
+            "Recover模式→身后赛车无法享受尾流", "防"));
 
         // ── JP: 寿司拉面车队 ──
         db.Add(new TrickCardDef(
             "jp-torpedo-tempura", "鱼雷天妇罗", "Torpedo Tempura",
             TeamId.JP, TrickCardType.Attack, TrickEffectType.TorpedoTempura,
-            "本回合超车时→获得+1速度。被超车时→对方获得+1速度", "🍤"));
+            "本回合超车时→获得+1速度。被超车时→对方获得+1速度", "攻"));
 
         db.Add(new TrickCardDef(
             "jp-kanto-oden", "关东慢煮", "Kanto Oden", TeamId.JP, TrickCardType.Defense,
             TrickEffectType.KantoOden,
-            "跳过本回合。将本回合档位的出牌数累加到下一回合", "🍢"));
+            "跳过本回合。将本回合档位的出牌数累加到下一回合", "防"));
 
         return db;
     }

@@ -84,5 +84,20 @@ prototype and is no longer the authoritative model.
 - A race ends when a participant reaches the configured lap count.
 - Final ranking compares completed laps and track position.
 
+## Drivers
+
+- The main menu exposes a session-only driver selection panel with two drivers
+  for each of the six national teams.
+- Each `PlayerState` stores a driver catalog ID and XP. The selected driver
+  supplies the player's team for race initialization; an unset selection uses
+  the configured team's first catalog entry.
+- Driver progression uses cumulative XP thresholds `0/100/250/500/1000/2000/4000`
+  for levels 1 through 7. Passive tiers unlock at levels 2/4/6 and active
+  tiers at levels 3/5/7. Level 7 provides two active uses per race; the UK
+  team adds one extra active use.
+- `DriverData.cs` currently provides the immutable catalog and structured skill
+  descriptions. Signature-skill runtime effects are intentionally not applied
+  to movement yet; those effects need a separate rules slice and tests.
+
 See [project-overview.md](project-overview.md) for architecture context and
 [current-task-list.md](current-task-list.md) for remaining work.

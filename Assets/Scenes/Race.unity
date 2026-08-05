@@ -399,11 +399,11 @@ MonoBehaviour:
   heatBgSprite: {fileID: 21300000, guid: 1ff70847aeb1db84b9ec961578f41672, type: 3}
   selectedOverlaySprite: {fileID: 21300000, guid: 1efe02941669b6044909dffc4a2a3afb, type: 3}
   numberSprites:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  heatIconSprite: {fileID: 21300000, guid: 46b93086ec2ff754ba4f48258dc673e5, type: 3}
+  - {fileID: 21300000, guid: 1c4210f48c42f8e41b02bc19e0330180, type: 3}
+  - {fileID: 21300000, guid: 16e1a777292cc8441af56dd4f667b1f9, type: 3}
+  - {fileID: 21300000, guid: 716b6c4a0784ecd48bfdabdfc5d7d742, type: 3}
+  - {fileID: 21300000, guid: 46b93086ec2ff754ba4f48258dc673e5, type: 3}
+  heatIconSprite: {fileID: 21300000, guid: b00f78ed663cc78438ef9018a51ff5c4, type: 3}
   carPrefab: {fileID: 5612381487196478950, guid: 1453583dc521df044a5081d2b06c06c3, type: 3}
   carSprites:
   - {fileID: 21300000, guid: 5d5fdeff4d2bd9b4a9da34ca5d5a8ed0, type: 3}

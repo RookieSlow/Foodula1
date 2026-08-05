@@ -147,6 +147,7 @@ public class GameConfigSO : ScriptableObject
 
     [Tooltip("玩家所属车队 (决定科技树与特技牌)")]
     public TeamId playerTeam = TeamId.CN;
+    public string playerDriverId = "";
 
     [Tooltip("AI 车队分配 — 数组前 N 个按顺序分配给 AI 对手")]
     public TeamId[] aiTeams = { TeamId.UK, TeamId.DE, TeamId.IT };

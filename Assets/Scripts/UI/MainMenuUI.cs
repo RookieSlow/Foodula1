@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// 主菜单 UI 控制器 — 挂载在 MainMenuCanvas 上。
@@ -12,6 +13,8 @@ public class MainMenuUI : MonoBehaviour
     public Button quitButton;
 
     private TrackSelectionUI trackSelectionUI;
+    private DriverSelectionUI driverSelectionUI;
+    private Button driverSelectionButton;
 
     void Start()
     {
@@ -21,6 +24,13 @@ public class MainMenuUI : MonoBehaviour
             trackSelectionUI = gameObject.AddComponent<TrackSelectionUI>();
         }
         trackSelectionUI.Initialize(OnTrackSelected);
+
+        driverSelectionUI = GetComponent<DriverSelectionUI>();
+        if (driverSelectionUI == null)
+        {
+            driverSelectionUI = gameObject.AddComponent<DriverSelectionUI>();
+        }
+        driverSelectionUI.Initialize(OnDriverSelected);
 
         if (startRaceButton != null)
         {
@@ -36,7 +46,18 @@ public class MainMenuUI : MonoBehaviour
             quitButton.onClick.AddListener(OnQuit);
         }
 
-        // 车队选择按钮由 Builder 设为 interactable = false，无需绑定回调
+        Transform driverButtonTransform = transform.Find("GarageBtn");
+        if (driverButtonTransform != null)
+        {
+            driverSelectionButton = driverButtonTransform.GetComponent<Button>();
+            if (driverSelectionButton != null)
+            {
+                driverSelectionButton.interactable = true;
+                driverSelectionButton.onClick.RemoveAllListeners();
+                driverSelectionButton.onClick.AddListener(driverSelectionUI.Show);
+                UpdateDriverButtonLabel();
+            }
+        }
     }
 
     /// <summary>开始比赛 → 加载 Race 场景。</summary>
@@ -50,6 +71,19 @@ public class MainMenuUI : MonoBehaviour
     {
         Debug.Log($"[MainMenuUI] Starting race on track: {trackId}");
         SceneLoader.LoadRace();
+    }
+
+    private void OnDriverSelected(string driverId)
+    {
+        UpdateDriverButtonLabel();
+    }
+
+    private void UpdateDriverButtonLabel()
+    {
+        if (driverSelectionButton == null) return;
+        DriverProfile driver = DriverSelectionState.ResolveDriver(TeamId.CN);
+        TMP_Text label = driverSelectionButton.GetComponentInChildren<TMP_Text>(true);
+        if (label != null) label.text = $"车手：{driver.ShortName}";
     }
 
     /// <summary>退出游戏。</summary>
