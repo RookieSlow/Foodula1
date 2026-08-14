@@ -93,19 +93,7 @@ public class HUDUI : MonoBehaviour
     {
         gameManager = gm;
 
-        if (gearText != null)
-            gearText.text = $"档位: {player.gear}";
-
-        if (heatText != null)
-        {
-            int handHeat = player.deck.CountHeatInHand();
-            int engineRemaining = player.deck.heatPool.remaining;
-            // Keep runtime HUD text within the configured CJK font's glyph set.
-            // Emoji warning symbols were rendered as empty boxes in the editor.
-            string heatWarning = handHeat >= 4 ? " <color=orange>警告</color>" : "";
-            string spinInfo = player.spinCounter > 0 ? $" | 失控 {player.spinCounter}/3" : "";
-            heatText.text = $"引擎: {engineRemaining} | 手牌热量: {handHeat}{heatWarning}{spinInfo}";
-        }
+        RefreshPlayerResources(player);
 
         if (lapText != null)
             lapText.text = $"圈数: {player.lap}/{gm.Config.totalLaps}";
@@ -139,6 +127,26 @@ public class HUDUI : MonoBehaviour
         // 多车排行榜
         if (standingsText != null && allPlayers != null && allPlayers.Count > 1)
             standingsText.text = FormatStandings(allPlayers, player);
+    }
+
+    /// <summary>Immediately refreshes the local player's gear and heat resources.</summary>
+    public void RefreshPlayerResources(PlayerState player)
+    {
+        if (player == null || player.deck == null) return;
+
+        if (gearText != null)
+            gearText.text = $"档位: {player.gear}";
+
+        if (heatText != null)
+        {
+            int handHeat = player.deck.CountHeatInHand();
+            int engineRemaining = player.deck.heatPool.remaining;
+            // Keep runtime HUD text within the configured CJK font's glyph set.
+            // Emoji warning symbols were rendered as empty boxes in the editor.
+            string heatWarning = handHeat >= 4 ? " <color=orange>警告</color>" : "";
+            string spinInfo = player.spinCounter > 0 ? $" | 失控 {player.spinCounter}/3" : "";
+            heatText.text = $"引擎: {engineRemaining} | 手牌热量: {handHeat}{heatWarning}{spinInfo}";
+        }
     }
 
     /// <summary>生成多车排行榜文本（含自己的标记）。</summary>

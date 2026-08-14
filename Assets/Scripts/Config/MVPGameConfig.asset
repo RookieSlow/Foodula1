@@ -25,6 +25,8 @@ MonoBehaviour:
   maxGear: 4
   moveAnimSpeed: 12
   nodeDelay: 0.02
+  carSpriteFacingAngle: 0
+  carRotateSpeed: 540
   aiHeatWarningThreshold: 0.7
   aiLookAheadNodes: 6
   aiAggressiveHeatThreshold: 0.3

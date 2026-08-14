@@ -11,11 +11,29 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 - The default speed deck contains twelve cards:
   `[1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 4]`.
 - Three heat cards start in the deck by default.
-- A turn selects a gear from 1 through 4 and plays speed cards.
+- When trick cards are enabled, four team cards (two attack and two defense)
+  are shuffled into the same draw pile before the opening seven-card draw.
+- A turn selects a gear from 1 through 4 and confirms playable cards one at a
+  time. Only one card can be pending confirmation.
+- Confirmed trick cards resolve immediately, leave the hand, and enter the
+  discard pile. They can return after the discard pile is reshuffled, and the
+  existing one-trick-per-turn limit still applies.
+- Confirmed speed cards leave the hand and accumulate in the current turn's
+  played area. Pressing the action button with no pending card ends card play;
+  any missing required speed cards use the existing engine-failure rule.
 - The selected speed-card values determine movement.
-- Played speed cards enter the discard pile; the discard pile is reshuffled
-  when the draw pile is empty.
+- Played speed cards enter the discard pile during end-of-turn cleanup; the
+  discard pile is reshuffled when the draw pile is empty.
 - Heat cards cannot be played as speed cards and can clog the hand.
+- The optional discard step can discard speed or trick cards without resolving
+  them, but heat cards cannot be selected.
+- Kanto Oden carry-over slots and its skip flag are consumed at the start of
+  the next turn independently of whether the tech-tree module is enabled. The
+  current runtime counts those carry-over slots as required for missing-card
+  engine failure; whether they should instead be optional remains a design
+  decision.
+- Hotpot grants its +1 movement only when an ATTACK trick actually occupies the
+  optional Hotpot slot beyond the gear and Kanto Oden card slots.
 
 ## Gear and Cooling Rules
 
@@ -35,7 +53,9 @@ both the player and AI race flow.
 - Each player starts with an independent engine heat pool of 6 by default.
 - Overspeeding through corners, sudden braking, and engine failures can move
   heat cards from the engine pool into the deck/discard lifecycle.
-- Cooling returns heat cards from the hand to the engine pool.
+- Cooling returns permanent heat cards from the hand to the engine pool.
+  Temporary heat cards are consumed and destroyed instead; cooling, recovery,
+  and defensive deck removal can never convert them into permanent engine heat.
 - Running out of payable engine heat affects the race flow according to the
   current manager rules.
 
@@ -44,8 +64,9 @@ prototype and is no longer the authoritative model.
 
 ## Track and Race
 
-- The Race scene currently loads the 60-node, 3-lap Silverstone JSON track;
-  a 42-node hard-coded track remains as a fallback only.
+- The main menu currently offers eight JSON-backed tracks. The selected track
+  is carried into the Race scene; Silverstone remains the default selection,
+  and the legacy 42-node layout is a fallback only.
 - When `GameConfigSO.trackId` is populated, `TrackManager` loads
   `Resources/Configs/Tracks/<trackId>.json`.
 - JSON tracks may define their own node count, lap count, start/finish node,
@@ -72,8 +93,11 @@ prototype and is no longer the authoritative model.
   before overspeed heat. At each start/finish crossing, the player may move one
   lane inward, keep the current lane, or move one lane outward; boundary
   choices are disabled and the AI keeps its lane.
-- Authoring workflow, vehicle orientation, pit behavior, weather integration,
-  and a full multi-lap manual playthrough remain incomplete.
+- Vehicle sprites follow the track tangent: spawning and teleport-style moves
+  snap immediately to the next-node direction, while normal movement rotates
+  smoothly according to `carRotateSpeed`.
+- Track authoring workflow, pit behavior, weather integration, and a full
+  multi-lap manual playthrough still need completion or broader validation.
 
 ## Opponents and Win Condition
 

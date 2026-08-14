@@ -70,6 +70,10 @@ public class MainMenuUI : MonoBehaviour
     public void OnTrackSelected(string trackId)
     {
         Debug.Log($"[MainMenuUI] Starting race on track: {trackId}");
+        if (trackSelectionUI != null)
+            trackSelectionUI.Hide();
+        if (driverSelectionUI != null)
+            driverSelectionUI.Hide();
         SceneLoader.LoadRace();
     }
 

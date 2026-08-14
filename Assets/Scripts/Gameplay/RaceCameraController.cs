@@ -52,11 +52,23 @@ public sealed class RaceCameraController : MonoBehaviour
         }
 
         mainCamera.orthographic = true;
+        ConfigureMainViewport(raceCanvas);
         CreateMinimap(raceCanvas);
         ReserveStatusArea();
         initialized = true;
         UpdateMainCamera(true);
         UpdateMinimapMarkers();
+    }
+
+    private void ConfigureMainViewport(Canvas raceCanvas)
+    {
+        mainCamera.rect = new Rect(0f, 0f, 1f, 1f);
+        if (raceCanvas == null)
+            return;
+
+        RaceUILayoutController layout = raceCanvas.GetComponent<RaceUILayoutController>();
+        if (layout != null)
+            mainCamera.rect = layout.TrackViewport;
     }
 
     private void LateUpdate()
@@ -177,7 +189,12 @@ public sealed class RaceCameraController : MonoBehaviour
             trackBounds.center.y,
             mainCamera.transform.position.z);
 
-        GameObject frameObject = CreateUiObject("MinimapFrame", raceCanvas.transform);
+        Transform minimapParent = raceCanvas.transform;
+        RaceUILayoutController layout = raceCanvas.GetComponent<RaceUILayoutController>();
+        if (layout != null && layout.TrackFrame != null)
+            minimapParent = layout.TrackFrame;
+
+        GameObject frameObject = CreateUiObject("MinimapFrame", minimapParent);
         RectTransform frameRect = frameObject.GetComponent<RectTransform>();
         frameRect.anchorMin = Vector2.one;
         frameRect.anchorMax = Vector2.one;
@@ -252,6 +269,13 @@ public sealed class RaceCameraController : MonoBehaviour
             return;
         }
 
+        // RaceUILayoutController gives the scoreboard its own reserved column;
+        // shifting those labels for the minimap would push them out of place.
+        if (gameManager.hudUI.GetComponentInParent<RaceUILayoutController>() != null)
+        {
+            return;
+        }
+
         float verticalOffset = config.minimapSize.y + config.minimapMargin.y + 12f;
         MoveStatusText(gameManager.hudUI.gearText, verticalOffset);
         MoveStatusText(gameManager.hudUI.heatText, verticalOffset);
@@ -278,4 +302,3 @@ public sealed class RaceCameraController : MonoBehaviour
         return uiObject;
     }
 }
-

@@ -41,6 +41,22 @@ public class RaceSession
         TechDb = TechTreeDatabaseFactory.CreateDefault();
     }
 
+    /// <summary>
+    /// 重置玩家的每回合状态，并把关东慢煮累积的出牌槽转入新回合。
+    /// 特技牌结算不依赖科技树是否启用。
+    /// </summary>
+    public void BeginTurn(PlayerState player)
+    {
+        if (player == null) return;
+
+        player.ClearTurnState();
+        player.trickState?.ResetPerTurn();
+        if (player.techState != null)
+            TechTreeRules.ResetPerTurnState(player.techState);
+        if (player.trickState != null)
+            player.extraCardSlotsThisTurn += TrickCardRules.ConsumeKantoOden(player.trickState);
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // 多车 / 排名（RaceRanking）
     // ═══════════════════════════════════════════════════════════════════
@@ -252,8 +268,12 @@ public class RaceSession
     /// </summary>
     public TrickPlayResult PlayTrick(PlayerState p, CardData card)
     {
+        if (p == null || p.deck == null)
+            return TrickPlayResult.Fail("玩家牌库不可用");
         if (card == null || !card.IsTrick)
             return TrickPlayResult.Fail("不是特技牌");
+        if (!p.deck.ContainsInHand(card))
+            return TrickPlayResult.Fail("该特技牌不在手牌中");
         var def = TrickDb.Get(card.trickId);
         if (def == null)
             return TrickPlayResult.Fail($"未知特技牌: {card.trickId}");

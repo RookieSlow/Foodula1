@@ -132,9 +132,9 @@ public class GameConfigSO : ScriptableObject
     [Tooltip("每节点移动后的暂停时间 (秒)")]
     public float nodeDelay = 0.02f;
 
-    [Tooltip("赛车精灵朝向 (度)：0=向右, 90=向上。用于赛车随赛道方向旋转")]
+    [Tooltip("赛车精灵朝向 (度)：0=向右, 90=向上。赛车素材车头朝右，因此默认使用 0")]
     [Range(0, 359)]
-    public float carSpriteFacingAngle = 90f;
+    public float carSpriteFacingAngle = 0f;
 
     [Tooltip("赛车随赛道方向旋转的速度 (度/秒)")]
     [Min(1f)]
@@ -198,7 +198,7 @@ public class GameConfigSO : ScriptableObject
     public int SpeedCardCount => speedCardDistribution.Length;
 
     /// <summary>
-    /// 初始牌组总数（速度牌 + 热量牌）。
+    /// 初始牌组总数（速度牌 + 热量牌 + 启用时每队 4 张特技牌）。
     /// </summary>
-    public int InitialDeckSize => speedCardDistribution.Length + initialHeatCards;
+    public int InitialDeckSize => speedCardDistribution.Length + initialHeatCards + (enableTrickCards ? 4 : 0);
 }

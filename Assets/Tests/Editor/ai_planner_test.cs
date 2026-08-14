@@ -193,6 +193,29 @@ public class AIControllerTests
         Assert.That(ai.playedSpeedCardsThisTurn, Is.Empty);
     }
 
+    [Test]
+    public void test_engine_failure_payment_uses_schwarzbrot_for_ai()
+    {
+        MVPGameManager game = gameObject.AddComponent<MVPGameManager>();
+        game.config = config;
+
+        PlayerState ai = new PlayerState("AI", true, 0, 3);
+        ai.deck.InitializeDeck(config, new HeatPool(1), new SystemRandomSource(1));
+        ai.deck.DrawToHand(1);
+        ai.trickState.schwarzbrotActive = true;
+        ai.trickState.schwarzbrotRemaining = 1;
+
+        AIController controller = gameObject.AddComponent<AIController>();
+        controller.Initialize(game, ai, new StubRandomSource());
+        controller.SelectCards();
+
+        Assert.That(ai.spinCounter, Is.Zero);
+        Assert.That(ai.skipNextTurn, Is.False);
+        Assert.That(ai.deck.heatPool.remaining, Is.Zero);
+        Assert.That(ai.playedSpeedCardsThisTurn.Count, Is.EqualTo(1));
+        Assert.That(ai.deck.CountSpeedInHand(), Is.Zero);
+    }
+
     private sealed class StubRandomSource : IRandomSource
     {
         public int NextInt(int minimumInclusive, int maximumExclusive)

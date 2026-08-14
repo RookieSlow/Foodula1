@@ -21,6 +21,7 @@ public static class SceneLoader
     public static void LoadRace()
     {
         Debug.Log("[SceneLoader] Loading Race...");
+        PrepareForRaceTransition();
         LoadSceneInternal(RACE);
     }
 
@@ -43,6 +44,47 @@ public static class SceneLoader
         }
 
         SceneManager.LoadScene(sceneName);
+    }
+
+    /// <summary>
+    /// Hides menu canvases before the synchronous scene switch.  This prevents
+    /// a dynamically-built track-selection overlay from being visible during
+    /// the frame in which the Race scene is activated, including canvases that
+    /// came from a persistent UI root.
+    /// </summary>
+    private static void PrepareForRaceTransition()
+    {
+        Canvas[] canvases = Object.FindObjectsOfType<Canvas>(true);
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            Canvas canvas = canvases[i];
+            if (canvas != null)
+                canvas.gameObject.SetActive(false);
+        }
+
+        MainMenuUI[] menus = Object.FindObjectsOfType<MainMenuUI>(true);
+        for (int i = 0; i < menus.Length; i++)
+        {
+            if (menus[i] != null)
+                menus[i].gameObject.SetActive(false);
+        }
+
+        GameObject[] objects = Object.FindObjectsOfType<GameObject>(true);
+        for (int i = 0; i < objects.Length; i++)
+        {
+            GameObject candidate = objects[i];
+            if (candidate != null && IsStaleMenuObject(candidate.name))
+                candidate.SetActive(false);
+        }
+    }
+
+    private static bool IsStaleMenuObject(string objectName)
+    {
+        return objectName == "MainMenuCanvas"
+            || objectName == "TrackSelectionOverlay"
+            || objectName == "TrackSelectionPanel"
+            || objectName == "DriverSelectionOverlay"
+            || objectName == "DriverSelectionPanel";
     }
 
     /// <summary>检查场景是否在 Build Settings 中（Editor + Runtime 通用）。</summary>

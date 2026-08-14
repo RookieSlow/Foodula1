@@ -64,6 +64,8 @@ MonoBehaviour:
   lapText: {fileID: 7970208316114515282}
   positionText: {fileID: 5038958869329966830}
   aiStatusText: {fileID: 1186211505579977685}
+  weatherText: {fileID: 0}
+  standingsText: {fileID: 0}
   logText: {fileID: 1372389573309392775}
   maxLogLines: 12
   gear1Button: {fileID: 8728871974400201098}
@@ -87,6 +89,7 @@ GameObject:
   - component: {fileID: 656952722790422524}
   - component: {fileID: 5083506628114625355}
   - component: {fileID: 6367753777494866770}
+  - component: {fileID: 7738265124543983840}
   m_Layer: 0
   m_Name: RaceCanvas
   m_TagString: Untagged
@@ -178,6 +181,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &7738265124543983840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 487224673684469573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3c4cbeba675a4449973d43208e1253d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1312797289836876001
 GameObject:
   m_ObjectHideFlags: 0
@@ -2293,6 +2308,9 @@ MonoBehaviour:
   gearSelectionPanel: {fileID: 0}
   gearPromptText: {fileID: 0}
   deckInfoText: {fileID: 8483351030881722705}
+  drawPileText: {fileID: 0}
+  enginePileText: {fileID: 0}
+  discardPileText: {fileID: 0}
   playCardsButton: {fileID: 1357676859937180739}
 --- !u!1 &5722021615712356318
 GameObject:

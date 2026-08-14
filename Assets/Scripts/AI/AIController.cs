@@ -127,16 +127,15 @@ public class AIController : MonoBehaviour
             randomSource);
 
         // 引擎故障：速度牌不足时，每缺 1 张 +1 热量到弃牌堆。引擎不足 → 失控
-        int missing = RaceRules.GetMissingSpeedCardCount(maxCards, chosen.Count);
+        int requiredCards = ai.gear + ai.extraCardSlotsThisTurn;
+        int missing = RaceRules.GetMissingSpeedCardCount(requiredCards, chosen.Count);
         if (missing > 0)
         {
-            int drawn = ai.deck.DrawHeatFromPool(missing);
-            if (drawn < missing)
+            if (!game.TryPayHeat(ai, missing, ai.position, "engine failure"))
             {
-                // 失控！归还已取出的牌，清空本回合
+                // 失控：自动选择尚未确认，速度牌保留在手牌中。
                 ai.playedSpeedCardsThisTurn.Clear();
                 ai.playedHeatCardsThisTurn.Clear();
-                game.HandleSpin(ai, ai.position, "engine failure");
                 return;
             }
         }

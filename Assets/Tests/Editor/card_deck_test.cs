@@ -41,6 +41,17 @@ public class CardDeckTest
     }
 
     [Test]
+    public void test_initial_deck_size_includes_enabled_trick_cards()
+    {
+        var config = CreateConfig();
+        config.enableTrickCards = true;
+        Assert.AreEqual(13, config.InitialDeckSize); // 7 speed + 2 heat + 4 trick
+
+        config.enableTrickCards = false;
+        Assert.AreEqual(9, config.InitialDeckSize);
+    }
+
+    [Test]
     public void test_draw_to_hand_fills_to_hand_size()
     {
         var config = CreateConfig();
@@ -161,6 +172,58 @@ public class CardDeckTest
     }
 
     [Test]
+    public void test_return_heat_cards_to_pool_removes_exact_hand_cards_without_duplication()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        var heat = new CardData(CardType.Heat, 0);
+        var speed = new CardData(CardType.Speed, 3);
+        var unheldHeat = new CardData(CardType.Heat, 0);
+        deck.AddCardsToHand(new List<CardData> { heat, speed });
+        int poolBefore = deck.heatPool.remaining;
+
+        int returned = deck.ReturnHeatCardsToPool(
+            new List<CardData> { heat, heat, unheldHeat, speed });
+
+        Assert.AreEqual(1, returned);
+        Assert.AreEqual(poolBefore + 1, deck.heatPool.remaining);
+        Assert.IsFalse(deck.ContainsInHand(heat));
+        Assert.IsTrue(deck.ContainsInHand(speed));
+        Assert.AreEqual(1, deck.HandCount);
+    }
+
+    [Test]
+    public void test_temporary_heat_is_destroyed_by_cooling_without_inflating_engine_pool()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        var temporaryHeat = CardData.CreateTempHeat();
+        deck.AddCardsToHand(new List<CardData> { temporaryHeat });
+        int poolBefore = deck.heatPool.remaining;
+
+        int removed = deck.RemoveHeatFromHand(1);
+
+        Assert.AreEqual(1, removed);
+        Assert.AreEqual(poolBefore, deck.heatPool.remaining);
+        Assert.IsFalse(deck.ContainsInHand(temporaryHeat));
+    }
+
+    [Test]
+    public void test_temporary_heat_is_destroyed_during_full_recovery()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        deck.AddCardsToHand(new List<CardData> { CardData.CreateTempHeat() });
+        int poolBefore = deck.heatPool.remaining;
+
+        deck.RecoverAllHeatToPool();
+
+        Assert.AreEqual(poolBefore + config.initialHeatCards, deck.heatPool.remaining);
+        Assert.AreEqual(0, deck.CountHeatInHand());
+        Assert.AreEqual(0, deck.CountHeatInDeck());
+    }
+
+    [Test]
     public void test_recover_all_heat_to_pool_returns_everything()
     {
         var config = CreateConfig();
@@ -244,19 +307,48 @@ public class CardDeckTest
     // ===== 特技牌扩展 =====
 
     [Test]
-    public void test_add_trick_cards_to_hand_ignores_non_tricks()
+    public void test_add_trick_cards_to_draw_pile_ignores_non_tricks_and_does_not_inject_hand()
     {
         var config = CreateConfig();
         var deck = CreateDeck(config);
 
-        deck.AddTrickCardsToHand(new List<CardData>
+        int added = deck.AddTrickCardsToDrawPile(new List<CardData>
         {
             CardData.CreateTrick("uk-scone"),
             new CardData(CardType.Speed, 2),
             CardData.CreateTrick("uk-english-breakfast-tea")
         });
 
-        Assert.AreEqual(2, deck.GetTricksInHand().Count);
+        Assert.AreEqual(2, added);
+        Assert.AreEqual(11, deck.DrawPileCount);
+        Assert.AreEqual(2, deck.CountTricksInDeck());
+        Assert.AreEqual(0, deck.HandCount);
+        Assert.AreEqual(0, deck.GetTricksInHand().Count);
+    }
+
+    [Test]
+    public void test_mixed_deck_opening_draw_preserves_all_card_types()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        var tricks = new List<CardData>
+        {
+            CardData.CreateTrick("uk-scone"),
+            CardData.CreateTrick("uk-english-breakfast-tea"),
+            CardData.CreateTrick("uk-scone"),
+            CardData.CreateTrick("uk-english-breakfast-tea")
+        };
+        Assert.AreEqual(4, deck.AddTrickCardsToDrawPile(tricks));
+
+        Assert.IsTrue(deck.DrawToHand(config.handSize));
+
+        Assert.AreEqual(config.handSize, deck.HandCount);
+        Assert.AreEqual(config.speedCardDistribution.Length,
+            deck.CountSpeedInDeck() + deck.CountSpeedInHand());
+        Assert.AreEqual(config.initialHeatCards,
+            deck.CountHeatInDeck() + deck.CountHeatInHand());
+        Assert.AreEqual(4,
+            deck.CountTricksInDeck() + deck.GetTricksInHand().Count);
     }
 
     [Test]
@@ -265,7 +357,7 @@ public class CardDeckTest
         var config = CreateConfig();
         var deck = CreateDeck(config);
         var trick = CardData.CreateTrick("cn-hotpot-base");
-        deck.AddTrickCardsToHand(new List<CardData> { trick });
+        deck.AddCardsToHand(new List<CardData> { trick });
 
         bool ok = deck.DiscardTrickCard(trick);
 
@@ -283,6 +375,75 @@ public class CardDeckTest
         bool ok = deck.DiscardTrickCard(new CardData(CardType.Speed, 1));
 
         Assert.IsFalse(ok);
+    }
+
+    [Test]
+    public void test_discard_trick_card_fails_for_different_trick_not_in_hand_without_mutation()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        var held = CardData.CreateTrick("uk-scone");
+        deck.AddCardsToHand(new List<CardData> { held });
+
+        bool ok = deck.DiscardTrickCard(CardData.CreateTrick("uk-scone"));
+
+        Assert.IsFalse(ok);
+        Assert.AreEqual(1, deck.HandCount);
+        Assert.AreEqual(0, deck.DiscardPileCount);
+        Assert.IsTrue(deck.ContainsInHand(held));
+    }
+
+    [Test]
+    public void test_discard_trick_card_removes_only_confirmed_duplicate_instance()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        var first = CardData.CreateTrick("jp-kanto-oden");
+        var second = CardData.CreateTrick("jp-kanto-oden");
+        deck.AddCardsToHand(new List<CardData> { first, second });
+
+        Assert.IsTrue(deck.DiscardTrickCard(second));
+
+        Assert.IsTrue(deck.ContainsInHand(first));
+        Assert.IsFalse(deck.ContainsInHand(second));
+        Assert.AreEqual(1, deck.HandCount);
+        Assert.AreEqual(1, deck.DiscardPileCount);
+    }
+
+    [Test]
+    public void test_played_trick_reshuffles_and_can_be_drawn_again()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        var trick = CardData.CreateTrick("de-sauerkraut");
+        deck.AddTrickCardsToDrawPile(new List<CardData> { trick });
+
+        Assert.IsTrue(deck.DrawToHand(deck.DrawPileCount));
+        Assert.IsTrue(deck.ContainsInHand(trick));
+        Assert.IsTrue(deck.DiscardTrickCard(trick));
+        Assert.AreEqual(1, deck.DiscardPileCount);
+
+        Assert.IsTrue(deck.DrawToHand(deck.HandCount + 1));
+        Assert.IsTrue(deck.ContainsInHand(trick));
+        Assert.AreEqual(0, deck.DiscardPileCount);
+    }
+
+    [Test]
+    public void test_optional_discard_moves_speed_and_trick_but_never_heat()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        var speed = new CardData(CardType.Speed, 2);
+        var trick = CardData.CreateTrick("it-parmigiano");
+        var heat = new CardData(CardType.Heat, 0);
+        deck.AddCardsToHand(new List<CardData> { speed, trick, heat });
+
+        int discarded = deck.DiscardPlayableCardsFromHand(new List<CardData> { speed, trick, heat });
+
+        Assert.AreEqual(2, discarded);
+        Assert.AreEqual(1, deck.HandCount);
+        Assert.IsTrue(deck.ContainsInHand(heat));
+        Assert.AreEqual(2, deck.DiscardPileCount);
     }
 
     [Test]

@@ -25,7 +25,32 @@ public class RaceSessionTest
         return p;
     }
 
+    private CardData GiveTrick(PlayerState player, string trickId)
+    {
+        var card = CardData.CreateTrick(trickId);
+        player.deck.AddCardsToHand(new List<CardData> { card });
+        return card;
+    }
+
     // ===== Demo 科技状态 =====
+
+    [Test]
+    public void test_begin_turn_consumes_kanto_oden_without_tech_tree()
+    {
+        var session = CreateSession();
+        var player = CreatePlayer(session, TeamId.JP);
+        player.techState = null;
+        player.kantoOdenSkipThisTurn = true;
+        player.trickState.kantoOdenActive = true;
+        player.trickState.kantoOdenAccumulatedCards = 3;
+
+        session.BeginTurn(player);
+
+        Assert.IsFalse(player.kantoOdenSkipThisTurn);
+        Assert.IsFalse(player.trickState.kantoOdenActive);
+        Assert.AreEqual(0, player.trickState.kantoOdenAccumulatedCards);
+        Assert.AreEqual(3, player.extraCardSlotsThisTurn);
+    }
 
     [Test]
     public void test_demo_tech_unlocks_l1_commons_and_team_unique()
@@ -152,8 +177,9 @@ public class RaceSessionTest
         var session = CreateSession();
         var p = CreatePlayer(session, TeamId.CN);
         p.trickState.trickPlayedThisTurn = true;
+        var card = GiveTrick(p, "cn-hotpot-base");
 
-        var result = session.PlayTrick(p, CardData.CreateTrick("cn-hotpot-base"));
+        var result = session.PlayTrick(p, card);
         Assert.IsFalse(result.success);
     }
 
@@ -162,13 +188,14 @@ public class RaceSessionTest
     {
         var session = CreateSession();
         var p = CreatePlayer(session, TeamId.CN);
+        var card = GiveTrick(p, "cn-hotpot-base");
 
         p.gear = 2; // 非 Go 模式
-        var fail = session.PlayTrick(p, CardData.CreateTrick("cn-hotpot-base"));
+        var fail = session.PlayTrick(p, card);
         Assert.IsFalse(fail.success);
 
         p.gear = 3; // Go 模式
-        var ok = session.PlayTrick(p, CardData.CreateTrick("cn-hotpot-base"));
+        var ok = session.PlayTrick(p, card);
         Assert.IsTrue(ok.success);
         Assert.IsTrue(TrickCardRules.HasHotpotAttack(p.trickState));
     }
@@ -178,13 +205,14 @@ public class RaceSessionTest
     {
         var session = CreateSession();
         var p = CreatePlayer(session, TeamId.UK);
+        var card = GiveTrick(p, "uk-scone");
         p.deck.heatPool.remaining = 0;
 
-        var fail = session.PlayTrick(p, CardData.CreateTrick("uk-scone"));
+        var fail = session.PlayTrick(p, card);
         Assert.IsFalse(fail.success);
 
         p.deck.heatPool.remaining = 2;
-        var ok = session.PlayTrick(p, CardData.CreateTrick("uk-scone"));
+        var ok = session.PlayTrick(p, card);
         Assert.IsTrue(ok.success);
         Assert.AreEqual(1, ok.heatToPay);
         Assert.AreEqual(2, ok.extraMovement);
@@ -195,9 +223,26 @@ public class RaceSessionTest
     {
         var session = CreateSession();
         var p = CreatePlayer(session, TeamId.UK);
+        var card = GiveTrick(p, "uk-english-breakfast-tea");
 
-        var fail = session.PlayTrick(p, CardData.CreateTrick("uk-english-breakfast-tea"));
+        var fail = session.PlayTrick(p, card);
         Assert.IsFalse(fail.success);
+    }
+
+    [Test]
+    public void test_play_trick_requires_the_exact_card_to_be_in_hand()
+    {
+        var session = CreateSession();
+        var p = CreatePlayer(session, TeamId.DE);
+        var held = GiveTrick(p, "de-sauerkraut");
+        var ghost = CardData.CreateTrick("de-sauerkraut");
+
+        var result = session.PlayTrick(p, ghost);
+
+        Assert.IsFalse(result.success);
+        Assert.IsFalse(p.trickState.trickPlayedThisTurn);
+        Assert.IsTrue(p.deck.ContainsInHand(held));
+        Assert.AreEqual(0, p.deck.DiscardPileCount);
     }
 
     // ===== 移动加成 =====
@@ -235,7 +280,7 @@ public class RaceSessionTest
         Assert.AreEqual(0, session.ComputeMovementBonus(p, true));
 
         // 打酸菜（DE L1 demo 状态存在，但特技牌需手动打出）
-        session.PlayTrick(p, CardData.CreateTrick("de-sauerkraut"));
+        session.PlayTrick(p, GiveTrick(p, "de-sauerkraut"));
         // 过弯 → 酸菜 +2
         Assert.AreEqual(2, session.ComputeMovementBonus(p, true));
         // 直道 → 酸菜 +1 + 轻量化底盘 +1 = 2
@@ -400,7 +445,7 @@ public class RaceSessionTest
         leader.cornerTotalThisTurn = 3;
 
         // 帕尔玛干酪：尾流 +2（共 +4）
-        session.PlayTrick(p, CardData.CreateTrick("it-parmigiano"));
+        session.PlayTrick(p, GiveTrick(p, "it-parmigiano"));
         Assert.AreEqual(RaceSession.SLIPSTREAM_BASE_BONUS + 2, session.ComputeSlipstreamBonus(p, session.Players, 60));
     }
 

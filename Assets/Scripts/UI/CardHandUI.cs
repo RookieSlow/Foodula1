@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -25,6 +26,10 @@ public class CardHandUI : MonoBehaviour
     public GameObject gearSelectionPanel;
     public TMP_Text gearPromptText;
     public TMP_Text deckInfoText;
+    [Tooltip("Optional layout labels populated by RaceUILayoutController.")]
+    public TMP_Text drawPileText;
+    public TMP_Text enginePileText;
+    public TMP_Text discardPileText;
 
     [Header("出牌按钮")]
     public UnityEngine.UI.Button playCardsButton;
@@ -33,11 +38,70 @@ public class CardHandUI : MonoBehaviour
     private List<CardUI> cardUIs = new List<CardUI>();
     private bool isGearSelectionMode;
     private bool isDiscardMode;
+    private CardUI pendingPlayCard;
+    private Coroutine actionButtonCooldown;
+
+    /// <summary>The single card waiting for explicit play confirmation.</summary>
+    public CardData PendingPlayCard => pendingPlayCard != null ? pendingPlayCard.cardData : null;
 
     void Start()
     {
+        BindPlayCardsButton();
+    }
+
+    void OnDestroy()
+    {
         if (playCardsButton != null)
-            playCardsButton.onClick.AddListener(OnPlayClicked);
+            playCardsButton.onClick.RemoveListener(OnPlayClicked);
+    }
+
+    /// <summary>Assigns the action button and guarantees a single CardHandUI listener.</summary>
+    public void SetPlayCardsButton(UnityEngine.UI.Button button)
+    {
+        if (playCardsButton != null)
+            playCardsButton.onClick.RemoveListener(OnPlayClicked);
+        playCardsButton = button;
+        BindPlayCardsButton();
+        UpdateActionButtonLabel();
+    }
+
+    private void BindPlayCardsButton()
+    {
+        if (playCardsButton == null) return;
+        playCardsButton.onClick.RemoveListener(OnPlayClicked);
+        playCardsButton.onClick.AddListener(OnPlayClicked);
+    }
+
+    /// <summary>
+    /// Briefly blocks the shared confirm/end button after a card is confirmed,
+    /// preventing a physical double-click from immediately ending the play phase.
+    /// </summary>
+    public void BlockActionButtonBriefly(float seconds = 0.25f)
+    {
+        if (playCardsButton == null || !isActiveAndEnabled) return;
+        if (actionButtonCooldown != null)
+            StopCoroutine(actionButtonCooldown);
+        actionButtonCooldown = StartCoroutine(ActionButtonCooldown(seconds));
+    }
+
+    private IEnumerator ActionButtonCooldown(float seconds)
+    {
+        playCardsButton.interactable = false;
+        yield return new WaitForSecondsRealtime(seconds);
+        if (playCardsButton != null)
+            playCardsButton.interactable = true;
+        actionButtonCooldown = null;
+    }
+
+    private void CancelActionButtonCooldown()
+    {
+        if (actionButtonCooldown != null)
+        {
+            StopCoroutine(actionButtonCooldown);
+            actionButtonCooldown = null;
+        }
+        if (playCardsButton != null)
+            playCardsButton.interactable = true;
     }
 
     /// <summary>
@@ -88,6 +152,8 @@ public class CardHandUI : MonoBehaviour
             }
             cardUIs.Add(ui);
         }
+
+        UpdateActionButtonLabel();
     }
 
     /// <summary>
@@ -95,6 +161,7 @@ public class CardHandUI : MonoBehaviour
     /// </summary>
     public void ClearHand()
     {
+        pendingPlayCard = null;
         for (int i = cardUIs.Count - 1; i >= 0; i--)
         {
             if (cardUIs[i] != null) Destroy(cardUIs[i].gameObject);
@@ -112,11 +179,14 @@ public class CardHandUI : MonoBehaviour
         {
             if (cardUIs[i] != null && cardUIs[i].cardData == card)
             {
+                if (pendingPlayCard == cardUIs[i])
+                    pendingPlayCard = null;
                 Destroy(cardUIs[i].gameObject);
                 cardUIs.RemoveAt(i);
                 break; // 只移除第一个匹配的（同一 CardData 引用不会重复出现）
             }
         }
+        UpdateActionButtonLabel();
     }
 
     /// <summary>
@@ -124,6 +194,7 @@ public class CardHandUI : MonoBehaviour
     /// </summary>
     public void HideAll()
     {
+        CancelActionButtonCooldown();
         ClearHand();
         if (gearSelectionPanel != null) gearSelectionPanel.SetActive(false);
         if (playCardsButton != null) playCardsButton.gameObject.SetActive(false);
@@ -136,7 +207,9 @@ public class CardHandUI : MonoBehaviour
     /// </summary>
     public void SetGearSelectionMode(bool isGearMode)
     {
+        CancelActionButtonCooldown();
         isGearSelectionMode = isGearMode;
+        ClearPendingPlaySelection();
         if (!isGearMode)
             isDiscardMode = false; // 离开档位模式 → 一定是正常选牌，清除弃牌残留
 
@@ -151,6 +224,7 @@ public class CardHandUI : MonoBehaviour
                 ? "Select gear (+1 free, +2 costs 1 Heat)"
                 : "";
         }
+        UpdateActionButtonLabel();
     }
 
     /// <summary>
@@ -158,23 +232,26 @@ public class CardHandUI : MonoBehaviour
     /// </summary>
     public void SetDiscardMode(bool isDiscard)
     {
+        CancelActionButtonCooldown();
+        ClearPendingPlaySelection();
         isDiscardMode = isDiscard;
         isGearSelectionMode = false;
         if (gearSelectionPanel != null)
             gearSelectionPanel.SetActive(false);
         if (playCardsButton != null)
             playCardsButton.gameObject.SetActive(true);
+        UpdateActionButtonLabel();
     }
 
     /// <summary>
-    /// 获取当前选中的速度牌列表（热量牌不可选中）。
+    /// 获取当前选中的可弃置牌列表（速度牌或特技牌；热量牌不可选中）。
     /// </summary>
     public List<CardData> GetSelectedCards()
     {
         List<CardData> selected = new List<CardData>();
         foreach (CardUI ui in cardUIs)
         {
-            if (ui != null && ui.isSelected && ui.cardData.IsSpeed)
+            if (ui != null && ui.isSelected && !ui.cardData.IsHeat)
             {
                 selected.Add(ui.cardData);
             }
@@ -206,42 +283,44 @@ public class CardHandUI : MonoBehaviour
         // 热量牌不可打出/不可弃掉 — 忽略点击
         if (card.cardData.IsHeat) return;
 
-        // 弃牌阶段只允许选择要弃掉的速度牌；特技牌不能在此阶段打出。
-        if (isDiscardMode) return;
-
-        // 特技牌：点击直接打出（每回合限 1，不进入选中状态）
-        if (card.cardData.IsTrick)
+        // 弃牌阶段允许多选任意非热量牌；确认后只弃置，不发动效果。
+        if (isDiscardMode)
         {
-            gameManager.OnTrickCardClicked(card.cardData);
+            card.SetSelectedWithoutNotify(!card.isSelected);
+            UpdateActionButtonLabel();
             return;
         }
 
+        if (gameManager.CurrentPhase != GamePhase.WaitingForCards) return;
+
         var player = gameManager.Player;
+        if (player == null) return;
         int gear = player.gear;
         int maxCards = gameManager.GetMaxSpeedCardsThisTurn(player);
 
-        // card.isSelected 已在 CardUI.OnCardClicked 中翻转完毕
-        if (card.isSelected)
+        if (card.cardData.IsSpeed && player.playedSpeedCardsThisTurn.Count >= maxCards)
         {
-            // 刚刚被选中 → 检查是否超出速度牌限制
-            int speedCount = GetSelectedSpeedCount();
-
-            if (speedCount > maxCards)
-            {
-                card.SetSelectedWithoutNotify(false); // 超限，撤销
-                return;
-            }
-
             if (gameManager.hudUI != null)
-                gameManager.hudUI.SetStatus($"G{gear} 档 - 已选 {speedCount}/{maxCards} 张速度牌");
+                gameManager.hudUI.SetStatus($"<color=orange>G{gear} 档已打满 {maxCards} 张速度牌</color>");
+            return;
+        }
+
+        // 正常出牌始终只有一个待确认项。再次点击同一张牌会取消选择。
+        if (pendingPlayCard == card)
+        {
+            card.SetSelectedWithoutNotify(false);
+            pendingPlayCard = null;
         }
         else
         {
-            // 取消选中
-            int speedCount = GetSelectedSpeedCount();
-            if (gameManager.hudUI != null)
-                gameManager.hudUI.SetStatus($"G{gear} 档 - 已选 {speedCount}/{maxCards} 张速度牌");
+            if (pendingPlayCard != null)
+                pendingPlayCard.SetSelectedWithoutNotify(false);
+            pendingPlayCard = card;
+            pendingPlayCard.SetSelectedWithoutNotify(true);
         }
+
+        UpdateActionButtonLabel();
+        UpdatePendingCardStatus(player, maxCards);
     }
 
     private void OnPlayClicked()
@@ -249,14 +328,104 @@ public class CardHandUI : MonoBehaviour
         gameManager?.OnPlayCardsButtonClicked();
     }
 
+    /// <summary>Clears the one-card play selection without changing the underlying hand.</summary>
+    public void ClearPendingPlaySelection()
+    {
+        if (pendingPlayCard != null)
+            pendingPlayCard.SetSelectedWithoutNotify(false);
+        pendingPlayCard = null;
+        UpdateActionButtonLabel();
+    }
+
+    private void UpdatePendingCardStatus(PlayerState player, int maxCards)
+    {
+        if (gameManager == null || gameManager.hudUI == null || player == null) return;
+
+        int played = player.playedSpeedCardsThisTurn.Count;
+        if (PendingPlayCard == null)
+        {
+            gameManager.hudUI.SetStatus($"G{player.gear} 档 - 已打出 {played}/{maxCards} 张速度牌；点击结束出牌");
+            return;
+        }
+
+        if (PendingPlayCard.IsSpeed)
+        {
+            gameManager.hudUI.SetStatus(
+                $"待确认：速度 {PendingPlayCard.value}（已打出 {played}/{maxCards} 张）");
+            return;
+        }
+
+        var def = gameManager.Session != null
+            ? gameManager.Session.TrickDb.Get(PendingPlayCard.trickId)
+            : null;
+        string label = def != null ? def.name : "特技牌";
+        gameManager.hudUI.SetStatus($"待确认：{label}（确认后立即发动）");
+    }
+
+    private void UpdateActionButtonLabel()
+    {
+        if (playCardsButton == null) return;
+
+        string label;
+        if (isDiscardMode)
+            label = "确认弃牌";
+        else if (pendingPlayCard != null)
+            label = "确认出牌";
+        else
+            label = "结束出牌";
+
+        TMP_Text tmp = playCardsButton.GetComponentInChildren<TMP_Text>(true);
+        if (tmp != null)
+        {
+            tmp.text = label;
+            return;
+        }
+
+        UnityEngine.UI.Text legacy = playCardsButton.GetComponentInChildren<UnityEngine.UI.Text>(true);
+        if (legacy != null)
+            legacy.text = label;
+    }
+
     public void UpdateDeckInfo(PlayerState player)
     {
-        if (deckInfoText != null && player != null)
+        UpdatePileInfoSafe(player);
+        if (deckInfoText != null && deckInfoText != enginePileText && player != null)
         {
             int spd = player.deck.CountSpeedInDeck();
             int heat = player.deck.CountHeatInDeck();
+            int trick = player.deck.CountTricksInDeck();
             int handHeat = player.deck.CountHeatInHand();
-            deckInfoText.text = $"牌堆: {spd}速 + {heat}热 | 手牌热量: {handHeat}";
+            deckInfoText.text = $"牌堆: {spd}速 + {trick}特 + {heat}热 | 手牌热量: {handHeat}";
         }
+    }
+
+    #if false
+    private void UpdatePileInfo(PlayerState player)
+    {
+        if (player == null || player.deck == null)
+            return;
+
+        if (drawPileText != null)
+            drawPileText.text = $"抽牌堆\n{player.deck.DrawPileCount} 张";
+
+        if (enginePileText != null)
+            enginePileText.text = $"引擎库\n{player.deck.heatPool.remaining} 热量";
+
+        if (discardPileText != null)
+            discardPileText.text = $"弃牌堆\n{player.deck.DiscardPileCount} 张";
+    }
+    #endif
+
+    private void UpdatePileInfoSafe(PlayerState player)
+    {
+        if (player == null || player.deck == null)
+            return;
+
+        if (drawPileText != null)
+            drawPileText.text = "Draw pile\n" + player.deck.DrawPileCount + " cards";
+        if (enginePileText != null)
+            enginePileText.text = "Engine\n" + player.deck.heatPool.remaining + " heat";
+        if (discardPileText != null)
+            discardPileText.text = "Discard pile\n" + player.deck.DiscardPileCount + " cards";
     }
 }

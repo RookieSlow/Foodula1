@@ -87,7 +87,7 @@ with 0 failures, warnings, or errors.
 - [x] Make ordinary tracks use the inside lane by default, move only the
   trailing car outside when cars share a node, and keep Indianapolis vehicle
   placement tied to the player's explicit lane choice.
-- [ ] Rotate vehicles to follow the tangent between track nodes.
+- [x] Rotate vehicles to follow the tangent between track nodes (default sprite offset corrected to 0° for right-facing car art).
 - [ ] Integrate track weather-pool selection after the core track path is
   stable.
 
@@ -105,6 +105,9 @@ with 0 failures, warnings, or errors.
 - [ ] Add multiple AI opponents.
 - [ ] Implement slipstream.
 - [ ] Implement team attributes.
+- [x] Shuffle team trick cards into the normal deck lifecycle and replace batch
+  hand submission with one-card select/confirm play, immediate trick resolution,
+  and explicit end-of-card-phase behavior.
 - [x] Implement the driver-selection flow as a catalog, session state, and
   runtime-built main-menu panel; connect the selected driver to race setup.
 - [ ] Add sound effects.
@@ -115,6 +118,8 @@ with 0 failures, warnings, or errors.
 
 - [ ] Select the replacement for the reverted Track Node Editor.
 - [ ] Confirm how the Le Mans test track relates to the six national teams.
+- [ ] Confirm whether Kanto Oden carry-over slots are mandatory (the current
+  runtime behavior) or optional; Hotpot's additional slot is already optional.
 - [ ] Decide the commit boundaries for current scene, data, MCP, and
   refactor changes.
 
@@ -150,3 +155,30 @@ maintained source for current work.
   selection state, menu panel, and 5 EditMode regression tests.
 - [x] Re-ran Unity EditMode tests after the audit and driver slice: 273/273
   passed with no failures or skips; dotnet build has 0 errors.
+- [x] Fixed the card-play lifecycle regression: opening tricks are randomly
+  drawn, confirmed tricks enter discard immediately, confirmed speed cards stay
+  in the played area until cleanup, and optional discard accepts any non-heat
+  card. Unity EditMode tests now pass 287/287; runtime smoke verified the
+  seven-card opening hand, button states, hand/UI synchronization, and trick
+  transfer to discard.
+- [x] Completed the follow-up runtime audit and repaired cross-system card/heat
+  ownership: exact runtime card instances are consumed atomically, temporary
+  heat can no longer inflate the permanent engine pool, and AI heat payments
+  use the same canonical path as human payments.
+- [x] Fixed turn-start and movement edge cases: Kanto Oden carry-over is
+  consumed even when the tech tree is disabled, Hotpot grants movement only
+  when its optional ATTACK slot is actually used, and teleports immediately
+  restore the car's track-tangent facing.
+- [x] Hardened card UI state: reset clears every interaction mode, heat cards
+  are non-interactable, resource displays refresh after card/heat changes, and
+  a short action-button debounce prevents a physical double-click from both
+  confirming a card and ending the phase. Gear controls are now interactable
+  only while the human player is actively choosing a gear.
+- [x] Replaced the placeholder race simulation assertions with an actual
+  draw/pay/commit/move/cleanup/reshuffle loop and added exact-ownership,
+  temporary-heat, Kanto, Hotpot, shared AI heat-payment, and orientation tests.
+  Final verification: Unity EditMode 301/301 passed; runtime smoke covered
+  main menu -> track selection -> Race, gear/card/discard/reset interaction,
+  disabled heat-card input, and post-teleport orientation with a clean console.
+  `dotnet build Foodular1.sln --no-restore` reports 0 errors (two existing MCP
+  assembly-version warnings remain).

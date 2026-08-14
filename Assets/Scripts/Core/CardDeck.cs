@@ -20,6 +20,7 @@ public class HeatPool
 /// 管理牌组（drawPile）、手牌（hand）、弃牌堆（discardPile）和该玩家持有的引擎牌库引用。
 ///
 /// 热量牌生命周期: 热量池 →(弯道超速/急刹/引擎故障)→ 弃牌堆 →(洗牌)→ 牌组 →(抽牌)→ 手牌(不可打出!) →(降档冷却/G1散热)→ 热量池
+/// 速度牌/特技牌生命周期: 牌组 → 手牌 → 打出/弃置 → 弃牌堆 → 洗回牌组。
 /// </summary>
 public class CardDeck
 {
@@ -39,6 +40,9 @@ public class CardDeck
 
     /// <summary>牌组 + 弃牌堆 总数（判断是否会抽干）。</summary>
     public int TotalAvailableForDraw => drawPile.Count + discardPile.Count;
+
+    /// <summary>Returns whether this exact runtime card is currently in hand.</summary>
+    public bool ContainsInHand(CardData card) => card != null && hand.Contains(card);
 
     /// <summary>
     /// 用配置初始化牌组。
@@ -143,17 +147,45 @@ public class CardDeck
     }
 
     /// <summary>
-    /// 将热量牌归还到该玩家的引擎牌库。
+    /// Removes playable cards from hand and puts them directly into the discard pile.
+    /// Heat cards are deliberately ignored because they can only leave hand through cooling.
+    /// Returns the number of cards discarded.
     /// </summary>
-    public void ReturnHeatCardsToPool(List<CardData> cards)
+    public int DiscardPlayableCardsFromHand(IReadOnlyList<CardData> cards)
     {
+        if (cards == null) return 0;
+
+        int discarded = 0;
         foreach (CardData card in cards)
         {
-            if (card.IsHeat)
+            if (card == null || card.IsHeat) continue;
+            if (hand.Remove(card))
             {
-                heatPool.remaining++;
+                discardPile.Add(card);
+                discarded++;
             }
         }
+        return discarded;
+    }
+
+    /// <summary>
+    /// 消耗指定的手牌热量牌；永久热量归还引擎，限时热量直接销毁。
+    /// 只有当前确实位于手牌中的同一张运行时卡牌才会被消耗，避免重复请求凭空增加热量。
+    /// 返回实际消耗数量。
+    /// </summary>
+    public int ReturnHeatCardsToPool(IReadOnlyList<CardData> cards)
+    {
+        if (cards == null || heatPool == null) return 0;
+
+        int returned = 0;
+        foreach (CardData card in cards)
+        {
+            if (card == null || !card.IsHeat || !hand.Remove(card)) continue;
+            if (!card.isTemp)
+                heatPool.remaining++;
+            returned++;
+        }
+        return returned;
     }
 
     /// <summary>
@@ -174,7 +206,7 @@ public class CardDeck
     }
 
     /// <summary>
-    /// 降档冷却 — 从手牌移除最多 count 张热量牌，归还热量池。
+    /// 降档冷却 — 从手牌移除最多 count 张热量牌；永久热量归还热量池，限时热量销毁。
     /// 返回实际移除的数量。
     /// </summary>
     public int RemoveHeatFromHand(int count)
@@ -184,7 +216,8 @@ public class CardDeck
         {
             if (hand[i].IsHeat)
             {
-                heatPool.remaining++;
+                if (!hand[i].isTemp)
+                    heatPool.remaining++;
                 hand.RemoveAt(i);
                 removed++;
             }
@@ -268,7 +301,8 @@ public class CardDeck
         {
             if (hand[i].IsHeat)
             {
-                heatPool.remaining++;
+                if (!hand[i].isTemp)
+                    heatPool.remaining++;
                 hand.RemoveAt(i);
             }
         }
@@ -277,7 +311,8 @@ public class CardDeck
         {
             if (drawPile[i].IsHeat)
             {
-                heatPool.remaining++;
+                if (!drawPile[i].isTemp)
+                    heatPool.remaining++;
                 drawPile.RemoveAt(i);
             }
         }
@@ -286,7 +321,8 @@ public class CardDeck
         {
             if (discardPile[i].IsHeat)
             {
-                heatPool.remaining++;
+                if (!discardPile[i].isTemp)
+                    heatPool.remaining++;
                 discardPile.RemoveAt(i);
             }
         }
@@ -303,8 +339,10 @@ public class CardDeck
         {
             if (drawPile[i].IsHeat)
             {
+                bool isTemp = drawPile[i].isTemp;
                 drawPile.RemoveAt(i);
-                heatPool.remaining++;
+                if (!isTemp)
+                    heatPool.remaining++;
                 return true;
             }
         }
@@ -313,8 +351,10 @@ public class CardDeck
         {
             if (discardPile[i].IsHeat)
             {
+                bool isTemp = discardPile[i].isTemp;
                 discardPile.RemoveAt(i);
-                heatPool.remaining++;
+                if (!isTemp)
+                    heatPool.remaining++;
                 return true;
             }
         }
@@ -339,21 +379,41 @@ public class CardDeck
         return count;
     }
 
+    /// <summary>牌组+弃牌堆中特技牌数量。</summary>
+    public int CountTricksInDeck()
+    {
+        int count = 0;
+        foreach (var c in drawPile) if (c.IsTrick) count++;
+        foreach (var c in discardPile) if (c.IsTrick) count++;
+        return count;
+    }
+
     // ====== 特技牌（Trick Cards） ======
 
     /// <summary>
-    /// 将开局特技牌直接加入手牌（每队 4 张：2 攻 2 守，不占档位出牌数）。
+    /// 将车队特技牌加入普通抽牌堆并重新洗牌。
+    /// 特技牌不会直接进入开局手牌，而是与速度牌、热量牌一样随机抽取。
     /// </summary>
-    public void AddTrickCardsToHand(IReadOnlyList<CardData> tricks)
+    public int AddTrickCardsToDrawPile(IReadOnlyList<CardData> tricks)
     {
-        if (tricks == null) return;
+        if (tricks == null) return 0;
+
+        int added = 0;
         foreach (var t in tricks)
-            if (t != null && t.IsTrick) hand.Add(t);
+        {
+            if (t == null || !t.IsTrick) continue;
+            drawPile.Add(t);
+            added++;
+        }
+
+        if (added > 0)
+            ShuffleDrawPile();
+        return added;
     }
 
     /// <summary>
     /// Adds runtime-created cards directly to the hand. This is intentionally
-    /// broader than <see cref="AddTrickCardsToHand"/> for temporary heat cards
+    /// broader than <see cref="AddTrickCardsToDrawPile"/> for temporary heat cards
     /// granted by trick/technology effects.
     /// </summary>
     public void AddCardsToHand(IReadOnlyList<CardData> cards)
@@ -376,12 +436,7 @@ public class CardDeck
     public bool DiscardTrickCard(CardData trick)
     {
         if (trick == null || !trick.IsTrick) return false;
-        if (hand.Remove(trick))
-        {
-            discardPile.Add(trick);
-            return true;
-        }
-        return false;
+        return DiscardPlayableCardsFromHand(new[] { trick }) == 1;
     }
 
     /// <summary>将限时卡牌（Fries 临时热量牌）从手牌移除并销毁。返回移除数量。</summary>

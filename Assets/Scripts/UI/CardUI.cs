@@ -153,6 +153,11 @@ public class CardUI : MonoBehaviour
             overlayImage.color = new Color(1, 1, 1, 0);
         }
 
+        // 热量牌不是可执行动作，避免它进入键盘/手柄的无效焦点序列。
+        Button button = GetComponent<Button>();
+        if (button != null)
+            button.interactable = !data.IsHeat;
+
         UpdateVisual();
     }
 
@@ -161,15 +166,8 @@ public class CardUI : MonoBehaviour
         // 热量牌不可打出 — 点击无响应
         if (cardData != null && cardData.IsHeat) return;
 
-        // 特技牌 — 直接打出（不进入选中状态）
-        if (cardData != null && cardData.IsTrick)
-        {
-            onClickCallback?.Invoke(this);
-            return;
-        }
-
-        isSelected = !isSelected;
-        UpdateVisual();
+        // 选择规则由 CardHandUI 按当前模式统一处理：
+        // 正常出牌只允许一个待确认项，弃牌阶段允许多选。
         onClickCallback?.Invoke(this);
     }
 

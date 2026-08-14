@@ -35,6 +35,10 @@ public class RaceSimulationTest
         // ── 会话与玩家（全科技解锁，覆盖 L2/L3 修正） ──
         var session = new RaceSession(new SystemRandomSource(SIM_SEED));
         session.InitializeWeather(trackCfg.weatherPool, trackCfg.defaultWeather);
+        var expectedSpeedCards = new Dictionary<PlayerState, int>();
+        var expectedTrickCards = new Dictionary<PlayerState, int>();
+        var expectedPermanentHeat = new Dictionary<PlayerState, int>();
+        GameConfigSO simConfig = CreateSimConfig();
 
         TeamId[] teams = { TeamId.CN, TeamId.UK, TeamId.DE };
         var players = new List<PlayerState>();
@@ -47,11 +51,14 @@ public class RaceSimulationTest
             TechTreeRules.ActivateAllUnlocked(p.techState);
             TechTreeRules.SelectBroth(p.techState, BrothType.Shio); // 汤底冷却生效
             int pool = session.EffectiveHeatPoolSize(p, 6);
-            p.deck.InitializeDeck(CreateSimConfig(), new HeatPool(pool), new SystemRandomSource(SIM_SEED + i));
-            p.deck.AddTrickCardsToHand(session.CreateInitialTrickCards(teams[i]));
+            p.deck.InitializeDeck(simConfig, new HeatPool(pool), new SystemRandomSource(SIM_SEED + i));
+            p.deck.AddTrickCardsToDrawPile(session.CreateInitialTrickCards(teams[i]));
             p.deck.DrawToHand(session.EffectiveHandSize(p, 7));
             p.trickState.ResetPerRace();
             players.Add(p);
+            expectedSpeedCards[p] = simConfig.speedCardDistribution.Length;
+            expectedTrickCards[p] = TrickCardRules.INITIAL_TRICK_CARDS_PER_TEAM;
+            expectedPermanentHeat[p] = pool + simConfig.initialHeatCards;
         }
         session.Players.AddRange(players);
 
@@ -62,11 +69,7 @@ public class RaceSimulationTest
         {
             turn++;
             foreach (var p in players)
-            {
-                p.ClearTurnState();
-                p.trickState.ResetPerTurn();
-                TechTreeRules.ResetPerTurnState(p.techState);
-            }
+                session.BeginTurn(p);
 
             foreach (var p in session.GetTurnOrder())
             {
@@ -81,8 +84,18 @@ public class RaceSimulationTest
 
                 // 选牌：最大 N 张速度牌
                 var chosen = p.deck.GetTopNSpeedCards(p.gear);
-                p.deck.RemoveFromHand(chosen);
-                p.playedSpeedCardsThisTurn.AddRange(chosen);
+                int missing = RaceRules.GetMissingSpeedCardCount(p.gear, chosen.Count);
+                if (missing > 0 && p.deck.DrawHeatFromPool(missing) < missing)
+                {
+                    SimSpin(p, p.position, session.EffectiveSpinMax(p));
+                    continue;
+                }
+                foreach (CardData card in chosen)
+                {
+                    SpeedCardCommitResult commit = CardPlayRules.CommitSpeedCard(p, card, p.gear);
+                    violations.Check(commit == SpeedCardCommitResult.Success,
+                        $"{p.name} 速度牌提交失败: {commit}");
+                }
 
                 // 移动计算（与管理器同构的纯层版本）
                 p.cornerTotalThisTurn = RaceRules.SumCardValues(p.playedSpeedCardsThisTurn);
@@ -156,6 +169,27 @@ public class RaceSimulationTest
                     session.RollWeatherForLap();
                     break;
                 }
+
+            // 与运行时 CleanupTurn 一致：打出区进入弃牌堆，限时牌销毁。
+            foreach (var p in players)
+            {
+                p.deck.DiscardSpeedCards(p.playedSpeedCardsThisTurn);
+                p.playedSpeedCardsThisTurn.Clear();
+                p.deck.RemoveTempCardsFromHand();
+                // 模拟玩家的可选弃牌：清走手中特技牌，避免不可用牌永久堵住手牌。
+                p.deck.DiscardPlayableCardsFromHand(p.deck.GetTricksInHand());
+
+                int speedTotal = p.deck.CountSpeedInDeck() + p.deck.CountSpeedInHand();
+                int trickTotal = p.deck.CountTricksInDeck() + p.deck.GetTricksInHand().Count;
+                int heatTotal = p.deck.heatPool.remaining +
+                    p.deck.CountHeatInDeck() + p.deck.CountHeatInHand();
+                violations.Check(speedTotal == expectedSpeedCards[p],
+                    $"{p.name} 速度牌不守恒: {speedTotal}/{expectedSpeedCards[p]}");
+                violations.Check(trickTotal == expectedTrickCards[p],
+                    $"{p.name} 特技牌不守恒: {trickTotal}/{expectedTrickCards[p]}");
+                violations.Check(heatTotal == expectedPermanentHeat[p],
+                    $"{p.name} 永久热量不守恒: {heatTotal}/{expectedPermanentHeat[p]}");
+            }
         }
 
         // ── 断言：不变量 ──
@@ -183,6 +217,7 @@ public class RaceSimulationTest
         // 爆缸者最多 1 人（3 人赛）
         int blown = players.FindAll(p => p.isBlown).Count;
         Assert.IsTrue(blown <= 1, $"爆缸人数异常: {blown}");
+        Object.DestroyImmediate(simConfig);
     }
 
     // ===== 模拟辅助 =====

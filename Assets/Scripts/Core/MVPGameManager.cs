@@ -23,7 +23,7 @@ public enum GamePhase
 /// - 多车：RaceSession.Players + RaceRanking 排名/回合顺序（末位先行）
 /// - 天气：比赛开始抽取 + 每圈掷骰换天，雨天弯道限速 -1
 /// - 维修区：经过 pit_entry 时选择进站，冷却全部热量、停 1 回合
-/// - 特技牌：开局 4 张，每回合限 1，点击直接打出
+/// - 特技牌：4 张洗入普通牌库，每回合限 1，逐张确认后即时结算
 /// - 科技树：demo 预算解锁 L1，修正手牌/热量池/弯速/失控阈值等
 /// 所有规则计算均在纯函数层（RaceSession / RaceRules / *Rules），本类只做编排。
 /// </summary>
@@ -75,6 +75,8 @@ public class MVPGameManager : MonoBehaviour
     private int playerGearChoice;
     private int pendingGear;
     private Dictionary<int, Image> gearButtonImages = new Dictionary<int, Image>();
+    private Dictionary<int, Button> gearButtons = new Dictionary<int, Button>();
+    private Button confirmGearControl;
 
     // 印地安纳波利斯起点换道
     private bool waitingForPlayerLaneChange;
@@ -145,11 +147,10 @@ public class MVPGameManager : MonoBehaviour
             AutoCreateUI();
         }
 
-        // 收集档位按钮图片引用（Prefab 模式从 HUDUI 获取，硬编码模式在 AutoCreateUI 中已填充）
-        if (raceCanvasPrefab != null)
-        {
-            CollectGearButtonImages();
-        }
+        ApplyRaceUILayout();
+
+        // 同时支持 Prefab 与硬编码回退 UI：统一收集档位控件用于高亮和阶段门控。
+        CollectGearButtonImages();
 
         CreateLaneChangeUI();
         CreatePitChoiceUI();
@@ -187,8 +188,10 @@ public class MVPGameManager : MonoBehaviour
     /// </summary>
     private void InstantiateUIFromPrefab()
     {
+        HideStaleMenuUI();
+
         // 禁用场景中已有的所有 Canvas（避免双份 UI）
-        foreach (var oldCanvas in FindObjectsOfType<Canvas>())
+        foreach (var oldCanvas in FindObjectsOfType<Canvas>(true))
             oldCanvas.gameObject.SetActive(false);
 
         GameObject instance = Instantiate(raceCanvasPrefab);
@@ -221,18 +224,101 @@ public class MVPGameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Scene transitions normally unload the menu, but editor play sessions or
+    /// persistent menu overlays can leave a canvas behind. Race UI must be the
+    /// only menu-facing canvas once the race scene starts.
+    /// </summary>
+    private static void HideStaleMenuUI()
+    {
+        foreach (MainMenuUI menu in FindObjectsOfType<MainMenuUI>(true))
+            menu.gameObject.SetActive(false);
+        foreach (TrackSelectionUI trackSelection in FindObjectsOfType<TrackSelectionUI>(true))
+            trackSelection.gameObject.SetActive(false);
+        foreach (DriverSelectionUI driverSelection in FindObjectsOfType<DriverSelectionUI>(true))
+            driverSelection.gameObject.SetActive(false);
+
+        foreach (GameObject candidate in FindObjectsOfType<GameObject>(true))
+        {
+            if (candidate == null)
+                continue;
+
+            switch (candidate.name)
+            {
+                case "MainMenuCanvas":
+                case "TrackSelectionOverlay":
+                case "TrackSelectionPanel":
+                case "DriverSelectionOverlay":
+                case "DriverSelectionPanel":
+                    candidate.SetActive(false);
+                    break;
+            }
+        }
+    }
+
+    private void ApplyRaceUILayout()
+    {
+        Canvas canvas = hudUI != null
+            ? hudUI.GetComponentInParent<Canvas>()
+            : cardHandUI != null ? cardHandUI.GetComponentInParent<Canvas>() : FindObjectOfType<Canvas>();
+        if (canvas == null)
+            return;
+
+        RaceUILayoutController layout = canvas.GetComponent<RaceUILayoutController>();
+        if (layout == null)
+            layout = canvas.gameObject.AddComponent<RaceUILayoutController>();
+        layout.ApplyLayout(hudUI, cardHandUI);
+    }
+
+    /// <summary>
     /// 从 HUDUI 的 public 按钮字段收集档位按钮 Image 引用，
     /// 用于选中高亮和重置颜色。
     /// </summary>
     private void CollectGearButtonImages()
     {
         gearButtonImages.Clear();
-        if (hudUI == null) return;
+        gearButtons.Clear();
+        confirmGearControl = null;
 
-        if (hudUI.gear1Button != null) gearButtonImages[1] = hudUI.gear1Button.GetComponent<Image>();
-        if (hudUI.gear2Button != null) gearButtonImages[2] = hudUI.gear2Button.GetComponent<Image>();
-        if (hudUI.gear3Button != null) gearButtonImages[3] = hudUI.gear3Button.GetComponent<Image>();
-        if (hudUI.gear4Button != null) gearButtonImages[4] = hudUI.gear4Button.GetComponent<Image>();
+        RegisterGearButton(1, hudUI != null ? hudUI.gear1Button : null, "Gear1Btn");
+        RegisterGearButton(2, hudUI != null ? hudUI.gear2Button : null, "Gear2Btn");
+        RegisterGearButton(3, hudUI != null ? hudUI.gear3Button : null, "Gear3Btn");
+        RegisterGearButton(4, hudUI != null ? hudUI.gear4Button : null, "Gear4Btn");
+
+        confirmGearControl = hudUI != null ? hudUI.confirmGearButton : null;
+        if (confirmGearControl == null)
+        {
+            GameObject confirmObject = GameObject.Find("ConfirmGearBtn");
+            if (confirmObject != null)
+                confirmGearControl = confirmObject.GetComponent<Button>();
+        }
+    }
+
+    private void RegisterGearButton(int gear, Button button, string fallbackName)
+    {
+        if (button == null)
+        {
+            GameObject buttonObject = GameObject.Find(fallbackName);
+            if (buttonObject != null)
+                button = buttonObject.GetComponent<Button>();
+        }
+
+        if (button == null) return;
+        gearButtons[gear] = button;
+        Image image = button.GetComponent<Image>();
+        if (image != null)
+            gearButtonImages[gear] = image;
+    }
+
+    private void SetGearControlsInteractable(bool interactable)
+    {
+        foreach (Button button in gearButtons.Values)
+        {
+            if (button != null)
+                button.interactable = interactable;
+        }
+
+        if (confirmGearControl != null)
+            confirmGearControl.interactable = interactable;
     }
 
     /// <summary>
@@ -257,6 +343,8 @@ public class MVPGameManager : MonoBehaviour
         HideOldUIElement("ReadyStepsText");
         HideOldUIElement("NextRound");
         HideOldUIElement("Reset");
+
+        Button autoPlayButton = null;
 
         // --- 创建 HUD ---
         if (hudUI == null)
@@ -294,8 +382,8 @@ public class MVPGameManager : MonoBehaviour
                 new Color(0.4f, 0.7f, 1f), () => OnConfirmGearClicked());
 
             // 创建 出牌 和 重新开始 按钮
-            CreateActionButton(canvas.transform, "PlayBtn", "出牌", new Vector2(-300, -185), Color.green,
-                () => OnPlayCardsButtonClicked());
+            autoPlayButton = CreateActionButton(canvas.transform, "PlayBtn", "出牌",
+                new Vector2(-300, -185), Color.green, null);
             CreateActionButton(canvas.transform, "ResetBtn", "重新开始", new Vector2(-150, -185), Color.yellow,
                 () => ResetGame());
 
@@ -334,6 +422,15 @@ public class MVPGameManager : MonoBehaviour
             if (cardHandUI.cardPrefab == null)
                 Debug.LogWarning("Could not auto-load CardPrefab. Set it manually on CardHand.");
         }
+
+        if (autoPlayButton == null)
+        {
+            GameObject playButtonObject = GameObject.Find("PlayBtn");
+            if (playButtonObject != null)
+                autoPlayButton = playButtonObject.GetComponent<Button>();
+        }
+        if (cardHandUI != null && cardHandUI.playCardsButton == null)
+            cardHandUI.SetPlayCardsButton(autoPlayButton);
 
         // 绑定档位按钮回调
         BindGearButton("Gear1Btn", 1);
@@ -471,7 +568,8 @@ public class MVPGameManager : MonoBehaviour
         img.color = color;
 
         Button btn = go.AddComponent<Button>();
-        btn.onClick.AddListener(callback);
+        if (callback != null)
+            btn.onClick.AddListener(callback);
 
         // Label - use standard UI.Text for reliability (avoids TMP font issues)
         GameObject labelGO = new GameObject("Label", typeof(RectTransform));
@@ -565,6 +663,13 @@ public class MVPGameManager : MonoBehaviour
         phase = GamePhase.WaitingForGear;
         waitingForPlayerGear = true;
         waitingForPlayerCards = false;
+        waitingForPlayerDiscard = false;
+        waitingForPlayerLaneChange = false;
+        waitingForPitChoice = false;
+        pitWaitingPlayer = null;
+        SetGearControlsInteractable(true);
+        if (laneChangePanel != null) laneChangePanel.SetActive(false);
+        if (pitChoicePanel != null) pitChoicePanel.SetActive(false);
 
         if (hudUI != null)
         {
@@ -572,11 +677,16 @@ public class MVPGameManager : MonoBehaviour
             hudUI.Refresh(this, Player, AI, session.Players);
         }
         if (cardHandUI != null)
+        {
+            cardHandUI.SetDiscardMode(false);
+            cardHandUI.SetGearSelectionMode(true);
             cardHandUI.ShowHand(this, Player);
+            cardHandUI.UpdateDeckInfo(Player);
+        }
     }
 
     /// <summary>
-    /// 单个玩家的比赛初始化：车队分配、科技树、热量池、手牌 + 特技牌。
+    /// 单个玩家的比赛初始化：车队分配、科技树、热量池，以及混合速度/热量/特技牌的牌库。
     /// </summary>
     private void SetupPlayerForRace(PlayerState p, TeamId teamId)
     {
@@ -607,7 +717,7 @@ public class MVPGameManager : MonoBehaviour
         p.trickState = new TrickCardState();
         p.trickState.ResetPerRace();
         if (config.enableTrickCards)
-            p.deck.AddTrickCardsToHand(session.CreateInitialTrickCards(teamId));
+            p.deck.AddTrickCardsToDrawPile(session.CreateInitialTrickCards(teamId));
 
         p.deck.DrawToHand(session.EffectiveHandSize(p, config.handSize));
     }
@@ -661,16 +771,7 @@ public class MVPGameManager : MonoBehaviour
         {
             // ──── 回合开始 ────
             foreach (var p in session.Players)
-            {
-                p.ClearTurnState();
-                p.trickState.ResetPerTurn();
-                if (p.techState != null)
-                {
-                    TechTreeRules.ResetPerTurnState(p.techState);
-                    // 关东慢煮累积的出牌数 → 本回合额外出牌槽
-                    p.extraCardSlotsThisTurn += TrickCardRules.ConsumeKantoOden(p.trickState);
-                }
-            }
+                session.BeginTurn(p);
             // JP L3 万骨涌：末位/次末位自动激活，逐回合递减
             TickBankuruwaseForAll();
 
@@ -695,6 +796,7 @@ public class MVPGameManager : MonoBehaviour
                 {
                     phase = GamePhase.WaitingForGear;
                     waitingForPlayerGear = true;
+                    SetGearControlsInteractable(true);
                     pendingGear = p.gear;
                     foreach (var kv in gearButtonImages)
                         kv.Value.color = (kv.Key == p.gear) ? new Color(0.3f, 0.8f, 0.3f, 0.9f) : new Color(1f, 1f, 1f, 0.8f);
@@ -702,7 +804,10 @@ public class MVPGameManager : MonoBehaviour
                     if (cardHandUI != null) { cardHandUI.SetGearSelectionMode(true); cardHandUI.UpdateDeckInfo(p); }
 
                     yield return new WaitWhile(() => waitingForPlayerGear);
+                    SetGearControlsInteractable(false);
                     ApplyGearShift(p, playerGearChoice);
+                    if (hudUI != null)
+                        hudUI.RefreshPlayerResources(p);
                 }
             }
 
@@ -746,7 +851,7 @@ public class MVPGameManager : MonoBehaviour
                     DecideAITrick(p);
             }
 
-            // ====== PHASE A4: 选牌 ======
+            // ====== PHASE A4: 逐张确认出牌 ======
             foreach (var p in turnOrder)
             {
                 // 含 ShouldSkipTurn：AI 在 A3 打出关东慢煮后本回合不再选牌
@@ -767,13 +872,16 @@ public class MVPGameManager : MonoBehaviour
                         cardHandUI.UpdateDeckInfo(p);
                     }
                     if (hudUI != null)
-                        hudUI.SetStatus($"G{p.gear} 档 - 选择速度牌 (最多 {GetMaxSpeedCardsThisTurn(p)} 张; 点特技牌直接打出)");
+                    {
+                        hudUI.RefreshPlayerResources(p);
+                        hudUI.SetStatus($"G{p.gear} 档 - 逐张选择并确认（最多 {GetMaxSpeedCardsThisTurn(p)} 张速度牌）");
+                    }
 
                     yield return new WaitWhile(() => waitingForPlayerCards);
                 }
 
-                // CN L2 连击追踪：特技 → 速度
-                if (p.techState != null)
+                // AI 的特技阶段固定早于速度选牌；人类在每张速度牌确认时记录真实顺序。
+                if (p.isAI && p.techState != null && p.playedSpeedCardsThisTurn.Count > 0)
                     TechTreeRules.TrackDimSumCombo(p.techState, false, true, false);
             }
 
@@ -911,7 +1019,7 @@ public class MVPGameManager : MonoBehaviour
     /// 支持特技牌黑面包垫底（-1，最少 1）与英国 L1 炸鱼薯条（每场 1 次免单）。
     /// 返回 true 表示支付成功，false 表示已触发失控。
     /// </summary>
-    private bool TryPayHeat(PlayerState p, int amount, int rewindPos, string reason)
+    public bool TryPayHeat(PlayerState p, int amount, int rewindPos, string reason)
     {
         if (amount <= 0) return true;
 
@@ -923,7 +1031,8 @@ public class MVPGameManager : MonoBehaviour
         if (drawn < amount)
         {
             // UK L1 炸鱼薯条：每场限 1 次 — 忽略本次热量判定，回收 1 张热量牌至引擎
-            if (p.techState != null && TechTreeRules.CanUseFishAndChips(p.techState, session.TechDb))
+            if (p.techState != null && session != null &&
+                TechTreeRules.CanUseFishAndChips(p.techState, session.TechDb))
             {
                 TechTreeRules.UseFishAndChips(p.techState);
                 p.deck.RemoveOneHeatFromDeck();
@@ -937,7 +1046,8 @@ public class MVPGameManager : MonoBehaviour
         }
 
         // DE L3 烤肉拼盘跟踪 + CN L2 连击追踪（付热）
-        session.TrackHeatPaid(p, drawn);
+        if (session != null)
+            session.TrackHeatPaid(p, drawn);
         if (p.techState != null)
             TechTreeRules.TrackDimSumCombo(p.techState, false, false, true);
         return true;
@@ -1085,8 +1195,7 @@ public class MVPGameManager : MonoBehaviour
             // JP 特技牌 鱼雷天妇罗：超车 +1
             bonus += GetTorpedoBonus(p, turnOrder);
             // CN 特技牌 火锅底料：ATTACK 牌 +1（不计入弯道判定）
-            if (TrickCardRules.HasHotpotAttack(p.trickState) && p.cornerTotalThisTurn > 0)
-                bonus += TrickCardRules.GetHotpotSpeedBonus();
+            bonus += CardPlayRules.GetHotpotMovementBonus(p);
             // 特技牌即时移动（司康 +2 等）
             bonus += p.trickMoveBonusThisTurn;
 
@@ -1322,11 +1431,11 @@ public class MVPGameManager : MonoBehaviour
                     var heatCards = new List<CardData>();
                     foreach (var c in p.deck.Hand)
                         if (c.IsHeat) heatCards.Add(c);
-                    p.deck.ReturnHeatCardsToPool(heatCards);
-                    p.position = (p.position + converted) % trackManager.TotalNodes;
+                    int returned = p.deck.ReturnHeatCardsToPool(heatCards);
+                    p.position = (p.position + returned) % trackManager.TotalNodes;
                     MoveCarTo(p, p.position);
                     if (hudUI != null)
-                        hudUI.AppendLog($"<color=orange>{p.name} 母亲之路(复兴)！{converted} 张热量牌转为移动。</color>");
+                        hudUI.AppendLog($"<color=orange>{p.name} 母亲之路(复兴)！{returned} 张热量牌转为移动。</color>");
                 }
                 break;
             }
@@ -1335,30 +1444,38 @@ public class MVPGameManager : MonoBehaviour
 
     // ====== 特技牌 ======
 
-    /// <summary>玩家点击手牌中的特技牌 — 直接打出（每回合限 1）。</summary>
+    /// <summary>
+    /// Legacy UI entry point retained for scene bindings. New hand interaction confirms
+    /// every card through <see cref="OnPlayCardsButtonClicked"/>.
+    /// </summary>
     public void OnTrickCardClicked(CardData card)
     {
         if (phase != GamePhase.WaitingForCards) return;
         if (!config.enableTrickCards) return;
         if (Player == null) return;
 
-        bool success = PlayTrickCard(Player, card);
-
-        // 关东慢煮：跳过本回合选牌与移动
-        if (Player.kantoOdenSkipThisTurn)
-        {
-            Player.playedSpeedCardsThisTurn.Clear();
-            waitingForPlayerCards = false;
-        }
-
-        // 打出成功后从 UI 移除该卡（精确移除，保留其他卡牌的选中状态）
-        if (success && cardHandUI != null)
-            cardHandUI.RemoveCardUI(card);
+        ConfirmPlayerCard(Player, card);
     }
 
     /// <summary>玩家与 AI 共用的特技牌结算入口。返回 true 表示打出成功。</summary>
     private bool PlayTrickCard(PlayerState p, CardData card)
     {
+        if (p == null || card == null || !p.deck.ContainsInHand(card))
+        {
+            if (p != null && !p.isAI && hudUI != null)
+                hudUI.SetStatus("<color=orange>该特技牌已不在手牌中</color>");
+            return false;
+        }
+
+        var def = session.TrickDb.Get(card.trickId);
+        if (def != null && def.effectType == TrickEffectType.KantoOden &&
+            p.playedSpeedCardsThisTurn.Count > 0)
+        {
+            if (!p.isAI && hudUI != null)
+                hudUI.SetStatus("<color=orange>关东慢煮必须在打出速度牌前使用</color>");
+            return false;
+        }
+
         var result = session.PlayTrick(p, card);
         if (!result.success)
         {
@@ -1367,7 +1484,11 @@ public class MVPGameManager : MonoBehaviour
             return false;
         }
 
-        p.deck.DiscardTrickCard(card);
+        if (!p.deck.DiscardTrickCard(card))
+        {
+            Debug.LogError($"Failed to move confirmed trick card '{card.trickId}' from hand to discard.");
+            return false;
+        }
         if (hudUI != null)
             hudUI.AppendLog($"{p.name} 打出特技牌: {result.message}");
 
@@ -1445,19 +1566,22 @@ public class MVPGameManager : MonoBehaviour
         var tricks = p.deck.GetTricksInHand();
         if (tricks.Count == 0) return;
 
-        var def = session.TrickDb.Get(tricks[0].trickId);
-        if (def == null) return;
+        foreach (CardData trick in tricks)
+        {
+            var def = session.TrickDb.Get(trick.trickId);
+            if (def == null) continue;
 
-        bool play = false;
-        if (def.IsDefense && p.HeatRatio >= config.aiHeatWarningThreshold)
-            play = true;
-        else if (def.IsAttack && p.HeatRatio <= 0.35f)
-            play = true;
-        else if (def.effectType == TrickEffectType.KantoOden && session.GetRank(p) >= session.Players.Count)
-            play = true;
+            bool play = false;
+            if (def.IsDefense && p.HeatRatio >= config.aiHeatWarningThreshold)
+                play = true;
+            else if (def.IsAttack && p.HeatRatio <= 0.35f)
+                play = true;
+            else if (def.effectType == TrickEffectType.KantoOden && session.GetRank(p) >= session.Players.Count)
+                play = true;
 
-        if (play)
-            PlayTrickCard(p, tricks[0]);
+            if (play && PlayTrickCard(p, trick))
+                return;
+        }
     }
 
     // ====== 印地安纳波利斯起点换道 ======
@@ -1515,7 +1639,7 @@ public class MVPGameManager : MonoBehaviour
     // ====== 步骤 8：弃牌 ======
 
     /// <summary>
-    /// 弃牌步骤 — 玩家可选择弃掉手中任意非热量牌，之后补牌至 7 张。
+    /// 弃牌步骤 — 玩家可选择弃掉手中任意非热量牌，之后补牌至手牌上限。
     /// </summary>
     private IEnumerator DiscardStep()
     {
@@ -1530,7 +1654,10 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.ShowHand(this, player);
         }
         if (hudUI != null)
-            hudUI.SetStatus("弃牌: 点击要弃掉的牌 (非热量牌), 然后点出牌");
+        {
+            hudUI.RefreshPlayerResources(player);
+            hudUI.SetStatus("弃牌: 点击要弃掉的牌 (非热量牌), 然后点确认弃牌");
+        }
 
         yield return new WaitWhile(() => waitingForPlayerDiscard);
 
@@ -1538,16 +1665,11 @@ public class MVPGameManager : MonoBehaviour
         if (cardHandUI != null)
         {
             List<CardData> toDiscard = cardHandUI.GetSelectedCards();
-            foreach (var card in toDiscard)
-            {
-                if (!card.IsHeat)
-                {
-                    player.deck.RemoveFromHand(new List<CardData> { card });
-                    player.deck.DiscardSpeedCards(new List<CardData> { card });
-                }
-            }
-            if (toDiscard.Count > 0 && hudUI != null)
-                hudUI.AppendLog($"{player.name} discards {toDiscard.Count} card(s).");
+            int discarded = player.deck.DiscardPlayableCardsFromHand(toDiscard);
+            if (discarded > 0 && hudUI != null)
+                hudUI.AppendLog($"{player.name} discards {discarded} card(s).");
+            cardHandUI.SetDiscardMode(false);
+            RefreshHumanHand(player);
         }
     }
 
@@ -1587,6 +1709,9 @@ public class MVPGameManager : MonoBehaviour
                     hudUI.AppendLog($"<color=green>{p.name} 烤肉拼盘：自动冷却 {cooled} 张热量牌。</color>");
             }
         }
+
+        // 打出区已全部转移到弃牌堆，立即清空引用以维持单一区域所有权。
+        p.playedSpeedCardsThisTurn.Clear();
     }
 
     /// <summary>应用阴阳茶结果：阴 → 付 1 热 +1 格；阳 → 自动冷却。</summary>
@@ -1850,7 +1975,7 @@ public class MVPGameManager : MonoBehaviour
         car.transform.position = trackManager.GetNodePosition(position, lane);
         // 传送后朝向下一节点（失控回退 / 进站出口 / 阴阳茶 +1）
         int nextIdx = (position + 1) % trackManager.TotalNodes;
-        RotateCarTowards(car, trackManager.GetNodePosition(nextIdx, lane));
+        FaceCarTowardsImmediately(car, trackManager.GetNodePosition(nextIdx, lane));
     }
 
     // ====== 赛车朝向（P2 #17 随赛道方向旋转） ======
@@ -1864,8 +1989,17 @@ public class MVPGameManager : MonoBehaviour
     /// <summary>朝向目标方向的角度（度，扣除精灵固有朝向）。</summary>
     private float GetFacingAngle(Vector2 direction)
     {
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        return angle - config.carSpriteFacingAngle;
+        return CarOrientationRules.GetFacingAngle(direction, config.carSpriteFacingAngle);
+    }
+
+    /// <summary>Immediately faces a teleported/stationary car toward the next node.</summary>
+    private void FaceCarTowardsImmediately(GameObject car, Vector3 target)
+    {
+        Vector3 direction = target - car.transform.position;
+        float currentAngle = car.transform.rotation.eulerAngles.z;
+        float targetAngle = CarOrientationRules.GetFacingAngle(
+            direction, config.carSpriteFacingAngle, currentAngle);
+        car.transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
     }
 
     /// <summary>朝目标点平滑旋转（每帧调用的廉价实现）。</summary>
@@ -1873,8 +2007,9 @@ public class MVPGameManager : MonoBehaviour
     {
         Vector3 dir = target - car.transform.position;
         if (dir.sqrMagnitude < 0.0001f) return;
-        float targetAngle = GetFacingAngle(dir);
         float currentAngle = car.transform.rotation.eulerAngles.z;
+        float targetAngle = CarOrientationRules.GetFacingAngle(
+            dir, config.carSpriteFacingAngle, currentAngle);
         float nextAngle = Mathf.MoveTowardsAngle(currentAngle, targetAngle, config.carRotateSpeed * Time.deltaTime);
         car.transform.rotation = Quaternion.Euler(0f, 0f, nextAngle);
     }
@@ -1883,7 +2018,7 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnGearButtonClicked(int gear)
     {
-        if (phase != GamePhase.WaitingForGear) return;
+        if (phase != GamePhase.WaitingForGear || !waitingForPlayerGear) return;
         pendingGear = gear;
         // 高亮选中的档位按钮
         foreach (var kv in gearButtonImages)
@@ -1896,14 +2031,15 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnConfirmGearClicked()
     {
-        if (phase != GamePhase.WaitingForGear) return;
+        if (phase != GamePhase.WaitingForGear || !waitingForPlayerGear) return;
         playerGearChoice = pendingGear;
         waitingForPlayerGear = false;
+        SetGearControlsInteractable(false);
     }
 
     public void OnPlayCardsButtonClicked()
     {
-        // 弃牌模式 — 点击 PLAY 确认弃牌
+        // 弃牌模式 — 点击按钮确认整组弃牌
         if (waitingForPlayerDiscard)
         {
             waitingForPlayerDiscard = false;
@@ -1915,18 +2051,102 @@ public class MVPGameManager : MonoBehaviour
         var player = Player;
         if (player == null) return;
 
-        List<CardData> selected = cardHandUI.GetSelectedCards();
-        // selected 已经只包含速度牌（热量牌不可选中，特技牌点击即打出）
-        int speedCount = selected.Count;
-        int maxCards = GetMaxSpeedCardsThisTurn(player);
-
-        // 不能超出档位 + 额外槽要求
-        if (speedCount > maxCards)
+        CardData pending = cardHandUI.PendingPlayCard;
+        if (pending != null)
         {
-            if (hudUI != null)
-                hudUI.SetStatus($"<color=orange>速度牌太多! 最多选 {maxCards} 张</color>");
+            ConfirmPlayerCard(player, pending);
             return;
         }
+
+        FinishPlayerCardPhase(player);
+    }
+
+    /// <summary>
+    /// Commits exactly one card from the human hand. Speed cards accumulate for the
+    /// later movement phase; trick cards enter discard and resolve immediately.
+    /// </summary>
+    private bool ConfirmPlayerCard(PlayerState player, CardData card)
+    {
+        if (player == null || card == null || !player.deck.ContainsInHand(card))
+        {
+            if (hudUI != null)
+                hudUI.SetStatus("<color=orange>该牌已不在手牌中</color>");
+            cardHandUI?.ShowHand(this, player);
+            return false;
+        }
+
+        if (card.IsHeat)
+        {
+            if (hudUI != null)
+                hudUI.SetStatus("<color=orange>热量牌不可打出</color>");
+            return false;
+        }
+
+        if (card.IsTrick)
+        {
+            if (!config.enableTrickCards || !PlayTrickCard(player, card))
+                return false;
+
+            RefreshHumanHand(player);
+            if (hudUI != null)
+                hudUI.RefreshPlayerResources(player);
+
+            if (hudUI != null)
+            {
+                var def = session.TrickDb.Get(card.trickId);
+                string trickName = def != null ? def.name : "特技牌";
+                hudUI.SetStatus(player.kantoOdenSkipThisTurn
+                    ? $"已发动 {trickName}，本回合出牌结束"
+                    : $"已发动 {trickName}；选择下一张牌或结束出牌");
+            }
+
+            // 关东慢煮在确认后立即结束本回合出牌阶段。
+            if (player.kantoOdenSkipThisTurn)
+            {
+                waitingForPlayerCards = false;
+                cardHandUI.HideAll();
+            }
+            else
+            {
+                cardHandUI.BlockActionButtonBriefly();
+            }
+            return true;
+        }
+
+        int maxCards = GetMaxSpeedCardsThisTurn(player);
+        SpeedCardCommitResult commit = CardPlayRules.CommitSpeedCard(player, card, maxCards);
+        if (commit != SpeedCardCommitResult.Success)
+        {
+            if (hudUI != null)
+            {
+                string message = commit == SpeedCardCommitResult.SpeedLimitReached
+                    ? $"速度牌已达上限：{maxCards} 张"
+                    : "出牌失败：手牌状态已变化";
+                hudUI.SetStatus($"<color=orange>{message}</color>");
+            }
+            if (commit == SpeedCardCommitResult.CardNotInHand)
+                RefreshHumanHand(player);
+            return false;
+        }
+
+        if (player.techState != null)
+            TechTreeRules.TrackDimSumCombo(player.techState, false, true, false);
+
+        if (hudUI != null)
+        {
+            hudUI.AppendLog($"{player.name} 确认速度牌 {card.value}。");
+            hudUI.SetStatus(
+                $"已打出 {player.playedSpeedCardsThisTurn.Count}/{maxCards} 张速度牌；选择下一张或结束出牌");
+        }
+        RefreshHumanHand(player);
+        cardHandUI.BlockActionButtonBriefly();
+        return true;
+    }
+
+    /// <summary>Ends human card play and applies the existing missing-card engine-failure rule.</summary>
+    private void FinishPlayerCardPhase(PlayerState player)
+    {
+        int speedCount = player.playedSpeedCardsThisTurn.Count;
 
         // 引擎故障：速度牌不足时，每缺 1 张 → +1 热量到弃牌堆。引擎不足 → 失控
         int required = player.gear + player.extraCardSlotsThisTurn;
@@ -1935,28 +2155,31 @@ public class MVPGameManager : MonoBehaviour
         {
             if (!TryPayHeat(player, missing, player.position, "engine failure"))
             {
-                // 失控发生，跳过出牌收尾
-                player.playedSpeedCardsThisTurn.Clear();
+                // 已确认速度牌仍属于本回合已打出区域，CleanupTurn 会将其放入弃牌堆。
                 player.playedHeatCardsThisTurn.Clear();
+                cardHandUI.ClearPendingPlaySelection();
                 waitingForPlayerCards = false;
+                if (hudUI != null)
+                    hudUI.RefreshPlayerResources(player);
+                cardHandUI.HideAll();
                 return;
             }
             if (hudUI != null)
                 hudUI.AppendLog($"Engine failure! Missing {missing} speed card(s). +{missing} Heat to discard.");
         }
 
-        player.playedSpeedCardsThisTurn.Clear();
-        player.playedHeatCardsThisTurn.Clear();
-
-        List<CardData> toRemove = new List<CardData>();
-        foreach (var card in selected)
-        {
-            toRemove.Add(card);
-            player.playedSpeedCardsThisTurn.Add(card);
-        }
-
-        player.deck.RemoveFromHand(toRemove);
+        if (hudUI != null)
+            hudUI.RefreshPlayerResources(player);
+        cardHandUI.ClearPendingPlaySelection();
         waitingForPlayerCards = false;
+        cardHandUI.HideAll();
+    }
+
+    private void RefreshHumanHand(PlayerState player)
+    {
+        if (player == null || player.isAI || cardHandUI == null) return;
+        cardHandUI.ShowHand(this, player);
+        cardHandUI.UpdateDeckInfo(player);
     }
 
     // ====== 重置 ======

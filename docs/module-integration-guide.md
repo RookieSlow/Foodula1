@@ -1,6 +1,6 @@
 # 模块接入指南 — 面向其他 AI 的操作手册
 
-> 更新: 2026-08-03
+> 更新: 2026-08-05
 > 关联: ADR-002（分层纯函数架构）、`design/planning/roadmap.md`
 > 用途: 其他 Claude Code 子代理（或人类开发者）开发新模块 / 接入现有模块时的唯一入口文档。
 
@@ -38,7 +38,7 @@
 | 多车 | `RaceRanking.cs` | ✅ 完整 | N 车排名/回合顺序/完赛判定 |
 | 天气 | `WeatherData.cs` `WeatherRules.cs` | ✅ 完整 | 开局抽天气 + 每圈 30% 换天，雨天弯道限速 -1 |
 | 维修区 | `PitLaneRules.cs` | ✅ 完整 | 经过 `pit_entry` 选择进站，冷却全部热量、停 1 回合 |
-| 特技牌 | `TrickCardData.cs` `TrickCardRules.cs` | ✅ 完整 | 开局 4 张（2攻2守），每回合限 1，点击直接打出 |
+| 特技牌 | `TrickCardData.cs` `TrickCardRules.cs` | ✅ 完整 | 4 张（2攻2守）洗入普通牌组，每回合限 1，逐张确认后即时结算并弃置 |
 | 科技树 | `TechTreeData.cs` `TechTreeRules.cs` `TechTreeDatabase.cs` | ✅ 数值接入 | demo 预算解锁 L1，修正手牌/热量池/弯速/失控阈值等 |
 
 未接入（文档化 TODO，见 §8）：尾流系统（slipstream）、地标完整机制（US L3
@@ -53,7 +53,8 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 |------|------|
 | `Assets/Scripts/Core/RaceSession.cs` | **新模块唯一需要知道的类**。比赛状态 + 跨系统规则粘合 |
 | `Assets/Scripts/Core/PlayerState.cs` | 新增 `techState` / `trickState` / `extraCardSlotsThisTurn` / `cornerTotalThisTurn` 等 |
-| `Assets/Scripts/Core/CardDeck.cs` | 新增特技牌 API（`AddTrickCardsToHand` / `GetTricksInHand` / `DiscardTrickCard` / `RemoveTempCardsFromHand`） |
+| `Assets/Scripts/Core/CardDeck.cs` | 特技牌与速度牌共用抽牌/弃牌循环（`AddTrickCardsToDrawPile` / `GetTricksInHand` / `DiscardTrickCard` / `DiscardPlayableCardsFromHand`） |
+| `Assets/Scripts/Core/CardPlayRules.cs` | 单张速度牌确认的纯规则：校验手牌所有权与本回合出牌上限后移入已打出区 |
 | `Assets/Scripts/Core/CardData.cs` | 新增 `isTemp`（限时热量牌）与 `CreateTempHeat()` |
 | `Assets/Scripts/Config/GameConfigSO.cs` | 新增 `aiOpponentCount` / `playerTeam` / `aiTeams` / 4 个系统开关 |
 | `Assets/Scripts/Core/MVPGameManager.cs` | 比赛循环重构为 N 玩家 + 5 系统接线 |
@@ -74,8 +75,9 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
   │
   ├─ PHASE A1 档位决策   （人类等 UI；AI 用 AIController.DecideGear）
   ├─ PHASE A2 抽牌       （手牌上限 = EffectiveHandSize + extraSlots）
-  ├─ PHASE A3 AI 特技牌  （DecideAITrick 启发式）
-  ├─ PHASE A4 选牌       （人类点击特技牌 → OnTrickCardClicked；速度牌 → 出牌）
+  ├─ PHASE A3 AI 特技牌  （DecideAITrick 启发式；成功后立即弃置并结算）
+  ├─ PHASE A4 逐张出牌   （人类选 1 张 → 确认；速度牌累计，特技牌即时结算）
+  │                       （无待确认牌时点击按钮结束出牌阶段）
   ├─ ComputeMovements    ← 科技直道加成 / 酸菜 / 寿司 / 鱼雷 / 火锅底料在此汇总
   │
   ├─ PHASE B 执行（按 turnOrder 逐个）:
@@ -152,8 +154,8 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
 
 ### 6.3 热量支付挂钩（重要）
 
-所有热量扣减必须经过 `MVPGameManager.TryPayHeat()`（private，模块如需调用请
-改成 public 或经由公开方法）。挂钩点：
+所有热量扣减必须经过公开的 `MVPGameManager.TryPayHeat()`。人类与 AI 都必须
+复用这条规范路径，避免绕过特技、科技与热量追踪挂钩。挂钩点：
 
 | 系统 | 挂钩方式 |
 |------|---------|
@@ -167,7 +169,7 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
 | 字段 | 管理器动作 |
 |------|-----------|
 | `heatToPay` | `TryPayHeat`（司康；失败→失控） |
-| `heatToCool` | `deck.RemoveHeatFromHand`（红茶/关东慢煮） |
+| `heatToCool` | `deck.RemoveHeatFromHand`（红茶/关东慢煮；永久热量回池，限时热量销毁） |
 | `extraMovement` | `p.trickMoveBonusThisTurn += n` |
 | `cardsToDraw` | `deck.DrawToHand(HandCount + n)`（可乐） |
 | `requiresSpeedDiscard` | 弃最小速度牌（基安蒂） |
@@ -227,7 +229,8 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
    只进移动、不进弯道判定。
 3. **热量支付别绕路**：直接 `DrawHeatFromPool` 会跳过黑面包/炸鱼薯条/烤肉拼盘。
 4. **特技牌每回合限 1**：由 `trickState.trickPlayedThisTurn` 保证，`PlayTrick`
-   里已校验，不要自己在管理器再写一套。
+   还会校验传入的同一张运行时卡牌确实在手牌中。成功后必须通过 `CardDeck`
+   移入弃牌堆，不要只删除 UI 或自己维护第二套状态。
 5. **手牌上限随科技变化**：抽牌用 `session.EffectiveHandSize(p, config.handSize)`
    + `extraCardSlotsThisTurn`，不要硬编码 `config.handSize`。
 6. **HUD 字段 nullable**：Prefab 模式没有新字段就静默跳过，别 `Find`。
@@ -238,15 +241,20 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
 9. **回退赛道已是 JSON**：原硬编码 42 节点赛道已导出为 `fallback_42.json`
    （roadmap P1 #9）。新增赛道注意：坐标为归一化 [0,1]，弯段只需 1 个
    `isApex: true` 节点（判定只在 apex 触发，多节点弯段不会重复判罚）。
-10. **赛车旋转**：`config.carSpriteFacingAngle`（默认 90=精灵朝上）与
-    `carRotateSpeed` 控制随赛道方向旋转；换新车精灵时先确认朝向角度。
+10. **赛车旋转**：`config.carSpriteFacingAngle`（默认 0=精灵朝右）与
+    `carRotateSpeed` 控制随赛道方向旋转；出生和传送会立即对齐下一节点切线，
+    正常移动则平滑旋转。换新车精灵时先确认朝向角度。
 
 ---
 
 ## 10. 2026-08-05 integration audit
 
-- Temporary heat cards now use `CardDeck.AddCardsToHand`; `AddTrickCardsToHand`
-  remains restricted to actual trick cards.
+- Temporary heat cards use `CardDeck.AddCardsToHand`; the four team trick cards
+  use `AddTrickCardsToDrawPile` before the opening draw and therefore share the
+  normal draw/discard/reshuffle lifecycle.
+- Human play is a one-card pending/confirm flow. Confirmed speed cards remain in
+  the turn's played area until cleanup; confirmed trick cards resolve immediately
+  and enter discard. With no pending card, the action button ends card play.
 - AI card selection uses the effective per-turn card-slot limit, including
   temporary slots and Hotpot effects.
 - AI corner-risk checks use lane-specific limits plus active tech/weather
@@ -254,3 +262,13 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
 - Track weather aliases (`cloudy`, `hot`, `light_rain`, `heavy_rain`) are mapped
   to the current Sunny/Rainy runtime model, and fixed-default tracks are valid
   when their weather pool is intentionally empty.
+- Exact runtime-card ownership is enforced for speed, trick, and heat transfer.
+  Temporary heat is destroyed rather than credited to the permanent engine
+  pool, and Mother Road advances only by the cards it actually consumes.
+- AI heat payments now use the same public `TryPayHeat` path as human payments;
+  Kanto Oden turn-start consumption no longer depends on tech-tree enablement.
+- Card UI reset, resource refresh, disabled heat input, and action-button
+  debounce were runtime-smoked through the actual menu-to-race flow. Gear and
+  confirm controls are enabled only during the human gear-selection wait.
+- The complete EditMode suite passes 301/301, the runtime console is clean, and
+  the solution build has 0 errors (two existing MCP assembly-version warnings).
