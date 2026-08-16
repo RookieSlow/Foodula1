@@ -1,6 +1,6 @@
 # Current Task List
 
-> Updated: 2026-08-05
+> Updated: 2026-08-15
 > Sources: Claude Code project memory, active session state, session history,
 > current Git worktree, and current Unity project structure.
 
@@ -139,6 +139,24 @@ Historical Claude Code files under `.claude/agent-memory/` and
 `production/session-logs/` remain provenance only; this task list is the
 maintained source for current work.
 
+## 2026-08-15 Tech Tree and Team Gear Audit
+
+- [x] Audited the existing tech-tree rules/database against the design docs;
+  common, unique and China EV node pools are now selected through one database API.
+- [x] Added the main-menu tech-tree entry and runtime-built configuration UI;
+  RP, permanent unlocks and active race selections persist per team.
+- [x] Replaced the race's demo-only human tech state with the saved profile;
+  AI opponents retain transient demo profiles so a race cannot mutate campaign RP.
+- [x] Added the China Go/Recover pure gear module and a team-aware facade;
+  player controls, AI selection, card limits, overclock heat and Recover cooling
+  all use the same rules.
+- [x] Added `TeamVehicleRules` as the boundary for team profile values and base
+  durability/heat-pool setup; full movement/handling balancing remains a follow-up.
+- [x] Unity EditMode validation after this slice: 307/307 passed; dotnet builds
+  complete with 0 errors.
+- [ ] Continue extracting orchestration from `MVPGameManager` into phase services
+  once the next feature requires changes across multiple phases.
+
 ## 2026-08-05 Module Audit
 
 - [x] Audited the modules introduced by the previous AI integration commit.
@@ -182,3 +200,11 @@ maintained source for current work.
   disabled heat-card input, and post-teleport orientation with a clean console.
   `dotnet build Foodular1.sln --no-restore` reports 0 errors (two existing MCP
   assembly-version warnings remain).
+
+## 本次完成（2026-08-15 赛事回归与平衡）
+
+- [x] 比赛 HUD 增加“返回主菜单”按钮；修复 RaceCanvas 预制体重建后的旧引用导致重复 HUD 的问题。
+- [x] 所有主要菜单/比赛控制按钮统一接入短按压/释放缩放动画；运行态确认按钮存在且可触发场景切换。
+- [x] 新增 `TrackTeamBalanceBenchmark`，覆盖 Resources 中全部赛道与六支车队，每图 12 场确定性比赛，报告写入 `design/balance/track-team-benchmark-2026-08-15.md`。
+- [x] 平衡收敛：标准 AI 在预计抵达弯道时优先低值牌，风险窗口按预计移动量计算；中国队恢复设计案 Go 直道输出、操控从 -1 调为 0，并默认采用 Go→Go→Recover；美国直道加成调整为每回合固定 +1。
+- [x] 最终验证：Unity EditMode 308/308 通过；`dotnet build Foodular1.sln --no-restore` 0 错误；MainMenu→Race→返回主菜单运行态冒烟通过，单一 HUD、按钮动画组件和控制台均正常。

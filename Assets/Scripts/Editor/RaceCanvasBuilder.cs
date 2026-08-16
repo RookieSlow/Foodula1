@@ -11,7 +11,7 @@ public static class RaceCanvasBuilder
 {
     private const string PREFAB_PATH = "Assets/Prefabs/UI/RaceCanvas.prefab";
     private const string CARD_PREFAB_PATH = "Assets/Prefab/CardPrefab.prefab";
-    private const string FONT_SDF_GUID = "67393bfc3a860b042baa08f7fbeadd93"; // 思源黑體-Medium
+    private const string FONT_SDF_GUID = "5358f61b11e22f34e9fe8942033cf67b"; // SourceHanSansTC-Medium-HQ
 
     [MenuItem("Tools/Build RaceCanvas Prefab")]
     public static void Build()
@@ -81,6 +81,12 @@ public static class RaceCanvasBuilder
         hud.resetButton = MakeBtn(parent, "ResetBtn", "重新开始", BR(), BR(), new Vector2(-140, 50), V2(120, 44));
         if (hud.resetButton != null)
             hud.resetButton.GetComponent<Image>().color = new Color(0.9f, 0.75f, 0.2f);
+
+        // -- 返回主菜单：比赛中始终可见，置于左上角独立顶栏，避免挤占档位操作区 --
+        hud.returnToMenuButton = MakeBtn(parent, "ReturnToMenuBtn", "返回主菜单",
+            TL(), TL(), new Vector2(24, -24), V2(160, 44));
+        if (hud.returnToMenuButton != null)
+            hud.returnToMenuButton.GetComponent<Image>().color = new Color(0.25f, 0.42f, 0.58f);
 
         // -- GameOver 面板：全屏居中，锚点 (0.5, 0.5) --
         var goPanel = NewGO("GameOverPanel", parent, typeof(Image));
@@ -223,6 +229,7 @@ public static class RaceCanvasBuilder
         Vector2 aMin, Vector2 aMax, Vector2 anchoredPos, Vector2 sizeDelta)
     {
         var go = NewGO(name, parent, typeof(Image), typeof(Button));
+        ButtonClickAnimation.Attach(go.GetComponent<Button>());
         var rt = go.GetComponent<RectTransform>();
         rt.anchorMin = aMin; rt.anchorMax = aMax;
         rt.pivot = aMin;   // pivot 对齐锚点

@@ -32,6 +32,7 @@ public class HUDUI : MonoBehaviour
     [Header("操作按钮")]
     public UnityEngine.UI.Button confirmGearButton;
     public UnityEngine.UI.Button resetButton;
+    public UnityEngine.UI.Button returnToMenuButton;
     public UnityEngine.UI.Button backToMenuButton;
 
     [Header("游戏结束面板")]
@@ -55,8 +56,20 @@ public class HUDUI : MonoBehaviour
         if (resetButton != null)
             resetButton.onClick.AddListener(OnResetClicked);
 
+        if (returnToMenuButton != null)
+            returnToMenuButton.onClick.AddListener(OnBackToMenuClicked);
+
         if (backToMenuButton != null)
             backToMenuButton.onClick.AddListener(OnBackToMenuClicked);
+
+        ButtonClickAnimation.Attach(gear1Button);
+        ButtonClickAnimation.Attach(gear2Button);
+        ButtonClickAnimation.Attach(gear3Button);
+        ButtonClickAnimation.Attach(gear4Button);
+        ButtonClickAnimation.Attach(confirmGearButton);
+        ButtonClickAnimation.Attach(resetButton);
+        ButtonClickAnimation.Attach(returnToMenuButton);
+        ButtonClickAnimation.Attach(backToMenuButton);
 
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
@@ -117,7 +130,7 @@ public class HUDUI : MonoBehaviour
                 ? "<color=red>AI: 爆缸!</color>"
                 : ai.hasFinished
                     ? "<color=green>AI: 完赛!</color>"
-                    : $"AI: G{ai.gear} | 引擎:{ai.deck.heatPool.remaining} | 圈{ai.lap} | 位{ai.position}";
+                    : $"AI: {TeamGearRules.GetDisplayName(ai.teamId, ai.gear)} | 引擎:{ai.deck.heatPool.remaining} | 圈{ai.lap} | 位{ai.position}";
         }
 
         // 天气显示
@@ -135,7 +148,7 @@ public class HUDUI : MonoBehaviour
         if (player == null || player.deck == null) return;
 
         if (gearText != null)
-            gearText.text = $"档位: {player.gear}";
+            gearText.text = $"档位: {TeamGearRules.GetDisplayName(player.teamId, player.gear)}";
 
         if (heatText != null)
         {

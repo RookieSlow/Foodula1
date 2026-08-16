@@ -558,6 +558,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 487224673684469573, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 656952722790422524, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
@@ -653,6 +657,18 @@ PrefabInstance:
     - target: {fileID: 2339451931376277091, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2784773369685089454, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2784773369685089454, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2784773369685089454, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3503117904208868435, guid: 00d86bc9075158d42a79573cb0e83582, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag

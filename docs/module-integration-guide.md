@@ -11,7 +11,7 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ MonoBehaviour 层（编排）: MVPGameManager / AIController /     │
-│   TrackManager / HUDUI / CardHandUI / CardUI                 │
+│   TrackManager / HUDUI / CardHandUI / CardUI / TechTreeUI    │
 │   —— 只做：等待输入、驱动协程、调用纯函数、刷新 UI            │
 ├─────────────────────────────────────────────────────────────┤
 │ RaceSession（纯 C# 聚合层，2026-08-03 新增）                 │
@@ -39,7 +39,8 @@
 | 天气 | `WeatherData.cs` `WeatherRules.cs` | ✅ 完整 | 开局抽天气 + 每圈 30% 换天，雨天弯道限速 -1 |
 | 维修区 | `PitLaneRules.cs` | ✅ 完整 | 经过 `pit_entry` 选择进站，冷却全部热量、停 1 回合 |
 | 特技牌 | `TrickCardData.cs` `TrickCardRules.cs` | ✅ 完整 | 4 张（2攻2守）洗入普通牌组，每回合限 1，逐张确认后即时结算并弃置 |
-| 科技树 | `TechTreeData.cs` `TechTreeRules.cs` `TechTreeDatabase.cs` | ✅ 数值接入 | demo 预算解锁 L1，修正手牌/热量池/弯速/失控阈值等 |
+| 科技树 | `TechTreeData.cs` `TechTreeRules.cs` `TechTreeDatabase.cs` `TechTreeProfileStore.cs` | ✅ UI + 持久化 + 数值接入 | 主菜单入口、按车队保存 RP/解锁/激活状态，比赛读取有效修正；AI 保留 demo 配置 |
+| 中国双档 | `ChinaGearShiftRules.cs` `TeamGearRules.cs` | ✅ 比赛循环接入 | Go/Recover 独立出牌数、连续档位热量/冷却链，玩家与 AI 共用同一纯规则模块 |
 
 未接入（文档化 TODO，见 §8）：尾流系统（slipstream）、地标完整机制（US L3
 MotherRoad）、SchwarzbierFuel 主动激活、FullEnglish、SunNeverSets 目标选择、
@@ -52,6 +53,11 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 | 文件 | 职责 |
 |------|------|
 | `Assets/Scripts/Core/RaceSession.cs` | **新模块唯一需要知道的类**。比赛状态 + 跨系统规则粘合 |
+| `Assets/Scripts/Core/ChinaGearShiftRules.cs` | 中国队 Go/Recover 纯规则：连续计数、4 张超频、内置冷却 |
+| `Assets/Scripts/Core/TeamGearRules.cs` | 标准四档与中国双档的统一门面，管理器不直接分支规则细节 |
+| `Assets/Scripts/Core/TeamVehicleRules.cs` | 车队基础性能/耐久配置边界，供比赛初始化和后续平衡调整使用 |
+| `Assets/Scripts/TechTree/TechTreeProfileStore.cs` | PlayerPrefs JSON 适配层；纯科技规则与存档/UI 解耦 |
+| `Assets/Scripts/UI/TechTreeUI.cs` | 运行时构建的车队科技树界面，不依赖 Race 场景 |
 | `Assets/Scripts/Core/PlayerState.cs` | 新增 `techState` / `trickState` / `extraCardSlotsThisTurn` / `cornerTotalThisTurn` 等 |
 | `Assets/Scripts/Core/CardDeck.cs` | 特技牌与速度牌共用抽牌/弃牌循环（`AddTrickCardsToDrawPile` / `GetTricksInHand` / `DiscardTrickCard` / `DiscardPlayableCardsFromHand`） |
 | `Assets/Scripts/Core/CardPlayRules.cs` | 单张速度牌确认的纯规则：校验手牌所有权与本回合出牌上限后移入已打出区 |
@@ -204,7 +210,7 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
 | # | 待做模块 | 接入点 | 现状 |
 |---|---------|--------|------|
 | 1 | ~~尾流系统（slipstream）~~ | `session.ComputeSlipstreamBonus`（ComputeMovements 第二轮调用） | ✅ 已接入：基础 +2，帕尔玛 +2，筋斗云 +2，冰糕阻断，范围 = 1 + 科技 + 临时加成 |
-| 2 | 科技树 UI | 用户自行处理；接入后调 `TechTreeRules.SelectActiveNodes` 替换 `CreateDemoTechState` 的固定解锁 | P2 |
+| 2 | ~~科技树 UI~~ | `MainMenuUI` 的“车队科技树”入口；`TechTreeProfileStore` 保存 RP/解锁/激活配置，比赛读取人类玩家配置 | ✅ 已接入 |
 | 3 | ~~US L3 MotherRoad~~ | `ResolveMotherRoadPass`（PHASE B 地标结算） | ✅ 已接入（自动结算：繁荣冷却2 / 衰退自动修复 / 复兴转移动） |
 | 4 | ~~SchwarzbierFuel~~ | ComputeMovements 自动激活（引擎 >1 热时付 1 热 +2 移动） | ✅ 已接入（自动模式，非手动选择） |
 | 5 | ~~FullEnglish（UK L2）~~ | 抽牌相位（A2）检查手牌热/速/特技 → 尾流+1 + 限时热量牌 | ✅ 已接入 |

@@ -28,7 +28,14 @@ public class PlayerState
     public int DriverLevel => DriverProgression.GetLevel(driverXp);
 
     // --- 持久状态 ---
-    public int gear;           // 当前档位 1-4
+    public int gear;           // 标准车队 1-4；中国队 1=Recover、2=Go
+    /// <summary>Set by the race setup when the electric dual-gear module is active.</summary>
+    public bool usesChinaGearSystem;
+    /// <summary>
+    /// 中国电动双档连续使用次数。切换 Go/Recover 时由 TeamGearRules 重置。
+    /// 标准车队保持 0，避免把车队特有状态散落到通用换档逻辑中。
+    /// </summary>
+    public int chinaConsecutiveGearCount;
     public int position;       // 赛道节点索引
     public int lap;            // 已完成的圈数 (0, 1, 2)
     public bool hasFinished;   // 已完成第 3 圈
@@ -75,6 +82,8 @@ public class PlayerState
         this.isAI = isAI;
         this.position = startPosition;
         this.gear = startGear;
+        this.chinaConsecutiveGearCount = 0;
+        this.usesChinaGearSystem = false;
         this.driverId = string.Empty;
         this.driverXp = 0;
         this.lap = 0;

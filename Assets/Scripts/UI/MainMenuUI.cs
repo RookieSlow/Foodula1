@@ -14,7 +14,9 @@ public class MainMenuUI : MonoBehaviour
 
     private TrackSelectionUI trackSelectionUI;
     private DriverSelectionUI driverSelectionUI;
+    private TechTreeUI techTreeUI;
     private Button driverSelectionButton;
+    private Button techTreeButton;
 
     void Start()
     {
@@ -32,8 +34,14 @@ public class MainMenuUI : MonoBehaviour
         }
         driverSelectionUI.Initialize(OnDriverSelected);
 
+        techTreeUI = GetComponent<TechTreeUI>();
+        if (techTreeUI == null)
+            techTreeUI = gameObject.AddComponent<TechTreeUI>();
+        techTreeUI.Initialize();
+
         if (startRaceButton != null)
         {
+            ButtonClickAnimation.Attach(startRaceButton);
             startRaceButton.onClick.AddListener(OnStartRace);
         }
         else
@@ -43,6 +51,7 @@ public class MainMenuUI : MonoBehaviour
 
         if (quitButton != null)
         {
+            ButtonClickAnimation.Attach(quitButton);
             quitButton.onClick.AddListener(OnQuit);
         }
 
@@ -52,12 +61,89 @@ public class MainMenuUI : MonoBehaviour
             driverSelectionButton = driverButtonTransform.GetComponent<Button>();
             if (driverSelectionButton != null)
             {
+                ButtonClickAnimation.Attach(driverSelectionButton);
                 driverSelectionButton.interactable = true;
                 driverSelectionButton.onClick.RemoveAllListeners();
                 driverSelectionButton.onClick.AddListener(driverSelectionUI.Show);
                 UpdateDriverButtonLabel();
             }
         }
+
+        EnsureTechTreeButton();
+    }
+
+    /// <summary>
+    /// Binds the authored TechTreeBtn when present and creates a compatible
+    /// runtime fallback for older menu scenes. This keeps scene upgrades
+    /// backwards compatible while the editor builder catches up.
+    /// </summary>
+    private void EnsureTechTreeButton()
+    {
+        Transform buttonTransform = transform.Find("TechTreeBtn");
+        if (buttonTransform == null)
+        {
+            GameObject buttonObject = new GameObject("TechTreeBtn", typeof(RectTransform), typeof(Image), typeof(Button));
+            buttonObject.transform.SetParent(transform, false);
+            RectTransform rect = buttonObject.GetComponent<RectTransform>();
+            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = new Vector2(0f, -80f);
+            rect.sizeDelta = new Vector2(320f, 64f);
+            buttonObject.GetComponent<Image>().color = new Color(0.42f, 0.28f, 0.14f);
+            ButtonClickAnimation.Attach(buttonObject.GetComponent<Button>());
+
+            GameObject labelObject = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+            labelObject.transform.SetParent(buttonObject.transform, false);
+            RectTransform labelRect = labelObject.GetComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = Vector2.zero;
+            labelRect.offsetMax = Vector2.zero;
+            TMP_Text label = labelObject.GetComponent<TMP_Text>();
+            label.text = "车队科技树";
+            label.fontSize = 28f;
+            label.alignment = TextAlignmentOptions.Center;
+            label.color = Color.white;
+            TMP_Text sourceFont = GetComponentInChildren<TMP_Text>(true);
+            if (sourceFont != null) label.font = sourceFont.font;
+            buttonTransform = buttonObject.transform;
+
+            // Preserve the original vertical rhythm when upgrading a legacy
+            // scene that only had Start/Garage/Quit.
+            MoveMenuButton("GarageBtn", -170f);
+            MoveMenuButton("QuitBtn", -260f);
+        }
+
+        techTreeButton = buttonTransform.GetComponent<Button>();
+        if (techTreeButton != null)
+        {
+            ButtonClickAnimation.Attach(techTreeButton);
+            techTreeButton.onClick.RemoveAllListeners();
+            techTreeButton.onClick.AddListener(techTreeUI.Show);
+            PlaceTechTreeButtonInMenuLayer(buttonTransform);
+        }
+    }
+
+    /// <summary>
+    /// Runtime overlays are appended after the authored menu children. Keep
+    /// the tech-tree entry beside Garage/Quit so TrackSelectionUI and
+    /// DriverSelectionUI overlays render above it instead of leaving a
+    /// stray button visible over their panels.
+    /// </summary>
+    private void PlaceTechTreeButtonInMenuLayer(Transform buttonTransform)
+    {
+        Transform garage = transform.Find("GarageBtn");
+        if (garage == null || buttonTransform == null) return;
+
+        buttonTransform.SetSiblingIndex(garage.GetSiblingIndex() + 1);
+    }
+
+    private void MoveMenuButton(string objectName, float y)
+    {
+        Transform button = transform.Find(objectName);
+        if (button == null) return;
+        RectTransform rect = button.GetComponent<RectTransform>();
+        if (rect != null) rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, y);
     }
 
     /// <summary>开始比赛 → 加载 Race 场景。</summary>

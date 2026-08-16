@@ -257,6 +257,7 @@ public sealed class TrackSelectionUI : MonoBehaviour
         image.color = color;
         Button button = buttonObject.AddComponent<Button>();
         button.targetGraphic = image;
+        ButtonClickAnimation.Attach(button);
 
         TMP_Text buttonText = CreateText(buttonObject.transform, "Label", label, fontSize,
             Vector2.zero, size, FontStyles.Bold);

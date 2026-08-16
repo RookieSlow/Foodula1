@@ -76,6 +76,9 @@ public class RaceSessionTest
         var cn = session.CreateDemoTechState(TeamId.CN);
         var de = session.CreateDemoTechState(TeamId.DE);
 
+        Assert.IsTrue(cn.IsUnlocked("cn-ev-l1-heat-pump"));
+        Assert.IsTrue(cn.IsUnlocked("cn-ev-l1-pmsm"));
+        Assert.IsFalse(cn.IsUnlocked("common-l1-heat-coating"));
         Assert.IsTrue(cn.IsUnlocked("cn-l1-yin-yang-tea"));
         Assert.IsFalse(cn.IsUnlocked("de-l1-schwarzbier-fuel"));
         Assert.IsTrue(de.IsUnlocked("de-l1-schwarzbier-fuel"));
@@ -121,6 +124,7 @@ public class RaceSessionTest
         session.Weather = WeatherType.Rainy;
         p.techState = null;
 
+        // China keeps neutral handling; rain contributes the only -1.
         Assert.AreEqual(BASE_LIMIT - 1, session.EffectiveCornerLimit(p, BASE_LIMIT));
     }
 
@@ -131,7 +135,7 @@ public class RaceSessionTest
         var p = CreatePlayer(session, TeamId.CN);
         session.Weather = WeatherType.Sunny;
 
-        // demo L1 赛道记忆 → 弯速 +1
+        // demo L1 赛道记忆 → 弯速 +1; neutral China handling leaves +1 net.
         Assert.AreEqual(BASE_LIMIT + 1, session.EffectiveCornerLimit(p, BASE_LIMIT));
     }
 
@@ -253,9 +257,10 @@ public class RaceSessionTest
         var session = CreateSession();
         var p = CreatePlayer(session, TeamId.CN);
 
-        // 直道（未过弯）→ 轻量化底盘 +1
+        // 直道（未过弯）→ 中国双档由 Go/Recover 出牌数表达，测试状态
+        // 未启用该模块时叠加中国车体的 +3（极速 +1、加速 +2）。
         int bonus = session.ComputeMovementBonus(p, crossedCorner: false);
-        Assert.AreEqual(1, bonus);
+        Assert.AreEqual(4, bonus);
 
         // 过弯 → 无直道加成
         int cornerBonus = session.ComputeMovementBonus(p, crossedCorner: true);
@@ -281,10 +286,10 @@ public class RaceSessionTest
 
         // 打酸菜（DE L1 demo 状态存在，但特技牌需手动打出）
         session.PlayTrick(p, GiveTrick(p, "de-sauerkraut"));
-        // 过弯 → 酸菜 +2
+        // 过弯 → 酸菜 +2（意大利才有基础出弯加速）。
         Assert.AreEqual(2, session.ComputeMovementBonus(p, true));
-        // 直道 → 酸菜 +1 + 轻量化底盘 +1 = 2
-        Assert.AreEqual(2, session.ComputeMovementBonus(p, false));
+        // 直道 → 德国基础直线 +1、酸菜 +1、轻量化底盘 +1 = 3
+        Assert.AreEqual(3, session.ComputeMovementBonus(p, false));
     }
 
     // ===== 排名 =====

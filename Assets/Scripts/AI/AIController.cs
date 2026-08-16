@@ -30,6 +30,25 @@ public class AIController : MonoBehaviour
     /// </summary>
     public int DecideGear()
     {
+        if (ai != null && TeamGearRules.IsChina(ai.teamId))
+        {
+            int target = ChinaGearShiftRules.ChooseAiGear(
+                ai.gear,
+                ai.chinaConsecutiveGearCount,
+                ai.deck.CountSpeedInHand(),
+                ai.HeatRatio,
+                config.aiHeatWarningThreshold);
+
+            // The two-gear policy still needs the same look-ahead safety check
+            // as standard teams. Without this guard China AI enters Go just
+            // before a tight apex, repeatedly spends engine heat and reaches
+            // the three-spin DNF threshold before its Recover cycle can help.
+            if (target == ChinaGearShiftRules.GoGear && HasChinaCornerRisk())
+                return ChinaGearShiftRules.RecoverGear;
+
+            return target;
+        }
+
         int currentGear = ai.gear;
         int speedInHand = ai.deck.CountSpeedInHand();
         float heatRatio = ai.HeatRatio;
@@ -53,10 +72,12 @@ public class AIController : MonoBehaviour
         }
 
         // ── P2: 弯道策略 ──
-        int lookAhead = config.aiLookAheadNodes;
         // 用降 1 档后的估算（如果可降）来评估降档是否有帮助
         int estCurrentGear = EstimateMovement(currentGear);
         int estLowerGear = currentGear > config.minGear ? EstimateMovement(currentGear - 1) : estCurrentGear;
+        int lookAhead = Mathf.Min(
+            config.aiLookAheadNodes,
+            Mathf.Max(1, estCurrentGear));
 
         // 检查前方所有弯道（不只第一个）
         for (int i = 1; i <= lookAhead; i++)
@@ -127,7 +148,7 @@ public class AIController : MonoBehaviour
             randomSource);
 
         // 引擎故障：速度牌不足时，每缺 1 张 +1 热量到弃牌堆。引擎不足 → 失控
-        int requiredCards = ai.gear + ai.extraCardSlotsThisTurn;
+        int requiredCards = game.GetMaxSpeedCardsThisTurn(ai);
         int missing = RaceRules.GetMissingSpeedCardCount(requiredCards, chosen.Count);
         if (missing > 0)
         {
@@ -173,7 +194,9 @@ public class AIController : MonoBehaviour
         }
 
         int estimatedMove = EstimateMovement(cardLimit);
-        int lookAhead = config.aiLookAheadNodes;
+        int lookAhead = Mathf.Min(
+            config.aiLookAheadNodes,
+            Mathf.Max(1, estimatedMove));
 
         for (int i = 1; i <= lookAhead; i++)
         {
@@ -198,6 +221,29 @@ public class AIController : MonoBehaviour
         return game != null && game.Session != null
             ? game.Session.EffectiveCornerLimit(ai, baseLimit)
             : baseLimit;
+    }
+
+    private bool HasChinaCornerRisk()
+    {
+        if (track == null || track.TotalNodes == 0)
+            return false;
+
+        int cardCount = ai.chinaConsecutiveGearCount > 0 ? 4 : 3;
+        int estimatedMove = EstimateMovement(cardCount);
+        int lookAhead = Mathf.Min(
+            Mathf.Min(config.aiLookAheadNodes, track.TotalNodes - 1),
+            Mathf.Max(1, estimatedMove));
+        for (int i = 1; i <= lookAhead; i++)
+        {
+            TrackNode node = track.GetNode((ai.position + i) % track.TotalNodes);
+            if (node.cornerId <= 0)
+                continue;
+
+            if (estimatedMove > GetEffectiveCornerLimit(node.cornerId))
+                return true;
+        }
+
+        return false;
     }
 
 }

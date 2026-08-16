@@ -13,7 +13,7 @@ using TMPro;
 public static class MainMenuBuilder
 {
     private const string SCENE_PATH = "Assets/Scenes/MainMenu.unity";
-    private const string FONT_SDF_GUID = "67393bfc3a860b042baa08f7fbeadd93"; // 思源黑體-Medium
+    private const string FONT_SDF_GUID = "5358f61b11e22f34e9fe8942033cf67b"; // SourceHanSansTC-Medium-HQ
 
     [MenuItem("Tools/Build MainMenu + Setup Scenes")]
     public static void Build()
@@ -89,11 +89,15 @@ public static class MainMenuBuilder
 
         // ── 车手选择按钮 ──
         MakeMenuBtn(canvasGO, "GarageBtn", "车手选择",
-            new Vector2(0, -80), new Color(0.18f, 0.42f, 0.62f));
+            new Vector2(0, -170), new Color(0.18f, 0.42f, 0.62f));
+
+        // ── 车队科技树按钮 ──
+        MakeMenuBtn(canvasGO, "TechTreeBtn", "车队科技树",
+            new Vector2(0, -80), new Color(0.42f, 0.28f, 0.14f));
 
         // ── 退出游戏 按钮 ──
         menuUI.quitButton = MakeMenuBtn(canvasGO, "QuitBtn", "退出游戏",
-            new Vector2(0, -170), new Color(0.5f, 0.15f, 0.15f))
+            new Vector2(0, -260), new Color(0.5f, 0.15f, 0.15f))
             .GetComponent<Button>();
 
         // ── 版本号（底部居中） ──
@@ -136,6 +140,7 @@ public static class MainMenuBuilder
         Vector2 anchoredPos, Color bgColor)
     {
         var go = NewGO(name, parent, typeof(Image), typeof(Button));
+        ButtonClickAnimation.Attach(go.GetComponent<Button>());
         var rt = go.GetComponent<RectTransform>();
         rt.anchorMin = rt.anchorMax = CC();
         rt.pivot = CC();

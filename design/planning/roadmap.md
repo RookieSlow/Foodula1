@@ -53,7 +53,7 @@
 | 13 | ~~维修区进站~~ | 功能 | ✅ 已完成：pit_entry 弹窗选择，冷却全部热量 + 停 1 回合 |
 | 14 | ~~车队特技~~ | 功能 | ✅ 已完成：12 张特技牌接入比赛（`docs/module-integration-guide.md` §6.4） |
 | 15 | ~~尾流系统~~ | 功能 | ✅ 已完成（`ComputeSlipstreamBonus`；帕尔玛/冰糕/筋斗云/范围科技全接入） |
-| 16 | 科技树 UI | 功能 | 用户自行处理；`SelectActiveNodes` 替换 demo 固定解锁 |
+| 16 | 科技树 UI | 功能 | 主菜单科技树入口、RP/解锁/激活持久化与比赛接线已完成；后续为视觉和数值平衡 |
 | 17 | ~~赛车随赛道方向旋转~~ | 视觉 | ✅ 已完成（`carSpriteFacingAngle`/`carRotateSpeed` 配置，出生朝向 + 移动平滑旋转 + 传送后朝向） |
 | 18 | 赛道背景图 | 视觉 | 集成 AI 生成的赛道俯视图作为背景 |
 | 19 | ~~独特科技补充~~ | 功能 | ✅ 已完成（MotherRoad / SchwarzbierFuel / FullEnglish / SunNeverSets / Broth / DriveThru / SmokedBBQ，见接入文档 §8） |

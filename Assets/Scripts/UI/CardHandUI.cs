@@ -301,7 +301,7 @@ public class CardHandUI : MonoBehaviour
         if (card.cardData.IsSpeed && player.playedSpeedCardsThisTurn.Count >= maxCards)
         {
             if (gameManager.hudUI != null)
-                gameManager.hudUI.SetStatus($"<color=orange>G{gear} 档已打满 {maxCards} 张速度牌</color>");
+                gameManager.hudUI.SetStatus($"<color=orange>{TeamGearRules.GetDisplayName(player.teamId, gear)} 档已打满 {maxCards} 张速度牌</color>");
             return;
         }
 
@@ -344,7 +344,7 @@ public class CardHandUI : MonoBehaviour
         int played = player.playedSpeedCardsThisTurn.Count;
         if (PendingPlayCard == null)
         {
-            gameManager.hudUI.SetStatus($"G{player.gear} 档 - 已打出 {played}/{maxCards} 张速度牌；点击结束出牌");
+            gameManager.hudUI.SetStatus($"{TeamGearRules.GetDisplayName(player.teamId, player.gear)} 档 - 已打出 {played}/{maxCards} 张速度牌；点击结束出牌");
             return;
         }
 

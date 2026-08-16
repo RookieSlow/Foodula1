@@ -84,7 +84,14 @@ public static class TechTreeRules
     public static int CountUnlockedCommonInTier(TechTreeState state, TechTreeDatabase db, TechTreeTier tier)
     {
         int count = 0;
-        foreach (var nodeId in db.commonNodeIds)
+        var ids = new List<string>(db.commonNodeIds);
+        // China uses the EV catalogue, but legacy saves/tests may contain
+        // standard IDs. Counting both keeps old states valid while the UI
+        // presents only the EV names for new China profiles.
+        if (state != null && state.teamId == TeamId.CN)
+            ids.AddRange(db.cnEvNodeIds);
+
+        foreach (var nodeId in ids)
         {
             var node = db.Get(nodeId);
             if (node != null && node.tier == tier && state.IsUnlocked(nodeId))
@@ -851,4 +858,3 @@ public static class TechTreeRules
         return diff < wrapDist ? diff : wrapDist;
     }
 }
-

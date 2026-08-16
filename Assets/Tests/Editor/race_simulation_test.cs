@@ -44,7 +44,11 @@ public class RaceSimulationTest
         var players = new List<PlayerState>();
         for (int i = 0; i < teams.Length; i++)
         {
-            var p = new PlayerState($"P{i}", i > 0, trackCfg.cells[0].index, 1) { teamId = teams[i] };
+            var p = new PlayerState($"P{i}", i > 0, trackCfg.cells[0].index, 1)
+            {
+                teamId = teams[i],
+                usesChinaGearSystem = teams[i] == TeamId.CN
+            };
             p.techState = TechTreeRules.CreateDemoState(teams[i]);
             UnlockEverything(p.techState);
             TechTreeRules.ResetPerRaceState(p.techState);

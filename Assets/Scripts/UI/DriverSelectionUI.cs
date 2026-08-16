@@ -172,6 +172,7 @@ public sealed class DriverSelectionUI : MonoBehaviour
         image.color = color;
         Button button = buttonObject.AddComponent<Button>();
         button.targetGraphic = image;
+        ButtonClickAnimation.Attach(button);
         TMP_Text text = CreateText(buttonObject.transform, "Label", label, size, Vector2.zero, dimensions, FontStyles.Bold);
         Stretch(text.rectTransform);
         return button;

@@ -460,14 +460,25 @@ public class TechTreeDatabase
         return node;
     }
 
-    /// <summary>Get all common nodes in a given tier.</summary>
+    /// <summary>Get all standard common nodes in a given tier.</summary>
     public List<TechNodeDef> GetCommonInTier(TechTreeTier tier)
     {
+        return GetCommonInTier(tier, false);
+    }
+
+    /// <summary>
+    /// Get the common tier pool for a team presentation. China uses the EV
+    /// naming variant (same effects/prices); all other teams use the standard
+    /// pool. This keeps catalogue selection out of UI code.
+    /// </summary>
+    public List<TechNodeDef> GetCommonInTier(TechTreeTier tier, bool useCnEv)
+    {
         var result = new List<TechNodeDef>();
-        foreach (var id in commonNodeIds)
+        IEnumerable<string> ids = useCnEv ? cnEvNodeIds : commonNodeIds;
+        foreach (var id in ids)
         {
-            var node = nodes[id];
-            if (node.tier == tier)
+            TechNodeDef node;
+            if (nodes.TryGetValue(id, out node) && node.tier == tier)
                 result.Add(node);
         }
         return result;
@@ -493,7 +504,7 @@ public class TechTreeDatabase
     public List<TechNodeDef> GetAllForTeamInTier(TeamId teamId, TechTreeTier tier, bool useCnEv = false)
     {
         var result = new List<TechNodeDef>();
-        result.AddRange(GetCommonInTier(tier));
+        result.AddRange(GetCommonInTier(tier, useCnEv && teamId == TeamId.CN));
         result.AddRange(GetUniqueInTier(teamId, tier));
         return result;
     }

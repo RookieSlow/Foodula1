@@ -22,7 +22,14 @@ the CCGS project framework.
 - `Gameplay/TrackDataLoader.cs` converts track JSON into runtime nodes and
   world positions.
 - `AI/AIController.cs` controls the current opponent.
-- `UI/` contains the card hand, HUD, card, and main-menu views.
+- `AI/AIController.cs` delegates team-specific China gear decisions to the
+  pure `ChinaGearShiftRules` module.
+- `TechTree/` contains the pure tech database/rules plus the
+  `TechTreeProfileStore` persistence adapter.
+- `UI/` contains the card hand, HUD, card, main-menu, driver-selection, and
+  runtime tech-tree views.
+- `Core/TeamGearRules.cs` is the team-aware gear facade; `Core/TeamVehicleRules.cs`
+  owns tunable team vehicle profiles without leaking them into UI code.
 - `Drivers/` contains the immutable driver catalog and progression rules;
   `Core/DriverSelectionState.cs` stores the current menu choice.
 - `Config/GameConfigSO.cs` contains tunable race, deck, gear, animation, and
@@ -41,9 +48,15 @@ The verified scene flow is:
 
 - Demo framework Phase 1 is complete.
 - Phase 2 asset replacement is in progress.
-- The project is in Production stage. A full audit on 2026-08-05 verified the
+- The project is in Production stage. A full audit on 2026-08-15 verified the
   MainMenu-to-Race flow, corrected race card/icon references, and cleared
   unsupported-glyph runtime warnings.
+- The main-menu tech-tree entry now persists per-team RP, unlocks, and active
+  nodes; `RaceSession` centralizes numeric tech modifiers while the manager
+  invokes explicit `TechTreeRules` event hooks at documented race phases.
+- China uses an independent Go/Recover drivetrain (3-card Go, 1-card Recover,
+  consecutive overclock heat and built-in Recover cooling) shared by player UI
+  and AI through the same pure rules module.
 - The driver-selection vertical slice is now implemented: 12 catalog entries,
   XP/tier rules, main-menu selection UI, and race initialization integration.
 - Card number and heat icons, Chinese UI, Chinese font support, team car
@@ -60,9 +73,9 @@ The verified scene flow is:
   implementations for deterministic tests. The reviewed refactor currently
   passes its original 16 EditMode tests with no Unity warnings or errors.
 - `Gameplay/TrackRules.cs` now provides pure, tested track traversal rules.
-  Together with four new track tests, the project currently passes 20 EditMode
-  tests. A Play Mode smoke test loaded Silverstone (60 nodes, 3 laps) with no
-  warnings or errors.
+  Together with the current feature tests, the project passes 307 EditMode
+  tests. A Play Mode smoke test loaded the menu, tech-tree panel and a China
+  race (Shanghai) with no project warnings or errors.
 
 ## Memory Provenance
 

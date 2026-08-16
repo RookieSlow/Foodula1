@@ -45,13 +45,13 @@
 | 9 | Tracks | `foodula-1-tracks.md` | In Progress | 8 JSON tracks with real-layout presentation, lanes, apex masks and limits; full pit/weather playthrough remains |
 | 10 | AI | `foodula-1-ai.md` | In Progress | Deterministic planner and one-opponent controller are implemented; multi-opponent personality tuning remains |
 | 11 | Visual Style | `foodula-1-visual-style.md` | In Progress | Main menu, race backgrounds, masks, minimap and card visuals are integrated; polish remains |
-| 12 | Tech Tree | `foodula-1-tech-tree.md` | In Progress | Rules/database are integrated for all teams; pre-race tech-tree configuration UI remains |
+| 12 | Tech Tree | `foodula-1-tech-tree.md` | In Progress | Rules/database, persistent profiles, main-menu configuration UI and race-loop hooks are integrated; balance/playtest remains |
 
 ## 2026-08-05 Implementation Snapshot
 
 The index was stale relative to the Unity project and is now aligned with the
 current implementation stage. `production/stage.txt` is `Production`. The
-project has 273 passing EditMode tests; the remaining `In Progress` items are
+project has 307 passing EditMode tests; the remaining `In Progress` items are
 deliberate feature gaps, not missing source files accidentally hidden by this
 index.
 

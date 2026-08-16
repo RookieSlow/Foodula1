@@ -54,6 +54,17 @@ public class AIPlannerTests
     }
 
     [Test]
+    public void test_corner_risk_with_low_heat_still_selects_lowest_cards()
+    {
+        CardDeck deck = create_full_hand_deck(15);
+
+        List<CardData> chosen = AIPlanner.ChooseSpeedCards(
+            deck, 2, 0f, true, 0.7f, 0.5f, 0f, new StubRandomSource());
+
+        assert_values(chosen, 1, 2);
+    }
+
+    [Test]
     public void test_variation_uses_injected_random_source()
     {
         CardDeck deck = create_full_hand_deck(14);

@@ -137,8 +137,14 @@ public class MVPGameManager : MonoBehaviour
         if (aiController == null)
             aiController = GetComponent<AIController>();
 
+        // Scene references can become stale when the RaceCanvas prefab is
+        // rebuilt (its child file IDs change). Resolve the live scene UI before
+        // falling back to the procedural HUD; otherwise AutoCreateUI creates a
+        // second, empty HUD on top of the authored one.
+        ResolveSceneUIReferences();
+
         // UI 初始化：Prefab 优先，硬编码回退
-        if (raceCanvasPrefab != null)
+        if (raceCanvasPrefab != null && hudUI == null && cardHandUI == null)
         {
             InstantiateUIFromPrefab();
         }
@@ -159,6 +165,55 @@ public class MVPGameManager : MonoBehaviour
         InitializeGame();
         InitializeRaceCamera();
         StartCoroutine(GameLoop());
+    }
+
+    /// <summary>
+    /// Recovers references to UI already present in the scene. This is
+    /// intentionally called before AutoCreateUI so a stale serialized
+    /// reference cannot produce a duplicate runtime HUD.
+    /// </summary>
+    private void ResolveSceneUIReferences()
+    {
+        if (hudUI == null)
+        {
+            HUDUI[] candidates = FindObjectsOfType<HUDUI>(true);
+            HUDUI fallback = null;
+            for (int i = 0; i < candidates.Length; i++)
+            {
+                HUDUI candidate = candidates[i];
+                if (candidate == null)
+                    continue;
+
+                // Prefer the authored prefab HUD: a valid gear button and the
+                // permanent return-to-menu button distinguish it from the
+                // minimal procedural fallback.
+                if (candidate.returnToMenuButton != null && candidate.gear1Button != null)
+                {
+                    hudUI = candidate;
+                    break;
+                }
+
+                if (fallback == null)
+                    fallback = candidate;
+            }
+
+            if (hudUI == null)
+                hudUI = fallback;
+        }
+
+        if (cardHandUI == null)
+        {
+            CardHandUI[] candidates = FindObjectsOfType<CardHandUI>(true);
+            for (int i = 0; i < candidates.Length; i++)
+            {
+                CardHandUI candidate = candidates[i];
+                if (candidate != null)
+                {
+                    cardHandUI = candidate;
+                    break;
+                }
+            }
+        }
     }
 
     private void InitializeRaceCamera()
@@ -319,6 +374,34 @@ public class MVPGameManager : MonoBehaviour
 
         if (confirmGearControl != null)
             confirmGearControl.interactable = interactable;
+    }
+
+    /// <summary>
+    /// Standard cars expose G1-G4; the Chinese electric car exposes only
+    /// Recover and Go. The existing prefab buttons are reused for both modes.
+    /// </summary>
+    private void ConfigureGearControls(PlayerState player)
+    {
+        bool china = player != null && TeamGearRules.IsChina(player.teamId);
+        SetGearButtonVisible(3, !china);
+        SetGearButtonVisible(4, !china);
+        SetGearButtonLabel(1, china ? "Recover" : "G1");
+        SetGearButtonLabel(2, china ? "Go" : "G2");
+        SetGearButtonLabel(3, "G3");
+        SetGearButtonLabel(4, "G4");
+    }
+
+    private void SetGearButtonVisible(int gear, bool visible)
+    {
+        if (gearButtons.TryGetValue(gear, out Button button) && button != null)
+            button.gameObject.SetActive(visible);
+    }
+
+    private void SetGearButtonLabel(int gear, string label)
+    {
+        if (!gearButtons.TryGetValue(gear, out Button button) || button == null) return;
+        TMP_Text text = button.GetComponentInChildren<TMP_Text>(true);
+        if (text != null) text.text = label;
     }
 
     /// <summary>
@@ -537,6 +620,7 @@ public class MVPGameManager : MonoBehaviour
 
         // Button
         UnityEngine.UI.Button btn = go.AddComponent<UnityEngine.UI.Button>();
+        ButtonClickAnimation.Attach(btn);
         int capturedGear = gear;
         btn.onClick.AddListener(() => OnGearButtonClicked(capturedGear));
         gearButtonImages[capturedGear] = img;
@@ -568,25 +652,31 @@ public class MVPGameManager : MonoBehaviour
         img.color = color;
 
         Button btn = go.AddComponent<Button>();
+        ButtonClickAnimation.Attach(btn);
         if (callback != null)
             btn.onClick.AddListener(callback);
 
-        // Label - use standard UI.Text for reliability (avoids TMP font issues)
+        // Use the same SDF font as the rest of the HUD. The old fallback to
+        // UnityEngine.UI.Text + an OS Arial font was rasterized at a fixed
+        // size and became blurry whenever the CanvasScaler resized the HUD.
         GameObject labelGO = new GameObject("Label", typeof(RectTransform));
         labelGO.transform.SetParent(go.transform, false);
         RectTransform lrt = labelGO.GetComponent<RectTransform>();
         lrt.anchorMin = Vector2.zero; lrt.anchorMax = Vector2.one;
         lrt.sizeDelta = Vector2.zero;
 
-        UnityEngine.UI.Text labelText = labelGO.AddComponent<UnityEngine.UI.Text>();
+        TMP_Text labelText = labelGO.AddComponent<TextMeshProUGUI>();
         labelText.text = label;
         labelText.fontSize = 20;
-        labelText.alignment = TextAnchor.MiddleCenter;
+        labelText.alignment = TextAlignmentOptions.Center;
         labelText.color = Color.black;
-        labelText.fontStyle = FontStyle.Bold;
-        // Use built-in Arial font
-        Font arial = Font.CreateDynamicFontFromOSFont("Arial", 16);
-        if (arial != null) labelText.font = arial;
+        labelText.fontStyle = FontStyles.Bold;
+
+        TMP_Text existingText = FindObjectOfType<TMP_Text>();
+        if (existingText != null && existingText.font != null)
+            labelText.font = existingText.font;
+        else if (TMP_Settings.defaultFontAsset != null)
+            labelText.font = TMP_Settings.defaultFontAsset;
 
         return btn;
     }
@@ -668,6 +758,7 @@ public class MVPGameManager : MonoBehaviour
         waitingForPitChoice = false;
         pitWaitingPlayer = null;
         SetGearControlsInteractable(true);
+        ConfigureGearControls(Player);
         if (laneChangePanel != null) laneChangePanel.SetActive(false);
         if (pitChoicePanel != null) pitChoicePanel.SetActive(false);
 
@@ -691,11 +782,14 @@ public class MVPGameManager : MonoBehaviour
     private void SetupPlayerForRace(PlayerState p, TeamId teamId)
     {
         p.teamId = teamId;
-        int poolSize = config.heatPoolPerPlayer;
+        p.usesChinaGearSystem = teamId == TeamId.CN;
+        int poolSize = TeamVehicleRules.GetBaseHeatPoolSize(teamId, config.heatPoolPerPlayer);
 
         if (config.enableTechTree)
         {
-            p.techState = session.CreateDemoTechState(teamId);
+            p.techState = p.isAI
+                ? session.CreateDemoTechState(teamId)
+                : TechTreeProfileStore.GetOrCreate(teamId, session.TechDb);
             TechTreeRules.ResetPerRaceState(p.techState);
             poolSize = session.EffectiveHeatPoolSize(p, poolSize);
 
@@ -798,9 +892,11 @@ public class MVPGameManager : MonoBehaviour
                     waitingForPlayerGear = true;
                     SetGearControlsInteractable(true);
                     pendingGear = p.gear;
+                    ConfigureGearControls(p);
                     foreach (var kv in gearButtonImages)
                         kv.Value.color = (kv.Key == p.gear) ? new Color(0.3f, 0.8f, 0.3f, 0.9f) : new Color(1f, 1f, 1f, 0.8f);
-                    if (hudUI != null) hudUI.SetStatus($"选择档位 (当前: G{p.gear})");
+                    if (hudUI != null)
+                        hudUI.SetStatus($"选择档位 (当前: {TeamGearRules.GetDisplayName(p.teamId, p.gear)})");
                     if (cardHandUI != null) { cardHandUI.SetGearSelectionMode(true); cardHandUI.UpdateDeckInfo(p); }
 
                     yield return new WaitWhile(() => waitingForPlayerGear);
@@ -825,6 +921,7 @@ public class MVPGameManager : MonoBehaviour
                 if (!p.isAI && p.deck.CountSpeedInHand() == 0 && p.gear > config.minGear)
                 {
                     p.gear = config.minGear;
+                    p.chinaConsecutiveGearCount = 0;
                     if (hudUI != null)
                         hudUI.AppendLog("<color=orange>No speed cards! Forced to Gear 1.</color>");
                 }
@@ -874,7 +971,7 @@ public class MVPGameManager : MonoBehaviour
                     if (hudUI != null)
                     {
                         hudUI.RefreshPlayerResources(p);
-                        hudUI.SetStatus($"G{p.gear} 档 - 逐张选择并确认（最多 {GetMaxSpeedCardsThisTurn(p)} 张速度牌）");
+                        hudUI.SetStatus($"{TeamGearRules.GetDisplayName(p.teamId, p.gear)} 档 - 逐张选择并确认（最多 {GetMaxSpeedCardsThisTurn(p)} 张速度牌）");
                     }
 
                     yield return new WaitWhile(() => waitingForPlayerCards);
@@ -966,7 +1063,10 @@ public class MVPGameManager : MonoBehaviour
         if (p.skipNextTurn)
         {
             p.skipNextTurn = false;
-            p.gear = config.minGear;
+            p.gear = TeamGearRules.IsChina(p.teamId)
+                ? ChinaGearShiftRules.RecoverGear
+                : config.minGear;
+            p.chinaConsecutiveGearCount = 0;
             if (hudUI != null)
                 hudUI.AppendLog($"{p.name} sits out this turn (recovery / pit stop).");
         }
@@ -994,7 +1094,10 @@ public class MVPGameManager : MonoBehaviour
         p.position = rewindPos;
 
         // 强制 1 档
-        p.gear = config.minGear;
+        p.gear = TeamGearRules.IsChina(p.teamId)
+            ? ChinaGearShiftRules.RecoverGear
+            : config.minGear;
+        p.chinaConsecutiveGearCount = 0;
 
         // 跳过下回合
         p.skipNextTurn = true;
@@ -1057,16 +1160,27 @@ public class MVPGameManager : MonoBehaviour
 
     private void ApplyGearShift(PlayerState p, int targetGear)
     {
-        GearShiftResult shift = RaceRules.ResolveGearShift(
+        TeamGearRules.Resolution shift = TeamGearRules.Resolve(
+            p.teamId,
             p.gear,
+            p.chinaConsecutiveGearCount,
             targetGear,
             config.minGear,
             config.maxGear,
-            config.twoGearShiftHeatCost);
+            config.twoGearShiftHeatCost,
+            config.gearOneCooldown,
+            config.gearTwoCooldown);
 
         if (TryPayHeat(p, shift.HeatCost, p.position, "shift 2 gears"))
         {
             p.gear = shift.TargetGear;
+            p.chinaConsecutiveGearCount = shift.IsChina ? shift.ConsecutiveCount : 0;
+
+            // China Go overclock heat is a distinct cost from the standard
+            // two-gear shift payment and follows the normal spin-out path.
+            if (shift.AdditionalHeat > 0)
+                TryPayHeat(p, shift.AdditionalHeat, p.position,
+                    $"{TeamGearRules.GetDisplayName(p.teamId, p.gear)} overclock");
         }
         // 若 TryPayHeat 失败（失控），HandleSpin 已将档位设为最低档
 
@@ -1084,10 +1198,15 @@ public class MVPGameManager : MonoBehaviour
     {
         if (p.isBlown || p.hasFinished) return;
 
-        int cooldown = RaceRules.GetCooldown(
-            p.gear,
-            config.gearOneCooldown,
-            config.gearTwoCooldown);
+        int cooldown = TeamGearRules.GetCooldown(
+            p.teamId, p.gear, p.chinaConsecutiveGearCount,
+            config.gearOneCooldown, config.gearTwoCooldown);
+
+        // Standard teams layer their cooling-efficiency stat on the normal
+        // G1/G2 reaction step. China's Recover cooldown is self-contained and
+        // remains governed solely by ChinaGearShiftRules.
+        if (!TeamGearRules.IsChina(p.teamId))
+            cooldown += TeamVehicleRules.GetCooling(p.teamId);
 
         if (p.techState != null)
         {
@@ -1099,7 +1218,7 @@ public class MVPGameManager : MonoBehaviour
         {
             int removed = p.deck.RemoveHeatFromHand(cooldown);
             if (removed > 0 && hudUI != null)
-                hudUI.AppendLog($"{p.name} (G{p.gear}): cools {removed} Heat → engine.");
+                hudUI.AppendLog($"{p.name} ({TeamGearRules.GetDisplayName(p.teamId, p.gear)}): cools {removed} Heat → engine.");
         }
     }
 
@@ -1152,7 +1271,9 @@ public class MVPGameManager : MonoBehaviour
     /// <summary>本回合最大可出速度牌数 = 档位 + 额外槽（关东慢煮/火锅底料）。</summary>
     public int GetMaxSpeedCardsThisTurn(PlayerState p)
     {
-        int max = p.gear + p.extraCardSlotsThisTurn;
+        int max = TeamGearRules.GetSpeedCardCount(
+            p.teamId, p.gear, p.chinaConsecutiveGearCount,
+            p.extraCardSlotsThisTurn);
         if (TrickCardRules.HasHotpotAttack(p.trickState)) max += 1;
         return max;
     }
@@ -1315,7 +1436,9 @@ public class MVPGameManager : MonoBehaviour
             {
                 int overspeed = totalSpeed - limit;
                 // 科技：每圈 1 次热量减免（最少为 1）
-                int heat = Mathf.Max(1, overspeed - session.ConsumeHeatReduction(p));
+                int heat = Mathf.Max(1,
+                    overspeed - session.ConsumeHeatReduction(p));
+                heat += TeamVehicleRules.GetCornerHeatPenalty(p.teamId);
                 string cname = trackManager.GetCornerName(cornerId);
 
                 // 尝试支付热量；引擎不足 → 失控
@@ -1826,6 +1949,8 @@ public class MVPGameManager : MonoBehaviour
                     rp = TechTreeRules.ApplyCavallinoRampante(rp, e.rank, TechTreeRules.IsCavallinoHomeRace(country));
                 }
                 p.techState.rpBalance += rp;
+                if (!p.isAI)
+                    TechTreeProfileStore.Save(p.techState);
             }
             lines.Add($"{e.rank}. {p.name}: +{rp} RP{(p.techState != null ? $" (余额 {p.techState.rpBalance})" : "")}");
         }
@@ -2019,6 +2144,8 @@ public class MVPGameManager : MonoBehaviour
     public void OnGearButtonClicked(int gear)
     {
         if (phase != GamePhase.WaitingForGear || !waitingForPlayerGear) return;
+        if (Player != null && TeamGearRules.IsChina(Player.teamId) && gear > ChinaGearShiftRules.GoGear)
+            return;
         pendingGear = gear;
         // 高亮选中的档位按钮
         foreach (var kv in gearButtonImages)
@@ -2026,7 +2153,7 @@ public class MVPGameManager : MonoBehaviour
             kv.Value.color = (kv.Key == gear) ? new Color(0.3f, 0.8f, 0.3f, 0.9f) : new Color(1f, 1f, 1f, 0.8f);
         }
         if (hudUI != null)
-            hudUI.SetStatus($"已选 G{gear} 档 - 点击确认锁定");
+            hudUI.SetStatus($"已选 {TeamGearRules.GetDisplayName(Player.teamId, gear)} 档 - 点击确认锁定");
     }
 
     public void OnConfirmGearClicked()
@@ -2149,7 +2276,7 @@ public class MVPGameManager : MonoBehaviour
         int speedCount = player.playedSpeedCardsThisTurn.Count;
 
         // 引擎故障：速度牌不足时，每缺 1 张 → +1 热量到弃牌堆。引擎不足 → 失控
-        int required = player.gear + player.extraCardSlotsThisTurn;
+        int required = GetMaxSpeedCardsThisTurn(player);
         int missing = RaceRules.GetMissingSpeedCardCount(required, speedCount);
         if (missing > 0)
         {

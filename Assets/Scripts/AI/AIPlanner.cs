@@ -13,7 +13,12 @@ public static class AIPlanner
         float variationChance,
         IRandomSource randomSource)
     {
+        // A known corner risk takes priority over aggression even when the
+        // engine is still cool.  Choosing the highest cards in that state
+        // creates avoidable overspeed spins and makes cross-team benchmarks
+        // measure reckless card selection instead of vehicle identity.
         bool chooseLowCards =
+            hasCornerRisk ||
             heatRatio >= heatWarningThreshold ||
             (hasCornerRisk && heatRatio >= cautiousHeatThreshold);
 

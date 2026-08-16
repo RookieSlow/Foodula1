@@ -1,18 +1,19 @@
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using TMPro;
 
 /// <summary>
 /// 一键修复模糊文字问题。
 /// 根因：LiberationSans 使用了 Mobile shader（无抗锯齿平滑），
-/// msyh SDF 的 _GradientScale 与采样字号不匹配导致 SDF 边缘过宽。
+/// 中文 SDF 字体图集采样过低或使用 Mobile shader 会导致 SDF 边缘发虚。
 /// 菜单: Foodular1 → Fix Blurry Text
 /// </summary>
 public static class FixBlurryText
 {
     // ── 已知 GUID ──
     private const string LIBERATION_SANS_GUID  = "8f586378b4e144a9851e7b34d9b748ee";
-    private const string MSYH_SDF_GUID         = "67393bfc3a860b042baa08f7fbeadd93";
+    private const string MSYH_SDF_GUID         = "5358f61b11e22f34e9fe8942033cf67b";
     private const string TMP_SDF_SHADER_GUID   = "68e6db2ebdc24f95958faec2be5558d6";   // TextMeshPro/Distance Field (标准桌面版)
     private const string TMP_SDF_MOBILE_GUID   = "fe393ace9b354375a9cb14cdbbc28be4";   // TextMeshPro/Mobile/Distance Field (移动版，无平滑)
 
@@ -27,11 +28,13 @@ public static class FixBlurryText
         anyFix |= FixLiberationSansShader();
         anyFix |= FixMsyhGradientScale();
         anyFix |= FixRaceCanvasPrefabFonts();
+        anyFix |= FixLoadedSceneFonts();
         anyFix |= FixTMPSettings();
 
         if (anyFix)
         {
             AssetDatabase.SaveAssets();
+            EditorSceneManager.SaveOpenScenes();
             AssetDatabase.Refresh();
             Debug.Log("<color=green>✓ Blurry text fixes applied!</color> " +
                       "Enter Play Mode to verify. If still blurry, " +
@@ -75,10 +78,9 @@ public static class FixBlurryText
     }
 
     // ──────────────────────────────────────────────
-    //  Fix 2: msyh SDF 的 _GradientScale 校准
-    //  SDF 清晰度公式: GradientScale ≈ SamplingPointSize × 0.1
-    //  当前: PointSize=237, GradientScale=65 → 比例 3.65 (正常应 ~24)
-    //  GradientScale 太高 = SDF 抗锯齿边缘过宽 = 文字模糊
+    //  Fix 2: 中文 SDF 的 _GradientScale 校准
+    //  TMP 生成器以 atlas padding + 1 写入 GradientScale。它与采样点
+    //  尺寸无关；按 pointSize 的旧公式会把高质量图集重新调糊。
     // ──────────────────────────────────────────────
     static bool FixMsyhGradientScale()
     {
@@ -98,9 +100,9 @@ public static class FixBlurryText
             samplingPtSize = fontAsset.faceInfo.pointSize;
         }
 
-        // TMP 标准公式: GradientScale = SamplingPointSize / 10 (向上取整)
-        // 但实际需要配合 _ScaleRatioA/B/C 和 Canvas Scaler，此处按 0.1 比例校准
-        float correctGS = Mathf.Round(samplingPtSize * 0.1f);
+        float correctGS = fontAsset != null
+            ? fontAsset.atlasPadding + 1f
+            : 10f;
         float currentGS = mat.GetFloat("_GradientScale");
 
         if (Mathf.Abs(currentGS - correctGS) < 0.5f)
@@ -161,7 +163,31 @@ public static class FixBlurryText
     }
 
     // ──────────────────────────────────────────────
-    //  Fix 4: TMP Settings 默认字体 + 回退链
+    //  Fix 4: 已打开场景中的 TMP 全部切换到高采样字体
+    // ──────────────────────────────────────────────
+    static bool FixLoadedSceneFonts()
+    {
+        var font = FindFontAsset(MSYH_SDF_GUID);
+        if (font == null) return false;
+
+        bool changed = false;
+        foreach (var tmp in Resources.FindObjectsOfTypeAll<TMP_Text>())
+        {
+            if (tmp == null || EditorUtility.IsPersistent(tmp) || !tmp.gameObject.scene.IsValid())
+                continue;
+            if (tmp.font == font) continue;
+
+            tmp.font = font;
+            EditorUtility.SetDirty(tmp);
+            EditorSceneManager.MarkSceneDirty(tmp.gameObject.scene);
+            changed = true;
+        }
+
+        return changed;
+    }
+
+    // ──────────────────────────────────────────────
+    //  Fix 5: TMP Settings 默认字体 + 回退链
     // ──────────────────────────────────────────────
     static bool FixTMPSettings()
     {

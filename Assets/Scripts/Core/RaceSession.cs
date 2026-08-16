@@ -116,13 +116,24 @@ public class RaceSession
 
     private void UnlockDemoTech(TechTreeState state)
     {
-        string[] commons =
-        {
-            "common-l1-heat-coating",
-            "common-l1-lightweight-chassis",
-            "common-l1-track-memory",
-            "common-l1-expanded-tank"
-        };
+        // China uses the EV-named common catalogue.  The effects are shared
+        // with the standard catalogue, but keeping the IDs aligned here is
+        // important because EV L2 prerequisites point to EV L1 nodes.
+        string[] commons = state.teamId == TeamId.CN
+            ? new[]
+            {
+                "cn-ev-l1-heat-pump",
+                "cn-ev-l1-pmsm",
+                "cn-ev-l1-torque-vector",
+                "cn-ev-l1-solid-state"
+            }
+            : new[]
+            {
+                "common-l1-heat-coating",
+                "common-l1-lightweight-chassis",
+                "common-l1-track-memory",
+                "common-l1-expanded-tank"
+            };
         foreach (var id in commons)
             TechTreeRules.UnlockNode(state, id, TechDb);
 
@@ -188,6 +199,18 @@ public class RaceSession
             case TechEffectType.SlipstreamRangeBonus:
                 m.slipstreamRangeBonus = System.Math.Max(m.slipstreamRangeBonus, (int)effect.value);
                 break;
+            case TechEffectType.EngineCapacityBonus:
+                m.engineCapacityBonus += (int)effect.value;
+                break;
+            case TechEffectType.HandSizeBonus:
+                m.handSizeBonus += (int)effect.value;
+                break;
+            case TechEffectType.SpinCounterMaxBonus:
+                m.spinCounterMaxBonus += (int)effect.value;
+                break;
+            case TechEffectType.LightweightDoubler:
+                m.hasPizzaSottile = true;
+                break;
         }
     }
 
@@ -219,7 +242,9 @@ public class RaceSession
     public int EffectiveCornerLimit(PlayerState p, int baseLimit)
     {
         if (baseLimit >= 99) return baseLimit;
-        int bonus = 0;
+        // Team handling is a base-car attribute; tech-tree bonuses layer on
+        // top of it. This keeps the corner formula in one pure entry point.
+        int bonus = p != null ? TeamVehicleRules.GetHandling(p.teamId) : 0;
         if (p.techState != null)
         {
             var m = GetModifiers(p);
@@ -257,10 +282,22 @@ public class RaceSession
     // ═══════════════════════════════════════════════════════════════════
 
     /// <summary>Go 模式：高挡位激进驾驶（火锅底料前置）。</summary>
-    public bool IsGoMode(PlayerState p) => p.gear >= 3;
+    public bool IsGoMode(PlayerState p)
+    {
+        if (p == null) return false;
+        return TeamGearRules.IsChina(p.teamId) && p.usesChinaGearSystem
+            ? ChinaGearShiftRules.IsGo(p.gear)
+            : p.gear >= 3;
+    }
 
     /// <summary>Recover 模式：低挡位冷却驾驶（冰糕前置）。</summary>
-    public bool IsRecoverMode(PlayerState p) => p.gear <= 2;
+    public bool IsRecoverMode(PlayerState p)
+    {
+        if (p == null) return false;
+        return TeamGearRules.IsChina(p.teamId) && p.usesChinaGearSystem
+            ? ChinaGearShiftRules.IsRecover(p.gear)
+            : p.gear <= 2;
+    }
 
     /// <summary>
     /// 尝试打出特技牌。校验顺序：类型 → 定义 → 每回合限 1 → 模式前置。
@@ -307,8 +344,38 @@ public class RaceSession
     public int ComputeMovementBonus(PlayerState p, bool crossedCorner)
     {
         int bonus = 0;
-        if (p.techState != null && !crossedCorner)
+        if (!crossedCorner)
+        {
+            // Base vehicle pace applies on straights. Standard teams use the
+            // chassis profile plus any team-specific card conversion. China
+            // uses the same documented profile only while Go is active; the
+            // Recover mode remains a deliberately conservative one-card turn.
+            if (!TeamGearRules.IsChina(p.teamId) || !p.usesChinaGearSystem)
+            {
+                bonus += TeamVehicleRules.GetStraightMovementBonus(p.teamId);
+                if (p.playedSpeedCardsThisTurn != null)
+                {
+                    if (p.playedSpeedCardsThisTurn.Count > 0)
+                        bonus += TeamVehicleRules.GetStraightTurnBonus(p.teamId);
+                    foreach (CardData card in p.playedSpeedCardsThisTurn)
+                        if (card != null)
+                            bonus += TeamVehicleRules.GetStraightCardBonus(p.teamId, card.value);
+                }
+            }
+            else if (IsGoMode(p))
+            {
+                // Go expresses the electric drivetrain's documented +1 top
+                // speed / +2 acceleration package on a straight.  Recover
+                // remains deliberately conservative at one card.
+                bonus += TeamVehicleRules.GetStraightMovementBonus(p.teamId);
+            }
+        }
+
+        if (p.techState != null && !crossedCorner &&
+            (!TeamGearRules.IsChina(p.teamId) || !p.usesChinaGearSystem || IsGoMode(p)))
             bonus += GetModifiers(p).EffectiveSpeedBonusStraight;
+        if (crossedCorner)
+            bonus += TeamVehicleRules.GetCornerExitBonus(p.teamId);
         bonus += TrickCardRules.GetSauerkrautBonus(p.trickState, crossedCorner);
         return bonus;
     }
@@ -359,7 +426,7 @@ public class RaceSession
         // 冰糕：前车开启 → 身后赛车无法享受尾流
         if (TrickCardRules.IsIceJellyActive(leader.trickState)) return 0;
 
-        int bonus = SLIPSTREAM_BASE_BONUS;
+        int bonus = SLIPSTREAM_BASE_BONUS + TeamVehicleRules.GetSlipstreamBonus(p.teamId);
         bonus += TrickCardRules.GetParmigianoBonus(p.trickState);
         // 筋斗云：本回合打过 ATTACK 特技牌 → 尾流 +2
         if (p.techState != null &&
