@@ -87,6 +87,9 @@ with 0 failures, warnings, or errors.
 - [x] Make ordinary tracks use the inside lane by default, move only the
   trailing car outside when cars share a node, and keep Indianapolis vehicle
   placement tied to the player's explicit lane choice.
+- [x] Preserve authored corners, start/finish, and pit landmarks while
+  re-sampling only the straight runs at equal arc-length intervals; add a
+  numbered F8 runtime node overlay and a regression test covering all tracks.
 - [x] Rotate vehicles to follow the tangent between track nodes (default sprite offset corrected to 0° for right-facing car art).
 - [ ] Integrate track weather-pool selection after the core track path is
   stable.

@@ -143,6 +143,63 @@ public class TrackDataLoaderTest
     }
 
     [Test]
+    public void test_all_tracks_preserve_authored_landmarks_when_sampling()
+    {
+        string[] trackIds = TrackDataLoader.GetAvailableTrackIds();
+        Assert.IsTrue(trackIds.Length >= 8, "应覆盖所有可选赛道和回退赛道");
+
+        foreach (string trackId in trackIds)
+        {
+            TrackConfig cfg = TrackDataLoader.LoadConfig(trackId);
+            Assert.IsNotNull(cfg, $"赛道配置缺失: {trackId}");
+
+            float width = trackId == TrackManager.FallbackTrackId ? 31.9f : 30f;
+            float height = trackId == TrackManager.FallbackTrackId ? 12.3f : 16.875f;
+            Vector2[] authored = TrackDataLoader.ConfigToWorldPositionsRaw(cfg, width, height);
+            Vector2[] sampled = TrackDataLoader.ConfigToWorldPositions(cfg, width, height);
+
+            for (int i = 0; i < cfg.cells.Length; i++)
+            {
+                CellData cell = cfg.cells[i];
+                bool isLandmark = cell.IsCorner || cell.IsStartFinish || cell.IsPitEntry || cell.IsPitExit;
+                if (isLandmark)
+                {
+                    Assert.AreEqual(
+                        authored[i],
+                        sampled[i],
+                        $"{trackId} 节点 {i} 的弯道/地标坐标不应因采样漂移");
+                }
+            }
+
+            float authoredLength = TrackLayoutRules.CalculateClosedPathLength(authored);
+            float sampledLength = TrackLayoutRules.CalculateClosedPathLength(sampled);
+            Assert.LessOrEqual(
+                sampledLength,
+                authoredLength + 0.001f,
+                $"{trackId} 重采样不应制造超出原始中心线的路径长度");
+        }
+    }
+
+    [Test]
+    public void test_anchored_sampling_preserves_a_single_landmark()
+    {
+        Vector2[] authored =
+        {
+            new Vector2(0f, 0f),
+            new Vector2(3f, 0f),
+            new Vector2(6f, 0f),
+            new Vector2(6f, 3f),
+            new Vector2(0f, 3f)
+        };
+        bool[] anchors = { true, false, false, false, false };
+
+        Vector2[] sampled = TrackLayoutRules.ResampleAnchoredPath(authored, anchors);
+
+        Assert.AreEqual(authored[0], sampled[0], "单个起点锚点也不得因重采样漂移");
+        Assert.AreEqual(authored.Length, sampled.Length);
+    }
+
+    [Test]
     public void test_build_corner_maps_assigns_limits_and_names()
     {
         TrackConfig cfg = TrackDataLoader.LoadConfig("suzuka_sushi");

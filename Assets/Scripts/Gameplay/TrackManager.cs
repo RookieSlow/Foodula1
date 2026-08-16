@@ -35,7 +35,7 @@ public class TrackManager : MonoBehaviour
     public float cornerMaskWidth = 1.05f;
     [Min(0.01f)]
     public float apexMaskDiameter = 0.72f;
-    [Tooltip("仅用于调试；默认游玩时隐藏所有结点和车道线。")]
+    [Tooltip("调试模式：游玩时按 F8 显示/隐藏带编号的节点覆盖层。")]
     public bool showDebugTrackNodesInPlay;
 
     // --- 运行时数据 ---
@@ -112,6 +112,11 @@ public class TrackManager : MonoBehaviour
         }
 
         RenderTrack();
+
+        TrackDebugOverlay overlay = GetComponent<TrackDebugOverlay>();
+        if (overlay == null)
+            overlay = gameObject.AddComponent<TrackDebugOverlay>();
+        overlay.Initialize(this);
     }
 
     // ===================================================================
@@ -352,7 +357,9 @@ public class TrackManager : MonoBehaviour
                 medianSpacing * (config != null ? config.trackLineSpacingFillRatio : 0.3f))
             : lineWidth;
 
-        bool showDebugNodes = !Application.isPlaying || showDebugTrackNodesInPlay;
+        // Play-mode debugging is handled by TrackDebugOverlay so it can be
+        // toggled with F8 without rebuilding masks or changing the track path.
+        bool showDebugNodes = !Application.isPlaying;
 
         // Spawn node GameObjects only for editor/debug visualization. The
         // playable scene uses the track background plus corner masks instead.

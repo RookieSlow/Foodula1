@@ -96,7 +96,10 @@ public static class TrackDataLoader
 
     /// <summary>
     /// Extract world-space positions from a TrackConfig's cells.
-    /// Normalized coordinates (0-1) are mapped to world space:
+    /// Normalized coordinates (0-1) are mapped to world space and then
+    /// re-sampled at equal arc-length intervals within each straight run.
+    /// Authored corners, start/finish, and pit landmarks remain fixed so they
+    /// continue to match the background artwork.
     ///   center (0.5, 0.5) → worldOrigin
     ///   size = worldWidth x worldHeight units
     /// </summary>
@@ -110,6 +113,28 @@ public static class TrackDataLoader
     /// This preserves non-square source layouts without changing their normalized coordinates.
     /// </summary>
     public static Vector2[] ConfigToWorldPositions(
+        TrackConfig config,
+        float worldWidth,
+        float worldHeight,
+        Vector2? worldOrigin = null)
+    {
+        Vector2[] authoredPositions = ConfigToWorldPositionsRaw(config, worldWidth, worldHeight, worldOrigin);
+        bool[] anchors = new bool[config.cells.Length];
+        for (int i = 0; i < config.cells.Length; i++)
+        {
+            CellData cell = config.cells[i];
+            anchors[i] = cell.IsCorner || cell.IsStartFinish || cell.IsPitEntry || cell.IsPitExit;
+        }
+
+        return TrackLayoutRules.ResampleAnchoredPath(authoredPositions, anchors);
+    }
+
+    /// <summary>
+    /// Extract authored world-space positions without presentation sampling.
+    /// This is useful for editor diagnostics and preserves the exact JSON
+    /// coordinates for tools that need to inspect the source layout.
+    /// </summary>
+    public static Vector2[] ConfigToWorldPositionsRaw(
         TrackConfig config,
         float worldWidth,
         float worldHeight,
