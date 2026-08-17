@@ -110,6 +110,9 @@ with 0 failures, warnings, or errors.
   view remains fixed while the player pans, zooms, or follows another vehicle.
 - [x] Tune race presentation pacing with 0.14s movement focus lead-in, 0.06s
   per-node pause and 0.10s focus trail-out; keep the authored ±15-cell window.
+- [x] Add a configurable test assist that guarantees the China player's
+  `cn-hotpot-base` ATTACK card is present in the opening hand while preserving
+  hand size and card conservation.
 - [x] Rotate vehicles to follow the tangent between track nodes (default sprite offset corrected to 0° for right-facing car art).
 - [ ] Integrate track weather-pool selection after the core track path is
   stable.

@@ -30,6 +30,7 @@ MonoBehaviour:
   speedCardDistribution: 010000000100000001000000020000000200000002000000020000000200000003000000030000000300000004000000
   initialHeatCards: 3
   heatPoolPerPlayer: 6
+  ensurePlayerAttackTrickInOpeningHand: 1
   minGear: 1
   maxGear: 4
   moveAnimSpeed: 12

@@ -815,6 +815,13 @@ public class MVPGameManager : MonoBehaviour
             p.deck.AddTrickCardsToDrawPile(session.CreateInitialTrickCards(teamId));
 
         p.deck.DrawToHand(session.EffectiveHandSize(p, config.handSize));
+
+        if (!p.isAI && teamId == TeamId.CN && config.ensurePlayerAttackTrickInOpeningHand)
+        {
+            string attackId = session.TrickDb.GetAttackId(teamId);
+            if (!p.deck.EnsureTrickCardInHand(attackId))
+                Debug.LogWarning($"[MVPGameManager] 无法保证中国队 ATTACK 牌 {attackId} 进入开局手牌。");
+        }
     }
 
     private void SpawnCars()

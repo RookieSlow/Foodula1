@@ -352,6 +352,25 @@ public class CardDeckTest
     }
 
     [Test]
+    public void test_ensure_trick_card_in_hand_preserves_hand_size_and_card_count()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        var attack = CardData.CreateTrick("cn-hotpot-base");
+        var defense = CardData.CreateTrick("cn-ice-jelly");
+        Assert.AreEqual(2, deck.AddTrickCardsToDrawPile(new List<CardData> { attack, defense }));
+        Assert.IsTrue(deck.DrawToHand(config.handSize));
+
+        int handSizeBefore = deck.HandCount;
+        int totalBefore = deck.DrawPileCount + deck.HandCount + deck.DiscardPileCount;
+
+        Assert.IsTrue(deck.EnsureTrickCardInHand("cn-hotpot-base"));
+        Assert.AreEqual(handSizeBefore, deck.HandCount);
+        Assert.IsTrue(deck.GetTricksInHand().Exists(card => card.trickId == "cn-hotpot-base"));
+        Assert.AreEqual(totalBefore, deck.DrawPileCount + deck.HandCount + deck.DiscardPileCount);
+    }
+
+    [Test]
     public void test_discard_trick_card_removes_from_hand_to_discard()
     {
         var config = CreateConfig();

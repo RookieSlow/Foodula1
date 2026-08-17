@@ -412,6 +412,76 @@ public class CardDeck
     }
 
     /// <summary>
+    /// Ensures one exact trick-card instance is in the opening hand. This is a
+    /// test-assist hook: it preserves card conservation and the current hand
+    /// size by swapping a non-heat opening card back into the draw pile.
+    /// </summary>
+    public bool EnsureTrickCardInHand(string trickId)
+    {
+        if (string.IsNullOrEmpty(trickId)) return false;
+
+        for (int i = 0; i < hand.Count; i++)
+        {
+            CardData held = hand[i];
+            if (held != null && held.IsTrick && held.trickId == trickId)
+                return true;
+        }
+
+        CardData requested = null;
+        for (int i = 0; i < drawPile.Count; i++)
+        {
+            CardData candidate = drawPile[i];
+            if (candidate != null && candidate.IsTrick && candidate.trickId == trickId)
+            {
+                requested = candidate;
+                drawPile.RemoveAt(i);
+                break;
+            }
+        }
+
+        if (requested == null)
+        {
+            for (int i = 0; i < discardPile.Count; i++)
+            {
+                CardData candidate = discardPile[i];
+                if (candidate != null && candidate.IsTrick && candidate.trickId == trickId)
+                {
+                    requested = candidate;
+                    discardPile.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        if (requested == null) return false;
+
+        if (hand.Count > 0)
+        {
+            int replacementIndex = -1;
+            for (int i = 0; i < hand.Count; i++)
+            {
+                if (hand[i] != null && !hand[i].IsHeat)
+                {
+                    replacementIndex = i;
+                    break;
+                }
+            }
+
+            if (replacementIndex < 0)
+                replacementIndex = hand.Count - 1;
+
+            CardData displaced = hand[replacementIndex];
+            hand.RemoveAt(replacementIndex);
+            if (displaced != null)
+                drawPile.Add(displaced);
+        }
+
+        hand.Add(requested);
+        ShuffleDrawPile();
+        return true;
+    }
+
+    /// <summary>
     /// Adds runtime-created cards directly to the hand. This is intentionally
     /// broader than <see cref="AddTrickCardsToDrawPile"/> for temporary heat cards
     /// granted by trick/technology effects.

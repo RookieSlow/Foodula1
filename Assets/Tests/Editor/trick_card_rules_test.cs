@@ -75,6 +75,16 @@ public class TrickCardRulesTests
         Assert.That(defenseCount, Is.EqualTo(2));
     }
 
+    [Test]
+    public void test_china_initial_trick_cards_include_hotpot_attack()
+    {
+        var cards = TrickCardRules.CreateInitialTrickCards(TeamId.CN, db);
+        string attackId = db.GetAttackId(TeamId.CN);
+
+        Assert.That(attackId, Is.EqualTo("cn-hotpot-base"));
+        Assert.That(cards.FindAll(c => c.trickId == attackId).Count, Is.EqualTo(2));
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // Play Validation
     // ═══════════════════════════════════════════════════════════════════

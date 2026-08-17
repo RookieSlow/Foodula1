@@ -179,6 +179,9 @@ public class GameConfigSO : ScriptableObject
     [Tooltip("特技牌系统：开局 4 张车队特技牌，每回合限 1")]
     public bool enableTrickCards = true;
 
+    [Tooltip("测试辅助：保证中国队玩家开局手牌中有 1 张 ATTACK 特技牌")]
+    public bool ensurePlayerAttackTrickInOpeningHand = false;
+
     [Tooltip("科技树系统：demo 预算解锁 L1 节点，修正手牌/热量池/弯速等")]
     public bool enableTechTree = true;
 
