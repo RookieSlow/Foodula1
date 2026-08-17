@@ -548,14 +548,18 @@
     },
     {
       "index": 40,
-      "type": "straight",
-      "name": "龙须糖超长直道",
-      "segmentId": "straight",
+      "type": "corner",
+      "name": "龙须糖末端右弯",
+      "segmentId": "long_straight_right_turn",
       "distanceMeters": 88,
       "position": {
         "x": 0.7727,
         "y": 0.6317
-      }
+      },
+      "cornerId": "long_straight_right_turn",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": true
     },
     {
       "index": 41,

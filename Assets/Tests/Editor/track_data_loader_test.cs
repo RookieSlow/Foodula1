@@ -223,7 +223,7 @@ public class TrackDataLoaderTest
         TrackConfig cfg = TrackDataLoader.LoadConfig("shanghai_dim_sum");
         int[] expectedCornerIndexes =
         {
-            6, 7, 8, 9, 12, 15, 19, 20, 23, 24, 27, 28, 32, 33, 34, 35,
+            6, 7, 8, 9, 12, 15, 19, 20, 23, 24, 27, 28, 32, 33, 34, 35, 40,
             56, 57, 58, 59, 61
         };
         int[] misplacedStraightIndexes = { 51, 52, 53 };
@@ -234,9 +234,10 @@ public class TrackDataLoaderTest
         foreach (int index in misplacedStraightIndexes)
             Assert.IsFalse(cfg.cells[index].IsCorner, $"上海节点 {index} 位于长直道，不应显示弯道蒙版");
 
-        Assert.AreEqual(10, new HashSet<string>(System.Array.ConvertAll(
+        Assert.AreEqual(11, new HashSet<string>(System.Array.ConvertAll(
             expectedCornerIndexes,
             index => cfg.cells[index].cornerId)).Count);
+        Assert.IsTrue(cfg.cells[40].isApex, "上海龙须糖超长直道末端右弯的弯心应落在节点 40");
         Assert.IsTrue(cfg.cells[57].isApex, "上海 T14 的弯心应落在发卡弯的折返点");
         Assert.IsTrue(cfg.cells[61].isApex, "上海最后一弯的弯心应落在起点前的可见转向处");
     }
