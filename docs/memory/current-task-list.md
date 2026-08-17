@@ -1,6 +1,6 @@
 # Current Task List
 
-> Updated: 2026-08-15
+> Updated: 2026-08-17
 > Sources: Claude Code project memory, active session state, session history,
 > current Git worktree, and current Unity project structure.
 
@@ -90,6 +90,16 @@ with 0 failures, warnings, or errors.
 - [x] Preserve authored corners, start/finish, and pit landmarks while
   re-sampling only the straight runs at equal arc-length intervals; add a
   numbered F8 runtime node overlay and a regression test covering all tracks.
+- [x] Keep the background generator on the same 16:9 world-space sampling
+  metric as `TrackDataLoader`; regenerate all eight official layouts and
+  verify every sampled node remains on the painted road centerline.
+- [x] Reconcile Monza corner metadata with the visible turning sections;
+  relocate the seven corner groups off the former straight-only cells and
+  regenerate its background.
+- [x] Reconcile Shanghai, Indianapolis, and Nürburgring GP corner metadata
+  with their painted turning sections; move the stale straight-road masks,
+  regenerate the three backgrounds, and add regression coverage for the
+  corrected node ranges.
 - [x] Rotate vehicles to follow the tangent between track nodes (default sprite offset corrected to 0° for right-facing car art).
 - [ ] Integrate track weather-pool selection after the core track path is
   stable.

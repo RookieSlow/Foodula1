@@ -65,6 +65,126 @@ function offsetPoints(points, offset) {
   });
 }
 
+// Keep the artwork generator in lockstep with TrackDataLoader.ConfigToWorldPositions.
+// Authored landmarks (corners, start/finish and pit markers) remain fixed while
+// the non-landmark points in each run are distributed by arc length. This makes
+// the painted road centerline and the runtime node path share the same geometry.
+function resampleAnchoredPath(source, cells) {
+  if (!Array.isArray(source) || source.length <= 2 || !Array.isArray(cells) || cells.length !== source.length) {
+    return source.map((point) => [...point]);
+  }
+
+  const result = source.map((point) => [...point]);
+  const anchors = cells.map((cell) =>
+    cell.type === "corner" ||
+    cell.type === "start_finish" ||
+    cell.type === "pit_entry" ||
+    cell.type === "pit_exit",
+  );
+  const anchorIndices = anchors
+    .map((isAnchor, index) => (isAnchor ? index : -1))
+    .filter((index) => index >= 0);
+
+  if (anchorIndices.length === 0) {
+    return resampleClosedPath(source);
+  }
+
+  for (let anchorOrdinal = 0; anchorOrdinal < anchorIndices.length; anchorOrdinal += 1) {
+    const start = anchorIndices[anchorOrdinal];
+    const end = anchorIndices[(anchorOrdinal + 1) % anchorIndices.length];
+    const interiorCount = (end - start - 1 + source.length) % source.length;
+    if (interiorCount <= 0) {
+      continue;
+    }
+
+    const run = Array.from({ length: interiorCount + 2 }, (_, index) =>
+      source[(start + index) % source.length],
+    );
+    const lengths = [];
+    const cumulative = [0];
+    let total = 0;
+    for (let index = 0; index < run.length - 1; index += 1) {
+      const dx = run[index + 1][0] - run[index][0];
+      const dy = run[index + 1][1] - run[index][1];
+      const length = Math.hypot(dx, dy);
+      lengths.push(length);
+      total += length;
+      cumulative.push(total);
+    }
+
+    if (total <= Number.EPSILON) {
+      continue;
+    }
+
+    for (let interior = 1; interior <= interiorCount; interior += 1) {
+      const target = (total * interior) / (interiorCount + 1);
+      let segment = 0;
+      while (segment < lengths.length - 1 && cumulative[segment + 1] < target) {
+        segment += 1;
+      }
+
+      const segmentLength = lengths[segment];
+      const t = segmentLength > Number.EPSILON
+        ? (target - cumulative[segment]) / segmentLength
+        : 0;
+      const from = run[segment];
+      const to = run[segment + 1];
+      result[(start + interior) % source.length] = [
+        from[0] + (to[0] - from[0]) * Math.max(0, Math.min(1, t)),
+        from[1] + (to[1] - from[1]) * Math.max(0, Math.min(1, t)),
+      ];
+    }
+  }
+
+  return result;
+}
+
+function resampleClosedPath(source) {
+  if (!Array.isArray(source) || source.length <= 2) {
+    return source.map((point) => [...point]);
+  }
+
+  const count = source.length;
+  const segmentLengths = [];
+  const cumulative = [0];
+  let total = 0;
+  for (let index = 0; index < count; index += 1) {
+    const from = source[index];
+    const to = source[(index + 1) % count];
+    const length = Math.hypot(to[0] - from[0], to[1] - from[1]);
+    segmentLengths.push(length);
+    total += length;
+    cumulative.push(total);
+  }
+
+  if (total <= Number.EPSILON) {
+    return source.map((point) => [...point]);
+  }
+
+  const result = [];
+  const spacing = total / count;
+  let segmentIndex = 0;
+  for (let index = 0; index < count; index += 1) {
+    const target = spacing * index;
+    while (segmentIndex < count - 1 && cumulative[segmentIndex + 1] < target) {
+      segmentIndex += 1;
+    }
+
+    const segmentLength = segmentLengths[segmentIndex];
+    const t = segmentLength > Number.EPSILON
+      ? (target - cumulative[segmentIndex]) / segmentLength
+      : 0;
+    const from = source[segmentIndex];
+    const to = source[(segmentIndex + 1) % count];
+    const clamped = Math.max(0, Math.min(1, t));
+    result.push([
+      from[0] + (to[0] - from[0]) * clamped,
+      from[1] + (to[1] - from[1]) * clamped,
+    ]);
+  }
+  return result;
+}
+
 function pathFromPoints(points) {
   return points
     .map(
@@ -75,9 +195,17 @@ function pathFromPoints(points) {
 }
 
 function createTrackOverlay(config, trackId) {
-  const points = config.cells.map((cell) => [
+  // Sample in the same 16:9 metric used by the runtime world (30 x 16.875).
+  // Sampling in raw 0-1 coordinates would weight x/y equally and diverge on
+  // long straights once the layout is rendered into the non-square world.
+  const authoredPoints = config.cells.map((cell) => [
     cell.position.x * width,
-    (1 - cell.position.y) * height,
+    cell.position.y * height,
+  ]);
+  const sampledPoints = resampleAnchoredPath(authoredPoints, config.cells);
+  const points = sampledPoints.map((point) => [
+    point[0],
+    height - point[1],
   ]);
   const laneCount = trackId === "indianapolis_burger" ? 4 : 2;
   const laneSpacing = 36;

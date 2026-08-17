@@ -200,6 +200,85 @@ public class TrackDataLoaderTest
     }
 
     [Test]
+    public void test_monza_corner_landmarks_follow_visible_turn_sections()
+    {
+        TrackConfig cfg = TrackDataLoader.LoadConfig("monza_pasta");
+        int[] expectedCornerIndexes = { 8, 9, 11, 12, 13, 22, 23, 25, 26, 34, 35, 36, 44, 45, 46 };
+        int[] misplacedStraightIndexes = { 5, 6, 17, 18, 31, 32, 33, 40, 41, 42 };
+
+        foreach (int index in expectedCornerIndexes)
+            Assert.IsTrue(cfg.cells[index].IsCorner, $"蒙扎节点 {index} 应属于可见弯道段");
+
+        foreach (int index in misplacedStraightIndexes)
+            Assert.IsFalse(cfg.cells[index].IsCorner, $"蒙扎节点 {index} 位于直道，不应显示弯道蒙版");
+
+        Assert.AreEqual(7, new HashSet<string>(System.Array.ConvertAll(
+            expectedCornerIndexes,
+            index => cfg.cells[index].cornerId)).Count);
+    }
+
+    [Test]
+    public void test_shanghai_corner_landmarks_follow_visible_turn_sections()
+    {
+        TrackConfig cfg = TrackDataLoader.LoadConfig("shanghai_dim_sum");
+        int[] expectedCornerIndexes =
+        {
+            6, 7, 8, 9, 12, 15, 19, 20, 23, 24, 27, 28, 32, 33, 34, 35,
+            56, 57, 58, 59, 61
+        };
+        int[] misplacedStraightIndexes = { 51, 52, 53 };
+
+        foreach (int index in expectedCornerIndexes)
+            Assert.IsTrue(cfg.cells[index].IsCorner, $"上海节点 {index} 应属于可见弯道段");
+
+        foreach (int index in misplacedStraightIndexes)
+            Assert.IsFalse(cfg.cells[index].IsCorner, $"上海节点 {index} 位于长直道，不应显示弯道蒙版");
+
+        Assert.AreEqual(10, new HashSet<string>(System.Array.ConvertAll(
+            expectedCornerIndexes,
+            index => cfg.cells[index].cornerId)).Count);
+        Assert.IsTrue(cfg.cells[57].isApex, "上海 T14 的弯心应落在发卡弯的折返点");
+        Assert.IsTrue(cfg.cells[61].isApex, "上海最后一弯的弯心应落在起点前的可见转向处");
+    }
+
+    [Test]
+    public void test_indianapolis_corner_landmarks_follow_visible_oval_turns()
+    {
+        TrackConfig cfg = TrackDataLoader.LoadConfig("indianapolis_burger");
+        int[] expectedCornerIndexes = { 5, 6, 11, 12, 27, 28, 33, 34 };
+        int[] misplacedStraightIndexes = { 17, 18 };
+
+        foreach (int index in expectedCornerIndexes)
+            Assert.IsTrue(cfg.cells[index].IsCorner, $"印第节点 {index} 应属于椭圆弯道段");
+
+        foreach (int index in misplacedStraightIndexes)
+            Assert.IsFalse(cfg.cells[index].IsCorner, $"印第节点 {index} 位于后直道，不应显示弯道蒙版");
+
+        Assert.AreEqual(4, new HashSet<string>(System.Array.ConvertAll(
+            expectedCornerIndexes,
+            index => cfg.cells[index].cornerId)).Count);
+        Assert.IsTrue(cfg.cells[6].isApex, "印第第一弯的弯心应位于右侧弯道入口");
+        Assert.IsTrue(cfg.cells[12].isApex, "印第第二弯的弯心应位于右侧弯道出口");
+    }
+
+    [Test]
+    public void test_nurburgring_gp_corner_landmarks_follow_visible_turn_sections()
+    {
+        TrackConfig cfg = TrackDataLoader.LoadConfig("nurburgring_bier");
+        int[] expectedCornerIndexes = { 39, 40 };
+        int[] misplacedStraightIndexes = { 41, 42 };
+
+        foreach (int index in expectedCornerIndexes)
+            Assert.IsTrue(cfg.cells[index].IsCorner, $"纽北 GP 节点 {index} 应属于维多尔弯的可见转向段");
+
+        foreach (int index in misplacedStraightIndexes)
+            Assert.IsFalse(cfg.cells[index].IsCorner, $"纽北 GP 节点 {index} 位于维多尔弯出口直道，不应显示弯道蒙版");
+
+        Assert.AreEqual("veedol_gurken", cfg.cells[39].cornerId);
+        Assert.IsTrue(cfg.cells[39].isApex, "纽北 GP 维多尔弯的弯心应落在右上方回头点");
+    }
+
+    [Test]
     public void test_build_corner_maps_assigns_limits_and_names()
     {
         TrackConfig cfg = TrackDataLoader.LoadConfig("suzuka_sushi");

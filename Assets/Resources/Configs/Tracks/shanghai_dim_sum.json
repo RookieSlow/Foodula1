@@ -669,48 +669,36 @@
     },
     {
       "index": 51,
-      "type": "corner",
-      "name": "奶黄包重刹发卡",
-      "segmentId": "custard_bun_hairpin",
+      "type": "straight",
+      "name": "龙须糖超长直道",
+      "segmentId": "straight",
       "distanceMeters": 88,
       "position": {
         "x": 0.450328,
         "y": 0.291775
-      },
-      "cornerId": "custard_bun_hairpin",
-      "cornerLevel": 3,
-      "cornerLimit": 2,
-      "isApex": false
+      }
     },
     {
       "index": 52,
-      "type": "corner",
-      "name": "奶黄包重刹发卡",
-      "segmentId": "custard_bun_hairpin",
+      "type": "straight",
+      "name": "龙须糖超长直道",
+      "segmentId": "straight",
       "distanceMeters": 88,
       "position": {
         "x": 0.401567,
         "y": 0.261793
-      },
-      "cornerId": "custard_bun_hairpin",
-      "cornerLevel": 3,
-      "cornerLimit": 2,
-      "isApex": true
+      }
     },
     {
       "index": 53,
-      "type": "corner",
-      "name": "奶黄包重刹发卡",
-      "segmentId": "custard_bun_hairpin",
+      "type": "straight",
+      "name": "龙须糖超长直道",
+      "segmentId": "straight",
       "distanceMeters": 88,
       "position": {
         "x": 0.352806,
         "y": 0.231811
-      },
-      "cornerId": "custard_bun_hairpin",
-      "cornerLevel": 3,
-      "cornerLimit": 2,
-      "isApex": false
+      }
     },
     {
       "index": 54,
@@ -737,51 +725,59 @@
     {
       "index": 56,
       "type": "corner",
-      "name": "马拉糕右纽",
-      "segmentId": "malay_cake_kink",
+      "name": "奶黄包重刹发卡",
+      "segmentId": "custard_bun_hairpin",
       "distanceMeters": 88,
       "position": {
         "x": 0.206522,
         "y": 0.141865
       },
-      "cornerId": "malay_cake_kink",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
-      "isApex": true
+      "cornerId": "custard_bun_hairpin",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
     },
     {
       "index": 57,
-      "type": "straight",
-      "name": "蛋挞衔接直道",
-      "segmentId": "straight",
+      "type": "corner",
+      "name": "奶黄包重刹发卡",
+      "segmentId": "custard_bun_hairpin",
       "distanceMeters": 88,
       "position": {
         "x": 0.157761,
         "y": 0.111883
-      }
+      },
+      "cornerId": "custard_bun_hairpin",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
     },
     {
       "index": 58,
-      "type": "straight",
-      "name": "蛋挞衔接直道",
-      "segmentId": "straight",
+      "type": "corner",
+      "name": "奶黄包重刹发卡",
+      "segmentId": "custard_bun_hairpin",
       "distanceMeters": 87,
       "position": {
         "x": 0.160815,
         "y": 0.151224
-      }
+      },
+      "cornerId": "custard_bun_hairpin",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": false
     },
     {
       "index": 59,
       "type": "corner",
-      "name": "杏仁饼终点左弯",
-      "segmentId": "almond_cookie_final",
+      "name": "马拉糕右纽",
+      "segmentId": "malay_cake_kink",
       "distanceMeters": 87,
       "position": {
         "x": 0.206953,
         "y": 0.184914
       },
-      "cornerId": "almond_cookie_final",
+      "cornerId": "malay_cake_kink",
       "cornerLevel": 2,
       "cornerLimit": 3,
       "isApex": true
@@ -799,14 +795,18 @@
     },
     {
       "index": 61,
-      "type": "straight",
-      "name": "回到蒸笼起点",
-      "segmentId": "straight",
+      "type": "corner",
+      "name": "杏仁饼终点左弯",
+      "segmentId": "almond_cookie_final",
       "distanceMeters": 87,
       "position": {
         "x": 0.301504,
         "y": 0.249463
-      }
+      },
+      "cornerId": "almond_cookie_final",
+      "cornerLevel": 2,
+      "cornerLimit": 3,
+      "isApex": true
     }
   ]
 }

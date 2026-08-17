@@ -524,35 +524,28 @@
     },
     {
       "index": 39,
-      "type": "straight",
-      "name": "大麦直道",
-      "segmentId": "straight",
-      "distanceMeters": 93,
-      "position": {
-        "x": 0.894034,
-        "y": 0.171771
-      }
-    },
-    {
-      "index": 40,
-      "type": "straight",
-      "name": "大麦直道",
-      "segmentId": "straight",
-      "distanceMeters": 93,
-      "position": {
-        "x": 0.84384,
-        "y": 0.216012
-      }
-    },
-    {
-      "index": 41,
       "type": "corner",
       "name": "维多尔腌菜减速弯",
       "segmentId": "veedol_gurken",
       "distanceMeters": 93,
       "position": {
-        "x": 0.795189,
-        "y": 0.262474
+        "x": 0.894034,
+        "y": 0.171771
+      },
+      "cornerId": "veedol_gurken",
+      "cornerLevel": 3,
+      "cornerLimit": 2,
+      "isApex": true
+    },
+    {
+      "index": 40,
+      "type": "corner",
+      "name": "维多尔腌菜减速弯",
+      "segmentId": "veedol_gurken",
+      "distanceMeters": 93,
+      "position": {
+        "x": 0.84384,
+        "y": 0.216012
       },
       "cornerId": "veedol_gurken",
       "cornerLevel": 3,
@@ -560,19 +553,26 @@
       "isApex": false
     },
     {
+      "index": 41,
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
+      "distanceMeters": 93,
+      "position": {
+        "x": 0.795189,
+        "y": 0.262474
+      }
+    },
+    {
       "index": 42,
-      "type": "corner",
-      "name": "维多尔腌菜减速弯",
-      "segmentId": "veedol_gurken",
+      "type": "straight",
+      "name": "赛道直道",
+      "segmentId": "straight",
       "distanceMeters": 93,
       "position": {
         "x": 0.746539,
         "y": 0.308937
-      },
-      "cornerId": "veedol_gurken",
-      "cornerLevel": 3,
-      "cornerLimit": 2,
-      "isApex": true
+      }
     },
     {
       "index": 43,

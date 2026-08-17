@@ -101,25 +101,33 @@
     },
     {
       "index": 5,
-      "type": "straight",
-      "name": "炭烤前直道",
-      "segmentId": "straight",
+      "type": "corner",
+      "name": "炭火第一弯",
+      "segmentId": "charcoal_turn_1",
       "distanceMeters": 96,
       "position": {
         "x": 0.889563,
         "y": 0.664972
-      }
+      },
+      "cornerId": "charcoal_turn_1",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": false
     },
     {
       "index": 6,
-      "type": "straight",
-      "name": "炭烤前直道",
-      "segmentId": "straight",
+      "type": "corner",
+      "name": "炭火第一弯",
+      "segmentId": "charcoal_turn_1",
       "distanceMeters": 96,
       "position": {
         "x": 0.923841,
         "y": 0.621572
-      }
+      },
+      "cornerId": "charcoal_turn_1",
+      "cornerLevel": 1,
+      "cornerLimit": 4,
+      "isApex": true
     },
     {
       "index": 7,
@@ -168,14 +176,14 @@
     {
       "index": 11,
       "type": "corner",
-      "name": "炭火第一弯",
-      "segmentId": "charcoal_turn_1",
+      "name": "培根第二弯",
+      "segmentId": "bacon_turn_2",
       "distanceMeters": 96,
       "position": {
         "x": 0.912478,
         "y": 0.35151
       },
-      "cornerId": "charcoal_turn_1",
+      "cornerId": "bacon_turn_2",
       "cornerLevel": 1,
       "cornerLimit": 4,
       "isApex": false
@@ -183,14 +191,14 @@
     {
       "index": 12,
       "type": "corner",
-      "name": "炭火第一弯",
-      "segmentId": "charcoal_turn_1",
+      "name": "培根第二弯",
+      "segmentId": "bacon_turn_2",
       "distanceMeters": 96,
       "position": {
         "x": 0.873674,
         "y": 0.31206
       },
-      "cornerId": "charcoal_turn_1",
+      "cornerId": "bacon_turn_2",
       "cornerLevel": 1,
       "cornerLimit": 4,
       "isApex": true
@@ -241,33 +249,25 @@
     },
     {
       "index": 17,
-      "type": "corner",
-      "name": "培根第二弯",
-      "segmentId": "bacon_turn_2",
+      "type": "straight",
+      "name": "芝士后直道",
+      "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
         "x": 0.601439,
         "y": 0.289189
-      },
-      "cornerId": "bacon_turn_2",
-      "cornerLevel": 1,
-      "cornerLimit": 4,
-      "isApex": false
+      }
     },
     {
       "index": 18,
-      "type": "corner",
-      "name": "培根第二弯",
-      "segmentId": "bacon_turn_2",
+      "type": "straight",
+      "name": "芝士后直道",
+      "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
         "x": 0.545862,
         "y": 0.290463
-      },
-      "cornerId": "bacon_turn_2",
-      "cornerLevel": 1,
-      "cornerLimit": 4,
-      "isApex": true
+      }
     },
     {
       "index": 19,
