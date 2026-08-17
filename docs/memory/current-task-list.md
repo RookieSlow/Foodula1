@@ -100,6 +100,16 @@ with 0 failures, warnings, or errors.
   with their painted turning sections; move the stale straight-road masks,
   regenerate the three backgrounds, and add regression coverage for the
   corrected node ranges.
+- [x] Re-audit all eight selectable tracks in Play Mode with the numbered debug
+  overlay; confirm runtime nodes, road centerlines, corner/apex masks and speed
+  limit labels remain aligned with the selected background art.
+- [x] Add turn-scoped manual camera control to the race map: left/middle drag,
+  mouse-wheel zoom, moving-vehicle focus, player focus outside movement, and
+  automatic-focus suspension after manual input until the next turn.
+- [x] Detach the minimap camera from the moving main camera so the complete-track
+  view remains fixed while the player pans, zooms, or follows another vehicle.
+- [x] Tune race presentation pacing with 0.14s movement focus lead-in, 0.06s
+  per-node pause and 0.10s focus trail-out; keep the authored ±15-cell window.
 - [x] Rotate vehicles to follow the tangent between track nodes (default sprite offset corrected to 0° for right-facing car art).
 - [ ] Integrate track weather-pool selection after the core track path is
   stable.

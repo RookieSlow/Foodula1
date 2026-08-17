@@ -37,7 +37,7 @@ public class GameConfigSO : ScriptableObject
 
     [Tooltip("Extra space around the local track window.")]
     [Min(1f)]
-    public float cameraPaddingMultiplier = 1.15f;
+    public float cameraPaddingMultiplier = 1.08f;
 
     [Tooltip("Minimum orthographic half-height for the main camera.")]
     [Min(0.01f)]
@@ -49,7 +49,15 @@ public class GameConfigSO : ScriptableObject
 
     [Tooltip("Seconds used to smooth main camera zoom changes.")]
     [Min(0.01f)]
-    public float cameraZoomSmoothTime = 0.2f;
+    public float cameraZoomSmoothTime = 0.18f;
+
+    [Tooltip("World movement multiplier while dragging the main track view.")]
+    [Min(0.01f)]
+    public float cameraDragSensitivity = 1f;
+
+    [Tooltip("Mouse-wheel zoom strength for the main track view.")]
+    [Range(0.01f, 1f)]
+    public float cameraZoomSensitivity = 0.16f;
 
     [Tooltip("Minimap size in reference-resolution pixels.")]
     public Vector2 minimapSize = new Vector2(320f, 180f);
@@ -130,7 +138,16 @@ public class GameConfigSO : ScriptableObject
     public float moveAnimSpeed = 12f;
 
     [Tooltip("每节点移动后的暂停时间 (秒)")]
-    public float nodeDelay = 0.02f;
+    [Min(0f)]
+    public float nodeDelay = 0.06f;
+
+    [Tooltip("车辆开始移动前留给摄像机切换焦点的时间 (秒)")]
+    [Min(0f)]
+    public float movementFocusLeadDelay = 0.14f;
+
+    [Tooltip("车辆完成移动后保持焦点的时间 (秒)")]
+    [Min(0f)]
+    public float movementFocusTrailDelay = 0.1f;
 
     [Tooltip("赛车精灵朝向 (度)：0=向右, 90=向上。赛车素材车头朝右，因此默认使用 0")]
     [Range(0, 359)]

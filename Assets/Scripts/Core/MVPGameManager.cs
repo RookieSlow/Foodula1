@@ -67,6 +67,7 @@ public class MVPGameManager : MonoBehaviour
     private List<int> laneIndices = new List<int>();
     private Dictionary<PlayerState, AIController> aiControllers = new Dictionary<PlayerState, AIController>();
     private int weatherRolledLap;
+    private RaceCameraController raceCameraController;
 
     private WaitForSeconds nodeWait;
     private bool waitingForPlayerGear;
@@ -225,16 +226,16 @@ public class MVPGameManager : MonoBehaviour
             return;
         }
 
-        RaceCameraController controller = raceCamera.GetComponent<RaceCameraController>();
-        if (controller == null)
+        raceCameraController = raceCamera.GetComponent<RaceCameraController>();
+        if (raceCameraController == null)
         {
-            controller = raceCamera.gameObject.AddComponent<RaceCameraController>();
+            raceCameraController = raceCamera.gameObject.AddComponent<RaceCameraController>();
         }
 
         Canvas raceCanvas = hudUI != null
             ? hudUI.GetComponentInParent<Canvas>()
             : FindObjectOfType<Canvas>();
-        controller.Initialize(this, raceCanvas);
+        raceCameraController.Initialize(this, raceCanvas);
     }
 
     /// <summary>
@@ -864,6 +865,7 @@ public class MVPGameManager : MonoBehaviour
         while (phase != GamePhase.GameOver)
         {
             // ──── 回合开始 ────
+            raceCameraController?.BeginTurn();
             foreach (var p in session.Players)
                 session.BeginTurn(p);
             // JP L3 万骨涌：末位/次末位自动激活，逐回合递减
@@ -975,6 +977,7 @@ public class MVPGameManager : MonoBehaviour
                     }
 
                     yield return new WaitWhile(() => waitingForPlayerCards);
+                    raceCameraController?.FocusPlayerAfterCardPlay();
                 }
 
                 // AI 的特技阶段固定早于速度选牌；人类在每张速度牌确认时记录真实顺序。
@@ -1235,6 +1238,13 @@ public class MVPGameManager : MonoBehaviour
         int totalNodes = trackManager.TotalNodes;
         int targetPos = p.position + totalMove;
 
+        if (totalMove > 0)
+        {
+            raceCameraController?.BeginVehicleMovement(car.transform);
+            if (config.movementFocusLeadDelay > 0f)
+                yield return new WaitForSeconds(config.movementFocusLeadDelay);
+        }
+
         for (int i = p.position + 1; i <= targetPos; i++)
         {
             int nodeIdx = i % totalNodes;
@@ -1264,6 +1274,13 @@ public class MVPGameManager : MonoBehaviour
 
         p.position = targetPos % totalNodes;
         RefreshVisualCarLanes();
+
+        if (totalMove > 0)
+        {
+            if (config.movementFocusTrailDelay > 0f)
+                yield return new WaitForSeconds(config.movementFocusTrailDelay);
+            raceCameraController?.EndVehicleMovement();
+        }
     }
 
     // ====== 移动力计算（科技 + 特技加成） ======

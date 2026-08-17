@@ -76,4 +76,46 @@ public class TrackCameraRulesTests
 
         Assert.That(result, Is.EqualTo(0.75f));
     }
+
+    [Test]
+    public void test_drag_world_offset_moves_camera_opposite_pointer()
+    {
+        Vector3 result = RaceCameraRules.CalculateDragWorldOffset(
+            new Vector2(100f, -50f),
+            5f,
+            1000f,
+            1f);
+
+        Assert.That(result.x, Is.EqualTo(-1f).Within(0.001f));
+        Assert.That(result.y, Is.EqualTo(0.5f).Within(0.001f));
+    }
+
+    [Test]
+    public void test_scroll_zoom_is_exponential_and_clamped()
+    {
+        float zoomedIn = RaceCameraRules.CalculateScrolledOrthographicSize(
+            10f, 1f, 0.2f, 2f, 12f);
+        float clampedOut = RaceCameraRules.CalculateScrolledOrthographicSize(
+            10f, -100f, 0.2f, 2f, 12f);
+
+        Assert.That(zoomedIn, Is.LessThan(10f));
+        Assert.That(clampedOut, Is.EqualTo(12f));
+    }
+
+    [Test]
+    public void test_manual_focus_override_resets_only_at_next_turn()
+    {
+        var state = new RaceCameraFocusState();
+
+        state.BeginTurn();
+        Assert.IsTrue(state.AllowsAutomaticFocus);
+
+        state.TakeManualControl();
+        Assert.IsFalse(state.AllowsAutomaticFocus);
+        Assert.IsTrue(state.ManualOverrideThisTurn);
+
+        state.BeginTurn();
+        Assert.IsTrue(state.AllowsAutomaticFocus);
+        Assert.IsFalse(state.ManualOverrideThisTurn);
+    }
 }

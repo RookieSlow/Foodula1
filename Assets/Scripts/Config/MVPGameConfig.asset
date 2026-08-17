@@ -17,6 +17,14 @@ MonoBehaviour:
   trackNodeCount: 42
   totalLaps: 3
   startFinishNodeIndex: 0
+  cameraCellsBehind: 15
+  cameraCellsAhead: 15
+  cameraPaddingMultiplier: 1.08
+  cameraMinimumOrthographicSize: 0.75
+  cameraPositionSmoothTime: 0.18
+  cameraZoomSmoothTime: 0.18
+  cameraDragSensitivity: 1
+  cameraZoomSensitivity: 0.16
   handSize: 7
   speedCardDistribution: 010000000100000001000000020000000200000002000000020000000200000003000000030000000300000004000000
   initialHeatCards: 3
@@ -24,7 +32,9 @@ MonoBehaviour:
   minGear: 1
   maxGear: 4
   moveAnimSpeed: 12
-  nodeDelay: 0.02
+  nodeDelay: 0.06
+  movementFocusLeadDelay: 0.14
+  movementFocusTrailDelay: 0.1
   carSpriteFacingAngle: 0
   carRotateSpeed: 540
   aiHeatWarningThreshold: 0.7

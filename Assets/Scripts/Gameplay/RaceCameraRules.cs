@@ -108,5 +108,60 @@ public static class RaceCameraRules
         float halfHeight = Mathf.Max(bounds.extents.y, bounds.extents.x / safeAspect);
         return Mathf.Max(Mathf.Max(0.01f, minimumSize), halfHeight * safePadding);
     }
+
+    /// <summary>
+    /// Converts a screen-space pointer drag into an opposite world-space camera offset.
+    /// </summary>
+    public static Vector3 CalculateDragWorldOffset(
+        Vector2 screenDelta,
+        float orthographicSize,
+        float viewportPixelHeight,
+        float sensitivity)
+    {
+        float safeHeight = Mathf.Max(1f, viewportPixelHeight);
+        float worldUnitsPerPixel = Mathf.Max(0.01f, orthographicSize) * 2f / safeHeight;
+        float safeSensitivity = Mathf.Max(0.01f, sensitivity);
+        return new Vector3(
+            -screenDelta.x * worldUnitsPerPixel * safeSensitivity,
+            -screenDelta.y * worldUnitsPerPixel * safeSensitivity,
+            0f);
+    }
+
+    /// <summary>
+    /// Applies exponential mouse-wheel zoom and clamps it to the playable range.
+    /// Positive wheel input zooms in.
+    /// </summary>
+    public static float CalculateScrolledOrthographicSize(
+        float currentSize,
+        float scrollDelta,
+        float sensitivity,
+        float minimumSize,
+        float maximumSize)
+    {
+        float safeMinimum = Mathf.Max(0.01f, minimumSize);
+        float safeMaximum = Mathf.Max(safeMinimum, maximumSize);
+        float factor = Mathf.Exp(-scrollDelta * Mathf.Max(0.01f, sensitivity));
+        return Mathf.Clamp(currentSize * factor, safeMinimum, safeMaximum);
+    }
 }
 
+/// <summary>
+/// Turn-scoped camera ownership state. Manual input blocks automatic focus until
+/// the next race turn begins.
+/// </summary>
+public sealed class RaceCameraFocusState
+{
+    public bool ManualOverrideThisTurn { get; private set; }
+
+    public bool AllowsAutomaticFocus => !ManualOverrideThisTurn;
+
+    public void BeginTurn()
+    {
+        ManualOverrideThisTurn = false;
+    }
+
+    public void TakeManualControl()
+    {
+        ManualOverrideThisTurn = true;
+    }
+}

@@ -12,6 +12,7 @@ public sealed class RaceCameraController : MonoBehaviour
     private static readonly Color AiMarkerColor = new Color(0.18f, 0.65f, 1f, 1f);
 
     private readonly List<Vector3> trackPositions = new List<Vector3>();
+    private readonly RaceCameraFocusState focusState = new RaceCameraFocusState();
 
     private MVPGameManager gameManager;
     private TrackManager trackManager;
@@ -24,7 +25,13 @@ public sealed class RaceCameraController : MonoBehaviour
     private RectTransform aiMarker;
     private Vector3 positionVelocity;
     private float zoomVelocity;
+    private Transform automaticFocusTarget;
+    private bool dragArmed;
+    private Vector3 lastPointerPosition;
+    private float maximumManualOrthographicSize;
     private bool initialized;
+
+    public bool ManualOverrideThisTurn => focusState.ManualOverrideThisTurn;
 
     /// <summary>
     /// Connects the controller to the current race and creates its optional minimap UI.
@@ -55,6 +62,9 @@ public sealed class RaceCameraController : MonoBehaviour
         ConfigureMainViewport(raceCanvas);
         CreateMinimap(raceCanvas);
         ReserveStatusArea();
+        automaticFocusTarget = gameManager.PlayerCarTransform;
+        focusState.BeginTurn();
+        maximumManualOrthographicSize = CalculateFullTrackOrthographicSize();
         initialized = true;
         UpdateMainCamera(true);
         UpdateMinimapMarkers();
@@ -78,12 +88,46 @@ public sealed class RaceCameraController : MonoBehaviour
             return;
         }
 
-        UpdateMainCamera(false);
+        HandleManualInput();
+        if (focusState.AllowsAutomaticFocus)
+            UpdateMainCamera(false);
         UpdateMinimapMarkers();
+    }
+
+    /// <summary>Restores automatic player focus at the beginning of a race turn.</summary>
+    public void BeginTurn()
+    {
+        focusState.BeginTurn();
+        dragArmed = false;
+        SetAutomaticFocus(gameManager != null ? gameManager.PlayerCarTransform : null);
+    }
+
+    /// <summary>Returns to the player's car after card play, unless manually overridden.</summary>
+    public void FocusPlayerAfterCardPlay()
+    {
+        SetAutomaticFocus(gameManager != null ? gameManager.PlayerCarTransform : null);
+    }
+
+    /// <summary>Follows the vehicle that is currently resolving movement.</summary>
+    public void BeginVehicleMovement(Transform movingVehicle)
+    {
+        SetAutomaticFocus(movingVehicle);
+    }
+
+    /// <summary>Returns automatic focus to the player after movement finishes.</summary>
+    public void EndVehicleMovement()
+    {
+        SetAutomaticFocus(gameManager != null ? gameManager.PlayerCarTransform : null);
     }
 
     private void OnDestroy()
     {
+        if (minimapCamera != null)
+        {
+            Destroy(minimapCamera.gameObject);
+            minimapCamera = null;
+        }
+
         if (minimapTexture != null)
         {
             minimapTexture.Release();
@@ -102,15 +146,17 @@ public sealed class RaceCameraController : MonoBehaviour
 
     private void UpdateMainCamera(bool snap)
     {
-        Transform playerCar = gameManager.PlayerCarTransform;
-        if (playerCar == null)
+        Transform focusTarget = automaticFocusTarget != null
+            ? automaticFocusTarget
+            : gameManager.PlayerCarTransform;
+        if (focusTarget == null)
         {
             return;
         }
 
         int centerIndex = RaceCameraRules.FindClosestPositionIndex(
             trackPositions,
-            playerCar.position);
+            focusTarget.position);
         Bounds windowBounds = RaceCameraRules.CalculateWindowBounds(
             trackPositions,
             centerIndex,
@@ -146,6 +192,76 @@ public sealed class RaceCameraController : MonoBehaviour
             Mathf.Max(0.01f, config.cameraZoomSmoothTime));
     }
 
+    private void SetAutomaticFocus(Transform target)
+    {
+        if (!focusState.AllowsAutomaticFocus || target == null)
+            return;
+
+        automaticFocusTarget = target;
+    }
+
+    private void HandleManualInput()
+    {
+        if (mainCamera == null)
+            return;
+
+        Vector3 pointerPosition = Input.mousePosition;
+        bool pointerInsideViewport = mainCamera.pixelRect.Contains(pointerPosition);
+
+        if ((Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(2)) && pointerInsideViewport)
+        {
+            dragArmed = true;
+            lastPointerPosition = pointerPosition;
+        }
+
+        if (dragArmed && (Input.GetMouseButton(0) || Input.GetMouseButton(2)))
+        {
+            Vector2 delta = pointerPosition - lastPointerPosition;
+            lastPointerPosition = pointerPosition;
+            if (delta.sqrMagnitude >= 0.25f)
+            {
+                TakeManualControl();
+                mainCamera.transform.position += RaceCameraRules.CalculateDragWorldOffset(
+                    delta,
+                    mainCamera.orthographicSize,
+                    mainCamera.pixelHeight,
+                    config.cameraDragSensitivity);
+            }
+        }
+
+        if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(2))
+            dragArmed = false;
+
+        float scrollDelta = Input.mouseScrollDelta.y;
+        if (pointerInsideViewport && Mathf.Abs(scrollDelta) > 0.001f)
+        {
+            TakeManualControl();
+            mainCamera.orthographicSize = RaceCameraRules.CalculateScrolledOrthographicSize(
+                mainCamera.orthographicSize,
+                scrollDelta,
+                config.cameraZoomSensitivity,
+                config.cameraMinimumOrthographicSize,
+                maximumManualOrthographicSize);
+        }
+    }
+
+    private void TakeManualControl()
+    {
+        focusState.TakeManualControl();
+        positionVelocity = Vector3.zero;
+        zoomVelocity = 0f;
+    }
+
+    private float CalculateFullTrackOrthographicSize()
+    {
+        Bounds trackBounds = RaceCameraRules.CalculateTrackBounds(trackPositions);
+        return RaceCameraRules.CalculateOrthographicSize(
+            trackBounds,
+            Mathf.Max(0.01f, mainCamera.aspect),
+            config.minimapWorldPaddingMultiplier,
+            config.cameraMinimumOrthographicSize);
+    }
+
     private void CreateMinimap(Canvas raceCanvas)
     {
         if (raceCanvas == null)
@@ -155,7 +271,6 @@ public sealed class RaceCameraController : MonoBehaviour
         }
 
         GameObject cameraObject = new GameObject("MinimapCamera");
-        cameraObject.transform.SetParent(transform, false);
         minimapCamera = cameraObject.AddComponent<Camera>();
         minimapCamera.orthographic = true;
         minimapCamera.clearFlags = mainCamera.clearFlags;
