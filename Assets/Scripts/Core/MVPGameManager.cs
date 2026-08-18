@@ -77,11 +77,7 @@ public class MVPGameManager : MonoBehaviour
     private ICarMovementAnimator carMovementAnimator;
 
     private WaitForSeconds nodeWait;
-    private bool waitingForPlayerGear;
-    private bool waitingForPlayerCards;
-    private bool waitingForPlayerDiscard;
-    private int playerGearChoice;
-    private int pendingGear;
+    private readonly RaceInputState inputState = new RaceInputState();
     private Dictionary<int, Image> gearButtonImages = new Dictionary<int, Image>();
     private Dictionary<int, Button> gearButtons = new Dictionary<int, Button>();
     private Button confirmGearControl;
@@ -620,11 +616,8 @@ public class MVPGameManager : MonoBehaviour
         }
 
         phase = GamePhase.WaitingForGear;
-        waitingForPlayerGear = true;
-        pendingGear = Player != null ? Player.gear : config.minGear;
-        playerGearChoice = pendingGear;
-        waitingForPlayerCards = false;
-        waitingForPlayerDiscard = false;
+        inputState.Reset();
+        inputState.BeginGearSelection(Player != null ? Player.gear : config.minGear);
         waitingForPlayerLaneChange = false;
         waitingForPitChoice = false;
         pitWaitingPlayer = null;
@@ -769,9 +762,8 @@ public class MVPGameManager : MonoBehaviour
                 else
                 {
                     phase = GamePhase.WaitingForGear;
-                    waitingForPlayerGear = true;
+                    inputState.BeginGearSelection(p.gear);
                     SetGearControlsInteractable(true);
-                    pendingGear = p.gear;
                     ConfigureGearControls(p);
                     foreach (var kv in gearButtonImages)
                         kv.Value.color = (kv.Key == p.gear) ? new Color(0.3f, 0.8f, 0.3f, 0.9f) : new Color(1f, 1f, 1f, 0.8f);
@@ -779,9 +771,9 @@ public class MVPGameManager : MonoBehaviour
                         hudUI.SetStatus($"选择档位 (当前: {TeamGearRules.GetDisplayName(p.teamId, p.gear)})");
                     if (cardHandUI != null) { cardHandUI.SetGearSelectionMode(true); cardHandUI.UpdateDeckInfo(p); }
 
-                    yield return new WaitWhile(() => waitingForPlayerGear);
+                    yield return new WaitWhile(() => inputState.WaitingForGear);
                     SetGearControlsInteractable(false);
-                    ApplyGearShift(p, playerGearChoice);
+                    ApplyGearShift(p, inputState.PlayerGearChoice);
                     if (hudUI != null)
                         hudUI.RefreshPlayerResources(p);
                 }
@@ -841,7 +833,7 @@ public class MVPGameManager : MonoBehaviour
                 else
                 {
                     phase = GamePhase.WaitingForCards;
-                    waitingForPlayerCards = true;
+                    inputState.BeginCardSelection();
                     if (cardHandUI != null)
                     {
                         cardHandUI.SetGearSelectionMode(false);
@@ -854,7 +846,7 @@ public class MVPGameManager : MonoBehaviour
                         hudUI.SetStatus($"{TeamGearRules.GetDisplayName(p.teamId, p.gear)} 档 - 可多选速度牌后确认（最多 {GetMaxSpeedCardsThisTurn(p)} 张；特技牌单张确认）");
                     }
 
-                    yield return new WaitWhile(() => waitingForPlayerCards);
+                    yield return new WaitWhile(() => inputState.WaitingForCards);
                     raceCameraController?.FocusPlayerAfterCardPlay();
                 }
 
@@ -1678,7 +1670,7 @@ public class MVPGameManager : MonoBehaviour
         var player = Player;
         if (player == null) yield break;
 
-        waitingForPlayerDiscard = true;
+        inputState.BeginDiscardSelection();
         if (cardHandUI != null)
         {
             cardHandUI.SetDiscardMode(true);
@@ -1690,7 +1682,7 @@ public class MVPGameManager : MonoBehaviour
             hudUI.SetStatus("弃牌: 点击要弃掉的牌 (非热量牌), 然后点确认弃牌");
         }
 
-        yield return new WaitWhile(() => waitingForPlayerDiscard);
+        yield return new WaitWhile(() => inputState.WaitingForDiscard);
 
         // 收集选中牌并弃掉
         if (cardHandUI != null)
@@ -2015,10 +2007,10 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnGearButtonClicked(int gear)
     {
-        if (phase != GamePhase.WaitingForGear || !waitingForPlayerGear) return;
+        if (phase != GamePhase.WaitingForGear || !inputState.WaitingForGear) return;
         if (Player != null && TeamGearRules.IsChina(Player.teamId) && gear > ChinaGearShiftRules.GoGear)
             return;
-        pendingGear = gear;
+        if (!inputState.SelectGear(gear)) return;
         // 高亮选中的档位按钮
         foreach (var kv in gearButtonImages)
         {
@@ -2030,18 +2022,17 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnConfirmGearClicked()
     {
-        if (phase != GamePhase.WaitingForGear || !waitingForPlayerGear) return;
-        playerGearChoice = pendingGear;
-        waitingForPlayerGear = false;
+        if (phase != GamePhase.WaitingForGear || !inputState.WaitingForGear) return;
+        if (!inputState.ConfirmGear()) return;
         SetGearControlsInteractable(false);
     }
 
     public void OnPlayCardsButtonClicked()
     {
         // 弃牌模式 — 点击按钮确认整组弃牌
-        if (waitingForPlayerDiscard)
+        if (inputState.WaitingForDiscard)
         {
-            waitingForPlayerDiscard = false;
+            inputState.EndDiscardSelection();
             return;
         }
 
@@ -2110,7 +2101,7 @@ public class MVPGameManager : MonoBehaviour
             // 关东慢煮在确认后立即结束本回合出牌阶段。
             if (player.kantoOdenSkipThisTurn)
             {
-                waitingForPlayerCards = false;
+                inputState.EndCardSelection();
                 cardHandUI.HideAll();
             }
             else
@@ -2179,7 +2170,7 @@ public class MVPGameManager : MonoBehaviour
                 // 已确认速度牌仍属于本回合已打出区域，CleanupTurn 会将其放入弃牌堆。
                 player.playedHeatCardsThisTurn.Clear();
                 cardHandUI.ClearPendingPlaySelection();
-                waitingForPlayerCards = false;
+                inputState.EndCardSelection();
                 if (hudUI != null)
                     hudUI.RefreshPlayerResources(player);
                 cardHandUI.HideAll();
@@ -2192,7 +2183,7 @@ public class MVPGameManager : MonoBehaviour
         if (hudUI != null)
             hudUI.RefreshPlayerResources(player);
         cardHandUI.ClearPendingPlaySelection();
-        waitingForPlayerCards = false;
+        inputState.EndCardSelection();
         cardHandUI.HideAll();
     }
 

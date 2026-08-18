@@ -219,7 +219,8 @@ public static class TrackDataLoader {
 
 - `MVPGameManager` remains a large coordinator (turn phases and race presentation
   orchestration still live there), but procedural HUD/hand construction, vehicle
-  orientation, and node interpolation are isolated in dedicated adapters.
+  orientation/node interpolation, and turn input gating are isolated in dedicated
+  adapters.
 - Two data paths for tracks (JSON primary + hardcoded fallback) add maintenance
   burden
 - No automated integration tests (full game loop still manual)
@@ -234,7 +235,7 @@ public static class TrackDataLoader {
 
 | Risk | Probability | Impact | Mitigation |
 |------|------------|--------|-----------|
-| MVPGameManager grows past 1500 lines | Medium | Code becomes hard to navigate | Extracted UIFactory, CarOrientationController, and CarMovementAnimator; next boundary is turn-phase orchestration |
+| MVPGameManager grows past 1500 lines | Medium | Code becomes hard to navigate | Extracted UIFactory, CarOrientationController, CarMovementAnimator, and RaceInputState; next boundary is turn-phase orchestration |
 | JSON schema changes break all 8 tracks | Low | All tracks fail to load | Schema version field + migration script |
 | Pure functions gain hidden state | Low | Tests become misleading | Code review gate — no static fields in Rules classes |
 
