@@ -44,6 +44,45 @@ public class CarOrientationTests
         Assert.That(CarOrientationRules.GetFacingAngle(Vector2.zero, 45f, 37f), Is.EqualTo(37f));
     }
 
+    [Test]
+    public void RuntimeControllerUsesConfiguredFacingOffset()
+    {
+        var config = ScriptableObject.CreateInstance<GameConfigSO>();
+        try
+        {
+            config.carSpriteFacingAngle = 90f;
+            var controller = new CarOrientationController(config);
+            float angle = controller.GetFacingRotation(Vector2.right).eulerAngles.z;
+
+            Assert.That(Mathf.DeltaAngle(angle, -90f), Is.EqualTo(0f).Within(0.001f));
+        }
+        finally
+        {
+            Object.DestroyImmediate(config);
+        }
+    }
+
+    [Test]
+    public void RuntimeControllerRespectsRotationSpeed()
+    {
+        var config = ScriptableObject.CreateInstance<GameConfigSO>();
+        var car = new GameObject("CarOrientationControllerTestCar");
+        try
+        {
+            config.carRotateSpeed = 90f;
+            var controller = new CarOrientationController(config);
+            controller.RotateTowards(car, Vector3.up, 0.5f);
+
+            Assert.That(Mathf.DeltaAngle(car.transform.eulerAngles.z, 45f),
+                Is.EqualTo(0f).Within(0.001f));
+        }
+        finally
+        {
+            Object.DestroyImmediate(car);
+            Object.DestroyImmediate(config);
+        }
+    }
+
     [TestCase("Assets/Scripts/Config/MVPGameConfig.asset")]
     [TestCase("Assets/Scripts/Config/SilverstoneGameConfig.asset")]
     public void SerializedConfigsMatchRightFacingCarSprites(string path)

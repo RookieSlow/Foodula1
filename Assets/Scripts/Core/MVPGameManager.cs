@@ -73,6 +73,7 @@ public class MVPGameManager : MonoBehaviour
     private Dictionary<PlayerState, int> overtakesThisTurn = new Dictionary<PlayerState, int>();
     private int weatherRolledLap;
     private RaceCameraController raceCameraController;
+    private CarOrientationController carOrientationController;
 
     private WaitForSeconds nodeWait;
     private bool waitingForPlayerGear;
@@ -136,6 +137,7 @@ public class MVPGameManager : MonoBehaviour
             config = ScriptableObject.CreateInstance<GameConfigSO>();
             Debug.LogWarning("MVPGameManager: GameConfigSO not set. Using defaults. Create one via Create > Foodular1 > MVP Game Config for better control.");
         }
+        carOrientationController = new CarOrientationController(config);
 
         // 自动创建缺失的引用
         if (trackManager == null)
@@ -720,7 +722,7 @@ public class MVPGameManager : MonoBehaviour
             Vector3 startPos = trackManager.GetNodePosition(trackManager.StartFinishNodeIndex, visualLane);
             // 出生即朝向赛道前进方向（P2 #17 赛车随赛道方向旋转）
             int nextIdx = (trackManager.StartFinishNodeIndex + 1) % trackManager.TotalNodes;
-            Quaternion startRot = GetFacingRotation(
+            Quaternion startRot = GetCarOrientationController().GetFacingRotation(
                 trackManager.GetNodePosition(nextIdx, visualLane) - startPos);
             GameObject instance = Instantiate(carPrefab, startPos, startRot);
             instance.name = $"Car_{p.name}";
@@ -1156,11 +1158,11 @@ public class MVPGameManager : MonoBehaviour
                 car.transform.position = Vector3.MoveTowards(
                     car.transform.position, target, config.moveAnimSpeed * Time.deltaTime);
                 // 赛车随移动方向平滑旋转（P2 #17）
-                RotateCarTowards(car, target);
+                GetCarOrientationController().RotateTowards(car, target, Time.deltaTime);
                 yield return null;
             }
             car.transform.position = target;
-            RotateCarTowards(car, target);
+            GetCarOrientationController().RotateTowards(car, target, Time.deltaTime);
 
             // 检测跨过起点/终点线
             if (trackManager.GetNode(nodeIdx).isStartFinish)
@@ -2060,43 +2062,16 @@ public class MVPGameManager : MonoBehaviour
         car.transform.position = trackManager.GetNodePosition(position, lane);
         // 传送后朝向下一节点（失控回退 / 进站出口 / 阴阳茶 +1）
         int nextIdx = (position + 1) % trackManager.TotalNodes;
-        FaceCarTowardsImmediately(car, trackManager.GetNodePosition(nextIdx, lane));
+        GetCarOrientationController().FaceImmediately(car, trackManager.GetNodePosition(nextIdx, lane));
     }
 
     // ====== 赛车朝向（P2 #17 随赛道方向旋转） ======
 
-    /// <summary>朝向目标方向的四元数（扣除精灵固有朝向）。</summary>
-    private Quaternion GetFacingRotation(Vector2 direction)
+    private CarOrientationController GetCarOrientationController()
     {
-        return Quaternion.Euler(0f, 0f, GetFacingAngle(direction));
-    }
-
-    /// <summary>朝向目标方向的角度（度，扣除精灵固有朝向）。</summary>
-    private float GetFacingAngle(Vector2 direction)
-    {
-        return CarOrientationRules.GetFacingAngle(direction, config.carSpriteFacingAngle);
-    }
-
-    /// <summary>Immediately faces a teleported/stationary car toward the next node.</summary>
-    private void FaceCarTowardsImmediately(GameObject car, Vector3 target)
-    {
-        Vector3 direction = target - car.transform.position;
-        float currentAngle = car.transform.rotation.eulerAngles.z;
-        float targetAngle = CarOrientationRules.GetFacingAngle(
-            direction, config.carSpriteFacingAngle, currentAngle);
-        car.transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
-    }
-
-    /// <summary>朝目标点平滑旋转（每帧调用的廉价实现）。</summary>
-    private void RotateCarTowards(GameObject car, Vector3 target)
-    {
-        Vector3 dir = target - car.transform.position;
-        if (dir.sqrMagnitude < 0.0001f) return;
-        float currentAngle = car.transform.rotation.eulerAngles.z;
-        float targetAngle = CarOrientationRules.GetFacingAngle(
-            dir, config.carSpriteFacingAngle, currentAngle);
-        float nextAngle = Mathf.MoveTowardsAngle(currentAngle, targetAngle, config.carRotateSpeed * Time.deltaTime);
-        car.transform.rotation = Quaternion.Euler(0f, 0f, nextAngle);
+        if (carOrientationController == null)
+            carOrientationController = new CarOrientationController(config);
+        return carOrientationController;
     }
 
     // ====== UI 回调 ======

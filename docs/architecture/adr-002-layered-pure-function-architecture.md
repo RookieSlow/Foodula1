@@ -234,7 +234,7 @@ public static class TrackDataLoader {
 
 | Risk | Probability | Impact | Mitigation |
 |------|------------|--------|-----------|
-| MVPGameManager grows past 1500 lines | Medium | Code becomes hard to navigate | Extracted UIFactory; next boundary is AnimationController |
+| MVPGameManager grows past 1500 lines | Medium | Code becomes hard to navigate | Extracted UIFactory and CarOrientationController; next boundary is movement animation orchestration |
 | JSON schema changes break all 8 tracks | Low | All tracks fail to load | Schema version field + migration script |
 | Pure functions gain hidden state | Low | Tests become misleading | Code review gate — no static fields in Rules classes |
 

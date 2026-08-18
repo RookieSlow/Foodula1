@@ -23,6 +23,10 @@
   传入回调与接收 UI 引用，不再持有主要 UI 构建细节。
 - [x] Unity EditMode：321/321 通过；`dotnet build Foodular1.sln --no-restore`：0 错误。
 - [x] Unity Play Mode 启动冒烟无项目错误/警告；MCP 仅记录自身 WebSocket 重连警告。
+- [x] 将出生朝向、传送朝向和逐帧旋转的 Unity 适配逻辑抽取到
+  `Assets/Scripts/Gameplay/CarOrientationController.cs`；角度规则仍由
+  `CarOrientationRules` 纯函数负责。
+- [x] 新增朝向偏移与旋转速度回归测试；Unity EditMode：323/323 通过，Dotnet 编译 0 错误。
 
 ## 本次修复（2026-08-18 档位确认卡死）
 
