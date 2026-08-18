@@ -60,6 +60,7 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 | `Assets/Scripts/Core/RaceMovementRules.cs` | 环形赛道超车判定纯规则；跳过回合策略由 `MVPGameManager` 注入 |
 | `Assets/Scripts/Core/RaceLaneRules.cs` | 同节点车辆的内/外线占用规则；车队赛道车道数量仍由 `TrackPresentationRules` 提供 |
 | `Assets/Scripts/Core/RaceInputState.cs` | 档位、卡牌、弃牌输入门控状态；不持有 UI/场景引用，由回合协程与回调共同驱动 |
+| `Assets/Scripts/Core/RaceLapRules.cs` | 起终点过线后的圈数递增与完赛边界；天气、科技和 UI 仍由管理器编排 |
 | `Assets/Scripts/TechTree/TechTreeProfileStore.cs` | PlayerPrefs JSON 适配层；纯科技规则与存档/UI 解耦 |
 | `Assets/Scripts/UI/TechTreeUI.cs` | 运行时构建的车队科技树界面，不依赖 Race 场景 |
 | `Assets/Scripts/UI/RaceUIFactory.cs` | RaceCanvas 缺失时的程序化 HUD/手牌构建；只接收回调，不持有比赛状态 |

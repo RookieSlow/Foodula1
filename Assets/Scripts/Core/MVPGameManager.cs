@@ -1766,7 +1766,8 @@ public class MVPGameManager : MonoBehaviour
     {
         if (p.hasFinished) return;
 
-        p.lap++;
+        LapProgressResult progress = RaceLapRules.Advance(p.lap, config.totalLaps);
+        p.lap = progress.Lap;
         session.OnNewLap(p);
         if (hudUI != null)
             hudUI.AppendLog($"{p.name} 完成第 {p.lap} 圈！");
@@ -1784,7 +1785,7 @@ public class MVPGameManager : MonoBehaviour
             }
         }
 
-        if (p.lap >= config.totalLaps)
+        if (progress.HasFinished)
         {
             p.hasFinished = true;
             session.AssignFinish(p);

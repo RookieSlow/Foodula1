@@ -40,6 +40,8 @@
 - [x] 将档位、卡牌和弃牌阶段的玩家输入等待状态抽取到
   `Assets/Scripts/Core/RaceInputState.cs`；回合协程与 UI 回调共享同一门控状态，并覆盖
   确认一次、阶段互斥和重置边界。
+- [x] 将起终点过线后的圈数递增与完赛边界抽取到
+  `Assets/Scripts/Core/RaceLapRules.cs`；天气掷骰、科技重置和 UI 日志仍由管理器编排。
 
 ## 本次修复（2026-08-18 档位确认卡死）
 
