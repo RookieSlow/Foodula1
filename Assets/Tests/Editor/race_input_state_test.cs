@@ -33,6 +33,34 @@ public class RaceInputStateTests
     }
 
     [Test]
+    public void TrackChoiceGatesCloseEveryOtherInputGate()
+    {
+        var state = new RaceInputState();
+        state.BeginCardSelection();
+        state.BeginLaneChangeSelection();
+
+        Assert.That(state.WaitingForLaneChange, Is.True);
+        Assert.That(state.WaitingForCards, Is.False);
+        Assert.That(state.WaitingForPitChoice, Is.False);
+
+        state.BeginPitChoice();
+        Assert.That(state.WaitingForPitChoice, Is.True);
+        Assert.That(state.WaitingForLaneChange, Is.False);
+    }
+
+    [Test]
+    public void ResetClosesTrackChoiceGates()
+    {
+        var state = new RaceInputState();
+        state.BeginLaneChangeSelection();
+        state.BeginPitChoice();
+        state.Reset();
+
+        Assert.That(state.WaitingForLaneChange, Is.False);
+        Assert.That(state.WaitingForPitChoice, Is.False);
+    }
+
+    [Test]
     public void ResetClosesEveryGateAndClearsChoices()
     {
         var state = new RaceInputState();

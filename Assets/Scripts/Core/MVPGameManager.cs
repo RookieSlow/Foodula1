@@ -83,7 +83,6 @@ public class MVPGameManager : MonoBehaviour
     private Button confirmGearControl;
 
     // 印地安纳波利斯起点换道
-    private bool waitingForPlayerLaneChange;
     private GameObject laneChangePanel;
     private Button laneInButton;
     private Button laneKeepButton;
@@ -93,7 +92,6 @@ public class MVPGameManager : MonoBehaviour
     private GameObject pitChoicePanel;
     private Button pitEnterButton;
     private Button pitSkipButton;
-    private bool waitingForPitChoice;
     private PlayerState pitWaitingPlayer;
 
     // --- 属性 ---
@@ -618,8 +616,6 @@ public class MVPGameManager : MonoBehaviour
         phase = GamePhase.WaitingForGear;
         inputState.Reset();
         inputState.BeginGearSelection(Player != null ? Player.gear : config.minGear);
-        waitingForPlayerLaneChange = false;
-        waitingForPitChoice = false;
         pitWaitingPlayer = null;
         SetGearControlsInteractable(true);
         ConfigureGearControls(Player);
@@ -1368,12 +1364,12 @@ public class MVPGameManager : MonoBehaviour
     {
         if (pitChoicePanel == null) yield break;
 
-        waitingForPitChoice = true;
+        inputState.BeginPitChoice();
         pitChoicePanel.SetActive(true);
         if (hudUI != null)
             hudUI.SetStatus("维修区入口：进站冷却全部热量，还是继续比赛？");
 
-        yield return new WaitWhile(() => waitingForPitChoice);
+        yield return new WaitWhile(() => inputState.WaitingForPitChoice);
 
         pitChoicePanel.SetActive(false);
         if (hudUI != null)
@@ -1383,8 +1379,8 @@ public class MVPGameManager : MonoBehaviour
     /// <summary>玩家选择进站 / 继续比赛。</summary>
     public void ChoosePit(bool enter)
     {
-        if (!waitingForPitChoice) return;
-        waitingForPitChoice = false;
+        if (!inputState.WaitingForPitChoice) return;
+        inputState.EndPitChoice();
         if (enter)
             EnterPit(pitWaitingPlayer);
     }
@@ -1614,7 +1610,7 @@ public class MVPGameManager : MonoBehaviour
         if (laneChangePanel == null)
             yield break;
 
-        waitingForPlayerLaneChange = true;
+        inputState.BeginLaneChangeSelection();
         int humanLane = laneIndices.Count > 0 ? laneIndices[0] : 0;
         laneInButton.interactable = trackManager.GetLaneTowardsInside(humanLane) != humanLane;
         laneOutButton.interactable = trackManager.GetLaneTowardsOutside(humanLane) != humanLane;
@@ -1624,7 +1620,7 @@ public class MVPGameManager : MonoBehaviour
         if (hudUI != null)
             hudUI.SetStatus("通过印地起点：选择向内、保持或向外一格");
 
-        yield return new WaitWhile(() => waitingForPlayerLaneChange);
+        yield return new WaitWhile(() => inputState.WaitingForLaneChange);
 
         laneChangePanel.SetActive(false);
         if (hudUI != null)
@@ -1636,7 +1632,7 @@ public class MVPGameManager : MonoBehaviour
     /// </summary>
     public void ChooseIndianapolisLaneChange(int direction)
     {
-        if (!waitingForPlayerLaneChange || trackManager == null)
+        if (!inputState.WaitingForLaneChange || trackManager == null)
             return;
 
         int oldLane = laneIndices.Count > 0 ? laneIndices[0] : 0;
@@ -1651,7 +1647,7 @@ public class MVPGameManager : MonoBehaviour
 
         laneIndices[0] = playerLaneIndex;
         MoveCarToNode(Player, trackManager.StartFinishNodeIndex, playerLaneIndex);
-        waitingForPlayerLaneChange = false;
+        inputState.EndLaneChangeSelection();
         string choice = playerLaneIndex == oldLane
             ? "保持当前车道"
             : playerLaneIndex > oldLane ? "向内一格" : "向外一格";

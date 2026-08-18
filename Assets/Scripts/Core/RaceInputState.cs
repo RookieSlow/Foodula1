@@ -13,6 +13,12 @@ public sealed class RaceInputState
     /// <summary>Whether the discard confirmation gate is currently open.</summary>
     public bool WaitingForDiscard { get; private set; }
 
+    /// <summary>Whether the Indianapolis lane-choice gate is currently open.</summary>
+    public bool WaitingForLaneChange { get; private set; }
+
+    /// <summary>Whether the pit-entry choice gate is currently open.</summary>
+    public bool WaitingForPitChoice { get; private set; }
+
     /// <summary>Gear currently highlighted by the player.</summary>
     public int PendingGear { get; private set; }
 
@@ -22,19 +28,25 @@ public sealed class RaceInputState
     /// <summary>Clears all gates and restores neutral choices.</summary>
     public void Reset()
     {
+        CloseAllGates();
+        PendingGear = 0;
+        PlayerGearChoice = 0;
+    }
+
+    private void CloseAllGates()
+    {
         WaitingForGear = false;
         WaitingForCards = false;
         WaitingForDiscard = false;
-        PendingGear = 0;
-        PlayerGearChoice = 0;
+        WaitingForLaneChange = false;
+        WaitingForPitChoice = false;
     }
 
     /// <summary>Opens gear selection and uses the current gear as the default choice.</summary>
     public void BeginGearSelection(int currentGear)
     {
+        CloseAllGates();
         WaitingForGear = true;
-        WaitingForCards = false;
-        WaitingForDiscard = false;
         PendingGear = currentGear;
         PlayerGearChoice = currentGear;
     }
@@ -63,9 +75,8 @@ public sealed class RaceInputState
     /// <summary>Opens the card-play gate and closes unrelated input gates.</summary>
     public void BeginCardSelection()
     {
-        WaitingForGear = false;
+        CloseAllGates();
         WaitingForCards = true;
-        WaitingForDiscard = false;
     }
 
     /// <summary>Closes the card-play gate.</summary>
@@ -77,8 +88,7 @@ public sealed class RaceInputState
     /// <summary>Opens the discard gate and closes unrelated input gates.</summary>
     public void BeginDiscardSelection()
     {
-        WaitingForGear = false;
-        WaitingForCards = false;
+        CloseAllGates();
         WaitingForDiscard = true;
     }
 
@@ -86,5 +96,31 @@ public sealed class RaceInputState
     public void EndDiscardSelection()
     {
         WaitingForDiscard = false;
+    }
+
+    /// <summary>Opens the Indianapolis lane-choice gate.</summary>
+    public void BeginLaneChangeSelection()
+    {
+        CloseAllGates();
+        WaitingForLaneChange = true;
+    }
+
+    /// <summary>Closes the Indianapolis lane-choice gate.</summary>
+    public void EndLaneChangeSelection()
+    {
+        WaitingForLaneChange = false;
+    }
+
+    /// <summary>Opens the pit-entry choice gate.</summary>
+    public void BeginPitChoice()
+    {
+        CloseAllGates();
+        WaitingForPitChoice = true;
+    }
+
+    /// <summary>Closes the pit-entry choice gate.</summary>
+    public void EndPitChoice()
+    {
+        WaitingForPitChoice = false;
     }
 }

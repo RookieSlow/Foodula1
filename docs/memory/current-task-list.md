@@ -42,6 +42,8 @@
   确认一次、阶段互斥和重置边界。
 - [x] 将起终点过线后的圈数递增与完赛边界抽取到
   `Assets/Scripts/Core/RaceLapRules.cs`；天气掷骰、科技重置和 UI 日志仍由管理器编排。
+- [x] 将印地换道与维修区选择的等待门控并入
+  `Assets/Scripts/Core/RaceInputState.cs`；场景面板和选择后的车辆/维修效果仍由管理器编排。
 
 ## 本次修复（2026-08-18 档位确认卡死）
 
