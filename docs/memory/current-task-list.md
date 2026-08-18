@@ -46,6 +46,8 @@
   `Assets/Scripts/Core/RaceInputState.cs`；场景面板和选择后的车辆/维修效果仍由管理器编排。
 - [x] 将回合跳过、爆缸和完赛后的参与资格抽取到
   `Assets/Scripts/Core/RaceTurnRules.cs`；A1 的跳过消费和各阶段副作用仍由管理器编排。
+- [x] 将比赛阶段枚举、阶段切换和输入可接受性抽取到
+  `Assets/Scripts/Core/RacePhaseState.cs`；协程副作用和 UI 仍由管理器编排。
 
 ## 本次修复（2026-08-18 档位确认卡死）
 

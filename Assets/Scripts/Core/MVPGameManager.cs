@@ -5,17 +5,6 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// 游戏阶段枚举。
-/// </summary>
-public enum GamePhase
-{
-    WaitingForGear,
-    WaitingForCards,
-    Animating,
-    GameOver
-}
-
-/// <summary>
 /// 比赛主管理器 — 协程驱动的回合制 HEAT 核心循环。
 /// 挂载到场景中的 GameManager GameObject 上。
 ///
@@ -65,7 +54,7 @@ public class MVPGameManager : MonoBehaviour
 
     // --- 运行时状态 ---
     private RaceSession session;
-    private GamePhase phase;
+    private readonly RacePhaseState phaseState = new RacePhaseState();
 
     private List<GameObject> carInstances = new List<GameObject>();
     private List<int> laneIndices = new List<int>();
@@ -99,7 +88,7 @@ public class MVPGameManager : MonoBehaviour
     public PlayerState AI => session != null && session.Players.Count > 1 ? session.Players[1] : null;
     /// <summary>当前比赛的完整会话（多车/天气/特技/科技状态）。</summary>
     public RaceSession Session => session;
-    public GamePhase CurrentPhase => phase;
+    public GamePhase CurrentPhase => phaseState.Current;
     public GameConfigSO Config => config;
     public TrackManager Track => trackManager;
     /// <summary>当前天气显示名。</summary>
@@ -613,7 +602,7 @@ public class MVPGameManager : MonoBehaviour
                 hudUI.AppendLog($"今日天气: {session.WeatherLabel}");
         }
 
-        phase = GamePhase.WaitingForGear;
+        phaseState.ResetForRace();
         inputState.Reset();
         inputState.BeginGearSelection(Player != null ? Player.gear : config.minGear);
         pitWaitingPlayer = null;
@@ -729,7 +718,7 @@ public class MVPGameManager : MonoBehaviour
 
     private IEnumerator GameLoop()
     {
-        while (phase != GamePhase.GameOver)
+        while (phaseState.IsRunning)
         {
             // ──── 回合开始 ────
             raceCameraController?.BeginTurn();
@@ -757,7 +746,7 @@ public class MVPGameManager : MonoBehaviour
                 }
                 else
                 {
-                    phase = GamePhase.WaitingForGear;
+                    phaseState.BeginGearSelection();
                     inputState.BeginGearSelection(p.gear);
                     SetGearControlsInteractable(true);
                     ConfigureGearControls(p);
@@ -828,7 +817,7 @@ public class MVPGameManager : MonoBehaviour
                 }
                 else
                 {
-                    phase = GamePhase.WaitingForCards;
+                    phaseState.BeginCardSelection();
                     inputState.BeginCardSelection();
                     if (cardHandUI != null)
                     {
@@ -855,7 +844,7 @@ public class MVPGameManager : MonoBehaviour
             ComputeMovements(turnOrder, turnSkipped);
 
             // ====== PHASE B: 执行阶段 ======
-            phase = GamePhase.Animating;
+            phaseState.BeginAnimation();
             foreach (var p in turnOrder)
             {
                 if (RaceTurnRules.IsInactive(p, turnSkipped)) continue;
@@ -915,7 +904,7 @@ public class MVPGameManager : MonoBehaviour
         }
 
         // ──── 游戏结束 ────
-        phase = GamePhase.GameOver;
+        phaseState.CompleteGame();
         ShowGameOver();
     }
 
@@ -1464,7 +1453,7 @@ public class MVPGameManager : MonoBehaviour
     /// </summary>
     public void OnTrickCardClicked(CardData card)
     {
-        if (phase != GamePhase.WaitingForCards) return;
+        if (!phaseState.CanAcceptCards(inputState)) return;
         if (!config.enableTrickCards) return;
         if (Player == null) return;
 
@@ -1999,7 +1988,7 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnGearButtonClicked(int gear)
     {
-        if (phase != GamePhase.WaitingForGear || !inputState.WaitingForGear) return;
+        if (!phaseState.CanAcceptGear(inputState)) return;
         if (Player != null && TeamGearRules.IsChina(Player.teamId) && gear > ChinaGearShiftRules.GoGear)
             return;
         if (!inputState.SelectGear(gear)) return;
@@ -2014,7 +2003,7 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnConfirmGearClicked()
     {
-        if (phase != GamePhase.WaitingForGear || !inputState.WaitingForGear) return;
+        if (!phaseState.CanAcceptGear(inputState)) return;
         if (!inputState.ConfirmGear()) return;
         SetGearControlsInteractable(false);
     }
@@ -2028,7 +2017,7 @@ public class MVPGameManager : MonoBehaviour
             return;
         }
 
-        if (phase != GamePhase.WaitingForCards) return;
+        if (!phaseState.CanAcceptCards(inputState)) return;
         if (cardHandUI == null) return;
         var player = Player;
         if (player == null) return;
