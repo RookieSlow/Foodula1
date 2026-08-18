@@ -30,6 +30,9 @@
 - [x] 将车队赛车精灵槽位与缺失精灵时的备用颜色映射抽取到
   `Assets/Scripts/Gameplay/TeamCarPresentationRules.cs`；新增 4 项边界回归测试，避免
   `MVPGameManager` 直接维护车队外观身份映射。
+- [x] 将节点间车辆插值与到达阈值抽取到
+  `Assets/Scripts/Gameplay/CarMovementAnimator.cs` / `CarMovementRules.cs`；通过注入
+  deltaTime 的回归测试保持原有移动速度、终点吸附与朝向更新行为。
 
 ## 本次修复（2026-08-18 档位确认卡死）
 

@@ -74,6 +74,7 @@ public class MVPGameManager : MonoBehaviour
     private int weatherRolledLap;
     private RaceCameraController raceCameraController;
     private CarOrientationController carOrientationController;
+    private ICarMovementAnimator carMovementAnimator;
 
     private WaitForSeconds nodeWait;
     private bool waitingForPlayerGear;
@@ -127,6 +128,7 @@ public class MVPGameManager : MonoBehaviour
             Debug.LogWarning("MVPGameManager: GameConfigSO not set. Using defaults. Create one via Create > Foodular1 > MVP Game Config for better control.");
         }
         carOrientationController = new CarOrientationController(config);
+        carMovementAnimator = new CarMovementAnimator(config, carOrientationController);
 
         // 自动创建缺失的引用
         if (trackManager == null)
@@ -1142,16 +1144,7 @@ public class MVPGameManager : MonoBehaviour
             int nodeIdx = i % totalNodes;
             Vector3 target = trackManager.GetNodePosition(nodeIdx, laneIndex);
 
-            while (Vector3.Distance(car.transform.position, target) > 0.02f)
-            {
-                car.transform.position = Vector3.MoveTowards(
-                    car.transform.position, target, config.moveAnimSpeed * Time.deltaTime);
-                // 赛车随移动方向平滑旋转（P2 #17）
-                GetCarOrientationController().RotateTowards(car, target, Time.deltaTime);
-                yield return null;
-            }
-            car.transform.position = target;
-            GetCarOrientationController().RotateTowards(car, target, Time.deltaTime);
+            yield return StartCoroutine(GetCarMovementAnimator().MoveToNode(car, target));
 
             // 检测跨过起点/终点线
             if (trackManager.GetNode(nodeIdx).isStartFinish)
@@ -2061,6 +2054,13 @@ public class MVPGameManager : MonoBehaviour
         if (carOrientationController == null)
             carOrientationController = new CarOrientationController(config);
         return carOrientationController;
+    }
+
+    private ICarMovementAnimator GetCarMovementAnimator()
+    {
+        if (carMovementAnimator == null)
+            carMovementAnimator = new CarMovementAnimator(config, GetCarOrientationController());
+        return carMovementAnimator;
     }
 
     // ====== UI 回调 ======

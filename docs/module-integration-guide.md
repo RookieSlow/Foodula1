@@ -61,6 +61,7 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 | `Assets/Scripts/UI/TechTreeUI.cs` | 运行时构建的车队科技树界面，不依赖 Race 场景 |
 | `Assets/Scripts/UI/RaceUIFactory.cs` | RaceCanvas 缺失时的程序化 HUD/手牌构建；只接收回调，不持有比赛状态 |
 | `Assets/Scripts/Gameplay/CarOrientationController.cs` | 车辆朝向的 Unity Transform 适配；角度规则由 `CarOrientationRules` 纯函数提供 |
+| `Assets/Scripts/Gameplay/CarMovementAnimator.cs` / `CarMovementRules.cs` | 节点间车辆插值与到达阈值适配；`MVPGameManager` 保留圈数、弯道和摄像机编排 |
 | `Assets/Scripts/Gameplay/TeamCarPresentationRules.cs` | 车队赛车精灵槽位与备用颜色映射；避免外观身份逻辑散落在比赛编排器中 |
 | `Assets/Scripts/Core/PlayerState.cs` | 新增 `techState` / `trickState` / `extraCardSlotsThisTurn` / `cornerTotalThisTurn` 等 |
 | `Assets/Scripts/Core/CardDeck.cs` | 特技牌与速度牌共用抽牌/弃牌循环（`AddTrickCardsToDrawPile` / `GetTricksInHand` / `DiscardTrickCard` / `DiscardPlayableCardsFromHand`） |
