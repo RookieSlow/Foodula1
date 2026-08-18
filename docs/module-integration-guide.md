@@ -57,6 +57,7 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 | `Assets/Scripts/Core/ChinaGearShiftRules.cs` | 中国队 Go/Recover 纯规则：连续计数、4 张超频、内置冷却 |
 | `Assets/Scripts/Core/TeamGearRules.cs` | 标准四档与中国双档的统一门面，管理器不直接分支规则细节 |
 | `Assets/Scripts/Core/TeamVehicleRules.cs` | 车队基础性能/耐久配置边界，供比赛初始化和后续平衡调整使用 |
+| `Assets/Scripts/Core/RaceMovementRules.cs` | 环形赛道超车判定纯规则；跳过回合策略由 `MVPGameManager` 注入 |
 | `Assets/Scripts/TechTree/TechTreeProfileStore.cs` | PlayerPrefs JSON 适配层；纯科技规则与存档/UI 解耦 |
 | `Assets/Scripts/UI/TechTreeUI.cs` | 运行时构建的车队科技树界面，不依赖 Race 场景 |
 | `Assets/Scripts/UI/RaceUIFactory.cs` | RaceCanvas 缺失时的程序化 HUD/手牌构建；只接收回调，不持有比赛状态 |

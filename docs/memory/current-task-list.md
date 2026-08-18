@@ -33,6 +33,8 @@
 - [x] 将节点间车辆插值与到达阈值抽取到
   `Assets/Scripts/Gameplay/CarMovementAnimator.cs` / `CarMovementRules.cs`；通过注入
   deltaTime 的回归测试保持原有移动速度、终点吸附与朝向更新行为。
+- [x] 将环形赛道超车判定抽取到 `Assets/Scripts/Core/RaceMovementRules.cs`；通过注入
+  跳过回合谓词覆盖普通超车、失控/维修区跳过和无效赛道长度边界。
 
 ## 本次修复（2026-08-18 档位确认卡死）
 

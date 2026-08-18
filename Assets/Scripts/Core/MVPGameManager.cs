@@ -1287,7 +1287,8 @@ public class MVPGameManager : MonoBehaviour
                 overtakesThisTurn[p] = 0;
                 continue;
             }
-            overtakesThisTurn[p] = CountOvertakes(p, turnOrder, true);
+            overtakesThisTurn[p] = RaceMovementRules.CountOvertakes(
+                p, turnOrder, trackManager.TotalNodes, true, ShouldSkipTurn);
         }
     }
 
@@ -1309,38 +1310,9 @@ public class MVPGameManager : MonoBehaviour
     {
         if (!TrickCardRules.IsTorpedoTempuraActive(p.trickState)) return 0;
 
-        int overtakes = CountOvertakes(p, turnOrder, false);
+        int overtakes = RaceMovementRules.CountOvertakes(
+            p, turnOrder, trackManager.TotalNodes, false, ShouldSkipTurn);
         return overtakes > 0 ? overtakes * TrickCardRules.GetTorpedoOvertakeBonus() : 0;
-    }
-
-    private int CountOvertakes(PlayerState p, List<PlayerState> turnOrder, bool useFinalMovement)
-    {
-        if (p == null || trackManager == null)
-            return 0;
-
-        int total = trackManager.TotalNodes;
-        int myOld = p.position;
-        int myNew = myOld + (useFinalMovement ? p.totalMovementThisTurn : p.cornerTotalThisTurn);
-        int overtakes = 0;
-
-        foreach (var q in turnOrder)
-        {
-            if (q == null || q == p || q.isBlown || q.hasFinished || ShouldSkipTurn(q)) continue;
-            int qOld = q.position;
-            int qNew = qOld + (useFinalMovement ? q.totalMovementThisTurn : q.cornerTotalThisTurn);
-            // 对方之前领先我，模拟移动后我领先对方 → 超车
-            if (IsAhead(qOld, myOld, total) && !IsAhead(qNew, myNew, total))
-                overtakes++;
-        }
-
-        return overtakes;
-    }
-
-    /// <summary>aheadPos 是否在 behindPos 前方（环形赛道半圈内判定）。</summary>
-    private static bool IsAhead(int aheadPos, int behindPos, int totalNodes)
-    {
-        int forward = (aheadPos - behindPos + totalNodes) % totalNodes;
-        return forward <= totalNodes / 2;
     }
 
     // ====== 弯道判定（per-corner-segment，含天气/科技修正） ======
