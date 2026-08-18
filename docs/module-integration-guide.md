@@ -38,7 +38,7 @@
 | 多车 | `RaceRanking.cs` | ✅ 完整 | N 车排名/回合顺序/完赛判定 |
 | 天气 | `WeatherData.cs` `WeatherRules.cs` | ✅ 完整 | 开局抽天气 + 每圈 30% 换天，雨天弯道限速 -1 |
 | 维修区 | `PitLaneRules.cs` | ✅ 完整 | 经过 `pit_entry` 选择进站，冷却全部热量、停 1 回合 |
-| 特技牌 | `TrickCardData.cs` `TrickCardRules.cs` | ✅ 完整 | 4 张（2攻2守）洗入普通牌组，每回合限 1，逐张确认后即时结算并弃置 |
+| 特技牌 | `TrickCardData.cs` `TrickCardRules.cs` | ✅ 完整 | 4 张（2攻2守）洗入普通牌组，每回合限 1，单张确认后即时结算并弃置 |
 | 科技树 | `TechTreeData.cs` `TechTreeRules.cs` `TechTreeDatabase.cs` `TechTreeProfileStore.cs` | ✅ UI + 持久化 + 数值接入 | 主菜单入口、按车队保存 RP/解锁/激活状态，比赛读取有效修正；AI 保留 demo 配置 |
 | 中国双档 | `ChinaGearShiftRules.cs` `TeamGearRules.cs` | ✅ 比赛循环接入 | Go/Recover 独立出牌数、连续档位热量/冷却链，玩家与 AI 共用同一纯规则模块 |
 
@@ -60,7 +60,7 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 | `Assets/Scripts/UI/TechTreeUI.cs` | 运行时构建的车队科技树界面，不依赖 Race 场景 |
 | `Assets/Scripts/Core/PlayerState.cs` | 新增 `techState` / `trickState` / `extraCardSlotsThisTurn` / `cornerTotalThisTurn` 等 |
 | `Assets/Scripts/Core/CardDeck.cs` | 特技牌与速度牌共用抽牌/弃牌循环（`AddTrickCardsToDrawPile` / `GetTricksInHand` / `DiscardTrickCard` / `DiscardPlayableCardsFromHand`） |
-| `Assets/Scripts/Core/CardPlayRules.cs` | 单张速度牌确认的纯规则：校验手牌所有权与本回合出牌上限后移入已打出区 |
+| `Assets/Scripts/Core/CardPlayRules.cs` | 速度牌单张/多选确认的纯规则：校验精确手牌所有权与本回合出牌上限后原子移入已打出区 |
 | `Assets/Scripts/Core/CardData.cs` | 新增 `isTemp`（限时热量牌）与 `CreateTempHeat()` |
 | `Assets/Scripts/Config/GameConfigSO.cs` | 新增 `aiOpponentCount` / `playerTeam` / `aiTeams` / 4 个系统开关 |
 | `Assets/Scripts/Core/MVPGameManager.cs` | 比赛循环重构为 N 玩家 + 5 系统接线 |
@@ -82,8 +82,8 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
   ├─ PHASE A1 档位决策   （人类等 UI；AI 用 AIController.DecideGear）
   ├─ PHASE A2 抽牌       （手牌上限 = EffectiveHandSize + extraSlots）
   ├─ PHASE A3 AI 特技牌  （DecideAITrick 启发式；成功后立即弃置并结算）
-  ├─ PHASE A4 逐张出牌   （人类选 1 张 → 确认；速度牌累计，特技牌即时结算）
-  │                       （无待确认牌时点击按钮结束出牌阶段）
+  ├─ PHASE A4 速度牌出牌 （人类可选 1 张或多张 → 确认；特技牌始终单张即时结算）
+  │                       （无选择时点击按钮结束出牌阶段）
   ├─ ComputeMovements    ← 科技直道加成 / 酸菜 / 寿司 / 鱼雷 / 火锅底料在此汇总
   │
   ├─ PHASE B 执行（按 turnOrder 逐个）:
@@ -258,9 +258,10 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
 - Temporary heat cards use `CardDeck.AddCardsToHand`; the four team trick cards
   use `AddTrickCardsToDrawPile` before the opening draw and therefore share the
   normal draw/discard/reshuffle lifecycle.
-- Human play is a one-card pending/confirm flow. Confirmed speed cards remain in
-  the turn's played area until cleanup; confirmed trick cards resolve immediately
-  and enter discard. With no pending card, the action button ends card play.
+- Human play supports a one-card or multi-speed-card selection/confirm flow.
+  Selected speed cards remain bounded by the turn limit and move atomically to
+  the played area; trick cards remain single-card immediate actions and enter
+  the discard pile. With no selection, the action button ends card play.
 - AI card selection uses the effective per-turn card-slot limit, including
   temporary slots and Hotpot effects.
 - AI corner-risk checks use lane-specific limits plus active tech/weather

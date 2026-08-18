@@ -37,6 +37,7 @@ MonoBehaviour:
   movementFocusTrailDelay: 0.1
   carSpriteFacingAngle: 0
   carRotateSpeed: 540
+  carSpriteScale: 0.28
   aiHeatWarningThreshold: 0.7
   aiLookAheadNodes: 6
   aiAggressiveHeatThreshold: 0.3

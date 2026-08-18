@@ -157,6 +157,10 @@ public class GameConfigSO : ScriptableObject
     [Min(1f)]
     public float carRotateSpeed = 540f;
 
+    [Tooltip("赛车图标相对于赛道世界单位的显示缩放。")]
+    [Min(0.01f)]
+    public float carSpriteScale = 0.28f;
+
     [Header("比赛规模 (多车)")]
     [Tooltip("AI 对手数量 (0-3)。多车系统：玩家 + N 名 AI 同场竞技")]
     [Range(0, 3)]

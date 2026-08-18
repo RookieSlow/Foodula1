@@ -13,8 +13,9 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 - Three heat cards start in the deck by default.
 - When trick cards are enabled, four team cards (two attack and two defense)
   are shuffled into the same draw pile before the opening seven-card draw.
-- A turn selects a gear from 1 through 4 and confirms playable cards one at a
-  time. Only one card can be pending confirmation.
+- A turn selects a gear from 1 through 4. Speed cards can be selected singly
+  or as a group and confirmed together; trick cards remain one-at-a-time
+  immediate actions. A speed-card selection may never exceed the turn limit.
 - Confirmed trick cards resolve immediately, leave the hand, and enter the
   discard pile. They can return after the discard pile is reshuffled, and the
   existing one-trick-per-turn limit still applies.

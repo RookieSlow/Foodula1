@@ -1,8 +1,26 @@
 # Current Task List
 
-> Updated: 2026-08-17
+> Updated: 2026-08-18
 > Sources: Claude Code project memory, active session state, session history,
 > current Git worktree, and current Unity project structure.
+
+## 本次完成（2026-08-18 出牌与赛事表现）
+
+- [x] 速度牌支持多选后一次确认，也支持选中一张后单张确认；选择数量由本回合
+  出牌上限实时限制，提交在 `CardPlayRules` 中原子完成。
+- [x] 特技牌仍严格保持单张选择、即时结算，并禁止与速度牌混选。
+- [x] 赛车图标显示缩放改为 `GameConfigSO.carSpriteScale`，默认由 0.2 调整为 0.28。
+- [x] 新增运行时 `RaceEventFX`：超车慢放特写、失控旋转提示与爆缸退赛提示，均不改变
+  规则层状态。
+- [ ] Unity 编辑器回归测试待本轮代码导入完成后执行；先以 dotnet 编译和 EditMode
+  纯规则测试作为静态门禁。
+
+## 本次修复（2026-08-18 档位确认卡死）
+
+- [x] 修复 `RaceEventFX` 复用失效 `CanvasGroup` 导致 `MVPGameManager.Start()` 中断的问题。
+- [x] 赛事特效初始化每次创建带必需组件的新根节点，并设置为可选表现；即使特效初始化
+  失败也会继续启动比赛回合协程。
+- [ ] Unity 编辑器退出 Play Mode 并重载脚本后复测档位确认按钮和首回合推进。
 
 ## P0 - Resume Approved Scheme A Refactor
 

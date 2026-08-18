@@ -72,6 +72,41 @@ public class CardPlayRulesTest
     }
 
     [Test]
+    public void test_commit_speed_cards_commits_selected_group_atomically()
+    {
+        var first = new CardData(CardType.Speed, 1);
+        var second = new CardData(CardType.Speed, 3);
+        var third = new CardData(CardType.Speed, 2);
+        var player = CreatePlayerWithHand(first, second, third);
+
+        var result = CardPlayRules.CommitSpeedCards(
+            player, new List<CardData> { first, second }, 3);
+
+        Assert.AreEqual(SpeedCardCommitResult.Success, result);
+        Assert.IsFalse(player.deck.ContainsInHand(first));
+        Assert.IsFalse(player.deck.ContainsInHand(second));
+        Assert.IsTrue(player.deck.ContainsInHand(third));
+        Assert.AreEqual(2, player.playedSpeedCardsThisTurn.Count);
+    }
+
+    [Test]
+    public void test_commit_speed_cards_limit_failure_does_not_partially_consume_selection()
+    {
+        var first = new CardData(CardType.Speed, 1);
+        var second = new CardData(CardType.Speed, 3);
+        var player = CreatePlayerWithHand(first, second);
+        player.playedSpeedCardsThisTurn.Add(new CardData(CardType.Speed, 2));
+
+        var result = CardPlayRules.CommitSpeedCards(
+            player, new List<CardData> { first, second }, 2);
+
+        Assert.AreEqual(SpeedCardCommitResult.SpeedLimitReached, result);
+        Assert.IsTrue(player.deck.ContainsInHand(first));
+        Assert.IsTrue(player.deck.ContainsInHand(second));
+        Assert.AreEqual(1, player.playedSpeedCardsThisTurn.Count);
+    }
+
+    [Test]
     public void test_hotpot_bonus_requires_using_the_extra_attack_slot()
     {
         var player = CreatePlayerWithHand();

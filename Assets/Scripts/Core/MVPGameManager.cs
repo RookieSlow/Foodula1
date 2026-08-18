@@ -23,7 +23,7 @@ public enum GamePhase
 /// - 多车：RaceSession.Players + RaceRanking 排名/回合顺序（末位先行）
 /// - 天气：比赛开始抽取 + 每圈掷骰换天，雨天弯道限速 -1
 /// - 维修区：经过 pit_entry 时选择进站，冷却全部热量、停 1 回合
-/// - 特技牌：4 张洗入普通牌库，每回合限 1，逐张确认后即时结算
+/// - 特技牌：4 张洗入普通牌库，每回合限 1，单张确认后即时结算；速度牌支持多选确认
 /// - 科技树：demo 预算解锁 L1，修正手牌/热量池/弯速/失控阈值等
 /// 所有规则计算均在纯函数层（RaceSession / RaceRules / *Rules），本类只做编排。
 /// </summary>
@@ -53,6 +53,10 @@ public class MVPGameManager : MonoBehaviour
     [Tooltip("6 辆赛车精灵，按车队索引: 0=UK, 1=DE, 2=IT, 3=US, 4=CN, 5=JP。留空则回退到颜色区分。")]
     public Sprite[] carSprites = new Sprite[6];
 
+    [Header("比赛事件特效")]
+    [Tooltip("超车慢放、失控旋转和爆缸提示的运行时表现组件。留空时自动创建。")]
+    public RaceEventFX raceEventFX;
+
     [Header("UI Prefab (Demo模式)")]
     [Tooltip("拖入 RaceCanvas Prefab 以使用预制 UI；留空则回退到硬编码 MVP UI。")]
     public GameObject raceCanvasPrefab;
@@ -66,6 +70,7 @@ public class MVPGameManager : MonoBehaviour
     private List<GameObject> carInstances = new List<GameObject>();
     private List<int> laneIndices = new List<int>();
     private Dictionary<PlayerState, AIController> aiControllers = new Dictionary<PlayerState, AIController>();
+    private Dictionary<PlayerState, int> overtakesThisTurn = new Dictionary<PlayerState, int>();
     private int weatherRolledLap;
     private RaceCameraController raceCameraController;
 
@@ -165,6 +170,18 @@ public class MVPGameManager : MonoBehaviour
         nodeWait = new WaitForSeconds(config.nodeDelay);
         InitializeGame();
         InitializeRaceCamera();
+        // Event visuals are optional presentation. If a stale runtime UI
+        // object survives an editor scene reload, it must not prevent the
+        // gameplay loop from starting.
+        try
+        {
+            InitializeRaceEventFX();
+        }
+        catch (System.Exception exception)
+        {
+            raceEventFX = null;
+            Debug.LogWarning($"[MVPGameManager] Race event visuals disabled: {exception.Message}");
+        }
         StartCoroutine(GameLoop());
     }
 
@@ -236,6 +253,27 @@ public class MVPGameManager : MonoBehaviour
             ? hudUI.GetComponentInParent<Canvas>()
             : FindObjectOfType<Canvas>();
         raceCameraController.Initialize(this, raceCanvas);
+    }
+
+    private void InitializeRaceEventFX()
+    {
+        Canvas raceCanvas = hudUI != null
+            ? hudUI.GetComponentInParent<Canvas>()
+            : FindObjectOfType<Canvas>();
+        if (raceCanvas == null)
+            return;
+
+        if (raceEventFX == null)
+            raceEventFX = raceCanvas.GetComponentInChildren<RaceEventFX>(true);
+        if (raceEventFX == null)
+        {
+            GameObject fxObject = new GameObject("RaceEventFX", typeof(RectTransform));
+            fxObject.transform.SetParent(raceCanvas.transform, false);
+            raceEventFX = fxObject.AddComponent<RaceEventFX>();
+        }
+
+        TMP_FontAsset font = FindObjectOfType<TMP_Text>()?.font;
+        raceEventFX.Initialize(raceCanvas, font);
     }
 
     /// <summary>
@@ -753,6 +791,8 @@ public class MVPGameManager : MonoBehaviour
 
         phase = GamePhase.WaitingForGear;
         waitingForPlayerGear = true;
+        pendingGear = Player != null ? Player.gear : config.minGear;
+        playerGearChoice = pendingGear;
         waitingForPlayerCards = false;
         waitingForPlayerDiscard = false;
         waitingForPlayerLaneChange = false;
@@ -847,7 +887,8 @@ public class MVPGameManager : MonoBehaviour
                 trackManager.GetNodePosition(nextIdx, visualLane) - startPos);
             GameObject instance = Instantiate(carPrefab, startPos, startRot);
             instance.name = $"Car_{p.name}";
-            instance.transform.localScale = new Vector3(0.2f, 0.2f, 1f);
+            float carScale = config != null ? Mathf.Max(0.01f, config.carSpriteScale) : 0.28f;
+            instance.transform.localScale = new Vector3(carScale, carScale, 1f);
 
             SpriteRenderer sr = instance.GetComponent<SpriteRenderer>();
             if (sr != null)
@@ -957,7 +998,7 @@ public class MVPGameManager : MonoBehaviour
                     DecideAITrick(p);
             }
 
-            // ====== PHASE A4: 逐张确认出牌 ======
+            // ====== PHASE A4: 速度牌可多选确认，特技牌单张即时确认 ======
             foreach (var p in turnOrder)
             {
                 // 含 ShouldSkipTurn：AI 在 A3 打出关东慢煮后本回合不再选牌
@@ -980,7 +1021,7 @@ public class MVPGameManager : MonoBehaviour
                     if (hudUI != null)
                     {
                         hudUI.RefreshPlayerResources(p);
-                        hudUI.SetStatus($"{TeamGearRules.GetDisplayName(p.teamId, p.gear)} 档 - 逐张选择并确认（最多 {GetMaxSpeedCardsThisTurn(p)} 张速度牌）");
+                        hudUI.SetStatus($"{TeamGearRules.GetDisplayName(p.teamId, p.gear)} 档 - 可多选速度牌后确认（最多 {GetMaxSpeedCardsThisTurn(p)} 张；特技牌单张确认）");
                     }
 
                     yield return new WaitWhile(() => waitingForPlayerCards);
@@ -1117,7 +1158,16 @@ public class MVPGameManager : MonoBehaviour
 
         string tag = eliminated ? "<color=red>ELIMINATED!</color>" : $"<color=orange>[{p.spinCounter}/{spinMax}]</color>";
         if (hudUI != null)
+        {
             hudUI.AppendLog($"{p.name} <color=red>SPINS OUT!</color> Reason: {reason}. {tag}");
+            hudUI.SetStatus(eliminated
+                ? $"<color=red>{p.name} 爆缸！赛车退赛</color>"
+                : $"<color=orange>{p.name} 失控！回退并跳过下回合</color>");
+        }
+
+        Transform spunCar = GetCarTransform(p);
+        if (raceEventFX != null && spunCar != null)
+            StartCoroutine(PlaySpinPresentation(spunCar, reason, eliminated));
 
         if (eliminated)
         {
@@ -1125,6 +1175,13 @@ public class MVPGameManager : MonoBehaviour
             if (hudUI != null)
                 hudUI.AppendLog($"<color=red><b>{p.name} has retired from the race!</b></color>");
         }
+    }
+
+    private IEnumerator PlaySpinPresentation(Transform car, string reason, bool blown)
+    {
+        raceCameraController?.BeginVehicleMovement(car);
+        yield return StartCoroutine(raceEventFX.PlaySpin(car, reason, blown));
+        raceCameraController?.EndVehicleMovement();
     }
 
     /// <summary>
@@ -1282,6 +1339,16 @@ public class MVPGameManager : MonoBehaviour
         p.position = targetPos % totalNodes;
         RefreshVisualCarLanes();
 
+        int overtakeCount = 0;
+        overtakesThisTurn.TryGetValue(p, out overtakeCount);
+        if (overtakeCount > 0 && raceEventFX != null)
+        {
+            // Keep the movement camera on the winner for a dedicated
+            // slow-motion close-up before returning to normal race pacing.
+            raceCameraController?.BeginVehicleMovement(car.transform);
+            yield return StartCoroutine(raceEventFX.PlayOvertake(car.transform, overtakeCount));
+        }
+
         if (totalMove > 0)
         {
             if (config.movementFocusTrailDelay > 0f)
@@ -1310,6 +1377,8 @@ public class MVPGameManager : MonoBehaviour
 
     private void ComputeMovements(List<PlayerState> turnOrder, HashSet<PlayerState> turnSkipped)
     {
+        overtakesThisTurn.Clear();
+
         // 第一轮：基础速度总和（弯道判定用，不含特技/科技加成）
         foreach (var p in turnOrder)
         {
@@ -1386,6 +1455,19 @@ public class MVPGameManager : MonoBehaviour
 
             p.totalMovementThisTurn = p.cornerTotalThisTurn + bonus;
         }
+
+        // Visual overtake events use the final movement values, including
+        // technology and trick bonuses, so the close-up matches what players
+        // actually see on the track.
+        foreach (var p in turnOrder)
+        {
+            if (p == null || turnSkipped.Contains(p) || ShouldSkipTurn(p) || p.isBlown || p.hasFinished)
+            {
+                overtakesThisTurn[p] = 0;
+                continue;
+            }
+            overtakesThisTurn[p] = CountOvertakes(p, turnOrder, true);
+        }
     }
 
     private int GetNigiriBonus(PlayerState p, bool crossedCorner, int rawEnd, int lane)
@@ -1406,22 +1488,31 @@ public class MVPGameManager : MonoBehaviour
     {
         if (!TrickCardRules.IsTorpedoTempuraActive(p.trickState)) return 0;
 
+        int overtakes = CountOvertakes(p, turnOrder, false);
+        return overtakes > 0 ? overtakes * TrickCardRules.GetTorpedoOvertakeBonus() : 0;
+    }
+
+    private int CountOvertakes(PlayerState p, List<PlayerState> turnOrder, bool useFinalMovement)
+    {
+        if (p == null || trackManager == null)
+            return 0;
+
         int total = trackManager.TotalNodes;
         int myOld = p.position;
-        int myNew = myOld + p.cornerTotalThisTurn;
+        int myNew = myOld + (useFinalMovement ? p.totalMovementThisTurn : p.cornerTotalThisTurn);
         int overtakes = 0;
 
         foreach (var q in turnOrder)
         {
-            if (q == p || q.isBlown || q.hasFinished || ShouldSkipTurn(q)) continue;
+            if (q == null || q == p || q.isBlown || q.hasFinished || ShouldSkipTurn(q)) continue;
             int qOld = q.position;
-            int qNew = qOld + q.cornerTotalThisTurn;
+            int qNew = qOld + (useFinalMovement ? q.totalMovementThisTurn : q.cornerTotalThisTurn);
             // 对方之前领先我，模拟移动后我领先对方 → 超车
             if (IsAhead(qOld, myOld, total) && !IsAhead(qNew, myNew, total))
                 overtakes++;
         }
 
-        return overtakes > 0 ? overtakes * TrickCardRules.GetTorpedoOvertakeBonus() : 0;
+        return overtakes;
     }
 
     /// <summary>aheadPos 是否在 behindPos 前方（环形赛道半圈内判定）。</summary>
@@ -1592,8 +1683,8 @@ public class MVPGameManager : MonoBehaviour
     // ====== 特技牌 ======
 
     /// <summary>
-    /// Legacy UI entry point retained for scene bindings. New hand interaction confirms
-    /// every card through <see cref="OnPlayCardsButtonClicked"/>.
+    /// Legacy UI entry point retained for scene bindings. Normal hand interaction
+    /// confirms selected speed groups or one selected trick through the shared action button.
     /// </summary>
     public void OnTrickCardClicked(CardData card)
     {
@@ -2030,6 +2121,14 @@ public class MVPGameManager : MonoBehaviour
 
     // ====== 辅助 ======
 
+    private Transform GetCarTransform(PlayerState p)
+    {
+        int index = GetCarIndex(p);
+        return index >= 0 && index < carInstances.Count && carInstances[index] != null
+            ? carInstances[index].transform
+            : null;
+    }
+
     private int GetCarIndex(PlayerState p)
     {
         if (session == null || p == null || session.Players == null)
@@ -2202,10 +2301,18 @@ public class MVPGameManager : MonoBehaviour
         var player = Player;
         if (player == null) return;
 
-        CardData pending = cardHandUI.PendingPlayCard;
-        if (pending != null)
+        List<CardData> selected = cardHandUI.GetSelectedPlayCards();
+        if (selected.Count > 0)
         {
-            ConfirmPlayerCard(player, pending);
+            if (selected[0].IsTrick)
+            {
+                // Trick cards are intentionally single-card, immediate actions.
+                ConfirmPlayerCard(player, selected[0]);
+            }
+            else
+            {
+                ConfirmPlayerSpeedCards(player, selected);
+            }
             return;
         }
 
@@ -2213,8 +2320,8 @@ public class MVPGameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Commits exactly one card from the human hand. Speed cards accumulate for the
-    /// later movement phase; trick cards enter discard and resolve immediately.
+    /// Commits one legacy card entry from the human hand. Speed cards use the
+    /// same atomic path as multi-select groups; trick cards resolve immediately.
     /// </summary>
     private bool ConfirmPlayerCard(PlayerState player, CardData card)
     {
@@ -2264,14 +2371,25 @@ public class MVPGameManager : MonoBehaviour
             return true;
         }
 
+        if (card.IsSpeed)
+            return ConfirmPlayerSpeedCards(player, new List<CardData> { card });
+
+        return false;
+    }
+
+    private bool ConfirmPlayerSpeedCards(PlayerState player, IReadOnlyList<CardData> cards)
+    {
+        if (player == null || cards == null || cards.Count == 0)
+            return false;
+
         int maxCards = GetMaxSpeedCardsThisTurn(player);
-        SpeedCardCommitResult commit = CardPlayRules.CommitSpeedCard(player, card, maxCards);
+        SpeedCardCommitResult commit = CardPlayRules.CommitSpeedCards(player, cards, maxCards);
         if (commit != SpeedCardCommitResult.Success)
         {
             if (hudUI != null)
             {
                 string message = commit == SpeedCardCommitResult.SpeedLimitReached
-                    ? $"速度牌已达上限：{maxCards} 张"
+                    ? $"速度牌已达上限：{maxCards} 张（本次选择未提交）"
                     : "出牌失败：手牌状态已变化";
                 hudUI.SetStatus($"<color=orange>{message}</color>");
             }
@@ -2285,9 +2403,12 @@ public class MVPGameManager : MonoBehaviour
 
         if (hudUI != null)
         {
-            hudUI.AppendLog($"{player.name} 确认速度牌 {card.value}。");
+            int speedTotal = 0;
+            for (int i = 0; i < cards.Count; i++)
+                speedTotal += cards[i].value;
+            hudUI.AppendLog($"{player.name} 确认 {cards.Count} 张速度牌（速度总和 {speedTotal}）。");
             hudUI.SetStatus(
-                $"已打出 {player.playedSpeedCardsThisTurn.Count}/{maxCards} 张速度牌；选择下一张或结束出牌");
+                $"已打出 {player.playedSpeedCardsThisTurn.Count}/{maxCards} 张速度牌；可继续多选或结束出牌");
         }
         RefreshHumanHand(player);
         cardHandUI.BlockActionButtonBriefly();

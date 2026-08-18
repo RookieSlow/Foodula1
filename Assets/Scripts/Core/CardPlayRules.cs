@@ -1,4 +1,6 @@
-/// <summary>Result of committing one speed card during the human card-play phase.</summary>
+using System.Collections.Generic;
+
+/// <summary>Result of committing one or more speed cards during the human card-play phase.</summary>
 public enum SpeedCardCommitResult
 {
     Success,
@@ -33,6 +35,44 @@ public static class CardPlayRules
             return SpeedCardCommitResult.CardNotInHand;
 
         player.playedSpeedCardsThisTurn.Add(card);
+        return SpeedCardCommitResult.Success;
+    }
+
+    /// <summary>
+    /// Commits a selected group of exact speed-card instances atomically.
+    /// The UI may use this for multi-select play, while a one-card selection
+    /// follows the same path and therefore has identical validation.
+    /// </summary>
+    public static SpeedCardCommitResult CommitSpeedCards(
+        PlayerState player,
+        IReadOnlyList<CardData> cards,
+        int maxSpeedCards)
+    {
+        if (player == null || player.deck == null || cards == null || cards.Count == 0)
+            return SpeedCardCommitResult.InvalidCard;
+
+        int remaining = maxSpeedCards - player.playedSpeedCardsThisTurn.Count;
+        if (cards.Count > remaining)
+            return SpeedCardCommitResult.SpeedLimitReached;
+
+        // Validate the entire selection before mutating the deck. This keeps
+        // a stale UI selection from consuming only part of the group.
+        var unique = new HashSet<CardData>();
+        for (int i = 0; i < cards.Count; i++)
+        {
+            CardData card = cards[i];
+            if (card == null || !card.IsSpeed)
+                return SpeedCardCommitResult.InvalidCard;
+            if (!unique.Add(card) || !player.deck.ContainsInHand(card))
+                return SpeedCardCommitResult.CardNotInHand;
+        }
+
+        List<CardData> removed = player.deck.RemoveFromHand(new List<CardData>(cards));
+        if (removed.Count != cards.Count)
+            return SpeedCardCommitResult.CardNotInHand;
+
+        for (int i = 0; i < cards.Count; i++)
+            player.playedSpeedCardsThisTurn.Add(cards[i]);
         return SpeedCardCommitResult.Success;
     }
 

@@ -38,11 +38,20 @@ public class CardHandUI : MonoBehaviour
     private List<CardUI> cardUIs = new List<CardUI>();
     private bool isGearSelectionMode;
     private bool isDiscardMode;
+    // Normal play supports a multi-selected speed-card group, while a trick
+    // card is intentionally restricted to one selected card at a time.
     private CardUI pendingPlayCard;
     private Coroutine actionButtonCooldown;
 
-    /// <summary>The single card waiting for explicit play confirmation.</summary>
-    public CardData PendingPlayCard => pendingPlayCard != null ? pendingPlayCard.cardData : null;
+    /// <summary>Compatibility accessor for callers that expect a single selection.</summary>
+    public CardData PendingPlayCard
+    {
+        get
+        {
+            List<CardData> selected = GetSelectedPlayCards();
+            return selected.Count == 1 ? selected[0] : null;
+        }
+    }
 
     void Start()
     {
@@ -251,12 +260,39 @@ public class CardHandUI : MonoBehaviour
         List<CardData> selected = new List<CardData>();
         foreach (CardUI ui in cardUIs)
         {
-            if (ui != null && ui.isSelected && !ui.cardData.IsHeat)
+            if (ui != null && ui.isSelected && ui.cardData != null && !ui.cardData.IsHeat)
             {
                 selected.Add(ui.cardData);
             }
         }
         return selected;
+    }
+
+    /// <summary>
+    /// Returns the normal play selection. Speed cards may contain multiple
+    /// cards; trick cards are limited to one by the click handler.
+    /// </summary>
+    public List<CardData> GetSelectedPlayCards()
+    {
+        List<CardData> selected = new List<CardData>();
+        foreach (CardUI ui in cardUIs)
+        {
+            if (ui != null && ui.isSelected && ui.cardData != null &&
+                (ui.cardData.IsSpeed || ui.cardData.IsTrick))
+                selected.Add(ui.cardData);
+        }
+        return selected;
+    }
+
+    /// <summary>Returns the one selected trick card, if any.</summary>
+    public CardData GetSelectedTrickCard()
+    {
+        foreach (CardUI ui in cardUIs)
+        {
+            if (ui != null && ui.isSelected && ui.cardData != null && ui.cardData.IsTrick)
+                return ui.cardData;
+        }
+        return null;
     }
 
     /// <summary>
@@ -267,7 +303,7 @@ public class CardHandUI : MonoBehaviour
         int count = 0;
         foreach (CardUI ui in cardUIs)
         {
-            if (ui != null && ui.isSelected && ui.cardData.IsSpeed)
+            if (ui != null && ui.isSelected && ui.cardData != null && ui.cardData.IsSpeed)
                 count++;
         }
         return count;
@@ -298,25 +334,54 @@ public class CardHandUI : MonoBehaviour
         int gear = player.gear;
         int maxCards = gameManager.GetMaxSpeedCardsThisTurn(player);
 
-        if (card.cardData.IsSpeed && player.playedSpeedCardsThisTurn.Count >= maxCards)
+        int selectedSpeedCount = GetSelectedSpeedCount();
+        if (card.cardData.IsTrick && selectedSpeedCount > 0)
+        {
+            if (gameManager.hudUI != null)
+                gameManager.hudUI.SetStatus("速度牌已选中；请先确认速度牌，特技牌必须单独打出");
+            return;
+        }
+
+        if (card.cardData.IsSpeed && GetSelectedTrickCard() != null)
+        {
+            if (gameManager.hudUI != null)
+                gameManager.hudUI.SetStatus("特技牌已选中；请先确认特技牌，不能与速度牌混选");
+            return;
+        }
+
+        if (card.cardData.IsSpeed && !card.isSelected &&
+            player.playedSpeedCardsThisTurn.Count + selectedSpeedCount >= maxCards)
         {
             if (gameManager.hudUI != null)
                 gameManager.hudUI.SetStatus($"<color=orange>{TeamGearRules.GetDisplayName(player.teamId, gear)} 档已打满 {maxCards} 张速度牌</color>");
             return;
         }
 
-        // 正常出牌始终只有一个待确认项。再次点击同一张牌会取消选择。
-        if (pendingPlayCard == card)
+        // Speed cards toggle independently so the player can select a group.
+        // A trick card remains a one-card selection and is confirmed alone.
+        if (card.cardData.IsSpeed)
         {
-            card.SetSelectedWithoutNotify(false);
+            card.SetSelectedWithoutNotify(!card.isSelected);
             pendingPlayCard = null;
         }
         else
         {
-            if (pendingPlayCard != null)
-                pendingPlayCard.SetSelectedWithoutNotify(false);
-            pendingPlayCard = card;
-            pendingPlayCard.SetSelectedWithoutNotify(true);
+            if (pendingPlayCard == card)
+            {
+                card.SetSelectedWithoutNotify(false);
+                pendingPlayCard = null;
+            }
+            else
+            {
+                // Defensive cleanup in case a stale UI contains two tricks.
+                foreach (CardUI ui in cardUIs)
+                {
+                    if (ui != null && ui != card && ui.cardData != null && ui.cardData.IsTrick)
+                        ui.SetSelectedWithoutNotify(false);
+                }
+                pendingPlayCard = card;
+                card.SetSelectedWithoutNotify(true);
+            }
         }
 
         UpdateActionButtonLabel();
@@ -328,11 +393,14 @@ public class CardHandUI : MonoBehaviour
         gameManager?.OnPlayCardsButtonClicked();
     }
 
-    /// <summary>Clears the one-card play selection without changing the underlying hand.</summary>
+    /// <summary>Clears all play selections without changing the underlying hand.</summary>
     public void ClearPendingPlaySelection()
     {
-        if (pendingPlayCard != null)
-            pendingPlayCard.SetSelectedWithoutNotify(false);
+        foreach (CardUI ui in cardUIs)
+        {
+            if (ui != null)
+                ui.SetSelectedWithoutNotify(false);
+        }
         pendingPlayCard = null;
         UpdateActionButtonLabel();
     }
@@ -342,21 +410,24 @@ public class CardHandUI : MonoBehaviour
         if (gameManager == null || gameManager.hudUI == null || player == null) return;
 
         int played = player.playedSpeedCardsThisTurn.Count;
-        if (PendingPlayCard == null)
+        List<CardData> selected = GetSelectedPlayCards();
+        if (selected.Count == 0)
         {
-            gameManager.hudUI.SetStatus($"{TeamGearRules.GetDisplayName(player.teamId, player.gear)} 档 - 已打出 {played}/{maxCards} 张速度牌；点击结束出牌");
+            gameManager.hudUI.SetStatus($"{TeamGearRules.GetDisplayName(player.teamId, player.gear)} 档 - 已打出 {played}/{maxCards} 张速度牌；可多选速度牌后确认");
             return;
         }
 
-        if (PendingPlayCard.IsSpeed)
+        if (selected[0].IsSpeed)
         {
+            int total = 0;
+            for (int i = 0; i < selected.Count; i++) total += selected[i].value;
             gameManager.hudUI.SetStatus(
-                $"待确认：速度 {PendingPlayCard.value}（已打出 {played}/{maxCards} 张）");
+                $"待确认：{selected.Count} 张速度牌（速度总和 {total}，本回合 {played + selected.Count}/{maxCards}）");
             return;
         }
 
         var def = gameManager.Session != null
-            ? gameManager.Session.TrickDb.Get(PendingPlayCard.trickId)
+            ? gameManager.Session.TrickDb.Get(selected[0].trickId)
             : null;
         string label = def != null ? def.name : "特技牌";
         gameManager.hudUI.SetStatus($"待确认：{label}（确认后立即发动）");
@@ -369,10 +440,16 @@ public class CardHandUI : MonoBehaviour
         string label;
         if (isDiscardMode)
             label = "确认弃牌";
-        else if (pendingPlayCard != null)
-            label = "确认出牌";
         else
-            label = "结束出牌";
+        {
+            List<CardData> selected = GetSelectedPlayCards();
+            if (selected.Count == 0)
+                label = "结束出牌";
+            else if (selected[0].IsTrick)
+                label = "确认特技牌";
+            else
+                label = selected.Count == 1 ? "确认速度牌" : $"确认速度牌 ({selected.Count})";
+        }
 
         TMP_Text tmp = playCardsButton.GetComponentInChildren<TMP_Text>(true);
         if (tmp != null)
