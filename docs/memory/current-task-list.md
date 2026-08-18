@@ -44,6 +44,8 @@
   `Assets/Scripts/Core/RaceLapRules.cs`；天气掷骰、科技重置和 UI 日志仍由管理器编排。
 - [x] 将印地换道与维修区选择的等待门控并入
   `Assets/Scripts/Core/RaceInputState.cs`；场景面板和选择后的车辆/维修效果仍由管理器编排。
+- [x] 将回合跳过、爆缸和完赛后的参与资格抽取到
+  `Assets/Scripts/Core/RaceTurnRules.cs`；A1 的跳过消费和各阶段副作用仍由管理器编排。
 
 ## 本次修复（2026-08-18 档位确认卡死）
 

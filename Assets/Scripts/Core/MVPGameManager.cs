@@ -744,7 +744,7 @@ public class MVPGameManager : MonoBehaviour
             // ====== PHASE A1: 档位决策 ======
             foreach (var p in turnOrder)
             {
-                if (ShouldSkipTurn(p))
+                if (RaceTurnRules.ShouldSkip(p))
                 {
                     ResolveSkip(p);
                     turnSkipped.Add(p);
@@ -819,8 +819,8 @@ public class MVPGameManager : MonoBehaviour
             // ====== PHASE A4: 速度牌可多选确认，特技牌单张即时确认 ======
             foreach (var p in turnOrder)
             {
-                // 含 ShouldSkipTurn：AI 在 A3 打出关东慢煮后本回合不再选牌
-                if (turnSkipped.Contains(p) || ShouldSkipTurn(p)) continue;
+                // 含 RaceTurnRules.ShouldSkip：AI 在 A3 打出关东慢煮后本回合不再选牌
+                if (turnSkipped.Contains(p) || RaceTurnRules.ShouldSkip(p)) continue;
 
                 if (p.isAI)
                 {
@@ -858,7 +858,7 @@ public class MVPGameManager : MonoBehaviour
             phase = GamePhase.Animating;
             foreach (var p in turnOrder)
             {
-                if (turnSkipped.Contains(p) || ShouldSkipTurn(p) || p.isBlown || p.hasFinished) continue;
+                if (RaceTurnRules.IsInactive(p, turnSkipped)) continue;
 
                 int oldPos = p.position;
                 int rawEnd = oldPos + p.cornerTotalThisTurn;
@@ -898,7 +898,7 @@ public class MVPGameManager : MonoBehaviour
             // ====== 弃牌（可选，仅玩家） ======
             var human = Player;
             if (human != null && !human.hasFinished && !human.isBlown &&
-                !turnSkipped.Contains(human) && !ShouldSkipTurn(human))
+                !turnSkipped.Contains(human) && !RaceTurnRules.ShouldSkip(human))
             {
                 yield return StartCoroutine(DiscardStep());
             }
@@ -920,11 +920,6 @@ public class MVPGameManager : MonoBehaviour
     }
 
     // ====== 回合跳过（失控 / 维修区 / 关东慢煮） ======
-
-    private bool ShouldSkipTurn(PlayerState p)
-    {
-        return p.skipNextTurn || p.kantoOdenSkipThisTurn;
-    }
 
     private void ResolveSkip(PlayerState p)
     {
@@ -1191,7 +1186,7 @@ public class MVPGameManager : MonoBehaviour
         // 第一轮：基础速度总和（弯道判定用，不含特技/科技加成）
         foreach (var p in turnOrder)
         {
-            if (turnSkipped.Contains(p) || ShouldSkipTurn(p) || p.isBlown || p.hasFinished)
+            if (RaceTurnRules.IsInactive(p, turnSkipped))
             {
                 p.totalMovementThisTurn = 0;
                 p.cornerTotalThisTurn = 0;
@@ -1203,7 +1198,7 @@ public class MVPGameManager : MonoBehaviour
         // 第二轮：加成（需要弯道信息与对手移动）
         foreach (var p in turnOrder)
         {
-            if (turnSkipped.Contains(p) || ShouldSkipTurn(p) || p.isBlown || p.hasFinished) continue;
+            if (RaceTurnRules.IsInactive(p, turnSkipped)) continue;
 
             int rawEnd = p.position + p.cornerTotalThisTurn;
             int lane = GetLane(p);
@@ -1270,13 +1265,13 @@ public class MVPGameManager : MonoBehaviour
         // actually see on the track.
         foreach (var p in turnOrder)
         {
-            if (p == null || turnSkipped.Contains(p) || ShouldSkipTurn(p) || p.isBlown || p.hasFinished)
+            if (RaceTurnRules.IsInactive(p, turnSkipped))
             {
                 overtakesThisTurn[p] = 0;
                 continue;
             }
             overtakesThisTurn[p] = RaceMovementRules.CountOvertakes(
-                p, turnOrder, trackManager.TotalNodes, true, ShouldSkipTurn);
+                p, turnOrder, trackManager.TotalNodes, true, RaceTurnRules.ShouldSkip);
         }
     }
 
@@ -1299,7 +1294,7 @@ public class MVPGameManager : MonoBehaviour
         if (!TrickCardRules.IsTorpedoTempuraActive(p.trickState)) return 0;
 
         int overtakes = RaceMovementRules.CountOvertakes(
-            p, turnOrder, trackManager.TotalNodes, false, ShouldSkipTurn);
+            p, turnOrder, trackManager.TotalNodes, false, RaceTurnRules.ShouldSkip);
         return overtakes > 0 ? overtakes * TrickCardRules.GetTorpedoOvertakeBonus() : 0;
     }
 
