@@ -1945,35 +1945,11 @@ public class MVPGameManager : MonoBehaviour
         if (TrackPresentationRules.IsIndianapolis(trackManager.TrackId))
             return Mathf.Clamp(laneIndices[idx], 0, trackManager.LaneCount - 1);
 
-        bool trailingInParallel = IsTrailingInParallel(p);
+        bool trailingInParallel = RaceLaneRules.IsTrailingInParallel(
+            p, session != null ? session.Players : null, idx);
         return TrackPresentationRules.GetStandardTrafficLaneIndex(
             trackManager.TrackId,
             trailingInParallel);
-    }
-
-    private bool IsTrailingInParallel(PlayerState candidate)
-    {
-        if (session == null || candidate == null || candidate.hasFinished || candidate.isBlown)
-            return false;
-
-        int candidateIndex = GetCarIndex(candidate);
-        if (candidateIndex < 0)
-            return false;
-
-        for (int i = 0; i < session.Players.Count; i++)
-        {
-            PlayerState other = session.Players[i];
-            if (other == candidate || other == null || other.hasFinished || other.isBlown)
-                continue;
-
-            // Discrete cells have no longitudinal tie-breaker; session order
-            // keeps the side-by-side assignment deterministic.
-            if (other.lap == candidate.lap && other.position == candidate.position &&
-                i < candidateIndex)
-                return true;
-        }
-
-        return false;
     }
 
     private void RefreshVisualCarLanes()
