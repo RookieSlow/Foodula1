@@ -15,6 +15,15 @@
 - [ ] Unity 编辑器回归测试待本轮代码导入完成后执行；先以 dotnet 编译和 EditMode
   纯规则测试作为静态门禁。
 
+## 本次完成（2026-08-18 模块化推进）
+
+- [x] 将 `MVPGameManager.AutoCreateUI()` 的程序化 HUD、档位按钮、动作按钮、手牌容器
+  和卡牌预制体回退逻辑抽取到 `Assets/Scripts/UI/RaceUIFactory.cs`。
+- [x] 保留 Prefab 优先、旧场景回退、按钮回调修复和 TMP 字体复用行为；Manager 只负责
+  传入回调与接收 UI 引用，不再持有主要 UI 构建细节。
+- [x] Unity EditMode：321/321 通过；`dotnet build Foodular1.sln --no-restore`：0 错误。
+- [x] Unity Play Mode 启动冒烟无项目错误/警告；MCP 仅记录自身 WebSocket 重连警告。
+
 ## 本次修复（2026-08-18 档位确认卡死）
 
 - [x] 修复 `RaceEventFX` 复用失效 `CanvasGroup` 导致 `MVPGameManager.Start()` 中断的问题。

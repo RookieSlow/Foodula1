@@ -13,6 +13,7 @@
 │ MonoBehaviour 层（编排）: MVPGameManager / AIController /     │
 │   TrackManager / HUDUI / CardHandUI / CardUI / TechTreeUI    │
 │   —— 只做：等待输入、驱动协程、调用纯函数、刷新 UI            │
+│   RaceUIFactory —— 只负责旧场景的程序化 HUD/手牌构建          │
 ├─────────────────────────────────────────────────────────────┤
 │ RaceSession（纯 C# 聚合层，2026-08-03 新增）                 │
 │   —— 单场比赛状态：玩家列表、天气、科技/特技数据库、排名       │
@@ -58,6 +59,7 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 | `Assets/Scripts/Core/TeamVehicleRules.cs` | 车队基础性能/耐久配置边界，供比赛初始化和后续平衡调整使用 |
 | `Assets/Scripts/TechTree/TechTreeProfileStore.cs` | PlayerPrefs JSON 适配层；纯科技规则与存档/UI 解耦 |
 | `Assets/Scripts/UI/TechTreeUI.cs` | 运行时构建的车队科技树界面，不依赖 Race 场景 |
+| `Assets/Scripts/UI/RaceUIFactory.cs` | RaceCanvas 缺失时的程序化 HUD/手牌构建；只接收回调，不持有比赛状态 |
 | `Assets/Scripts/Core/PlayerState.cs` | 新增 `techState` / `trickState` / `extraCardSlotsThisTurn` / `cornerTotalThisTurn` 等 |
 | `Assets/Scripts/Core/CardDeck.cs` | 特技牌与速度牌共用抽牌/弃牌循环（`AddTrickCardsToDrawPile` / `GetTricksInHand` / `DiscardTrickCard` / `DiscardPlayableCardsFromHand`） |
 | `Assets/Scripts/Core/CardPlayRules.cs` | 速度牌单张/多选确认的纯规则：校验精确手牌所有权与本回合出牌上限后原子移入已打出区 |
@@ -109,7 +111,8 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 3. **写测试**：在 `Assets/Tests/Editor/` 加 `xxx_test.cs`，命名
    `test_系统_场景_期望结果`，纯逻辑测试不依赖场景（用 `SystemRandomSource(seed)`
    保证确定性）。
-4. **接线**：在 `MVPGameManager` 找对应相位（§4），调用纯函数、改 `PlayerState`。
+4. **接线**：在 `MVPGameManager` 找对应相位（§4），调用纯函数、改 `PlayerState`。程序化 UI
+   只通过 `RaceUIFactory` 构建，禁止把新的 GameObject 创建逻辑直接塞回 Manager。
    注意：
    - **跳过回合**：永远用 `ShouldSkipTurn(p)` / 回合级 `turnSkipped` 集合，
      不要在多个相位重复判断同一标志的"是否已清除"状态。

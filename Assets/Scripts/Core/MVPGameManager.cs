@@ -455,106 +455,23 @@ public class MVPGameManager : MonoBehaviour
             return;
         }
 
-        // 从场景中获取 TMP 字体引用
-        TMP_FontAsset fontAsset = null;
+        // Keep the fallback path isolated from race orchestration. The factory
+        // only builds controls and wires callbacks; gameplay state stays here.
         TMP_Text existingTmp = FindObjectOfType<TMP_Text>();
-        if (existingTmp != null) fontAsset = existingTmp.font;
+        TMP_FontAsset fontAsset = existingTmp != null ? existingTmp.font : null;
+        RaceUIFactory factory = new RaceUIFactory(fontAsset);
+        factory.Build(
+            canvas,
+            ref hudUI,
+            ref cardHandUI,
+            trackManager != null ? trackManager.TotalNodes : 0,
+            cardUIPrefab,
+            OnGearButtonClicked,
+            OnConfirmGearClicked,
+            ResetGame);
 
-        // 隐藏旧 UI 元素
-        HideOldUIElement("StatusTextTMP");
-        HideOldUIElement("ReadyStepsText");
-        HideOldUIElement("NextRound");
-        HideOldUIElement("Reset");
-
-        Button autoPlayButton = null;
-
-        // --- 创建 HUD ---
-        if (hudUI == null)
-        {
-            GameObject hudGO = new GameObject("HUD", typeof(RectTransform));
-            hudGO.transform.SetParent(canvas.transform, false);
-            hudUI = hudGO.AddComponent<HUDUI>();
-
-            // 创建子 TMP 文本（G按钮下方，拉开间距）
-            hudUI.statusText = CreateTMPText(hudGO.transform, "StatusText", "选择档位 (1-4)", 22,
-                new Vector2(-300, 180), new Vector2(420, 30), fontAsset);
-            hudUI.gearText = CreateTMPText(hudGO.transform, "GearText", "档位: 1", 18,
-                new Vector2(-400, 150), new Vector2(150, 25), fontAsset);
-            hudUI.heatText = CreateTMPText(hudGO.transform, "HeatText", "引擎热量: 12", 18,
-                new Vector2(-400, 125), new Vector2(280, 25), fontAsset);
-            hudUI.lapText = CreateTMPText(hudGO.transform, "LapText", "圈数: 0/3", 18,
-                new Vector2(-400, 100), new Vector2(200, 25), fontAsset);
-            hudUI.positionText = CreateTMPText(hudGO.transform, "PositionText", $"位置: 0/{trackManager.TotalNodes}", 18,
-                new Vector2(-400, 75), new Vector2(250, 25), fontAsset);
-            hudUI.aiStatusText = CreateTMPText(hudGO.transform, "AIStatusText", "AI: 就绪", 16,
-                new Vector2(250, 50), new Vector2(200, 25), fontAsset);
-            hudUI.weatherText = CreateTMPText(hudGO.transform, "WeatherText", "晴天", 16,
-                new Vector2(250, 180), new Vector2(200, 25), fontAsset);
-            hudUI.standingsText = CreateTMPText(hudGO.transform, "StandingsText", "", 14,
-                new Vector2(250, 75), new Vector2(320, 100), fontAsset);
-            hudUI.logText = CreateTMPText(hudGO.transform, "LogText", "", 13,
-                new Vector2(0, -160), new Vector2(750, 180), fontAsset);
-
-            // 创建 4 个档位按钮 + 确认按钮（屏幕顶部）
-            CreateGearButton(canvas.transform, "Gear1Btn", "G1", new Vector2(-380, 220), 1);
-            CreateGearButton(canvas.transform, "Gear2Btn", "G2", new Vector2(-290, 220), 2);
-            CreateGearButton(canvas.transform, "Gear3Btn", "G3", new Vector2(-200, 220), 3);
-            CreateGearButton(canvas.transform, "Gear4Btn", "G4", new Vector2(-110, 220), 4);
-            CreateActionButton(canvas.transform, "ConfirmGearBtn", "确认", new Vector2(10, 220),
-                new Color(0.4f, 0.7f, 1f), () => OnConfirmGearClicked());
-
-            // 创建 出牌 和 重新开始 按钮
-            autoPlayButton = CreateActionButton(canvas.transform, "PlayBtn", "出牌",
-                new Vector2(-300, -185), Color.green, null);
-            CreateActionButton(canvas.transform, "ResetBtn", "重新开始", new Vector2(-150, -185), Color.yellow,
-                () => ResetGame());
-
-            // 创建游戏结束面板
-            GameObject goPanel = new GameObject("GameOverPanel", typeof(RectTransform));
-            goPanel.transform.SetParent(canvas.transform, false);
-            hudUI.gameOverPanel = goPanel;
-            hudUI.gameOverText = CreateTMPText(goPanel.transform, "GameOverText", "", 28,
-                Vector2.zero, new Vector2(500, 300), fontAsset);
-            goPanel.SetActive(false);
-        }
-
-        // --- 创建 CardHandUI ---
-        if (cardHandUI == null)
-        {
-            Transform handContainer = canvas.transform.Find("HandContainer");
-            if (handContainer == null)
-            {
-                GameObject hc = new GameObject("HandContainer", typeof(RectTransform));
-                hc.transform.SetParent(canvas.transform, false);
-                handContainer = hc.transform;
-            }
-
-            GameObject cardHandGO = new GameObject("CardHand", typeof(RectTransform));
-            cardHandGO.transform.SetParent(canvas.transform, false);
-            cardHandUI = cardHandGO.AddComponent<CardHandUI>();
-            cardHandUI.handContainer = handContainer;
-            cardHandUI.deckInfoText = CreateTMPText(cardHandGO.transform, "DeckInfo",
-                "牌堆: 12速 + 3热", 14, new Vector2(-300, -100), new Vector2(200, 25), fontAsset);
-
-            // 尝试从 Assets/Prefab/CardPrefab.prefab 加载
-#if UNITY_EDITOR
-            cardHandUI.cardPrefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
-                "Assets/Prefab/CardPrefab.prefab");
-#endif
-            if (cardHandUI.cardPrefab == null)
-                Debug.LogWarning("Could not auto-load CardPrefab. Set it manually on CardHand.");
-        }
-
-        if (autoPlayButton == null)
-        {
-            GameObject playButtonObject = GameObject.Find("PlayBtn");
-            if (playButtonObject != null)
-                autoPlayButton = playButtonObject.GetComponent<Button>();
-        }
-        if (cardHandUI != null && cardHandUI.playCardsButton == null)
-            cardHandUI.SetPlayCardsButton(autoPlayButton);
-
-        // 绑定档位按钮回调
+        // Authored and procedural buttons use the same binding path. This
+        // also repairs older scenes whose serialized listeners were lost.
         BindGearButton("Gear1Btn", 1);
         BindGearButton("Gear2Btn", 2);
         BindGearButton("Gear3Btn", 3);
@@ -625,99 +542,25 @@ public class MVPGameManager : MonoBehaviour
         pitChoicePanel.SetActive(false);
     }
 
+    // Auxiliary overlays share the same typography/button construction as the
+    // procedural HUD. These adapters keep the manager-specific callbacks local
+    // while RaceUIFactory owns the actual UI construction.
+    private RaceUIFactory GetRaceUIFactory()
+    {
+        return new RaceUIFactory(FindObjectOfType<TMP_Text>()?.font);
+    }
+
     private TMP_Text CreateTMPText(Transform parent, string name, string text, int fontSize,
         Vector2 anchoredPos, Vector2 size, TMP_FontAsset font = null)
     {
-        GameObject go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-        RectTransform rt = go.GetComponent<RectTransform>();
-        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
-        rt.anchoredPosition = anchoredPos;
-        rt.sizeDelta = size;
-
-        TMP_Text tmp = go.AddComponent<TextMeshProUGUI>();
-        tmp.text = text;
-        tmp.fontSize = fontSize;
-        tmp.alignment = TextAlignmentOptions.Left;
-        if (font != null) tmp.font = font;
-
-        return tmp;
-    }
-
-    private void CreateGearButton(Transform parent, string name, string label, Vector2 pos, int gear)
-    {
-        GameObject go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-        RectTransform rt = go.GetComponent<RectTransform>();
-        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
-        rt.anchoredPosition = pos;
-        rt.sizeDelta = new Vector2(80, 40);
-
-        // Image
-        UnityEngine.UI.Image img = go.AddComponent<UnityEngine.UI.Image>();
-        img.color = new Color(1, 1, 1, 0.8f);
-
-        // Button
-        UnityEngine.UI.Button btn = go.AddComponent<UnityEngine.UI.Button>();
-        ButtonClickAnimation.Attach(btn);
-        int capturedGear = gear;
-        btn.onClick.AddListener(() => OnGearButtonClicked(capturedGear));
-        gearButtonImages[capturedGear] = img;
-
-        // Label
-        GameObject labelGO = new GameObject("Label", typeof(RectTransform));
-        labelGO.transform.SetParent(go.transform, false);
-        RectTransform lrt = labelGO.GetComponent<RectTransform>();
-        lrt.anchorMin = Vector2.zero; lrt.anchorMax = Vector2.one;
-        lrt.sizeDelta = Vector2.zero;
-        TMP_Text ltmp = labelGO.AddComponent<TMPro.TextMeshProUGUI>();
-        ltmp.text = label;
-        ltmp.fontSize = 18;
-        ltmp.alignment = TMPro.TextAlignmentOptions.Center;
-        ltmp.color = Color.black;
+        return new RaceUIFactory(font != null ? font : FindObjectOfType<TMP_Text>()?.font)
+            .CreateText(parent, name, text, fontSize, anchoredPos, size);
     }
 
     private Button CreateActionButton(Transform parent, string name, string label, Vector2 pos, Color color,
         UnityEngine.Events.UnityAction callback)
     {
-        GameObject go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-        RectTransform rt = go.GetComponent<RectTransform>();
-        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
-        rt.anchoredPosition = pos;
-        rt.sizeDelta = new Vector2(120, 40);
-
-        Image img = go.AddComponent<Image>();
-        img.color = color;
-
-        Button btn = go.AddComponent<Button>();
-        ButtonClickAnimation.Attach(btn);
-        if (callback != null)
-            btn.onClick.AddListener(callback);
-
-        // Use the same SDF font as the rest of the HUD. The old fallback to
-        // UnityEngine.UI.Text + an OS Arial font was rasterized at a fixed
-        // size and became blurry whenever the CanvasScaler resized the HUD.
-        GameObject labelGO = new GameObject("Label", typeof(RectTransform));
-        labelGO.transform.SetParent(go.transform, false);
-        RectTransform lrt = labelGO.GetComponent<RectTransform>();
-        lrt.anchorMin = Vector2.zero; lrt.anchorMax = Vector2.one;
-        lrt.sizeDelta = Vector2.zero;
-
-        TMP_Text labelText = labelGO.AddComponent<TextMeshProUGUI>();
-        labelText.text = label;
-        labelText.fontSize = 20;
-        labelText.alignment = TextAlignmentOptions.Center;
-        labelText.color = Color.black;
-        labelText.fontStyle = FontStyles.Bold;
-
-        TMP_Text existingText = FindObjectOfType<TMP_Text>();
-        if (existingText != null && existingText.font != null)
-            labelText.font = existingText.font;
-        else if (TMP_Settings.defaultFontAsset != null)
-            labelText.font = TMP_Settings.defaultFontAsset;
-
-        return btn;
+        return GetRaceUIFactory().CreateActionButton(parent, name, label, pos, color, callback);
     }
 
     private void BindGearButton(string name, int gear)
@@ -733,12 +576,6 @@ public class MVPGameManager : MonoBehaviour
                 btn.onClick.AddListener(() => OnGearButtonClicked(capturedGear));
             }
         }
-    }
-
-    private void HideOldUIElement(string name)
-    {
-        GameObject go = GameObject.Find(name);
-        if (go != null) go.SetActive(false);
     }
 
     // ====== 初始化 ======

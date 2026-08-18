@@ -217,8 +217,9 @@ public static class TrackDataLoader {
 
 ### Negative
 
-- `MVPGameManager` is still ~1018 lines — coordinator bloat (UI creation, animation,
-  game loop all in one class)
+- `MVPGameManager` remains a large coordinator (animation and game loop still live
+  there), but the procedural HUD/hand construction is now isolated in
+  `Assets/Scripts/UI/RaceUIFactory.cs`.
 - Two data paths for tracks (JSON primary + hardcoded fallback) add maintenance
   burden
 - No automated integration tests (full game loop still manual)
@@ -233,7 +234,7 @@ public static class TrackDataLoader {
 
 | Risk | Probability | Impact | Mitigation |
 |------|------------|--------|-----------|
-| MVPGameManager grows past 1500 lines | Medium | Code becomes hard to navigate | Extract UIFactory, AnimationController |
+| MVPGameManager grows past 1500 lines | Medium | Code becomes hard to navigate | Extracted UIFactory; next boundary is AnimationController |
 | JSON schema changes break all 8 tracks | Low | All tracks fail to load | Schema version field + migration script |
 | Pure functions gain hidden state | Low | Tests become misleading | Code review gate — no static fields in Rules classes |
 
@@ -272,7 +273,7 @@ needed — the hardcoded fallback in `TrackManager` preserves the original behav
 ## Related
 
 - **ADR-001**: Superseded — this is the evolution
-- **Future**: ADR-003 (UI layer separation) when MVPGameManager is split
+- **Future**: ADR-003 (UI layer separation) when MVPGameManager's animation/game-loop responsibilities are split
 - **Code**: `Assets/Scripts/Core/RaceRules.cs`, `Assets/Scripts/Gameplay/TrackRules.cs`,
   `Assets/Scripts/AI/AIPlanner.cs`, `Assets/Scripts/Gameplay/TrackDataLoader.cs`
 - **Tests**: `Assets/Tests/Editor/race_rules_test.cs`, `ai_planner_test.cs`,

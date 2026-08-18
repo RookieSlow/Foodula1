@@ -34,7 +34,7 @@
 
 | # | 任务 | 类型 | 说明 |
 |---|------|------|------|
-| 4 | 从 `MVPGameManager` 抽取 `UIFactory` | 重构 | `AutoCreateUI()` ~200 行单独成类，减轻 Manager 负担 |
+| 4 | ~~从 `MVPGameManager` 抽取 `UIFactory`~~ | 重构 | ✅ 已完成：`Assets/Scripts/UI/RaceUIFactory.cs` 负责程序化 HUD/手牌构建，Manager 仅保留编排和回调接线 |
 | 5 | 填充 `tr-registry.yaml` | 文档 | 从 GDD 提取技术需求 ID，建立可追溯性 |
 | 6 | ~~赛道 JSON schema 校验工具~~ | 工具 | ✅ 已完成（`Assets/Scripts/Editor/TrackJsonValidator.cs`，Foodular1 > Tools 菜单） |
 | 7 | ~~写 `PlayerState` 状态机测试~~ | 测试 | ✅ 已完成（`player_state_test.cs`） |
@@ -77,7 +77,7 @@
 | # | 债务 | 严重度 | 说明 |
 |---|------|--------|------|
 | D1 | `TrackManager` 混合渲染 + 逻辑 | 中 | 渲染代码应与状态管理分离 |
-| D2 | `MVPGameManager` 双 UI 路径 | 中 | Prefab 模式 + 硬编码 `AutoCreateUI()` — 长期维护成本 |
+| D2 | `MVPGameManager` 双 UI 路径 | 低 | Prefab 模式 + `RaceUIFactory` 回退路径仍需双路径冒烟测试；UI 构建代码已从 Manager 移出 |
 | D3 | 测试命名不统一 | 低 | `test_xxx_yyy` vs `testXxxYyy` — 统一为 `test_xxx_yyy` 格式 |
 | D4 | 缺少 `.gitignore` 中 Unity 标准条目 | 低 | 检查 `Library/`, `Temp/`, `obj/` 等是否已排除 |
 
