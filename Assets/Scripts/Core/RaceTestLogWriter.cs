@@ -7,6 +7,8 @@ using UnityEngine;
 /// <summary>
 /// Persists a readable race trace for manual playtest analysis.
 /// Gameplay treats this adapter as optional: file failures never stop a race.
+/// Architecture boundary: ADR-002 keeps this Unity/file-system adapter outside
+/// the pure race rules layer.
 /// </summary>
 public sealed class RaceTestLogWriter : IDisposable
 {
@@ -18,20 +20,30 @@ public sealed class RaceTestLogWriter : IDisposable
     public RaceTestLogWriter(string outputDirectory = null)
     {
         directory = string.IsNullOrEmpty(outputDirectory)
-            ? Path.Combine(Application.persistentDataPath, "race-logs")
+            ? GetDefaultDirectory()
             : outputDirectory;
     }
 
     /// <summary>Absolute path of the current or most recently closed log.</summary>
     public string FilePath { get; private set; }
 
+    /// <summary>Directory used for the current writer, useful for test tooling.</summary>
+    public string OutputDirectory => directory;
+
     /// <summary>Whether a race log is currently accepting events.</summary>
     public bool IsActive => writer != null;
+
+    /// <summary>Returns the default persistent directory used by race logs.</summary>
+    public static string GetDefaultDirectory()
+    {
+        return Path.Combine(Application.persistentDataPath, "race-logs");
+    }
 
     /// <summary>Starts a fresh log file for one race.</summary>
     public void BeginRace(string trackId, string trackName, string playerName, TeamId playerTeam, int opponentCount)
     {
         Close();
+        FilePath = null;
 
         try
         {
@@ -55,7 +67,7 @@ public sealed class RaceTestLogWriter : IDisposable
         }
         catch (Exception exception)
         {
-            writer = null;
+            Close();
             Debug.LogWarning($"[RaceTestLog] Logging disabled: {exception.Message}");
         }
     }
@@ -125,18 +137,17 @@ public sealed class RaceTestLogWriter : IDisposable
         if (writer == null)
             return;
 
+        StreamWriter current = writer;
+        writer = null;
         try
         {
-            writer.Flush();
-            writer.Dispose();
+            current.Flush();
+            current.Dispose();
         }
-        catch (ObjectDisposedException)
+        catch (Exception exception)
         {
-            // The file is already closed; keep shutdown safe.
-        }
-        finally
-        {
-            writer = null;
+            // Logging is best effort and must never abort scene shutdown.
+            Debug.LogWarning($"[RaceTestLog] Close failed: {exception.Message}");
         }
     }
 }

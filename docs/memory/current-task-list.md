@@ -12,8 +12,8 @@
 - [x] 赛车图标显示缩放改为 `GameConfigSO.carSpriteScale`，默认由 0.2 调整为 0.28。
 - [x] 新增运行时 `RaceEventFX`：超车慢放特写、失控旋转提示与爆缸退赛提示，均不改变
   规则层状态。
-- [ ] Unity 编辑器回归测试待本轮代码导入完成后执行；先以 dotnet 编译和 EditMode
-  纯规则测试作为静态门禁。
+- [x] Unity 编辑器回归测试已完成：EditMode 365/365 通过，Play Mode 启动冒烟无项目
+  错误或警告（仅 Unity MCP 自身 WebSocket 重连警告）。
 
 ## 本次完成（2026-08-18 模块化推进）
 
@@ -50,15 +50,18 @@
   `Assets/Scripts/Core/RacePhaseState.cs`；协程副作用和 UI 仍由管理器编排。
 - [x] 将每圈天气只掷一次的门控抽取到
   `Assets/Scripts/Core/RaceWeatherState.cs`；天气池选择和 UI 日志仍由会话/管理器编排。
-- [x] 增加 `RaceTestLogWriter` 手动测试日志：自动保存 HUD 事件、回合状态、档位、AI/玩家
-  出牌和移动计划；启动/结束时在 Console 输出日志绝对路径，文件写入失败不影响比赛。
+- [x] 增加 `RaceTestLogWriter` 手动测试日志：自动保存 HUD 事件、回合状态、档位、玩家/AI
+  出牌、特技牌和移动计划；启动/结束时在 Console 输出日志绝对路径，文件写入或关闭失败
+  不影响比赛。日志适配器通过 `GetDefaultDirectory()` 暴露默认目录，并覆盖重开比赛时的
+  文件轮换。
 
 ## 本次修复（2026-08-18 档位确认卡死）
 
 - [x] 修复 `RaceEventFX` 复用失效 `CanvasGroup` 导致 `MVPGameManager.Start()` 中断的问题。
 - [x] 赛事特效初始化每次创建带必需组件的新根节点，并设置为可选表现；即使特效初始化
   失败也会继续启动比赛回合协程。
-- [ ] Unity 编辑器退出 Play Mode 并重载脚本后复测档位确认按钮和首回合推进。
+- [x] Unity 编辑器退出 Play Mode 并重载脚本后复测档位确认按钮和首回合推进；本轮
+  EditMode 365/365 通过，启动冒烟未再出现 `CanvasGroup` 异常。
 
 ## P0 - Resume Approved Scheme A Refactor
 

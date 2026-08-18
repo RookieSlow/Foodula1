@@ -1566,6 +1566,9 @@ public class MVPGameManager : MonoBehaviour
             Debug.LogError($"Failed to move confirmed trick card '{card.trickId}' from hand to discard.");
             return false;
         }
+        raceLogWriter?.Append(
+            $"[TRICK] {p.name} source={(p.isAI ? "AI" : "PLAYER")} id={card.trickId} " +
+            $"effect={(def != null ? def.effectType.ToString() : "unknown")}");
         if (hudUI != null)
             hudUI.AppendLog($"{p.name} 打出特技牌: {result.message}");
 
@@ -2209,6 +2212,7 @@ public class MVPGameManager : MonoBehaviour
             hudUI.SetStatus(
                 $"已打出 {player.playedSpeedCardsThisTurn.Count}/{maxCards} 张速度牌；可继续多选或结束出牌");
         }
+        LogPlayedCards(player, "PLAYER");
         RefreshHumanHand(player);
         cardHandUI.BlockActionButtonBriefly();
         return true;
