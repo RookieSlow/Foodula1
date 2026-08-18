@@ -60,7 +60,7 @@ public class MVPGameManager : MonoBehaviour
     private List<int> laneIndices = new List<int>();
     private Dictionary<PlayerState, AIController> aiControllers = new Dictionary<PlayerState, AIController>();
     private Dictionary<PlayerState, int> overtakesThisTurn = new Dictionary<PlayerState, int>();
-    private int weatherRolledLap;
+    private readonly RaceWeatherState weatherState = new RaceWeatherState();
     private RaceCameraController raceCameraController;
     private CarOrientationController carOrientationController;
     private ICarMovementAnimator carMovementAnimator;
@@ -562,7 +562,7 @@ public class MVPGameManager : MonoBehaviour
 
         session = new RaceSession();
         aiControllers.Clear();
-        weatherRolledLap = 0;
+        weatherState.Reset();
 
         // 人类玩家（Players[0]）
         DriverProfile humanDriver = DriverSelectionState.ResolveDriver(config.playerDriverId, config.playerTeam);
@@ -1753,9 +1753,8 @@ public class MVPGameManager : MonoBehaviour
             hudUI.AppendLog($"{p.name} 完成第 {p.lap} 圈！");
 
         // 每圈掷骰换天（同一圈内多辆车过线只掷一次）
-        if (config.enableWeather && p.lap != weatherRolledLap)
+        if (weatherState.TryBeginLapRoll(p.lap, config.enableWeather))
         {
-            weatherRolledLap = p.lap;
             WeatherType before = session.Weather;
             WeatherType after = session.RollWeatherForLap();
             if (after != before && hudUI != null)

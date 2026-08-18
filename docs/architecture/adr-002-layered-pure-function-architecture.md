@@ -235,7 +235,7 @@ public static class TrackDataLoader {
 
 | Risk | Probability | Impact | Mitigation |
 |------|------------|--------|-----------|
-| MVPGameManager grows past 1500 lines | Medium | Code becomes hard to navigate | Extracted UIFactory, CarOrientationController, CarMovementAnimator, RaceInputState, RaceLapRules, RaceTurnRules, and RacePhaseState; phase transitions and input gates are centralized while coroutine side effects remain in the coordinator |
+| MVPGameManager grows past 1500 lines | Medium | Code becomes hard to navigate | Extracted UIFactory, CarOrientationController, CarMovementAnimator, RaceInputState, RaceLapRules, RaceTurnRules, RacePhaseState, and RaceWeatherState; phase, input, and lap-weather gates are centralized while coroutine side effects remain in the coordinator |
 | JSON schema changes break all 8 tracks | Low | All tracks fail to load | Schema version field + migration script |
 | Pure functions gain hidden state | Low | Tests become misleading | Code review gate — no static fields in Rules classes |
 
