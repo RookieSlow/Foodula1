@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro;
 
@@ -41,6 +42,7 @@ public class HUDUI : MonoBehaviour
 
     private MVPGameManager gameManager;
     private string logBuffer = "";
+    private Action<string> logSink;
 
     void Start()
     {
@@ -87,6 +89,12 @@ public class HUDUI : MonoBehaviour
     public void SetGameManager(MVPGameManager gm)
     {
         gameManager = gm;
+    }
+
+    /// <summary>Sets an optional sink for full-fidelity manual playtest logs.</summary>
+    public void SetLogSink(Action<string> sink)
+    {
+        logSink = sink;
     }
 
     // ====== 刷新 ======
@@ -185,6 +193,7 @@ public class HUDUI : MonoBehaviour
 
     public void AppendLog(string msg)
     {
+        logSink?.Invoke(msg);
         logBuffer = msg + "\n" + logBuffer;
 
         // 限制行数

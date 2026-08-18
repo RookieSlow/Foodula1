@@ -63,6 +63,7 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 | `Assets/Scripts/Core/RacePhaseState.cs` | 比赛阶段状态机与输入可接受性；只管理 WaitingForGear/WaitingForCards/Animating/GameOver 转换，不执行协程副作用 |
 | `Assets/Scripts/Core/RaceTurnRules.cs` | 回合跳过与终止状态的参与资格判定；A1 已消费的跳过集合由管理器传入，规则层不修改玩家状态 |
 | `Assets/Scripts/Core/RaceWeatherState.cs` | 每圈天气掷骰的一次性门控；天气池选择和实际天气变化仍由 `RaceSession`/`WeatherRules` 负责 |
+| `Assets/Scripts/Core/RaceTestLogWriter.cs` | 手动测试日志持久化适配器；HUD 事件、回合快照、档位、出牌和移动计划写入 `persistentDataPath/race-logs`，文件失败不阻断比赛 |
 | `Assets/Scripts/Core/RaceLapRules.cs` | 起终点过线后的圈数递增与完赛边界；天气、科技和 UI 仍由管理器编排 |
 | `Assets/Scripts/TechTree/TechTreeProfileStore.cs` | PlayerPrefs JSON 适配层；纯科技规则与存档/UI 解耦 |
 | `Assets/Scripts/UI/TechTreeUI.cs` | 运行时构建的车队科技树界面，不依赖 Race 场景 |

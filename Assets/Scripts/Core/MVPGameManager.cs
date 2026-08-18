@@ -55,6 +55,8 @@ public class MVPGameManager : MonoBehaviour
     // --- 运行时状态 ---
     private RaceSession session;
     private readonly RacePhaseState phaseState = new RacePhaseState();
+    private RaceTestLogWriter raceLogWriter;
+    private int raceTurnNumber;
 
     private List<GameObject> carInstances = new List<GameObject>();
     private List<int> laneIndices = new List<int>();
@@ -93,6 +95,8 @@ public class MVPGameManager : MonoBehaviour
     public TrackManager Track => trackManager;
     /// <summary>当前天气显示名。</summary>
     public string WeatherLabel => session != null ? session.WeatherLabel : "晴天";
+    /// <summary>Absolute path of the current or most recent manual playtest log.</summary>
+    public string LastRaceLogPath => raceLogWriter != null ? raceLogWriter.FilePath : null;
     /// <summary>The currently rendered human car, if it has been spawned.</summary>
     public Transform PlayerCarTransform => carInstances.Count > 0 ? carInstances[0].transform : null;
     /// <summary>The currently rendered first AI car, if it has been spawned.</summary>
@@ -100,6 +104,12 @@ public class MVPGameManager : MonoBehaviour
 
     void Awake()
     {
+    }
+
+    void OnDestroy()
+    {
+        if (raceLogWriter != null && raceLogWriter.IsActive)
+            raceLogWriter.End("scene destroyed");
     }
 
     void Start()
@@ -563,6 +573,7 @@ public class MVPGameManager : MonoBehaviour
         session = new RaceSession();
         aiControllers.Clear();
         weatherState.Reset();
+        raceTurnNumber = 0;
 
         // 人类玩家（Players[0]）
         DriverProfile humanDriver = DriverSelectionState.ResolveDriver(config.playerDriverId, config.playerTeam);
@@ -587,6 +598,7 @@ public class MVPGameManager : MonoBehaviour
         }
 
         SpawnCars();
+        BeginRaceTestLog(humanDriver, human);
 
         if (hudUI != null)
             hudUI.AppendLog($"车手: {humanDriver.DisplayName}（{humanDriver.Style}，XP {humanDriver.TalentMultiplier:0.0}x）");
@@ -623,6 +635,58 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.ShowHand(this, Player);
             cardHandUI.UpdateDeckInfo(Player);
         }
+    }
+
+    private void BeginRaceTestLog(DriverProfile humanDriver, PlayerState human)
+    {
+        if (raceLogWriter == null)
+            raceLogWriter = new RaceTestLogWriter();
+        else if (raceLogWriter.IsActive)
+            raceLogWriter.End("race reset");
+
+        string trackId = config != null ? config.trackId : "";
+        string trackName = trackManager != null && trackManager.LoadedTrackConfig != null
+            ? trackManager.LoadedTrackConfig.trackName
+            : trackId;
+        raceLogWriter.BeginRace(trackId, trackName, human.name, human.teamId, session.Players.Count - 1);
+        if (hudUI != null)
+            hudUI.SetLogSink(raceLogWriter.Append);
+        Debug.Log($"[RaceTestLog] Started: {raceLogWriter.FilePath}");
+    }
+
+    private void LogPlayerSnapshots()
+    {
+        if (raceLogWriter == null || session == null)
+            return;
+
+        foreach (PlayerState p in session.Players)
+        {
+            if (p == null || p.deck == null || p.deck.heatPool == null)
+                continue;
+
+            raceLogWriter.Append(
+                $"[STATE] {p.name} role={(p.isAI ? "AI" : "PLAYER")} lap={p.lap} position={p.position} " +
+                $"gear={p.gear} engine_heat={p.deck.heatPool.remaining} hand_speed={p.deck.CountSpeedInHand()} " +
+                $"blown={p.isBlown} finished={p.hasFinished}");
+        }
+    }
+
+    private void LogPlayedCards(PlayerState player, string source)
+    {
+        if (raceLogWriter == null || player == null)
+            return;
+
+        string values = "";
+        for (int i = 0; i < player.playedSpeedCardsThisTurn.Count; i++)
+        {
+            if (i > 0)
+                values += ",";
+            values += player.playedSpeedCardsThisTurn[i].value;
+        }
+
+        raceLogWriter.Append(
+            $"[CARDS] {player.name} source={source} count={player.playedSpeedCardsThisTurn.Count} values=[{values}] " +
+            $"gear_limit={GetMaxSpeedCardsThisTurn(player)}");
     }
 
     /// <summary>
@@ -720,6 +784,9 @@ public class MVPGameManager : MonoBehaviour
     {
         while (phaseState.IsRunning)
         {
+            raceTurnNumber++;
+            raceLogWriter?.Append($"[TURN_START] turn={raceTurnNumber} weather={WeatherLabel}");
+            LogPlayerSnapshots();
             // ──── 回合开始 ────
             raceCameraController?.BeginTurn();
             foreach (var p in session.Players)
@@ -814,6 +881,7 @@ public class MVPGameManager : MonoBehaviour
                 if (p.isAI)
                 {
                     GetAIController(p).SelectCards();
+                    LogPlayedCards(p, "AI");
                 }
                 else
                 {
@@ -1054,6 +1122,9 @@ public class MVPGameManager : MonoBehaviour
         // 若 TryPayHeat 失败（失控），HandleSpin 已将档位设为最低档
 
         p.selectedGearThisTurn = p.gear;
+        raceLogWriter?.Append(
+            $"[GEAR] {p.name} role={(p.isAI ? "AI" : "PLAYER")} requested={targetGear} " +
+            $"selected={p.gear} engine_heat={p.deck.heatPool.remaining}");
     }
 
     // ====== 步骤 5：反应（冷却） ======
@@ -1247,6 +1318,9 @@ public class MVPGameManager : MonoBehaviour
             }
 
             p.totalMovementThisTurn = p.cornerTotalThisTurn + bonus;
+            raceLogWriter?.Append(
+                $"[MOVE_PLAN] {p.name} role={(p.isAI ? "AI" : "PLAYER")} position={p.position} " +
+                $"corner_speed={p.cornerTotalThisTurn} bonus={bonus} total={p.totalMovementThisTurn}");
         }
 
         // Visual overtake events use the final movement values, including
@@ -1796,6 +1870,11 @@ public class MVPGameManager : MonoBehaviour
 
         if (hudUI != null) hudUI.ShowGameOver(result);
         if (cardHandUI != null) cardHandUI.HideAll();
+        if (raceLogWriter != null && raceLogWriter.IsActive)
+        {
+            raceLogWriter.End(result);
+            Debug.Log($"[RaceTestLog] Finished: {raceLogWriter.FilePath}");
+        }
     }
 
     private void AssignRemainingFinishers()

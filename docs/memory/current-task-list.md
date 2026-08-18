@@ -50,6 +50,8 @@
   `Assets/Scripts/Core/RacePhaseState.cs`；协程副作用和 UI 仍由管理器编排。
 - [x] 将每圈天气只掷一次的门控抽取到
   `Assets/Scripts/Core/RaceWeatherState.cs`；天气池选择和 UI 日志仍由会话/管理器编排。
+- [x] 增加 `RaceTestLogWriter` 手动测试日志：自动保存 HUD 事件、回合状态、档位、AI/玩家
+  出牌和移动计划；启动/结束时在 Console 输出日志绝对路径，文件写入失败不影响比赛。
 
 ## 本次修复（2026-08-18 档位确认卡死）
 
