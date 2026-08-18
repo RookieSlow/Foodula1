@@ -27,6 +27,9 @@
   `Assets/Scripts/Gameplay/CarOrientationController.cs`；角度规则仍由
   `CarOrientationRules` 纯函数负责。
 - [x] 新增朝向偏移与旋转速度回归测试；Unity EditMode：323/323 通过，Dotnet 编译 0 错误。
+- [x] 将车队赛车精灵槽位与缺失精灵时的备用颜色映射抽取到
+  `Assets/Scripts/Gameplay/TeamCarPresentationRules.cs`；新增 4 项边界回归测试，避免
+  `MVPGameManager` 直接维护车队外观身份映射。
 
 ## 本次修复（2026-08-18 档位确认卡死）
 

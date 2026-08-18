@@ -51,7 +51,7 @@ public class MVPGameManager : MonoBehaviour
 
     [Header("赛车精灵图")]
     [Tooltip("6 辆赛车精灵，按车队索引: 0=UK, 1=DE, 2=IT, 3=US, 4=CN, 5=JP。留空则回退到颜色区分。")]
-    public Sprite[] carSprites = new Sprite[6];
+    public Sprite[] carSprites = new Sprite[TeamCarPresentationRules.TeamCount];
 
     [Header("比赛事件特效")]
     [Tooltip("超车慢放、失控旋转和爆缸提示的运行时表现组件。留空时自动创建。")]
@@ -98,17 +98,6 @@ public class MVPGameManager : MonoBehaviour
     private Button pitSkipButton;
     private bool waitingForPitChoice;
     private PlayerState pitWaitingPlayer;
-
-    /// <summary>6 车队回退颜色（精灵图缺失时）。</summary>
-    private static readonly Color[] TEAM_COLORS =
-    {
-        new Color(0.85f, 0.2f, 0.2f),   // UK 红
-        new Color(0.2f, 0.35f, 0.85f),  // DE 蓝
-        new Color(0.2f, 0.7f, 0.35f),   // IT 绿
-        new Color(0.9f, 0.7f, 0.15f),   // US 黄
-        new Color(0.95f, 0.4f, 0.1f),   // CN 橙
-        new Color(0.3f, 0.8f, 0.85f)    // JP 青
-    };
 
     // --- 属性 ---
     public PlayerState Player => session != null ? session.Human : null;
@@ -732,11 +721,11 @@ public class MVPGameManager : MonoBehaviour
             SpriteRenderer sr = instance.GetComponent<SpriteRenderer>();
             if (sr != null)
             {
-                int teamIdx = (int)p.teamId;
-                if (carSprites != null && carSprites.Length > teamIdx && carSprites[teamIdx] != null)
-                    sr.sprite = carSprites[teamIdx];
-                else if (teamIdx >= 0 && teamIdx < TEAM_COLORS.Length)
-                    sr.color = TEAM_COLORS[teamIdx];
+                Sprite teamSprite;
+                if (TeamCarPresentationRules.TryGetSprite(carSprites, p.teamId, out teamSprite))
+                    sr.sprite = teamSprite;
+                else
+                    sr.color = TeamCarPresentationRules.GetFallbackColor(p.teamId);
             }
 
             carInstances.Add(instance);
