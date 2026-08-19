@@ -10,7 +10,7 @@ using TMPro;
 ///
 /// 5 大核心系统接入（2026-08-03）：
 /// - 多车：RaceSession.Players + RaceRanking 排名/回合顺序（末位先行）
-/// - 天气：比赛开始抽取 + 每圈掷骰换天，雨天弯道限速 -1
+/// - 天气：比赛开始抽取 + 每圈掷骰换天，五种赛道天气画像由 WeatherRules 统一处理
 /// - 维修区：经过 pit_entry 时选择进站，冷却全部热量、停 1 回合
 /// - 特技牌：4 张洗入普通牌库，每回合限 1，单张确认后即时结算；速度牌支持多选确认
 /// - 科技树：demo 预算解锁 L1，修正手牌/热量池/弯速/失控阈值等
@@ -1004,7 +1004,10 @@ public class MVPGameManager : MonoBehaviour
     {
         if (p.isBlown) return;
 
-        p.spinCounter++;
+        int spinIncrement = 1;
+        if (session != null)
+            spinIncrement += WeatherRules.GetExtraSpinCounter(session.Weather);
+        p.spinCounter += spinIncrement;
         int spinMax = session != null ? session.EffectiveSpinMax(p) : 3;
         bool eliminated = p.spinCounter >= spinMax;
 
@@ -1153,6 +1156,9 @@ public class MVPGameManager : MonoBehaviour
             cooldown += TechTreeRules.GetBrothCooldownPerTurn(p.techState);
             cooldown += TechTreeRules.GetBankuruwaseCooldownPerTurn(p.techState);
         }
+
+        if (session != null)
+            cooldown = WeatherRules.ApplyWeatherToCooling(cooldown, session.Weather);
 
         if (cooldown > 0)
         {
@@ -1823,25 +1829,29 @@ public class MVPGameManager : MonoBehaviour
     {
         if (p.hasFinished) return;
 
-        LapProgressResult progress = RaceLapRules.Advance(p.lap, config.totalLaps);
-        p.lap = progress.Lap;
+        RaceLapWeatherTransition transition = RaceLapWeatherRules.Advance(
+            p.lap,
+            config.totalLaps,
+            weatherState.LastRolledLap,
+            config.enableWeather);
+        p.lap = transition.Lap;
         session.OnNewLap(p);
         if (hudUI != null)
             hudUI.AppendLog($"{p.name} 完成第 {p.lap} 圈！");
 
         // 每圈掷骰换天（同一圈内多辆车过线只掷一次）
-        if (weatherState.TryBeginLapRoll(p.lap, config.enableWeather))
+        if (transition.ShouldRollWeather)
         {
+            weatherState.MarkLapRolled(transition.Lap);
             WeatherType before = session.Weather;
             WeatherType after = session.RollWeatherForLap();
             if (after != before && hudUI != null)
             {
-                string bLabel = before == WeatherType.Rainy ? "雨天" : "晴天";
-                hudUI.AppendLog($"<color=cyan>天气变化: {bLabel} → {session.WeatherLabel} (雨天弯道限速 -1)</color>");
+                hudUI.AppendLog($"<color=cyan>天气变化: {WeatherRules.GetDisplayName(before)} → {session.WeatherLabel}</color>");
             }
         }
 
-        if (progress.HasFinished)
+        if (transition.HasFinished)
         {
             p.hasFinished = true;
             session.AssignFinish(p);

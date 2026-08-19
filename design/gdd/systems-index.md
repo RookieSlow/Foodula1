@@ -42,7 +42,7 @@
 | 6 | Core Mechanics | `foodula-1-core-mechanics.md` | In Progress | HEAT board game adaptation; runtime card/heat/gear loop is implemented and tested |
 | 7 | Teams & Cars | `foodula-1-teams-cars.md` | In Progress | 6 national food-themed teams; car sprites and team tech modifiers are wired, full team-selection UI remains |
 | 8 | Drivers | `foodula-1-drivers.md` | In Progress | 12 driver catalog entries, XP/tier rules and menu selection are implemented; signature effects remain |
-| 9 | Tracks | `foodula-1-tracks.md` | In Progress | 8 JSON tracks with real-layout presentation, lanes, apex masks and limits; full pit/weather playthrough remains |
+| 9 | Tracks | `foodula-1-tracks.md` | In Progress | 8 JSON tracks with real-layout presentation, lanes, apex masks and limits; full pit/weather Play Mode playthrough remains |
 | 10 | AI | `foodula-1-ai.md` | In Progress | Deterministic planner and one-opponent controller are implemented; multi-opponent personality tuning remains |
 | 11 | Visual Style | `foodula-1-visual-style.md` | In Progress | Main menu, race backgrounds, masks, minimap and card visuals are integrated; polish remains |
 | 12 | Tech Tree | `foodula-1-tech-tree.md` | In Progress | Rules/database, persistent profiles, main-menu configuration UI and race-loop hooks are integrated; balance/playtest remains |

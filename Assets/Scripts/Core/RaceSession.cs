@@ -96,7 +96,8 @@ public class RaceSession
         return Weather;
     }
 
-    public string WeatherLabel => Weather == WeatherType.Rainy ? "雨天" : "晴天";
+    /// <summary>Current Chinese HUD label for the active weather profile.</summary>
+    public string WeatherLabel => WeatherRules.GetDisplayName(Weather);
 
     // ═══════════════════════════════════════════════════════════════════
     // 科技树（TechTreeRules）
@@ -399,6 +400,7 @@ public class RaceSession
     public int ComputeSlipstreamBonus(PlayerState p, IReadOnlyList<PlayerState> players, int totalNodes)
     {
         if (p.isBlown || p.hasFinished) return 0;
+        if (!WeatherRules.CanSlipstream(Weather)) return 0;
 
         int mySim = p.position + p.cornerTotalThisTurn;
         PlayerState leader = null;
@@ -421,6 +423,7 @@ public class RaceSession
         // 距离判定：最近的前车必须在尾流距离内（≤ 半圈才算"前方"）
         if (bestGap > totalNodes / 2) return 0;
         int range = 1 + GetModifiers(p).slipstreamRangeBonus + p.slipstreamRangeBonusThisTurn;
+        range = WeatherRules.ApplyWeatherToSlipstreamRange(range, Weather);
         if (bestGap > range) return 0;
 
         // 冰糕：前车开启 → 身后赛车无法享受尾流

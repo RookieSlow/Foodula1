@@ -68,6 +68,7 @@ public class RaceSimulationTest
 
         // ── 比赛循环（纯层模拟） ──
         var violations = new SimViolations();
+        var weatherState = new RaceWeatherState();
         int turn = 0;
         while (turn < MAX_TURNS && !session.IsRaceOver() && !RaceEndedForHuman(players))
         {
@@ -118,9 +119,19 @@ public class RaceSimulationTest
                 {
                     if (nodes[i % totalNodes].isStartFinish)
                     {
-                        p.lap++;
+                        RaceLapWeatherTransition transition = RaceLapWeatherRules.Advance(
+                            p.lap,
+                            trackCfg.laps,
+                            weatherState.LastRolledLap,
+                            true);
+                        p.lap = transition.Lap;
                         session.OnNewLap(p);
-                        if (p.lap >= trackCfg.laps)
+                        if (transition.ShouldRollWeather)
+                        {
+                            weatherState.MarkLapRolled(transition.Lap);
+                            session.RollWeatherForLap();
+                        }
+                        if (transition.HasFinished)
                         {
                             p.hasFinished = true;
                             session.AssignFinish(p);
@@ -164,15 +175,6 @@ public class RaceSimulationTest
                     }
                 }
             }
-
-            // 圈内换天（每圈一次，由最先过线者触发）
-            foreach (var p in players)
-                if (p.lap > sessionWeatherRolledLap)
-                {
-                    sessionWeatherRolledLap = p.lap;
-                    session.RollWeatherForLap();
-                    break;
-                }
 
             // 与运行时 CleanupTurn 一致：打出区进入弃牌堆，限时牌销毁。
             foreach (var p in players)
@@ -225,8 +227,6 @@ public class RaceSimulationTest
     }
 
     // ===== 模拟辅助 =====
-
-    private int sessionWeatherRolledLap;
 
     private static bool RaceEndedForHuman(List<PlayerState> players)
     {

@@ -37,7 +37,7 @@
 | 系统 | 文件 | 接入状态 | 说明 |
 |------|------|---------|------|
 | 多车 | `RaceRanking.cs` | ✅ 完整 | N 车排名/回合顺序/完赛判定 |
-| 天气 | `WeatherData.cs` `WeatherRules.cs` | ✅ 完整 | 开局抽天气 + 每圈 30% 换天，雨天弯道限速 -1 |
+| 天气 | `WeatherData.cs` `WeatherRules.cs` | ✅ 完整 | 开局抽天气 + 每圈 30% 换天；五种天气画像统一处理弯速、尾流、冷却、失控与 HUD |
 | 维修区 | `PitLaneRules.cs` | ✅ 完整 | 经过 `pit_entry` 选择进站，冷却全部热量、停 1 回合 |
 | 特技牌 | `TrickCardData.cs` `TrickCardRules.cs` | ✅ 完整 | 4 张（2攻2守）洗入普通牌组，每回合限 1，单张确认后即时结算并弃置 |
 | 科技树 | `TechTreeData.cs` `TechTreeRules.cs` `TechTreeDatabase.cs` `TechTreeProfileStore.cs` | ✅ UI + 持久化 + 数值接入 | 主菜单入口、按车队保存 RP/解锁/激活状态，比赛读取有效修正；AI 保留 demo 配置 |
@@ -63,8 +63,9 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 | `Assets/Scripts/Core/RacePhaseState.cs` | 比赛阶段状态机与输入可接受性；只管理 WaitingForGear/WaitingForCards/Animating/GameOver 转换，不执行协程副作用 |
 | `Assets/Scripts/Core/RaceTurnRules.cs` | 回合跳过与终止状态的参与资格判定；A1 已消费的跳过集合由管理器传入，规则层不修改玩家状态 |
 | `Assets/Scripts/Core/RaceWeatherState.cs` | 每圈天气掷骰的一次性门控；天气池选择和实际天气变化仍由 `RaceSession`/`WeatherRules` 负责 |
+| `Assets/Scripts/Core/RaceLapWeatherRules.cs` | 起终点过线的纯转场：统一圈数递增、每圈天气门控和完赛边界，运行时与纯模拟共用 |
 | `Assets/Scripts/Core/RaceTestLogWriter.cs` | 手动测试日志持久化适配器；HUD 事件、回合快照、档位、玩家/AI 速度牌、特技牌和移动计划写入 `persistentDataPath/race-logs`，`GetDefaultDirectory()` 供测试工具定位，文件失败不阻断比赛 |
-| `Assets/Scripts/Core/RaceLapRules.cs` | 起终点过线后的圈数递增与完赛边界；天气、科技和 UI 仍由管理器编排 |
+| `Assets/Scripts/Core/RaceLapRules.cs` | 起终点过线后的基础圈数递增与完赛边界；天气门控由 `RaceLapWeatherRules` 组合 |
 | `Assets/Scripts/TechTree/TechTreeProfileStore.cs` | PlayerPrefs JSON 适配层；纯科技规则与存档/UI 解耦 |
 | `Assets/Scripts/UI/TechTreeUI.cs` | 运行时构建的车队科技树界面，不依赖 Race 场景 |
 | `Assets/Scripts/UI/RaceUIFactory.cs` | RaceCanvas 缺失时的程序化 HUD/手牌构建；只接收回调，不持有比赛状态 |
@@ -209,6 +210,7 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
 现有测试：`race_session_test.cs`（本接入层）、`player_state_test.cs`、
 `card_deck_test.cs`、`track_data_loader_test.cs` 为本次新增；
 `tech_tree_rules_test.cs` / `trick_card_rules_test.cs` / `weather_rules_test.cs` /
+`race_lap_weather_rules_test.cs` /
 `pit_lane_rules_test.cs` / `race_ranking_test.cs` 为系统自身测试。
 
 运行方式：Unity Test Runner（EditMode）或
@@ -280,9 +282,9 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
   temporary slots and Hotpot effects.
 - AI corner-risk checks use lane-specific limits plus active tech/weather
   modifiers through `RaceSession.EffectiveCornerLimit`.
-- Track weather aliases (`cloudy`, `hot`, `light_rain`, `heavy_rain`) are mapped
-  to the current Sunny/Rainy runtime model, and fixed-default tracks are valid
-  when their weather pool is intentionally empty.
+- Track weather names (`cloudy`, `hot`, `light_rain`, `heavy_rain`) resolve to
+  distinct runtime profiles, while `rain`/`rainy` remain light-rain aliases;
+  fixed-default tracks are valid when their weather pool is intentionally empty.
 - Exact runtime-card ownership is enforced for speed, trick, and heat transfer.
   Temporary heat is destroyed rather than credited to the permanent engine
   pool, and Mother Road advances only by the cards it actually consumes.

@@ -17,13 +17,46 @@ public static class WeatherRules
     public static int ApplyWeatherToSlipstreamRange(int baseRange, WeatherType weather)
     {
         var mods = WeatherModifiers.FromWeather(weather);
-        return baseRange - mods.slipstreamRangeReduction;
+        if (mods.disablesSlipstream) return 0;
+        return System.Math.Max(0, baseRange - mods.slipstreamRangeReduction);
     }
 
     /// <summary>Get extra heat for corner overspeed in given weather.</summary>
     public static int GetExtraHeatPerOverspeed(WeatherType weather)
     {
         return WeatherModifiers.FromWeather(weather).extraHeatPerOverspeed;
+    }
+
+    /// <summary>Returns whether the weather allows a slipstream bonus.</summary>
+    public static bool CanSlipstream(WeatherType weather)
+    {
+        return !WeatherModifiers.FromWeather(weather).disablesSlipstream;
+    }
+
+    /// <summary>Applies weather's cooling penalty without allowing negative cooling.</summary>
+    public static int ApplyWeatherToCooling(int baseCooling, WeatherType weather)
+    {
+        var mods = WeatherModifiers.FromWeather(weather);
+        return System.Math.Max(0, baseCooling - mods.coolingReduction);
+    }
+
+    /// <summary>Returns additional spin-counter points caused by a failed maneuver.</summary>
+    public static int GetExtraSpinCounter(WeatherType weather)
+    {
+        return WeatherModifiers.FromWeather(weather).extraSpinCounter;
+    }
+
+    /// <summary>Returns the Chinese HUD label for a weather type.</summary>
+    public static string GetDisplayName(WeatherType weather)
+    {
+        switch (weather)
+        {
+            case WeatherType.Cloudy: return "多云";
+            case WeatherType.LightRain: return "小雨";
+            case WeatherType.HeavyRain: return "大雨";
+            case WeatherType.Hot: return "高温";
+            default: return "晴天";
+        }
     }
 
     /// <summary>Select starting weather from the track's weather pool.</summary>
@@ -91,12 +124,12 @@ public static class WeatherRules
         switch (name.ToLowerInvariant())
         {
             case "sunny": return WeatherType.Sunny;
-            case "cloudy":
-            case "hot": return WeatherType.Sunny;
+            case "cloudy": return WeatherType.Cloudy;
+            case "hot": return WeatherType.Hot;
             case "rainy":
             case "rain":
-            case "light_rain":
-            case "heavy_rain": return WeatherType.Rainy;
+            case "light_rain": return WeatherType.LightRain;
+            case "heavy_rain": return WeatherType.HeavyRain;
             default: return null;
         }
     }

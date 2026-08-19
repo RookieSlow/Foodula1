@@ -135,13 +135,12 @@ public static class TrackJsonValidator
         if (cfg.laps <= 0)
             errors.Add($"laps={cfg.laps} 必须 > 0");
 
-        // 8. 天气池可解析（sunny/cloudy/light_rain/heavy_rain/hot 至少含 sunny 或 rain）
+        // 8. 天气池可解析（sunny/cloudy/light_rain/heavy_rain/hot）
         if (cfg.weatherPool != null && cfg.weatherPool.Length > 0)
         {
             foreach (var w in cfg.weatherPool)
             {
-                if (WeatherRules.ParseWeather(w) == null &&
-                    !IsExtendedWeather(w))
+                if (WeatherRules.ParseWeather(w) == null)
                 {
                     errors.Add($"天气池包含未知天气: '{w}'");
                     break;
@@ -161,18 +160,4 @@ public static class TrackJsonValidator
             errors.Add("layout.pathClosed 应为 true（环形赛道）");
     }
 
-    /// <summary>扩展天气类型（cloudy/light_rain/heavy_rain/hot）— 当前 WeatherRules 简化为 Sunny/Rainy。</summary>
-    private static bool IsExtendedWeather(string name)
-    {
-        switch (name.ToLowerInvariant())
-        {
-            case "cloudy":
-            case "light_rain":
-            case "heavy_rain":
-            case "hot":
-                return true;
-            default:
-                return false;
-        }
-    }
 }

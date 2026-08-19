@@ -396,6 +396,36 @@ public class RaceSessionTest
     }
 
     [Test]
+    public void test_slipstream_range_respects_cloudy_weather()
+    {
+        var session = CreateSession();
+        var p = AddRacer(session, "Behind", 10, TeamId.CN, false);
+        var leader = AddRacer(session, "Leader", 12, TeamId.UK);
+        p.cornerTotalThisTurn = 3;
+        leader.cornerTotalThisTurn = 3;
+        p.slipstreamRangeBonusThisTurn = 1;
+
+        session.Weather = WeatherType.Sunny;
+        Assert.AreEqual(RaceSession.SLIPSTREAM_BASE_BONUS, session.ComputeSlipstreamBonus(p, session.Players, 60));
+
+        session.Weather = WeatherType.Cloudy;
+        Assert.AreEqual(0, session.ComputeSlipstreamBonus(p, session.Players, 60));
+    }
+
+    [Test]
+    public void test_heavy_rain_disables_slipstream_in_session()
+    {
+        var session = CreateSession();
+        var p = AddRacer(session, "Behind", 10, TeamId.CN, false);
+        var leader = AddRacer(session, "Leader", 11, TeamId.UK);
+        p.cornerTotalThisTurn = 3;
+        leader.cornerTotalThisTurn = 3;
+        session.Weather = WeatherType.HeavyRain;
+
+        Assert.AreEqual(0, session.ComputeSlipstreamBonus(p, session.Players, 60));
+    }
+
+    [Test]
     public void test_slipstream_no_bonus_beyond_range()
     {
         var session = CreateSession();

@@ -1,8 +1,20 @@
 # Current Task List
 
-> Updated: 2026-08-18
+> Updated: 2026-08-19
 > Sources: Claude Code project memory, active session state, session history,
 > current Git worktree, and current Unity project structure.
+
+## 本次完成（2026-08-19 赛道天气规则边界）
+
+- [x] 将赛道 JSON 的 `sunny/cloudy/light_rain/heavy_rain/hot` 映射为独立
+  `WeatherType`，并保留旧 `WeatherType.Rainy` 作为小雨兼容别名。
+- [x] 将弯道限速、尾流范围/禁用、热天冷却惩罚、湿地失控计数器增量和 HUD
+  文案统一收敛到 `WeatherModifiers` / `WeatherRules`，管理器仅负责调用。
+- [x] 增加 `RaceLapWeatherRules`，让运行时比赛与纯模拟共用起终点过线、每圈天气门控
+  和完赛判定顺序；新增跨圈转场回归测试。Unity EditMode：377/377 通过，
+  `dotnet build Foodular1.sln --no-restore`：0 错误。
+- [x] Play Mode 启动冒烟通过：5 秒运行期间 Console 0 条错误/警告/日志；未修改场景。
+- [ ] 仍需在 Play Mode 完成多天气、多圈和完整进站流程的人工走查；本轮未修改场景。
 
 ## 本次完成（2026-08-18 出牌与赛事表现）
 
@@ -173,8 +185,9 @@ with 0 failures, warnings, or errors.
   `cn-hotpot-base` ATTACK card is present in the opening hand while preserving
   hand size and card conservation.
 - [x] Rotate vehicles to follow the tangent between track nodes (default sprite offset corrected to 0° for right-facing car art).
-- [ ] Integrate track weather-pool selection after the core track path is
-  stable.
+- [x] Integrate track weather-pool selection after the core track path is stable;
+  profile effects now resolve through `WeatherRules`, with Play Mode multi-weather
+ 走查 remaining.
 
 ## P2 - Demo Asset Replacement
 
@@ -197,7 +210,8 @@ with 0 failures, warnings, or errors.
   runtime-built main-menu panel; connect the selected driver to race setup.
 - [ ] Add sound effects.
 - [ ] Add card-play, vehicle movement, bounce, and spin-out animations.
-- [ ] Add weather gameplay after track data and race rules are stable.
+- [x] Add weather gameplay after track data and race rules are stable; the five
+  design profiles are now wired into limits, slipstream, cooling, spin-out and HUD.
 
 ## Open Decisions
 

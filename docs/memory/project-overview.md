@@ -66,7 +66,8 @@ The verified scene flow is:
 - The Race scene is configured for the 60-node Silverstone JSON track. Runtime
   apex traversal, start/finish lookup, arbitrary-node HUD display, and loaded
   LineRenderer coordinates are integrated and verified; authoring workflow,
-  vehicle orientation, pit behavior, weather, and full-lap playtesting remain.
+  pit behavior, and full-lap playtesting remain. Track weather now preserves
+  sunny/cloudy/light-rain/heavy-rain/hot profiles through one pure rules boundary.
 - The four Scheme A refactor sources were committed in `58d1bba`.
   `RaceRules.cs` and `AIPlanner.cs` are integrated into the runtime.
   `AIController` and `CardDeck` accept injectable `IRandomSource`

@@ -97,8 +97,23 @@ prototype and is no longer the authoritative model.
 - Vehicle sprites follow the track tangent: spawning and teleport-style moves
   snap immediately to the next-node direction, while normal movement rotates
   smoothly according to `carRotateSpeed`.
-- Track authoring workflow, pit behavior, weather integration, and a full
-  multi-lap manual playthrough still need completion or broader validation.
+- Track authoring workflow, pit behavior, and a full multi-lap manual playthrough
+  still need completion or broader validation.
+
+## Weather
+
+- The selected track supplies a weighted weather pool and optional default.
+  Weather selection is deterministic when the session receives an injected
+  `IRandomSource`.
+- Runtime weather profiles are `Sunny`, `Cloudy`, `LightRain`, `HeavyRain`, and
+  `Hot`; the legacy `Rainy` enum name remains an alias for `LightRain`.
+- Cloudy reduces slipstream range by one cell. Light rain reduces corner limits
+  by one and adds one spin-counter point on a spin-out. Heavy rain reduces corner
+  limits by two, adds two spin-counter points, and disables slipstream. Hot
+  reduces reaction-step cooling by one. Corner limits, slipstream, cooling,
+  spin-out increments, and HUD labels all resolve through `WeatherRules`.
+- Weather rolls once per newly crossed lap; the `RaceWeatherState` gate prevents
+  multiple cars crossing the same start/finish node from rerolling the lap.
 
 ## Opponents and Win Condition
 

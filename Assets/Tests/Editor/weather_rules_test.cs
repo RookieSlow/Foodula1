@@ -21,6 +21,36 @@ public class WeatherRulesTests
     }
 
     [Test]
+    public void test_cloudy_reduces_slipstream_range_by_one()
+    {
+        int range = WeatherRules.ApplyWeatherToSlipstreamRange(2, WeatherType.Cloudy);
+        Assert.That(range, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void test_heavy_rain_reduces_corner_limit_by_two_and_disables_slipstream()
+    {
+        Assert.That(WeatherRules.ApplyWeatherToCornerLimit(5, WeatherType.HeavyRain), Is.EqualTo(3));
+        Assert.That(WeatherRules.ApplyWeatherToSlipstreamRange(2, WeatherType.HeavyRain), Is.Zero);
+        Assert.That(WeatherRules.CanSlipstream(WeatherType.HeavyRain), Is.False);
+    }
+
+    [Test]
+    public void test_hot_reduces_cooling_by_one_without_going_negative()
+    {
+        Assert.That(WeatherRules.ApplyWeatherToCooling(3, WeatherType.Hot), Is.EqualTo(2));
+        Assert.That(WeatherRules.ApplyWeatherToCooling(0, WeatherType.Hot), Is.Zero);
+    }
+
+    [Test]
+    public void test_wet_weather_adds_spin_counter_points()
+    {
+        Assert.That(WeatherRules.GetExtraSpinCounter(WeatherType.LightRain), Is.EqualTo(1));
+        Assert.That(WeatherRules.GetExtraSpinCounter(WeatherType.HeavyRain), Is.EqualTo(2));
+        Assert.That(WeatherRules.GetExtraSpinCounter(WeatherType.Sunny), Is.Zero);
+    }
+
+    [Test]
     public void test_sunny_has_no_slipstream_reduction()
     {
         int range = WeatherRules.ApplyWeatherToSlipstreamRange(2, WeatherType.Sunny);
@@ -139,9 +169,20 @@ public class WeatherRulesTests
     [Test]
     public void test_parse_track_weather_aliases()
     {
-        Assert.That(WeatherRules.ParseWeather("cloudy"), Is.EqualTo(WeatherType.Sunny));
-        Assert.That(WeatherRules.ParseWeather("light_rain"), Is.EqualTo(WeatherType.Rainy));
-        Assert.That(WeatherRules.ParseWeather("heavy_rain"), Is.EqualTo(WeatherType.Rainy));
+        Assert.That(WeatherRules.ParseWeather("cloudy"), Is.EqualTo(WeatherType.Cloudy));
+        Assert.That(WeatherRules.ParseWeather("light_rain"), Is.EqualTo(WeatherType.LightRain));
+        Assert.That(WeatherRules.ParseWeather("heavy_rain"), Is.EqualTo(WeatherType.HeavyRain));
+        Assert.That(WeatherRules.ParseWeather("hot"), Is.EqualTo(WeatherType.Hot));
+    }
+
+    [Test]
+    public void test_weather_display_names_match_profiles()
+    {
+        Assert.That(WeatherRules.GetDisplayName(WeatherType.Sunny), Is.EqualTo("晴天"));
+        Assert.That(WeatherRules.GetDisplayName(WeatherType.Cloudy), Is.EqualTo("多云"));
+        Assert.That(WeatherRules.GetDisplayName(WeatherType.LightRain), Is.EqualTo("小雨"));
+        Assert.That(WeatherRules.GetDisplayName(WeatherType.HeavyRain), Is.EqualTo("大雨"));
+        Assert.That(WeatherRules.GetDisplayName(WeatherType.Hot), Is.EqualTo("高温"));
     }
 
     [Test]
