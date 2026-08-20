@@ -10,7 +10,7 @@ public class AIController : MonoBehaviour
     private MVPGameManager game;
     private PlayerState ai;
     private GameConfigSO config;
-    private TrackManager track;
+    private TrackRuntimeContext track;
 
     private IRandomSource randomSource = new UnityRandomSource();
 
@@ -19,7 +19,9 @@ public class AIController : MonoBehaviour
         game = gameManager;
         ai = aiState;
         config = gameManager.Config;
-        track = gameManager.Track;
+        track = gameManager != null && gameManager.Track != null
+            ? gameManager.Track.Runtime
+            : null;
         randomSource = source ?? new UnityRandomSource();
     }
 

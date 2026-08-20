@@ -1,8 +1,120 @@
 # Current Task List
 
-> Updated: 2026-08-19
+> Updated: 2026-08-20
 > Sources: Claude Code project memory, active session state, session history,
 > current Git worktree, and current Unity project structure.
+
+## 本次完成（2026-08-20 移动事件快照边界）
+
+- [x] 新增 `TrackTraversalEvents`，由 `TrackRuntimeContext.GetTraversalEvents` 从未取模的
+  原始移动目标一次采样有序节点、起终点经过次数、去重弯心和维修区入口；车辆动画、过线、
+  弯道、阴阳茶与维修区编排消费同一份事件快照，减少 `MVPGameManager` 内重复路径判断。
+- [x] `Mother Road` 地标判定改用最终未取模移动目标，支持非零地标跨圈与额外移动；
+  `TechTreeRules.CrossedPositionForward` 保留既有一圈语义并覆盖多圈原始目标。
+- [x] 新增 3 项事件/地标跨圈回归测试；Unity Test Runner EditMode 全量 **394/394 通过**、
+  0 失败/跳过。测试中的 `no_such_track` 预期错误日志已清理，最终 Console 为 0 条错误/警告。
+- [x] MainMenu → 上海国际赛车场 → Race 启动并执行一回合 Go；赛道、车辆、HUD 和移动后
+  状态正常，PlayMode 已停止；`dotnet build Foodular1.sln --no-restore` 0 错误，仅保留既存
+  MCP 程序集版本冲突警告。未修改场景，未 commit/push。
+- [ ] 剩余风险：多天气、多圈、多车过线与完整进站选择/出站流程仍需人工组合走查；PlayMode
+  Test Runner 当前没有非编辑器测试程序集。
+
+## 本次完成（2026-08-20 赛道前进路径边界）
+
+- [x] `TrackRules.GetCrossedNodeIndices` 统一生成原始前进目标对应的有序、归一化节点序列；
+  `TrackRuntimeContext` 暴露该查询，车辆逐节点动画、弯心/起终点查询和维修区入口检测共用
+  同一环形路径采样，跨一圈或多圈时不再各自维护取模逻辑。
+- [x] 新增跨圈有序路径、空/反向路径和快照多圈事件查询回归测试；Unity EditMode 全量
+  391/391 通过。清理 `no_such_track` 的 `LogAssert.Expect` 预期日志后，Console 为 0 条
+  错误/警告。
+- [x] MainMenu → 上海国际赛车场 → Race 重新加载并按 F8 检查编号节点、弯道/弯心与起终点
+  标记；运行时背景和覆盖层对齐，PlayMode 已停止，未修改场景，未 commit/push。
+- [ ] 剩余风险：完整多天气、多圈以及进站选择/出站流程仍需人工组合走查；PlayMode Test
+  Runner 当前没有非编辑器测试程序集。
+
+## 本次完成（2026-08-20 调试覆盖层读取边界）
+
+- [x] `TrackDebugOverlay.SetVisible` 的节点数量、节点元数据和世界坐标读取改为直接消费
+  `TrackRuntimeContext`；`TrackManager` 仍只提供调试开关、Prefab 与颜色等表现配置，兼容
+  序列化行为保持不变。
+- [x] 新增 `test_context_debug_overlay_queries_preserve_node_metadata_and_positions`，覆盖
+  调试覆盖层所需的节点编号、弯心标记、环形查询和非零坐标；Unity EditMode 全量 388/388
+  通过。清理预期的 `no_such_track` 日志后，Console 为 0 条错误/警告。
+- [x] MainMenu → 上海国际赛车场 → Race 的真实 Play Mode 走查中按 F8 显示整条赛道的编号
+  节点、弯道/弯心和起终点标记，覆盖层与赛道背景对齐；未修改场景，未 commit/push。
+- [ ] 剩余风险：PlayMode Test Runner 当前没有非编辑器测试程序集，多天气、多圈与完整进站
+  选择/出站流程仍需后续人工组合走查。
+
+## 本次完成（2026-08-20 比赛编排读取边界）
+
+- [x] `MVPGameManager` 的比赛初始化、天气元数据、地标/MotherRoad、维修区入口与进站、
+  阴阳茶位移、圈数天气和奖励国家读取，均改为直接消费 `TrackRuntimeContext`；不再从
+  `TrackManager` 兼容门面读取赛道节点、圈数或元数据，既有规则与 UI 行为保持不变。
+- [x] 新增带 `pit_entry/pit_exit` 的快照回归测试，验证源节点修改不会污染运行时副本，且
+  `PitLaneRules` 可直接消费上下文节点；Unity EditMode 全量 387/387 通过。
+- [x] MainMenu → 上海国际赛车场 → Race 初始化并执行一回合 Go 走查，赛道背景、车辆、HUD
+  和维修区赛道数据正常；清理 Console 后运行期间 0 条项目错误/警告。`dotnet build
+  Foodular1.sln --no-restore` 0 错误，仅保留既存 MCP 程序集版本冲突警告。
+- [ ] 历史记录：调试覆盖层读取已在后续切片迁移到 `TrackRuntimeContext`；PlayMode Test Runner
+  当前没有非编辑器测试程序集，多天气、多圈与完整进站选择/出站流程仍需后续人工组合走查。
+  本轮未修改场景，未 commit/push。
+
+## 本次完成（2026-08-20 移动计划与弯道结算读取边界）
+
+- [x] `MVPGameManager.ComputeMovements`、`GetNigiriBonus`、`GetTorpedoBonus` 和
+  `ResolveCorners` 现在直接读取 `TrackRuntimeContext` 的节点数、弯道集合、弯道限速和
+  名称；同一切片内的起终点换道 UI 也改为消费快照，未改变移动量、尾流、地标或弯道判定规则。
+- [x] 新增快照查询回归测试，覆盖移动计划/弯道结算所需的跨节点弯道去重、车道限速、弯道名称
+  和环形节点查询；Unity 资源刷新后 EditMode 全量 386/386 通过。
+- [x] MainMenu → Indianapolis → Race 启动并执行一回合 Go 走查，车辆、赛道、HUD 和车道视觉
+  正常；清理 Console 后运行期间 0 条项目错误/警告。`dotnet build Foodular1.sln --no-restore`
+  0 错误，仅保留既存 MCP 程序集版本冲突警告。
+- [ ] 历史剩余风险：进站/MotherRoad、地标/阴阳茶的比赛编排读取已迁移；`TrackDebugOverlay`
+  仍有兼容门面读取。PlayMode Test Runner 当前没有非编辑器测试程序集，多天气、多圈与完整
+  进站选择/出站流程仍需后续人工组合走查。本轮未修改场景，未 commit/push。
+
+## 本次完成（2026-08-20 车辆路径读取边界）
+
+- [x] `MVPGameManager` 的车辆出生、逐格移动、起终点换道、车道刷新和传送朝向读取，
+  直接消费 `TrackRuntimeContext`；不再从 `TrackManager` 兼容门面读取节点坐标、起终点、
+  车道边界和赛道标识，保留既有动画、圈数、换道与精灵表现行为。
+- [x] 新增车辆路径查询回归测试，覆盖玩家/AI 默认车道、起终点位置、下一节点路径、
+  环形节点归一化和起终点换道能力；未修改场景或序列化引用。
+- [x] Unity 资源刷新后 EditMode 385/385 通过；Race Play Mode 通过主菜单→Indianapolis
+  选轨→比赛初始化走查，车辆与赛道视觉正常，清理 Console 后运行期间 0 条项目错误/警告；
+  `dotnet build Foodular1.sln --no-restore` 0 错误，仅保留既存 MCP 程序集版本冲突警告。
+- [ ] 历史剩余风险：进站/MotherRoad、地标/阴阳茶和 `TrackDebugOverlay` 仍使用兼容门面；
+  PlayMode Test Runner 当前没有非编辑器测试程序集，多天气、多圈与完整进站选择/出站流程仍需
+  后续人工组合走查。本轮未修改场景，未 commit/push。
+
+## 本次完成（2026-08-19 赛道运行时上下文边界）
+
+- [x] 新增 `Assets/Scripts/Gameplay/TrackRuntimeContext.cs`，在赛道加载后复制节点、
+  世界坐标、车道偏移、弯道限速、天气池、圈数和元数据，作为比赛/AI/镜头/车辆表现的
+  单一只读赛道快照；旧 `TrackManager` 查询 API 保持兼容并委托到快照。
+- [x] 移除 JSON 赛道加载对共享 `GameConfigSO` 的圈数、节点数和回退尺寸回写；比赛流程
+  改从赛道上下文读取 `TotalLaps`、天气、赛道名称和国家，避免跨组件配置污染。
+- [x] 新增 4 项快照边界/适配器查询/印地车道限速/坐标归一化回归测试；同步 ADR-004、架构注册表、
+  模块接入指南和路线图 D1 状态。
+- [x] `AIController` 的弯道预判、`RaceCameraController` 的路径缓存和 Race HUD 的位置总格
+  直接依赖 `TrackRuntimeContext`；保留 `TrackManager` 兼容门面，未改变选牌、镜头焦点或场景绑定行为。
+- [x] 验证：Unity EditMode 384/384 通过；Race Play Mode 启动运行 7 秒，Console 0 条
+  项目错误/警告；`dotnet build Foodular1.sln --no-restore` 0 错误，仅有既存 MCP 程序集
+  版本冲突警告；未修改场景、未 commit/push。
+- [ ] 剩余风险：车辆编排和调试层仍通过 `TrackManager` 兼容门面读取赛道；多天气、
+  多圈与完整进站 Play Mode 走查仍待完成。
+
+## 本次完成（2026-08-19 维修区入口路径边界）
+
+- [x] `PitLaneRules.CrossedPitEntry` 现在沿未取模的前进路径逐格检查维修区入口，
+  正确覆盖跨起终点回绕、实际额外移动和空轨道边界。
+- [x] `MVPGameManager` 传入 `oldPos + totalMovementThisTurn`，避免科技/特技移动加成
+  将车辆带过维修区入口时漏判；纯层比赛模拟同步使用未取模目标。
+- [x] 新增维修区入口跨圈命中/未命中/空轨道回归测试；Unity EditMode：380/380 通过，
+  `dotnet build Foodular1.sln --no-restore`：0 错误。
+- [x] Race Play Mode 真实 MainMenu → Race 转场与初始化冒烟通过，项目 Console 0 条
+  错误/警告；未修改场景。
+- [ ] 仍需人工完成多天气、多圈与完整进站选择/出站流程走查。
 
 ## 本次完成（2026-08-19 赛道天气规则边界）
 

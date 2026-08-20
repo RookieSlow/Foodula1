@@ -50,16 +50,20 @@ public sealed class TrackDebugOverlay : MonoBehaviour
         if (!visible || trackManager == null)
             return;
 
+        TrackRuntimeContext track = trackManager.Runtime;
+        if (track == null || track.TotalNodes <= 0)
+            return;
+
         Sprite markerSprite = trackManager.nodePrefab != null
             ? trackManager.nodePrefab.GetComponent<SpriteRenderer>()?.sprite
             : null;
         TMP_FontAsset font = FindObjectOfType<TMP_Text>()?.font;
 
-        for (int i = 0; i < trackManager.TotalNodes; i++)
+        for (int i = 0; i < track.TotalNodes; i++)
         {
-            TrackNode node = trackManager.GetNode(i);
+            TrackNode node = track.GetNode(i);
             GameObject marker = new GameObject($"TrackDebugNode_{i}");
-            marker.transform.position = trackManager.GetNodePosition(i);
+            marker.transform.position = track.GetNodePosition(i);
             marker.transform.localScale = Vector3.one * markerScale;
 
             SpriteRenderer renderer = marker.AddComponent<SpriteRenderer>();

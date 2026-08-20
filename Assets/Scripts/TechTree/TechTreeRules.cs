@@ -837,15 +837,34 @@ public static class TechTreeRules
 
     /// <summary>
     /// Check if a position crosses a landmark going forward (clockwise).
-    /// NOTE: Wrap-around detection only handles targetPos == 0 (start line).
-    /// If landmarks are ever placed at non-zero positions, generalize the wrap check.
+    /// newPos may be either the raw forward target or a normalized one-turn
+    /// target. Raw targets can therefore cross any landmark over one or more
+    /// lap boundaries without losing the event.
     /// </summary>
     public static bool CrossedPositionForward(int oldPos, int newPos, int targetPos, int totalCells)
     {
-        if (oldPos <= targetPos && newPos >= targetPos) return true;
-        // Wrap-around case: crossing the origin (targetPos == 0) from end of track
-        if (oldPos > newPos && targetPos == 0) return true;
-        return false;
+        if (totalCells <= 0 || newPos == oldPos)
+            return false;
+
+        int forwardDistance = newPos > oldPos
+            ? newPos - oldPos
+            : newPos + totalCells - oldPos;
+        if (forwardDistance <= 0)
+            return false;
+
+        int normalizedOld = NormalizeTrackPosition(oldPos, totalCells);
+        int normalizedTarget = NormalizeTrackPosition(targetPos, totalCells);
+        int targetOffset = normalizedTarget - normalizedOld;
+        if (targetOffset <= 0)
+            targetOffset += totalCells;
+
+        return targetOffset <= forwardDistance;
+    }
+
+    private static int NormalizeTrackPosition(int position, int totalCells)
+    {
+        int normalized = position % totalCells;
+        return normalized < 0 ? normalized + totalCells : normalized;
     }
 
     /// <summary>

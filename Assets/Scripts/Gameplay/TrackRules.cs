@@ -5,23 +5,61 @@ using System.Collections.Generic;
 /// </summary>
 public static class TrackRules
 {
+    /// <summary>
+    /// Returns the normalized node indices visited by a forward movement path.
+    /// The positions remain raw at the call site so a move can cross one or
+    /// more lap boundaries without losing event order.
+    /// </summary>
+    public static List<int> GetCrossedNodeIndices(int nodeCount, int fromPosition, int toPosition)
+    {
+        var crossed = new List<int>();
+        if (nodeCount <= 0 || toPosition <= fromPosition)
+            return crossed;
+
+        for (int position = fromPosition + 1; position <= toPosition; position++)
+            crossed.Add(NormalizeIndex(position, nodeCount));
+
+        return crossed;
+    }
+
+    /// <summary>
+    /// Samples all track-owned events from one raw forward path. The raw
+    /// target is intentionally retained by the caller so multi-lap movement
+    /// cannot lose event order or skip a repeated landmark node.
+    /// </summary>
+    public static TrackTraversalEvents GetTraversalEvents(
+        IReadOnlyList<TrackNode> nodes,
+        int fromPosition,
+        int toPosition)
+    {
+        var crossed = GetCrossedNodeIndices(nodes != null ? nodes.Count : 0, fromPosition, toPosition);
+        var startFinishNodes = new List<int>();
+        var corners = new HashSet<int>();
+        bool crossedPitEntry = false;
+
+        foreach (int index in crossed)
+        {
+            TrackNode node = nodes[index];
+            if (node == null)
+                continue;
+
+            if (node.isStartFinish)
+                startFinishNodes.Add(index);
+            if (node.cornerId > 0 && node.isApex)
+                corners.Add(node.cornerId);
+            if (node.isPitEntry)
+                crossedPitEntry = true;
+        }
+
+        return new TrackTraversalEvents(crossed, startFinishNodes, corners, crossedPitEntry);
+    }
+
     public static HashSet<int> GetUniqueApexCornersCrossed(
         IReadOnlyList<TrackNode> nodes,
         int fromPosition,
         int toPosition)
     {
-        var corners = new HashSet<int>();
-        if (nodes == null || nodes.Count == 0 || toPosition <= fromPosition)
-            return corners;
-
-        for (int position = fromPosition + 1; position <= toPosition; position++)
-        {
-            TrackNode node = nodes[NormalizeIndex(position, nodes.Count)];
-            if (node.cornerId > 0 && node.isApex)
-                corners.Add(node.cornerId);
-        }
-
-        return corners;
+        return new HashSet<int>(GetTraversalEvents(nodes, fromPosition, toPosition).UniqueApexCornerIds);
     }
 
     public static bool CrossesStartFinish(
@@ -31,20 +69,13 @@ public static class TrackRules
         out int startFinishIndex)
     {
         startFinishIndex = -1;
-        if (nodes == null || nodes.Count == 0 || toPosition <= fromPosition)
+        IReadOnlyList<int> crossedStartFinishNodes =
+            GetTraversalEvents(nodes, fromPosition, toPosition).CrossedStartFinishNodeIndices;
+        if (crossedStartFinishNodes.Count == 0)
             return false;
 
-        for (int position = fromPosition + 1; position <= toPosition; position++)
-        {
-            int index = NormalizeIndex(position, nodes.Count);
-            if (!nodes[index].isStartFinish)
-                continue;
-
-            startFinishIndex = index;
-            return true;
-        }
-
-        return false;
+        startFinishIndex = crossedStartFinishNodes[0];
+        return true;
     }
 
     public static int FindStartFinishNodeIndex(IReadOnlyList<TrackNode> nodes)

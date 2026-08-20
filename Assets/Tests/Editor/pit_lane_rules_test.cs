@@ -81,6 +81,28 @@ public class PitLaneRulesTests
         Assert.That(PitLaneRules.CrossedPitEntry(5, 8, nodes), Is.False);
     }
 
+    [Test]
+    public void test_crossed_pit_entry_after_start_finish_wrap()
+    {
+        var nodes = BuildTrackWithPit();
+
+        Assert.That(PitLaneRules.CrossedPitEntry(39, 51, nodes), Is.True);
+    }
+
+    [Test]
+    public void test_did_not_cross_pit_entry_before_next_lap_entry()
+    {
+        var nodes = BuildTrackWithPit();
+
+        Assert.That(PitLaneRules.CrossedPitEntry(39, 49, nodes), Is.False);
+    }
+
+    [Test]
+    public void test_crossed_pit_entry_handles_missing_track()
+    {
+        Assert.That(PitLaneRules.CrossedPitEntry(0, 10, null), Is.False);
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // Pit Stop
     // ═══════════════════════════════════════════════════════════════════

@@ -15,7 +15,7 @@ public sealed class RaceCameraController : MonoBehaviour
     private readonly RaceCameraFocusState focusState = new RaceCameraFocusState();
 
     private MVPGameManager gameManager;
-    private TrackManager trackManager;
+    private TrackRuntimeContext trackContext;
     private GameConfigSO config;
     private Camera mainCamera;
     private Camera minimapCamera;
@@ -39,11 +39,13 @@ public sealed class RaceCameraController : MonoBehaviour
     public void Initialize(MVPGameManager manager, Canvas raceCanvas)
     {
         gameManager = manager;
-        trackManager = manager != null ? manager.Track : null;
+        trackContext = manager != null && manager.Track != null
+            ? manager.Track.Runtime
+            : null;
         config = manager != null ? manager.Config : null;
         mainCamera = GetComponent<Camera>();
 
-        if (mainCamera == null || trackManager == null || config == null)
+        if (mainCamera == null || trackContext == null || config == null)
         {
             Debug.LogWarning("[RaceCameraController] Missing camera, track, or config; camera setup skipped.");
             enabled = false;
@@ -138,9 +140,9 @@ public sealed class RaceCameraController : MonoBehaviour
     private void CacheTrackPositions()
     {
         trackPositions.Clear();
-        for (int i = 0; i < trackManager.TotalNodes; i++)
+        for (int i = 0; i < trackContext.TotalNodes; i++)
         {
-            trackPositions.Add(trackManager.GetNodePosition(i));
+            trackPositions.Add(trackContext.GetNodePosition(i));
         }
     }
 

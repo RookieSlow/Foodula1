@@ -121,14 +121,16 @@ public class HUDUI : MonoBehaviour
 
         if (positionText != null)
         {
+            TrackRuntimeContext track = gm != null ? gm.TrackContext : null;
+            int totalNodes = track != null ? track.TotalNodes : 0;
             if (allPlayers != null && allPlayers.Count > 0)
             {
                 int rank = RaceRanking.GetCurrentRank(player, new System.Collections.Generic.List<PlayerState>(allPlayers));
-                positionText.text = $"位置: {player.position}/{gm.Track.TotalNodes} | 排名: {rank}/{allPlayers.Count}";
+                positionText.text = $"位置: {player.position}/{totalNodes} | 排名: {rank}/{allPlayers.Count}";
             }
             else
             {
-                positionText.text = $"位置: {player.position}/{gm.Track.TotalNodes}";
+                positionText.text = $"位置: {player.position}/{totalNodes}";
             }
         }
 

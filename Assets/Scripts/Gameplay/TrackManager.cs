@@ -45,8 +45,7 @@ public class TrackManager : MonoBehaviour
     private List<LineRenderer> cornerMaskRenderers = new List<LineRenderer>();
     private List<GameObject> apexMaskObjects = new List<GameObject>();
     private List<GameObject> speedLimitLabelObjects = new List<GameObject>();
-    private Vector2[] worldPathCoordinates = new Vector2[0];
-    private float[] laneOffsets = new float[0];
+    private TrackRuntimeContext runtimeContext;
 
     /// <summary>弯道 ID → 限速的快速查找表。</summary>
     private Dictionary<int, int> cornerSpeedLimits = new Dictionary<int, int>();
@@ -57,31 +56,36 @@ public class TrackManager : MonoBehaviour
     /// <summary>当前加载的赛道配置（JSON 模式非 null）。</summary>
     public TrackConfig LoadedTrackConfig { get; private set; }
 
+    /// <summary>
+    /// The loaded track snapshot used by gameplay and presentation adapters.
+    /// The legacy TrackManager methods below remain as a compatibility facade.
+    /// </summary>
+    public TrackRuntimeContext Runtime
+    {
+        get
+        {
+            EnsureRuntimeContext();
+            return runtimeContext;
+        }
+    }
+
     /// <summary>统一硬编码赛道为 JSON 后的回退赛道 ID（roadmap P1 #9）。</summary>
     public const string FallbackTrackId = "fallback_42";
     private const float FallbackWorldWidth = 31.9f;   // 原始 42 节点形状包围盒
     private const float FallbackWorldHeight = 12.3f;
 
     // --- 公开属性 ---
-    public int TotalNodes => nodes.Count;
-    public int LaneCount => laneOffsets.Length > 0 ? laneOffsets.Length : 1;
-    public IReadOnlyList<TrackNode> Nodes => nodes;
-    public int StartFinishNodeIndex => TrackRules.FindStartFinishNodeIndex(nodes);
-    public string TrackId => LoadedTrackConfig != null
-        ? LoadedTrackConfig.trackId
-        : (config != null ? TrackSelectionState.ResolveTrackId(config.trackId) : FallbackTrackId);
-    public bool AllowsStartFinishLaneChange
-    {
-        get
-        {
-            string trackId = LoadedTrackConfig != null
-                ? LoadedTrackConfig.trackId
-                : (config != null ? config.trackId : string.Empty);
-            return LoadedTrackConfig != null
-                ? LoadedTrackConfig.allowStartFinishLaneChange
-                : TrackPresentationRules.AllowsStartFinishLaneChange(trackId);
-        }
-    }
+    public int TotalNodes => Runtime.TotalNodes;
+    public int TotalLaps => Runtime.TotalLaps;
+    public int LaneCount => Runtime.LaneCount;
+    public IReadOnlyList<TrackNode> Nodes => Runtime.Nodes;
+    public int StartFinishNodeIndex => Runtime.StartFinishNodeIndex;
+    public string TrackId => Runtime.TrackId;
+    public string TrackName => Runtime.TrackName;
+    public string Country => Runtime.Country;
+    public string DefaultWeather => Runtime.DefaultWeather;
+    public string[] WeatherPool => Runtime.WeatherPool;
+    public bool AllowsStartFinishLaneChange => Runtime.AllowsStartFinishLaneChange;
 
     void Awake()
     {
@@ -132,21 +136,8 @@ public class TrackManager : MonoBehaviour
         if (cfg == null) return false;
 
         LoadedTrackConfig = cfg;
+        runtimeContext = null;
         nodes = TrackDataLoader.ConfigToNodes(cfg);
-
-        // 覆盖配置中的圈数
-        if (config != null)
-        {
-            config.totalLaps = cfg.laps;
-            config.trackNodeCount = cfg.gameCellCount;
-
-            // fallback 赛道使用自身包围盒尺寸，保持与旧硬编码渲染一致
-            if (trackId == FallbackTrackId)
-            {
-                config.trackWorldSize = FallbackWorldWidth;
-                config.trackWorldHeight = FallbackWorldHeight;
-            }
-        }
 
         TrackDataLoader.BuildCornerMaps(cfg, nodes, out cornerSpeedLimits, out cornerNames);
 
@@ -169,6 +160,8 @@ public class TrackManager : MonoBehaviour
 
     private void BuildHardcodedTrack()
     {
+        LoadedTrackConfig = null;
+        runtimeContext = null;
         nodes.Clear();
 
         Vector2[] rawShape = GetTrackShape42();
@@ -213,122 +206,67 @@ public class TrackManager : MonoBehaviour
 
     public HashSet<int> GetUniqueCornersCrossed(int fromPos, int toPos)
     {
-        return TrackRules.GetUniqueApexCornersCrossed(nodes, fromPos, toPos);
+        return Runtime.GetUniqueCornersCrossed(fromPos, toPos);
     }
 
     public bool CrossesStartFinish(int fromPos, int toPos, out int startFinishIndex)
     {
-        return TrackRules.CrossesStartFinish(nodes, fromPos, toPos, out startFinishIndex);
+        return Runtime.CrossesStartFinish(fromPos, toPos, out startFinishIndex);
     }
 
     public int GetApexNodeIndex(int cornerId)
     {
-        for (int i = 0; i < nodes.Count; i++)
-        {
-            if (nodes[i].cornerId == cornerId && nodes[i].isApex)
-                return i;
-        }
-        return -1;
+        return Runtime.GetApexNodeIndex(cornerId);
     }
 
     public int GetCornerSpeedLimit(int cornerId)
     {
-        if (cornerSpeedLimits.TryGetValue(cornerId, out int limit))
-            return limit;
-        return 99;
+        return Runtime.GetCornerSpeedLimit(cornerId);
     }
 
     public int GetCornerSpeedLimit(int cornerId, int laneIndex)
     {
-        int baseLimit = GetCornerSpeedLimit(cornerId);
-        if (baseLimit >= 99)
-            return baseLimit;
-
-        if (LoadedTrackConfig != null &&
-            LoadedTrackConfig.laneCornerSpeedLimits != null &&
-            LoadedTrackConfig.laneCornerSpeedLimits.Length >= LaneCount)
-        {
-            int innerToOuterIndex = TrackPresentationRules.GetLaneRankFromInside(
-                LoadedTrackConfig.trackId,
-                laneIndex);
-            return LoadedTrackConfig.laneCornerSpeedLimits[innerToOuterIndex];
-        }
-
-        string trackId = LoadedTrackConfig != null
-            ? LoadedTrackConfig.trackId
-            : (config != null ? config.trackId : string.Empty);
-        return TrackPresentationRules.GetLaneAdjustedCornerSpeedLimit(
-            trackId,
-            baseLimit,
-            laneIndex);
+        return Runtime.GetCornerSpeedLimit(cornerId, laneIndex);
     }
 
     public string GetCornerName(int cornerId)
     {
-        if (cornerNames.TryGetValue(cornerId, out string name))
-            return name;
-        return "Unknown";
+        return Runtime.GetCornerName(cornerId);
     }
 
     public Vector3 GetNodePosition(int index)
     {
-        if (nodes.Count == 0)
-            return Vector3.zero;
-
-        int clamped = index % nodes.Count;
-        if (clamped < 0) clamped += nodes.Count;
-        if (clamped < worldPathCoordinates.Length)
-        {
-            Vector2 centerline = worldPathCoordinates[clamped];
-            return new Vector3(centerline.x, centerline.y, 0f);
-        }
-        if (clamped < nodeObjects.Count)
-            return nodeObjects[clamped].transform.position;
-        return Vector3.zero;
+        return Runtime.GetNodePosition(index);
     }
 
     public Vector3 GetNodePosition(int index, int laneIndex)
     {
-        if (nodes.Count == 0 || worldPathCoordinates.Length == 0)
-            return Vector3.zero;
-
-        int clamped = index % nodes.Count;
-        if (clamped < 0) clamped += nodes.Count;
-        int safeLane = Mathf.Clamp(laneIndex, 0, LaneCount - 1);
-        Vector2 position = worldPathCoordinates[clamped] + GetPathNormal(clamped) * laneOffsets[safeLane];
-        return new Vector3(position.x, position.y, 0f);
+        return Runtime.GetNodePosition(index, laneIndex);
     }
 
     public int GetDefaultLaneIndex(bool isAi)
     {
-        if (LaneCount <= 1) return 0;
-        if (!TrackPresentationRules.IsIndianapolis(TrackId))
-            return TrackPresentationRules.GetInnerLaneIndex(TrackId);
-
-        int leftMiddle = (LaneCount - 1) / 2;
-        return isAi ? Mathf.Min(LaneCount - 1, leftMiddle + 1) : leftMiddle;
+        return Runtime.GetDefaultLaneIndex(isAi);
     }
 
     public int GetLaneTowardsInside(int laneIndex)
     {
-        if (LaneCount <= 1) return 0;
-        return Mathf.Max(0, laneIndex - 1);
+        return Runtime.GetLaneTowardsInside(laneIndex);
     }
 
     public int GetLaneTowardsOutside(int laneIndex)
     {
-        if (LaneCount <= 1) return 0;
-        return Mathf.Min(LaneCount - 1, laneIndex + 1);
+        return Runtime.GetLaneTowardsOutside(laneIndex);
     }
 
     public TrackNode GetNode(int index)
     {
-        return nodes[index % nodes.Count];
+        return Runtime.GetNode(index);
     }
 
     public bool IsInCorner(int position)
     {
-        return nodes[position % nodes.Count].cornerId > 0;
+        return Runtime.IsInCorner(position);
     }
 
     // ===================================================================
@@ -338,13 +276,6 @@ public class TrackManager : MonoBehaviour
     private void RenderTrack()
     {
         Vector2[] pathCoords = GetPathCoordinates();
-        worldPathCoordinates = pathCoords;
-        string trackId = LoadedTrackConfig != null
-            ? LoadedTrackConfig.trackId
-            : (config != null ? config.trackId : string.Empty);
-        laneOffsets = TrackPresentationRules.CalculateCenteredLaneOffsets(
-            TrackPresentationRules.GetLaneCount(trackId),
-            config != null ? config.trackLaneSpacing : 0.28f);
         float medianSpacing = TrackPresentationRules.CalculateMedianNeighborDistance(pathCoords);
         float nodeScaleMultiplier = TrackPresentationRules.CalculateNodeScaleMultiplier(
             medianSpacing,
@@ -446,13 +377,58 @@ public class TrackManager : MonoBehaviour
 
     private Vector2[] GetPathCoordinates()
     {
-        if (LoadedTrackConfig != null)
-        {
-            float worldWidth = config != null ? config.trackWorldSize : 30f;
-            float worldHeight = config != null ? config.trackWorldHeight : worldWidth;
-            return TrackDataLoader.ConfigToWorldPositions(LoadedTrackConfig, worldWidth, worldHeight);
-        }
-        return GetTrackShape42();
+        EnsureRuntimeContext();
+        Vector2[] coordinates = new Vector2[Runtime.WorldPathCoordinates.Count];
+        for (int i = 0; i < coordinates.Length; i++)
+            coordinates[i] = Runtime.WorldPathCoordinates[i];
+        return coordinates;
+    }
+
+    private void EnsureRuntimeContext()
+    {
+        if (runtimeContext != null)
+            return;
+
+        string trackId = LoadedTrackConfig != null
+            ? LoadedTrackConfig.trackId
+            : (config != null ? TrackSelectionState.ResolveTrackId(config.trackId) : FallbackTrackId);
+        Vector2[] pathCoordinates = BuildPathCoordinates(trackId);
+        float[] offsets = TrackPresentationRules.CalculateCenteredLaneOffsets(
+            TrackPresentationRules.GetLaneCount(trackId),
+            config != null ? config.trackLaneSpacing : 0.28f);
+        int configuredLaps = config != null ? config.totalLaps : 3;
+
+        runtimeContext = new TrackRuntimeContext(
+            trackId,
+            LoadedTrackConfig,
+            nodes,
+            pathCoordinates,
+            offsets,
+            cornerSpeedLimits,
+            cornerNames,
+            configuredLaps);
+    }
+
+    private Vector2[] BuildPathCoordinates(string trackId)
+    {
+        if (LoadedTrackConfig == null)
+            return GetTrackShape42();
+
+        // The fallback JSON retains the original non-square prototype bounds.
+        // Keep this choice inside the track snapshot instead of mutating the
+        // shared GameConfigSO when the JSON is loaded.
+        float worldWidth = trackId == FallbackTrackId
+            ? FallbackWorldWidth
+            : (config != null ? config.trackWorldSize : 30f);
+        float worldHeight = trackId == FallbackTrackId
+            ? FallbackWorldHeight
+            : (config != null && config.trackWorldHeight > 0f
+                ? config.trackWorldHeight
+                : worldWidth);
+        return TrackDataLoader.ConfigToWorldPositions(
+            LoadedTrackConfig,
+            worldWidth,
+            worldHeight);
     }
 
     private void AddCornerLabels(Vector2[] pathCoords, float nodeScaleMultiplier)
@@ -740,11 +716,4 @@ public class TrackManager : MonoBehaviour
     }
 #endif
 
-    private Vector2 GetPathNormal(int index)
-    {
-        int previous = (index - 1 + worldPathCoordinates.Length) % worldPathCoordinates.Length;
-        int next = (index + 1) % worldPathCoordinates.Length;
-        Vector2 tangent = (worldPathCoordinates[next] - worldPathCoordinates[previous]).normalized;
-        return new Vector2(-tangent.y, tangent.x);
-    }
 }

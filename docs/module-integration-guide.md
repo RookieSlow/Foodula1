@@ -1,7 +1,7 @@
 # 模块接入指南 — 面向其他 AI 的操作手册
 
-> 更新: 2026-08-05
-> 关联: ADR-002（分层纯函数架构）、`design/planning/roadmap.md`
+> 更新: 2026-08-20
+> 关联: ADR-002（分层纯函数架构）、ADR-004（TrackRuntimeContext）、`design/planning/roadmap.md`
 > 用途: 其他 Claude Code 子代理（或人类开发者）开发新模块 / 接入现有模块时的唯一入口文档。
 
 ---
@@ -14,6 +14,9 @@
 │   TrackManager / HUDUI / CardHandUI / CardUI / TechTreeUI    │
 │   —— 只做：等待输入、驱动协程、调用纯函数、刷新 UI            │
 │   RaceUIFactory —— 只负责旧场景的程序化 HUD/手牌构建          │
+├─────────────────────────────────────────────────────────────┤
+│ TrackRuntimeContext（单场赛道只读快照，2026-08-20 扩展）      │
+│   —— 节点/坐标/车道/弯道/天气/圈数；由 TrackManager 构建       │
 ├─────────────────────────────────────────────────────────────┤
 │ RaceSession（纯 C# 聚合层，2026-08-03 新增）                 │
 │   —— 单场比赛状态：玩家列表、天气、科技/特技数据库、排名       │
@@ -28,7 +31,9 @@
 ```
 
 **铁律（ADR-002）**：任何游戏规则计算不得写在 MonoBehaviour 里。先在纯函数层
-实现 + 写 EditMode 测试，再在 `MVPGameManager` 里接线。
+实现 + 写 EditMode 测试，再在 `MVPGameManager` 里接线。新模块读取赛道信息时优先直接依赖
+`TrackRuntimeContext`（由 `TrackManager.Runtime` 提供）；不要读取或回写 `GameConfigSO` 中由赛道
+JSON 派生的圈数、节点数或天气元数据。
 
 ---
 
@@ -53,6 +58,8 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 
 | 文件 | 职责 |
 |------|------|
+| `Assets/Scripts/Gameplay/TrackRuntimeContext.cs` | 赛道加载后的只读运行时快照；复制节点、坐标、车道偏移、弯道限速、天气池、圈数和元数据，隔离加载器与比赛/UI/AI |
+| `Assets/Scripts/Gameplay/TrackManager.cs` | Unity 赛道加载/渲染适配器；`Runtime` 是新模块的赛道数据入口，旧查询 API 继续作为兼容门面 |
 | `Assets/Scripts/Core/RaceSession.cs` | **新模块唯一需要知道的类**。比赛状态 + 跨系统规则粘合 |
 | `Assets/Scripts/Core/ChinaGearShiftRules.cs` | 中国队 Go/Recover 纯规则：连续计数、4 张超频、内置冷却 |
 | `Assets/Scripts/Core/TeamGearRules.cs` | 标准四档与中国双档的统一门面，管理器不直接分支规则细节 |
@@ -139,6 +146,33 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 ---
 
 ## 6. 关键 API 参考
+
+### 6.0 TrackRuntimeContext（赛道数据入口）
+
+```csharp
+trackManager.Runtime.TotalNodes
+trackManager.Runtime.TotalLaps
+trackManager.Runtime.Nodes
+trackManager.Runtime.GetUniqueCornersCrossed(fromPosition, rawTarget)
+trackManager.Runtime.GetCrossedNodeIndices(fromPosition, rawTarget)
+trackManager.Runtime.GetTraversalEvents(fromPosition, rawTarget)
+trackManager.Runtime.GetCornerSpeedLimit(cornerId, laneIndex)
+trackManager.Runtime.GetNodePosition(position, laneIndex)
+trackManager.Runtime.WeatherPool
+trackManager.Runtime.DefaultWeather
+```
+
+`Runtime` 在赛道加载后构建一次。集合只读或返回防御性副本；新代码不得把
+`TrackConfig` 的派生值写回共享 `GameConfigSO`。现有 `TrackManager` 查询方法会委托到
+同一快照，迁移可按模块逐步完成。AI 弯道预判与 `RaceCameraController` 路径缓存已直接
+消费 `Runtime`；`MVPGameManager` 的初始化、天气、车辆出生、逐格移动、起终点换道、车道
+刷新、传送朝向、移动计划、弯道结算、维修区、地标/MotherRoad、阴阳茶、圈数天气和奖励
+元数据也已直接消费 `Runtime`。`TrackDebugOverlay` 的节点数量、元数据和坐标查询同样直接
+使用快照；仅调试开关、Prefab、颜色等表现配置继续从 `TrackManager` 读取，以保留现有场景绑定。
+其中 `GetTraversalEvents` 保留未取模的原始目标，并一次返回有序节点序列、起终点经过次数、
+去重弯心和维修区入口命中；车辆动画、起终点、弯心、阴阳茶与维修区逻辑应消费同一快照。
+`GetCrossedNodeIndices` 和旧的弯心/过线查询保留为兼容的纯查询门面。地标/MotherRoad 若要
+判断移动是否经过位置，必须传入最终未取模目标，不要使用动画完成后的归一化位置。
 
 ### 6.1 RaceSession（新模块的主入口）
 

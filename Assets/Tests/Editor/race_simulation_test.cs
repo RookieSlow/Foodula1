@@ -138,6 +138,7 @@ public class RaceSimulationTest
                         }
                     }
                 }
+                bool crossedPitEntry = PitLaneRules.CrossedPitEntry(oldPos, newPos, nodes);
                 p.position = newPos % totalNodes;
                 violations.Check(p.position >= 0 && p.position < totalNodes,
                     $"{p.name} 位置越界: {p.position}");
@@ -164,7 +165,7 @@ public class RaceSimulationTest
                     $"{p.name} 热量池为负: {p.deck.heatPool.remaining}");
 
                 // 维修区（热量高自动进站）
-                if (PitLaneRules.CrossedPitEntry(oldPos, p.position, nodes) && p.HeatRatio >= 0.6f)
+                if (crossedPitEntry && p.HeatRatio >= 0.6f)
                 {
                     var pit = PitLaneRules.EnterPit(p, nodes);
                     if (pit.success)

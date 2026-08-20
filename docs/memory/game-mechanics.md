@@ -72,11 +72,36 @@ prototype and is no longer the authoritative model.
   `Resources/Configs/Tracks/<trackId>.json`.
 - JSON tracks may define their own node count, lap count, start/finish node,
   corners, apex cells, speed limits, pit entry/exit, weather pool, and layout.
+- Pit-entry detection consumes the unnormalized forward movement target, so
+  cross-lap movement and movement bonuses cannot skip a `pit_entry` node;
+  selecting a pit stop still moves the car to `pit_exit`, cools all heat, and
+  skips one turn.
 - Corner-speed resolution triggers only when movement crosses an `isApex`
   cell. Repeated apex cells for the same corner are deduplicated per move.
 - Player initialization and lap crossing use the runtime node marked
   `isStartFinish`, including when that node is not index 0.
+- `TrackManager` builds one `TrackRuntimeContext` snapshot after loading the
+  selected JSON/fallback track. Runtime gameplay reads node count, lap count,
+  weather metadata, lane offsets, corner limits, and world positions from this
+  boundary; JSON loading no longer writes derived values into the shared
+  `GameConfigSO`.
 - HUD position totals and LineRenderer coordinates use the loaded track data.
+- Vehicle spawning, per-node movement, Indianapolis lane selection, visual lane
+  refresh, and teleport orientation read node positions, lane limits, and
+  start/finish metadata from the same `TrackRuntimeContext` snapshot; the
+  `MVPGameManager` movement planning and apex-only corner resolution now also
+  query the same snapshot for node traversal, unique corners, lane limits and
+  corner names. Race orchestration also uses the snapshot for pit entry/exit
+  nodes, landmarks, MotherRoad, YinYang movement, lap/weather limits and track
+  metadata; `TrackDebugOverlay` now reads node count, metadata, and positions directly from the
+  snapshot. `TrackManager` remains only for debug presentation settings and legacy compatibility.
+- The raw forward path is sampled once through `TrackRuntimeContext.GetTraversalEvents`;
+  `TrackTraversalEvents` exposes the ordered normalized nodes, repeated start/finish crossings,
+  unique apex corners, and pit-entry hit for the same movement target. Vehicle animation,
+  start/finish crossings, apex checks, Nigiri and pit-entry detection consume that shared event
+  snapshot, including when a movement target crosses one or more lap boundaries.
+- Mother Road landmark checks consume the final unnormalized movement target, so non-zero
+  landmarks remain correct when a bonus movement crosses a lap boundary more than once.
 - Track presentation uses the selected layout background in Play Mode, with
   translucent yellow corner masks, red apex masks, and visible speed-limit
   labels. Runtime grid nodes, lane lines, and debug corner text are hidden;

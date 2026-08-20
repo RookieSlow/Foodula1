@@ -4,6 +4,53 @@ using NUnit.Framework;
 public class TrackRulesTests
 {
     [Test]
+    public void GetCrossedNodeIndices_PreservesOrderedNodesAcrossLapWrap()
+    {
+        List<int> crossed = TrackRules.GetCrossedNodeIndices(4, 2, 6);
+
+        Assert.That(crossed, Is.EqualTo(new[] { 3, 0, 1, 2 }));
+    }
+
+    [Test]
+    public void GetCrossedNodeIndices_RejectsEmptyOrNonForwardPaths()
+    {
+        Assert.That(TrackRules.GetCrossedNodeIndices(0, 0, 4), Is.Empty);
+        Assert.That(TrackRules.GetCrossedNodeIndices(4, 4, 4), Is.Empty);
+        Assert.That(TrackRules.GetCrossedNodeIndices(4, 5, 3), Is.Empty);
+    }
+
+    [Test]
+    public void GetTraversalEvents_UsesOneOrderedPathForTrackEvents()
+    {
+        var nodes = new List<TrackNode>
+        {
+            new TrackNode(0, 99, "Start", isStartFinish: true),
+            new TrackNode(1, 4, "Apex", cornerId: 7, isApex: true),
+            new TrackNode(2, 99, "Pit Entry", isPitEntry: true),
+            new TrackNode(3, 99, "Pit Exit", isPitExit: true)
+        };
+
+        TrackTraversalEvents events = TrackRules.GetTraversalEvents(nodes, 2, 10);
+
+        Assert.That(events.CrossedNodeIndices, Is.EqualTo(new[] { 3, 0, 1, 2, 3, 0, 1, 2 }));
+        Assert.That(events.CrossedStartFinishNodeIndices, Is.EqualTo(new[] { 0, 0 }));
+        Assert.That(events.UniqueApexCornerIds, Is.EquivalentTo(new[] { 7 }));
+        Assert.That(events.CrossedPitEntry, Is.True);
+        Assert.That(events.CrossedStartFinishAt(0), Is.True);
+    }
+
+    [Test]
+    public void GetTraversalEvents_ReturnsEmptyEventsForInvalidTrack()
+    {
+        TrackTraversalEvents events = TrackRules.GetTraversalEvents(null, 0, 4);
+
+        Assert.That(events.CrossedNodeIndices, Is.Empty);
+        Assert.That(events.CrossedStartFinishNodeIndices, Is.Empty);
+        Assert.That(events.UniqueApexCornerIds, Is.Empty);
+        Assert.That(events.CrossedPitEntry, Is.False);
+    }
+
+    [Test]
     public void ConfigToNodes_PreservesApexAndStartFinishFlags()
     {
         var config = new TrackConfig

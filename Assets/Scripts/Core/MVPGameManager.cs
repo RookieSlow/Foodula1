@@ -93,6 +93,8 @@ public class MVPGameManager : MonoBehaviour
     public GamePhase CurrentPhase => phaseState.Current;
     public GameConfigSO Config => config;
     public TrackManager Track => trackManager;
+    /// <summary>Read-only track data boundary for UI and other consumers.</summary>
+    public TrackRuntimeContext TrackContext => trackManager != null ? trackManager.Runtime : null;
     /// <summary>当前天气显示名。</summary>
     public string WeatherLabel => session != null ? session.WeatherLabel : "晴天";
     /// <summary>Absolute path of the current or most recent manual playtest log.</summary>
@@ -445,12 +447,13 @@ public class MVPGameManager : MonoBehaviour
         // only builds controls and wires callbacks; gameplay state stays here.
         TMP_Text existingTmp = FindObjectOfType<TMP_Text>();
         TMP_FontAsset fontAsset = existingTmp != null ? existingTmp.font : null;
+        TrackRuntimeContext track = TrackContext;
         RaceUIFactory factory = new RaceUIFactory(fontAsset);
         factory.Build(
             canvas,
             ref hudUI,
             ref cardHandUI,
-            trackManager != null ? trackManager.TotalNodes : 0,
+            track != null ? track.TotalNodes : 0,
             cardUIPrefab,
             OnGearButtonClicked,
             OnConfirmGearClicked,
@@ -466,7 +469,8 @@ public class MVPGameManager : MonoBehaviour
 
     private void CreateLaneChangeUI()
     {
-        if (trackManager == null || !trackManager.AllowsStartFinishLaneChange)
+        TrackRuntimeContext track = TrackContext;
+        if (track == null || !track.AllowsStartFinishLaneChange)
             return;
 
         Canvas canvas = hudUI != null
@@ -568,7 +572,11 @@ public class MVPGameManager : MonoBehaviour
 
     private void InitializeGame()
     {
-        int startFinishNodeIndex = trackManager.StartFinishNodeIndex;
+        TrackRuntimeContext track = TrackContext;
+        if (track == null)
+            return;
+
+        int startFinishNodeIndex = track.StartFinishNodeIndex;
 
         session = new RaceSession();
         aiControllers.Clear();
@@ -606,10 +614,9 @@ public class MVPGameManager : MonoBehaviour
         // 天气：比赛开始时从赛道天气池抽取
         if (config.enableWeather)
         {
-            var trackCfg = trackManager.LoadedTrackConfig;
             session.InitializeWeather(
-                trackCfg != null ? trackCfg.weatherPool : null,
-                trackCfg != null ? trackCfg.defaultWeather : null);
+                track.WeatherPool,
+                track.DefaultWeather);
             if (hudUI != null)
                 hudUI.AppendLog($"今日天气: {session.WeatherLabel}");
         }
@@ -644,10 +651,9 @@ public class MVPGameManager : MonoBehaviour
         else if (raceLogWriter.IsActive)
             raceLogWriter.End("race reset");
 
-        string trackId = config != null ? config.trackId : "";
-        string trackName = trackManager != null && trackManager.LoadedTrackConfig != null
-            ? trackManager.LoadedTrackConfig.trackName
-            : trackId;
+        TrackRuntimeContext track = TrackContext;
+        string trackId = track != null ? track.TrackId : "";
+        string trackName = track != null ? track.TrackName : trackId;
         raceLogWriter.BeginRace(trackId, trackName, human.name, human.teamId, session.Players.Count - 1);
         if (hudUI != null)
             hudUI.SetLogSink(raceLogWriter.Append);
@@ -744,19 +750,22 @@ public class MVPGameManager : MonoBehaviour
         laneIndices.Clear();
         if (carPrefab == null) return;
 
+        TrackRuntimeContext track = TrackContext;
+        if (track == null || session == null) return;
+
         for (int i = 0; i < session.Players.Count; i++)
         {
             var p = session.Players[i];
-            int lane = trackManager.GetDefaultLaneIndex(p.isAI);
+            int lane = track.GetDefaultLaneIndex(p.isAI);
             laneIndices.Add(lane);
 
             int visualLane = GetVisualLaneIndex(p);
             laneIndices[i] = visualLane;
-            Vector3 startPos = trackManager.GetNodePosition(trackManager.StartFinishNodeIndex, visualLane);
+            Vector3 startPos = track.GetNodePosition(track.StartFinishNodeIndex, visualLane);
             // 出生即朝向赛道前进方向（P2 #17 赛车随赛道方向旋转）
-            int nextIdx = (trackManager.StartFinishNodeIndex + 1) % trackManager.TotalNodes;
+            int nextIdx = (track.StartFinishNodeIndex + 1) % track.TotalNodes;
             Quaternion startRot = GetCarOrientationController().GetFacingRotation(
-                trackManager.GetNodePosition(nextIdx, visualLane) - startPos);
+                track.GetNodePosition(nextIdx, visualLane) - startPos);
             GameObject instance = Instantiate(carPrefab, startPos, startRot);
             instance.name = $"Car_{p.name}";
             float carScale = config != null ? Mathf.Max(0.01f, config.carSpriteScale) : 0.28f;
@@ -784,6 +793,10 @@ public class MVPGameManager : MonoBehaviour
     {
         while (phaseState.IsRunning)
         {
+            TrackRuntimeContext track = TrackContext;
+            if (track == null)
+                yield break;
+
             raceTurnNumber++;
             raceLogWriter?.Append($"[TURN_START] turn={raceTurnNumber} weather={WeatherLabel}");
             LogPlayerSnapshots();
@@ -919,26 +932,31 @@ public class MVPGameManager : MonoBehaviour
 
                 int oldPos = p.position;
                 int rawEnd = oldPos + p.cornerTotalThisTurn;
+                int rawMovementEnd = oldPos + p.totalMovementThisTurn;
+                TrackTraversalEvents movementEvents =
+                    track.GetTraversalEvents(oldPos, rawMovementEnd);
+                TrackTraversalEvents cornerEvents =
+                    track.GetTraversalEvents(oldPos, rawEnd);
 
                 // 移动 → 反应(冷却) → 弯道判定
-                yield return StartCoroutine(AnimateMovement(p, GetCarIndex(p)));
+                yield return StartCoroutine(AnimateMovement(p, GetCarIndex(p), movementEvents));
                 ReactStep(p);
-                ResolveCorners(p, oldPos, rawEnd);
+                ResolveCorners(p, cornerEvents, oldPos);
 
                 // US L3 母亲之路：经过地标自动结算（繁荣→冷却2 / 衰退→自动修复 / 复兴→终极转化）
                 if (p.techState != null && config.enableTechTree &&
                     TechTreeRules.HasUniqueTech(p.techState, session.TechDb, TechEffectType.MotherRoad))
                 {
-                    var (lm1, lm2) = RaceSession.GetLandmarks(trackManager.TotalNodes);
-                    if (RaceSession.CrossedLandmark(oldPos, p.position, lm1, trackManager.TotalNodes))
+                    var (lm1, lm2) = RaceSession.GetLandmarks(track.TotalNodes);
+                    if (RaceSession.CrossedLandmark(oldPos, rawMovementEnd, lm1, track.TotalNodes))
                         ResolveMotherRoadPass(p, 0, oldPos);
-                    if (RaceSession.CrossedLandmark(oldPos, p.position, lm2, trackManager.TotalNodes))
+                    if (RaceSession.CrossedLandmark(oldPos, rawMovementEnd, lm2, track.TotalNodes))
                         ResolveMotherRoadPass(p, 1, oldPos);
                 }
 
                 // 维修区入口检测（进站 → 冷却全部热量 + 停 1 回合）
-                if (config.enablePitLane && PitLaneRules.HasPitLane(trackManager.Nodes) &&
-                    PitLaneRules.CrossedPitEntry(oldPos, p.position, trackManager.Nodes))
+                if (config.enablePitLane && PitLaneRules.HasPitLane(track.Nodes) &&
+                    movementEvents.CrossedPitEntry)
                 {
                     if (p.isAI)
                     {
@@ -1170,15 +1188,21 @@ public class MVPGameManager : MonoBehaviour
 
     // ====== 移动动画（含圈数检测） ======
 
-    private IEnumerator AnimateMovement(PlayerState p, int carIndex)
+    private IEnumerator AnimateMovement(
+        PlayerState p,
+        int carIndex,
+        TrackTraversalEvents movementEvents)
     {
         if (carIndex < 0 || carIndex >= carInstances.Count || carInstances[carIndex] == null) yield break;
+
+        TrackRuntimeContext track = TrackContext;
+        if (track == null || track.TotalNodes <= 0) yield break;
 
         GameObject car = carInstances[carIndex];
         int laneIndex = GetVisualLaneIndex(p);
         laneIndices[carIndex] = laneIndex;
         int totalMove = p.totalMovementThisTurn;
-        int totalNodes = trackManager.TotalNodes;
+        int totalNodes = track.TotalNodes;
         int targetPos = p.position + totalMove;
 
         if (totalMove > 0)
@@ -1188,18 +1212,24 @@ public class MVPGameManager : MonoBehaviour
                 yield return new WaitForSeconds(config.movementFocusLeadDelay);
         }
 
-        for (int i = p.position + 1; i <= targetPos; i++)
+        IReadOnlyList<int> crossedNodeIndices = movementEvents != null
+            ? movementEvents.CrossedNodeIndices
+            : track.GetCrossedNodeIndices(p.position, targetPos);
+        foreach (int nodeIdx in crossedNodeIndices)
         {
-            int nodeIdx = i % totalNodes;
-            Vector3 target = trackManager.GetNodePosition(nodeIdx, laneIndex);
+            Vector3 target = track.GetNodePosition(nodeIdx, laneIndex);
 
             yield return StartCoroutine(GetCarMovementAnimator().MoveToNode(car, target));
 
             // 检测跨过起点/终点线
-            if (trackManager.GetNode(nodeIdx).isStartFinish)
+            TrackNode node = track.GetNode(nodeIdx);
+            bool crossedStartFinish = movementEvents != null
+                ? movementEvents.CrossedStartFinishAt(nodeIdx)
+                : node != null && node.isStartFinish;
+            if (crossedStartFinish)
             {
                 OnPlayerCrossedStartFinish(p);
-                if (p == Player && !p.hasFinished && trackManager.AllowsStartFinishLaneChange)
+                if (p == Player && !p.hasFinished && track.AllowsStartFinishLaneChange)
                     yield return StartCoroutine(WaitForIndianapolisLaneChoice());
             }
 
@@ -1247,6 +1277,11 @@ public class MVPGameManager : MonoBehaviour
 
     private void ComputeMovements(List<PlayerState> turnOrder, HashSet<PlayerState> turnSkipped)
     {
+        TrackRuntimeContext track = TrackContext;
+        if (track == null || track.TotalNodes <= 0)
+            return;
+
+        int totalNodes = track.TotalNodes;
         overtakesThisTurn.Clear();
 
         // 第一轮：基础速度总和（弯道判定用，不含特技/科技加成）
@@ -1268,14 +1303,15 @@ public class MVPGameManager : MonoBehaviour
 
             int rawEnd = p.position + p.cornerTotalThisTurn;
             int lane = GetLane(p);
-            bool crossedCorner = trackManager.GetUniqueCornersCrossed(p.position, rawEnd).Count > 0;
+            TrackTraversalEvents traversalEvents = track.GetTraversalEvents(p.position, rawEnd);
+            bool crossedCorner = traversalEvents.UniqueApexCornerIds.Count > 0;
 
             int bonus = session.ComputeMovementBonus(p, crossedCorner);
             // DE L2 猪肘悬挂：过弯 → 出弯后 +1 移动（弯道判定在 ResolveCorners 跳过）
             if (p.techState != null && TechTreeRules.ShouldTriggerWurstplatte(p.techState, session.TechDb, crossedCorner))
                 bonus += 1;
             // JP L1 寿司：速度精确等于弯道限速 → 每弯 +2
-            bonus += GetNigiriBonus(p, crossedCorner, rawEnd, lane);
+            bonus += GetNigiriBonus(p, traversalEvents, lane);
             // JP 特技牌 鱼雷天妇罗：超车 +1
             bonus += GetTorpedoBonus(p, turnOrder);
             // CN 特技牌 火锅底料：ATTACK 牌 +1（不计入弯道判定）
@@ -1284,7 +1320,7 @@ public class MVPGameManager : MonoBehaviour
             bonus += p.trickMoveBonusThisTurn;
 
             // 尾流：模拟移动后紧跟前方车 → 基础 +2（帕尔玛/筋斗云叠加；前车冰糕阻断）
-            bonus += session.ComputeSlipstreamBonus(p, session.Players, trackManager.TotalNodes);
+            bonus += session.ComputeSlipstreamBonus(p, session.Players, totalNodes);
 
             // DE L1 黑啤酒燃料：付 1 热 → +2 移动（自动激活；引擎预留 1 热防失控）
             if (p.techState != null && config.enableTechTree &&
@@ -1303,9 +1339,9 @@ public class MVPGameManager : MonoBehaviour
             if (p.techState != null && config.enableTechTree &&
                 session.GetModifiers(p).hasDriveThru)
             {
-                var (lm1, lm2) = RaceSession.GetLandmarks(trackManager.TotalNodes);
-                if (RaceSession.CrossedLandmark(p.position, rawEnd, lm1, trackManager.TotalNodes) ||
-                    RaceSession.CrossedLandmark(p.position, rawEnd, lm2, trackManager.TotalNodes))
+                var (lm1, lm2) = RaceSession.GetLandmarks(totalNodes);
+                if (RaceSession.CrossedLandmark(p.position, rawEnd, lm1, totalNodes) ||
+                    RaceSession.CrossedLandmark(p.position, rawEnd, lm2, totalNodes))
                 {
                     bonus += 1;
                     if (hudUI != null)
@@ -1316,7 +1352,7 @@ public class MVPGameManager : MonoBehaviour
             // US L2 美式烧烤：处于 BBQ 区（地标 5 格内）→ +2 移动（近似：热量当 2 速）
             if (p.techState != null && config.enableTechTree &&
                 session.GetModifiers(p).hasSmokedBBQ &&
-                RaceSession.IsInBBQZone(rawEnd % trackManager.TotalNodes, trackManager.TotalNodes))
+                RaceSession.IsInBBQZone(rawEnd % totalNodes, totalNodes))
             {
                 bonus += 2;
                 if (hudUI != null)
@@ -1340,19 +1376,23 @@ public class MVPGameManager : MonoBehaviour
                 continue;
             }
             overtakesThisTurn[p] = RaceMovementRules.CountOvertakes(
-                p, turnOrder, trackManager.TotalNodes, true, RaceTurnRules.ShouldSkip);
+                p, turnOrder, totalNodes, true, RaceTurnRules.ShouldSkip);
         }
     }
 
-    private int GetNigiriBonus(PlayerState p, bool crossedCorner, int rawEnd, int lane)
+    private int GetNigiriBonus(PlayerState p, TrackTraversalEvents traversalEvents, int lane)
     {
-        if (!crossedCorner || p.techState == null) return 0;
+        if (traversalEvents == null || traversalEvents.UniqueApexCornerIds.Count == 0 || p.techState == null)
+            return 0;
         if (!TechTreeRules.HasUniqueTech(p.techState, session.TechDb, TechEffectType.Nigiri)) return 0;
 
+        TrackRuntimeContext track = TrackContext;
+        if (track == null) return 0;
+
         int bonus = 0;
-        foreach (var cornerId in trackManager.GetUniqueCornersCrossed(p.position, rawEnd))
+        foreach (int cornerId in traversalEvents.UniqueApexCornerIds)
         {
-            int limit = session.EffectiveCornerLimit(p, trackManager.GetCornerSpeedLimit(cornerId, lane));
+            int limit = session.EffectiveCornerLimit(p, track.GetCornerSpeedLimit(cornerId, lane));
             if (p.cornerTotalThisTurn == limit) bonus += 2;
         }
         return bonus;
@@ -1362,19 +1402,30 @@ public class MVPGameManager : MonoBehaviour
     {
         if (!TrickCardRules.IsTorpedoTempuraActive(p.trickState)) return 0;
 
+        TrackRuntimeContext track = TrackContext;
+        if (track == null || track.TotalNodes <= 0) return 0;
+
         int overtakes = RaceMovementRules.CountOvertakes(
-            p, turnOrder, trackManager.TotalNodes, false, RaceTurnRules.ShouldSkip);
+            p, turnOrder, track.TotalNodes, false, RaceTurnRules.ShouldSkip);
         return overtakes > 0 ? overtakes * TrickCardRules.GetTorpedoOvertakeBonus() : 0;
     }
 
     // ====== 弯道判定（per-corner-segment，含天气/科技修正） ======
 
-    private void ResolveCorners(PlayerState p, int oldPos, int rawEndPos)
+    private void ResolveCorners(
+        PlayerState p,
+        TrackTraversalEvents traversalEvents,
+        int rewindPosition)
     {
         if (p.cornerTotalThisTurn <= 0) return;
         if (p.isBlown) return;
 
-        HashSet<int> corners = trackManager.GetUniqueCornersCrossed(oldPos, rawEndPos);
+        TrackRuntimeContext track = TrackContext;
+        if (track == null) return;
+
+        IReadOnlyCollection<int> corners = traversalEvents != null
+            ? traversalEvents.UniqueApexCornerIds
+            : new HashSet<int>();
         int totalSpeed = p.cornerTotalThisTurn;
         int laneIndex = GetLane(p);
         string log = "";
@@ -1391,7 +1442,7 @@ public class MVPGameManager : MonoBehaviour
         foreach (int cornerId in corners)
         {
             // 限速 = 基础 + 科技弯速加成 − 天气惩罚
-            int limit = session.EffectiveCornerLimit(p, trackManager.GetCornerSpeedLimit(cornerId, laneIndex));
+            int limit = session.EffectiveCornerLimit(p, track.GetCornerSpeedLimit(cornerId, laneIndex));
             if (totalSpeed > limit)
             {
                 int overspeed = totalSpeed - limit;
@@ -1399,10 +1450,10 @@ public class MVPGameManager : MonoBehaviour
                 int heat = Mathf.Max(1,
                     overspeed - session.ConsumeHeatReduction(p));
                 heat += TeamVehicleRules.GetCornerHeatPenalty(p.teamId);
-                string cname = trackManager.GetCornerName(cornerId);
+                string cname = track.GetCornerName(cornerId);
 
                 // 尝试支付热量；引擎不足 → 失控
-                if (!TryPayHeat(p, heat, oldPos, $"overspeed at {cname} ({totalSpeed}>{limit})"))
+                if (!TryPayHeat(p, heat, rewindPosition, $"overspeed at {cname} ({totalSpeed}>{limit})"))
                 {
                     if (hudUI != null) hudUI.AppendLog(log);
                     return; // 失控中断后续弯道判定
@@ -1412,7 +1463,7 @@ public class MVPGameManager : MonoBehaviour
             }
             else
             {
-                log += $"{p.name} 安全通过 {trackManager.GetCornerName(cornerId)} (lane {laneIndex + 1}, {totalSpeed}<={limit})。\n";
+                log += $"{p.name} 安全通过 {track.GetCornerName(cornerId)} (lane {laneIndex + 1}, {totalSpeed}<={limit})。\n";
             }
         }
 
@@ -1464,7 +1515,11 @@ public class MVPGameManager : MonoBehaviour
 
     private void EnterPit(PlayerState p)
     {
-        var result = PitLaneRules.EnterPit(p, trackManager.Nodes);
+        TrackRuntimeContext track = TrackContext;
+        if (track == null)
+            return;
+
+        var result = PitLaneRules.EnterPit(p, track.Nodes);
         if (!result.success)
         {
             if (hudUI != null) hudUI.AppendLog(result.message);
@@ -1483,7 +1538,11 @@ public class MVPGameManager : MonoBehaviour
     /// </summary>
     private void ResolveMotherRoadPass(PlayerState p, int landmarkIndex, int rewindPos)
     {
-        var result = TechTreeRules.ResolveMotherRoadPass(p.techState, landmarkIndex, config.totalLaps);
+        TrackRuntimeContext track = TrackContext;
+        if (track == null)
+            return;
+
+        var result = TechTreeRules.ResolveMotherRoadPass(p.techState, landmarkIndex, track.TotalLaps);
         switch (result.phase)
         {
             case MotherRoadResult.MotherRoadPhase.Prosperity:
@@ -1515,7 +1574,7 @@ public class MVPGameManager : MonoBehaviour
                     foreach (var c in p.deck.Hand)
                         if (c.IsHeat) heatCards.Add(c);
                     int returned = p.deck.ReturnHeatCardsToPool(heatCards);
-                    p.position = (p.position + returned) % trackManager.TotalNodes;
+                    p.position = (p.position + returned) % track.TotalNodes;
                     MoveCarTo(p, p.position);
                     if (hudUI != null)
                         hudUI.AppendLog($"<color=orange>{p.name} 母亲之路(复兴)！{returned} 张热量牌转为移动。</color>");
@@ -1674,13 +1733,14 @@ public class MVPGameManager : MonoBehaviour
 
     private IEnumerator WaitForIndianapolisLaneChoice()
     {
-        if (laneChangePanel == null)
+        TrackRuntimeContext track = TrackContext;
+        if (laneChangePanel == null || track == null)
             yield break;
 
         inputState.BeginLaneChangeSelection();
         int humanLane = laneIndices.Count > 0 ? laneIndices[0] : 0;
-        laneInButton.interactable = trackManager.GetLaneTowardsInside(humanLane) != humanLane;
-        laneOutButton.interactable = trackManager.GetLaneTowardsOutside(humanLane) != humanLane;
+        laneInButton.interactable = track.GetLaneTowardsInside(humanLane) != humanLane;
+        laneOutButton.interactable = track.GetLaneTowardsOutside(humanLane) != humanLane;
         laneKeepButton.interactable = true;
         laneChangePanel.SetActive(true);
 
@@ -1699,21 +1759,22 @@ public class MVPGameManager : MonoBehaviour
     /// </summary>
     public void ChooseIndianapolisLaneChange(int direction)
     {
-        if (!inputState.WaitingForLaneChange || trackManager == null)
+        TrackRuntimeContext track = TrackContext;
+        if (!inputState.WaitingForLaneChange || track == null)
             return;
 
         int oldLane = laneIndices.Count > 0 ? laneIndices[0] : 0;
         int playerLaneIndex = oldLane;
         if (direction > 0)
-            playerLaneIndex = trackManager.GetLaneTowardsInside(playerLaneIndex);
+            playerLaneIndex = track.GetLaneTowardsInside(playerLaneIndex);
         else if (direction < 0)
-            playerLaneIndex = trackManager.GetLaneTowardsOutside(playerLaneIndex);
+            playerLaneIndex = track.GetLaneTowardsOutside(playerLaneIndex);
 
         if (direction != 0 && oldLane == playerLaneIndex)
             return;
 
         laneIndices[0] = playerLaneIndex;
-        MoveCarToNode(Player, trackManager.StartFinishNodeIndex, playerLaneIndex);
+        MoveCarToNode(Player, track.StartFinishNodeIndex, playerLaneIndex);
         inputState.EndLaneChangeSelection();
         string choice = playerLaneIndex == oldLane
             ? "保持当前车道"
@@ -1805,11 +1866,15 @@ public class MVPGameManager : MonoBehaviour
     {
         if (!result.triggered) return;
 
+        TrackRuntimeContext track = TrackContext;
+        if (track == null)
+            return;
+
         if (result.isYin)
         {
             if (TryPayHeat(p, 1, p.positionAtTurnStart, "yin yang (yin)"))
             {
-                p.position = (p.position + 1) % trackManager.TotalNodes;
+                p.position = (p.position + 1) % track.TotalNodes;
                 MoveCarTo(p, p.position);
                 if (hudUI != null)
                     hudUI.AppendLog($"<color=orange>{p.name} 阴阳茶(阴)：付 1 热 → +1 格。</color>");
@@ -1829,9 +1894,13 @@ public class MVPGameManager : MonoBehaviour
     {
         if (p.hasFinished) return;
 
+        TrackRuntimeContext track = TrackContext;
+        if (track == null)
+            return;
+
         RaceLapWeatherTransition transition = RaceLapWeatherRules.Advance(
             p.lap,
-            config.totalLaps,
+            track.TotalLaps,
             weatherState.LastRolledLap,
             config.enableWeather);
         p.lap = transition.Lap;
@@ -1915,9 +1984,8 @@ public class MVPGameManager : MonoBehaviour
             {
                 if (TechTreeRules.ShouldApplyCavallino(p.techState, session.TechDb, e.rank))
                 {
-                    string country = trackManager.LoadedTrackConfig != null
-                        ? trackManager.LoadedTrackConfig.country
-                        : "";
+                    TrackRuntimeContext track = TrackContext;
+                    string country = track != null ? track.Country : "";
                     rp = TechTreeRules.ApplyCavallinoRampante(rp, e.rank, TechTreeRules.IsCavallinoHomeRace(country));
                 }
                 p.techState.rpBalance += rp;
@@ -2001,24 +2069,25 @@ public class MVPGameManager : MonoBehaviour
     private int GetVisualLaneIndex(PlayerState p)
     {
         int idx = GetCarIndex(p);
-        if (idx < 0 || idx >= laneIndices.Count || trackManager == null)
-            return trackManager != null && p != null
-                ? trackManager.GetDefaultLaneIndex(p.isAI)
+        TrackRuntimeContext track = TrackContext;
+        if (idx < 0 || idx >= laneIndices.Count || track == null)
+            return track != null && p != null
+                ? track.GetDefaultLaneIndex(p.isAI)
                 : 0;
 
-        if (TrackPresentationRules.IsIndianapolis(trackManager.TrackId))
-            return Mathf.Clamp(laneIndices[idx], 0, trackManager.LaneCount - 1);
+        if (TrackPresentationRules.IsIndianapolis(track.TrackId))
+            return Mathf.Clamp(laneIndices[idx], 0, track.LaneCount - 1);
 
         bool trailingInParallel = RaceLaneRules.IsTrailingInParallel(
             p, session != null ? session.Players : null, idx);
         return TrackPresentationRules.GetStandardTrafficLaneIndex(
-            trackManager.TrackId,
+            track.TrackId,
             trailingInParallel);
     }
 
     private void RefreshVisualCarLanes()
     {
-        if (session == null || trackManager == null)
+        if (session == null || TrackContext == null)
             return;
 
         for (int i = 0; i < session.Players.Count && i < carInstances.Count; i++)
@@ -2052,11 +2121,13 @@ public class MVPGameManager : MonoBehaviour
     {
         int idx = GetCarIndex(p);
         if (idx < 0 || idx >= carInstances.Count || carInstances[idx] == null) return;
+        TrackRuntimeContext track = TrackContext;
+        if (track == null) return;
         var car = carInstances[idx];
-        car.transform.position = trackManager.GetNodePosition(position, lane);
+        car.transform.position = track.GetNodePosition(position, lane);
         // 传送后朝向下一节点（失控回退 / 进站出口 / 阴阳茶 +1）
-        int nextIdx = (position + 1) % trackManager.TotalNodes;
-        GetCarOrientationController().FaceImmediately(car, trackManager.GetNodePosition(nextIdx, lane));
+        int nextIdx = (position + 1) % track.TotalNodes;
+        GetCarOrientationController().FaceImmediately(car, track.GetNodePosition(nextIdx, lane));
     }
 
     // ====== 赛车朝向（P2 #17 随赛道方向旋转） ======

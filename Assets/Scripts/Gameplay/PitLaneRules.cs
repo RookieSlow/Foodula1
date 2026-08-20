@@ -47,12 +47,28 @@ public static class PitLaneRules
 
     /// <summary>
     /// Check if a car crossed the pit entry during its movement this turn.
+    /// newPos is the unnormalized forward target (oldPos + actual movement).
     /// </summary>
     public static bool CrossedPitEntry(int oldPos, int newPos, IReadOnlyList<TrackNode> nodes)
     {
+        if (nodes == null || nodes.Count == 0)
+            return false;
+
         int entry = FindPitEntry(nodes);
-        if (entry < 0) return false;
-        return oldPos <= entry && newPos >= entry;
+        if (entry < 0 || newPos <= oldPos)
+            return false;
+
+        // The race coordinator keeps the current position normalized, but a
+        // movement target may continue past the end of the closed track. Use
+        // the shared path sampler so pit detection and vehicle animation see
+        // the same ordered nodes across one or more lap boundaries.
+        foreach (int nodeIndex in TrackRules.GetCrossedNodeIndices(nodes.Count, oldPos, newPos))
+        {
+            if (nodes[nodeIndex].isPitEntry)
+                return true;
+        }
+
+        return false;
     }
 
     /// <summary>

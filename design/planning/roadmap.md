@@ -1,7 +1,7 @@
 # Foodular1 开发路线图
 
-> 最后更新: 2026-08-03
-> 关联: ADR-002 (当前架构)
+> 最后更新: 2026-08-20
+> 关联: ADR-002 (当前架构)、ADR-004（TrackRuntimeContext）
 > 新模块接入指引: `docs/module-integration-guide.md`
 
 ---
@@ -76,7 +76,7 @@
 
 | # | 债务 | 严重度 | 说明 |
 |---|------|--------|------|
-| D1 | `TrackManager` 混合渲染 + 逻辑 | 中 | 渲染代码应与状态管理分离 |
+| D1 | `TrackManager` 混合渲染 + 加载适配 | 中 | ✅ 运行时节点/坐标/天气/圈数已隔离到 `TrackRuntimeContext`；AI、镜头、HUD、车辆路径、移动计划/弯道结算、比赛编排和调试覆盖层查询已直接消费快照；Manager 仍保留加载、表现配置与兼容 API |
 | D2 | `MVPGameManager` 双 UI 路径 | 低 | Prefab 模式 + `RaceUIFactory` 回退路径仍需双路径冒烟测试；UI 构建代码已从 Manager 移出 |
 | D3 | 测试命名不统一 | 低 | `test_xxx_yyy` vs `testXxxYyy` — 统一为 `test_xxx_yyy` 格式 |
 | D4 | 缺少 `.gitignore` 中 Unity 标准条目 | 低 | 检查 `Library/`, `Temp/`, `obj/` 等是否已排除 |

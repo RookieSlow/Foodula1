@@ -43,7 +43,18 @@ last_updated: ""
 # interface: how other systems access this state (read-only property, method call,
 #   signal, shared resource, etc.) — this is the contract other ADRs depend on.
 
-state_ownership: []
+state_ownership:
+  - state: track_runtime_context
+    status: active
+    owner_system: track-system
+    adr: docs/architecture/adr-004-track-runtime-context-boundary.md
+    interface: "TrackManager.Runtime (read-only TrackRuntimeContext snapshot)"
+    write_access: "track-system load boundary only"
+    referenced_by:
+      - docs/architecture/adr-004-track-runtime-context-boundary.md
+      - docs/module-integration-guide.md
+    added: 2026-08-19
+    revised: 2026-08-20
 
 # Example:
 #
@@ -71,7 +82,23 @@ state_ownership: []
 #
 # pattern options: signal | direct_call | event_bus | shared_resource | rpc | none
 
-interfaces: []
+interfaces:
+  - contract: track_runtime_snapshot
+    status: active
+    pattern: direct_call
+    producer: track-system
+    consumers:
+      - race-system
+      - ai-system
+      - camera-system
+      - vehicle-presentation-system
+    adr: docs/architecture/adr-004-track-runtime-context-boundary.md
+    signature: "TrackManager.Runtime -> TrackRuntimeContext"
+    referenced_by:
+      - docs/architecture/adr-004-track-runtime-context-boundary.md
+      - docs/module-integration-guide.md
+    added: 2026-08-19
+    revised: 2026-08-20
 
 # Example:
 #

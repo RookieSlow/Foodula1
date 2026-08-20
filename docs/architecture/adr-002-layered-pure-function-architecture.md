@@ -10,7 +10,7 @@ Accepted
 
 ## Last Verified
 
-2026-08-18
+2026-08-19
 
 ## Decision Makers
 
@@ -88,7 +88,8 @@ refactoring. This ADR formalizes that structure.
 ┌─────────────────────────────────────────────────────────┐
 │                   Unity Scene Layer                      │
 │  MVPGameManager (coordinator, coroutines, UI binding)    │
-│  TrackManager (runtime track state, rendering)           │
+│  TrackManager (track loading/render adapter)              │
+│  TrackRuntimeContext (read-only loaded track snapshot)    │
 │  AIController (MonoBehaviour, wiring)                    │
 │  CardHandUI / HUDUI (display, user input)                │
 └──────────────────────┬──────────────────────────────────┘
@@ -224,7 +225,8 @@ public static class TrackDataLoader {
 - Two data paths for tracks (JSON primary + hardcoded fallback) add maintenance
   burden
 - No automated integration tests (full game loop still manual)
-- `TrackManager` holds rendering logic alongside state — mixed concerns
+- `TrackManager` still holds rendering logic alongside the load adapter; its
+  gameplay state is now isolated behind `TrackRuntimeContext` (ADR-004)
 
 ### Neutral
 

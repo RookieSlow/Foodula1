@@ -528,6 +528,14 @@ public class RaceSessionTest
     }
 
     [Test]
+    public void test_crossed_landmark_supports_raw_multi_lap_targets()
+    {
+        Assert.IsTrue(RaceSession.CrossedLandmark(58, 62, 0, 60));
+        Assert.IsTrue(RaceSession.CrossedLandmark(58, 92, 30, 60));
+        Assert.IsFalse(RaceSession.CrossedLandmark(58, 69, 30, 60));
+    }
+
+    [Test]
     public void test_in_bbq_zone_near_landmark()
     {
         Assert.IsTrue(RaceSession.IsInBBQZone(4, 60));   // 靠近起点线
