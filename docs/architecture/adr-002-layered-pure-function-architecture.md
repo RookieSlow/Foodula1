@@ -35,7 +35,7 @@ testing and data-driven content authoring.
 | **Knowledge Risk** | LOW — in training data |
 | **References Consulted** | `docs/engine-reference/unity/VERSION.md` |
 | **Post-Cutoff APIs Used** | None |
-| **Verification Required** | None — standard C# 9.0 patterns, no engine-version-specific APIs |
+| **Verification Required** | Full EditMode regression suite and Race Play Mode smoke test; complete weather/lap/pit combinations remain manual |
 
 ## ADR Dependencies
 
@@ -209,7 +209,8 @@ public static class TrackDataLoader {
 
 ### Positive
 
-- **20 unit tests pass** with zero Unity scene dependencies (EditMode only)
+- The latest maintained Unity validation record is **399/399 EditMode tests passed**;
+  the pure-rule layer remains independent of scene dependencies.
 - Deterministic seeded randomness enables reproducible AI behavior and replay
 - JSON track authoring — designers can create tracks without touching C# code
 - Inspector-tunable config via `GameConfigSO` — no recompilation for balance changes
@@ -258,11 +259,11 @@ needed — the hardcoded fallback in `TrackManager` preserves the original behav
 
 ## Validation Criteria
 
-- [x] All 20 EditMode tests pass without scene dependencies
-- [x] Play Mode smoke test completes with 0 errors (Silverstone track, 60 nodes, 3 laps)
+- [x] Latest maintained full EditMode record is 399/399 with no failures or skips
+- [x] MainMenu → Race Play Mode smoke has completed with a clean project console on current tracks
 - [x] AI behavior is deterministic given same seed
 - [ ] Integration test for full game loop (non-blocking follow-up)
-- [ ] Track JSON schema validation tool (non-blocking follow-up)
+- [x] Track JSON schema validation tool (`TrackJsonValidator`) is integrated
 
 ## GDD Requirements Addressed
 

@@ -76,7 +76,7 @@ public enum TechEffectType
     MotherRoad,            // L3: landmark prosperity/decline/revival system
 
     // ── CN Unique ──
-    YinYangTea,            // L1: end of turn cold→pay heat+move / hot→auto cool
+    YinYangTea,            // L1: end of turn player chooses pay heat+move or cool; AI uses auto policy
     DimSumCombo,           // L2: trick→speed→pay heat sequence → extra YinYang
     SomersaultCloud,       // L3: upgrade ATTACK cards (+2 slipstream, +1 corner limit)
 

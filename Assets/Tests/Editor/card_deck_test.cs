@@ -209,6 +209,44 @@ public class CardDeckTest
     }
 
     [Test]
+    public void test_cool_heat_prioritizes_hand_then_draw_pile_then_discard_pile()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        deck.AddCardsToHand(new List<CardData> { new CardData(CardType.Heat, 0) });
+        deck.DrawHeatFromPool(1); // creates a heat card in the discard pile
+
+        int poolBefore = deck.heatPool.remaining;
+        int cooled = deck.CoolHeat(3);
+
+        Assert.That(cooled, Is.EqualTo(3));
+        Assert.That(deck.CountHeatInHand(), Is.EqualTo(0));
+        Assert.That(deck.CountHeatInDrawPile(), Is.EqualTo(0));
+        Assert.That(deck.CountHeatInDiscardPile(), Is.EqualTo(1));
+        Assert.That(deck.heatPool.remaining, Is.EqualTo(poolBefore + 3));
+
+        int discardCooled = deck.CoolHeat(1);
+        Assert.That(discardCooled, Is.EqualTo(1));
+        Assert.That(deck.CountHeatInDiscardPile(), Is.EqualTo(0));
+        Assert.That(deck.heatPool.remaining, Is.EqualTo(poolBefore + 4));
+    }
+
+    [Test]
+    public void test_cool_heat_destroys_temporary_heat_after_permanent_zones_are_empty()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        deck.AddCardsToHand(new List<CardData> { CardData.CreateTempHeat() });
+
+        int poolBefore = deck.heatPool.remaining;
+        int cooled = deck.CoolHeat(1);
+
+        Assert.That(cooled, Is.EqualTo(1));
+        Assert.That(deck.heatPool.remaining, Is.EqualTo(poolBefore));
+        Assert.That(deck.CountHeatInHand(), Is.EqualTo(0));
+    }
+
+    [Test]
     public void test_temporary_heat_is_destroyed_during_full_recovery()
     {
         var config = CreateConfig();

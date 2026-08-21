@@ -115,30 +115,29 @@ public class RaceSimulationTest
                 // 移动 + 圈数
                 int oldPos = p.position;
                 int newPos = p.position + p.totalMovementThisTurn;
-                for (int i = oldPos + 1; i <= newPos; i++)
+                TrackTraversalEvents movementEvents = TrackRules.GetTraversalEvents(nodes, oldPos, newPos);
+                RaceLapWeatherBatchTransition crossingBatch = RaceLapWeatherRules.AdvanceCrossings(
+                    p.lap,
+                    trackCfg.laps,
+                    weatherState.LastRolledLap,
+                    true,
+                    movementEvents.CrossedStartFinishNodeIndices.Count);
+                foreach (RaceLapWeatherTransition transition in crossingBatch.Transitions)
                 {
-                    if (nodes[i % totalNodes].isStartFinish)
+                    p.lap = transition.Lap;
+                    session.OnNewLap(p);
+                    if (transition.ShouldRollWeather)
                     {
-                        RaceLapWeatherTransition transition = RaceLapWeatherRules.Advance(
-                            p.lap,
-                            trackCfg.laps,
-                            weatherState.LastRolledLap,
-                            true);
-                        p.lap = transition.Lap;
-                        session.OnNewLap(p);
-                        if (transition.ShouldRollWeather)
-                        {
-                            weatherState.MarkLapRolled(transition.Lap);
-                            session.RollWeatherForLap();
-                        }
-                        if (transition.HasFinished)
-                        {
-                            p.hasFinished = true;
-                            session.AssignFinish(p);
-                        }
+                        weatherState.MarkLapRolled(transition.Lap);
+                        session.RollWeatherForLap();
+                    }
+                    if (transition.HasFinished)
+                    {
+                        p.hasFinished = true;
+                        session.AssignFinish(p);
                     }
                 }
-                bool crossedPitEntry = PitLaneRules.CrossedPitEntry(oldPos, newPos, nodes);
+                bool crossedPitEntry = movementEvents.CrossedPitEntry;
                 p.position = newPos % totalNodes;
                 violations.Check(p.position >= 0 && p.position < totalNodes,
                     $"{p.name} 位置越界: {p.position}");
@@ -167,9 +166,10 @@ public class RaceSimulationTest
                 // 维修区（热量高自动进站）
                 if (crossedPitEntry && p.HeatRatio >= 0.6f)
                 {
-                    var pit = PitLaneRules.EnterPit(p, nodes);
+                    PitStopResult pit = PitLaneRules.ResolvePitStop(p, nodes);
                     if (pit.success)
                     {
+                        PitLaneRules.ApplyPitStop(p, pit);
                         p.deck.RecoverAllHeatToPool();
                         violations.Check(p.position >= 0 && p.position < totalNodes,
                             $"{p.name} 进站后位置越界: {p.position}");

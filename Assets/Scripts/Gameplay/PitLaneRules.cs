@@ -9,6 +9,13 @@ public static class PitLaneRules
     /// <summary>Default pit stop duration in turns (car skips this many turns).</summary>
     public const int DEFAULT_PIT_DURATION = 1;
 
+    /// <summary>
+    /// Number of track cells used to represent the pit-lane transit.
+    /// The car still skips one turn for servicing, then exits five cells after
+    /// the authored pit entry instead of being teleported to an adjacent marker.
+    /// </summary>
+    public const int PIT_ADVANCE_CELLS = 5;
+
     /// <summary>Heat cooled during a standard pit stop.</summary>
     public const int PIT_HEAT_COOLDOWN = 999; // All heat returned to engine
 
@@ -23,16 +30,18 @@ public static class PitLaneRules
     /// <summary>Find the index of the pit entry node. Returns -1 if none.</summary>
     public static int FindPitEntry(IReadOnlyList<TrackNode> nodes)
     {
+        if (nodes == null) return -1;
         for (int i = 0; i < nodes.Count; i++)
-            if (nodes[i].isPitEntry) return i;
+            if (nodes[i] != null && nodes[i].isPitEntry) return i;
         return -1;
     }
 
     /// <summary>Find the index of the pit exit node. Returns -1 if none.</summary>
     public static int FindPitExit(IReadOnlyList<TrackNode> nodes)
     {
+        if (nodes == null) return -1;
         for (int i = 0; i < nodes.Count; i++)
-            if (nodes[i].isPitExit) return i;
+            if (nodes[i] != null && nodes[i].isPitExit) return i;
         return -1;
     }
 
@@ -51,33 +60,23 @@ public static class PitLaneRules
     /// </summary>
     public static bool CrossedPitEntry(int oldPos, int newPos, IReadOnlyList<TrackNode> nodes)
     {
-        if (nodes == null || nodes.Count == 0)
-            return false;
-
-        int entry = FindPitEntry(nodes);
-        if (entry < 0 || newPos <= oldPos)
-            return false;
-
-        // The race coordinator keeps the current position normalized, but a
-        // movement target may continue past the end of the closed track. Use
-        // the shared path sampler so pit detection and vehicle animation see
-        // the same ordered nodes across one or more lap boundaries.
-        foreach (int nodeIndex in TrackRules.GetCrossedNodeIndices(nodes.Count, oldPos, newPos))
-        {
-            if (nodes[nodeIndex].isPitEntry)
-                return true;
-        }
-
-        return false;
+        // Keep the legacy pure-rule facade, but make the traversal event
+        // snapshot the single source of truth for direct callers too.
+        return TrackRules.GetTraversalEvents(nodes, oldPos, newPos).CrossedPitEntry;
     }
 
     /// <summary>
-    /// Get the position where the car exits the pit lane.
+    /// Get the simulated position where the car exits the pit lane.
+    /// The authored pit_exit node remains a validation/presentation marker;
+    /// gameplay uses a fixed five-cell transit to model the pit-lane segment.
     /// </summary>
     public static int GetPitExitPosition(IReadOnlyList<TrackNode> nodes)
     {
-        int exit = FindPitExit(nodes);
-        return exit >= 0 ? exit : 0;
+        int entry = FindPitEntry(nodes);
+        if (entry < 0 || nodes == null || nodes.Count == 0)
+            return 0;
+
+        return (entry + PIT_ADVANCE_CELLS) % nodes.Count;
     }
 
     /// <summary>
@@ -88,26 +87,22 @@ public static class PitLaneRules
     /// </summary>
     public static bool CanEnterPit(PlayerState player, IReadOnlyList<TrackNode> nodes)
     {
+        if (player == null) return false;
         if (player.isBlown || player.hasFinished) return false;
         if (player.skipNextTurn) return false; // Already pitting or spinning
         return HasPitLane(nodes);
     }
 
     /// <summary>
-    /// Resolve a pit stop. Returns the result with effects to apply.
-    /// Sets skipNextTurn for the pit duration.
+    /// Resolve a pit stop without mutating player state.
+    /// The caller decides when to apply the returned transition.
     /// </summary>
-    public static PitStopResult EnterPit(PlayerState player, IReadOnlyList<TrackNode> nodes)
+    public static PitStopResult ResolvePitStop(PlayerState player, IReadOnlyList<TrackNode> nodes)
     {
         if (!CanEnterPit(player, nodes))
             return PitStopResult.Fail("Cannot enter pit");
 
         int exitPos = GetPitExitPosition(nodes);
-        // Move car to pit exit
-        player.position = exitPos;
-        // Skip turns for pit duration
-        player.skipNextTurn = true;
-
         return new PitStopResult
         {
             success = true,
@@ -115,6 +110,26 @@ public static class PitLaneRules
             heatCooled = PIT_HEAT_COOLDOWN,
             turnsSkipped = DEFAULT_PIT_DURATION
         };
+    }
+
+    /// <summary>Apply a successful pit transition to the mutable race state.</summary>
+    public static void ApplyPitStop(PlayerState player, PitStopResult result)
+    {
+        if (player == null || !result.success) return;
+
+        player.position = result.exitPosition;
+        player.skipNextTurn = result.turnsSkipped > 0;
+    }
+
+    /// <summary>
+    /// Legacy one-step pit API. Kept for existing callers while new orchestration
+    /// can explicitly separate pure resolution from state application.
+    /// </summary>
+    public static PitStopResult EnterPit(PlayerState player, IReadOnlyList<TrackNode> nodes)
+    {
+        PitStopResult result = ResolvePitStop(player, nodes);
+        ApplyPitStop(player, result);
+        return result;
     }
 
     /// <summary>

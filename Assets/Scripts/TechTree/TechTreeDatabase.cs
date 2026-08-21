@@ -448,7 +448,7 @@ public static class TechTreeDatabaseFactory
             tier: TechTreeTier.L1, teamId: TeamId.CN, index: 1, rpCost: 5000,
             prerequisites: new string[0], upgradesTo: "",
             effects: new[] { new TechEffect(TechEffectType.YinYangTea, 1) },
-            description: "回合结束时：无热量牌(阴)→付1热+1格；有热量牌(阳)→自动冷却1张。"
+            description: "回合结束时由玩家选择：阴→付1热+1格；阳→按手牌、牌库、弃牌堆顺序冷却1张。AI使用自动策略。"
         ));
 
         db.Add(new TechNodeDef(

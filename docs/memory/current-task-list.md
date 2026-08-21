@@ -1,8 +1,68 @@
 # Current Task List
 
-> Updated: 2026-08-20
+> Updated: 2026-08-21
 > Sources: Claude Code project memory, active session state, session history,
 > current Git worktree, and current Unity project structure.
+
+> **当前口径说明**：本文件下方的历史条目保留当时的测试数字和机器状态，
+> 仅本文件顶部最新条目代表当前状态。当前机器已能打开 Unity；本次审计确认
+> Unity MCP 为 10.1.2 并已连接。重装系统后本机未安装 .NET SDK，因此旧条目中
+> `dotnet build 0 errors` 不能当作本机当前可复现结果。
+
+## 本次完成（2026-08-21 手牌选中视觉反馈）
+
+- [x] `CardUI` 选中牌增加平滑上移、轻微放大、金色染色、叠加高亮和描边；取消选择时
+  自动恢复原位与原色。
+- [x] 反馈在运行时动态添加，不修改 `CardPrefab` 资产，兼容当前 `CardHandUI` 的布局组。
+- [ ] Unity MCP 工具端点本轮未在 Codex 工具列表暴露；Unity 编辑器保持打开，已完成静态
+  检查，待编辑器内实际选牌或 MCP 恢复后做截图确认。
+
+## 本次完成（2026-08-21 冷却、维修区与阴阳茶规则校准）
+
+- [x] 普通冷却统一使用 `CardDeck.CoolHeat`，严格按手牌 → 牌库 → 弃牌堆处理；
+  特技牌的“冷却指定手牌”效果仍保留为显式的手牌目标效果。
+- [x] 维修区从 `pit_entry` 模拟前进 5 格，清空全部热量并跳过 1 回合；`pit_exit`
+  保留为 JSON 校验/表现标记，并新增相邻出口标记的回归测试。
+- [x] CN L1 阴阳茶改为人类玩家在回合结束选择阴/阳，AI 保留自动策略；补充输入门控、
+  显式选择和额外移动跨起终点的测试与运行时 UI。
+- [ ] Unity 已自动重载脚本且 `Editor.log` 未出现 C# 编译错误；EditMode 全量测试本轮
+  未能在已打开的 Unity 实例上再次启动，待编辑器内 Test Runner 或关闭编辑器后复跑。
+
+## 本次完成（2026-08-21 维修区解析/应用边界）
+
+- [x] `PitLaneRules.ResolvePitStop` 现在只解析资格、出口位置、冷却量和跳过回合数，
+  `ApplyPitStop` 单独应用位置/跳过状态；旧 `EnterPit` 保留为兼容性一站式门面。
+- [x] `MVPGameManager` 与纯层比赛模拟显式执行 resolve → apply，规则结果和可变
+  `PlayerState` 副作用可以分别验证；空轨道/空玩家/缺失节点输入也安全返回。
+- [x] 新增进站解析不变更玩家、应用后才变更以及缺失节点防护回归测试；维护记录中最近一次
+  Unity EditMode 全量 **399/399 通过**、0 失败/跳过。本次文档同步未重跑 Test Runner。
+- [ ] 当前机器的 `dotnet build Foodula1.sln --no-restore` 尚不可复现：未安装 .NET SDK；
+  旧记录中的 0 错误与 MCP 程序集警告属于历史验证结果。
+- [ ] 剩余风险：多天气、多圈、多车过线与完整进站选择/出站流程仍需人工组合走查；
+  PlayMode Test Runner 当前没有非编辑器测试程序集。
+
+## 本次完成（2026-08-21 多圈跨线终止边界）
+
+- [x] 新增 `RaceLapWeatherRules.AdvanceCrossings`，把同一移动中多个起终点经过的
+  圈数递增、每圈天气门控和完赛边界组合为一个纯规则批次；到达完赛圈后立即停止处理
+  后续跨线，避免超额移动在纯模拟中重复分配完赛顺位。
+- [x] `race_simulation_test` 改用批量跨线结果，同时保留每次跨线的科技重置、天气掷骰和
+  完赛副作用接线；新增多圈终止与天气门控回归覆盖。
+- [x] Unity 资源刷新后 EditMode 全量 **396/396 通过**、0 失败；`dotnet build
+  Foodular1.sln --no-restore` 0 错误，仅保留既存 MCP 程序集版本冲突警告。
+- [ ] 剩余风险：多天气、多圈、多车过线与完整进站选择/出站流程仍需人工组合走查；
+  PlayMode Test Runner 当前没有非编辑器测试程序集。
+
+## 本次完成（2026-08-21 纯层事件快照一致性）
+
+- [x] `PitLaneRules.CrossedPitEntry` 保留旧纯规则 API，但内部改为消费
+  `TrackRules.GetTraversalEvents`；运行时、维修区门面和测试模拟不再各自重走跨圈节点路径。
+- [x] `race_simulation_test` 的起终点/天气/完赛与维修区检查改用同一 `TrackTraversalEvents`
+  快照，纯层模拟与 `MVPGameManager` 的移动事件顺序保持一致。
+- [x] 保留既有跨圈事件与维修区回归覆盖；Unity 资源刷新后 EditMode 全量 **394/394 通过**、
+  0 失败/跳过，并完成 PlayMode 上海赛道一回合 Go 冒烟。本轮不修改场景、不 commit/push。
+- [ ] 剩余风险：多天气、多圈、多车过线与完整进站选择/出站流程仍需人工组合走查；PlayMode
+  Test Runner 当前没有非编辑器测试程序集。
 
 ## 本次完成（2026-08-20 移动事件快照边界）
 
@@ -303,18 +363,21 @@ with 0 failures, warnings, or errors.
 
 ## P2 - Demo Asset Replacement
 
-- [ ] Reconcile the Phase 2 planning document with assets already completed.
+- [x] Reconcile the Phase 2 planning document with assets already completed; the
+  authoritative inventory is now `design/planning/asset-manifest.md`.
 - [ ] Finish remaining UI panel artwork.
 - [ ] Replace gear-button placeholders with the approved gear controls.
 - [ ] Replace the heat text placeholder with the approved thermometer UI.
-- [ ] Replace remaining flag and track-node placeholders.
-- [ ] Verify card and vehicle sprites in both scenes at target resolution.
+- [ ] Replace remaining flag, track-node, and runtime-generated UI placeholders.
+- [x] Verify the current card, vehicle, and eight selectable track-background
+  assets are present; target-resolution visual polish remains.
 
 ## P3 - Feature Completion
 
-- [ ] Add multiple AI opponents.
-- [ ] Implement slipstream.
-- [ ] Implement team attributes.
+- [x] Support multiple AI participants through `aiOpponentCount` (0–3); deeper
+  personality and difficulty tuning remain.
+- [x] Implement slipstream and weather gating.
+- [x] Implement team vehicle attributes and team-tech modifiers; balance remains.
 - [x] Shuffle team trick cards into the normal deck lifecycle and replace batch
   hand submission with one-card select/confirm play, immediate trick resolution,
   and explicit end-of-card-phase behavior.
@@ -324,6 +387,8 @@ with 0 failures, warnings, or errors.
 - [ ] Add card-play, vehicle movement, bounce, and spin-out animations.
 - [x] Add weather gameplay after track data and race rules are stable; the five
   design profiles are now wired into limits, slipstream, cooling, spin-out and HUD.
+- [ ] Implement driver passive/signature effects; the catalog, XP tiers, and
+  selection flow are present but the effects are not yet applied to movement.
 
 ## Open Decisions
 
@@ -341,7 +406,8 @@ with 0 failures, warnings, or errors.
 - [x] Card number and heat icon display.
 - [x] Six national-team vehicle sprites.
 - [x] Eight track-layout image prompts.
-- [x] Unity MCP 10.1.0 package installed and connection verified.
+- [x] Unity MCP 10.1.2 package installed and connection verified; the local
+  server is registered on `http://127.0.0.1:8080/mcp`.
 
 ## Maintenance Rule
 

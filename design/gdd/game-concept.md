@@ -1,9 +1,11 @@
 # Foodular1 — MVP 概念文档
 
-> **状态**: Draft — 基于 foodula-1-concept.md 的 MVP 范围裁剪
+> **状态**: Historical MVP baseline — 不再作为当前实现规范
 > **替代**: game-concept-ARCHIVED-2026-07-19.md（已退役的原型行为审计文档）
 > **日期**: 2026-07-19
 > **范围**: 单场 HEAT 核心循环验证
+
+> **当前口径（2026-08-21）**：本文保留早期“42 格、单 AI、单场核心循环”的范围快照，便于追溯最初 MVP 验收。当前项目已扩展为 8 条可选赛道、6 支车队、12 位车手、科技树、天气和维修区；开发与验收请以 `design/gdd/foodula-1-concept.md`、对应系统 GDD 和 `design/planning/demo-framework.md` 为准。
 
 ---
 

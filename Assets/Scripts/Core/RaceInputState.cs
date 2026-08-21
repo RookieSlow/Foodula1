@@ -19,6 +19,9 @@ public sealed class RaceInputState
     /// <summary>Whether the pit-entry choice gate is currently open.</summary>
     public bool WaitingForPitChoice { get; private set; }
 
+    /// <summary>Whether the end-of-turn Yin/Yang Tea choice gate is open.</summary>
+    public bool WaitingForYinYangChoice { get; private set; }
+
     /// <summary>Gear currently highlighted by the player.</summary>
     public int PendingGear { get; private set; }
 
@@ -40,6 +43,7 @@ public sealed class RaceInputState
         WaitingForDiscard = false;
         WaitingForLaneChange = false;
         WaitingForPitChoice = false;
+        WaitingForYinYangChoice = false;
     }
 
     /// <summary>Opens gear selection and uses the current gear as the default choice.</summary>
@@ -122,5 +126,18 @@ public sealed class RaceInputState
     public void EndPitChoice()
     {
         WaitingForPitChoice = false;
+    }
+
+    /// <summary>Opens the end-of-turn Yin/Yang Tea choice gate.</summary>
+    public void BeginYinYangChoice()
+    {
+        CloseAllGates();
+        WaitingForYinYangChoice = true;
+    }
+
+    /// <summary>Closes the Yin/Yang Tea choice gate.</summary>
+    public void EndYinYangChoice()
+    {
+        WaitingForYinYangChoice = false;
     }
 }

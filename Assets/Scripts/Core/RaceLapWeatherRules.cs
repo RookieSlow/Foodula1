@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 /// <summary>
 /// Pure transition rules for a start/finish crossing.
 /// Combines lap progression with the once-per-lap weather-roll decision so the
@@ -19,6 +21,46 @@ public static class RaceLapWeatherRules
         bool shouldRollWeather = weatherEnabled && progress.Lap != lastWeatherRolledLap;
         return new RaceLapWeatherTransition(progress.Lap, progress.HasFinished, shouldRollWeather);
     }
+
+    /// <summary>
+    /// Resolves an ordered batch of start/finish crossings from one movement.
+    ///
+    /// A high movement bonus can cross the line more than once. The batch keeps
+    /// the weather gate local to this pure calculation and stops at the first
+    /// finishing crossing, matching the runtime adapter's terminal semantics.
+    /// </summary>
+    public static RaceLapWeatherBatchTransition AdvanceCrossings(
+        int currentLap,
+        int totalLaps,
+        int lastWeatherRolledLap,
+        bool weatherEnabled,
+        int crossingCount)
+    {
+        var transitions = new List<RaceLapWeatherTransition>();
+        int lap = currentLap;
+        int lastRolledLap = lastWeatherRolledLap;
+
+        for (int i = 0; i < crossingCount; i++)
+        {
+            RaceLapWeatherTransition transition = Advance(
+                lap,
+                totalLaps,
+                lastRolledLap,
+                weatherEnabled);
+            transitions.Add(transition);
+            lap = transition.Lap;
+            if (transition.ShouldRollWeather)
+                lastRolledLap = transition.Lap;
+
+            if (transition.HasFinished)
+                break;
+        }
+
+        return new RaceLapWeatherBatchTransition(
+            lap,
+            lastRolledLap,
+            transitions);
+    }
 }
 
 /// <summary>Immutable result of crossing the start/finish line.</summary>
@@ -39,4 +81,27 @@ public readonly struct RaceLapWeatherTransition
 
     /// <summary>Whether this crossing should roll weather and commit the lap gate.</summary>
     public bool ShouldRollWeather { get; }
+}
+
+/// <summary>Immutable result of resolving multiple ordered line crossings.</summary>
+public readonly struct RaceLapWeatherBatchTransition
+{
+    public RaceLapWeatherBatchTransition(
+        int finalLap,
+        int lastWeatherRolledLap,
+        IReadOnlyList<RaceLapWeatherTransition> transitions)
+    {
+        FinalLap = finalLap;
+        LastWeatherRolledLap = lastWeatherRolledLap;
+        Transitions = transitions;
+    }
+
+    /// <summary>Lap after the last processed crossing.</summary>
+    public int FinalLap { get; }
+
+    /// <summary>Weather gate after the last processed crossing.</summary>
+    public int LastWeatherRolledLap { get; }
+
+    /// <summary>Ordered crossings, ending at finish when the car finishes.</summary>
+    public IReadOnlyList<RaceLapWeatherTransition> Transitions { get; }
 }

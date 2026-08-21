@@ -4,6 +4,9 @@
 > **关联文档**：`foodula-1-concept.md`（主框架）、`foodula-1-drivers.md`（车手系统）  
 > **提取自**：`foodula-1-concept.md` 第三章 & 第五章  
 > **创建日期**：2026-07-13
+> **最后校准**：2026-08-21。当前车队数值以 `Assets/Scripts/Core/TeamVehicleRules.cs`、
+> `RaceSession` 和 `design/balance/track-team-benchmark-2026-08-15.md` 为准；本文中的
+> 电池衰减与旧版技能树段落已标注为历史设计。
 
 ---
 
@@ -92,8 +95,8 @@
 | 档位数 | 4 档，逐级升降 | 2 档，自由切换 |
 | 加速能力 | 平缓递增（逐级升） | 一次到位，加速档 = 3 张牌 |
 | 热量管理 | 降档冷却（每降 1 档 = 1 热量） | 减速档一次冷却 2 热量 |
-| 弯道适应性 | 可通过操控属性加成限速 | **弯速差**：操控 -1（弯道限速更严格） |
-| 换胎/进站 | 无此概念 | **需进站充电**——每 3 圈必须进站 1 次 |
+| 弯道适应性 | 可通过操控属性加成限速 | 当前平衡值操控 0；Go/Recover 节奏是主要差异 |
+| 进站 | 无此概念 | 赛道有维修区时可选择标准进站；不再强制每 3 圈进站 |
 
 **连续档位惩罚（Consecutive Gear Penalty）**：
 
@@ -116,10 +119,17 @@
 > - CN 平均 36.4 回合完赛（与 US 并列最快），较改造前的 70.7 回合提升 **48%**
 > - 热量产出 101.0（全场最高，US 55.3 / IT 14.9），呈现极端"玻璃大炮"特征
 > - 连续 Go ≥3 次时引擎爆缸风险急剧上升——CN 车手必须精确掌握 Go/Recover 节奏
-> - 弯速差（-1 corner limit）使 CN 在弯道密集赛道（铃鹿）上更依赖 Recover 冷却
+> - 当前平衡版本将 CN 操控从 -1 调整为 0，保留 Go/Recover 热量节奏而避免弯道自动失衡
 > - 结论：设计方向正确，后续需关注高温爆缸率是否过高（待多人 playtest 验证手感）
 
-**电池衰减机制（Battery Degradation）**：
+**当前实现口径（2026-08-21）**：
+
+当前 Demo 不启用自动电池容量逐圈衰减。中国车队的引擎热量池使用车队耐久值 7，
+Go/Recover 的连续档位惩罚和 Recover 冷却链构成主要资源节奏；赛道存在维修区时，
+任何符合条件的玩家或 AI 都可选择标准进站，效果为从 `pit_entry` 模拟前进 5 格、清空热量并跳过 1 回合；`pit_exit` 作为赛道标记保留。
+下面的电池衰减表和“每 3 圈必须进站”方案保留为历史设计参考，不属于当前验收口径。
+
+<!-- BEGIN ARCHIVED BATTERY-DEGRADATION DESIGN
 
 中国队是唯一使用电动能源的车队。电池容量随圈数自然衰减——这是电动赛车结构性劣势，也是独特节奏张力的来源。
 
@@ -156,6 +166,8 @@
 - 能量回收增强：减速档额外多冷却 1 热量
 - 超频模式：加速档可出 4 张牌（但产生 2 热量）
 
+END ARCHIVED BATTERY-DEGRADATION DESIGN -->
+
 #### 1.2.6 🇯🇵 日本 — 寿司拉面赛车 (Sushi & Ramen Racer)
 
 > *"下克上——以小博大，以弱胜强。不要被账面数据骗了。"*
@@ -189,15 +201,17 @@
 |---|---|---|---|---|---|---|
 | **极速** | 0 | +1 | 0 | **+2** | +1 | 0 |
 | **加速** | 0 | 0 | +1 | +1 | **+2** | 0 |
-| **操控** | +1 | +1 | **+2** | **-1** | **-1** | +1 |
+| **操控** | +1 | +1 | **+2** | **-1** | **0（当前平衡值）** | +1 |
 | **冷却** | +1 | +1 | 0 | 0 | 0 (+进站清空) | 0 |
 | **耐久** | 7 | **8** | 6 | **8** | 7 | 6 |
 | **尾流** | 0 | 0 | 0 | +1 | 0 | 0 |
-| **特殊** | 科技树 ×1.25 | 最低牌=2, 失控减半 | 过弯后+1速 | 直道+1速, 弯道罚+1 | 2档系统, 可选进站 | 秘方增益牌 |
+| **特殊** | 科技树 ×1.25 | 直道 1 牌转 2，科技/失控钩子 | 过弯后+1速 | 直道每回合+1，弯道额外罚热 | 2 档 Go/Recover，标准可选进站 | 当前使用车队特技牌循环 |
 
 ---
 
 ### 1.4 赛车数据配置（JSON）
+
+> **口径说明**：以下 JSON 是面向策划/导表的概念配置样例，不是当前 Unity 的自动加载源。车队基础数值已按当前 `TeamVehicleRules` 校准；未由 `TeamVehicleRules`、`TechTreeRules` 或 `RaceSession` 明确接线的 `special` 字段仍属于设计预留，不能视为已实现效果。
 
 ```json
 {
@@ -224,28 +238,17 @@
     },
     "cn_electric_dimsum": {
       "name": "电动点心赛车", "nameEn": "Electric Dim Sum Racer", "country": "CN",
-      "stats": { "topSpeed": 1, "accel": 2, "handling": -1, "cooling": 0, "durability": 7, "slipstream": 0 },
+      "stats": { "topSpeed": 1, "accel": 2, "handling": 0, "cooling": 0, "durability": 7, "slipstream": 0 },
       "special": {
         "type": "ev_dual_gear",
         "gearSystem": "dual",
         "goGearCards": 3,
         "recoverGearCards": 1,
         "usesStep5Cooling": false,
-        "batteryBaseCapacity": 7,
-        "batteryDegradePerLap": 1,
-        "pitStopOptional": true,
-        "pitStopLossMin": 3,
-        "pitStopLossMax": 5,
+        "autoBatteryDegrade": false,
+        "pitStop": "track_defined_standard_optional",
         "consecutiveGoHeat": [0, 1, 2, 3],
-        "consecutiveRecoverCooldown": [3, 2, 1, 0],
-        "batteryDegradePenalties": {
-          "warningThreshold": 3,
-          "dangerThreshold": 4,
-          "criticalThreshold": 5,
-          "warningPenalty": { "goExtraHeat": 1 },
-          "dangerPenalty": { "goExtraHeat": 2 },
-          "criticalPenalty": { "blowUpCounterPerLap": 1 }
-        }
+        "consecutiveRecoverCooldown": [3, 2, 1, 0]
       }
     },
     "jp_sushi_ramen": {
@@ -260,6 +263,15 @@
 ---
 
 ## 二、技能树系统
+
+### 2.0 当前实现口径（2026-08-21）
+
+- 当前运行时使用 `TechTreeDatabase` 的通用节点池、六队专属节点和中国 EV 节点，
+  共 36 个 `TechNodeDef`；RP、解锁和激活配置由 `TechTreeProfileStore` 持久化。
+- 比赛通过 `RaceSession` 统一读取科技修正；已接入手牌上限、热量池、弯道限速、失控阈值、
+  直道移动、尾流和已列入模块接入指南的专属效果。
+- 下方旧版“车队共享技能树”段落不参与当前实现，也不应被用来判断当前数值；当前权威设计是
+  `foodula-1-tech-tree.md` + `Assets/Scripts/TechTree/`。
 
 > ⚠️ **已废弃 — 由 `foodula-1-tech-tree.md` 取代。**  
 > 以下内容为旧版车队专属技能树设计（4/3/1 节点每层），已被新的通用科技池 + 专属科技系统替换。  
@@ -373,9 +385,9 @@ L3 大师层（需 L2 任意 2 个前置）
 └─ ⭐ V8 咆哮：每场比赛 1 次，本回合直道移动力翻倍（×2），但回合结束时立即产生 5 张热量牌加入手牌
 ```
 
-#### 2.3.5 🇨🇳 中国车队技能树
+#### 2.3.5 🇨🇳 中国车队技能树（旧版，已废弃）
 
-> 核心机制：电动双档——仅 2 档（Go/Recover）、连续使用惩罚、每 3 圈进站
+> 旧版核心机制：电动双档——仅 2 档（Go/Recover）、连续使用惩罚、每 3 圈进站。当前实现不采用自动电池衰减或强制进站；请以本节开头的当前实现口径和 `foodula-1-tech-tree.md` 为准。
 
 ```
 🇨🇳 中国车队 — 共享技能树

@@ -2,7 +2,10 @@
 
 > **文档类型**: 框架设计 + 资源需求  
 > **创建日期**: 2026-07-22  
-> **状态**: Phase 1 完成 ✅ | Phase 2 进行中 🚧 — 资产制作  
+> **状态**: 核心运行时已完成 ✅ | 表现资产补齐进行中 🚧  
+> **当前口径**: 本文最初是 2026-07-22 的框架草案；当前实现以
+> `RaceSession`、`TrackRuntimeContext`、`RaceUIFactory` 和实际 Assets 目录为准。
+> 本文中的“计划新增”脚本/预制体不代表已经存在。  
 
 ---
 
@@ -11,7 +14,7 @@
 ```
 Assets/
 ├── Scripts/                    # C# 游戏逻辑
-│   ├── Core/                   # 核心系统（纯逻辑，非 MonoBehaviour）
+│   ├── Core/                   # 比赛编排、状态与纯规则聚合
 │   ├── Gameplay/               # 玩法系统
 │   ├── AI/                     # AI 系统
 │   ├── UI/                     # UI 系统
@@ -33,7 +36,6 @@ Assets/
 ├── Scenes/                     # Unity 场景
 │   ├── MainMenu.unity          # 主菜单
 │   ├── Race.unity              # 比赛场景（核心）
-│   └── Garage.unity            # 车库/车队选择（后续）
 │
 ├── Audio/                      # 音频资源
 │   ├── Music/
@@ -53,14 +55,14 @@ Assets/
 
 | 现有文件 | → 新位置 | 重构说明 |
 |---------|---------|---------|
-| `MVPGameManager.cs` | `Scripts/Core/GameManager.cs` | 重命名，分割职责 |
+| `MVPGameManager.cs` | `Scripts/Core/MVPGameManager.cs` | 当前仍是 Unity 比赛编排器；逐步抽取职责，不改名为 `GameManager` |
 | `CardDeck.cs` | `Scripts/Core/CardDeck.cs` | 保持，已纯 C# |
 | `CardData.cs` | `Scripts/Core/CardData.cs` | 保持 |
 | `PlayerState.cs` | `Scripts/Core/PlayerState.cs` | 保持 |
 | `HeatPool.cs` | `Scripts/Core/HeatPool.cs` | 从 CardDeck.cs 中独立出来 |
 | `TrackManager.cs` | `Scripts/Gameplay/TrackManager.cs` | 重构，数据驱动赛道 |
 | `AIController.cs` | `Scripts/AI/AIController.cs` | 保持 |
-| `GameConfigSO.cs` | `Scripts/Config/GameConfigSO.cs` | 拆分 |
+| `GameConfigSO.cs` | `Scripts/Config/GameConfigSO.cs` | 当前保留为比赛配置；赛道 JSON 派生数据不再回写此对象 |
 | `CardUI.cs` | `Scripts/UI/CardUI.cs` | 重构，支持 sprite |
 | `CardHandUI.cs` | `Scripts/UI/CardHandUI.cs` | 重构，Canvas 预制体 |
 | `HUDUI.cs` | `Scripts/UI/HUDUI.cs` | 重构，Canvas 预制体 |
@@ -77,10 +79,10 @@ Assets/
 | `TrackDataSO.cs` | `Scripts/Config/` | 赛道数据 ScriptableObject |
 | `CarConfigSO.cs` | `Scripts/Config/` | 赛车配置 ScriptableObject |
 | `DriverConfigSO.cs` | `Scripts/Config/` | 车手配置 ScriptableObject |
-| `TechTreeConfigSO.cs` | `Scripts/Config/` | 技能树配置 ScriptableObject |
+| `TechTreeConfigSO.cs` | `Scripts/Config/` | 旧计划项；当前科技树由 `TechTreeDatabase`/`TechTreeProfileStore` 提供 |
 | `UIPanel.cs` | `Scripts/UI/` | UI 面板基类 |
 | `MainMenuUI.cs` | `Scripts/UI/` | 主菜单 |
-| `GarageUI.cs` | `Scripts/UI/` | 车库/车队选择 |
+| `GarageUI.cs` | `Scripts/UI/` | 旧计划项；当前由车手选择面板间接确定车队 |
 | `ResultsUI.cs` | `Scripts/UI/` | 比赛结果面板 |
 | `AIDriverProfile.cs` | `Scripts/AI/` | AI 车手个性配置 |
 | `AudioManager.cs` | `Scripts/Core/` | 音效/音乐管理 |
@@ -90,7 +92,7 @@ Assets/
 
 ## 三、UI 系统框架
 
-MVP 使用 `AutoCreateUI()` 硬编码所有 UI。Demo 必须改为 **Canvas Prefab** 方式。
+当前 UI 由 `RaceUIFactory` 负责构建：优先复用场景/Prefab 引用，缺失时回退到程序化 Canvas/UI。两条路径都是现行兼容方案，不能再按“必须移除 AutoCreateUI”的旧计划理解。
 
 ### 3.1 UI Canvas 层级
 
@@ -150,7 +152,7 @@ RaceCanvas (Canvas, Screen Space - Overlay)
 |------|--------|------|------|
 | 速度牌底图 | `card_speed_bg.png` | 256×384, PNG | 速度牌通用底图，科技蓝边框，圆角 |
 | 热量牌底图 | `card_heat_bg.png` | 256×384, PNG | 热量牌底图，暗橙/红棕色调，"沉重"感 |
-| 速度牌高亮 | `card_speed_selected.png` | 256×384, PNG | 选中态叠加，绿色半透明覆盖 |
+| 速度牌高亮 | `card_selected_overlay.png` | 256×384, PNG | 当前实现的选中态叠加；旧规划名为 `card_speed_selected.png` |
 | 卡牌背图 | `card_back.png` | 256×384, PNG | 牌组背面，赛车主题 |
 | 数字 1-4 | `card_num_1..4.png` | 128×128, PNG | 速度牌中央大号数字，自定义风格字体 |
 | 热量图标 | `card_heat_icon.png` | 128×128, PNG | 火焰简化图标 |
@@ -191,7 +193,7 @@ RaceCanvas (Canvas, Screen Space - Overlay)
 | 赛道节点（直道）| `track_straight.png` | 32×32, PNG | 灰色圆点/方块 |
 | 赛道节点（弯心）| `track_apex.png` | 32×32, PNG | 红色圆点+限速数字 |
 | 起终点线 | `track_start_finish.png` | 32×32, PNG | 绿色+方格旗图案 |
-| 背景赛道底图 | `track_bg_demo.png` | 2048×2048, PNG | 42 节点赛道整体底图（可用程序化替代） |
+| 赛道布局底图 | `track_layout_*.png` | 运行时按国家/补充赛道复用 | 当前已有 8 张布局图；旧规划名 `track_bg_demo.png` 不再作为实际文件名 |
 
 **替代方案**: 赛道可用 LineRenderer 画线（现有方案），节点用简单精灵标记。后期切换到完整赛道底图。
 
@@ -246,7 +248,7 @@ GameManager (MonoBehaviour)
 ```
 - 标题: "Foodular 1" (大号 TMP)
 - 快速比赛 按钮 → Race.unity
-- 车队选择 按钮 → Garage.unity (后续)
+- 车手选择面板 → 选定车手并间接确定车队；独立 Garage 场景尚未实现
 - 退出 按钮
 - 背景: 赛道剪影 + 动画赛车
 ```
@@ -266,7 +268,7 @@ public class TrackDataSO : ScriptableObject
     public int totalLaps;
     public Vector2[] nodePositions;         // 节点坐标
     public int[] apexNodeIndices;           // 弯心节点索引
-    public int[] cornerSpeedLimits;         // 弯心限速
+    public int[] laneCornerSpeedLimits;     // 各车道弯心限速（当前 TrackConfig 字段）
     public string[] cornerNames;            // 弯心名称
     public int startFinishIndex;            // 起点/终点索引
 }
@@ -315,25 +317,25 @@ public class DriverConfigSO : ScriptableObject
 - [x] 重命名 + 移动现有脚本到新目录（13 脚本迁移，GUID 保留）
 - [x] Scripts/ 拆分为 Core/Gameplay/AI/UI/Config + Editor
 - [x] RaceCanvas Prefab 生成（Editor 工具: Foodular1 → Build RaceCanvas Prefab）
-- [ ] ~~拆分 GameConfigSO → TrackDataSO + CarConfigSO~~ → 延后至 Phase 2
-- [ ] ~~GameManager 分割：RaceManager + InputManager~~ → 延后至 Phase 2
+- [ ] ~~拆分 GameConfigSO → TrackDataSO + CarConfigSO~~ → 当前 JSON 赛道 + `GameConfigSO` 配置方案已取代该计划
+- [ ] ~~GameManager 分割：RaceManager + InputManager~~ → 当前保留 `MVPGameManager` 编排器，继续渐进式抽取
 
-### Phase 2 — 资源替换
-- [ ] 卡牌精灵替换硬编码 UI
-- [ ] 赛车精灵替换红色/蓝色方块
-- [ ] UI 面板底图替换
-- [ ] 字体替换（Inter / JetBrains Mono）
+### Phase 2 — 资源替换与表现补齐
+- [x] 卡牌精灵与赛车精灵已接入
+- [x] 八条可选赛道背景已接入
+- [ ] UI 面板、档位和热量专用图形继续替换程序化占位
+- [x] 中文 TMP 字体已接入；其他字体变体按表现需求补充
 
 ### Phase 3 — 功能补全
-- [ ] 多 AI 对手
-- [ ] 尾流机制
-- [ ] 车队属性系统
-- [ ] 车手选择界面
+- [x] 可配置多 AI 参与者（`aiOpponentCount` 0–3）
+- [x] 尾流机制
+- [x] 车队属性与科技树运行时接线
+- [x] 车手选择界面；独立车队选择场景仍未实现
 
 ### Phase 4 — 打磨
 - [ ] 音效
-- [ ] 动画（卡牌飞出、赛车移动弹跳、失控旋转）
-- [ ] 天气系统
+- [ ] 更完整动画（卡牌飞出、赛车移动弹跳、失控旋转素材）
+- [x] 天气系统规则与 HUD 接入；天气专用视觉表现仍待补齐
 
 ---
 

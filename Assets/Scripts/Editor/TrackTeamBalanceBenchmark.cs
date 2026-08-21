@@ -282,7 +282,7 @@ public static class TrackTeamBalanceBenchmark
                     cfg.gearOneCooldown, cfg.gearTwoCooldown);
                 if (!TeamGearRules.IsChina(p.teamId))
                     cooldown += TeamVehicleRules.GetCooling(p.teamId);
-                p.deck.RemoveHeatFromHand(cooldown);
+                p.deck.CoolHeat(cooldown);
 
                 foreach (int cornerId in TrackRules.GetUniqueApexCornersCrossed(nodes, oldPos, rawEnd))
                 {

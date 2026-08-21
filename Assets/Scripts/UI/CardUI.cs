@@ -24,6 +24,17 @@ public class CardUI : MonoBehaviour
     [Header("图标设置")]
     public Vector2 iconSize = new Vector2(100, 100);
 
+    [Header("选中态反馈")]
+    [Tooltip("选中时卡牌向上抬起的像素距离。")]
+    public float selectedLift = 28f;
+    [Tooltip("选中时卡牌的放大倍率。")]
+    public float selectedScale = 1.06f;
+    [Tooltip("选中/取消选中的过渡速度。")]
+    public float visualTransitionSpeed = 14f;
+    public Color selectedTint = new Color(1f, 0.86f, 0.42f, 1f);
+    public Color selectedOutlineColor = new Color(1f, 0.68f, 0.12f, 1f);
+    public Vector2 selectedOutlineDistance = new Vector2(3f, -3f);
+
     [Header("卡牌数据")]
     public CardData cardData;
     public bool isSelected;
@@ -31,6 +42,13 @@ public class CardUI : MonoBehaviour
     private System.Action<CardUI> onClickCallback;
     private Image overlayImage; // 运行时动态创建的选中态叠加层
     private Image iconImage;    // 运行时动态创建的速度数字/热量图标
+    private Outline selectionOutline;
+    private RectTransform cardRect;
+    private Color normalBackgroundColor = Color.white;
+    private Vector2 normalAnchoredPosition;
+    private Vector3 normalScale = Vector3.one;
+    private float visualProgress;
+    private bool layoutBaselineCaptured;
 
     // 颜色常量（精灵图缺失时的回退方案）
     private static readonly Color COLOR_DEFAULT = new Color(1f, 1f, 1f, 1f);
@@ -39,6 +57,20 @@ public class CardUI : MonoBehaviour
 
     void Awake()
     {
+        cardRect = GetComponent<RectTransform>();
+        if (cardRect != null)
+            normalAnchoredPosition = cardRect.anchoredPosition;
+        normalScale = transform.localScale;
+
+        // 描边是运行时组件，避免修改 CardPrefab 资产并让旧场景自动获得效果。
+        selectionOutline = GetComponent<Outline>();
+        if (selectionOutline == null)
+            selectionOutline = gameObject.AddComponent<Outline>();
+        selectionOutline.enabled = false;
+        selectionOutline.effectColor = selectedOutlineColor;
+        selectionOutline.effectDistance = selectedOutlineDistance;
+        selectionOutline.useGraphicAlpha = true;
+
         // 创建选中态叠加层（覆盖在背景之上，图标之下）
         if (overlayImage == null)
         {
@@ -99,6 +131,8 @@ public class CardUI : MonoBehaviour
                 backgroundImage.color = data.IsHeat ? COLOR_HEAT : COLOR_DEFAULT;
             else
                 backgroundImage.color = Color.white;
+
+            normalBackgroundColor = backgroundImage.color;
         }
 
         // 特技牌：直接显示名称（不显示数字/图标）
@@ -153,12 +187,37 @@ public class CardUI : MonoBehaviour
             overlayImage.color = new Color(1, 1, 1, 0);
         }
 
+        // CardHandUI 使用 LayoutGroup 排列卡牌。基准位置在第一次真正选中时
+        // 捕获，避免把 Prefab 的占位坐标误当成运行时手牌坐标。
+        visualProgress = 0f;
+        layoutBaselineCaptured = false;
+
         // 热量牌不是可执行动作，避免它进入键盘/手柄的无效焦点序列。
         Button button = GetComponent<Button>();
         if (button != null)
             button.interactable = !data.IsHeat;
 
         UpdateVisual();
+    }
+
+    private void LateUpdate()
+    {
+        float target = isSelected ? 1f : 0f;
+        visualProgress = Mathf.MoveTowards(
+            visualProgress,
+            target,
+            Time.unscaledDeltaTime * Mathf.Max(1f, visualTransitionSpeed));
+
+        if (!layoutBaselineCaptured || cardRect == null)
+            return;
+
+        // 只在选中态改变布局坐标，未选中时平滑回到 LayoutGroup 给出的原位。
+        cardRect.anchoredPosition = normalAnchoredPosition +
+            Vector2.up * (selectedLift * visualProgress);
+        transform.localScale = Vector3.LerpUnclamped(
+            normalScale,
+            normalScale * Mathf.Max(1f, selectedScale),
+            visualProgress);
     }
 
     public void OnCardClicked()
@@ -177,23 +236,50 @@ public class CardUI : MonoBehaviour
         if (overlayImage != null)
         {
             overlayImage.color = isSelected
-                ? new Color(1, 1, 1, 0.35f)
+                ? new Color(1f, 0.78f, 0.22f, 0.42f)
                 : new Color(1, 1, 1, 0);
         }
 
-        // 精灵图模式下不需要改色；纯色回退模式下改变背景色
-        if (backgroundImage != null && backgroundImage.sprite == null)
+        if (selectionOutline != null)
         {
-            if (cardData != null && cardData.IsHeat)
-                backgroundImage.color = COLOR_HEAT;
+            selectionOutline.enabled = isSelected;
+            selectionOutline.effectColor = selectedOutlineColor;
+            selectionOutline.effectDistance = selectedOutlineDistance;
+        }
+
+        if (backgroundImage != null)
+        {
+            // 有卡面精灵时使用轻微金色染色，既保留原卡面又明显区别于未选中态；
+            // 没有精灵时继续使用原有的纯色回退方案。
+            if (backgroundImage.sprite == null)
+            {
+                if (cardData != null && cardData.IsHeat)
+                    backgroundImage.color = COLOR_HEAT;
+                else
+                    backgroundImage.color = isSelected ? COLOR_SELECTED : normalBackgroundColor;
+            }
             else
-                backgroundImage.color = isSelected ? COLOR_SELECTED : COLOR_DEFAULT;
+            {
+                backgroundImage.color = isSelected
+                    ? Color.Lerp(normalBackgroundColor, selectedTint, 0.45f)
+                    : normalBackgroundColor;
+            }
         }
     }
 
     /// <summary>程序化设置选中状态（不触发回调）。</summary>
     public void SetSelectedWithoutNotify(bool selected)
     {
+        if (selected && !isSelected)
+        {
+            if (!layoutBaselineCaptured && cardRect != null)
+            {
+                normalAnchoredPosition = cardRect.anchoredPosition;
+                layoutBaselineCaptured = true;
+            }
+
+        }
+
         isSelected = selected;
         UpdateVisual();
     }

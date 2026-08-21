@@ -74,4 +74,23 @@ public class RaceInputStateTests
         Assert.That(state.PendingGear, Is.EqualTo(0));
         Assert.That(state.PlayerGearChoice, Is.EqualTo(0));
     }
+
+    [Test]
+    public void YinYangChoiceGateIsMutuallyExclusiveAndResettable()
+    {
+        var state = new RaceInputState();
+        state.BeginYinYangChoice();
+
+        Assert.That(state.WaitingForYinYangChoice, Is.True);
+        Assert.That(state.WaitingForCards, Is.False);
+        Assert.That(state.WaitingForPitChoice, Is.False);
+
+        state.BeginPitChoice();
+        Assert.That(state.WaitingForYinYangChoice, Is.False);
+        Assert.That(state.WaitingForPitChoice, Is.True);
+
+        state.Reset();
+        Assert.That(state.WaitingForYinYangChoice, Is.False);
+        Assert.That(state.WaitingForPitChoice, Is.False);
+    }
 }

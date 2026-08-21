@@ -41,9 +41,15 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 - The selected gear controls how many speed cards may be played.
 - A normal shift changes one gear.
 - A two-gear shift costs heat.
-- Gear 1 removes up to three heat cards from the hand.
-- Gear 2 removes up to one heat card from the hand.
+- Gear 1 removes up to three heat cards through the standard cooling order:
+  hand → draw pile → discard pile.
+- Gear 2 removes up to one heat card through the same order.
 - Higher gears provide no automatic cooling.
+
+All ordinary cooling effects use the same hand → draw pile → discard pile
+priority. Permanent heat returns to the engine pool and temporary heat is
+destroyed. Full recovery effects such as a spin-out recovery or pit stop still
+collect heat from all three zones.
 
 Gear-shift heat cost and gear-one/gear-two cooling values are configured in
 `GameConfigSO`. `MVPGameManager` resolves these rules through `RaceRules` for
@@ -54,7 +60,8 @@ both the player and AI race flow.
 - Each player starts with an independent engine heat pool of 6 by default.
 - Overspeeding through corners, sudden braking, and engine failures can move
   heat cards from the engine pool into the deck/discard lifecycle.
-- Cooling returns permanent heat cards from the hand to the engine pool.
+- Cooling returns permanent heat cards from the hand, draw pile, or discard pile
+  to the engine pool according to the standard zone order.
   Temporary heat cards are consumed and destroyed instead; cooling, recovery,
   and defensive deck removal can never convert them into permanent engine heat.
 - Running out of payable engine heat affects the race flow according to the
@@ -74,8 +81,17 @@ prototype and is no longer the authoritative model.
   corners, apex cells, speed limits, pit entry/exit, weather pool, and layout.
 - Pit-entry detection consumes the unnormalized forward movement target, so
   cross-lap movement and movement bonuses cannot skip a `pit_entry` node;
-  selecting a pit stop still moves the car to `pit_exit`, cools all heat, and
-  skips one turn.
+  selecting a pit stop simulates five cells of pit-lane transit, cools all heat,
+  and skips one turn. The authored `pit_exit` remains a track validation and
+  presentation marker. The current runtime allows any eligible player or AI
+  participant to use a track-defined pit lane; only Shanghai currently
+  contains `pit_entry`/`pit_exit` nodes. The China-specific skip helper is
+  retained as a compatibility hook, not as a general team lock.
+- Pit-stop resolution is a two-stage boundary: `PitLaneRules.ResolvePitStop`
+  returns the transition without mutating `PlayerState`, and `ApplyPitStop`
+  applies its position/skip state. The legacy `EnterPit` method composes both
+  stages for compatibility, while orchestration and pure simulation should use
+  the explicit pair.
 - Corner-speed resolution triggers only when movement crosses an `isApex`
   cell. Repeated apex cells for the same corner are deduplicated per move.
 - Player initialization and lap crossing use the runtime node marked
@@ -102,6 +118,13 @@ prototype and is no longer the authoritative model.
   snapshot, including when a movement target crosses one or more lap boundaries.
 - Mother Road landmark checks consume the final unnormalized movement target, so non-zero
   landmarks remain correct when a bonus movement crosses a lap boundary more than once.
+- The pure race simulation and the compatibility `PitLaneRules.CrossedPitEntry` facade consume
+  the same `TrackTraversalEvents` snapshot as runtime movement; regression simulations must not
+  reimplement start/finish or pit-entry path iteration.
+- `RaceLapWeatherRules.AdvanceCrossings` resolves repeated start/finish crossings from one
+  movement as an ordered pure batch, updates the local per-lap weather gate between crossings,
+  and stops at the first finishing crossing. Runtime side effects still run once per returned
+  crossing, so multi-lap movement cannot allocate a second finish order after completion.
 - Track presentation uses the selected layout background in Play Mode, with
   translucent yellow corner masks, red apex masks, and visible speed-limit
   labels. Runtime grid nodes, lane lines, and debug corner text are hidden;
@@ -122,8 +145,9 @@ prototype and is no longer the authoritative model.
 - Vehicle sprites follow the track tangent: spawning and teleport-style moves
   snap immediately to the next-node direction, while normal movement rotates
   smoothly according to `carRotateSpeed`.
-- Track authoring workflow, pit behavior, and a full multi-lap manual playthrough
-  still need completion or broader validation.
+- Track JSON authoring and schema validation are available. Adding new tracks
+  and the full multi-weather/multi-lap/pit manual matrix still need broader
+  validation.
 
 ## Weather
 
@@ -142,12 +166,17 @@ prototype and is no longer the authoritative model.
 
 ## Opponents and Win Condition
 
-- The current demo includes the player and one AI-controlled opponent.
+- The default demo includes the player and one AI-controlled opponent;
+  `aiOpponentCount` supports a configurable 0–3 AI participants.
 - AI speed-card selection uses configurable normal, heat-warning, and
   corner-risk behavior. Its variation probability and random source are
   injectable so seeded runs can be reproduced in tests.
 - A race ends when a participant reaches the configured lap count.
 - Final ranking compares completed laps and track position.
+
+When CN L1 Yin/Yang Tea is active, the human player chooses Yin or Yang at
+end-of-turn. Yin pays one engine heat for +1 movement; Yang cools one heat using
+the standard cooling order. AI participants retain the automatic policy.
 
 ## Drivers
 

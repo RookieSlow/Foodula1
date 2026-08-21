@@ -438,6 +438,23 @@ public class TechTreeRulesTests
     }
 
     [Test]
+    public void test_cn_l1_yin_yang_explicit_choice_is_not_based_on_hand_state()
+    {
+        var cnState = new TechTreeState(TeamId.CN, TechTreeRules.DEMO_BUDGET);
+        UnlockL1TierGate(cnState);
+        TechTreeRules.UnlockNode(cnState, "cn-l1-yin-yang-tea", db);
+        TechTreeRules.SelectActiveNodes(cnState, new[] { "cn-l1-yin-yang-tea" }, db);
+
+        var yin = TechTreeRules.ResolveYinYangChoice(cnState, db, chooseYin: true);
+        var yang = TechTreeRules.ResolveYinYangChoice(cnState, db, chooseYin: false);
+
+        Assert.That(yin.isYin, Is.True);
+        Assert.That(yin.extraMovement, Is.EqualTo(1));
+        Assert.That(yang.isYang, Is.True);
+        Assert.That(yang.heatToCool, Is.EqualTo(1));
+    }
+
+    [Test]
     public void test_cn_l1_yin_yang_no_tech_no_trigger()
     {
         var cnState = new TechTreeState(TeamId.CN, TechTreeRules.DEMO_BUDGET);

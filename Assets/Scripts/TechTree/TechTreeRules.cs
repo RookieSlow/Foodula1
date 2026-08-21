@@ -596,16 +596,37 @@ public static class TechTreeRules
     // ═══════════════════════════════════════════════════════════════════
 
     /// <summary>
-    /// CN L1: Resolve YinYangTea at end of turn.
+    /// CN L1: Resolve YinYangTea at end of turn using the legacy automatic
+    /// policy. Runtime human play now uses ResolveYinYangChoice instead.
     /// Yin (cold, no heat in hand): can pay 1 heat from engine → +1 move.
-    /// Yang (hot, has heat in hand): auto cool 1 heat.
+    /// Yang (hot, has heat in hand): cool 1 heat.
     /// </summary>
     public static YinYangResult ResolveYinYang(TechTreeState state, TechTreeDatabase db, bool hasHeatInHand)
     {
-        if (!HasEffect(state, db, TechEffectType.YinYangTea))
+        if (!HasYinYangTea(state, db))
             return YinYangResult.NoTrigger;
 
         return hasHeatInHand ? YinYangResult.Yang : YinYangResult.Yin;
+    }
+
+    /// <summary>Whether CN L1 Yin/Yang Tea is active for this race.</summary>
+    public static bool HasYinYangTea(TechTreeState state, TechTreeDatabase db)
+    {
+        return HasEffect(state, db, TechEffectType.YinYangTea);
+    }
+
+    /// <summary>
+    /// Resolves the player's explicit end-of-turn Yin/Yang Tea choice.
+    /// </summary>
+    public static YinYangResult ResolveYinYangChoice(
+        TechTreeState state,
+        TechTreeDatabase db,
+        bool chooseYin)
+    {
+        if (!HasYinYangTea(state, db))
+            return YinYangResult.NoTrigger;
+
+        return chooseYin ? YinYangResult.Yin : YinYangResult.Yang;
     }
 
     /// <summary>

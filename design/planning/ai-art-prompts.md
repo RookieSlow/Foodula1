@@ -444,7 +444,10 @@ Style: flat UI divider, like an <hr> tag in HTML. Absolute minimalism.
 > **尺寸**: 4096×4096px — 需要足够大的分辨率来容纳 42-62 个节点的细节。
 > **视图**: 完全俯视 (top-down)，纯 2D 平面。
 
-### 通用规则（6 条赛道全部遵守）
+### 通用规则（6 条国家主赛道全部遵守）
+
+纽博格林 24h 与勒芒是补充/测试赛道，复用同一套俯视赛道背景规范；当前不新增独立的
+美术主题规则。
 
 ```
 ALL tracks must follow these rules:

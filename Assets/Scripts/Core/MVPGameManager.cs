@@ -11,7 +11,7 @@ using TMPro;
 /// 5 大核心系统接入（2026-08-03）：
 /// - 多车：RaceSession.Players + RaceRanking 排名/回合顺序（末位先行）
 /// - 天气：比赛开始抽取 + 每圈掷骰换天，五种赛道天气画像由 WeatherRules 统一处理
-/// - 维修区：经过 pit_entry 时选择进站，冷却全部热量、停 1 回合
+/// - 维修区：经过 pit_entry 时选择进站，模拟前进 5 格并停 1 回合
 /// - 特技牌：4 张洗入普通牌库，每回合限 1，单张确认后即时结算；速度牌支持多选确认
 /// - 科技树：demo 预算解锁 L1，修正手牌/热量池/弯速/失控阈值等
 /// 所有规则计算均在纯函数层（RaceSession / RaceRules / *Rules），本类只做编排。
@@ -85,6 +85,13 @@ public class MVPGameManager : MonoBehaviour
     private Button pitSkipButton;
     private PlayerState pitWaitingPlayer;
 
+    // 阴阳茶
+    private GameObject yinYangChoicePanel;
+    private Button yinYangButton;
+    private Button yangButton;
+    private PlayerState yinYangWaitingPlayer;
+    private bool yinYangChoiceIsYin;
+
     // --- 属性 ---
     public PlayerState Player => session != null ? session.Human : null;
     public PlayerState AI => session != null && session.Players.Count > 1 ? session.Players[1] : null;
@@ -154,6 +161,7 @@ public class MVPGameManager : MonoBehaviour
 
         CreateLaneChangeUI();
         CreatePitChoiceUI();
+        CreateYinYangChoiceUI();
 
         nodeWait = new WaitForSeconds(config.nodeDelay);
         InitializeGame();
@@ -522,7 +530,7 @@ public class MVPGameManager : MonoBehaviour
             new Vector2(0f, 32f), new Vector2(580f, 28f),
             FindObjectOfType<TMP_Text>()?.font);
 
-        pitEnterButton = CreateActionButton(panelRect, "PitEnterButton", "进站 (冷却全部热量)",
+        pitEnterButton = CreateActionButton(panelRect, "PitEnterButton", "进站 (前进5格/冷却)",
             new Vector2(-160f, -15f), new Color(0.45f, 0.85f, 0.55f),
             () => ChoosePit(true));
         pitSkipButton = CreateActionButton(panelRect, "PitSkipButton", "继续比赛",
@@ -530,6 +538,35 @@ public class MVPGameManager : MonoBehaviour
             () => ChoosePit(false));
 
         pitChoicePanel.SetActive(false);
+    }
+
+    private void CreateYinYangChoiceUI()
+    {
+        Canvas canvas = hudUI != null
+            ? hudUI.GetComponentInParent<Canvas>()
+            : FindObjectOfType<Canvas>();
+        if (canvas == null)
+            return;
+
+        yinYangChoicePanel = new GameObject("YinYangChoicePanel", typeof(RectTransform));
+        yinYangChoicePanel.transform.SetParent(canvas.transform, false);
+        RectTransform panelRect = yinYangChoicePanel.GetComponent<RectTransform>();
+        panelRect.anchorMin = panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.anchoredPosition = new Vector2(0f, 175f);
+        panelRect.sizeDelta = new Vector2(620f, 105f);
+
+        CreateTMPText(panelRect, "YinYangPrompt", "阴阳茶：选择本回合结束效果", 18,
+            new Vector2(0f, 32f), new Vector2(580f, 28f),
+            FindObjectOfType<TMP_Text>()?.font);
+
+        yinYangButton = CreateActionButton(panelRect, "YinYangButton",
+            "阴：付1热量，前进1格", new Vector2(-160f, -15f),
+            new Color(0.95f, 0.75f, 0.35f), () => ChooseYinYang(true));
+        yangButton = CreateActionButton(panelRect, "YangButton",
+            "阳：冷却1热量", new Vector2(160f, -15f),
+            new Color(0.35f, 0.75f, 0.95f), () => ChooseYinYang(false));
+
+        yinYangChoicePanel.SetActive(false);
     }
 
     // Auxiliary overlays share the same typography/button construction as the
@@ -629,6 +666,8 @@ public class MVPGameManager : MonoBehaviour
         ConfigureGearControls(Player);
         if (laneChangePanel != null) laneChangePanel.SetActive(false);
         if (pitChoicePanel != null) pitChoicePanel.SetActive(false);
+        if (yinYangChoicePanel != null) yinYangChoicePanel.SetActive(false);
+        yinYangWaitingPlayer = null;
 
         if (hudUI != null)
         {
@@ -954,7 +993,7 @@ public class MVPGameManager : MonoBehaviour
                         ResolveMotherRoadPass(p, 1, oldPos);
                 }
 
-                // 维修区入口检测（进站 → 冷却全部热量 + 停 1 回合）
+                // 维修区入口检测（进站 → 模拟前进5格 + 冷却全部热量 + 停1回合）
                 if (config.enablePitLane && PitLaneRules.HasPitLane(track.Nodes) &&
                     movementEvents.CrossedPitEntry)
                 {
@@ -980,7 +1019,7 @@ public class MVPGameManager : MonoBehaviour
 
             // ====== 收尾 + 补牌 ======
             foreach (var p in session.Players)
-                CleanupTurn(p);
+                yield return StartCoroutine(CleanupTurn(p));
 
             // 检查游戏是否结束
             if (CheckGameEnd()) break;
@@ -1180,7 +1219,7 @@ public class MVPGameManager : MonoBehaviour
 
         if (cooldown > 0)
         {
-            int removed = p.deck.RemoveHeatFromHand(cooldown);
+            int removed = p.deck.CoolHeat(cooldown);
             if (removed > 0 && hudUI != null)
                 hudUI.AppendLog($"{p.name} ({TeamGearRules.GetDisplayName(p.teamId, p.gear)}): cools {removed} Heat → engine.");
         }
@@ -1519,17 +1558,18 @@ public class MVPGameManager : MonoBehaviour
         if (track == null)
             return;
 
-        var result = PitLaneRules.EnterPit(p, track.Nodes);
+        PitStopResult result = PitLaneRules.ResolvePitStop(p, track.Nodes);
         if (!result.success)
         {
             if (hudUI != null) hudUI.AppendLog(result.message);
             return;
         }
 
+        PitLaneRules.ApplyPitStop(p, result);
         p.deck.RecoverAllHeatToPool(); // 进站冷却全部热量回引擎
-        MoveCarTo(p, p.position);       // 移动到维修区出口
+        MoveCarTo(p, p.position);       // 更新到模拟的维修区出口位置
         if (hudUI != null)
-            hudUI.AppendLog($"<color=green>{p.name} 进站：冷却全部热量，停靠 {result.turnsSkipped} 回合。</color>");
+            hudUI.AppendLog($"<color=green>{p.name} 进站：维修区前进 {PitLaneRules.PIT_ADVANCE_CELLS} 格，冷却全部热量，停靠 {result.turnsSkipped} 回合。</color>");
     }
 
     /// <summary>
@@ -1547,7 +1587,7 @@ public class MVPGameManager : MonoBehaviour
         {
             case MotherRoadResult.MotherRoadPhase.Prosperity:
             {
-                int cooled = p.deck.RemoveHeatFromHand(result.freeCooldown);
+                int cooled = p.deck.CoolHeat(result.freeCooldown);
                 if (hudUI != null)
                     hudUI.AppendLog($"<color=green>{p.name} 母亲之路(繁荣)：自动冷却 {cooled} 张热量牌。</color>");
                 break;
@@ -1655,7 +1695,7 @@ public class MVPGameManager : MonoBehaviour
                 return; // 失控中断（后续效果不应用）
         }
 
-        // 冷却（红茶 / 关东慢煮）
+        // 特技牌指定手牌冷却（红茶 / 关东慢煮）；不等同于普通档位冷却
         if (result.heatToCool > 0)
         {
             int cooled = p.deck.RemoveHeatFromHand(result.heatToCool);
@@ -1822,9 +1862,12 @@ public class MVPGameManager : MonoBehaviour
 
     // ====== 收尾 ======
 
-    private void CleanupTurn(PlayerState p)
+    private IEnumerator CleanupTurn(PlayerState p)
     {
-        // 速度牌 → 弃牌堆。热量牌始终留在手牌中，只能通过降档冷却或 G1 散热移除。
+        if (p == null)
+            yield break;
+
+        // 速度牌 → 弃牌堆。未被冷却的热量牌继续留在其当前牌区。
         p.deck.DiscardSpeedCards(p.playedSpeedCardsThisTurn);
 
         // 限时热量牌销毁（薯条）
@@ -1833,17 +1876,33 @@ public class MVPGameManager : MonoBehaviour
             hudUI.AppendLog($"{p.name} 限时热量牌销毁 {tempRemoved} 张。");
 
         // 回合结束科技结算
-        if (p.techState != null)
+        if (p.techState != null && !p.isBlown && !p.hasFinished)
         {
-            // CN L1 阴阳茶：阴（无手牌热）→ 付 1 热 +1 格；阳（有手牌热）→ 自动冷却 1
-            ApplyYinYang(p, session.ResolveEndOfTurn(p));
+            // CN L1 阴阳茶：AI 沿用策略，人类在回合结束时自行选择。
+            if (session.HasYinYangChoice(p) && !p.isAI)
+            {
+                yield return StartCoroutine(WaitForYinYangChoice(p));
+                ApplyYinYang(p, session.ResolveYinYangChoice(p, yinYangChoiceIsYin));
+            }
+            else
+            {
+                ApplyYinYang(p, session.ResolveEndOfTurn(p));
+            }
 
             // CN L2 连击：特技 → 速度 → 付热 完整序列 → 额外触发阴阳
             if (TechTreeRules.CheckDimSumCombo(p.techState, session.TechDb))
             {
                 if (hudUI != null)
                     hudUI.AppendLog($"<color=orange>{p.name} 点心连击！额外触发阴阳茶。</color>");
-                ApplyYinYang(p, session.ResolveEndOfTurn(p));
+                if (!p.isAI && !p.isBlown && !p.hasFinished)
+                {
+                    yield return StartCoroutine(WaitForYinYangChoice(p));
+                    ApplyYinYang(p, session.ResolveYinYangChoice(p, yinYangChoiceIsYin));
+                }
+                else if (!p.isBlown && !p.hasFinished)
+                {
+                    ApplyYinYang(p, session.ResolveEndOfTurn(p));
+                }
             }
 
             // DE L3 烤肉拼盘：每场 1 次，自动冷却本回合支付的全部热量
@@ -1851,7 +1910,7 @@ public class MVPGameManager : MonoBehaviour
             if (grillCooldown > 0)
             {
                 session.ActivateGrillSpezial(p);
-                int cooled = p.deck.RemoveHeatFromHand(grillCooldown);
+                int cooled = p.deck.CoolHeat(grillCooldown);
                 if (cooled > 0 && hudUI != null)
                     hudUI.AppendLog($"<color=green>{p.name} 烤肉拼盘：自动冷却 {cooled} 张热量牌。</color>");
             }
@@ -1861,7 +1920,58 @@ public class MVPGameManager : MonoBehaviour
         p.playedSpeedCardsThisTurn.Clear();
     }
 
-    /// <summary>应用阴阳茶结果：阴 → 付 1 热 +1 格；阳 → 自动冷却。</summary>
+    private IEnumerator WaitForYinYangChoice(PlayerState player)
+    {
+        if (player == null || player.isAI || yinYangChoicePanel == null)
+        {
+            yinYangChoiceIsYin = false;
+            yield break;
+        }
+
+        yinYangWaitingPlayer = player;
+        yinYangChoiceIsYin = false;
+        inputState.BeginYinYangChoice();
+        yinYangChoicePanel.SetActive(true);
+
+        bool canPayYin = player.deck != null && player.deck.heatPool != null &&
+            player.deck.heatPool.remaining > 0;
+        if (yinYangButton != null)
+            yinYangButton.interactable = canPayYin;
+        if (yangButton != null)
+            yangButton.interactable = true;
+        if (hudUI != null)
+            hudUI.SetStatus(canPayYin
+                ? "回合结束：选择阴阳茶效果"
+                : "回合结束：引擎无可支付热量，只能选择阳");
+
+        yield return new WaitWhile(() => inputState.WaitingForYinYangChoice);
+
+        yinYangChoicePanel.SetActive(false);
+        yinYangWaitingPlayer = null;
+        if (hudUI != null)
+            hudUI.SetStatus("");
+    }
+
+    /// <summary>选择阴阳茶效果：阴支付 1 热量并前进，阳按冷却规则清热。</summary>
+    public void ChooseYinYang(bool chooseYin)
+    {
+        if (!inputState.WaitingForYinYangChoice || yinYangWaitingPlayer == null)
+            return;
+
+        if (chooseYin && (yinYangWaitingPlayer.deck == null ||
+            yinYangWaitingPlayer.deck.heatPool == null ||
+            yinYangWaitingPlayer.deck.heatPool.remaining <= 0))
+        {
+            if (hudUI != null)
+                hudUI.SetStatus("引擎没有可支付的热量，请选择阳");
+            return;
+        }
+
+        yinYangChoiceIsYin = chooseYin;
+        inputState.EndYinYangChoice();
+    }
+
+    /// <summary>应用阴阳茶结果：阴 → 付 1 热 +1 格；阳 → 按顺序冷却 1 热。</summary>
     private void ApplyYinYang(PlayerState p, YinYangResult result)
     {
         if (!result.triggered) return;
@@ -1874,7 +1984,16 @@ public class MVPGameManager : MonoBehaviour
         {
             if (TryPayHeat(p, 1, p.positionAtTurnStart, "yin yang (yin)"))
             {
-                p.position = (p.position + 1) % track.TotalNodes;
+                int oldPosition = p.position;
+                int rawTarget = oldPosition + result.extraMovement;
+                p.position = rawTarget % track.TotalNodes;
+                TrackTraversalEvents movementEvents = track.GetTraversalEvents(oldPosition, rawTarget);
+                foreach (int startFinishNode in movementEvents.CrossedStartFinishNodeIndices)
+                {
+                    OnPlayerCrossedStartFinish(p);
+                    if (p.hasFinished)
+                        break;
+                }
                 MoveCarTo(p, p.position);
                 if (hudUI != null)
                     hudUI.AppendLog($"<color=orange>{p.name} 阴阳茶(阴)：付 1 热 → +1 格。</color>");
@@ -1882,9 +2001,9 @@ public class MVPGameManager : MonoBehaviour
         }
         else if (result.isYang)
         {
-            int cooled = p.deck.RemoveHeatFromHand(result.heatToCool);
+            int cooled = p.deck.CoolHeat(result.heatToCool);
             if (cooled > 0 && hudUI != null)
-                hudUI.AppendLog($"<color=cyan>{p.name} 阴阳茶(阳)：自动冷却 {cooled} 张热量牌。</color>");
+                hudUI.AppendLog($"<color=cyan>{p.name} 阴阳茶(阳)：冷却 {cooled} 张热量牌。</color>");
         }
     }
 

@@ -211,17 +211,23 @@ public class CardDeck
     /// </summary>
     public int RemoveHeatFromHand(int count)
     {
-        int removed = 0;
-        for (int i = hand.Count - 1; i >= 0 && removed < count; i--)
-        {
-            if (hand[i].IsHeat)
-            {
-                if (!hand[i].isTemp)
-                    heatPool.remaining++;
-                hand.RemoveAt(i);
-                removed++;
-            }
-        }
+        return RemoveHeatFromList(hand, count);
+    }
+
+    /// <summary>
+    /// 标准冷却流程：手牌 → 牌库 → 弃牌堆。
+    /// 每个热量区最多按顺序取走所需数量；永久热量归还引擎，限时热量销毁。
+    /// </summary>
+    public int CoolHeat(int count)
+    {
+        if (count <= 0 || heatPool == null)
+            return 0;
+
+        int removed = RemoveHeatFromList(hand, count);
+        if (removed < count)
+            removed += RemoveHeatFromList(drawPile, count - removed);
+        if (removed < count)
+            removed += RemoveHeatFromList(discardPile, count - removed);
         return removed;
     }
 
@@ -379,6 +385,22 @@ public class CardDeck
         return count;
     }
 
+    /// <summary>牌库中热量牌数量（用于规则验证和调试）。</summary>
+    public int CountHeatInDrawPile()
+    {
+        int count = 0;
+        foreach (var c in drawPile) if (c.IsHeat) count++;
+        return count;
+    }
+
+    /// <summary>弃牌堆中热量牌数量（用于规则验证和调试）。</summary>
+    public int CountHeatInDiscardPile()
+    {
+        int count = 0;
+        foreach (var c in discardPile) if (c.IsHeat) count++;
+        return count;
+    }
+
     /// <summary>牌组+弃牌堆中特技牌数量。</summary>
     public int CountTricksInDeck()
     {
@@ -520,6 +542,26 @@ public class CardDeck
                 hand.RemoveAt(i);
                 removed++;
             }
+        }
+        return removed;
+    }
+
+    private int RemoveHeatFromList(List<CardData> pile, int count)
+    {
+        if (pile == null || count <= 0 || heatPool == null)
+            return 0;
+
+        int removed = 0;
+        for (int i = pile.Count - 1; i >= 0 && removed < count; i--)
+        {
+            CardData card = pile[i];
+            if (card == null || !card.IsHeat)
+                continue;
+
+            if (!card.isTemp)
+                heatPool.remaining++;
+            pile.RemoveAt(i);
+            removed++;
         }
         return removed;
     }

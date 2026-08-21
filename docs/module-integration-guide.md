@@ -37,20 +37,20 @@ JSON 派生的圈数、节点数或天气元数据。
 
 ---
 
-## 2. 5 个核心系统现状（2026-08-03 全部已接入比赛循环）
+## 2. 核心系统现状（2026-08-21 校准）
 
 | 系统 | 文件 | 接入状态 | 说明 |
 |------|------|---------|------|
 | 多车 | `RaceRanking.cs` | ✅ 完整 | N 车排名/回合顺序/完赛判定 |
 | 天气 | `WeatherData.cs` `WeatherRules.cs` | ✅ 完整 | 开局抽天气 + 每圈 30% 换天；五种天气画像统一处理弯速、尾流、冷却、失控与 HUD |
-| 维修区 | `PitLaneRules.cs` | ✅ 完整 | 经过 `pit_entry` 选择进站，冷却全部热量、停 1 回合 |
+| 维修区 | `PitLaneRules.cs` | ✅ 完整 | `ResolvePitStop` 纯解析 + `ApplyPitStop` 应用；经过 `pit_entry` 选择进站，模拟前进 5 格、冷却全部热量、停 1 回合 |
 | 特技牌 | `TrickCardData.cs` `TrickCardRules.cs` | ✅ 完整 | 4 张（2攻2守）洗入普通牌组，每回合限 1，单张确认后即时结算并弃置 |
 | 科技树 | `TechTreeData.cs` `TechTreeRules.cs` `TechTreeDatabase.cs` `TechTreeProfileStore.cs` | ✅ UI + 持久化 + 数值接入 | 主菜单入口、按车队保存 RP/解锁/激活状态，比赛读取有效修正；AI 保留 demo 配置 |
 | 中国双档 | `ChinaGearShiftRules.cs` `TeamGearRules.cs` | ✅ 比赛循环接入 | Go/Recover 独立出牌数、连续档位热量/冷却链，玩家与 AI 共用同一纯规则模块 |
 
-未接入（文档化 TODO，见 §8）：尾流系统（slipstream）、地标完整机制（US L3
-MotherRoad）、SchwarzbierFuel 主动激活、FullEnglish、SunNeverSets 目标选择、
-BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
+已接入但仍有近似或交互限制的部分：尾流、MotherRoad、SchwarzbierFuel、FullEnglish、
+SunNeverSets、BrothSelection 和 SmokedBBQ 均已接入比赛循环；其中部分效果采用自动激活
+或近似结算。车手被动/签名技能、科技树 AI 自动 build 和完整 PlayMode 组合测试仍未完成。
 
 ---
 
@@ -66,11 +66,11 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
 | `Assets/Scripts/Core/TeamVehicleRules.cs` | 车队基础性能/耐久配置边界，供比赛初始化和后续平衡调整使用 |
 | `Assets/Scripts/Core/RaceMovementRules.cs` | 环形赛道超车判定纯规则；跳过回合策略由 `MVPGameManager` 注入 |
 | `Assets/Scripts/Core/RaceLaneRules.cs` | 同节点车辆的内/外线占用规则；车队赛道车道数量仍由 `TrackPresentationRules` 提供 |
-| `Assets/Scripts/Core/RaceInputState.cs` | 档位、卡牌、弃牌、印地换道和维修区选择的互斥输入门控；不持有 UI/场景引用，由回合协程与回调共同驱动 |
+| `Assets/Scripts/Core/RaceInputState.cs` | 档位、卡牌、弃牌、印地换道、维修区和阴阳茶选择的互斥输入门控；不持有 UI/场景引用，由回合协程与回调共同驱动 |
 | `Assets/Scripts/Core/RacePhaseState.cs` | 比赛阶段状态机与输入可接受性；只管理 WaitingForGear/WaitingForCards/Animating/GameOver 转换，不执行协程副作用 |
 | `Assets/Scripts/Core/RaceTurnRules.cs` | 回合跳过与终止状态的参与资格判定；A1 已消费的跳过集合由管理器传入，规则层不修改玩家状态 |
 | `Assets/Scripts/Core/RaceWeatherState.cs` | 每圈天气掷骰的一次性门控；天气池选择和实际天气变化仍由 `RaceSession`/`WeatherRules` 负责 |
-| `Assets/Scripts/Core/RaceLapWeatherRules.cs` | 起终点过线的纯转场：统一圈数递增、每圈天气门控和完赛边界，运行时与纯模拟共用 |
+| `Assets/Scripts/Core/RaceLapWeatherRules.cs` | 起终点过线的纯转场：统一圈数递增、每圈天气门控和完赛边界；`AdvanceCrossings` 处理一次移动中的多次过线并在完赛后终止，运行时与纯模拟共用 |
 | `Assets/Scripts/Core/RaceTestLogWriter.cs` | 手动测试日志持久化适配器；HUD 事件、回合快照、档位、玩家/AI 速度牌、特技牌和移动计划写入 `persistentDataPath/race-logs`，`GetDefaultDirectory()` 供测试工具定位，文件失败不阻断比赛 |
 | `Assets/Scripts/Core/RaceLapRules.cs` | 起终点过线后的基础圈数递增与完赛边界；天气门控由 `RaceLapWeatherRules` 组合 |
 | `Assets/Scripts/TechTree/TechTreeProfileStore.cs` | PlayerPrefs JSON 适配层；纯科技规则与存档/UI 解耦 |
@@ -109,12 +109,12 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
   │
   ├─ PHASE B 执行（按 turnOrder 逐个）:
   │   ├─ AnimateMovement（过线 → OnPlayerCrossedStartFinish：圈数/完赛/换天）
-  │   ├─ ReactStep       （档位冷却 + 汤底/万骨涌冷却）
+  │   ├─ ReactStep       （档位冷却：手牌 → 牌库 → 弃牌堆 + 汤底/万骨涌冷却）
   │   ├─ ResolveCorners  ← 弯道判定：EffectiveCornerLimit（科技+天气）→ 热量支付
   │   └─ 维修区检测       （CrossedPitEntry → 玩家弹窗 / AI 启发式）
   │
   ├─ 弃牌（仅人类）
-  ├─ CleanupTurn         ← 阴阳茶 / 点心连击 / 烤肉拼盘 / 限时牌销毁
+  ├─ CleanupTurn         ← 阴阳茶选择 / 点心连击 / 烤肉拼盘 / 限时牌销毁
   ├─ CheckGameEnd        （人类完赛或全员完赛/爆缸）
   └─ HUD 刷新
 ```
@@ -173,6 +173,18 @@ trackManager.Runtime.DefaultWeather
 去重弯心和维修区入口命中；车辆动画、起终点、弯心、阴阳茶与维修区逻辑应消费同一快照。
 `GetCrossedNodeIndices` 和旧的弯心/过线查询保留为兼容的纯查询门面。地标/MotherRoad 若要
 判断移动是否经过位置，必须传入最终未取模目标，不要使用动画完成后的归一化位置。
+维修区进站另有 resolve/apply 两阶段边界：`PitLaneRules.ResolvePitStop` 只返回资格与
+转场结果，不改写玩家；编排层在确认成功后调用 `ApplyPitStop`。当前标准进站从
+`pit_entry` 模拟前进 5 格、清空热量并跳过 1 回合，JSON 的 `pit_exit` 保留为赛道标记。
+`EnterPit` 仅作为兼容旧调用方的一站式包装器保留，新的比赛流程和纯层模拟应使用显式两阶段调用。
+
+CN L1 阴阳茶在回合收尾时由人类玩家选择阴/阳；AI 使用既有自动策略。阴支付 1 点引擎
+热量并前进 1 格，阳按统一的手牌 → 牌库 → 弃牌堆顺序冷却 1 张热量。
+纯层比赛模拟也必须消费该快照的 `CrossedStartFinishNodeIndices` 与 `CrossedPitEntry`，
+避免测试路径与运行时路径各自维护跨圈循环。
+当一次移动包含多个 `CrossedStartFinishNodeIndices` 时，应调用
+`RaceLapWeatherRules.AdvanceCrossings`，按返回的 `Transitions` 逐项接入 `OnNewLap`、天气
+掷骰和完赛副作用；不要在达到 `HasFinished` 后继续推进圈数或分配顺位。
 
 ### 6.1 RaceSession（新模块的主入口）
 
@@ -224,7 +236,7 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
 | 字段 | 管理器动作 |
 |------|-----------|
 | `heatToPay` | `TryPayHeat`（司康；失败→失控） |
-| `heatToCool` | `deck.RemoveHeatFromHand`（红茶/关东慢煮；永久热量回池，限时热量销毁） |
+| `heatToCool` | `deck.RemoveHeatFromHand`（红茶/关东慢煮明确只指定手牌；永久热量回池，限时热量销毁；普通档位冷却使用 `deck.CoolHeat` 的手牌 → 牌库 → 弃牌堆顺序） |
 | `extraMovement` | `p.trickMoveBonusThisTurn += n` |
 | `cardsToDraw` | `deck.DrawToHand(HandCount + n)`（可乐） |
 | `requiresSpeedDiscard` | 弃最小速度牌（基安蒂） |
@@ -268,7 +280,7 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
 | 7 | ~~BrothSelection（JP L2）~~ | `SetupPlayerForRace` 按 `config.jpDemoBroth` 自动选择；冷却已在 ReactStep | ✅ 已接入 |
 | 8 | ~~SmokedBBQ（US L2）~~ | ComputeMovements：BBQ 区内 +2 移动（热量当 2 速的近似） | ✅ 已接入（近似） |
 | 9 | ~~赛道 JSON schema 校验工具~~ | `Assets/Scripts/Editor/TrackJsonValidator.cs`（Foodular1 > Tools 菜单） | ✅ 已完成 |
-| 10 | 集成测试 | `race_simulation_test.cs`（纯层 3 玩家全比赛模拟，EditMode） | ✅ 已完成；Play Mode 版本待许可证可用后补 |
+| 10 | 集成测试 | `race_simulation_test.cs`（纯层 3 玩家全比赛模拟，EditMode） | ✅ 纯层完成；MainMenu→Race Play Mode 冒烟已验证，自动化 PlayMode 仍因没有非编辑器测试程序集而未建立 |
 
 **近似说明**：黑啤酒燃料/美式烧烤/复兴终极采用自动激活近似（设计为主动选择/交互），
 接入正式 UI 时可改为手动触发。DriveThru 地标判定已接入（+1 移动）。

@@ -26,6 +26,21 @@ public class PitLaneRulesTests
         return nodes;
     }
 
+    private List<TrackNode> BuildTrackWithAdjacentPitMarkers()
+    {
+        var nodes = new List<TrackNode>();
+        for (int i = 0; i < 40; i++)
+        {
+            if (i == 10)
+                nodes.Add(new TrackNode(i, 99, "Pit Entry", isPitEntry: true));
+            else if (i == 11)
+                nodes.Add(new TrackNode(i, 99, "Pit Exit", isPitExit: true));
+            else
+                nodes.Add(new TrackNode(i, 99, $"Node {i}"));
+        }
+        return nodes;
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // Detection
     // ═══════════════════════════════════════════════════════════════════
@@ -103,6 +118,30 @@ public class PitLaneRulesTests
         Assert.That(PitLaneRules.CrossedPitEntry(0, 10, null), Is.False);
     }
 
+    [Test]
+    public void test_find_pit_nodes_handles_missing_track()
+    {
+        Assert.That(PitLaneRules.FindPitEntry(null), Is.EqualTo(-1));
+        Assert.That(PitLaneRules.FindPitExit(null), Is.EqualTo(-1));
+        Assert.That(PitLaneRules.HasPitLane(null), Is.False);
+    }
+
+    [Test]
+    public void test_find_pit_nodes_skips_missing_nodes()
+    {
+        var nodes = new List<TrackNode>
+        {
+            null,
+            new TrackNode(1, 99, "Pit Entry", isPitEntry: true),
+            null,
+            new TrackNode(3, 99, "Pit Exit", isPitExit: true)
+        };
+
+        Assert.That(PitLaneRules.FindPitEntry(nodes), Is.EqualTo(1));
+        Assert.That(PitLaneRules.FindPitExit(nodes), Is.EqualTo(3));
+        Assert.That(PitLaneRules.HasPitLane(nodes), Is.True);
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // Pit Stop
     // ═══════════════════════════════════════════════════════════════════
@@ -152,6 +191,37 @@ public class PitLaneRulesTests
         Assert.That(result.exitPosition, Is.EqualTo(15));
         Assert.That(player.position, Is.EqualTo(15));
         Assert.That(player.skipNextTurn, Is.True);
+    }
+
+    [Test]
+    public void test_resolve_pit_does_not_mutate_player_until_applied()
+    {
+        var nodes = BuildTrackWithPit();
+        var player = new PlayerState("Test", false, 5, 1);
+
+        PitStopResult result = PitLaneRules.ResolvePitStop(player, nodes);
+
+        Assert.That(result.success, Is.True);
+        Assert.That(result.exitPosition, Is.EqualTo(15));
+        Assert.That(player.position, Is.EqualTo(5));
+        Assert.That(player.skipNextTurn, Is.False);
+
+        PitLaneRules.ApplyPitStop(player, result);
+
+        Assert.That(player.position, Is.EqualTo(15));
+        Assert.That(player.skipNextTurn, Is.True);
+    }
+
+    [Test]
+    public void test_pit_stop_uses_five_cell_transit_not_adjacent_exit_marker()
+    {
+        var nodes = BuildTrackWithAdjacentPitMarkers();
+        var player = new PlayerState("Test", false, 10, 1);
+
+        PitStopResult result = PitLaneRules.ResolvePitStop(player, nodes);
+
+        Assert.That(result.success, Is.True);
+        Assert.That(result.exitPosition, Is.EqualTo(15));
     }
 
     [Test]

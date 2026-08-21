@@ -481,11 +481,28 @@ public class RaceSession
     // 回合结算（CN 阴阳茶 / DE 烤肉拼盘）
     // ═══════════════════════════════════════════════════════════════════
 
-    /// <summary>回合结束时结算 CN 阴阳茶。返回触发的效果（调用方应用热量支付/冷却）。</summary>
+    /// <summary>
+    /// 回合结束时为 AI 结算 CN 阴阳茶。人类玩家由运行时输入选择阴/阳。
+    /// </summary>
     public YinYangResult ResolveEndOfTurn(PlayerState p)
     {
         if (p.techState == null) return YinYangResult.NoTrigger;
         return TechTreeRules.ResolveYinYang(p.techState, TechDb, p.deck.CountHeatInHand() > 0);
+    }
+
+    /// <summary>Whether the player has an active Yin/Yang Tea choice.</summary>
+    public bool HasYinYangChoice(PlayerState p)
+    {
+        return p != null && p.techState != null &&
+            TechTreeRules.HasYinYangTea(p.techState, TechDb);
+    }
+
+    /// <summary>Resolve a human player's explicit Yin/Yang Tea choice.</summary>
+    public YinYangResult ResolveYinYangChoice(PlayerState p, bool chooseYin)
+    {
+        if (p == null || p.techState == null)
+            return YinYangResult.NoTrigger;
+        return TechTreeRules.ResolveYinYangChoice(p.techState, TechDb, chooseYin);
     }
 
     /// <summary>回合结束时可用的 DE 烤肉拼盘冷却量（本回合已支付的热量）。</summary>

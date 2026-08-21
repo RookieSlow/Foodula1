@@ -41,6 +41,42 @@ public class RaceLapWeatherRulesTests
     }
 
     [Test]
+    public void test_batch_crossings_stops_after_finish()
+    {
+        RaceLapWeatherBatchTransition result = RaceLapWeatherRules.AdvanceCrossings(
+            0,
+            3,
+            0,
+            true,
+            5);
+
+        Assert.That(result.Transitions.Count, Is.EqualTo(3));
+        Assert.That(result.Transitions[0].Lap, Is.EqualTo(1));
+        Assert.That(result.Transitions[1].Lap, Is.EqualTo(2));
+        Assert.That(result.Transitions[2].Lap, Is.EqualTo(3));
+        Assert.That(result.Transitions[2].HasFinished, Is.True);
+        Assert.That(result.FinalLap, Is.EqualTo(3));
+        Assert.That(result.LastWeatherRolledLap, Is.EqualTo(3));
+    }
+
+    [Test]
+    public void test_batch_crossings_updates_weather_gate_between_laps()
+    {
+        RaceLapWeatherBatchTransition result = RaceLapWeatherRules.AdvanceCrossings(
+            0,
+            4,
+            1,
+            true,
+            2);
+
+        Assert.That(result.Transitions.Count, Is.EqualTo(2));
+        Assert.That(result.Transitions[0].ShouldRollWeather, Is.False);
+        Assert.That(result.Transitions[1].ShouldRollWeather, Is.True);
+        Assert.That(result.FinalLap, Is.EqualTo(2));
+        Assert.That(result.LastWeatherRolledLap, Is.EqualTo(2));
+    }
+
+    [Test]
     public void test_reset_weather_state_allows_first_lap_roll_again()
     {
         var state = new RaceWeatherState();

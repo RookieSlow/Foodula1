@@ -1,7 +1,8 @@
 # === IDE and Editor ===
 .vs/
-.vscode/settings.json
+.vscode/
 .idea/
+*.code-workspace
 *.swp
 *.swo
 *~
@@ -18,6 +19,12 @@ production/session-state/
 # === Template Repo (already merged into root) ===
 my-game/
 
+# === Non-Unity template directories ===
+# Unity source and tests live under Assets/; keep generic template folders out.
+/src/
+/tests/
+/prototypes/
+
 # === Internal Planning (not for public) ===
 
 expansions/
@@ -28,6 +35,12 @@ marrow/
 # === Runtime Artifacts (auto-generated, start empty on fresh clone) ===
 # Created on first use by /consistency-check and /architecture-review
 docs/consistency-failures.md
+
+# === Local installers and tool packages ===
+# MCP/IDE installers are not Unity project assets. Keep the installed package
+# configuration in Packages/, but never upload the downloaded installer.
+*.mcpb
+*.mcpb.meta
 
 # === Build Output ===
 build/
@@ -139,8 +152,8 @@ secrets.json
 # Unity editor captures and reference documents stay local and are not game assets.
 /Assets/Screenshots/
 /Assets/Screenshots.meta
-/ht_diary.pdf
 /熱力狂飆_水印.pdf
+/*.pdf
 
 # === OS Generated ===
 ehthumbs.db

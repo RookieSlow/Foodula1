@@ -324,7 +324,7 @@ public class TrackRuntimeContextTests
         Assert.That(PitLaneRules.FindPitEntry(context.Nodes), Is.EqualTo(2));
         Assert.That(PitLaneRules.FindPitExit(context.Nodes), Is.EqualTo(4));
         Assert.That(PitLaneRules.CrossedPitEntry(1, 3, context.Nodes), Is.True);
-        Assert.That(PitLaneRules.GetPitExitPosition(context.Nodes), Is.EqualTo(4));
+        Assert.That(PitLaneRules.GetPitExitPosition(context.Nodes), Is.EqualTo(1));
         Assert.That(context.GetNode(2).isPitEntry, Is.True);
         Assert.That(context.GetNode(4).isPitExit, Is.True);
     }
