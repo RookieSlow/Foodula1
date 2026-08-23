@@ -1,4 +1,4 @@
-# Foodular1 — 美术资源清单
+# Foodula1 — 美术资源清单
 
 > **用途**: 美术资源制作和查找的目录索引  
 > **关联**: `design/planning/demo-framework.md` §4 资产需求清单

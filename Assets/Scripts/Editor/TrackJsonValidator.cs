@@ -12,13 +12,13 @@ using UnityEngine;
 ///  - 弯道：cornerId 非空、限速合理、每个弯段至少有 1 个 apex
 ///  - 维修区：pit_entry / pit_exit 成对出现（与 hasPitLane 一致）
 ///  - 坐标在 [0,1] 内、圈数 > 0、天气池可解析
-/// 菜单：Foodular1 > Tools > Validate Track JSONs
+/// 菜单：Foodula1 > Tools > Validate Track JSONs
 /// </summary>
 public static class TrackJsonValidator
 {
     private const string TRACKS_PATH = "Assets/Resources/Configs/Tracks";
 
-    [MenuItem("Foodular1/Tools/Validate Track JSONs")]
+    [MenuItem("Foodula1/Tools/Validate Track JSONs")]
     public static void ValidateAllTracks()
     {
         string[] guids = AssetDatabase.FindAssets("t:TextAsset", new[] { TRACKS_PATH });

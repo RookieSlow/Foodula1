@@ -13,7 +13,7 @@ Superseded by [ADR-002](adr-002-layered-pure-function-architecture.md) (2026-07-
 
 ## Context
 
-Foodular1 was built as a rapid prototype. The entire game logic — track
+Foodula1 was built as a rapid prototype. The entire game logic — track
 generation, card dealing, movement, heat penalty, UI updates, and game state
 — lives in a single `GameManager` MonoBehaviour. This architecture was chosen
 for speed of iteration during the concept exploration phase.

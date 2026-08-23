@@ -118,7 +118,7 @@ public class MVPGameManager : MonoBehaviour
         if (config == null)
         {
             config = ScriptableObject.CreateInstance<GameConfigSO>();
-            Debug.LogWarning("MVPGameManager: GameConfigSO not set. Using defaults. Create one via Create > Foodular1 > MVP Game Config for better control.");
+            Debug.LogWarning("MVPGameManager: GameConfigSO not set. Using defaults. Create one via Create > Foodula1 > MVP Game Config for better control.");
         }
         carOrientationController = new CarOrientationController(config);
         carMovementAnimator = new CarMovementAnimator(config, carOrientationController);
@@ -514,11 +514,11 @@ public class MVPGameManager : MonoBehaviour
         panelRect.anchoredPosition = new Vector2(0f, 175f);
         panelRect.sizeDelta = new Vector2(620f, 105f);
 
-        CreateTMPText(panelRect, "PitPrompt", "通过维修区入口：是否进站？", 18,
+        CreateTMPText(panelRect, "PitPrompt", "距维修区入口 10 格内：是否预定进站？", 18,
             new Vector2(0f, 32f), new Vector2(580f, 28f),
             FindObjectOfType<TMP_Text>()?.font);
 
-        pitEnterButton = CreateActionButton(panelRect, "PitEnterButton", "进站 (冷却+停1回合)",
+        pitEnterButton = CreateActionButton(panelRect, "PitEnterButton", "预定进站（过入口后停1回合）",
             new Vector2(-160f, -15f), new Color(0.45f, 0.85f, 0.55f),
             () => ChoosePit(true));
         pitSkipButton = CreateActionButton(panelRect, "PitSkipButton", "继续比赛",
@@ -690,7 +690,7 @@ public class MVPGameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 单个玩家的比赛初始化：车队分配、科技树、热量池，以及混合速度/热量/特技牌的牌库。
+    /// 单个玩家的比赛初始化：车队分配、科技树、独立引擎热量池，以及速度/特技普通牌组。
     /// </summary>
     private void SetupPlayerForRace(PlayerState p, TeamId teamId)
     {
@@ -800,6 +800,15 @@ public class MVPGameManager : MonoBehaviour
             // ====== PHASE A1: 档位决策 ======
             foreach (var p in turnOrder)
             {
+                // 维修区预选在上一回合越过入口时登记；本回合开始才真正执行，
+                // 因此“停一回合 + 出口后前移”不会发生在入口提示的同一回合。
+                if (p.pitStopScheduled)
+                {
+                    ExecuteScheduledPitStop(p);
+                    turnSkipped.Add(p);
+                    continue;
+                }
+
                 if (RaceTurnRules.ShouldSkip(p))
                 {
                     ResolveSkip(p);
@@ -908,6 +917,15 @@ public class MVPGameManager : MonoBehaviour
                     TechTreeRules.TrackDimSumCombo(p.techState, false, true, false);
             }
 
+            // ====== 维修区预选 ======
+            // 在车辆本回合移动前检查入口前十格窗口；选择只登记意图，
+            // 真正的停靠要等车辆越过入口后的下一回合开始。
+            foreach (var p in turnOrder)
+            {
+                if (RaceTurnRules.IsInactive(p, turnSkipped)) continue;
+                yield return StartCoroutine(ResolvePitApproachChoice(p));
+            }
+
             // ====== 计算移动力（科技 + 特技加成） ======
             ComputeMovements(turnOrder, turnSkipped);
 
@@ -936,18 +954,24 @@ public class MVPGameManager : MonoBehaviour
                         ResolveMotherRoadPass(p, 1, oldPos);
                 }
 
-                // 维修区入口检测（进站 → 冷却全部热量 + 停 1 回合）
+                // 维修区入口检测：入口前已经选择进站的车辆在此登记，
+                // 下一回合 A1 再执行停靠；本回合不会被传送或额外跳过。
+                int rawMovementEnd = oldPos + p.totalMovementThisTurn;
                 if (config.enablePitLane && PitLaneRules.HasPitLane(trackManager.Nodes) &&
-                    PitLaneRules.CrossedPitEntry(oldPos, p.position, trackManager.Nodes))
+                    PitLaneRules.CrossedPitEntry(oldPos, rawMovementEnd, trackManager.Nodes))
                 {
-                    if (p.isAI)
+                    if (p.pitStopRequested && !p.isBlown && !p.hasFinished)
                     {
-                        DecideAIPit(p);
+                        p.pitStopRequested = false;
+                        p.pitStopScheduled = true;
+                        if (hudUI != null)
+                            hudUI.AppendLog($"{p.name} 已越过维修区入口，下一回合执行进站。");
                     }
                     else
                     {
-                        pitWaitingPlayer = p;
-                        yield return StartCoroutine(WaitForPitChoice());
+                        // 本次通过未选择进站；下一圈再次接近入口时可重新选择。
+                        p.pitStopRequested = false;
+                        p.pitChoiceResolvedThisLap = false;
                     }
                 }
             }
@@ -1059,10 +1083,17 @@ public class MVPGameManager : MonoBehaviour
 
     /// <summary>
     /// 尝试从引擎支付热量。若引擎不足 → 触发失控。
+    /// 默认将支付的永久热量放入手牌，让热量实际占用手牌；明确指定弃牌堆的效果
+    /// （例如中国队阴阳茶 Go）仍可使用 Discard 目的地。
     /// 支持特技牌黑面包垫底（-1，最少 1）与英国 L1 炸鱼薯条（每场 1 次免单）。
     /// 返回 true 表示支付成功，false 表示已触发失控。
     /// </summary>
-    public bool TryPayHeat(PlayerState p, int amount, int rewindPos, string reason)
+    public bool TryPayHeat(
+        PlayerState p,
+        int amount,
+        int rewindPos,
+        string reason,
+        HeatPaymentDestination destination = HeatPaymentDestination.Hand)
     {
         if (amount <= 0) return true;
 
@@ -1070,7 +1101,7 @@ public class MVPGameManager : MonoBehaviour
         amount = TrickCardRules.ApplySchwarzbrot(p.trickState, amount);
         if (amount <= 0) return true;
 
-        int drawn = p.deck.DrawHeatFromPool(amount);
+        int drawn = p.deck.DrawHeatFromPool(amount, destination);
         if (drawn < amount)
         {
             // UK L1 炸鱼薯条：每场限 1 次 — 忽略本次热量判定，回收 1 张热量牌至引擎
@@ -1424,14 +1455,46 @@ public class MVPGameManager : MonoBehaviour
 
     // ====== 维修区 ======
 
-    private IEnumerator WaitForPitChoice()
+    private IEnumerator ResolvePitApproachChoice(PlayerState p)
     {
-        if (pitChoicePanel == null) yield break;
+        if (p == null || !config.enablePitLane || !PitLaneRules.HasPitLane(trackManager.Nodes))
+            yield break;
+        if (p.isBlown || p.hasFinished || p.pitChoiceResolvedThisLap ||
+            p.pitStopRequested || p.pitStopScheduled)
+            yield break;
+
+        int distance = PitLaneRules.GetDistanceToPitEntry(p.position, trackManager.Nodes);
+        if (distance <= 0 || distance > PitLaneRules.DEFAULT_APPROACH_WINDOW)
+            yield break;
+
+        if (p.isAI)
+        {
+            DecideAIPit(p, distance);
+            yield break;
+        }
+
+        pitWaitingPlayer = p;
+        yield return StartCoroutine(WaitForPitChoice(distance));
+        pitWaitingPlayer = null;
+    }
+
+    private IEnumerator WaitForPitChoice(int distance)
+    {
+        PlayerState waitingPlayer = pitWaitingPlayer;
+        if (waitingPlayer == null) yield break;
+
+        // 无 Canvas 时安全地默认继续比赛，避免输入门永远保持打开。
+        if (pitChoicePanel == null)
+        {
+            ApplyPitChoice(waitingPlayer, false);
+            yield break;
+        }
 
         inputState.BeginPitChoice();
         pitChoicePanel.SetActive(true);
         if (hudUI != null)
-            hudUI.SetStatus("维修区入口：进站冷却全部热量并停 1 回合（出站后前移），还是继续比赛？");
+            hudUI.SetStatus(
+                $"距维修区入口还有 {distance} 格：可预定进站（越过入口后的下一回合停 1 回合并出站前移），还是继续比赛？");
 
         yield return new WaitWhile(() => inputState.WaitingForPitChoice);
 
@@ -1440,30 +1503,47 @@ public class MVPGameManager : MonoBehaviour
             hudUI.SetStatus("");
     }
 
-    /// <summary>玩家选择进站 / 继续比赛。</summary>
+    /// <summary>玩家选择预定进站 / 本圈继续比赛。</summary>
     public void ChoosePit(bool enter)
     {
         if (!inputState.WaitingForPitChoice) return;
+        PlayerState selectedPlayer = pitWaitingPlayer;
         inputState.EndPitChoice();
-        if (enter)
-            EnterPit(pitWaitingPlayer);
+        ApplyPitChoice(selectedPlayer, enter);
     }
 
-    private void DecideAIPit(PlayerState p)
+    private void ApplyPitChoice(PlayerState p, bool enter)
     {
-        // AI 启发：热量高 → 进站
-        if (p.HeatRatio >= 0.6f)
-        {
-            EnterPit(p);
-        }
-        else if (hudUI != null)
-        {
-            hudUI.AppendLog($"{p.name} 选择不进站。");
-        }
+        if (p == null) return;
+
+        p.pitChoiceResolvedThisLap = true;
+        p.pitStopRequested = enter;
+        if (hudUI != null)
+            hudUI.AppendLog(enter
+                ? $"{p.name} 预定进站：越过维修区入口后下一回合执行。"
+                : $"{p.name} 选择本圈不进站。接近下一圈入口时可再次选择。");
     }
 
-    private void EnterPit(PlayerState p)
+    private void DecideAIPit(PlayerState p, int distance)
     {
+        // AI 启发：热量高 → 在入口前窗口预定进站；决策不会立即传送赛车。
+        bool enter = p.HeatRatio >= 0.6f;
+        p.pitChoiceResolvedThisLap = true;
+        p.pitStopRequested = enter;
+        if (hudUI != null)
+            hudUI.AppendLog(enter
+                ? $"{p.name}（AI）在距入口 {distance} 格处预定进站。"
+                : $"{p.name}（AI）在距入口 {distance} 格处选择不进站。");
+    }
+
+    private void ExecuteScheduledPitStop(PlayerState p)
+    {
+        if (p == null) return;
+
+        // 这个标记只消费一次；本回合由 GameLoop A1 负责把玩家加入 turnSkipped。
+        p.pitStopScheduled = false;
+        p.skipNextTurn = false;
+
         int exitMoveBonus = config != null
             ? config.pitExitMoveBonus
             : PitLaneRules.DEFAULT_EXIT_MOVE_BONUS;
@@ -1478,9 +1558,12 @@ public class MVPGameManager : MonoBehaviour
         }
 
         p.deck.RecoverAllHeatToPool(); // 进站冷却全部热量回引擎
+        p.gear = TeamGearRules.IsChina(p.teamId) ? ChinaGearShiftRules.RecoverGear : config.minGear;
+        p.chinaConsecutiveGearCount = 0;
+        p.pitChoiceResolvedThisLap = false;
         MoveCarTo(p, p.position);       // 移动到维修区出口
         if (hudUI != null)
-            hudUI.AppendLog($"<color=green>{p.name} 进站：冷却全部热量，停靠 {result.turnsSkipped} 回合，出站后前进 {result.exitMoveBonus} 格（{result.pitExitPosition}→{result.exitPosition}）。</color>");
+            hudUI.AppendLog($"<color=green>{p.name} 进站执行：本回合停靠，冷却全部热量，出站后前进 {result.exitMoveBonus} 格（{result.pitExitPosition}→{result.exitPosition}）。</color>");
     }
 
     /// <summary>
@@ -1769,7 +1852,7 @@ public class MVPGameManager : MonoBehaviour
 
     private void CleanupTurn(PlayerState p)
     {
-        // 速度牌 → 弃牌堆。热量牌始终留在手牌中，只能通过降档冷却或 G1 散热移除。
+        // 速度牌 → 弃牌堆。热量牌不参与普通抽牌/弃牌，只能通过冷却回引擎。
         p.deck.DiscardSpeedCards(p.playedSpeedCardsThisTurn);
 
         // 限时热量牌销毁（薯条）
@@ -1813,7 +1896,12 @@ public class MVPGameManager : MonoBehaviour
 
         if (result.isYin)
         {
-            if (TryPayHeat(p, 1, p.positionAtTurnStart, "yin yang (yin)"))
+            if (TryPayHeat(
+                    p,
+                    1,
+                    p.positionAtTurnStart,
+                    "yin yang (yin)",
+                    HeatPaymentDestination.Discard))
             {
                 p.position = (p.position + 1) % trackManager.TotalNodes;
                 MoveCarTo(p, p.position);
@@ -2240,7 +2328,7 @@ public class MVPGameManager : MonoBehaviour
     {
         int speedCount = player.playedSpeedCardsThisTurn.Count;
 
-        // 引擎故障：速度牌不足时，每缺 1 张 → +1 热量到弃牌堆。引擎不足 → 失控
+        // 引擎故障：速度牌不足时，每缺 1 张 → +1 热量入手牌。引擎不足 → 失控
         int required = GetMaxSpeedCardsThisTurn(player);
         int missing = RaceRules.GetMissingSpeedCardCount(required, speedCount);
         if (missing > 0)
@@ -2257,7 +2345,7 @@ public class MVPGameManager : MonoBehaviour
                 return;
             }
             if (hudUI != null)
-                hudUI.AppendLog($"Engine failure! Missing {missing} speed card(s). +{missing} Heat to discard.");
+                hudUI.AppendLog($"Engine failure! Missing {missing} speed card(s). +{missing} Heat to hand.");
         }
 
         if (hudUI != null)

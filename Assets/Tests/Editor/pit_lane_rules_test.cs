@@ -81,6 +81,29 @@ public class PitLaneRulesTests
         Assert.That(PitLaneRules.CrossedPitEntry(5, 8, nodes), Is.False);
     }
 
+    [Test]
+    public void test_pit_approach_window_is_before_entry()
+    {
+        var nodes = BuildTrackWithPit();
+
+        Assert.That(PitLaneRules.GetDistanceToPitEntry(0, nodes), Is.EqualTo(10));
+        Assert.That(PitLaneRules.GetDistanceToPitEntry(9, nodes), Is.EqualTo(1));
+        Assert.That(PitLaneRules.GetDistanceToPitEntry(10, nodes), Is.EqualTo(0));
+        Assert.That(PitLaneRules.IsWithinPitApproachWindow(0, nodes), Is.True);
+        Assert.That(PitLaneRules.IsWithinPitApproachWindow(9, nodes), Is.True);
+        Assert.That(PitLaneRules.IsWithinPitApproachWindow(10, nodes), Is.False);
+        Assert.That(PitLaneRules.IsWithinPitApproachWindow(11, nodes), Is.False);
+    }
+
+    [Test]
+    public void test_crossed_pit_entry_handles_lap_wrap_with_raw_end_position()
+    {
+        var nodes = BuildTrackWithPit();
+
+        Assert.That(PitLaneRules.CrossedPitEntry(39, 51, nodes), Is.True);
+        Assert.That(PitLaneRules.CrossedPitEntry(39, 49, nodes), Is.False);
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // Pit Stop
     // ═══════════════════════════════════════════════════════════════════
@@ -131,7 +154,7 @@ public class PitLaneRulesTests
         Assert.That(result.exitPosition, Is.EqualTo(16));
         Assert.That(result.exitMoveBonus, Is.EqualTo(1));
         Assert.That(player.position, Is.EqualTo(16));
-        Assert.That(player.skipNextTurn, Is.True);
+        Assert.That(player.skipNextTurn, Is.False);
     }
 
     [Test]
@@ -156,6 +179,16 @@ public class PitLaneRulesTests
         Assert.That(result.success, Is.True);
         Assert.That(result.heatCooled, Is.EqualTo(999)); // All heat
         Assert.That(result.turnsSkipped, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void test_scheduled_pit_stop_is_not_enterable_twice()
+    {
+        var nodes = BuildTrackWithPit();
+        var player = new PlayerState("Test", false, 5, 1);
+        player.pitStopScheduled = true;
+
+        Assert.That(PitLaneRules.CanEnterPit(player, nodes), Is.False);
     }
 
     // ═══════════════════════════════════════════════════════════════════

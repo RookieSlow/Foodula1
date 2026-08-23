@@ -6,7 +6,7 @@ using TMPro;
 
 /// <summary>
 /// Editor 工具：一键生成 MainMenu 场景 + 重命名 SampleScene → Race + 更新 Build Settings。
-/// 菜单: Foodular1 → Build MainMenu + Setup Scenes
+/// 菜单: Foodula1 → Build MainMenu + Setup Scenes
 ///
 /// 生成后 MainMenuCanvas 挂载 MainMenuUI，按钮回调在 MainMenuUI.Start() 中绑定。
 /// </summary>
@@ -72,7 +72,7 @@ public static class MainMenuBuilder
         var menuUI = canvasGO.GetComponent<MainMenuUI>();
 
         // ── 标题 ──
-        MakeText(canvasGO, "TitleText", "Foodular 1", 80,
+        MakeText(canvasGO, "TitleText", "Foodula1", 80,
             CC(), CC(), new Vector2(0, 200), new Vector2(700, 100),
             TextAlignmentOptions.Center, FontStyles.Bold, Color.white);
 

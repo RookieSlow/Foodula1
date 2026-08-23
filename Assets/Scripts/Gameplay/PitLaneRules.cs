@@ -12,6 +12,9 @@ public static class PitLaneRules
     /// <summary>Default number of track cells gained after reaching pit exit.</summary>
     public const int DEFAULT_EXIT_MOVE_BONUS = 1;
 
+    /// <summary>Number of cells before the entry where a pit decision is offered.</summary>
+    public const int DEFAULT_APPROACH_WINDOW = 10;
+
     /// <summary>Heat cooled during a standard pit stop.</summary>
     public const int PIT_HEAT_COOLDOWN = 999; // All heat returned to engine
 
@@ -26,6 +29,7 @@ public static class PitLaneRules
     /// <summary>Find the index of the pit entry node. Returns -1 if none.</summary>
     public static int FindPitEntry(IReadOnlyList<TrackNode> nodes)
     {
+        if (nodes == null) return -1;
         for (int i = 0; i < nodes.Count; i++)
             if (nodes[i].isPitEntry) return i;
         return -1;
@@ -34,6 +38,7 @@ public static class PitLaneRules
     /// <summary>Find the index of the pit exit node. Returns -1 if none.</summary>
     public static int FindPitExit(IReadOnlyList<TrackNode> nodes)
     {
+        if (nodes == null) return -1;
         for (int i = 0; i < nodes.Count; i++)
             if (nodes[i].isPitExit) return i;
         return -1;
@@ -49,13 +54,50 @@ public static class PitLaneRules
     }
 
     /// <summary>
-    /// Check if a car crossed the pit entry during its movement this turn.
+    /// Return the forward distance from a position to the pit entry.
+    /// A value of zero means the car is currently on the entry node; -1 means
+    /// that the track has no usable pit entry.
     /// </summary>
-    public static bool CrossedPitEntry(int oldPos, int newPos, IReadOnlyList<TrackNode> nodes)
+    public static int GetDistanceToPitEntry(int position, IReadOnlyList<TrackNode> nodes)
     {
         int entry = FindPitEntry(nodes);
-        if (entry < 0) return false;
-        return oldPos <= entry && newPos >= entry;
+        if (entry < 0 || nodes == null || nodes.Count == 0) return -1;
+
+        int normalized = position % nodes.Count;
+        if (normalized < 0) normalized += nodes.Count;
+        return (entry - normalized + nodes.Count) % nodes.Count;
+    }
+
+    /// <summary>
+    /// Whether a car is in the pre-entry decision window. The entry node itself
+    /// is excluded because the decision must already have been made before it.
+    /// </summary>
+    public static bool IsWithinPitApproachWindow(
+        int position,
+        IReadOnlyList<TrackNode> nodes,
+        int window = DEFAULT_APPROACH_WINDOW)
+    {
+        int distance = GetDistanceToPitEntry(position, nodes);
+        return distance > 0 && distance <= window;
+    }
+
+    /// <summary>
+    /// Check if a car crossed the pit entry during its movement this turn.
+    /// <paramref name="rawEndPos"/> is the unwrapped end position
+    /// (old position + actual movement), so lap wrapping is handled correctly.
+    /// </summary>
+    public static bool CrossedPitEntry(int oldPos, int rawEndPos, IReadOnlyList<TrackNode> nodes)
+    {
+        int entry = FindPitEntry(nodes);
+        if (entry < 0 || nodes == null || nodes.Count == 0) return false;
+
+        int movement = rawEndPos - oldPos;
+        if (movement < 0) return false;
+
+        int distanceToEntry = GetDistanceToPitEntry(oldPos, nodes);
+        if (distanceToEntry == 0)
+            distanceToEntry = nodes.Count;
+        return movement >= distanceToEntry;
     }
 
     /// <summary>
@@ -76,14 +118,16 @@ public static class PitLaneRules
     public static bool CanEnterPit(PlayerState player, IReadOnlyList<TrackNode> nodes)
     {
         if (player.isBlown || player.hasFinished) return false;
-        if (player.skipNextTurn) return false; // Already pitting or spinning
+        if (player.skipNextTurn || player.pitStopScheduled) return false; // Already pitting or spinning
         return HasPitLane(nodes);
     }
 
     /// <summary>
-    /// Resolve a pit stop. The car still skips one turn, but exits one or more
-    /// cells beyond the authored pit-exit marker to model a shortened time loss.
-    /// Sets skipNextTurn for the pit duration.
+    /// Execute a pit stop that has already been selected and scheduled.
+    /// The caller consumes the current turn as the one skipped turn; this pure
+    /// rule only resolves the exit position and leaves no extra skip flag.
+    /// The car exits one or more cells beyond the authored pit-exit marker to
+    /// model a shortened time loss.
     /// </summary>
     public static PitStopResult EnterPit(PlayerState player, IReadOnlyList<TrackNode> nodes,
         int exitMoveBonus = DEFAULT_EXIT_MOVE_BONUS)
@@ -97,8 +141,6 @@ public static class PitLaneRules
 
         // Move car through the pit and slightly beyond the pit exit.
         player.position = exitPosition;
-        // Skip turns for pit duration
-        player.skipNextTurn = true;
 
         return new PitStopResult
         {

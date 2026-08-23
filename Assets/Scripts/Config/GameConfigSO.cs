@@ -4,7 +4,7 @@ using UnityEngine;
 /// MVP 游戏配置 — 所有可调参数集中在 ScriptableObject 中，
 /// 可在 Unity Inspector 中直接修改，无需重新编译。
 /// </summary>
-[CreateAssetMenu(menuName = "Foodular1/MVP Game Config", fileName = "MVPGameConfig")]
+[CreateAssetMenu(menuName = "Foodula1/MVP Game Config", fileName = "MVPGameConfig")]
 public class GameConfigSO : ScriptableObject
 {
     [Header("赛道")]
@@ -108,8 +108,8 @@ public class GameConfigSO : ScriptableObject
     [Tooltip("速度牌分布 — 数组中的每个值代表一张速度牌的数值")]
     public int[] speedCardDistribution = { 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 4 };
 
-    [Tooltip("初始牌组中的热量牌数量")]
-    public int initialHeatCards = 3;
+    [Tooltip("已废弃：热量牌不属于普通牌组；保留此字段仅为兼容旧配置，运行时不再读取")]
+    public int initialHeatCards = 0;
 
     [Tooltip("每玩家的独立引擎牌库大小（热量牌数量）")]
     public int heatPoolPerPlayer = 6;
@@ -226,7 +226,8 @@ public class GameConfigSO : ScriptableObject
     public int SpeedCardCount => speedCardDistribution.Length;
 
     /// <summary>
-    /// 初始牌组总数（速度牌 + 热量牌 + 启用时每队 4 张特技牌）。
+    /// 普通初始牌组总数（速度牌 + 启用时每队 4 张特技牌）。
+    /// 热量牌存放在独立引擎池，不计入普通牌组。
     /// </summary>
-    public int InitialDeckSize => speedCardDistribution.Length + initialHeatCards + (enableTrickCards ? 4 : 0);
+    public int InitialDeckSize => speedCardDistribution.Length + (enableTrickCards ? 4 : 0);
 }

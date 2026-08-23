@@ -56,7 +56,7 @@ public sealed class RaceTestLogWriter : IDisposable
                 AutoFlush = true
             };
 
-            writer.WriteLine("# Foodular1 Race Test Log");
+        writer.WriteLine("# Foodula1 Race Test Log");
             writer.WriteLine($"started_utc={DateTime.UtcNow:O}");
             writer.WriteLine($"track_id={SanitizeValue(trackId)}");
             writer.WriteLine($"track_name={SanitizeValue(trackName)}");

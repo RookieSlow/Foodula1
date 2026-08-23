@@ -1,8 +1,8 @@
 # Track Layout Reference Attribution
 
-These files are retained as factual circuit-layout references for the Foodular
+These files are retained as factual circuit-layout references for the Foodula1
 track backgrounds. They are not shipped as runtime artwork. Runtime backgrounds
-are original Foodular-styled compositions whose playable paths are rendered
+are original Foodula1-styled compositions whose playable paths are rendered
 from the project JSON track coordinates.
 
 | Local file or control data | Circuit/layout | Author/source | License | Source |

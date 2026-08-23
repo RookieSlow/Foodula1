@@ -1,4 +1,4 @@
-# Foodular1 — Demo 游戏框架
+# Foodula1 — Demo 游戏框架
 
 > **文档类型**: 框架设计 + 资源需求  
 > **创建日期**: 2026-07-22  
@@ -248,7 +248,7 @@ GameManager (MonoBehaviour)
 ### 5.2 MainMenu.unity — 主菜单
 
 ```
-- 标题: "Foodular 1" (大号 TMP)
+- 标题: "Foodula1" (大号 TMP)
 - 快速比赛 按钮 → Race.unity
 - 车队/车手与科技树配置通过当前 MainMenu 面板完成；`Garage.unity` 仍是未来独立车库场景目标。
 - 退出 按钮
@@ -265,7 +265,7 @@ GameManager (MonoBehaviour)
 > `TrackDataSO` 保留为后续编辑器化方案，不应视为缺失的当前运行时资产。
 
 ```csharp
-[CreateAssetMenu(menuName = "Foodular1/Track Config")]
+[CreateAssetMenu(menuName = "Foodula1/Track Config")]
 public class TrackDataSO : ScriptableObject
 {
     public string trackName;
@@ -282,7 +282,7 @@ public class TrackDataSO : ScriptableObject
 ### 6.2 CarConfigSO（赛车配置）
 
 ```csharp
-[CreateAssetMenu(menuName = "Foodular1/Car Config")]
+[CreateAssetMenu(menuName = "Foodula1/Car Config")]
 public class CarConfigSO : ScriptableObject
 {
     public string carName;
@@ -300,7 +300,7 @@ public class CarConfigSO : ScriptableObject
 ### 6.3 DriverConfigSO（车手配置 — 后续）
 
 ```csharp
-[CreateAssetMenu(menuName = "Foodular1/Driver Config")]
+[CreateAssetMenu(menuName = "Foodula1/Driver Config")]
 public class DriverConfigSO : ScriptableObject
 {
     public string driverName;
@@ -321,7 +321,7 @@ public class DriverConfigSO : ScriptableObject
 - [x] 创建 RaceCanvas Prefab（UI 层级）
 - [x] 重命名 + 移动现有脚本到新目录（13 脚本迁移，GUID 保留）
 - [x] Scripts/ 拆分为 Core/Gameplay/AI/UI/Config + Editor
-- [x] RaceCanvas Prefab 生成（Editor 工具: Foodular1 → Build RaceCanvas Prefab）
+- [x] RaceCanvas Prefab 生成（Editor 工具: Foodula1 → Build RaceCanvas Prefab）
 - [ ] ~~拆分 GameConfigSO → TrackDataSO + CarConfigSO~~ → 延后至 Phase 2
 - [ ] ~~GameManager 分割：RaceManager + InputManager~~ → 延后至 Phase 2
 

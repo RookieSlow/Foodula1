@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 引擎牌库 — 每玩家独立。弯道超速/急刹/引擎故障时从此抽取热量牌放入弃牌堆。
-/// 冷却时热量牌归还至此。包装类以支持引用传递。
+/// 引擎牌库 — 每玩家独立。弯道超速/急刹/引擎故障时从此支付热量牌，
+/// 放入手牌或弃牌堆；明确的冷却/回收效果再将热量归还至此。
+/// 包装类以支持引用传递。
 /// </summary>
 public class HeatPool
 {
@@ -16,10 +17,22 @@ public class HeatPool
 }
 
 /// <summary>
+/// Destination for a heat card paid from the independent engine pool.
+/// Heat cards never use the ordinary draw path; the destination is chosen by
+/// the rule that caused the payment.
+/// </summary>
+public enum HeatPaymentDestination
+{
+    Hand,
+    Discard
+}
+
+/// <summary>
 /// 牌组系统 — 纯 C# 逻辑类（非 MonoBehaviour）。
 /// 管理牌组（drawPile）、手牌（hand）、弃牌堆（discardPile）和该玩家持有的引擎牌库引用。
 ///
-/// 热量牌生命周期: 热量池 →(弯道超速/急刹/引擎故障)→ 弃牌堆 →(洗牌)→ 牌组 →(抽牌)→ 手牌(不可打出!) →(冷却: 手牌→牌组→弃牌堆)→ 热量池
+/// 热量牌生命周期: 热量池 →(支付热量)→ 手牌或弃牌堆 →(冷却)→ 热量池。
+/// 普通抽牌只循环速度牌和特技牌；热量牌不属于普通抽牌堆。
 /// 速度牌/特技牌生命周期: 牌组 → 手牌 → 打出/弃置 → 弃牌堆 → 洗回牌组。
 /// </summary>
 public class CardDeck
@@ -29,7 +42,7 @@ public class CardDeck
     private List<CardData> discardPile = new List<CardData>();
     private IRandomSource randomSource = new UnityRandomSource();
 
-    /// <summary>该玩家的引擎牌库 — 每玩家独立的 HeatPool 实例。弯道超速/急刹/引擎故障从此抽取。</summary>
+    /// <summary>该玩家的引擎牌库 — 每玩家独立的 HeatPool 实例，支付热量时从此扣除。</summary>
     public HeatPool heatPool;
 
     // --- 只读属性 ---
@@ -38,15 +51,16 @@ public class CardDeck
     public int DrawPileCount => drawPile.Count;
     public int DiscardPileCount => discardPile.Count;
 
-    /// <summary>牌组 + 弃牌堆 总数（判断是否会抽干）。</summary>
-    public int TotalAvailableForDraw => drawPile.Count + discardPile.Count;
+    /// <summary>牌组 + 弃牌堆中仍可普通抽取的卡牌数量。</summary>
+    public int TotalAvailableForDraw => CountPlayableCards(drawPile) + CountPlayableCards(discardPile);
 
     /// <summary>Returns whether this exact runtime card is currently in hand.</summary>
     public bool ContainsInHand(CardData card) => card != null && hand.Contains(card);
 
     /// <summary>
     /// 用配置初始化牌组。
-    /// 速度牌 + 热量牌 → 全部放入牌组，然后洗牌。
+    /// 速度牌 → 普通抽牌堆，然后洗牌。
+    /// 热量牌属于独立引擎热量池，不在此处初始化，也不参与普通抽牌。
     /// </summary>
     public void InitializeDeck(GameConfigSO config, HeatPool enginePool, IRandomSource source = null)
     {
@@ -60,12 +74,6 @@ public class CardDeck
         foreach (int val in config.speedCardDistribution)
         {
             drawPile.Add(new CardData(CardType.Speed, val));
-        }
-
-        // 加入初始热量牌
-        for (int i = 0; i < config.initialHeatCards; i++)
-        {
-            drawPile.Add(new CardData(CardType.Heat, 0));
         }
 
         ShuffleDrawPile();
@@ -86,34 +94,63 @@ public class CardDeck
     }
 
     /// <summary>
-    /// 从牌组抽牌到手牌，直至手牌数达到 handSize。
-    /// 牌组不够时自动洗入弃牌堆。
-    /// 如果牌组+弃牌堆+热量池全部耗尽 → 返回 false（爆缸）。
+    /// 从普通抽牌堆抽牌到手牌，直至手牌数达到 handSize。
+    /// 牌组不够时只将非热量牌从弃牌堆洗回；热量牌留在原区域等待冷却。
+    /// 如果没有可普通抽取的速度/特技牌 → 返回 false。
     /// </summary>
     public bool DrawToHand(int handSize)
     {
         while (hand.Count < handSize)
         {
-            // 牌组空 → 洗入弃牌堆
-            if (drawPile.Count == 0)
+            int drawIndex = FindPlayableCardIndex(drawPile);
+            if (drawIndex < 0)
             {
-                if (discardPile.Count > 0)
-                {
-                    drawPile.AddRange(discardPile);
-                    discardPile.Clear();
-                    ShuffleDrawPile();
-                }
-                else
-                {
-                    // 牌组和弃牌堆都空 → 无牌可抽（热量牌只能通过弯道惩罚进入弃牌堆后再循环）
-                    return false;
-                }
+                RecyclePlayableDiscardCards();
+                drawIndex = FindPlayableCardIndex(drawPile);
+                if (drawIndex < 0) return false;
             }
 
-            hand.Add(drawPile[0]);
-            drawPile.RemoveAt(0);
+            hand.Add(drawPile[drawIndex]);
+            drawPile.RemoveAt(drawIndex);
         }
         return true;
+    }
+
+    private static int FindPlayableCardIndex(List<CardData> pile)
+    {
+        if (pile == null) return -1;
+        for (int i = 0; i < pile.Count; i++)
+        {
+            CardData card = pile[i];
+            if (card != null && !card.IsHeat) return i;
+        }
+        return -1;
+    }
+
+    private static int CountPlayableCards(List<CardData> pile)
+    {
+        if (pile == null) return 0;
+        int count = 0;
+        foreach (CardData card in pile)
+            if (card != null && !card.IsHeat) count++;
+        return count;
+    }
+
+    private void RecyclePlayableDiscardCards()
+    {
+        bool moved = false;
+        for (int i = discardPile.Count - 1; i >= 0; i--)
+        {
+            CardData card = discardPile[i];
+            if (card == null || card.IsHeat) continue;
+
+            drawPile.Add(card);
+            discardPile.RemoveAt(i);
+            moved = true;
+        }
+
+        if (moved)
+            ShuffleDrawPile();
     }
 
     /// <summary>
@@ -189,20 +226,43 @@ public class CardDeck
     }
 
     /// <summary>
-    /// 从该玩家的引擎牌库抽取 count 张热量牌，放入弃牌堆。
+    /// 从该玩家的引擎牌库支付 count 张热量牌，放入弃牌堆。
+    /// 这是显式的弃牌堆支付路径（例如中国队阴阳茶 Go）；它不参与普通抽牌。
     /// 返回实际抽到的数量（热量池不足时取走全部剩余）。
     /// </summary>
     public int DrawHeatFromPool(int count)
     {
+        return DrawHeatFromPool(count, HeatPaymentDestination.Discard);
+    }
+
+    /// <summary>
+    /// 从引擎支付 count 张永久热量牌，并按指定规则放入手牌或弃牌堆。
+    /// </summary>
+    public int DrawHeatFromPool(int count, HeatPaymentDestination destination)
+    {
+        if (heatPool == null || count <= 0) return 0;
+
         int drawn = 0;
         for (int i = 0; i < count; i++)
         {
             if (heatPool.remaining <= 0) break;
-            discardPile.Add(new CardData(CardType.Heat, 0));
+            List<CardData> target = destination == HeatPaymentDestination.Hand
+                ? hand
+                : discardPile;
+            target.Add(new CardData(CardType.Heat, 0));
             heatPool.remaining--;
             drawn++;
         }
         return drawn;
+    }
+
+    /// <summary>
+    /// 从引擎支付 count 张永久热量牌，直接放入手牌。
+    /// 这是明确指定“入手牌”的支付路径，不属于普通抽牌。
+    /// </summary>
+    public int DrawHeatFromPoolToHand(int count)
+    {
+        return DrawHeatFromPool(count, HeatPaymentDestination.Hand);
     }
 
     /// <summary>
@@ -314,8 +374,8 @@ public class CardDeck
     }
 
     /// <summary>
-    /// 失控恢复 — 回收所有热量牌（手牌 + 牌组 + 弃牌堆）到引擎牌库。
-    /// 引擎重新点火，散落在外的热量全部收回。
+    /// 失控恢复 — 回收所有热量牌到引擎牌库。
+    /// 正常流程只有手牌和弃牌堆会持有永久热量；扫描抽牌堆是旧存档/测试状态的防线。
     /// </summary>
     public void RecoverAllHeatToPool()
     {
@@ -352,8 +412,8 @@ public class CardDeck
     }
 
     /// <summary>
-    /// 从牌组或弃牌堆中移除 1 张热量牌，归还热量池。优先牌组。
-    /// 返回是否成功移除。
+    /// 从牌组或弃牌堆中移除 1 张遗留热量牌，归还热量池。
+    /// 正常运行时普通牌组没有热量，因此实际回退到弃牌堆；返回是否成功移除。
     /// </summary>
     public bool RemoveOneHeatFromDeck()
     {
@@ -415,7 +475,7 @@ public class CardDeck
 
     /// <summary>
     /// 将车队特技牌加入普通抽牌堆并重新洗牌。
-    /// 特技牌不会直接进入开局手牌，而是与速度牌、热量牌一样随机抽取。
+    /// 特技牌不会直接进入开局手牌，而是与速度牌一起随机抽取；热量牌不属于该牌组。
     /// </summary>
     public int AddTrickCardsToDrawPile(IReadOnlyList<CardData> tricks)
     {
@@ -505,15 +565,16 @@ public class CardDeck
     }
 
     /// <summary>
-    /// Adds runtime-created cards directly to the hand. This is intentionally
-    /// broader than <see cref="AddTrickCardsToDrawPile"/> for temporary heat cards
-    /// granted by trick/technology effects.
+    /// Adds explicitly granted non-heat runtime cards or temporary heat cards
+    /// directly to the hand. Permanent heat must use an engine-payment method
+    /// such as <see cref="DrawHeatFromPoolToHand"/>; normal DrawToHand never
+    /// inserts heat cards.
     /// </summary>
     public void AddCardsToHand(IReadOnlyList<CardData> cards)
     {
         if (cards == null) return;
         foreach (var card in cards)
-            if (card != null) hand.Add(card);
+            if (card != null && (!card.IsHeat || card.isTemp)) hand.Add(card);
     }
 
     /// <summary>手牌中所有特技牌。</summary>

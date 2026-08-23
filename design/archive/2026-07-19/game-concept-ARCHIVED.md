@@ -5,7 +5,7 @@ date: 2026-07-19
 verified-by: User
 ---
 
-# Foodular1 — Game Concept
+# Foodula1 — Game Concept
 
 > **Note**: This document was reverse-engineered from the existing implementation.
 > It captures current behavior. Some sections may be incomplete where
@@ -13,7 +13,7 @@ verified-by: User
 
 ## 1. Overview
 
-Foodular1 is a 2D card-driven food truck racing game. The player manages a food
+Foodula1 is a 2D card-driven food truck racing game. The player manages a food
 truck racing along an 85-node circuit track. Movement is determined by playing
 cards from a hand — each card has a step value (1–4). The core strategic
 mechanic is **speed limits** at specific corners: if the total steps of played

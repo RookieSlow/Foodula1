@@ -12,7 +12,7 @@ public class CardDeckTest
     {
         var config = ScriptableObject.CreateInstance<GameConfigSO>();
         config.speedCardDistribution = new[] { 1, 1, 2, 2, 3, 3, 4 };
-        config.initialHeatCards = 2;
+        config.initialHeatCards = 2; // legacy field: must not enter the normal deck
         config.heatPoolPerPlayer = 5;
         config.handSize = 4;
         return config;
@@ -33,9 +33,10 @@ public class CardDeckTest
         var config = CreateConfig();
         var deck = CreateDeck(config);
 
-        Assert.AreEqual(9, deck.DrawPileCount);            // 7 速度 + 2 初始热量
+        Assert.AreEqual(7, deck.DrawPileCount);            // 仅 7 张速度牌
         Assert.AreEqual(0, deck.HandCount);                // 未抽牌
         Assert.AreEqual(0, deck.DiscardPileCount);
+        Assert.AreEqual(0, deck.CountHeatInDeck());        // 热量只存在于独立引擎池
         Assert.IsNotNull(deck.heatPool);
         Assert.AreEqual(5, deck.heatPool.remaining);
     }
@@ -45,10 +46,10 @@ public class CardDeckTest
     {
         var config = CreateConfig();
         config.enableTrickCards = true;
-        Assert.AreEqual(13, config.InitialDeckSize); // 7 speed + 2 heat + 4 trick
+        Assert.AreEqual(11, config.InitialDeckSize); // 7 speed + 4 trick
 
         config.enableTrickCards = false;
-        Assert.AreEqual(9, config.InitialDeckSize);
+        Assert.AreEqual(7, config.InitialDeckSize);
     }
 
     [Test]
@@ -61,7 +62,7 @@ public class CardDeckTest
 
         Assert.IsTrue(ok);
         Assert.AreEqual(4, deck.HandCount);
-        Assert.AreEqual(5, deck.DrawPileCount); // 9 - 4（含 2 张初始热量）
+        Assert.AreEqual(3, deck.DrawPileCount); // 7 - 4
     }
 
     // ===== 抽牌与牌库耗尽 =====
@@ -80,20 +81,21 @@ public class CardDeckTest
         deck.DiscardSpeedCards(cards);
         Assert.AreEqual(3, deck.DiscardPileCount);
 
-        // 抽到牌组抽干（剩余 6 张）
-        bool ok1 = deck.DrawToHand(6);
+        // 抽到普通牌组抽干（剩余 4 张速度牌）
+        bool ok1 = deck.DrawToHand(4);
         Assert.IsTrue(ok1);
+        Assert.AreEqual(4, deck.HandCount);
         Assert.AreEqual(0, deck.DrawPileCount);
 
-        // 再抽 → 自动洗入弃牌堆，全部 9 张回到手牌
-        bool ok2 = deck.DrawToHand(9);
+        // 再抽 → 只将非热量弃牌洗回普通牌组，补足 3 张
+        bool ok2 = deck.DrawToHand(7);
         Assert.IsTrue(ok2);
-        Assert.AreEqual(9, deck.HandCount);
+        Assert.AreEqual(7, deck.HandCount);
         Assert.AreEqual(0, deck.DrawPileCount);
         Assert.AreEqual(0, deck.DiscardPileCount);
 
         // 超出总量 → false
-        Assert.IsFalse(deck.DrawToHand(10));
+        Assert.IsFalse(deck.DrawToHand(8));
     }
 
     [Test]
@@ -141,34 +143,29 @@ public class CardDeckTest
     }
 
     [Test]
+    public void test_heat_payment_destination_can_put_heat_in_hand_without_normal_draw()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config, poolSize: 3);
+
+        Assert.AreEqual(2, deck.DrawHeatFromPool(2, HeatPaymentDestination.Hand));
+        Assert.AreEqual(2, deck.CountHeatInHand());
+        Assert.AreEqual(0, deck.CountHeatInDeck());
+        Assert.AreEqual(1, deck.heatPool.remaining);
+    }
+
+    [Test]
     public void test_remove_heat_from_hand_returns_to_pool()
     {
         var config = CreateConfig();
         var deck = CreateDeck(config);
-        deck.DrawToHand(config.handSize);
-
-        // 手牌热量数可能为 0（取决于种子）— 先确保有热量：从池抽 1 张热量直接进弃牌堆再洗入
-        if (deck.CountHeatInHand() == 0)
-        {
-            deck.DrawHeatFromPool(1);
-            // 热量在弃牌堆 — 洗回牌组
-            deck.ShuffleDrawPile(); // 弃牌堆不会自动洗入，手动构造：抽出牌组已有牌
-        }
-
-        // 更直接的方式：手牌全是热量时移除
-        while (deck.HandCount > 0)
-            deck.RemoveFromHand(new List<CardData>(deck.Hand));
-
-        // 现在手牌空 → 洗入弃牌堆（含刚抽的热量）→ 抽到手牌
+        Assert.AreEqual(1, deck.DrawHeatFromPoolToHand(1));
         int poolBefore = deck.heatPool.remaining;
-        bool ok = deck.DrawToHand(config.handSize);
-        Assert.IsTrue(ok);
+        int removed = deck.RemoveHeatFromHand(1);
 
-        int heatInHand = deck.CountHeatInHand();
-        int removed = deck.RemoveHeatFromHand(10);
-
-        Assert.AreEqual(heatInHand, removed);
-        Assert.AreEqual(poolBefore + removed, deck.heatPool.remaining);
+        Assert.AreEqual(1, removed);
+        Assert.AreEqual(poolBefore + 1, deck.heatPool.remaining);
+        Assert.AreEqual(0, deck.CountHeatInHand());
     }
 
     [Test]
@@ -176,10 +173,13 @@ public class CardDeckTest
     {
         var config = CreateConfig();
         var deck = CreateDeck(config);
-        var heat = new CardData(CardType.Heat, 0);
         var speed = new CardData(CardType.Speed, 3);
         var unheldHeat = new CardData(CardType.Heat, 0);
-        deck.AddCardsToHand(new List<CardData> { heat, speed });
+        deck.AddCardsToHand(new List<CardData> { speed });
+        Assert.AreEqual(1, deck.DrawHeatFromPoolToHand(1));
+        CardData heat = null;
+        foreach (CardData card in deck.Hand)
+            if (card.IsHeat) { heat = card; break; }
         int poolBefore = deck.heatPool.remaining;
 
         int returned = deck.ReturnHeatCardsToPool(
@@ -209,34 +209,31 @@ public class CardDeckTest
     }
 
     [Test]
-    public void test_cool_heat_uses_hand_then_draw_then_discard_priority()
+    public void test_cool_heat_uses_hand_then_discard_when_normal_draw_pile_has_no_heat()
     {
         var config = CreateConfig();
         config.speedCardDistribution = new int[0];
-        config.initialHeatCards = 3;
         var deck = CreateDeck(config, poolSize: 4);
 
-        // One permanent heat in each zone: hand, draw pile, discard pile.
-        Assert.IsTrue(deck.DrawToHand(1));
+        // Heat paid from the engine enters hand or discard explicitly; it
+        // never becomes a normal draw-pile card.
+        Assert.AreEqual(1, deck.DrawHeatFromPoolToHand(1));
         Assert.AreEqual(1, deck.CountHeatInHand());
-        Assert.AreEqual(2, deck.DrawPileCount);
-        Assert.AreEqual(1, deck.DrawHeatFromPool(1));
+        Assert.AreEqual(2, deck.DrawHeatFromPool(2));
         int poolBefore = deck.heatPool.remaining;
 
         int cooled = deck.CoolHeat(2);
 
         Assert.AreEqual(2, cooled);
         Assert.AreEqual(0, deck.CountHeatInHand(), "hand must be cooled first");
-        Assert.AreEqual(1, deck.DrawPileCount, "only one draw-pile heat should remain");
-        Assert.AreEqual(1, deck.DiscardPileCount, "discard-pile heat must wait until hand/draw are exhausted");
+        Assert.AreEqual(1, deck.DiscardPileCount, "one discard-pile heat should remain");
         Assert.AreEqual(poolBefore + 2, deck.heatPool.remaining);
 
         cooled = deck.CoolHeat(2);
 
-        Assert.AreEqual(2, cooled);
-        Assert.AreEqual(0, deck.DrawPileCount);
+        Assert.AreEqual(1, cooled);
         Assert.AreEqual(0, deck.DiscardPileCount);
-        Assert.AreEqual(poolBefore + 4, deck.heatPool.remaining);
+        Assert.AreEqual(poolBefore + 3, deck.heatPool.remaining);
     }
 
     [Test]
@@ -249,7 +246,7 @@ public class CardDeckTest
 
         deck.RecoverAllHeatToPool();
 
-        Assert.AreEqual(poolBefore + config.initialHeatCards, deck.heatPool.remaining);
+        Assert.AreEqual(poolBefore, deck.heatPool.remaining);
         Assert.AreEqual(0, deck.CountHeatInHand());
         Assert.AreEqual(0, deck.CountHeatInDeck());
     }
@@ -263,33 +260,33 @@ public class CardDeckTest
 
         // 从池抽热量制造散落热量
         deck.DrawHeatFromPool(3);
-        // 弃牌堆现有 3 张热量；手牌也可能有初始热量
+        // 弃牌堆现有 3 张热量；普通手牌中没有热量
 
         int poolBefore = deck.heatPool.remaining;
         deck.RecoverAllHeatToPool();
 
-        // 系统内热量总量 = 池 + 初始热量牌 = 5 + 2
-        Assert.AreEqual(5 + config.initialHeatCards, deck.heatPool.remaining);
+        // 系统内永久热量总量始终等于独立引擎池容量
+        Assert.AreEqual(5, deck.heatPool.remaining);
         Assert.AreEqual(0, deck.CountHeatInHand());
         Assert.AreEqual(0, deck.CountHeatInDeck());
         Assert.IsTrue(poolBefore <= 5);
     }
 
     [Test]
-    public void test_remove_one_heat_from_deck_prefers_draw_pile()
+    public void test_remove_one_heat_from_deck_removes_discard_heat()
     {
         var config = CreateConfig();
         var deck = CreateDeck(config);
 
-        deck.DrawHeatFromPool(2); // 2 张热量入弃牌堆（初始 2 张热量仍在牌组）
+        deck.DrawHeatFromPool(2); // 2 张热量入弃牌堆；普通牌组不含热量
         int before = deck.heatPool.remaining;
 
         bool ok = deck.RemoveOneHeatFromDeck();
 
         Assert.IsTrue(ok);
         Assert.AreEqual(before + 1, deck.heatPool.remaining);
-        // 优先从牌组移除：牌组 2 → 1，弃牌堆 2 不变
-        Assert.AreEqual(3, deck.CountHeatInDeck());
+        // 没有普通牌组热量时，从弃牌堆移除
+        Assert.AreEqual(1, deck.CountHeatInDeck());
     }
 
     [Test]
@@ -299,9 +296,8 @@ public class CardDeckTest
         var deck = CreateDeck(config);
         deck.DrawToHand(config.handSize);
 
-        // 手动把热量全部清走：抽干热量池以外路径不可行 — 构造无热量牌组
+        // 构造无热量普通牌组
         var noHeatConfig = CreateConfig();
-        noHeatConfig.initialHeatCards = 0;
         var cleanDeck = new CardDeck();
         cleanDeck.InitializeDeck(noHeatConfig, new HeatPool(0), new SystemRandomSource(1));
 
@@ -351,7 +347,7 @@ public class CardDeckTest
         });
 
         Assert.AreEqual(2, added);
-        Assert.AreEqual(11, deck.DrawPileCount);
+        Assert.AreEqual(9, deck.DrawPileCount);
         Assert.AreEqual(2, deck.CountTricksInDeck());
         Assert.AreEqual(0, deck.HandCount);
         Assert.AreEqual(0, deck.GetTricksInHand().Count);
@@ -376,7 +372,7 @@ public class CardDeckTest
         Assert.AreEqual(config.handSize, deck.HandCount);
         Assert.AreEqual(config.speedCardDistribution.Length,
             deck.CountSpeedInDeck() + deck.CountSpeedInHand());
-        Assert.AreEqual(config.initialHeatCards,
+        Assert.AreEqual(0,
             deck.CountHeatInDeck() + deck.CountHeatInHand());
         Assert.AreEqual(4,
             deck.CountTricksInDeck() + deck.GetTricksInHand().Count);
@@ -485,8 +481,11 @@ public class CardDeckTest
         var deck = CreateDeck(config);
         var speed = new CardData(CardType.Speed, 2);
         var trick = CardData.CreateTrick("it-parmigiano");
-        var heat = new CardData(CardType.Heat, 0);
-        deck.AddCardsToHand(new List<CardData> { speed, trick, heat });
+        deck.AddCardsToHand(new List<CardData> { speed, trick });
+        Assert.AreEqual(1, deck.DrawHeatFromPoolToHand(1));
+        CardData heat = null;
+        foreach (CardData card in deck.Hand)
+            if (card.IsHeat) { heat = card; break; }
 
         int discarded = deck.DiscardPlayableCardsFromHand(new List<CardData> { speed, trick, heat });
 
@@ -503,7 +502,7 @@ public class CardDeckTest
         var deck = CreateDeck(config);
         var temp = CardData.CreateTempHeat();
         deck.AddCardsToHand(new List<CardData> { temp });
-        deck.AddCardsToHand(new List<CardData> { new CardData(CardType.Heat, 0) });
+        Assert.AreEqual(1, deck.DrawHeatFromPoolToHand(1));
 
         int removed = deck.RemoveTempCardsFromHand();
 

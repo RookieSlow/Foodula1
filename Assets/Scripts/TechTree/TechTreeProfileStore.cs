@@ -10,7 +10,8 @@ using UnityEngine;
 /// </summary>
 public static class TechTreeProfileStore
 {
-    private const string KeyPrefix = "Foodular1.TechTree.";
+    private const string KeyPrefix = "Foodula1.TechTree.";
+    private const string LegacyKeyPrefix = "Foodular1.TechTree.";
     private static readonly Dictionary<TeamId, TechTreeState> Cache =
         new Dictionary<TeamId, TechTreeState>();
 
@@ -29,12 +30,16 @@ public static class TechTreeProfileStore
             return cached;
 
         string key = KeyPrefix + teamId;
+        string legacyKey = LegacyKeyPrefix + teamId;
+        string savedKey = PlayerPrefs.HasKey(key)
+            ? key
+            : (PlayerPrefs.HasKey(legacyKey) ? legacyKey : null);
         TechTreeState state = null;
-        if (PlayerPrefs.HasKey(key))
+        if (savedKey != null)
         {
             try
             {
-                SaveData save = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(key));
+                SaveData save = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(savedKey));
                 if (save != null && save.unlocked != null && save.active != null)
                 {
                     state = new TechTreeState(teamId, save.rpBalance);
@@ -53,6 +58,11 @@ public static class TechTreeProfileStore
         if (state == null)
         {
             state = CreateDemoProfile(teamId, db);
+            Save(state);
+        }
+        else if (savedKey == legacyKey)
+        {
+            // Migrate the legacy spelling without invalidating existing player progress.
             Save(state);
         }
 
@@ -103,6 +113,7 @@ public static class TechTreeProfileStore
     {
         Cache.Remove(teamId);
         PlayerPrefs.DeleteKey(KeyPrefix + teamId);
+        PlayerPrefs.DeleteKey(LegacyKeyPrefix + teamId);
         PlayerPrefs.Save();
     }
 

@@ -50,7 +50,6 @@ public static class TrackTeamBalanceBenchmark
     private sealed class BenchmarkConfig
     {
         public readonly int[] speedCards = { 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 4 };
-        public readonly int initialHeatCards = 3;
         public readonly int heatPoolPerPlayer = 6;
         public readonly int handSize = 7;
         public readonly int totalLaps = 3;
@@ -429,7 +428,6 @@ public static class TrackTeamBalanceBenchmark
     {
         GameConfigSO config = ScriptableObject.CreateInstance<GameConfigSO>();
         config.speedCardDistribution = (int[])cfg.speedCards.Clone();
-        config.initialHeatCards = cfg.initialHeatCards;
         config.heatPoolPerPlayer = cfg.heatPoolPerPlayer;
         config.handSize = cfg.handSize;
         config.totalLaps = cfg.totalLaps;

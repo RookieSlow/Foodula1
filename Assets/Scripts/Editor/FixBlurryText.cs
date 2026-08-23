@@ -7,7 +7,7 @@ using TMPro;
 /// 一键修复模糊文字问题。
 /// 根因：LiberationSans 使用了 Mobile shader（无抗锯齿平滑），
 /// 中文 SDF 字体图集采样过低或使用 Mobile shader 会导致 SDF 边缘发虚。
-/// 菜单: Foodular1 → Fix Blurry Text
+/// 菜单: Foodula1 → Fix Blurry Text
 /// </summary>
 public static class FixBlurryText
 {

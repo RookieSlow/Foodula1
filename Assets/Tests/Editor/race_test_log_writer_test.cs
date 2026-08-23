@@ -7,7 +7,7 @@ public class RaceTestLogWriterTests
     [Test]
     public void WritesMetadataAndStripsHudRichText()
     {
-        string directory = Path.Combine(Path.GetTempPath(), "foodular1-race-log-" + Guid.NewGuid().ToString("N"));
+        string directory = Path.Combine(Path.GetTempPath(), "foodula1-race-log-" + Guid.NewGuid().ToString("N"));
         try
         {
             var writer = new RaceTestLogWriter(directory);
@@ -32,7 +32,7 @@ public class RaceTestLogWriterTests
     [Test]
     public void RestartingRaceClosesPreviousFileAndUsesFreshPath()
     {
-        string directory = Path.Combine(Path.GetTempPath(), "foodular1-race-log-" + Guid.NewGuid().ToString("N"));
+        string directory = Path.Combine(Path.GetTempPath(), "foodula1-race-log-" + Guid.NewGuid().ToString("N"));
         try
         {
             var writer = new RaceTestLogWriter(directory);

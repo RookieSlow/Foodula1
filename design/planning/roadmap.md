@@ -1,4 +1,4 @@
-# Foodular1 开发路线图
+# Foodula1 开发路线图
 
 > 最后更新: 2026-08-23
 > 关联: ADR-002 (当前架构)
@@ -36,7 +36,7 @@
 |---|------|------|------|
 | 4 | ~~从 `MVPGameManager` 抽取 `UIFactory`~~ | 重构 | ✅ 已完成：`Assets/Scripts/UI/RaceUIFactory.cs` 负责程序化 HUD/手牌构建，Manager 仅保留编排和回调接线 |
 | 5 | 填充 `tr-registry.yaml` | 文档 | 从 GDD 提取技术需求 ID，建立可追溯性 |
-| 6 | ~~赛道 JSON schema 校验工具~~ | 工具 | ✅ 已完成（`Assets/Scripts/Editor/TrackJsonValidator.cs`，Foodular1 > Tools 菜单） |
+| 6 | ~~赛道 JSON schema 校验工具~~ | 工具 | ✅ 已完成（`Assets/Scripts/Editor/TrackJsonValidator.cs`，Foodula1 > Tools 菜单） |
 | 7 | ~~写 `PlayerState` 状态机测试~~ | 测试 | ✅ 已完成（`player_state_test.cs`） |
 | 8 | ~~集成测试：完整比赛流程~~ | 测试 | ✅ 已完成纯层版本（`race_simulation_test.cs`，3 玩家全比赛模拟）；完整多天气/多圈/进站 Play Mode 走查仍待完成 |
 | 9 | ~~统一硬编码赛道为 JSON~~ | 重构 | ✅ 已完成（`fallback_42.json` 导出 42 节点赛道，无配置时自动加载；代码内建保留作双保险） |
@@ -50,7 +50,7 @@
 |---|------|------|------|
 | 11 | ~~多车支持~~ | 功能 | ✅ 已完成：`RaceRanking` + N 玩家循环，`aiOpponentCount` 可配 |
 | 12 | ~~天气系统~~ | 功能 | ✅ 已完成：开局抽天气 + 每圈换天；Sunny/Cloudy/LightRain/HeavyRain/Hot 五种画像统一接入纯规则层 |
-| 13 | ~~维修区进站~~ | 功能 | ✅ 已完成：`pit_entry` 选择，按手牌→牌库→弃牌堆冷却全部热量，停 1 回合，并在 `pit_exit` 后前移；快充科技再增加 1 格 |
+| 13 | ~~维修区进站~~ | 功能 | ✅ 已完成：`pit_entry` 前 1–10 格预选，越过入口后下一回合按手牌→牌库→弃牌堆冷却全部热量，停 1 回合并在 `pit_exit` 后前移；快充科技再增加 1 格 |
 | 14 | ~~车队特技~~ | 功能 | ✅ 已完成：12 张特技牌接入比赛（`docs/module-integration-guide.md` §6.4） |
 | 15 | ~~尾流系统~~ | 功能 | ✅ 已完成（`ComputeSlipstreamBonus`；帕尔玛/冰糕/筋斗云/范围科技全接入） |
 | 16 | ~~科技树 UI~~ | 功能 | ✅ 已完成：主菜单科技树入口、RP/解锁/激活持久化与比赛接线；后续为视觉和数值平衡 |

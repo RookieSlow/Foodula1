@@ -1,6 +1,6 @@
 # Project Overview
 
-Foodular1 is a Unity 2022.3.62f3c1 2D card-driven food truck racing game using
+Foodula1 is a Unity 2022.3.62f3c1 2D card-driven food truck racing game using
 the CCGS project framework.
 
 ## Technology

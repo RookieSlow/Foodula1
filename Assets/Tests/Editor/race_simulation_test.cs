@@ -62,7 +62,7 @@ public class RaceSimulationTest
             players.Add(p);
             expectedSpeedCards[p] = simConfig.speedCardDistribution.Length;
             expectedTrickCards[p] = TrickCardRules.INITIAL_TRICK_CARDS_PER_TEAM;
-            expectedPermanentHeat[p] = pool + simConfig.initialHeatCards;
+            expectedPermanentHeat[p] = pool;
         }
         session.Players.AddRange(players);
 
@@ -78,19 +78,67 @@ public class RaceSimulationTest
 
             foreach (var p in session.GetTurnOrder())
             {
+                if (p.pitStopScheduled)
+                {
+                    p.pitStopScheduled = false;
+                    var scheduledPit = PitLaneRules.EnterPit(p, nodes);
+                    if (scheduledPit.success)
+                    {
+                        p.deck.RecoverAllHeatToPool();
+                        p.pitChoiceResolvedThisLap = false;
+                        violations.Check(p.position >= 0 && p.position < totalNodes,
+                            $"{p.name} 进站后位置越界: {p.position}");
+                    }
+                    continue;
+                }
+
                 if (p.skipNextTurn) { p.skipNextTurn = false; p.gear = 1; continue; }
                 if (p.isBlown || p.hasFinished) continue;
 
+                if (!p.pitChoiceResolvedThisLap &&
+                    PitLaneRules.IsWithinPitApproachWindow(p.position, nodes))
+                {
+                    p.pitChoiceResolvedThisLap = true;
+                    p.pitStopRequested = p.HeatRatio >= 0.6f;
+                }
+
                 // 档位（简单策略：热量高降档，低升档）
-                p.gear = SimPolicyGear(p);
+                // The old harness relied on initial heat cards entering the
+                // hand to make this policy conservative. Heat is now kept out
+                // of the normal deck, so cap the synthetic policy at a
+                // playable, low-risk two-card turn instead.
+                p.gear = Mathf.Min(SimPolicyGear(p), 2);
+                // Standard heat payments enter the hand and are recovered by
+                // the same gear cooling path as the runtime loop.
+                if (p.gear == 1)
+                    p.deck.CoolHeat(3);
+                else if (p.gear == 2)
+                    p.deck.CoolHeat(1);
 
                 // 抽牌
                 p.deck.DrawToHand(session.EffectiveHandSize(p, 7));
 
-                // 选牌：最大 N 张速度牌
+                // 选牌：直道使用高牌，预计进入低限速弯道时改用低牌；
+                // 热量支付/冷却仍由下方路径覆盖。
                 var chosen = p.deck.GetTopNSpeedCards(p.gear);
+                int predictedMovement = RaceRules.SumCardValues(chosen);
+                var predictedCorners = TrackRules.GetUniqueApexCornersCrossed(
+                    nodes, p.position, p.position + predictedMovement);
+                bool predictedRisk = false;
+                foreach (var cornerId in predictedCorners)
+                {
+                    int limit = session.EffectiveCornerLimit(
+                        p, cornerLimits.TryGetValue(cornerId, out var value) ? value : 99);
+                    if (predictedMovement > limit)
+                    {
+                        predictedRisk = true;
+                        break;
+                    }
+                }
+                if (predictedRisk)
+                    chosen = p.deck.GetBottomNSpeedCards(p.gear);
                 int missing = RaceRules.GetMissingSpeedCardCount(p.gear, chosen.Count);
-                if (missing > 0 && p.deck.DrawHeatFromPool(missing) < missing)
+                if (missing > 0 && p.deck.DrawHeatFromPoolToHand(missing) < missing)
                 {
                     SimSpin(p, p.position, session.EffectiveSpinMax(p));
                     continue;
@@ -151,7 +199,7 @@ public class RaceSimulationTest
                         if (p.cornerTotalThisTurn > limit)
                         {
                             int heat = Mathf.Max(1, p.cornerTotalThisTurn - limit - session.ConsumeHeatReduction(p));
-                            int drawn = p.deck.DrawHeatFromPool(heat);
+                            int drawn = p.deck.DrawHeatFromPoolToHand(heat);
                             if (drawn < heat)
                             {
                                 SimSpin(p, oldPos, session.EffectiveSpinMax(p));
@@ -164,15 +212,10 @@ public class RaceSimulationTest
                     $"{p.name} 热量池为负: {p.deck.heatPool.remaining}");
 
                 // 维修区（热量高自动进站）
-                if (PitLaneRules.CrossedPitEntry(oldPos, p.position, nodes) && p.HeatRatio >= 0.6f)
+                if (PitLaneRules.CrossedPitEntry(oldPos, newPos, nodes) && p.pitStopRequested)
                 {
-                    var pit = PitLaneRules.EnterPit(p, nodes);
-                    if (pit.success)
-                    {
-                        p.deck.RecoverAllHeatToPool();
-                        violations.Check(p.position >= 0 && p.position < totalNodes,
-                            $"{p.name} 进站后位置越界: {p.position}");
-                    }
+                    p.pitStopRequested = false;
+                    p.pitStopScheduled = true;
                 }
             }
 
@@ -204,7 +247,13 @@ public class RaceSimulationTest
 
         // 至少 2 人完赛（300 回合内）
         int finished = players.FindAll(p => p.hasFinished).Count;
-        Assert.IsTrue(finished >= 2, $"300 回合内完赛人数不足: {finished}/3");
+        var finalStates = new List<string>();
+        foreach (var p in players)
+        {
+            finalStates.Add($"{p.name}:pos={p.position},lap={p.lap},gear={p.gear},heat={p.deck.heatPool.remaining},spins={p.spinCounter},blown={p.isBlown},finished={p.hasFinished}");
+        }
+        Assert.IsTrue(finished >= 2,
+            $"300 回合内完赛人数不足: {finished}/3\n" + string.Join("; ", finalStates));
 
         // 完赛顺位唯一且从 1 开始
         var orders = new HashSet<int>();
@@ -236,6 +285,12 @@ public class RaceSimulationTest
 
     private static int SimPolicyGear(PlayerState p)
     {
+        // With heat outside the normal deck, the engine pool is the primary
+        // survival signal; hand HeatRatio alone no longer sees discard heat.
+        if (p.deck.heatPool != null && p.deck.heatPool.remaining <= 1)
+            return 1;
+        if (p.deck.heatPool != null && p.deck.heatPool.remaining <= 2)
+            return Mathf.Max(1, p.gear - 1);
         if (p.HeatRatio >= 0.6f) return Mathf.Max(1, p.gear - 1);
         if (p.HeatRatio <= 0.25f && p.gear < 4) return p.gear + 1;
         return p.gear;
@@ -276,7 +331,6 @@ public class RaceSimulationTest
     {
         var config = ScriptableObject.CreateInstance<GameConfigSO>();
         config.speedCardDistribution = new[] { 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 4 };
-        config.initialHeatCards = 3;
         config.heatPoolPerPlayer = 6;
         config.handSize = 7;
         config.totalLaps = 3;

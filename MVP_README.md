@@ -1,4 +1,4 @@
-# Foodular1 MVP Prototype
+# Foodula1 MVP Prototype
 
 **HEAT boardgame digital adaptation — minimum viable prototype**
 

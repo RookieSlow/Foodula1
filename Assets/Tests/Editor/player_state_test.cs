@@ -85,14 +85,14 @@ public class PlayerStateTest
     [Test]
     public void test_heat_ratio_mixed_hand()
     {
-        // 抽完全部 3 张（2 速 + 1 热）— 与洗牌顺序无关，确定性
+        // 普通抽牌只抽速度牌，热量必须由支付/效果显式进入手牌。
         var config = UnityEngine.ScriptableObject.CreateInstance<GameConfigSO>();
         config.speedCardDistribution = new[] { 2, 3 };
-        config.initialHeatCards = 1;
 
         var p = CreatePlayer();
         p.deck.InitializeDeck(config, new HeatPool(5), new SystemRandomSource(99));
-        p.deck.DrawToHand(3);
+        p.deck.DrawToHand(2);
+        Assert.AreEqual(1, p.deck.DrawHeatFromPoolToHand(1));
 
         Assert.AreEqual(3, p.deck.HandCount);
         Assert.AreEqual(2, p.SpeedCardCount);

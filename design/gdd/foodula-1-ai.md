@@ -275,8 +275,8 @@ IF lap == total_laps：
 当前运行时不维护 battery_capacity；电池每圈衰减属于设计目标，未接入比赛状态。
 Go/Recover 的连续使用和热量代价由 `ChinaGearShiftRules` 统一计算。
 
-// 未来设计：电池阈值驱动的 AI 进站选择尚未接入
-// 当前运行时只由玩家在 authored pit_entry 处选择进站；AI 电池策略待实现。
+// 当前运行时：AI 与玩家一样在 pit_entry 前 1–10 格作出进站预选，
+// 越过入口后下一回合执行停站；AI 以热量比例作为选择启发式。
 
 IF 热量 ≥ 60%：
     → 选 Recover 档（连续 Recover 冷却 3→2→1→0 + 出 1 张牌）

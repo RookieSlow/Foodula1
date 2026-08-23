@@ -5,7 +5,7 @@ using TMPro;
 
 /// <summary>
 /// Editor 工具：一键生成 RaceCanvas Prefab，含完整 UI 层级、组件引用、按钮绑定。
-/// 菜单: Foodular1 → Build RaceCanvas Prefab
+/// 菜单: Foodula1 → Build RaceCanvas Prefab
 /// </summary>
 public static class RaceCanvasBuilder
 {

@@ -32,7 +32,14 @@ public class CardPlayRulesTest
         CardData card = type == CardType.Trick
             ? CardData.CreateTrick("uk-scone")
             : new CardData(type, 0);
-        var player = CreatePlayerWithHand(card);
+        var player = type == CardType.Heat
+            ? CreatePlayerWithHand()
+            : CreatePlayerWithHand(card);
+        if (type == CardType.Heat)
+        {
+            Assert.AreEqual(1, player.deck.DrawHeatFromPoolToHand(1));
+            card = player.deck.Hand[0];
+        }
 
         var result = CardPlayRules.CommitSpeedCard(player, card, 2);
 

@@ -233,7 +233,7 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
 | 6 | ~~SunNeverSets（UK L3）~~ | `GetModifiers` flag 合并 + `config.enableUkSunNeverSetsDemo` 选择目标国 | ✅ 已接入 |
 | 7 | ~~BrothSelection（JP L2）~~ | `SetupPlayerForRace` 按 `config.jpDemoBroth` 自动选择；冷却已在 ReactStep | ✅ 已接入 |
 | 8 | ~~SmokedBBQ（US L2）~~ | ComputeMovements：BBQ 区内 +2 移动（热量当 2 速的近似） | ✅ 已接入（近似） |
-| 9 | ~~赛道 JSON schema 校验工具~~ | `Assets/Scripts/Editor/TrackJsonValidator.cs`（Foodular1 > Tools 菜单） | ✅ 已完成 |
+| 9 | ~~赛道 JSON schema 校验工具~~ | `Assets/Scripts/Editor/TrackJsonValidator.cs`（Foodula1 > Tools 菜单） | ✅ 已完成 |
 | 10 | 集成测试 | `race_simulation_test.cs`（纯层 3 玩家全比赛模拟，EditMode） | ✅ 已完成；Play Mode 版本待许可证可用后补 |
 
 **近似说明**：黑啤酒燃料/美式烧烤/复兴终极采用自动激活近似（设计为主动选择/交互），

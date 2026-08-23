@@ -42,6 +42,12 @@ public class PlayerState
     public bool isBlown;       // 退赛淘汰（失控计数器 = 3）
     public int spinCounter;    // 失控计数器 0-3，到 3 淘汰
     public bool skipNextTurn;  // 失控恢复，跳过下一回合
+    /// <summary>在维修区入口前窗口内已选择进站，等待车辆越过入口。</summary>
+    public bool pitStopRequested;
+    /// <summary>车辆已越过入口，下一回合开始时执行进站停靠。</summary>
+    public bool pitStopScheduled;
+    /// <summary>本次入口接近窗口已经作出选择，避免连续弹窗。</summary>
+    public bool pitChoiceResolvedThisLap;
     public int finishOrder;    // 完赛顺序（0=未完赛, 1=第一, 2=第二...）
     public CardDeck deck;      // 牌组/手牌/弃牌堆管理
 

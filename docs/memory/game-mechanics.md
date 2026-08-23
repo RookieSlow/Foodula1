@@ -15,9 +15,11 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 - The default hand limit is 7.
 - The default speed deck contains twelve cards:
   `[1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 4]`.
-- Three heat cards start in the deck by default.
+- Heat cards do not start in the normal deck. Each player's independent engine
+  heat pool is the only source of permanent heat cards.
 - When trick cards are enabled, four team cards (two attack and two defense)
-  are shuffled into the same draw pile before the opening seven-card draw.
+  are shuffled into the normal draw pile before the opening seven-card draw;
+  ordinary drawing never draws heat cards.
 - A turn selects a gear from 1 through 4. Speed cards can be selected singly
   or as a group and confirmed together; trick cards remain one-at-a-time
   immediate actions. A speed-card selection may never exceed the turn limit.
@@ -28,9 +30,10 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   played area. Pressing the action button with no pending card ends card play;
   any missing required speed cards use the existing engine-failure rule.
 - The selected speed-card values determine movement.
-- Played speed cards enter the discard pile during end-of-turn cleanup; the
-  discard pile is reshuffled when the draw pile is empty.
-- Heat cards cannot be played as speed cards and can clog the hand.
+- Played speed cards enter the discard pile during end-of-turn cleanup; only
+  non-heat cards are reshuffled when the draw pile is empty.
+- Heat cards cannot be played as speed cards and can clog the hand after they
+  are explicitly paid from the engine or granted by an effect.
 - The optional discard step can discard speed or trick cards without resolving
   them, but heat cards cannot be selected.
 - Kanto Oden carry-over slots and its skip flag are consumed at the start of
@@ -58,13 +61,15 @@ both the player and AI race flow.
 ## Heat
 
 - Each player starts with an independent engine heat pool of 6 by default.
-- Overspeeding through corners, sudden braking, and engine failures can move
-  heat cards from the engine pool into the deck/discard lifecycle.
+- Overspeeding through corners, sudden braking, and engine failures pay heat
+  cards from the engine pool into the hand by default, so heat occupies hand
+  capacity; an explicit effect can choose the discard pile (China's Yin/Yang
+  Tea Go branch does this). Heat never enters through ordinary drawing.
 - Generic cooling returns permanent heat cards from hand/draw/discard to the
-  engine pool in that order. Temporary heat cards are consumed and destroyed
-  instead; cooling, recovery, and defensive deck removal can never convert them
-  into permanent engine heat. Effects that explicitly say “from hand” remain
-  hand-only.
+  engine pool in that order. The normal draw pile contains no heat cards, but
+  the draw-pile step remains a defensive boundary for legacy or explicit test
+  states. Temporary heat cards are consumed and destroyed instead; effects that
+  explicitly say “from hand” remain hand-only.
 - Running out of payable engine heat affects the race flow according to the
   current manager rules.
 
@@ -80,7 +85,9 @@ prototype and is no longer the authoritative model.
   `Resources/Configs/Tracks/<trackId>.json`.
 - JSON tracks may define their own node count, lap count, start/finish node,
   corners, apex cells, speed limits, pit entry/exit, weather pool, and layout.
-- A pit stop still skips the next turn, but places the car one cell beyond the
+- A pit decision is offered while the car is 1–10 cells before `pit_entry`.
+  Choosing to pit only schedules the stop; after the car crosses the entry,
+  the next turn is consumed by the pit stop. The car then exits one cell beyond
   authored `pit_exit` by default. `GameConfigSO.pitExitMoveBonus` controls the
   base value; China's Fast Charge tech adds another cell.
 - Corner-speed resolution triggers only when movement crosses an `isApex`

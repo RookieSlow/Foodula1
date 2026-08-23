@@ -4,15 +4,27 @@
 > Sources: Claude Code project memory, active session state, session history,
 > current Git worktree, and current Unity project structure.
 
-## 本次完成（2026-08-23 热量、阴阳茶与维修区）
+## 本次完成（2026-08-23 热量牌生命周期、阴阳茶与维修区）
 
+- [x] 修正热量牌生命周期：`initialHeatCards` 不再加入普通牌组；开局与普通补牌只抽
+  速度/特技牌。永久热量只能从独立引擎池经明确支付/效果进入手牌或弃牌堆，再由冷却
+  或明确回收效果返回引擎。
 - [x] 将自动冷却统一到 `CardDeck.CoolHeat()`，严格按手牌→抽牌堆→弃牌堆
   顺序处理热量；永久热量回引擎，限时热量销毁。
 - [x] 将中国队阴阳茶改为按 Go/Recover 模式结算：Go 支付引擎热量到弃牌堆并
   前进 1 格，Recover 从手牌冷却 1 张。
 - [x] 维修区保持停 1 回合，同时在 `pit_exit` 后按配置前移；新增中国队“快充技术”
-  科技修正。新增规则测试后 Unity EditMode 381/381 通过。
+  科技修正。
 - [ ] 仍需在 Play Mode 完成多天气、多圈和完整进站流程的人工走查；本次未修改场景。
+
+## 本次推进（2026-08-23 热量支付与维修区时序）
+
+- [x] 标准热量支付改为默认直接进入手牌，热量会占用手牌；显式弃牌堆路径保留给
+  阴阳茶 Go 等明确效果；普通抽牌仍不会抽取热量。
+- [x] 维修区选择窗口改为 `pit_entry` 前 1–10 格；选择进站只登记预定状态，
+  越过入口的本回合继续移动，下一回合开始才执行停站、全热量冷却和出口前移。
+- [x] 增加维修区入口前窗口、跨圈入口检测和“预定后延后一回合执行”的 EditMode 覆盖。
+- [x] 本轮 Unity EditMode 全量回归 385/385 通过；Play Mode 进站人工走查仍待验证。
 
 ## 本次完成（2026-08-19 赛道天气规则边界）
 
@@ -22,7 +34,7 @@
   文案统一收敛到 `WeatherModifiers` / `WeatherRules`，管理器仅负责调用。
 - [x] 增加 `RaceLapWeatherRules`，让运行时比赛与纯模拟共用起终点过线、每圈天气门控
   和完赛判定顺序；新增跨圈转场回归测试。Unity EditMode：377/377 通过，
-  `dotnet build Foodular1.sln --no-restore`：0 错误。
+  `dotnet build Foodula1.sln --no-restore`：0 错误。
 - [x] Play Mode 启动冒烟通过：5 秒运行期间 Console 0 条错误/警告/日志；未修改场景。
 - [ ] 仍需在 Play Mode 完成多天气、多圈和完整进站流程的人工走查；本轮未修改场景。
 
@@ -43,7 +55,7 @@
   和卡牌预制体回退逻辑抽取到 `Assets/Scripts/UI/RaceUIFactory.cs`。
 - [x] 保留 Prefab 优先、旧场景回退、按钮回调修复和 TMP 字体复用行为；Manager 只负责
   传入回调与接收 UI 引用，不再持有主要 UI 构建细节。
-- [x] Unity EditMode：321/321 通过；`dotnet build Foodular1.sln --no-restore`：0 错误。
+- [x] Unity EditMode：321/321 通过；`dotnet build Foodula1.sln --no-restore`：0 错误。
 - [x] Unity Play Mode 启动冒烟无项目错误/警告；MCP 仅记录自身 WebSocket 重连警告。
 - [x] 将出生朝向、传送朝向和逐帧旋转的 Unity 适配逻辑抽取到
   `Assets/Scripts/Gameplay/CarOrientationController.cs`；角度规则仍由
@@ -307,7 +319,7 @@ maintained source for current work.
   Final verification: Unity EditMode 301/301 passed; runtime smoke covered
   main menu -> track selection -> Race, gear/card/discard/reset interaction,
   disabled heat-card input, and post-teleport orientation with a clean console.
-  `dotnet build Foodular1.sln --no-restore` reports 0 errors (two existing MCP
+  `dotnet build Foodula1.sln --no-restore` reports 0 errors (two existing MCP
   assembly-version warnings remain).
 
 ## 本次完成（2026-08-15 赛事回归与平衡）
@@ -316,4 +328,4 @@ maintained source for current work.
 - [x] 所有主要菜单/比赛控制按钮统一接入短按压/释放缩放动画；运行态确认按钮存在且可触发场景切换。
 - [x] 新增 `TrackTeamBalanceBenchmark`，覆盖 Resources 中全部赛道与六支车队，每图 12 场确定性比赛，报告写入 `design/balance/track-team-benchmark-2026-08-15.md`。
 - [x] 平衡收敛：标准 AI 在预计抵达弯道时优先低值牌，风险窗口按预计移动量计算；中国队恢复设计案 Go 直道输出、操控从 -1 调为 0，并默认采用 Go→Go→Recover；美国直道加成调整为每回合固定 +1。
-- [x] 最终验证：Unity EditMode 308/308 通过；`dotnet build Foodular1.sln --no-restore` 0 错误；MainMenu→Race→返回主菜单运行态冒烟通过，单一 HUD、按钮动画组件和控制台均正常。
+- [x] 最终验证：Unity EditMode 308/308 通过；`dotnet build Foodula1.sln --no-restore` 0 错误；MainMenu→Race→返回主菜单运行态冒烟通过，单一 HUD、按钮动画组件和控制台均正常。
