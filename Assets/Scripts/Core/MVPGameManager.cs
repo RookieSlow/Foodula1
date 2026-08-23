@@ -644,7 +644,12 @@ public class MVPGameManager : MonoBehaviour
         else if (raceLogWriter.IsActive)
             raceLogWriter.End("race reset");
 
-        string trackId = config != null ? config.trackId : "";
+        // The menu selection is resolved by TrackManager before the race
+        // starts.  The config asset can still contain its default track ID, so
+        // log the track that was actually loaded rather than the asset value.
+        string trackId = trackManager != null
+            ? trackManager.TrackId
+            : (config != null ? TrackSelectionState.ResolveTrackId(config.trackId) : "");
         string trackName = trackManager != null && trackManager.LoadedTrackConfig != null
             ? trackManager.LoadedTrackConfig.trackName
             : trackId;
@@ -800,6 +805,14 @@ public class MVPGameManager : MonoBehaviour
             // ====== PHASE A1: 档位决策 ======
             foreach (var p in turnOrder)
             {
+                // 已完赛或已爆缸的赛车不再参与后续回合；否则在玩家 DNF
+                // 后比赛继续时，A1 仍会向玩家请求档位输入。
+                if (p.isBlown || p.hasFinished)
+                {
+                    turnSkipped.Add(p);
+                    continue;
+                }
+
                 // 维修区预选在上一回合越过入口时登记；本回合开始才真正执行，
                 // 因此“停一回合 + 出口后前移”不会发生在入口提示的同一回合。
                 if (p.pitStopScheduled)
@@ -1959,11 +1972,11 @@ public class MVPGameManager : MonoBehaviour
 
     private bool CheckGameEnd()
     {
-        var human = session.Human;
-        if (human == null) return true;
-        // 人类完赛或爆缸 → 结束（如 AI 先完赛则继续跑到人类完赛）
-        if (human.isBlown || human.hasFinished) return true;
-        // 所有人完赛/爆缸 → 结束
+        if (session == null) return true;
+        // A blown player is removed from future turns, but does not end the
+        // race for the remaining active participants.  A finisher also only
+        // locks its own result; the loop ends when no non-blown participant
+        // still needs to finish.
         return session.IsRaceOver();
     }
 

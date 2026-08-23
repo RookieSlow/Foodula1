@@ -105,7 +105,7 @@ public static class RaceRanking
 
     /// <summary>
     /// Check if the race is over.
-    /// Conditions: all non-blown players have finished, or only 1 active player remains.
+    /// Conditions: no non-blown player remains active.
     /// </summary>
     public static bool IsRaceOver(List<PlayerState> players)
     {
@@ -141,10 +141,10 @@ public static class RaceRanking
         foreach (var entry in rankings)
         {
             var p = entry.player;
-            string status = p.isBlown ? "💥爆缸" :
-                           p.hasFinished ? "🏁完赛" : "🏃比赛中";
-            string teamIcon = GetTeamIcon(p.teamId);
-            lines.Add($"{entry.rank}. {teamIcon} {p.name} - {p.lap}圈 位{p.position} {status}");
+            string status = p.isBlown ? "[爆缸]" :
+                           p.hasFinished ? "[完赛]" : "[比赛中]";
+            string teamCode = GetTeamCode(p.teamId);
+            lines.Add($"{entry.rank}. [{teamCode}] {p.name} - {p.lap}圈 位{p.position} {status}");
         }
 
         return string.Join("\n", lines);
@@ -177,17 +177,17 @@ public static class RaceRanking
         return rewards;
     }
 
-    private static string GetTeamIcon(TeamId teamId)
+    private static string GetTeamCode(TeamId teamId)
     {
         switch (teamId)
         {
-            case TeamId.UK: return "🇬🇧";
-            case TeamId.DE: return "🇩🇪";
-            case TeamId.IT: return "🇮🇹";
-            case TeamId.US: return "🇺🇸";
-            case TeamId.CN: return "🇨🇳";
-            case TeamId.JP: return "🇯🇵";
-            default: return "🏎️";
+            case TeamId.UK: return "UK";
+            case TeamId.DE: return "DE";
+            case TeamId.IT: return "IT";
+            case TeamId.US: return "US";
+            case TeamId.CN: return "CN";
+            case TeamId.JP: return "JP";
+            default: return "NA";
         }
     }
 }

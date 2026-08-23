@@ -177,6 +177,18 @@ public class RaceRankingTests
     }
 
     [Test]
+    public void test_race_not_over_when_blown_player_leaves_active_racer()
+    {
+        var field = CreateField();
+        field[0].isBlown = true;
+        field[1].lap = 2;
+        field[1].position = 40;
+
+        Assert.That(RaceRanking.IsRaceOver(field), Is.False,
+            "A DNF player must not terminate the race while another racer is active");
+    }
+
+    [Test]
     public void test_count_active()
     {
         var field = CreateField();
@@ -196,6 +208,10 @@ public class RaceRankingTests
         Assert.That(result, Does.Contain("比赛结果"));
         Assert.That(result, Does.Contain("Alice"));
         Assert.That(result, Does.Contain("Bob"));
+        Assert.That(result, Does.Contain("[UK]"));
+        Assert.That(result, Does.Contain("[完赛]"));
+        Assert.That(result, Does.Contain("[爆缸]"));
+        Assert.That(result, Does.Not.Contain("🇬"));
     }
 
     // ═══════════════════════════════════════════════════════════════════

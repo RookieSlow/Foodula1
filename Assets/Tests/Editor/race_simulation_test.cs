@@ -70,7 +70,7 @@ public class RaceSimulationTest
         var violations = new SimViolations();
         var weatherState = new RaceWeatherState();
         int turn = 0;
-        while (turn < MAX_TURNS && !session.IsRaceOver() && !RaceEndedForHuman(players))
+        while (turn < MAX_TURNS && !session.IsRaceOver())
         {
             turn++;
             foreach (var p in players)
@@ -276,12 +276,6 @@ public class RaceSimulationTest
     }
 
     // ===== 模拟辅助 =====
-
-    private static bool RaceEndedForHuman(List<PlayerState> players)
-    {
-        // 人类（P0）完赛或爆缸即结束（与 CheckGameEnd 一致）
-        return players[0].hasFinished || players[0].isBlown;
-    }
 
     private static int SimPolicyGear(PlayerState p)
     {

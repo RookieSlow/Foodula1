@@ -141,7 +141,11 @@ prototype and is no longer the authoritative model.
 - AI speed-card selection uses configurable normal, heat-warning, and
   corner-risk behavior. Its variation probability and random source are
   injectable so seeded runs can be reproduced in tests.
-- A race ends when a participant reaches the configured lap count.
+- A participant reaching the configured lap count locks its finish order; the
+  race ends after all non-blown participants have finished, or no active
+  participant remains.
+- A blown/DNF participant is removed from future turns and ranks below active
+  and finished racers; it does not immediately terminate the race.
 - Final ranking compares completed laps and track position.
 
 ## Drivers
