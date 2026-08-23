@@ -1,0 +1,35 @@
+# Git LFS policy for Foodula1
+# Keep Unity YAML/text assets in normal Git for review and mergeability.
+
+# Unity packages and binary source/content assets
+*.unitypackage filter=lfs diff=lfs merge=lfs -text
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.tga filter=lfs diff=lfs merge=lfs -text
+*.exr filter=lfs diff=lfs merge=lfs -text
+*.hdr filter=lfs diff=lfs merge=lfs -text
+*.psd filter=lfs diff=lfs merge=lfs -text
+*.fbx filter=lfs diff=lfs merge=lfs -text
+*.blend filter=lfs diff=lfs merge=lfs -text
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.webm filter=lfs diff=lfs merge=lfs -text
+
+# Font binaries, including uppercase extensions used by some bundled fonts.
+*.ttf filter=lfs diff=lfs merge=lfs -text
+*.TTF filter=lfs diff=lfs merge=lfs -text
+*.ttc filter=lfs diff=lfs merge=lfs -text
+*.TTC filter=lfs diff=lfs merge=lfs -text
+*.otf filter=lfs diff=lfs merge=lfs -text
+*.OTF filter=lfs diff=lfs merge=lfs -text
+*.fon filter=lfs diff=lfs merge=lfs -text
+*.FON filter=lfs diff=lfs merge=lfs -text
+
+# Generated TextMeshPro font atlas assets can be very large; keep this scoped
+# to the generated font-material directory rather than all Unity .asset files.
+"Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/*.asset" filter=lfs diff=lfs merge=lfs -text
+"Assets/ttf/* SDF.asset" filter=lfs diff=lfs merge=lfs -text
