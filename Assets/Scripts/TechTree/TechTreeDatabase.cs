@@ -448,7 +448,17 @@ public static class TechTreeDatabaseFactory
             tier: TechTreeTier.L1, teamId: TeamId.CN, index: 1, rpCost: 5000,
             prerequisites: new string[0], upgradesTo: "",
             effects: new[] { new TechEffect(TechEffectType.YinYangTea, 1) },
-            description: "回合结束时：无热量牌(阴)→付1热+1格；有热量牌(阳)→自动冷却1张。"
+            description: "回合结束时：Go(阴)从引擎付1热到弃牌堆并前进1格；Recover(阳)从手牌冷却1张回引擎。"
+        ));
+
+        db.Add(new TechNodeDef(
+            id: "cn-l1-fast-charge",
+            name: "快充技术",
+            nameEn: "Fast Charge",
+            tier: TechTreeTier.L1, teamId: TeamId.CN, index: 2, rpCost: 5000,
+            prerequisites: new string[0], upgradesTo: "",
+            effects: new[] { new TechEffect(TechEffectType.PitExitMoveBonus, 1) },
+            description: "进站停 1 回合后，出站位置额外前进 1 格，缩短维修区时间损失。"
         ));
 
         db.Add(new TechNodeDef(

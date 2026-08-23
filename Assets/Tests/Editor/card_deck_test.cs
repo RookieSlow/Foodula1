@@ -209,6 +209,37 @@ public class CardDeckTest
     }
 
     [Test]
+    public void test_cool_heat_uses_hand_then_draw_then_discard_priority()
+    {
+        var config = CreateConfig();
+        config.speedCardDistribution = new int[0];
+        config.initialHeatCards = 3;
+        var deck = CreateDeck(config, poolSize: 4);
+
+        // One permanent heat in each zone: hand, draw pile, discard pile.
+        Assert.IsTrue(deck.DrawToHand(1));
+        Assert.AreEqual(1, deck.CountHeatInHand());
+        Assert.AreEqual(2, deck.DrawPileCount);
+        Assert.AreEqual(1, deck.DrawHeatFromPool(1));
+        int poolBefore = deck.heatPool.remaining;
+
+        int cooled = deck.CoolHeat(2);
+
+        Assert.AreEqual(2, cooled);
+        Assert.AreEqual(0, deck.CountHeatInHand(), "hand must be cooled first");
+        Assert.AreEqual(1, deck.DrawPileCount, "only one draw-pile heat should remain");
+        Assert.AreEqual(1, deck.DiscardPileCount, "discard-pile heat must wait until hand/draw are exhausted");
+        Assert.AreEqual(poolBefore + 2, deck.heatPool.remaining);
+
+        cooled = deck.CoolHeat(2);
+
+        Assert.AreEqual(2, cooled);
+        Assert.AreEqual(0, deck.DrawPileCount);
+        Assert.AreEqual(0, deck.DiscardPileCount);
+        Assert.AreEqual(poolBefore + 4, deck.heatPool.remaining);
+    }
+
+    [Test]
     public void test_temporary_heat_is_destroyed_during_full_recovery()
     {
         var config = CreateConfig();

@@ -2,7 +2,10 @@
 
 > **文档类型**: 框架设计 + 资源需求  
 > **创建日期**: 2026-07-22  
-> **状态**: Phase 1 完成 ✅ | Phase 2 进行中 🚧 — 资产制作  
+> **状态**: Phase 1 完成 ✅ | Phase 2 资产替换与验证进行中 🚧
+> **实现快照**：2026-08-23；Prefab 优先 + `RaceUIFactory` 回退 UI、8 条赛道布局
+> 背景、车队赛车精灵、天气、维修区、科技树和车手选择已部分或全部接入；
+> 本文中的“目标重构映射”不等同于当前文件已被重命名。
 
 ---
 
@@ -90,7 +93,8 @@ Assets/
 
 ## 三、UI 系统框架
 
-MVP 使用 `AutoCreateUI()` 硬编码所有 UI。Demo 必须改为 **Canvas Prefab** 方式。
+当前运行时优先使用 Canvas Prefab，旧场景仍可回退到 `RaceUIFactory` 的程序化 UI；
+`AutoCreateUI()` 不再是唯一实现方式。
 
 ### 3.1 UI Canvas 层级
 
@@ -246,7 +250,7 @@ GameManager (MonoBehaviour)
 ```
 - 标题: "Foodular 1" (大号 TMP)
 - 快速比赛 按钮 → Race.unity
-- 车队选择 按钮 → Garage.unity (后续)
+- 车队/车手与科技树配置通过当前 MainMenu 面板完成；`Garage.unity` 仍是未来独立车库场景目标。
 - 退出 按钮
 - 背景: 赛道剪影 + 动画赛车
 ```
@@ -255,7 +259,10 @@ GameManager (MonoBehaviour)
 
 ## 六、配置数据架构
 
-### 6.1 TrackDataSO（赛道配置）
+### 6.1 TrackDataSO（未来配置方案；当前不使用）
+
+> 当前赛道配置以 `Assets/Resources/Configs/Tracks/*.json` 为权威，
+> `TrackDataSO` 保留为后续编辑器化方案，不应视为缺失的当前运行时资产。
 
 ```csharp
 [CreateAssetMenu(menuName = "Foodular1/Track Config")]
@@ -318,22 +325,22 @@ public class DriverConfigSO : ScriptableObject
 - [ ] ~~拆分 GameConfigSO → TrackDataSO + CarConfigSO~~ → 延后至 Phase 2
 - [ ] ~~GameManager 分割：RaceManager + InputManager~~ → 延后至 Phase 2
 
-### Phase 2 — 资源替换
-- [ ] 卡牌精灵替换硬编码 UI
-- [ ] 赛车精灵替换红色/蓝色方块
-- [ ] UI 面板底图替换
-- [ ] 字体替换（Inter / JetBrains Mono）
+### Phase 2 — 资源替换与验证（进行中）
+- [x] 卡牌底图、数字、热量图标和选中态资源已存在并接入
+- [x] 六支车队赛车精灵已存在并接入
+- [ ] UI 面板底图、国旗和完整按钮状态仍待资源补齐
+- [x] 中文 TMP 字体支持已接入；Inter / JetBrains Mono 仍是可选的后续替换
 
-### Phase 3 — 功能补全
-- [ ] 多 AI 对手
-- [ ] 尾流机制
-- [ ] 车队属性系统
-- [ ] 车手选择界面
+### Phase 3 — 功能补全（核心已接入，调优未完成）
+- [x] 多车循环和可配置 AI 对手数量已接入；多对手平衡仍待调参
+- [x] 尾流机制已接入纯规则层
+- [x] 车队属性、科技树规则和比赛钩子已接入
+- [x] 车手目录、XP 规则、主菜单选择和比赛初始化已接入；签名效果仍待实现
 
 ### Phase 4 — 打磨
 - [ ] 音效
-- [ ] 动画（卡牌飞出、赛车移动弹跳、失控旋转）
-- [ ] 天气系统
+- [x] 基础移动插值、朝向、失控旋转提示和事件 FX 已接入；动画表现仍可打磨
+- [x] 五种天气规则和 HUD 文案已接入；多天气多圈 Play Mode 走查仍待完成
 
 ---
 

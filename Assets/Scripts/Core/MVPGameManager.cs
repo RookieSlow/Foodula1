@@ -518,7 +518,7 @@ public class MVPGameManager : MonoBehaviour
             new Vector2(0f, 32f), new Vector2(580f, 28f),
             FindObjectOfType<TMP_Text>()?.font);
 
-        pitEnterButton = CreateActionButton(panelRect, "PitEnterButton", "进站 (冷却全部热量)",
+        pitEnterButton = CreateActionButton(panelRect, "PitEnterButton", "进站 (冷却+停1回合)",
             new Vector2(-160f, -15f), new Color(0.45f, 0.85f, 0.55f),
             () => ChoosePit(true));
         pitSkipButton = CreateActionButton(panelRect, "PitSkipButton", "继续比赛",
@@ -1162,7 +1162,7 @@ public class MVPGameManager : MonoBehaviour
 
         if (cooldown > 0)
         {
-            int removed = p.deck.RemoveHeatFromHand(cooldown);
+            int removed = p.deck.CoolHeat(cooldown);
             if (removed > 0 && hudUI != null)
                 hudUI.AppendLog($"{p.name} ({TeamGearRules.GetDisplayName(p.teamId, p.gear)}): cools {removed} Heat → engine.");
         }
@@ -1431,7 +1431,7 @@ public class MVPGameManager : MonoBehaviour
         inputState.BeginPitChoice();
         pitChoicePanel.SetActive(true);
         if (hudUI != null)
-            hudUI.SetStatus("维修区入口：进站冷却全部热量，还是继续比赛？");
+            hudUI.SetStatus("维修区入口：进站冷却全部热量并停 1 回合（出站后前移），还是继续比赛？");
 
         yield return new WaitWhile(() => inputState.WaitingForPitChoice);
 
@@ -1464,7 +1464,13 @@ public class MVPGameManager : MonoBehaviour
 
     private void EnterPit(PlayerState p)
     {
-        var result = PitLaneRules.EnterPit(p, trackManager.Nodes);
+        int exitMoveBonus = config != null
+            ? config.pitExitMoveBonus
+            : PitLaneRules.DEFAULT_EXIT_MOVE_BONUS;
+        if (config != null && config.enableTechTree && session != null && p.techState != null)
+            exitMoveBonus += session.GetModifiers(p).pitExitMoveBonus;
+
+        var result = PitLaneRules.EnterPit(p, trackManager.Nodes, exitMoveBonus);
         if (!result.success)
         {
             if (hudUI != null) hudUI.AppendLog(result.message);
@@ -1474,7 +1480,7 @@ public class MVPGameManager : MonoBehaviour
         p.deck.RecoverAllHeatToPool(); // 进站冷却全部热量回引擎
         MoveCarTo(p, p.position);       // 移动到维修区出口
         if (hudUI != null)
-            hudUI.AppendLog($"<color=green>{p.name} 进站：冷却全部热量，停靠 {result.turnsSkipped} 回合。</color>");
+            hudUI.AppendLog($"<color=green>{p.name} 进站：冷却全部热量，停靠 {result.turnsSkipped} 回合，出站后前进 {result.exitMoveBonus} 格（{result.pitExitPosition}→{result.exitPosition}）。</color>");
     }
 
     /// <summary>
@@ -1488,7 +1494,7 @@ public class MVPGameManager : MonoBehaviour
         {
             case MotherRoadResult.MotherRoadPhase.Prosperity:
             {
-                int cooled = p.deck.RemoveHeatFromHand(result.freeCooldown);
+                int cooled = p.deck.CoolHeat(result.freeCooldown);
                 if (hudUI != null)
                     hudUI.AppendLog($"<color=green>{p.name} 母亲之路(繁荣)：自动冷却 {cooled} 张热量牌。</color>");
                 break;
@@ -1599,7 +1605,7 @@ public class MVPGameManager : MonoBehaviour
         // 冷却（红茶 / 关东慢煮）
         if (result.heatToCool > 0)
         {
-            int cooled = p.deck.RemoveHeatFromHand(result.heatToCool);
+            int cooled = p.deck.CoolHeat(result.heatToCool);
             if (cooled > 0 && hudUI != null)
                 hudUI.AppendLog($"{p.name} 特技冷却 {cooled} 张热量牌。");
         }
@@ -1790,7 +1796,7 @@ public class MVPGameManager : MonoBehaviour
             if (grillCooldown > 0)
             {
                 session.ActivateGrillSpezial(p);
-                int cooled = p.deck.RemoveHeatFromHand(grillCooldown);
+                int cooled = p.deck.CoolHeat(grillCooldown);
                 if (cooled > 0 && hudUI != null)
                     hudUI.AppendLog($"<color=green>{p.name} 烤肉拼盘：自动冷却 {cooled} 张热量牌。</color>");
             }
@@ -1800,7 +1806,7 @@ public class MVPGameManager : MonoBehaviour
         p.playedSpeedCardsThisTurn.Clear();
     }
 
-    /// <summary>应用阴阳茶结果：阴 → 付 1 热 +1 格；阳 → 自动冷却。</summary>
+    /// <summary>应用阴阳茶结果：Go(阴) → 付 1 引擎热并前进；Recover(阳) → 仅从手牌冷却。</summary>
     private void ApplyYinYang(PlayerState p, YinYangResult result)
     {
         if (!result.triggered) return;
@@ -1817,6 +1823,7 @@ public class MVPGameManager : MonoBehaviour
         }
         else if (result.isYang)
         {
+            // 阴阳茶的 Recover 分支是明确的“手牌冷却”，不使用全牌区优先级冷却。
             int cooled = p.deck.RemoveHeatFromHand(result.heatToCool);
             if (cooled > 0 && hudUI != null)
                 hudUI.AppendLog($"<color=cyan>{p.name} 阴阳茶(阳)：自动冷却 {cooled} 张热量牌。</color>");

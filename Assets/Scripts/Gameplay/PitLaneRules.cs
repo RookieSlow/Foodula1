@@ -9,6 +9,9 @@ public static class PitLaneRules
     /// <summary>Default pit stop duration in turns (car skips this many turns).</summary>
     public const int DEFAULT_PIT_DURATION = 1;
 
+    /// <summary>Default number of track cells gained after reaching pit exit.</summary>
+    public const int DEFAULT_EXIT_MOVE_BONUS = 1;
+
     /// <summary>Heat cooled during a standard pit stop.</summary>
     public const int PIT_HEAT_COOLDOWN = 999; // All heat returned to engine
 
@@ -78,24 +81,31 @@ public static class PitLaneRules
     }
 
     /// <summary>
-    /// Resolve a pit stop. Returns the result with effects to apply.
+    /// Resolve a pit stop. The car still skips one turn, but exits one or more
+    /// cells beyond the authored pit-exit marker to model a shortened time loss.
     /// Sets skipNextTurn for the pit duration.
     /// </summary>
-    public static PitStopResult EnterPit(PlayerState player, IReadOnlyList<TrackNode> nodes)
+    public static PitStopResult EnterPit(PlayerState player, IReadOnlyList<TrackNode> nodes,
+        int exitMoveBonus = DEFAULT_EXIT_MOVE_BONUS)
     {
         if (!CanEnterPit(player, nodes))
             return PitStopResult.Fail("Cannot enter pit");
 
-        int exitPos = GetPitExitPosition(nodes);
-        // Move car to pit exit
-        player.position = exitPos;
+        int pitExitPosition = GetPitExitPosition(nodes);
+        int appliedMoveBonus = exitMoveBonus < 0 ? 0 : exitMoveBonus;
+        int exitPosition = (pitExitPosition + appliedMoveBonus) % nodes.Count;
+
+        // Move car through the pit and slightly beyond the pit exit.
+        player.position = exitPosition;
         // Skip turns for pit duration
         player.skipNextTurn = true;
 
         return new PitStopResult
         {
             success = true,
-            exitPosition = exitPos,
+            pitExitPosition = pitExitPosition,
+            exitPosition = exitPosition,
+            exitMoveBonus = appliedMoveBonus,
             heatCooled = PIT_HEAT_COOLDOWN,
             turnsSkipped = DEFAULT_PIT_DURATION
         };
@@ -112,12 +122,16 @@ public static class PitLaneRules
 }
 
 /// <summary>Result of a pit stop.</summary>
-public struct PitStopResult
+    public struct PitStopResult
 {
     public bool success;
     public string message;
-    /// <summary>Position after exiting pit.</summary>
+    /// <summary>Authored pit-exit node position.</summary>
+    public int pitExitPosition;
+    /// <summary>Position after exiting pit and applying the forward bonus.</summary>
     public int exitPosition;
+    /// <summary>Cells advanced beyond the authored pit exit.</summary>
+    public int exitMoveBonus;
     /// <summary>Amount of heat cooled (returned to engine).</summary>
     public int heatCooled;
     /// <summary>Number of turns skipped.</summary>

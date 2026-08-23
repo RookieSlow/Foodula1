@@ -4,6 +4,9 @@
 > **关联文档**：`foodula-1-concept.md`（主框架）、`foodula-1-core-mechanics.md`（核心机制）  
 > **创建日期**：2026-07-13  
 > **适用范围**：Demo 快速比赛模式，中等难度 AI
+> **实现快照**：2026-08-23；当前运行时为 `AIController` + `AIPlanner`，
+> 共享 `ChinaGearShiftRules`，默认一名 AI；`aiOpponentCount` 可配置更多对手。
+> P3 尾流策略、个性化难度和完整 Play Mode 调参仍属于未完成项。
 
 ---
 
@@ -269,25 +272,19 @@ IF lap == total_laps：
 ### 档位决策
 
 ```
-电池容量 = battery_capacity（初始 7，每圈 -1）
+当前运行时不维护 battery_capacity；电池每圈衰减属于设计目标，未接入比赛状态。
+Go/Recover 的连续使用和热量代价由 `ChinaGearShiftRules` 统一计算。
 
-// 进站决策（可选）
-IF 经过维修区入口：
-    IF 电池容量 ≤ 4 AND 当前位置不在关键超车段：
-        → 选择进站（重置电池容量为 7）
-    ELSE：
-        → 跳过进站，继续比赛
-
-IF 电池容量 ≤ 2：
-    → 极高优先级：下个维修区必须进站
+// 未来设计：电池阈值驱动的 AI 进站选择尚未接入
+// 当前运行时只由玩家在 authored pit_entry 处选择进站；AI 电池策略待实现。
 
 IF 热量 ≥ 60%：
-    → 选 Recover 档（冷却 3 热量 + 出 1 张牌）
+    → 选 Recover 档（连续 Recover 冷却 3→2→1→0 + 出 1 张牌）
     如果连续 R 惩罚严重，仅选 1 回合 R 后切回 Go
 
 ELSE IF 前方有长直道（≥ 5 格直道）：
     → 选 Go 档（3 张牌冲刺）
-    检查连续 Go 惩罚：如果连续 Go ≥ 3 次 → 热量开始累积 → 考虑切 Recover
+    检查连续 Go 惩罚：第 1 次 Go 出 3 张，之后出 4 张并按连续次数产生 1/2/3 热量
 
 ELSE：
     → Go ↔ Recover 交替（最优节奏）
@@ -325,12 +322,9 @@ Recover 档（1 张牌）：选中间值速度牌（不太快不过弯，不太�
 ```
 Assets/Scripts/AI/
 ├── AIController.cs           // 主控制器，每回合调用
-├── AIDecisionTree.cs         // 行为树实现
-├── AIGearSelector.cs         // 档位选择逻辑
-├── AICardSelector.cs         // 出牌选择逻辑
-├── AICornerEvaluator.cs      // 弯道预判
-├── AISlipstreamEvaluator.cs  // 尾流评估
-└── AIChinaSpecial.cs         // 中国车队专属 AI
+├── AIPlanner.cs              // 纯规则决策与出牌计划
+├── ChinaGearShiftRules.cs    // 中国 Go/Recover 连续档位规则
+└── AIController.cs           // Unity 回合编排与状态注入
 ```
 
 ### AIController 伪代码

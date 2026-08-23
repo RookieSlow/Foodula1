@@ -1,11 +1,11 @@
 # Project Overview
 
-Foodular1 is a Unity 2022.3.62f2 2D card-driven food truck racing game using
+Foodular1 is a Unity 2022.3.62f3c1 2D card-driven food truck racing game using
 the CCGS project framework.
 
 ## Technology
 
-- **Engine**: Unity 2022.3.62f2
+- **Engine**: Unity 2022.3.62f3c1
 - **Language**: C# 9.0
 - **Rendering**: Built-in Render Pipeline, 2D
 - **UI**: uGUI and TextMesh Pro
@@ -17,8 +17,8 @@ the CCGS project framework.
 - `Core/MVPGameManager.cs` coordinates the current race loop.
 - `Core/CardDeck.cs`, `CardData.cs`, and `PlayerState.cs` implement race state
   and card lifecycle.
-- `Gameplay/TrackManager.cs` supports a data-driven JSON track and a
-  hard-coded 42-node fallback track.
+- `Gameplay/TrackManager.cs` supports the eight selectable JSON tracks and the
+  `fallback_42` 42-node fallback track.
 - `Gameplay/TrackDataLoader.cs` converts track JSON into runtime nodes and
   world positions.
 - `AI/AIController.cs` controls the current opponent.
@@ -48,9 +48,10 @@ The verified scene flow is:
 
 - Demo framework Phase 1 is complete.
 - Phase 2 asset replacement is in progress.
-- The project is in Production stage. A full audit on 2026-08-15 verified the
-  MainMenu-to-Race flow, corrected race card/icon references, and cleared
-  unsupported-glyph runtime warnings.
+- The project is in Production stage. The latest editor audit on 2026-08-23
+  verified a clean Unity editor state and 381/381 EditMode tests. The
+  MainMenu-to-Race flow, race card/icon references, and Chinese font support
+  remain the current presentation baseline.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
   nodes; `RaceSession` centralizes numeric tech modifiers while the manager
   invokes explicit `TechTreeRules` event hooks at documented race phases.
@@ -63,20 +64,22 @@ The verified scene flow is:
   sprites, and the main-menu flow have been implemented.
 - The custom Track Node Editor experiment was reverted after Scene View
   interaction problems.
-- The Race scene is configured for the 60-node Silverstone JSON track. Runtime
-  apex traversal, start/finish lookup, arbitrary-node HUD display, and loaded
-  LineRenderer coordinates are integrated and verified; authoring workflow,
-  pit behavior, and full-lap playtesting remain. Track weather now preserves
-  sunny/cloudy/light-rain/heavy-rain/hot profiles through one pure rules boundary.
+- The Race scene defaults to the 60-node Silverstone JSON track. Runtime apex
+  traversal, start/finish lookup, arbitrary-node HUD display, loaded
+  LineRenderer coordinates, pit exit movement, and track weather are
+  integrated. The current selectable catalog contains eight official JSON
+  tracks; `fallback_42` is retained only as a fallback. Full multi-weather,
+  multi-lap, and pit-flow Play Mode walkthroughs remain open.
 - The four Scheme A refactor sources were committed in `58d1bba`.
   `RaceRules.cs` and `AIPlanner.cs` are integrated into the runtime.
   `AIController` and `CardDeck` accept injectable `IRandomSource`
   implementations for deterministic tests. The reviewed refactor currently
-  passes its original 16 EditMode tests with no Unity warnings or errors.
+  passes its historical original 16 EditMode tests with no Unity warnings or errors;
+  the current full suite is tracked separately below.
 - `Gameplay/TrackRules.cs` now provides pure, tested track traversal rules.
-  Together with the current feature tests, the project passes 307 EditMode
-  tests. A Play Mode smoke test loaded the menu, tech-tree panel and a China
-  race (Shanghai) with no project warnings or errors.
+  Together with the current feature tests, the project passes 381 EditMode
+  tests. `RaceTestLogWriter` can capture a manual race into a timestamped log
+  for later review; the latest audit did not create a new gameplay log.
 
 ## Memory Provenance
 

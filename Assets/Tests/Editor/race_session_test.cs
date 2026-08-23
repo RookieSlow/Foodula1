@@ -85,6 +85,27 @@ public class RaceSessionTest
     }
 
     [Test]
+    public void test_yin_yang_resolution_follows_china_drivetrain_mode()
+    {
+        var session = CreateSession();
+        var player = CreatePlayer(session, TeamId.CN);
+        player.usesChinaGearSystem = true;
+
+        player.gear = ChinaGearShiftRules.GoGear;
+        var go = session.ResolveEndOfTurn(player);
+        Assert.IsTrue(go.triggered);
+        Assert.IsTrue(go.isYin);
+        Assert.IsFalse(go.isYang);
+
+        player.gear = ChinaGearShiftRules.RecoverGear;
+        var recover = session.ResolveEndOfTurn(player);
+        Assert.IsTrue(recover.triggered);
+        Assert.IsFalse(recover.isYin);
+        Assert.IsTrue(recover.isYang);
+        Assert.AreEqual(1, recover.heatToCool);
+    }
+
+    [Test]
     public void test_effective_hand_size_and_pool_add_bonuses()
     {
         var session = CreateSession();

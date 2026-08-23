@@ -249,6 +249,11 @@ public static class TechTreeRules
                             effectMaxValues.GetValueOrDefault(effect.type, 0), effect.value);
                         break;
 
+                    case TechEffectType.PitExitMoveBonus:
+                        effectMaxValues[effect.type] = Math.Max(
+                            effectMaxValues.GetValueOrDefault(effect.type, 0), effect.value);
+                        break;
+
                     case TechEffectType.EngineCapacityBonus:
                         m.engineCapacityBonus += (int)effect.value;
                         break;
@@ -292,6 +297,7 @@ public static class TechTreeRules
         m.cornerLimitBonus = (int)effectMaxValues.GetValueOrDefault(TechEffectType.CornerLimitBonus, 0);
         m.durabilityBonus = (int)effectMaxValues.GetValueOrDefault(TechEffectType.DurabilityBonus, 0);
         m.slipstreamRangeBonus = (int)effectMaxValues.GetValueOrDefault(TechEffectType.SlipstreamRangeBonus, 0);
+        m.pitExitMoveBonus = (int)effectMaxValues.GetValueOrDefault(TechEffectType.PitExitMoveBonus, 0);
 
         // JP L2 Broth: add broth passive values to modifiers
         if (m.hasBrothSelection && state.brothSelection != BrothType.None)
@@ -596,16 +602,16 @@ public static class TechTreeRules
     // ═══════════════════════════════════════════════════════════════════
 
     /// <summary>
-    /// CN L1: Resolve YinYangTea at end of turn.
-    /// Yin (cold, no heat in hand): can pay 1 heat from engine → +1 move.
-    /// Yang (hot, has heat in hand): auto cool 1 heat.
+    /// CN L1: Resolve YinYangTea at end of turn from the current drivetrain mode.
+    /// Go (Yin): pay 1 heat from engine → +1 move.
+    /// Recover (Yang): cool 1 heat from hand back to the engine.
     /// </summary>
-    public static YinYangResult ResolveYinYang(TechTreeState state, TechTreeDatabase db, bool hasHeatInHand)
+    public static YinYangResult ResolveYinYang(TechTreeState state, TechTreeDatabase db, bool isGoMode)
     {
         if (!HasEffect(state, db, TechEffectType.YinYangTea))
             return YinYangResult.NoTrigger;
 
-        return hasHeatInHand ? YinYangResult.Yang : YinYangResult.Yin;
+        return isGoMode ? YinYangResult.Yin : YinYangResult.Yang;
     }
 
     /// <summary>

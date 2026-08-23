@@ -4,6 +4,9 @@
 > **关联文档**：`foodula-1-concept.md`（主框架）、`foodula-1-teams-cars.md`（车队系统）  
 > **提取自**：`foodula-1-concept.md` 第四章  
 > **创建日期**：2026-07-13
+> **实现快照**：2026-08-23；`DriverData.cs` 已提供 12 位车手目录、
+> XP 阈值、等级/技能层级和主菜单选择接线。车手签名技能的实际比赛效果
+> 尚未接入，本文中的技能描述仍是设计目标。
 
 ---
 
@@ -16,7 +19,7 @@
 | **天赋（Talent）** | `talent` | 影响 XP 获取速率（1.0x / 1.2x / 1.5x） |
 | **经验（Experience）** | `xp` | 比赛获得，用于解锁技能节点 |
 | **等级（Level）** | `level` | XP 累积到阈值自动升级 |
-| **风格（Style）** | `style` | Aggressive / Balanced / Technical → 影响同系技能效果 +10% |
+| **风格（Style）** | `style` | Aggressive / Balanced / Technical → 设计目标为影响同系技能效果 +10%；当前运行时仅保存描述 |
 | **特技（Signature）** | `signature` | 每场限用 1~2 次的独特技能 |
 
 ### 1.2 XP 与升级

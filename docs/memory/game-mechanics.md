@@ -3,6 +3,11 @@
 This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
+> **Implementation snapshot (2026-08-23)**: Unity `2022.3.62f3c1`; the latest
+> editor EditMode run passed `381/381`. The required
+> `production/session-state/active.md` file is currently absent, so this
+> document is based on source, configuration, and the live editor state.
+
 ## Turn and Card Loop
 
 - Each player has a draw pile, hand, discard pile, and independent engine
@@ -41,8 +46,9 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 - The selected gear controls how many speed cards may be played.
 - A normal shift changes one gear.
 - A two-gear shift costs heat.
-- Gear 1 removes up to three heat cards from the hand.
-- Gear 2 removes up to one heat card from the hand.
+- Gear 1 removes up to three heat cards through the cooling priority:
+  hand, then draw pile, then discard pile.
+- Gear 2 removes up to one heat card through the same priority.
 - Higher gears provide no automatic cooling.
 
 Gear-shift heat cost and gear-one/gear-two cooling values are configured in
@@ -54,9 +60,11 @@ both the player and AI race flow.
 - Each player starts with an independent engine heat pool of 6 by default.
 - Overspeeding through corners, sudden braking, and engine failures can move
   heat cards from the engine pool into the deck/discard lifecycle.
-- Cooling returns permanent heat cards from the hand to the engine pool.
-  Temporary heat cards are consumed and destroyed instead; cooling, recovery,
-  and defensive deck removal can never convert them into permanent engine heat.
+- Generic cooling returns permanent heat cards from hand/draw/discard to the
+  engine pool in that order. Temporary heat cards are consumed and destroyed
+  instead; cooling, recovery, and defensive deck removal can never convert them
+  into permanent engine heat. Effects that explicitly say “from hand” remain
+  hand-only.
 - Running out of payable engine heat affects the race flow according to the
   current manager rules.
 
@@ -72,6 +80,9 @@ prototype and is no longer the authoritative model.
   `Resources/Configs/Tracks/<trackId>.json`.
 - JSON tracks may define their own node count, lap count, start/finish node,
   corners, apex cells, speed limits, pit entry/exit, weather pool, and layout.
+- A pit stop still skips the next turn, but places the car one cell beyond the
+  authored `pit_exit` by default. `GameConfigSO.pitExitMoveBonus` controls the
+  base value; China's Fast Charge tech adds another cell.
 - Corner-speed resolution triggers only when movement crosses an `isApex`
   cell. Repeated apex cells for the same corner are deduplicated per move.
 - Player initialization and lap crossing use the runtime node marked
@@ -117,7 +128,9 @@ prototype and is no longer the authoritative model.
 
 ## Opponents and Win Condition
 
-- The current demo includes the player and one AI-controlled opponent.
+- The default demo includes the player and one AI-controlled opponent;
+  `aiOpponentCount` supports a larger configured opponent count, while the
+  broader multi-opponent balance/playtest remains open.
 - AI speed-card selection uses configurable normal, heat-warning, and
   corner-risk behavior. Its variation probability and random source are
   injectable so seeded runs can be reproduced in tests.

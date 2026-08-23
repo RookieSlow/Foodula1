@@ -200,6 +200,9 @@ public class RaceSession
             case TechEffectType.SlipstreamRangeBonus:
                 m.slipstreamRangeBonus = System.Math.Max(m.slipstreamRangeBonus, (int)effect.value);
                 break;
+            case TechEffectType.PitExitMoveBonus:
+                m.pitExitMoveBonus = System.Math.Max(m.pitExitMoveBonus, (int)effect.value);
+                break;
             case TechEffectType.EngineCapacityBonus:
                 m.engineCapacityBonus += (int)effect.value;
                 break;
@@ -481,11 +484,11 @@ public class RaceSession
     // 回合结算（CN 阴阳茶 / DE 烤肉拼盘）
     // ═══════════════════════════════════════════════════════════════════
 
-    /// <summary>回合结束时结算 CN 阴阳茶。返回触发的效果（调用方应用热量支付/冷却）。</summary>
+    /// <summary>回合结束时按中国队当前 Go/Recover 模式结算阴阳茶。</summary>
     public YinYangResult ResolveEndOfTurn(PlayerState p)
     {
         if (p.techState == null) return YinYangResult.NoTrigger;
-        return TechTreeRules.ResolveYinYang(p.techState, TechDb, p.deck.CountHeatInHand() > 0);
+        return TechTreeRules.ResolveYinYang(p.techState, TechDb, IsGoMode(p));
     }
 
     /// <summary>回合结束时可用的 DE 烤肉拼盘冷却量（本回合已支付的热量）。</summary>

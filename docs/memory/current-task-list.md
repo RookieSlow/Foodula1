@@ -1,8 +1,18 @@
 # Current Task List
 
-> Updated: 2026-08-19
+> Updated: 2026-08-23
 > Sources: Claude Code project memory, active session state, session history,
 > current Git worktree, and current Unity project structure.
+
+## 本次完成（2026-08-23 热量、阴阳茶与维修区）
+
+- [x] 将自动冷却统一到 `CardDeck.CoolHeat()`，严格按手牌→抽牌堆→弃牌堆
+  顺序处理热量；永久热量回引擎，限时热量销毁。
+- [x] 将中国队阴阳茶改为按 Go/Recover 模式结算：Go 支付引擎热量到弃牌堆并
+  前进 1 格，Recover 从手牌冷却 1 张。
+- [x] 维修区保持停 1 回合，同时在 `pit_exit` 后按配置前移；新增中国队“快充技术”
+  科技修正。新增规则测试后 Unity EditMode 381/381 通过。
+- [ ] 仍需在 Play Mode 完成多天气、多圈和完整进站流程的人工走查；本次未修改场景。
 
 ## 本次完成（2026-08-19 赛道天气规则边界）
 
@@ -88,8 +98,8 @@
 - [x] Add EditMode tests for `RaceRules` (9 cases passing in Unity).
 - [x] Add EditMode tests for `AIPlanner`, deterministic random behavior,
   and the AI spin-out card-conservation regression (7 cases passing in Unity).
-- [x] Validate every changed script, wait for Unity compilation, and confirm
-  that the Unity console has no errors (16 EditMode tests, 0 warnings/errors).
+- [x] Historical baseline: validated changed scripts and Unity console with no errors
+  (16 EditMode tests at that stage; current full suite is 381/381).
 - [x] Review the final diff for the approved refactor changes.
 - [ ] Commit only with explicit user instruction; scheduled-task authorization
   does not include Git commits.
@@ -137,7 +147,7 @@ with 0 failures, warnings, or errors.
 - [x] Drive start/finish lookup and crossing from runtime track-node data;
   validate wrapping and a non-zero start/finish index in EditMode tests.
 - [ ] Complete a multi-lap manual playthrough to validate finish timing.
-- [ ] Implement or verify pit entry and pit exit behavior.
+- [x] Implement and unit-test pit entry and pit exit behavior; Play Mode manual validation remains open above.
 - [x] Drive LineRenderer positions from loaded track coordinates and verify
   the Silverstone path in Play Mode.
 - [x] Replace the inaccurate Nürburgring 24H combined bonus layout with a
@@ -191,18 +201,18 @@ with 0 failures, warnings, or errors.
 
 ## P2 - Demo Asset Replacement
 
-- [ ] Reconcile the Phase 2 planning document with assets already completed.
+- [x] Reconcile the Phase 2 planning document with assets already completed; remaining gaps are listed in `design/planning/asset-manifest.md`.
 - [ ] Finish remaining UI panel artwork.
 - [ ] Replace gear-button placeholders with the approved gear controls.
 - [ ] Replace the heat text placeholder with the approved thermometer UI.
-- [ ] Replace remaining flag and track-node placeholders.
+- [ ] Replace remaining flag/UI-node placeholders; track layouts and runtime corner masks are already integrated.
 - [ ] Verify card and vehicle sprites in both scenes at target resolution.
 
 ## P3 - Feature Completion
 
-- [ ] Add multiple AI opponents.
-- [ ] Implement slipstream.
-- [ ] Implement team attributes.
+- [ ] Tune and Play Mode-verify configured multi-AI races.
+- [x] Implement slipstream rules and team range modifiers; broader balance remains open.
+- [x] Implement team vehicle attributes and tech modifiers; balance review remains open.
 - [x] Shuffle team trick cards into the normal deck lifecycle and replace batch
   hand submission with one-card select/confirm play, immediate trick resolution,
   and explicit end-of-card-phase behavior.
@@ -216,7 +226,7 @@ with 0 failures, warnings, or errors.
 ## Open Decisions
 
 - [ ] Select the replacement for the reverted Track Node Editor.
-- [ ] Confirm how the Le Mans test track relates to the six national teams.
+- [x] Treat Le Mans as a France expansion track with no home team; it is not one of the six national-team home circuits.
 - [ ] Confirm whether Kanto Oden carry-over slots are mandatory (the current
   runtime behavior) or optional; Hotpot's additional slot is already optional.
 - [ ] Decide the commit boundaries for current scene, data, MCP, and
@@ -251,8 +261,8 @@ maintained source for current work.
   all use the same rules.
 - [x] Added `TeamVehicleRules` as the boundary for team profile values and base
   durability/heat-pool setup; full movement/handling balancing remains a follow-up.
-- [x] Unity EditMode validation after this slice: 307/307 passed; dotnet builds
-  complete with 0 errors.
+- [x] 历史记录：该切片完成时 Unity EditMode 307/307 通过；当前总回归已更新为 381/381。
+  该历史切片的 dotnet build 当时为 0 错误。
 - [ ] Continue extracting orchestration from `MVPGameManager` into phase services
   once the next feature requires changes across multiple phases.
 

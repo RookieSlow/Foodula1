@@ -59,7 +59,7 @@ public class TechTreeRulesTests
     }
 
     [Test]
-    public void test_database_contains_three_unique_per_country()
+    public void test_database_contains_expected_unique_nodes_per_country()
     {
         foreach (TeamId team in System.Enum.GetValues(typeof(TeamId)))
         {
@@ -68,8 +68,9 @@ public class TechTreeRulesTests
             all.AddRange(db.GetUniqueInTier(team, TechTreeTier.L2));
             all.AddRange(db.GetUniqueInTier(team, TechTreeTier.L3));
 
-            Assert.That(all.Count, Is.EqualTo(3),
-                $"Team {team} should have exactly 3 unique techs (L1+L2+L3)");
+            int expected = team == TeamId.CN ? 4 : 3;
+            Assert.That(all.Count, Is.EqualTo(expected),
+                $"Team {team} should have the expected unique tech count");
         }
     }
 
@@ -413,8 +414,8 @@ public class TechTreeRulesTests
         TechTreeRules.UnlockNode(cnState, "cn-l1-yin-yang-tea", db);
         TechTreeRules.SelectActiveNodes(cnState, new[] { "cn-l1-yin-yang-tea" }, db);
 
-        // Cold (no heat in hand) = Yin
-        var result = TechTreeRules.ResolveYinYang(cnState, db, hasHeatInHand: false);
+        // Go mode = Yin
+        var result = TechTreeRules.ResolveYinYang(cnState, db, isGoMode: true);
         Assert.That(result.triggered, Is.True);
         Assert.That(result.isYin, Is.True);
         Assert.That(result.isYang, Is.False);
@@ -429,8 +430,8 @@ public class TechTreeRulesTests
         TechTreeRules.UnlockNode(cnState, "cn-l1-yin-yang-tea", db);
         TechTreeRules.SelectActiveNodes(cnState, new[] { "cn-l1-yin-yang-tea" }, db);
 
-        // Hot (has heat in hand) = Yang
-        var result = TechTreeRules.ResolveYinYang(cnState, db, hasHeatInHand: true);
+        // Recover mode = Yang
+        var result = TechTreeRules.ResolveYinYang(cnState, db, isGoMode: false);
         Assert.That(result.triggered, Is.True);
         Assert.That(result.isYang, Is.True);
         Assert.That(result.isYin, Is.False);
@@ -442,8 +443,21 @@ public class TechTreeRulesTests
     {
         var cnState = new TechTreeState(TeamId.CN, TechTreeRules.DEMO_BUDGET);
         // No tech unlocked
-        var result = TechTreeRules.ResolveYinYang(cnState, db, hasHeatInHand: false);
+        var result = TechTreeRules.ResolveYinYang(cnState, db, isGoMode: true);
         Assert.That(result.triggered, Is.False);
+    }
+
+    [Test]
+    public void test_cn_fast_charge_adds_pit_exit_move_bonus()
+    {
+        var cnState = new TechTreeState(TeamId.CN, TechTreeRules.DEMO_BUDGET);
+        UnlockL1TierGate(cnState);
+        Assert.That(TechTreeRules.UnlockNode(cnState, "cn-l1-fast-charge", db), Is.True);
+        TechTreeRules.SelectActiveNodes(cnState, new[] { "cn-l1-fast-charge" }, db);
+
+        var modifiers = TechTreeRules.ComputeModifiers(cnState, db);
+
+        Assert.That(modifiers.pitExitMoveBonus, Is.EqualTo(1));
     }
 
     [Test]

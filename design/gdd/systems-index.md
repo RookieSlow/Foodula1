@@ -7,7 +7,7 @@
 
 | # | System | File | Status | Notes |
 |---|--------|------|--------|-------|
-| 1 | Game Concept (MVP) | `game-concept.md` | In Review | Updated 2026-07-22 — aligned heat lifecycle with HEAT rules. 12 ACs all met in code |
+| 1 | Game Concept (MVP) | `game-concept.md` | In Progress | Runtime core is implemented and editor-tested; the acceptance list still needs to distinguish automated coverage from pending Play Mode walkthroughs |
 
 ## Archived Systems
 
@@ -40,20 +40,21 @@
 |---|--------|------|--------|-------|
 | 5 | Foodula 1 Concept | `foodula-1-concept.md` | In Progress | Full vision — 6 teams, 12 drivers, 8 selectable tracks; open items in §10 remain |
 | 6 | Core Mechanics | `foodula-1-core-mechanics.md` | In Progress | HEAT board game adaptation; runtime card/heat/gear loop is implemented and tested |
-| 7 | Teams & Cars | `foodula-1-teams-cars.md` | In Progress | 6 national food-themed teams; car sprites and team tech modifiers are wired, full team-selection UI remains |
+| 7 | Teams & Cars | `foodula-1-teams-cars.md` | In Progress | 6 national food-themed teams; car sprites, team profiles, and tech modifiers are wired; presentation and balance review remain |
 | 8 | Drivers | `foodula-1-drivers.md` | In Progress | 12 driver catalog entries, XP/tier rules and menu selection are implemented; signature effects remain |
 | 9 | Tracks | `foodula-1-tracks.md` | In Progress | 8 JSON tracks with real-layout presentation, lanes, apex masks and limits; full pit/weather Play Mode playthrough remains |
-| 10 | AI | `foodula-1-ai.md` | In Progress | Deterministic planner and one-opponent controller are implemented; multi-opponent personality tuning remains |
+| 10 | AI | `foodula-1-ai.md` | In Progress | Deterministic planner and one-default-opponent controller are implemented; configured multi-opponent personality tuning remains |
 | 11 | Visual Style | `foodula-1-visual-style.md` | In Progress | Main menu, race backgrounds, masks, minimap and card visuals are integrated; polish remains |
 | 12 | Tech Tree | `foodula-1-tech-tree.md` | In Progress | Rules/database, persistent profiles, main-menu configuration UI and race-loop hooks are integrated; balance/playtest remains |
 
-## 2026-08-05 Implementation Snapshot
+## 2026-08-23 Implementation Snapshot
 
 The index was stale relative to the Unity project and is now aligned with the
 current implementation stage. `production/stage.txt` is `Production`. The
-project has 307 passing EditMode tests; the remaining `In Progress` items are
+project has 381 passing EditMode tests; the remaining `In Progress` items are
 deliberate feature gaps, not missing source files accidentally hidden by this
-index.
+index. The required `production/session-state/active.md` continuity file is
+currently missing and has not been created automatically.
 
 ## Design Dependencies
 
@@ -61,7 +62,7 @@ index.
 MVP Scope ✅ (game-concept.md)
   ├── Core HEAT Loop (gears, deck cycling, per-corner-segment judging)
   ├── Heat cards CANNOT be played — clog hand, only removed by cooldown (HEAT-correct)
-  ├── One simplified track (42 nodes, 5 corners)
+  ├── One simplified track target (42-node fallback, 5-corner MVP scope)
   ├── One AI opponent (simple behavior tree)
   └── 3-lap race with finish order
 
@@ -69,7 +70,7 @@ Full Vision (foodula-1-concept.md)
   ├── Core Mechanics (gears, cards, heat, slipstream, spin-out) — §1.6 rewritten 2026-07-22
   ├── Teams & Cars (6 teams, differentiated stats)
   ├── Drivers (12 drivers, skills)
-  ├── Tracks (6 tracks, weather)
+  ├── Tracks (8 selectable JSON tracks + fallback, weather)
   ├── AI (behavior tree, per-team logic)
   └── Visual Style (UI, world, VFX)
 ```

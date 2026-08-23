@@ -127,9 +127,23 @@ public class PitLaneRulesTests
         var result = PitLaneRules.EnterPit(player, nodes);
 
         Assert.That(result.success, Is.True);
-        Assert.That(result.exitPosition, Is.EqualTo(15));
-        Assert.That(player.position, Is.EqualTo(15));
+        Assert.That(result.pitExitPosition, Is.EqualTo(15));
+        Assert.That(result.exitPosition, Is.EqualTo(16));
+        Assert.That(result.exitMoveBonus, Is.EqualTo(1));
+        Assert.That(player.position, Is.EqualTo(16));
         Assert.That(player.skipNextTurn, Is.True);
+    }
+
+    [Test]
+    public void test_pit_exit_bonus_can_be_overridden_for_tech_balance()
+    {
+        var nodes = BuildTrackWithPit();
+        var player = new PlayerState("Test", false, 5, 1);
+        var result = PitLaneRules.EnterPit(player, nodes, exitMoveBonus: 2);
+
+        Assert.That(result.pitExitPosition, Is.EqualTo(15));
+        Assert.That(result.exitPosition, Is.EqualTo(17));
+        Assert.That(player.position, Is.EqualTo(17));
     }
 
     [Test]

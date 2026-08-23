@@ -4,6 +4,25 @@
 > **关联文档**：`foodula-1-concept.md`（主 GDD）  
 > **创建日期**：2026-07-13  
 > **数据来源**：真实 F1 赛道弯道序列 + 美食化改编
+> **实现快照**：2026-08-23；运行时以 `Assets/Resources/Configs/Tracks/*.json`
+> 为准，当前有 8 条官方可选赛道和 1 条 `fallback_42` 回退赛道。
+
+### 当前运行时赛道清单
+
+| Track ID | 格数 | 圈数 | 弯道/弯心 | 维修区 |
+|---|---:|---:|---:|---|
+| `silverstone_afternoon_tea` | 60 | 3 | 20 / 13 | 否 |
+| `nurburgring_bier` | 55 | 3 | 19 / 11 | 否 |
+| `monza_pasta` | 50 | 3 | 15 / 7 | 否 |
+| `indianapolis_burger` | 42 | 3 | 8 / 4 | 否 |
+| `shanghai_dim_sum` | 62 | 3 | 22 / 11 | 是 |
+| `suzuka_sushi` | 62 | 3 | 26 / 11 | 否 |
+| `le_mans_old_mulsanne` | 142 | 2 | 23 / 8 | 否 |
+| `nurburgring_24h_endurance` | 219 | 1 | 143 / 18 | 否 |
+| `fallback_42`（回退，不在菜单中） | 42 | 3 | 14 / 5 | 否 |
+
+> 表中“弯道/弯心”分别来自 JSON 的 corner 元数据和 `isApex` 标记。
+> 勒芒与北环的天气池当前为空，不能套用原六条赛道的天气百分比表。
 
 ---
 
@@ -15,7 +34,7 @@
 
 **规则：**
 ```
-本回合移动路径上的所有节点 → 检查每个节点是否是弯心（cornerId > 0）
+本回合移动路径上的所有节点 → 检查每个节点是否是弯心（`isApex: true`）
 → 对每个踩到的弯心：
     → 取 totalSpeed（本回合打出的速度牌总和）
     → 取有效限速 = cornerLimit + 赛车操控加成
@@ -30,9 +49,9 @@
 - HEAT 桌游原版中弯道就是一个判定点，弯心判定更接近原版体验
 
 **实现要点：**
-- 赛道数据中只有弯心节点标注 `cornerId`、`speedLimit`
+- 赛道数据中只有弯心节点标注 `cornerId`、`cornerLimit`、`isApex`
 - 弯道段的其他节点（入弯/出弯）不标注弯道数据，视为普通直道
-- 判定逻辑遍历路径节点，遇到 `cornerId > 0` 的节点就触发判定
+- 判定逻辑遍历路径节点，遇到 `isApex: true` 的节点就触发判定，并按 cornerId 去重
 
 ---
 
@@ -66,13 +85,16 @@
 | `straight` | 直道 | 无弯道判定，美国车/德国车可能获得加成 |
 | `corner` | 弯道（单格） | 经过时进行弯道判定 |
 | `corner_chain` | 连续弯道区 | 多个连续弯道格共享同一弯道名，每格独立判定 |
-| `pit_entry` | 维修区入口 | 中国车队进站触发点（其他车队可选） |
+| `pit_entry` | 维修区入口 | 有维修区赛道上的玩家进站选择点；不再限定为中国车队 |
 | `pit_exit` | 维修区出口 | 出站回到赛道的位置 |
 | `special` | 特殊装饰格 | 无机械效果，仅用于视觉/UI 展示（如铃鹿十字交叉的筷子雕塑/隧道） |
 
 ---
 
-## 二、六条赛道详细设计
+## 二、原始六条赛道详细设计
+
+> 本节保留最初六条赛道的弯道命名与美术设计；当前可选数量、完整节点
+> 序列和加载字段以上方清单及实际 JSON 为准，勒芒/北环属于后续扩展赛道。
 
 ---
 
@@ -414,7 +436,8 @@
 
 ### 天气类型
 
-每条赛道有独立的天气池，比赛开始时从中随机抽取。天气影响全局规则——所有数值基于赛道所在地区的**真实历史气候数据**确定。
+每条已配置天气的赛道有独立天气池，比赛开始时从中随机抽取。天气影响全局规则；
+原六条赛道的百分比表是设计参考，运行时以各 JSON 的实际 `weatherPool` 为准。
 
 | 天气 | 图标 | 游戏效果 | 说明 |
 |---|---|---|---|
@@ -435,6 +458,9 @@
 | 🇨🇳 上海 | 18% | **36%** | 27% | 18% | — | 多云潮湿，梅雨 + 台风季影响 |
 | 🇯🇵 铃鹿 | 25% | 17% | 33% | **25%** | — | **全赛道最湿**，台风暴雨是历史特征 |
 
+> 上表是原始六条赛道的设计基线；当前 JSON 的池长度和权重可能不同，
+> 勒芒旧慕尚与纽博格林北环当前没有配置天气池。
+
 > 📄 详细气候数据和天气池 JSON 数组见 `foodula-1-visual-style.md` 第 4.3 节。
 
 ---
@@ -445,20 +471,21 @@
 
 ```json
 {
+  "schemaVersion": 1,
   "trackId": "monza_pasta",
   "trackName": "蒙扎意面赛道",
   "trackNameEn": "Monza Pasta Circuit",
   "country": "IT",
   "laps": 3,
-  "totalCells": 50,
+  "gameCellCount": 50,
   "homeTeam": "ita_pasta_pizza",
   "weatherPool": ["sunny", "sunny", "sunny", "sunny", "sunny", "sunny", "cloudy", "cloudy", "cloudy", "light_rain", "light_rain", "heavy_rain", "hot"],
   "defaultWeather": "sunny",
   "hasPitLane": false,
   "cells": [
-    { "index": 0, "type": "start_finish", "cornerLevel": null, "cornerLimit": null, "name": "Start/Finish" },
+    { "index": 0, "type": "start_finish", "segmentId": "start_finish", "isApex": false, "name": "Start/Finish" },
     { "index": 1, "type": "straight", "cornerLevel": null, "cornerLimit": null, "name": "意面起点直道" },
-    { "index": 8, "type": "corner", "cornerLevel": 3, "cornerLimit": 2, "cornerId": "ragu_rettifilo", "name": "番茄肉酱减速弯", "length": 2 },
+    { "index": 8, "type": "corner", "segmentId": "ragu_rettifilo", "cornerLevel": 3, "cornerLimit": 2, "cornerId": "ragu_rettifilo", "isApex": true, "name": "番茄肉酱减速弯" },
     { "index": 12, "type": "corner", "cornerLevel": 1, "cornerLimit": 4, "cornerId": "grande_lasagna", "name": "千层面大弯", "length": 3 },
     { "index": 18, "type": "corner", "cornerLevel": 3, "cornerLimit": 2, "cornerId": "pesto_roggia", "name": "罗勒青酱减速弯", "length": 2 },
     { "index": 24, "type": "corner", "cornerLevel": 2, "cornerLimit": 3, "cornerId": "lesmo_primo", "name": "莱斯莫第一弯", "length": 1 },
@@ -482,9 +509,9 @@
 
 ## 七、待办事项
 
-- [ ] 各赛道的完整 Cell 序列（按 index 逐格定义）——本文档仅给出弯道分布，直道段的具体格子数待转化为逐格 JSON
+- [x] 官方赛道的完整 Cell 序列已落在 `Assets/Resources/Configs/Tracks/` 的 8 个可选 JSON 与 `fallback_42.json`；本文件保留设计说明
 - [x] 多车道视觉规则已确定：普通赛道默认内线，同格并排时后车使用外线；印地赛道使用四条可选赛道线，玩家在起终点可调整一条车道
-- [ ] 维修区对非中国车队的可用性（当前仅中国使用，其他车队可选维修区待设计）
+- [x] 维修区规则已可作用于带 `pit_entry`/`pit_exit` 的玩家；后续仍需完整 Play Mode 走查和数值平衡
 - [x] 主场加成已移除——主场优势由科技树 L3 体现（2026-07-24 决议）
 - [x] 高温天气已加入（蒙扎 8%、印第安纳波利斯 18%）
 - [x] 铃鹿十字交叉仅视觉元素，无机械影响（2026-07-24 决议）

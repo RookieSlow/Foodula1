@@ -1,8 +1,10 @@
 # Foodular1 — 美术资源清单
 
 > **用途**: 美术资源制作和查找的目录索引  
-> **关联**: `design/demo-framework.md` §4 资产需求清单  
-> **状态**: 全部待制作（🚧 = 占位符可用，⬜ = 待制作）
+> **关联**: `design/planning/demo-framework.md` §4 资产需求清单
+> **当前审计**：2026-08-23；本清单同时记录已存在资源、运行时生成内容和后续缺口。
+> **状态**：已有资源与待制作项混合；以本文件的逐项状态和实际文件为准。
+> “⬜”不再表示整个项目没有视觉实现，而是表示该项文件尚未提供或仍需美术替换。
 
 ---
 
@@ -13,7 +15,8 @@ Assets/
 ├── Sprites/           ← 2D精灵图（卡牌、UI、赛车、赛道、特效）
 ├── Prefabs/           ← Unity预制体（按类型分子目录）
 ├── Audio/             ← 音频资源（Music / SFX）
-├── Fonts/             ← 字体文件
+├── ttf/               ← 已有字体文件
+├── TmpFont/           ← TMP 字体资源
 └── Resources/Configs/ ← 运行时数据（JSON赛道）✅已完成
 ```
 
@@ -23,15 +26,15 @@ Assets/
 
 | # | 文件名 | 规格 | 描述 | 状态 |
 |---|--------|------|------|------|
-| 1 | `card_speed_bg.png` | 256×384 | 速度牌底图，科技蓝边框，圆角 | ⬜ |
-| 2 | `card_heat_bg.png` | 256×384 | 热量牌底图，暗橙/红棕色调 | ⬜ |
-| 3 | `card_speed_selected.png` | 256×384 | 选中态叠加，绿色半透明覆盖 | ⬜ |
-| 4 | `card_back.png` | 256×384 | 牌背，赛车主题 | ⬜ |
-| 5 | `card_num_1.png` | 128×128 | 速度数字 1 | ⬜ |
-| 6 | `card_num_2.png` | 128×128 | 速度数字 2 | ⬜ |
-| 7 | `card_num_3.png` | 128×128 | 速度数字 3 | ⬜ |
-| 8 | `card_num_4.png` | 128×128 | 速度数字 4 | ⬜ |
-| 9 | `card_heat_icon.png` | 128×128 | 火焰简化图标 | ⬜ |
+| 1 | `card_speed_bg.png` | 256×384 | 速度牌底图，科技蓝边框，圆角 | ✅ 已有 |
+| 2 | `card_heat_bg.png` | 256×384 | 热量牌底图，暗橙/红棕色调 | ✅ 已有 |
+| 3 | `card_selected_overlay.png` | 256×384 | 选中态叠加，绿色半透明覆盖 | ✅ 已有 |
+| 4 | `card_back.png` | 256×384 | 牌背，赛车主题 | ✅ 已有 |
+| 5 | `card_num_1.png` | 128×128 | 速度数字 1 | ✅ 已有 |
+| 6 | `card_num_2.png` | 128×128 | 速度数字 2 | ✅ 已有 |
+| 7 | `card_num_3.png` | 128×128 | 速度数字 3 | ✅ 已有 |
+| 8 | `card_num_4.png` | 128×128 | 速度数字 4 | ✅ 已有 |
+| 9 | `card_heat_icon.png` | 128×128 | 火焰简化图标 | ✅ 已有 |
 
 **设计参考**: `design/gdd/foodula-1-visual-style.md` §5 卡牌视觉设计  
 **色值参考**: `design/gdd/foodula-1-visual-style.md` §2.2
@@ -42,7 +45,7 @@ Assets/
 
 | # | 文件名 | 规格 | 描述 | 状态 |
 |---|--------|------|------|------|
-| 10 | `gear_knob_bg.png` | 200×200 | 档位旋钮底，圆形 | ⬜ |
+| 10 | `gear_knob_bg.png` | 200×200 | 档位旋钮底，圆形 | ✅ 已有 |
 | 11 | `gear_knob_pointer.png` | 200×200 | 档位旋钮指针层 | ⬜ |
 | 12 | `heat_meter_bg.png` | 48×256 | 热量温度计底，蓝→红渐变 | ⬜ |
 | 13 | `heat_meter_fill.png` | 44×252, 9-slice | 热量填充条 | ⬜ |
@@ -65,12 +68,12 @@ Assets/
 
 | # | 文件名 | 规格 | 描述 | 状态 |
 |---|--------|------|------|------|
-| 24 | `car_uk.png` | 256×128 | 英国炸鱼薯条赛车，金黄车身+薯条尾翼 | ⬜ |
-| 25 | `car_de.png` | 256×128 | 德国啤酒黑面包赛车，银灰+深棕 | ⬜ |
-| 26 | `car_it.png` | 256×128 | 意大利意面披萨赛车，法拉利红+芝士白 | ⬜ |
-| 27 | `car_us.png` | 256×128 | 美国汉堡可乐赛车，可乐红+双层肉饼 | ⬜ |
-| 28 | `car_cn.png` | 256×128 | 中国电动点心赛车，瓷白蒸笼+翡翠绿 | ⬜ |
-| 29 | `car_jp.png` | 256×128 | 日本寿司拉面赛车，玄黑海苔+彩色截面 | ⬜ |
+| 24 | `car_uk.png` | 256×128 | 英国炸鱼薯条赛车，金黄车身+薯条尾翼 | ✅ 已有 |
+| 25 | `car_de.png` | 256×128 | 德国啤酒黑面包赛车，银灰+深棕 | ✅ 已有 |
+| 26 | `car_it.png` | 256×128 | 意大利意面披萨赛车，法拉利红+芝士白 | ✅ 已有 |
+| 27 | `car_us.png` | 256×128 | 美国汉堡可乐赛车，可乐红+双层肉饼 | ✅ 已有 |
+| 28 | `car_cn.png` | 256×128 | 中国电动点心赛车，瓷白蒸笼+翡翠绿 | ✅ 已有 |
+| 29 | `car_jp.png` | 256×128 | 日本寿司拉面赛车，玄黑海苔+彩色截面 | ✅ 已有 |
 
 **设计要求**: 俯视图（赛道从上方看）。手绘质感（Hand-Painted）。  
 **设计参考**: `design/gdd/foodula-1-visual-style.md` §3.2
@@ -85,6 +88,10 @@ Assets/
 | 31 | `track_apex.png` | 32×32 | 弯心节点，红色圆点+限速数字 | 🚧 |
 | 32 | `track_start_finish.png` | 32×32 | 起终点线，绿色+方格旗图案 | 🚧 |
 | 33 | `track_bg_demo.png` | 2048×2048 | 示范赛道整体底图 | ⬜ |
+
+> 当前运行时已存在 8 个布局背景：`track_layout_uk/de/it/us/cn/jp/`
+> `fr_lemans/de_endurance.png`。普通节点和弯心遮罩由运行时绘制，
+> 不对应上表的旧节点精灵文件。
 
 **替代方案**: Demo 阶段可用 LineRenderer 画线（现有方案），节点用简单有色精灵标记。
 
@@ -104,7 +111,7 @@ Assets/
 
 ---
 
-## 六、字体 `Assets/Fonts/`
+## 六、字体（`Assets/ttf/` 与 `Assets/TmpFont/`）
 
 | # | 文件名 | 描述 | 许可 | 状态 |
 |---|--------|------|------|------|
@@ -147,9 +154,9 @@ Assets/
 
 | # | 文件名 | 描述 | 状态 |
 |---|--------|------|------|
-| 50 | `Prefab/CardPrefab.prefab` | 卡牌预制体，需替换精灵图+底图 | 🚧 占位 |
-| 51 | `Prefab/CarPrefab.prefab` | 赛车预制体，需替换精灵图 | 🚧 占位 |
-| 52 | `Prefab/NodePrefab.prefab` | 赛道节点预制体 | 🚧 占位 |
+| 50 | `Prefab/CardPrefab.prefab` | 卡牌预制体，需替换精灵图+底图 | ✅ 已有，运行时使用 |
+| 51 | `Prefab/CarPrefab.prefab` | 赛车预制体，需替换精灵图 | ✅ 已有，运行时使用 |
+| 52 | `Prefab/NodePrefab.prefab` | 赛道节点预制体 | ✅ 已有，运行时使用 |
 
 ### 已有
 
@@ -206,7 +213,7 @@ Assets/
 | 赛车图 | `Assets/Sprites/Cars/` |
 | 赛道节点 | `Assets/Sprites/Track/` |
 | 粒子/特效 | `Assets/Sprites/Effects/` |
-| 字体 | `Assets/Fonts/` |
+| 字体 | `Assets/ttf/`、`Assets/TmpFont/` |
 | 音乐 | `Assets/Audio/Music/` |
 | 音效 | `Assets/Audio/SFX/` |
 | UI预制体 | `Assets/Prefabs/UI/` |

@@ -3,7 +3,8 @@
 > **用途**: 复制 Prompt → 粘贴到 AI 绘图工具，生成游戏美术资源  
 > **当前工具**: GPT Image (ChatGPT 内置)  
 > **输出格式**: PNG, RGBA (需手动去底)  
-> **关联文档**: `design/gdd/foodula-1-visual-style.md` (配色与风格), `design/asset-manifest.md` (完整清单)
+> **关联文档**: `design/gdd/foodula-1-visual-style.md`（配色与风格）、`design/planning/asset-manifest.md`（完整清单）
+> **实现审计**：2026-08-23；赛道布局背景当前为 8 条官方可选赛道，资源清单中的状态以实际文件为准。
 
 ---
 
@@ -437,14 +438,14 @@ Style: flat UI divider, like an <hr> tag in HTML. Absolute minimalism.
 
 ---
 
-## 🟢 P2.5 — 赛道布局背景图（6 项）NEW
+## 🟢 P2.5 — 赛道布局背景图（8 项）
 
 > 🎯 **用途不同于 `track_env_*.png`**：这些是带完整赛道线路的布局图，
 > 直接铺在游戏场景中作为赛道本体。赛道线路清晰可见，节点沿线路布设。
-> **尺寸**: 4096×4096px — 需要足够大的分辨率来容纳 42-62 个节点的细节。
+> **尺寸**: 4096×4096px — 需要足够大的分辨率来容纳当前 42-219 个节点的细节。
 > **视图**: 完全俯视 (top-down)，纯 2D 平面。
 
-### 通用规则（6 条赛道全部遵守）
+### 通用规则（8 条官方赛道全部遵守）
 
 ```
 ALL tracks must follow these rules:
@@ -999,5 +1000,4 @@ AI 出图后，每张图需要：
 ---
 
 > 📄 **关联**: `design/gdd/foodula-1-visual-style.md` (完整配色与风格参考),  
-> `design/asset-manifest.md` (58 项完整清单),  
-> `design/asset-requirements.md` (详细规格)
+> `design/planning/asset-manifest.md`（当前资产清单与审计状态）。

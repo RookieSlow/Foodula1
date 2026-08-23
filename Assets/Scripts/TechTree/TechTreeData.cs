@@ -44,6 +44,8 @@ public enum TechEffectType
     DurabilityBonus,
     /// <summary>Slipstream range bonus, stacks on base 1 (0=1格, 1=2格).</summary>
     SlipstreamRangeBonus,
+    /// <summary>Cells advanced beyond the pit exit after a pit stop.</summary>
+    PitExitMoveBonus,
 
     // ── Stat Modifiers ──
     /// <summary>Engine capacity bonus — increases heat pool max.</summary>
@@ -76,7 +78,7 @@ public enum TechEffectType
     MotherRoad,            // L3: landmark prosperity/decline/revival system
 
     // ── CN Unique ──
-    YinYangTea,            // L1: end of turn cold→pay heat+move / hot→auto cool
+    YinYangTea,            // L1: Go→pay heat+move / Recover→cool hand heat
     DimSumCombo,           // L2: trick→speed→pay heat sequence → extra YinYang
     SomersaultCloud,       // L3: upgrade ATTACK cards (+2 slipstream, +1 corner limit)
 
@@ -182,6 +184,7 @@ public struct TechModifiers
     public int engineCapacityBonus;      // added to base engine capacity
     public int handSizeBonus;            // added to base hand size
     public int spinCounterMaxBonus;      // added to base spin counter max (3)
+    public int pitExitMoveBonus;         // cells gained beyond pit exit after pitting
 
     // ══ Category multipliers ══
     public bool hasPizzaSottile;         // doubles lightweight effects
@@ -239,9 +242,9 @@ public struct YinYangResult
 {
     /// <summary>Whether the effect triggered.</summary>
     public bool triggered;
-    /// <summary>"Yin" (cold) — pay 1 heat from engine to move +1.</summary>
+    /// <summary>"Yin" — Go mode: pay 1 heat from engine to move +1.</summary>
     public bool isYin;
-    /// <summary>"Yang" (hot) — auto cool 1 heat.</summary>
+    /// <summary>"Yang" — Recover mode: cool 1 heat from hand to engine.</summary>
     public bool isYang;
     /// <summary>Heat to cool (only for Yang).</summary>
     public int heatToCool;

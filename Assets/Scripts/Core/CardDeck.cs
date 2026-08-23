@@ -19,7 +19,7 @@ public class HeatPool
 /// 牌组系统 — 纯 C# 逻辑类（非 MonoBehaviour）。
 /// 管理牌组（drawPile）、手牌（hand）、弃牌堆（discardPile）和该玩家持有的引擎牌库引用。
 ///
-/// 热量牌生命周期: 热量池 →(弯道超速/急刹/引擎故障)→ 弃牌堆 →(洗牌)→ 牌组 →(抽牌)→ 手牌(不可打出!) →(降档冷却/G1散热)→ 热量池
+/// 热量牌生命周期: 热量池 →(弯道超速/急刹/引擎故障)→ 弃牌堆 →(洗牌)→ 牌组 →(抽牌)→ 手牌(不可打出!) →(冷却: 手牌→牌组→弃牌堆)→ 热量池
 /// 速度牌/特技牌生命周期: 牌组 → 手牌 → 打出/弃置 → 弃牌堆 → 洗回牌组。
 /// </summary>
 public class CardDeck
@@ -211,16 +211,39 @@ public class CardDeck
     /// </summary>
     public int RemoveHeatFromHand(int count)
     {
+        return RemoveHeatFromPile(hand, count);
+    }
+
+    /// <summary>
+    /// 通用冷却：严格按“手牌 → 抽牌堆 → 弃牌堆”顺序移除热量牌。
+    /// 永久热量牌归还引擎，限时热量牌直接销毁；不会因为冷却而洗牌。
+    /// </summary>
+    public int CoolHeat(int count)
+    {
+        if (count <= 0) return 0;
+
+        int removed = RemoveHeatFromPile(hand, count);
+        if (removed < count)
+            removed += RemoveHeatFromPile(drawPile, count - removed);
+        if (removed < count)
+            removed += RemoveHeatFromPile(discardPile, count - removed);
+        return removed;
+    }
+
+    private int RemoveHeatFromPile(List<CardData> pile, int count)
+    {
+        if (pile == null || count <= 0) return 0;
+
         int removed = 0;
-        for (int i = hand.Count - 1; i >= 0 && removed < count; i--)
+        for (int i = pile.Count - 1; i >= 0 && removed < count; i--)
         {
-            if (hand[i].IsHeat)
-            {
-                if (!hand[i].isTemp)
-                    heatPool.remaining++;
-                hand.RemoveAt(i);
-                removed++;
-            }
+            CardData card = pile[i];
+            if (card == null || !card.IsHeat) continue;
+
+            pile.RemoveAt(i);
+            if (!card.isTemp && heatPool != null)
+                heatPool.remaining++;
+            removed++;
         }
         return removed;
     }

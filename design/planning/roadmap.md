@@ -1,6 +1,6 @@
 # Foodular1 开发路线图
 
-> 最后更新: 2026-08-03
+> 最后更新: 2026-08-23
 > 关联: ADR-002 (当前架构)
 > 新模块接入指引: `docs/module-integration-guide.md`
 
@@ -10,7 +10,7 @@
 
 - ✅ Demo 框架：主菜单 → 比赛 → 返回
 - ✅ 核心 HEAT 循环：选档 → 选牌 → 移动 → 冷却 → 弯道判定
-- ✅ 数据驱动赛道：8 条 JSON 赛道（含银石 60 格验证通过）
+- ✅ 数据驱动赛道：8 条官方可选 JSON 赛道 + `fallback_42` 备用赛道（银石 60 格验证通过）
 - ✅ 纯函数层：RaceRules / TrackRules / AIPlanner / WeatherRules / PitLaneRules
 - ✅ 确定性随机：IRandomSource 注入，种子可重现
 - ✅ AI 对手：热量感知选牌 + 弯道风险判断
@@ -38,9 +38,9 @@
 | 5 | 填充 `tr-registry.yaml` | 文档 | 从 GDD 提取技术需求 ID，建立可追溯性 |
 | 6 | ~~赛道 JSON schema 校验工具~~ | 工具 | ✅ 已完成（`Assets/Scripts/Editor/TrackJsonValidator.cs`，Foodular1 > Tools 菜单） |
 | 7 | ~~写 `PlayerState` 状态机测试~~ | 测试 | ✅ 已完成（`player_state_test.cs`） |
-| 8 | ~~集成测试：完整比赛流程~~ | 测试 | ✅ 已完成纯层版本（`race_simulation_test.cs`，3 玩家全比赛模拟）；Play Mode 版本待许可证 |
+| 8 | ~~集成测试：完整比赛流程~~ | 测试 | ✅ 已完成纯层版本（`race_simulation_test.cs`，3 玩家全比赛模拟）；完整多天气/多圈/进站 Play Mode 走查仍待完成 |
 | 9 | ~~统一硬编码赛道为 JSON~~ | 重构 | ✅ 已完成（`fallback_42.json` 导出 42 节点赛道，无配置时自动加载；代码内建保留作双保险） |
-| 10 | 运行全部 EditMode 测试 | 验证 | ⚠️ 需 Unity 许可证（机器无 ULF）— 交互式 Test Runner 或激活许可证 |
+| 10 | ~~运行全部 EditMode 测试~~ | 验证 | ✅ Unity 编辑器回归：381/381 通过；Play Mode 完整走查仍单独跟踪 |
 
 ---
 
@@ -50,12 +50,12 @@
 |---|------|------|------|
 | 11 | ~~多车支持~~ | 功能 | ✅ 已完成：`RaceRanking` + N 玩家循环，`aiOpponentCount` 可配 |
 | 12 | ~~天气系统~~ | 功能 | ✅ 已完成：开局抽天气 + 每圈换天；Sunny/Cloudy/LightRain/HeavyRain/Hot 五种画像统一接入纯规则层 |
-| 13 | ~~维修区进站~~ | 功能 | ✅ 已完成：pit_entry 弹窗选择，冷却全部热量 + 停 1 回合 |
+| 13 | ~~维修区进站~~ | 功能 | ✅ 已完成：`pit_entry` 选择，按手牌→牌库→弃牌堆冷却全部热量，停 1 回合，并在 `pit_exit` 后前移；快充科技再增加 1 格 |
 | 14 | ~~车队特技~~ | 功能 | ✅ 已完成：12 张特技牌接入比赛（`docs/module-integration-guide.md` §6.4） |
 | 15 | ~~尾流系统~~ | 功能 | ✅ 已完成（`ComputeSlipstreamBonus`；帕尔玛/冰糕/筋斗云/范围科技全接入） |
-| 16 | 科技树 UI | 功能 | 主菜单科技树入口、RP/解锁/激活持久化与比赛接线已完成；后续为视觉和数值平衡 |
+| 16 | ~~科技树 UI~~ | 功能 | ✅ 已完成：主菜单科技树入口、RP/解锁/激活持久化与比赛接线；后续为视觉和数值平衡 |
 | 17 | ~~赛车随赛道方向旋转~~ | 视觉 | ✅ 已完成（`carSpriteFacingAngle`/`carRotateSpeed` 配置，出生朝向 + 移动平滑旋转 + 传送后朝向） |
-| 18 | 赛道背景图 | 视觉 | 集成 AI 生成的赛道俯视图作为背景 |
+| 18 | ~~赛道背景图~~ | 视觉 | ✅ 已完成：当前 8 条官方布局背景已接入运行时；后续为视觉细化和 Play Mode 走查 |
 | 19 | ~~独特科技补充~~ | 功能 | ✅ 已完成（MotherRoad / SchwarzbierFuel / FullEnglish / SunNeverSets / Broth / DriveThru / SmokedBBQ，见接入文档 §8） |
 
 ---

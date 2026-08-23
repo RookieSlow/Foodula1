@@ -180,6 +180,10 @@ public class GameConfigSO : ScriptableObject
     [Tooltip("维修区系统：进站/出站/冷却 (赛道需有 pit_entry/pit_exit)")]
     public bool enablePitLane = true;
 
+    [Tooltip("进站停 1 回合后，在 pit_exit 之外额外前进的格数；快充技术可继续增加")]
+    [Min(0)]
+    public int pitExitMoveBonus = 1;
+
     [Tooltip("特技牌系统：开局 4 张车队特技牌，每回合限 1")]
     public bool enableTrickCards = true;
 
