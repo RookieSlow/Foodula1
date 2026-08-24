@@ -48,8 +48,8 @@ The verified scene flow is:
 
 - Demo framework Phase 1 is complete.
 - Phase 2 asset replacement is in progress.
-- The project is in Production stage. The latest editor audit on 2026-08-23
-  verified a clean Unity editor state and 381/381 EditMode tests. The
+- The project is in Production stage. The latest editor audit on 2026-08-24
+  verified a clean Unity editor state and 396/396 EditMode tests. The
   MainMenu-to-Race flow, race card/icon references, and Chinese font support
   remain the current presentation baseline.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
@@ -61,7 +61,9 @@ The verified scene flow is:
 - The driver-selection vertical slice is now implemented: 12 catalog entries,
   XP/tier rules, main-menu selection UI, and race initialization integration.
 - Card number and heat icons, Chinese UI, Chinese font support, team car
-  sprites, and the main-menu flow have been implemented.
+  sprites, the main-menu flow, and the selected-card scale/lift/shadow feedback
+  have been implemented. Draw/discard pile previews now show stacked backs,
+  live card thumbnails, and count badges.
 - The custom Track Node Editor experiment was reverted after Scene View
   interaction problems.
 - The Race scene defaults to the 60-node Silverstone JSON track. Runtime apex
@@ -77,7 +79,7 @@ The verified scene flow is:
   passes its historical original 16 EditMode tests with no Unity warnings or errors;
   the current full suite is tracked separately below.
 - `Gameplay/TrackRules.cs` now provides pure, tested track traversal rules.
-  Together with the current feature tests, the project passes 381 EditMode
+  Together with the current feature tests, the project passes 396 EditMode
   tests. `RaceTestLogWriter` can capture a manual race into a timestamped log
   for later review; the latest audit did not create a new gameplay log.
 

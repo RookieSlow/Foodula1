@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -24,6 +25,16 @@ public class CardUI : MonoBehaviour
     [Header("图标设置")]
     public Vector2 iconSize = new Vector2(100, 100);
 
+    [Header("选中态表现")]
+    [Tooltip("选中卡牌的目标缩放；不改变 LayoutGroup 计算的槽位尺寸。")]
+    public float selectedScale = 1.08f;
+    [Tooltip("选中卡牌向上移动的像素距离。")]
+    public float selectedLift = 24f;
+    [Tooltip("选中态过渡时长（秒，使用未缩放时间）。")]
+    public float selectionDuration = 0.14f;
+    public Color selectedShadowColor = new Color(0.15f, 0.75f, 1f, 0.85f);
+    public Vector2 selectedShadowDistance = new Vector2(3f, -3f);
+
     [Header("卡牌数据")]
     public CardData cardData;
     public bool isSelected;
@@ -31,6 +42,12 @@ public class CardUI : MonoBehaviour
     private System.Action<CardUI> onClickCallback;
     private Image overlayImage; // 运行时动态创建的选中态叠加层
     private Image iconImage;    // 运行时动态创建的速度数字/热量图标
+    private Shadow selectionShadow;
+    private RectTransform rectTransform;
+    private Vector2 baseAnchoredPosition;
+    private Vector3 baseScale = Vector3.one;
+    private bool hasBaseTransform;
+    private Coroutine selectionRoutine;
 
     // 颜色常量（精灵图缺失时的回退方案）
     private static readonly Color COLOR_DEFAULT = new Color(1f, 1f, 1f, 1f);
@@ -38,6 +55,30 @@ public class CardUI : MonoBehaviour
     private static readonly Color COLOR_HEAT = new Color(0.55f, 0.35f, 0.28f, 1f);
 
     void Awake()
+    {
+        EnsureSelectionComponents();
+
+        // 创建选中态叠加层（覆盖在背景之上，图标之下）
+        CreateOverlayIfNeeded();
+
+        // 创建中央图标（显示速度数字或热量图标）
+        CreateIconIfNeeded();
+    }
+
+    private void EnsureSelectionComponents()
+    {
+        rectTransform = GetComponent<RectTransform>();
+
+        // Shadow 挂在卡牌根 Image 上，不占用额外布局尺寸；只有选中时才显示。
+        selectionShadow = GetComponent<Shadow>();
+        if (selectionShadow == null)
+            selectionShadow = gameObject.AddComponent<Shadow>();
+        selectionShadow.useGraphicAlpha = true;
+        selectionShadow.effectColor = Color.clear;
+        selectionShadow.effectDistance = Vector2.zero;
+    }
+
+    private void CreateOverlayIfNeeded()
     {
         // 创建选中态叠加层（覆盖在背景之上，图标之下）
         if (overlayImage == null)
@@ -55,7 +96,10 @@ public class CardUI : MonoBehaviour
             overlayImage.color = new Color(1, 1, 1, 0); // 默认透明
             overlayImage.preserveAspect = true;
         }
+    }
 
+    private void CreateIconIfNeeded()
+    {
         // 创建中央图标（显示速度数字或热量图标）
         if (iconImage == null)
         {
@@ -75,9 +119,19 @@ public class CardUI : MonoBehaviour
 
     public void SetupCard(CardData data, System.Action<CardUI> callback, string labelOverride = null)
     {
+        EnsureSelectionComponents();
+        CreateOverlayIfNeeded();
+        CreateIconIfNeeded();
+        StopSelectionAnimation();
+        if (hasBaseTransform && rectTransform != null)
+        {
+            rectTransform.localScale = baseScale;
+            rectTransform.anchoredPosition = baseAnchoredPosition;
+        }
         cardData = data;
         onClickCallback = callback;
         isSelected = false;
+        hasBaseTransform = false;
 
         // 设置背景精灵图
         if (backgroundImage != null)
@@ -189,13 +243,85 @@ public class CardUI : MonoBehaviour
             else
                 backgroundImage.color = isSelected ? COLOR_SELECTED : COLOR_DEFAULT;
         }
+
+        if (selectionShadow != null)
+        {
+            selectionShadow.effectColor = isSelected ? selectedShadowColor : Color.clear;
+            selectionShadow.effectDistance = isSelected ? selectedShadowDistance : Vector2.zero;
+        }
     }
 
     /// <summary>程序化设置选中状态（不触发回调）。</summary>
     public void SetSelectedWithoutNotify(bool selected)
     {
+        EnsureSelectionComponents();
+        if (rectTransform != null && !hasBaseTransform)
+        {
+            baseAnchoredPosition = rectTransform.anchoredPosition;
+            baseScale = rectTransform.localScale;
+            hasBaseTransform = true;
+        }
+
         isSelected = selected;
         UpdateVisual();
+        AnimateSelectionTransform();
+    }
+
+    private void AnimateSelectionTransform()
+    {
+        if (rectTransform == null || !hasBaseTransform)
+            return;
+
+        if (selectionRoutine != null)
+            StopCoroutine(selectionRoutine);
+
+        Vector3 targetScale = baseScale * (isSelected ? Mathf.Max(1f, selectedScale) : 1f);
+        Vector2 targetPosition = baseAnchoredPosition +
+            (isSelected ? Vector2.up * Mathf.Max(0f, selectedLift) : Vector2.zero);
+
+        if (selectionDuration <= 0f || !isActiveAndEnabled || !gameObject.activeInHierarchy)
+        {
+            rectTransform.localScale = targetScale;
+            rectTransform.anchoredPosition = targetPosition;
+            return;
+        }
+
+        selectionRoutine = StartCoroutine(AnimateSelectionRoutine(targetScale, targetPosition));
+    }
+
+    private IEnumerator AnimateSelectionRoutine(Vector3 targetScale, Vector2 targetPosition)
+    {
+        Vector3 startScale = rectTransform.localScale;
+        Vector2 startPosition = rectTransform.anchoredPosition;
+        float elapsed = 0f;
+
+        while (elapsed < selectionDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / selectionDuration);
+            t = t * t * (3f - 2f * t); // SmoothStep，避免卡牌突然跳动
+            rectTransform.localScale = Vector3.LerpUnclamped(startScale, targetScale, t);
+            rectTransform.anchoredPosition = Vector2.LerpUnclamped(startPosition, targetPosition, t);
+            yield return null;
+        }
+
+        rectTransform.localScale = targetScale;
+        rectTransform.anchoredPosition = targetPosition;
+        selectionRoutine = null;
+    }
+
+    private void StopSelectionAnimation()
+    {
+        if (selectionRoutine != null)
+        {
+            StopCoroutine(selectionRoutine);
+            selectionRoutine = null;
+        }
+    }
+
+    private void OnDisable()
+    {
+        StopSelectionAnimation();
     }
 
     /// <summary>批量设置所有精灵图引用（由 CardHandUI 在实例化后调用）。</summary>

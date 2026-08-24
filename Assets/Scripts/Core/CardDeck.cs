@@ -47,6 +47,8 @@ public class CardDeck
 
     // --- 只读属性 ---
     public IReadOnlyList<CardData> Hand => hand;
+    public IReadOnlyList<CardData> DrawPile => drawPile;
+    public IReadOnlyList<CardData> DiscardPile => discardPile;
     public int HandCount => hand.Count;
     public int DrawPileCount => drawPile.Count;
     public int DiscardPileCount => discardPile.Count;

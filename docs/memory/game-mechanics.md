@@ -3,8 +3,8 @@
 This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
-> **Implementation snapshot (2026-08-23)**: Unity `2022.3.62f3c1`; the latest
-> editor EditMode run passed `381/381`. The required
+> **Implementation snapshot (2026-08-24)**: Unity `2022.3.62f3c1`; the latest
+> editor EditMode run passed `396/396`. The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.
 
@@ -23,6 +23,9 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 - A turn selects a gear from 1 through 4. Speed cards can be selected singly
   or as a group and confirmed together; trick cards remain one-at-a-time
   immediate actions. A speed-card selection may never exceed the turn limit.
+  The selected card visual scales to 1.08, lifts 24 px, and uses a 0.14-second
+  unscaled-time transition plus a blue shadow; the LayoutGroup slot size and
+  sibling positions remain unchanged.
 - Confirmed trick cards resolve immediately, leave the hand, and enter the
   discard pile. They can return after the discard pile is reshuffled, and the
   existing one-trick-per-turn limit still applies.
@@ -30,6 +33,9 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   played area. Pressing the action button with no pending card ends card play;
   any missing required speed cards use the existing engine-failure rule.
 - The selected speed-card values determine movement.
+- The draw-pile and discard-pile panels show stacked backs, up to three live
+  card thumbnails, and a quantity badge. Draw previews follow the actual draw
+  order; discard previews start from the most recently discarded card.
 - Played speed cards enter the discard pile during end-of-turn cleanup; only
   non-heat cards are reshuffled when the draw pile is empty.
 - Heat cards cannot be played as speed cards and can clog the hand after they

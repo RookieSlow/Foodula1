@@ -42,6 +42,8 @@ public class CardHandUI : MonoBehaviour
     // card is intentionally restricted to one selected card at a time.
     private CardUI pendingPlayCard;
     private Coroutine actionButtonCooldown;
+    private CardPilePreviewUI drawPilePreview;
+    private CardPilePreviewUI discardPilePreview;
 
     /// <summary>Compatibility accessor for callers that expect a single selection.</summary>
     public CardData PendingPlayCard
@@ -163,6 +165,7 @@ public class CardHandUI : MonoBehaviour
         }
 
         UpdateActionButtonLabel();
+        RefreshRequirementFeedback(player);
     }
 
     /// <summary>
@@ -403,6 +406,25 @@ public class CardHandUI : MonoBehaviour
         }
         pendingPlayCard = null;
         UpdateActionButtonLabel();
+        RefreshRequirementFeedback();
+    }
+
+    /// <summary>
+    /// Refreshes the visible effective gear requirement after the manager has
+    /// finished setting the phase status text. This keeps the UI aligned with
+    /// team-specific extra slots and the current pending selection.
+    /// </summary>
+    public void RefreshRequirementFeedback(PlayerState player = null)
+    {
+        if (gameManager == null || isGearSelectionMode || isDiscardMode)
+            return;
+
+        PlayerState current = player != null ? player : gameManager.Player;
+        if (current == null || current.deck == null)
+            return;
+
+        UpdatePendingCardStatus(current, gameManager.GetMaxSpeedCardsThisTurn(current));
+        UpdateActionButtonLabel();
     }
 
     private void UpdatePendingCardStatus(PlayerState player, int maxCards)
@@ -411,9 +433,19 @@ public class CardHandUI : MonoBehaviour
 
         int played = player.playedSpeedCardsThisTurn.Count;
         List<CardData> selected = GetSelectedPlayCards();
+        int selectedSpeed = GetSelectedSpeedCount();
+        GearRequirementFeedback feedback = GearRequirementFeedbackRules.Evaluate(
+            maxCards,
+            played,
+            selectedSpeed,
+            player.deck.CountSpeedInHand(),
+            player.deck.heatPool != null ? player.deck.heatPool.remaining : 0);
+        string requirementStatus = GearRequirementFeedbackRules.FormatStatus(
+            TeamGearRules.GetDisplayName(player.teamId, player.gear), feedback);
+
         if (selected.Count == 0)
         {
-            gameManager.hudUI.SetStatus($"{TeamGearRules.GetDisplayName(player.teamId, player.gear)} 档 - 已打出 {played}/{maxCards} 张速度牌；可多选速度牌后确认");
+            gameManager.hudUI.SetStatus(requirementStatus);
             return;
         }
 
@@ -422,7 +454,7 @@ public class CardHandUI : MonoBehaviour
             int total = 0;
             for (int i = 0; i < selected.Count; i++) total += selected[i].value;
             gameManager.hudUI.SetStatus(
-                $"待确认：{selected.Count} 张速度牌（速度总和 {total}，本回合 {played + selected.Count}/{maxCards}）");
+                $"{requirementStatus}\n待确认：{selected.Count} 张速度牌（速度总和 {total}）");
             return;
         }
 
@@ -430,7 +462,7 @@ public class CardHandUI : MonoBehaviour
             ? gameManager.Session.TrickDb.Get(selected[0].trickId)
             : null;
         string label = def != null ? def.name : "特技牌";
-        gameManager.hudUI.SetStatus($"待确认：{label}（确认后立即发动）");
+        gameManager.hudUI.SetStatus($"{requirementStatus}\n待确认：{label}（确认后立即发动）");
     }
 
     private void UpdateActionButtonLabel()
@@ -444,7 +476,12 @@ public class CardHandUI : MonoBehaviour
         {
             List<CardData> selected = GetSelectedPlayCards();
             if (selected.Count == 0)
-                label = "结束出牌";
+            {
+                GearRequirementFeedback feedback = GetCurrentRequirementFeedback();
+                label = feedback.RequiredCards > 0
+                    ? GearRequirementFeedbackRules.FormatEndButtonLabel(feedback)
+                    : "结束出牌";
+            }
             else if (selected[0].IsTrick)
                 label = "确认特技牌";
             else
@@ -461,6 +498,20 @@ public class CardHandUI : MonoBehaviour
         UnityEngine.UI.Text legacy = playCardsButton.GetComponentInChildren<UnityEngine.UI.Text>(true);
         if (legacy != null)
             legacy.text = label;
+    }
+
+    private GearRequirementFeedback GetCurrentRequirementFeedback()
+    {
+        if (gameManager == null || gameManager.Player == null || gameManager.Player.deck == null)
+            return GearRequirementFeedbackRules.Evaluate(0, 0, 0, 0, 0);
+
+        PlayerState player = gameManager.Player;
+        return GearRequirementFeedbackRules.Evaluate(
+            gameManager.GetMaxSpeedCardsThisTurn(player),
+            player.playedSpeedCardsThisTurn.Count,
+            GetSelectedSpeedCount(),
+            player.deck.CountSpeedInHand(),
+            player.deck.heatPool != null ? player.deck.heatPool.remaining : 0);
     }
 
     public void UpdateDeckInfo(PlayerState player)
@@ -498,11 +549,46 @@ public class CardHandUI : MonoBehaviour
         if (player == null || player.deck == null)
             return;
 
-        if (drawPileText != null)
+        drawPilePreview = EnsurePilePreview(drawPileText, false, drawPilePreview);
+        if (drawPilePreview != null)
+            drawPilePreview.Refresh(player.deck.DrawPile, player.deck.DrawPileCount);
+        else if (drawPileText != null)
             drawPileText.text = "Draw pile\n" + player.deck.DrawPileCount + " cards";
+
         if (enginePileText != null)
             enginePileText.text = "Engine\n" + player.deck.heatPool.remaining + " heat";
-        if (discardPileText != null)
+
+        discardPilePreview = EnsurePilePreview(discardPileText, true, discardPilePreview);
+        if (discardPilePreview != null)
+            discardPilePreview.Refresh(player.deck.DiscardPile, player.deck.DiscardPileCount);
+        else if (discardPileText != null)
             discardPileText.text = "Discard pile\n" + player.deck.DiscardPileCount + " cards";
+    }
+
+    private CardPilePreviewUI EnsurePilePreview(
+        TMP_Text pileText,
+        bool newestCardAtEnd,
+        CardPilePreviewUI existing)
+    {
+        if (pileText == null || pileText.transform.parent == null)
+            return existing;
+
+        CardPilePreviewUI preview = existing;
+        if (preview == null)
+        {
+            Transform panel = pileText.transform.parent;
+            if (!panel.TryGetComponent(out preview))
+                preview = panel.gameObject.AddComponent<CardPilePreviewUI>();
+        }
+
+        preview.Configure(
+            speedBgSprite,
+            heatBgSprite,
+            numberSprites,
+            heatIconSprite,
+            pileText.font,
+            newestCardAtEnd);
+        pileText.gameObject.SetActive(false);
+        return preview;
     }
 }

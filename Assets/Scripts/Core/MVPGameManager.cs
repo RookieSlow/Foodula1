@@ -920,6 +920,8 @@ public class MVPGameManager : MonoBehaviour
                         hudUI.RefreshPlayerResources(p);
                         hudUI.SetStatus($"{TeamGearRules.GetDisplayName(p.teamId, p.gear)} 档 - 可多选速度牌后确认（最多 {GetMaxSpeedCardsThisTurn(p)} 张；特技牌单张确认）");
                     }
+                    if (cardHandUI != null)
+                        cardHandUI.RefreshRequirementFeedback(p);
 
                     yield return new WaitWhile(() => inputState.WaitingForCards);
                     raceCameraController?.FocusPlayerAfterCardPlay();
