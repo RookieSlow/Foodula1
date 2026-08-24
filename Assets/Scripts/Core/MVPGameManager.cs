@@ -62,6 +62,7 @@ public class MVPGameManager : MonoBehaviour
     private List<int> laneIndices = new List<int>();
     private Dictionary<PlayerState, AIController> aiControllers = new Dictionary<PlayerState, AIController>();
     private Dictionary<PlayerState, int> overtakesThisTurn = new Dictionary<PlayerState, int>();
+    private readonly Dictionary<PlayerState, SlipstreamResult> slipstreamsThisTurn = new Dictionary<PlayerState, SlipstreamResult>();
     private readonly RaceWeatherState weatherState = new RaceWeatherState();
     private RaceCameraController raceCameraController;
     private CarOrientationController carOrientationController;
@@ -944,6 +945,7 @@ public class MVPGameManager : MonoBehaviour
 
             // ====== 计算移动力（科技 + 特技加成） ======
             ComputeMovements(turnOrder, turnSkipped);
+            yield return StartCoroutine(PlaySlipstreamPhase(turnOrder, turnSkipped));
 
             // ====== PHASE B: 执行阶段 ======
             phaseState.BeginAnimation();
@@ -1295,6 +1297,7 @@ public class MVPGameManager : MonoBehaviour
     private void ComputeMovements(List<PlayerState> turnOrder, HashSet<PlayerState> turnSkipped)
     {
         overtakesThisTurn.Clear();
+        slipstreamsThisTurn.Clear();
 
         // 第一轮：基础速度总和（弯道判定用，不含特技/科技加成）
         foreach (var p in turnOrder)
@@ -1303,6 +1306,7 @@ public class MVPGameManager : MonoBehaviour
             {
                 p.totalMovementThisTurn = 0;
                 p.cornerTotalThisTurn = 0;
+                slipstreamsThisTurn[p] = default;
                 continue;
             }
             p.cornerTotalThisTurn = RaceRules.SumCardValues(p.playedSpeedCardsThisTurn);
@@ -1331,7 +1335,9 @@ public class MVPGameManager : MonoBehaviour
             bonus += p.trickMoveBonusThisTurn;
 
             // 尾流：模拟移动后紧跟前方车 → 基础 +2（帕尔玛/筋斗云叠加；前车冰糕阻断）
-            bonus += session.ComputeSlipstreamBonus(p, session.Players, trackManager.TotalNodes);
+            SlipstreamResult slipstream = session.ComputeSlipstream(p, session.Players, trackManager.TotalNodes);
+            slipstreamsThisTurn[p] = slipstream;
+            bonus += slipstream.Bonus;
 
             // DE L1 黑啤酒燃料：付 1 热 → +2 移动（自动激活；引擎预留 1 热防失控）
             if (p.techState != null && config.enableTechTree &&
@@ -1389,6 +1395,36 @@ public class MVPGameManager : MonoBehaviour
             overtakesThisTurn[p] = RaceMovementRules.CountOvertakes(
                 p, turnOrder, trackManager.TotalNodes, true, RaceTurnRules.ShouldSkip);
         }
+    }
+
+    /// <summary>
+    /// 合并播放本回合全部尾流事件：同时突出前后车并显示气流，
+    /// 只增加一个短表现阶段，不改变移动顺序、奖励或时间缩放。
+    /// </summary>
+    private IEnumerator PlaySlipstreamPhase(List<PlayerState> turnOrder, HashSet<PlayerState> turnSkipped)
+    {
+        if (raceEventFX == null)
+            yield break;
+
+        var events = new List<RaceEventFX.SlipstreamVisualEvent>();
+        foreach (PlayerState follower in turnOrder)
+        {
+            if (RaceTurnRules.IsInactive(follower, turnSkipped))
+                continue;
+            if (!slipstreamsThisTurn.TryGetValue(follower, out SlipstreamResult result) || !result.Triggered)
+                continue;
+
+            Transform followerCar = GetCarTransform(follower);
+            Transform leaderCar = GetCarTransform(result.Leader);
+            if (followerCar == null || leaderCar == null)
+                continue;
+
+            events.Add(new RaceEventFX.SlipstreamVisualEvent(followerCar, leaderCar, result.Bonus));
+            raceLogWriter?.Append($"[SLIPSTREAM] {follower.name} follows={result.Leader.name} bonus={result.Bonus}");
+        }
+
+        if (events.Count > 0)
+            yield return StartCoroutine(raceEventFX.PlaySlipstreams(events));
     }
 
     private int GetNigiriBonus(PlayerState p, bool crossedCorner, int rawEnd, int lane)

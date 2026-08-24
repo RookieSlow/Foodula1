@@ -4,7 +4,7 @@ This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
 > **Implementation snapshot (2026-08-24)**: Unity `2022.3.62f3c1`; the latest
-> editor EditMode run passed `402/402`. The required
+> editor EditMode run passed `406/406`. The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.
 
@@ -135,11 +135,16 @@ prototype and is no longer the authoritative model.
   `IRandomSource`.
 - Runtime weather profiles are `Sunny`, `Cloudy`, `LightRain`, `HeavyRain`, and
   `Hot`; the legacy `Rainy` enum name remains an alias for `LightRain`.
-- Cloudy reduces slipstream range by one cell. Light rain reduces corner limits
+- Cloudy keeps the normal slipstream trigger range but reduces the final
+  slipstream movement bonus by one. Light rain reduces corner limits
   by one and adds one spin-counter point on a spin-out. Heavy rain reduces corner
   limits by two, adds two spin-counter points, and disables slipstream. Hot
   reduces reaction-step cooling by one. Corner limits, slipstream, cooling,
   spin-out increments, and HUD labels all resolve through `WeatherRules`.
+- A successful slipstream now also records the nearest leader for presentation.
+  Before movement, all slipstreams in the turn are merged into one 0.9-second
+  unscaled visual phase with a blue moving dash trail, a two-car focus pulse,
+  and the final bonus text; this presentation does not alter movement totals.
 - Weather rolls once per newly crossed lap; the `RaceWeatherState` gate prevents
   multiple cars crossing the same start/finish node from rerolling the lap.
 

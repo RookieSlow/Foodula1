@@ -21,10 +21,12 @@ public class WeatherRulesTests
     }
 
     [Test]
-    public void test_cloudy_reduces_slipstream_range_by_one()
+    public void test_cloudy_keeps_slipstream_range_and_reduces_bonus_by_one()
     {
         int range = WeatherRules.ApplyWeatherToSlipstreamRange(2, WeatherType.Cloudy);
-        Assert.That(range, Is.EqualTo(1));
+        int bonus = WeatherRules.ApplyWeatherToSlipstreamBonus(2, WeatherType.Cloudy);
+        Assert.That(range, Is.EqualTo(2));
+        Assert.That(bonus, Is.EqualTo(1));
     }
 
     [Test]
@@ -32,6 +34,7 @@ public class WeatherRulesTests
     {
         Assert.That(WeatherRules.ApplyWeatherToCornerLimit(5, WeatherType.HeavyRain), Is.EqualTo(3));
         Assert.That(WeatherRules.ApplyWeatherToSlipstreamRange(2, WeatherType.HeavyRain), Is.Zero);
+        Assert.That(WeatherRules.ApplyWeatherToSlipstreamBonus(2, WeatherType.HeavyRain), Is.Zero);
         Assert.That(WeatherRules.CanSlipstream(WeatherType.HeavyRain), Is.False);
     }
 

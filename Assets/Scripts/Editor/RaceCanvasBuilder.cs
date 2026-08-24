@@ -16,8 +16,8 @@ public static class RaceCanvasBuilder
     [MenuItem("Tools/Build RaceCanvas Prefab")]
     public static void Build()
     {
-        if (AssetDatabase.LoadAssetAtPath<GameObject>(PREFAB_PATH) != null)
-            AssetDatabase.DeleteAsset(PREFAB_PATH);
+        // Save over the existing asset instead of deleting it first. Keeping
+        // the .meta file preserves the prefab GUID used by the Race scene.
 
         // ── Canvas Root ──
         GameObject root = NewGO("RaceCanvas", null, typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
@@ -42,6 +42,12 @@ public static class RaceCanvasBuilder
         var ch = chGO.GetComponent<CardHandUI>();
 
         BuildCardHand(chGO, ch);
+
+        // Bake the final in-game arrangement into the prefab so Prefab Mode
+        // matches Play Mode. Runtime only falls back to rebuilding this layout
+        // when an older canvas does not contain the authored panel structure.
+        var layout = root.AddComponent<RaceUILayoutController>();
+        layout.RebuildDefaultLayout(hud, ch);
 
         // ── Save Prefab ──
         EnsureDir("Assets/Prefabs/UI");

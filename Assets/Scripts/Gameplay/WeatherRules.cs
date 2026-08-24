@@ -13,12 +13,23 @@ public static class WeatherRules
         return baseLimit - mods.cornerLimitReduction;
     }
 
-    /// <summary>Apply weather modifiers to slipstream range.</summary>
+    /// <summary>
+    /// Apply weather gating to slipstream range. Cloudy affects efficiency,
+    /// not distance; only a weather that disables slipstream collapses range.
+    /// </summary>
     public static int ApplyWeatherToSlipstreamRange(int baseRange, WeatherType weather)
     {
         var mods = WeatherModifiers.FromWeather(weather);
         if (mods.disablesSlipstream) return 0;
-        return System.Math.Max(0, baseRange - mods.slipstreamRangeReduction);
+        return System.Math.Max(0, baseRange);
+    }
+
+    /// <summary>Apply weather modifiers to the movement awarded by slipstream.</summary>
+    public static int ApplyWeatherToSlipstreamBonus(int baseBonus, WeatherType weather)
+    {
+        var mods = WeatherModifiers.FromWeather(weather);
+        if (mods.disablesSlipstream) return 0;
+        return System.Math.Max(0, baseBonus - mods.slipstreamBonusReduction);
     }
 
     /// <summary>Get extra heat for corner overspeed in given weather.</summary>

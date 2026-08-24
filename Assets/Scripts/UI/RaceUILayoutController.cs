@@ -26,6 +26,7 @@ public class RaceUILayoutController : MonoBehaviour
     public bool IsApplied => applied;
     public RectTransform OperationPanel => operationPanel;
     public RectTransform TrackFrame => trackFrame;
+    public bool UsesAuthoredLayout { get; private set; }
     public static Vector2 ReturnToMenuAnchorMin => new Vector2(0.08f, 0.405f);
     public static Vector2 ReturnToMenuAnchorMax => new Vector2(0.92f, 0.475f);
 
@@ -50,6 +51,39 @@ public class RaceUILayoutController : MonoBehaviour
         RectTransform root = GetComponent<RectTransform>();
         if (root == null)
             return;
+
+        // A baked RaceCanvas is the authoring source of truth. Bind its named
+        // panels and references without touching any authored RectTransforms.
+        // Older canvases still receive the same safe runtime fallback below.
+        if (TryBindAuthoredLayout(root))
+        {
+            BindAuthoredReferences(hud, cardHand);
+            UsesAuthoredLayout = true;
+            applied = true;
+            return;
+        }
+
+        BuildDefaultLayout(root, hud, cardHand);
+    }
+
+    /// <summary>
+    /// Rebuilds the reference layout on an editor-authored canvas. This is
+    /// intentionally explicit because it resets panel/control anchors to the
+    /// project defaults; normal runtime startup never calls it for a baked UI.
+    /// </summary>
+    public void RebuildDefaultLayout(HUDUI hud, CardHandUI cardHand)
+    {
+        RectTransform root = GetComponent<RectTransform>();
+        if (root == null)
+            return;
+
+        applied = false;
+        UsesAuthoredLayout = false;
+        BuildDefaultLayout(root, hud, cardHand);
+    }
+
+    private void BuildDefaultLayout(RectTransform root, HUDUI hud, CardHandUI cardHand)
+    {
 
         TMP_FontAsset font = FindFont(root);
 
@@ -89,6 +123,40 @@ public class RaceUILayoutController : MonoBehaviour
             Dock(hud.gameOverPanel.transform, trackFrame, new Vector2(0.2f, 0.2f), new Vector2(0.8f, 0.8f));
 
         applied = true;
+    }
+
+    private bool TryBindAuthoredLayout(Transform root)
+    {
+        operationPanel = FindRect(root, "OperationPanel");
+        scoreboardPanel = FindRect(root, "ScoreboardPanel");
+        trackFrame = FindRect(root, "TrackFrame");
+        deckPanel = FindRect(root, "DeckTablePanel");
+
+        return operationPanel != null
+            && scoreboardPanel != null
+            && trackFrame != null
+            && deckPanel != null;
+    }
+
+    private static void BindAuthoredReferences(HUDUI hud, CardHandUI cardHand)
+    {
+        if (hud != null)
+        {
+            if (hud.weatherText == null)
+                hud.weatherText = FindComponent<TMP_Text>(hud.transform, "WeatherText");
+            if (hud.standingsText == null)
+                hud.standingsText = FindComponent<TMP_Text>(hud.transform, "StandingsText");
+        }
+
+        if (cardHand == null)
+            return;
+
+        if (cardHand.drawPileText == null)
+            cardHand.drawPileText = FindComponent<TMP_Text>(cardHand.transform.root, "DrawPileInfo");
+        if (cardHand.enginePileText == null)
+            cardHand.enginePileText = cardHand.deckInfoText;
+        if (cardHand.discardPileText == null)
+            cardHand.discardPileText = FindComponent<TMP_Text>(cardHand.transform.root, "DiscardPileInfo");
     }
 
     private void BuildOperationPanel(HUDUI hud, CardHandUI cardHand, TMP_FontAsset font)
@@ -318,5 +386,17 @@ public class RaceUILayoutController : MonoBehaviour
                 return found;
         }
         return null;
+    }
+
+    private static RectTransform FindRect(Transform root, string objectName)
+    {
+        Transform found = FindDeep(root, objectName);
+        return found != null ? found.GetComponent<RectTransform>() : null;
+    }
+
+    private static T FindComponent<T>(Transform root, string objectName) where T : Component
+    {
+        Transform found = FindDeep(root, objectName);
+        return found != null ? found.GetComponent<T>() : null;
     }
 }

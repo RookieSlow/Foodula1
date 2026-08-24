@@ -417,7 +417,42 @@ public class RaceSessionTest
     }
 
     [Test]
-    public void test_slipstream_range_respects_cloudy_weather()
+    public void test_slipstream_result_identifies_the_nearest_leader()
+    {
+        var session = CreateSession();
+        var follower = AddRacer(session, "Follower", 10, TeamId.CN, false);
+        var nearest = AddRacer(session, "Nearest", 11, TeamId.UK);
+        var farther = AddRacer(session, "Farther", 12, TeamId.DE);
+        follower.cornerTotalThisTurn = 3;
+        nearest.cornerTotalThisTurn = 3;
+        farther.cornerTotalThisTurn = 3;
+
+        SlipstreamResult result = session.ComputeSlipstream(follower, session.Players, 60);
+
+        Assert.IsTrue(result.Triggered);
+        Assert.AreSame(nearest, result.Leader);
+        Assert.AreEqual(RaceSession.SLIPSTREAM_BASE_BONUS, result.Bonus);
+    }
+
+    [Test]
+    public void test_slipstream_result_is_empty_when_effect_is_blocked()
+    {
+        var session = CreateSession();
+        var follower = AddRacer(session, "Follower", 10, TeamId.CN, false);
+        var leader = AddRacer(session, "Leader", 11, TeamId.UK);
+        follower.cornerTotalThisTurn = 3;
+        leader.cornerTotalThisTurn = 3;
+        leader.trickState.iceJellyActive = true;
+
+        SlipstreamResult result = session.ComputeSlipstream(follower, session.Players, 60);
+
+        Assert.IsFalse(result.Triggered);
+        Assert.IsNull(result.Leader);
+        Assert.AreEqual(0, result.Bonus);
+    }
+
+    [Test]
+    public void test_cloudy_slipstream_keeps_range_and_reduces_final_bonus()
     {
         var session = CreateSession();
         var p = AddRacer(session, "Behind", 10, TeamId.CN, false);
@@ -430,7 +465,24 @@ public class RaceSessionTest
         Assert.AreEqual(RaceSession.SLIPSTREAM_BASE_BONUS, session.ComputeSlipstreamBonus(p, session.Players, 60));
 
         session.Weather = WeatherType.Cloudy;
-        Assert.AreEqual(0, session.ComputeSlipstreamBonus(p, session.Players, 60));
+        Assert.AreEqual(RaceSession.SLIPSTREAM_BASE_BONUS - 1, session.ComputeSlipstreamBonus(p, session.Players, 60));
+    }
+
+    [Test]
+    public void test_cloudy_still_allows_base_range_slipstream()
+    {
+        var session = CreateSession();
+        var p = AddRacer(session, "Behind", 10, TeamId.CN, false);
+        var leader = AddRacer(session, "Leader", 11, TeamId.UK);
+        p.cornerTotalThisTurn = 3;
+        leader.cornerTotalThisTurn = 3;
+        session.Weather = WeatherType.Cloudy;
+
+        SlipstreamResult result = session.ComputeSlipstream(p, session.Players, 60);
+
+        Assert.IsTrue(result.Triggered);
+        Assert.AreSame(leader, result.Leader);
+        Assert.AreEqual(1, result.Bonus);
     }
 
     [Test]

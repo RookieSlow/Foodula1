@@ -6,6 +6,15 @@
 
 ## 待推进（2026-08-23 比赛视觉信息强化）
 
+- [x] 根据 2026-08-24 上海半局日志修正多云尾流语义：多云不再把基础 1 格触发距离
+  压成 0，而是按 GDD 的“尾流效率 -1”将最终尾流移动奖励减少 1；大雨仍完全禁用。
+  已补天气纯规则与 RaceSession 回归，Unity EditMode 全量 406/406 通过；Play Mode
+  仍需实际触发确认表现。
+
+- [x] 将比赛最终四区 HUD 烘焙进 `RaceCanvas.prefab`，运行时优先保留 Prefab 中人工
+  调整的 RectTransform；旧 Canvas 缺少主面板时才自动补齐。新增 Race UI Authoring
+  编辑器入口和已编排/回退两条布局回归测试；Unity EditMode 全量回归 403/403 通过，
+  Play Mode 确认采用 authored layout、画面与基线一致且 Console 0 错误/警告。
 - [x] 比赛中“返回主菜单”按钮移入左侧操作栏动作栈，放在重新开始按钮下方、
   提示日志面板上方，避免覆盖操作栏标题和赛道画面；Play Mode 截图和 Console
   走查通过，并增加运行时锚点回归测试。
@@ -14,17 +23,19 @@
   Play Mode 人工走查仍待完成。
 - [x] P1：选中卡牌缩放并上移，保持布局槽位不变；选中态使用 1.08 倍缩放、上移
   24px、0.14 秒未缩放时间缓动和蓝色阴影，已覆盖多选、特技单选和布局槽位不变。
-  Unity EditMode 当前全量回归 402/402 通过；Play Mode 遮罩边界仍待人工走查。
+  Unity EditMode 当前全量回归 403/403 通过；Play Mode 遮罩边界仍待人工走查。
 - [x] P1：为抽牌堆和弃牌堆增加牌背叠放、实际卡牌缩略图、数量徽标和牌堆变化刷新；
   抽牌堆按实际抽取顺序预览，弃牌堆按最近弃入顺序预览，热量牌按真实区域显示。
-  Unity EditMode 当前全量回归 402/402 通过；Play Mode 尺寸与可读性仍待人工走查。
+  Unity EditMode 当前全量回归 403/403 通过；Play Mode 尺寸与可读性仍待人工走查。
 - [x] P1：基于赛道 JSON 增加科技蓝玩家光环、1-based `格 X/N` 和玩家前后各 6 格
   的局部刻度；密集节点会自动抽样文字。弯道覆盖层同步重制为 Lv1 绿 / Lv2 黄 /
   Lv3 红的圆角平滑双层曲线带，弯心和限速徽标保持清晰。Unity EditMode 全量回归
-  402/402 通过，并覆盖全部 8 条官方 JSON 与 fallback 的弯道曲线采样；Silverstone
+  403/403 通过，并覆盖全部 8 条官方 JSON 与 fallback 的弯道曲线采样；Silverstone
   Play Mode 截图与 Console 走查通过，其余官方赛道待抽查。
-- [ ] P2：为尾流结算增加独立视觉阶段，显示两车聚焦、蓝色虚线气流和尾流加成；
-  不改变规则层移动结果。
+- [x] P2：尾流结算现在返回命中的前车与最终加成，并在移动前把同回合全部事件合并为
+  0.9 秒独立表现：两车同步聚焦、科技蓝流动虚线和“尾流 +N”提示；计时使用
+  unscaled time，不改变规则层移动结果。Unity EditMode 当前全量回归 406/406 通过，
+  实际画面仍待包含尾流的一局 Play Mode 人工走查。
 - [ ] 验收：相关 EditMode 测试通过，并完成至少一局包含牌堆变化、挡位缺牌和尾流的
   Play Mode 人工走查。
 
@@ -37,7 +48,7 @@
 - [x] 修正比赛结果文本中的国旗和状态 Emoji 字形警告，改用稳定的车队代码和中文
   状态标签，避免 TMP 显示方框。
 - [x] 增加 RaceRanking 回归测试，并让纯层比赛模拟覆盖玩家 DNF 后其余赛车继续比赛；
-  Unity EditMode 全量回归 402/402 通过。
+  Unity EditMode 全量回归 403/403 通过。
 - [ ] 仍需用新的手动 Play Mode 日志确认：玩家 DNF 后 AI 会继续完成并正确记录最终结果。
 
 ## 本次完成（2026-08-23 热量牌生命周期、阴阳茶与维修区）
@@ -60,7 +71,7 @@
 - [x] 维修区选择窗口改为 `pit_entry` 前 1–10 格；选择进站只登记预定状态，
   越过入口的本回合继续移动，下一回合开始才执行停站、全热量冷却和出口前移。
 - [x] 增加维修区入口前窗口、跨圈入口检测和“预定后延后一回合执行”的 EditMode 覆盖。
-- [x] 本轮 Unity EditMode 全量回归 402/402 通过；Play Mode 进站人工走查仍待验证。
+- [x] 本轮 Unity EditMode 全量回归 403/403 通过；Play Mode 进站人工走查仍待验证。
 
 ## 本次完成（2026-08-19 赛道天气规则边界）
 
@@ -147,7 +158,7 @@
 - [x] Add EditMode tests for `AIPlanner`, deterministic random behavior,
   and the AI spin-out card-conservation regression (7 cases passing in Unity).
 - [x] Historical baseline: validated changed scripts and Unity console with no errors
-  (16 EditMode tests at that stage; current full suite is 402/402).
+  (16 EditMode tests at that stage; current full suite is 403/403).
 - [x] Review the final diff for the approved refactor changes.
 - [ ] Commit only with explicit user instruction; scheduled-task authorization
   does not include Git commits.
@@ -309,7 +320,7 @@ maintained source for current work.
   all use the same rules.
 - [x] Added `TeamVehicleRules` as the boundary for team profile values and base
   durability/heat-pool setup; full movement/handling balancing remains a follow-up.
-- [x] 历史记录：该切片完成时 Unity EditMode 307/307 通过；当前总回归已更新为 402/402。
+- [x] 历史记录：该切片完成时 Unity EditMode 307/307 通过；当前总回归已更新为 403/403。
   该历史切片的 dotnet build 当时为 0 错误。
 - [ ] Continue extracting orchestration from `MVPGameManager` into phase services
   once the next feature requires changes across multiple phases.

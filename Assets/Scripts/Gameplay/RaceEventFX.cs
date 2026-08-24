@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,20 @@ using UnityEngine.UI;
 /// </summary>
 public sealed class RaceEventFX : MonoBehaviour
 {
+    public readonly struct SlipstreamVisualEvent
+    {
+        public Transform Follower { get; }
+        public Transform Leader { get; }
+        public int Bonus { get; }
+
+        public SlipstreamVisualEvent(Transform follower, Transform leader, int bonus)
+        {
+            Follower = follower;
+            Leader = leader;
+            Bonus = bonus;
+        }
+    }
+
     private Canvas canvas;
     private RectTransform overlayRoot;
     private CanvasGroup canvasGroup;
@@ -23,6 +38,7 @@ public sealed class RaceEventFX : MonoBehaviour
 
     private static readonly Color PanelColor = new Color(0.025f, 0.04f, 0.07f, 0.94f);
     private static readonly Color OvertakeColor = new Color(1f, 0.75f, 0.24f, 1f);
+    private static readonly Color SlipstreamColor = new Color(0.12f, 0.76f, 1f, 1f);
     private static readonly Color SpinColor = new Color(1f, 0.47f, 0.22f, 1f);
     private static readonly Color BlowupColor = new Color(1f, 0.16f, 0.12f, 1f);
 
@@ -133,6 +149,89 @@ public sealed class RaceEventFX : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// One merged slipstream phase for the turn. Animated UI dashes connect
+    /// every follower/leader pair while both cars receive a restrained focus pulse.
+    /// </summary>
+    public IEnumerator PlaySlipstreams(IReadOnlyList<SlipstreamVisualEvent> events)
+    {
+        if (!initialized || events == null || events.Count == 0 || canvas == null)
+            yield break;
+
+        yield return AcquireEffectSlot();
+
+        int totalBonus = 0;
+        var originalScales = new Dictionary<Transform, Vector3>();
+        var airflowRoots = new List<RectTransform>();
+        for (int i = 0; i < events.Count; i++)
+        {
+            SlipstreamVisualEvent visualEvent = events[i];
+            if (visualEvent.Follower == null || visualEvent.Leader == null || visualEvent.Bonus <= 0)
+                continue;
+
+            totalBonus += visualEvent.Bonus;
+            RememberScale(originalScales, visualEvent.Follower);
+            RememberScale(originalScales, visualEvent.Leader);
+            airflowRoots.Add(CreateAirflowStrip($"SlipstreamAirflow_{i}"));
+        }
+
+        if (airflowRoots.Count == 0)
+        {
+            effectBusy = false;
+            yield break;
+        }
+
+        string detail = events.Count == 1
+            ? $"尾流 +{totalBonus} · 气流牵引"
+            : $"尾流 ×{airflowRoots.Count} · 总加成 +{totalBonus}";
+        SetMessage("SLIPSTREAM!", detail, SlipstreamColor);
+
+        try
+        {
+            float elapsed = 0f;
+            const float duration = 0.9f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                float pulse = 1f + Mathf.Sin(t * Mathf.PI) * 0.11f;
+                foreach (KeyValuePair<Transform, Vector3> pair in originalScales)
+                {
+                    if (pair.Key != null)
+                        pair.Key.localScale = pair.Value * pulse;
+                }
+
+                int airflowIndex = 0;
+                for (int i = 0; i < events.Count && airflowIndex < airflowRoots.Count; i++)
+                {
+                    SlipstreamVisualEvent visualEvent = events[i];
+                    if (visualEvent.Follower == null || visualEvent.Leader == null || visualEvent.Bonus <= 0)
+                        continue;
+                    UpdateAirflowStrip(airflowRoots[airflowIndex], visualEvent.Follower, visualEvent.Leader, elapsed);
+                    airflowIndex++;
+                }
+
+                canvasGroup.alpha = t < 0.12f ? t / 0.12f : (t > 0.78f ? (1f - t) / 0.22f : 1f);
+                yield return null;
+            }
+        }
+        finally
+        {
+            foreach (KeyValuePair<Transform, Vector3> pair in originalScales)
+            {
+                if (pair.Key != null)
+                    pair.Key.localScale = pair.Value;
+            }
+            foreach (RectTransform airflowRoot in airflowRoots)
+            {
+                if (airflowRoot != null)
+                    Destroy(airflowRoot.gameObject);
+            }
+            effectBusy = false;
+            HideMessage();
+        }
+    }
+
     /// <summary>Spin-out cue: a full rotation, shake and explicit status text.</summary>
     public IEnumerator PlaySpin(Transform car, string reason, bool blown)
     {
@@ -178,6 +277,73 @@ public sealed class RaceEventFX : MonoBehaviour
         while (effectBusy)
             yield return null;
         effectBusy = true;
+    }
+
+    private static void RememberScale(Dictionary<Transform, Vector3> scales, Transform target)
+    {
+        if (target != null && !scales.ContainsKey(target))
+            scales.Add(target, target.localScale);
+    }
+
+    private RectTransform CreateAirflowStrip(string name)
+    {
+        GameObject rootObject = new GameObject(name, typeof(RectTransform));
+        rootObject.transform.SetParent(canvas.transform, false);
+        RectTransform root = rootObject.GetComponent<RectTransform>();
+        root.anchorMin = root.anchorMax = new Vector2(0.5f, 0.5f);
+        root.sizeDelta = Vector2.zero;
+
+        const int dashCount = 8;
+        for (int i = 0; i < dashCount; i++)
+        {
+            Image dash = CreateImage(root, $"Dash_{i}", Vector2.zero, new Vector2(20f, 5f));
+            dash.color = SlipstreamColor;
+        }
+        root.SetAsLastSibling();
+        if (overlayRoot != null)
+            overlayRoot.SetAsLastSibling();
+        return root;
+    }
+
+    private void UpdateAirflowStrip(RectTransform root, Transform follower, Transform leader, float elapsed)
+    {
+        if (root == null || follower == null || leader == null)
+            return;
+
+        Camera worldCamera = Camera.main;
+        RectTransform canvasRect = canvas.transform as RectTransform;
+        if (worldCamera == null || canvasRect == null)
+            return;
+
+        Vector2 followerScreen = worldCamera.WorldToScreenPoint(follower.position);
+        Vector2 leaderScreen = worldCamera.WorldToScreenPoint(leader.position);
+        Camera uiCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, followerScreen, uiCamera, out Vector2 from) ||
+            !RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, leaderScreen, uiCamera, out Vector2 to))
+            return;
+
+        Vector2 direction = to - from;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        int dashCount = root.childCount;
+        for (int i = 0; i < dashCount; i++)
+        {
+            RectTransform dash = root.GetChild(i) as RectTransform;
+            if (dash == null)
+                continue;
+
+            float flow = Mathf.Repeat((i + 1f) / (dashCount + 1f) + elapsed * 1.35f, 1f);
+            dash.anchoredPosition = Vector2.Lerp(from, to, flow);
+            dash.localRotation = Quaternion.Euler(0f, 0f, angle);
+            float taper = Mathf.Lerp(0.65f, 1.15f, flow);
+            dash.sizeDelta = new Vector2(20f * taper, 5f * taper);
+            Image image = dash.GetComponent<Image>();
+            if (image != null)
+            {
+                Color color = SlipstreamColor;
+                color.a = Mathf.Sin(flow * Mathf.PI) * 0.92f;
+                image.color = color;
+            }
+        }
     }
 
     private void OnDisable()

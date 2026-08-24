@@ -26,8 +26,8 @@ public struct WeatherModifiers
     /// <summary>Corner speed limit reduction (positive = harder).</summary>
     public int cornerLimitReduction;
 
-    /// <summary>Slipstream range reduction (cells).</summary>
-    public int slipstreamRangeReduction;
+    /// <summary>Slipstream movement-bonus reduction.</summary>
+    public int slipstreamBonusReduction;
 
     /// <summary>Reserved extra heat per corner overspeed for future weather rules.</summary>
     public int extraHeatPerOverspeed;
@@ -45,18 +45,18 @@ public struct WeatherModifiers
     public static WeatherModifiers Sunny => new WeatherModifiers
     {
         cornerLimitReduction = 0,
-        slipstreamRangeReduction = 0,
+        slipstreamBonusReduction = 0,
         extraHeatPerOverspeed = 0,
         extraSpinCounter = 0,
         coolingReduction = 0,
         disablesSlipstream = false
     };
 
-    /// <summary>Cloud cover reduces the effective slipstream range by one cell.</summary>
+    /// <summary>Cloud cover reduces slipstream efficiency by one movement point.</summary>
     public static WeatherModifiers Cloudy => new WeatherModifiers
     {
         cornerLimitReduction = 0,
-        slipstreamRangeReduction = 1,
+        slipstreamBonusReduction = 1,
         extraHeatPerOverspeed = 0,
         extraSpinCounter = 0,
         coolingReduction = 0,
@@ -67,7 +67,7 @@ public struct WeatherModifiers
     public static WeatherModifiers LightRain => new WeatherModifiers
     {
         cornerLimitReduction = 1,
-        slipstreamRangeReduction = 0,
+        slipstreamBonusReduction = 0,
         extraHeatPerOverspeed = 0,
         extraSpinCounter = 1,
         coolingReduction = 0,
@@ -78,7 +78,7 @@ public struct WeatherModifiers
     public static WeatherModifiers HeavyRain => new WeatherModifiers
     {
         cornerLimitReduction = 2,
-        slipstreamRangeReduction = 0,
+        slipstreamBonusReduction = 0,
         extraHeatPerOverspeed = 0,
         extraSpinCounter = 2,
         coolingReduction = 0,
@@ -89,7 +89,7 @@ public struct WeatherModifiers
     public static WeatherModifiers Hot => new WeatherModifiers
     {
         cornerLimitReduction = 0,
-        slipstreamRangeReduction = 0,
+        slipstreamBonusReduction = 0,
         extraHeatPerOverspeed = 0,
         extraSpinCounter = 0,
         coolingReduction = 1,

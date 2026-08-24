@@ -51,7 +51,7 @@
 
 The index was stale relative to the Unity project and is now aligned with the
 current implementation stage. `production/stage.txt` is `Production`. The
-project has 402 passing EditMode tests; the remaining `In Progress` items are
+project has 406 passing EditMode tests; the remaining `In Progress` items are
 deliberate feature gaps, not missing source files accidentally hidden by this
 index. The required `production/session-state/active.md` continuity file is
 currently missing and has not been created automatically.

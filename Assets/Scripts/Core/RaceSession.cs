@@ -1,5 +1,19 @@
 using System.Collections.Generic;
 
+/// <summary>尾流判定结果；规则层同时返回加成与被跟随的前车，供表现层使用。</summary>
+public readonly struct SlipstreamResult
+{
+    public PlayerState Leader { get; }
+    public int Bonus { get; }
+    public bool Triggered => Leader != null && Bonus > 0;
+
+    public SlipstreamResult(PlayerState leader, int bonus)
+    {
+        Leader = leader;
+        Bonus = bonus;
+    }
+}
+
 /// <summary>
 /// 单场比赛的完整运行时状态 — 纯 C# 层（ADR-002 分层架构）。
 /// 聚合 5 个核心系统：多车排名（RaceRanking）、天气（WeatherRules）、
@@ -400,10 +414,11 @@ public class RaceSession
     /// 加成 = 基础 +2 + 帕尔玛干酪 +2 + 筋斗云 +2（本回合打过 ATTACK 特技）。
     /// 前方车的冰糕会阻断尾流（CN 特技牌）。
     /// </summary>
-    public int ComputeSlipstreamBonus(PlayerState p, IReadOnlyList<PlayerState> players, int totalNodes)
+    public SlipstreamResult ComputeSlipstream(PlayerState p, IReadOnlyList<PlayerState> players, int totalNodes)
     {
-        if (p.isBlown || p.hasFinished) return 0;
-        if (!WeatherRules.CanSlipstream(Weather)) return 0;
+        if (p == null || players == null || totalNodes <= 0) return default;
+        if (p.isBlown || p.hasFinished) return default;
+        if (!WeatherRules.CanSlipstream(Weather)) return default;
 
         int mySim = p.position + p.cornerTotalThisTurn;
         PlayerState leader = null;
@@ -421,16 +436,16 @@ public class RaceSession
             }
         }
 
-        if (leader == null) return 0;
+        if (leader == null) return default;
 
         // 距离判定：最近的前车必须在尾流距离内（≤ 半圈才算"前方"）
-        if (bestGap > totalNodes / 2) return 0;
+        if (bestGap > totalNodes / 2) return default;
         int range = 1 + GetModifiers(p).slipstreamRangeBonus + p.slipstreamRangeBonusThisTurn;
         range = WeatherRules.ApplyWeatherToSlipstreamRange(range, Weather);
-        if (bestGap > range) return 0;
+        if (bestGap > range) return default;
 
         // 冰糕：前车开启 → 身后赛车无法享受尾流
-        if (TrickCardRules.IsIceJellyActive(leader.trickState)) return 0;
+        if (TrickCardRules.IsIceJellyActive(leader.trickState)) return default;
 
         int bonus = SLIPSTREAM_BASE_BONUS + TeamVehicleRules.GetSlipstreamBonus(p.teamId);
         bonus += TrickCardRules.GetParmigianoBonus(p.trickState);
@@ -441,7 +456,14 @@ public class RaceSession
         {
             bonus += TechTreeRules.GetSomersaultCloudSlipstreamBonus();
         }
-        return bonus;
+        bonus = WeatherRules.ApplyWeatherToSlipstreamBonus(bonus, Weather);
+        return new SlipstreamResult(leader, bonus);
+    }
+
+    /// <summary>兼容只需要数值的模拟、AI 与既有测试调用。</summary>
+    public int ComputeSlipstreamBonus(PlayerState p, IReadOnlyList<PlayerState> players, int totalNodes)
+    {
+        return ComputeSlipstream(p, players, totalNodes).Bonus;
     }
 
     /// <summary>环形赛道前向距离（a 到 b 沿赛道方向）。</summary>
