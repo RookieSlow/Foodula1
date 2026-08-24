@@ -26,6 +26,8 @@ public class RaceUILayoutController : MonoBehaviour
     public bool IsApplied => applied;
     public RectTransform OperationPanel => operationPanel;
     public RectTransform TrackFrame => trackFrame;
+    public static Vector2 ReturnToMenuAnchorMin => new Vector2(0.08f, 0.405f);
+    public static Vector2 ReturnToMenuAnchorMax => new Vector2(0.92f, 0.475f);
 
     /// <summary>Normalized screen rectangle reserved for the main race camera.</summary>
     public Rect TrackViewport
@@ -114,6 +116,10 @@ public class RaceUILayoutController : MonoBehaviour
 
             DockButton(hud.confirmGearButton, operationPanel, new Vector2(0.08f, 0.57f), new Vector2(0.92f, 0.64f));
             DockButton(hud.resetButton, operationPanel, new Vector2(0.08f, 0.49f), new Vector2(0.92f, 0.56f));
+            // Keep persistent navigation with the other actions, but outside
+            // the prompt/log panel and away from the operation-panel title.
+            DockButton(hud.returnToMenuButton, operationPanel,
+                ReturnToMenuAnchorMin, ReturnToMenuAnchorMax);
             DockText(hud.statusText, operationPanel, 0.24f, 0.38f, 12);
             DockText(hud.logText, operationPanel, 0.05f, 0.22f, 10);
         }

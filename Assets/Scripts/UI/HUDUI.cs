@@ -124,11 +124,11 @@ public class HUDUI : MonoBehaviour
             if (allPlayers != null && allPlayers.Count > 0)
             {
                 int rank = RaceRanking.GetCurrentRank(player, new System.Collections.Generic.List<PlayerState>(allPlayers));
-                positionText.text = $"位置: {player.position}/{gm.Track.TotalNodes} | 排名: {rank}/{allPlayers.Count}";
+                positionText.text = $"{TrackPresentationRules.FormatCellPosition(player.position, gm.Track.TotalNodes)} | 排名: {rank}/{allPlayers.Count}";
             }
             else
             {
-                positionText.text = $"位置: {player.position}/{gm.Track.TotalNodes}";
+                positionText.text = TrackPresentationRules.FormatCellPosition(player.position, gm.Track.TotalNodes);
             }
         }
 
@@ -138,7 +138,7 @@ public class HUDUI : MonoBehaviour
                 ? "<color=red>AI: 爆缸!</color>"
                 : ai.hasFinished
                     ? "<color=green>AI: 完赛!</color>"
-                    : $"AI: {TeamGearRules.GetDisplayName(ai.teamId, ai.gear)} | 引擎:{ai.deck.heatPool.remaining} | 圈{ai.lap} | 位{ai.position}";
+                    : $"AI: {TeamGearRules.GetDisplayName(ai.teamId, ai.gear)} | 引擎:{ai.deck.heatPool.remaining} | 圈{ai.lap} | 格{TrackPresentationRules.WrapNodeIndex(ai.position, gm.Track.TotalNodes) + 1}";
         }
 
         // 天气显示
@@ -178,7 +178,13 @@ public class HUDUI : MonoBehaviour
         foreach (var e in rankings)
         {
             string mark = e.player == self ? " ←你" : "";
-            sb.AppendLine($"{e.rank}. {e.player.name} 圈{e.player.lap} 位{e.player.position}{mark}");
+            int totalNodes = gameManager != null && gameManager.Track != null
+                ? gameManager.Track.TotalNodes
+                : 0;
+            string cell = totalNodes > 0
+                ? (TrackPresentationRules.WrapNodeIndex(e.player.position, totalNodes) + 1).ToString()
+                : "?";
+            sb.AppendLine($"{e.rank}. {e.player.name} 圈{e.player.lap} 格{cell}{mark}");
         }
         return sb.ToString();
     }

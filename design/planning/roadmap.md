@@ -1,6 +1,6 @@
 # Foodula1 开发路线图
 
-> 最后更新: 2026-08-23
+> 最后更新: 2026-08-24
 > 关联: ADR-002 (当前架构)
 > 新模块接入指引: `docs/module-integration-guide.md`
 
@@ -40,7 +40,7 @@
 | 7 | ~~写 `PlayerState` 状态机测试~~ | 测试 | ✅ 已完成（`player_state_test.cs`） |
 | 8 | ~~集成测试：完整比赛流程~~ | 测试 | ✅ 已完成纯层版本（`race_simulation_test.cs`，3 玩家全比赛模拟）；完整多天气/多圈/进站 Play Mode 走查仍待完成 |
 | 9 | ~~统一硬编码赛道为 JSON~~ | 重构 | ✅ 已完成（`fallback_42.json` 导出 42 节点赛道，无配置时自动加载；代码内建保留作双保险） |
-| 10 | ~~运行全部 EditMode 测试~~ | 验证 | ✅ Unity 编辑器回归：381/381 通过；Play Mode 完整走查仍单独跟踪 |
+| 10 | ~~运行全部 EditMode 测试~~ | 验证 | ✅ Unity 编辑器回归：402/402 通过；Play Mode 完整走查仍单独跟踪 |
 
 ---
 

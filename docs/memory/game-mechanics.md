@@ -4,7 +4,7 @@ This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
 > **Implementation snapshot (2026-08-24)**: Unity `2022.3.62f3c1`; the latest
-> editor EditMode run passed `396/396`. The required
+> editor EditMode run passed `402/402`. The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.
 
@@ -101,9 +101,13 @@ prototype and is no longer the authoritative model.
 - Player initialization and lap crossing use the runtime node marked
   `isStartFinish`, including when that node is not index 0.
 - HUD position totals and LineRenderer coordinates use the loaded track data.
+- Player-facing positions use 1-based `格 X/N`. The human car has a pulsing
+  technology-blue ring and a local scale covering six cells behind and ahead;
+  dense layouts retain every tick but sample number badges to avoid overlap.
 - Track presentation uses the selected layout background in Play Mode, with
-  translucent yellow corner masks, red apex masks, and visible speed-limit
-  labels. Runtime grid nodes, lane lines, and debug corner text are hidden;
+  smoothed, rounded corner ribbons over a dark edge: Lv1 is safety green, Lv2
+  amber, and Lv3 warning coral. Apex badges inherit the corner level color and
+  keep visible speed-limit labels. Runtime grid nodes, lane lines, and debug corner text are hidden;
   tracks with explicit lane-specific limits show the effective limit above each
   lane's apex. Editor Scene view retains node metadata and limits for authoring.
   Ordinary tracks place all cars on the inside lane by default; when cars share

@@ -8,6 +8,137 @@ public static class TrackPresentationRules
 {
     public const string IndianapolisTrackId = "indianapolis_burger";
 
+    public static int WrapNodeIndex(int index, int totalNodes)
+    {
+        if (totalNodes <= 0)
+            return 0;
+
+        int wrapped = index % totalNodes;
+        return wrapped < 0 ? wrapped + totalNodes : wrapped;
+    }
+
+    public static string FormatCellPosition(int zeroBasedIndex, int totalNodes)
+    {
+        if (totalNodes <= 0)
+            return "格 0/0";
+
+        return $"格 {WrapNodeIndex(zeroBasedIndex, totalNodes) + 1}/{totalNodes}";
+    }
+
+    public static int CalculateLocalLabelStride(float medianSpacing, float minimumLabelSpacing = 0.72f)
+    {
+        if (medianSpacing <= Mathf.Epsilon || minimumLabelSpacing <= Mathf.Epsilon)
+            return 1;
+
+        return Mathf.Clamp(Mathf.CeilToInt(minimumLabelSpacing / medianSpacing), 1, 3);
+    }
+
+    public static bool ShouldShowLocalCellLabel(int relativeOffset, int stride, int radius)
+    {
+        int safeStride = Mathf.Max(1, stride);
+        return relativeOffset == 0 || Mathf.Abs(relativeOffset) == Mathf.Max(0, radius)
+            || Mathf.Abs(relativeOffset) % safeStride == 0;
+    }
+
+    public static int FindClosestNodeIndex(IReadOnlyList<Vector2> positions, Vector2 point)
+    {
+        if (positions == null || positions.Count == 0)
+            return -1;
+
+        int closest = 0;
+        float bestDistance = (positions[0] - point).sqrMagnitude;
+        for (int i = 1; i < positions.Count; i++)
+        {
+            float distance = (positions[i] - point).sqrMagnitude;
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                closest = i;
+            }
+        }
+
+        return closest;
+    }
+
+    public static int InferCornerLevel(int speedLimit)
+    {
+        if (speedLimit <= 2)
+            return 3;
+        if (speedLimit == 3)
+            return 2;
+        return 1;
+    }
+
+    public static Color GetCornerLevelColor(
+        int cornerLevel,
+        Color levelOne,
+        Color levelTwo,
+        Color levelThree)
+    {
+        if (cornerLevel >= 3)
+            return levelThree;
+        if (cornerLevel == 2)
+            return levelTwo;
+        return levelOne;
+    }
+
+    /// <summary>
+    /// Builds a Catmull-Rom render path through a contiguous corner range.
+    /// Gameplay nodes remain untouched; the returned samples are presentation-only.
+    /// </summary>
+    public static Vector2[] BuildSmoothCornerPath(
+        IReadOnlyList<Vector2> closedPath,
+        IReadOnlyList<int> cornerIndices,
+        int subdivisionsPerSegment)
+    {
+        if (closedPath == null || closedPath.Count < 2 || cornerIndices == null || cornerIndices.Count == 0)
+            return new Vector2[0];
+
+        int subdivisions = Mathf.Clamp(subdivisionsPerSegment, 1, 8);
+        var samples = new List<Vector2>(cornerIndices.Count * subdivisions + 1);
+
+        for (int i = 0; i < cornerIndices.Count; i++)
+        {
+            int current = WrapNodeIndex(cornerIndices[i], closedPath.Count);
+            int next = i + 1 < cornerIndices.Count
+                ? WrapNodeIndex(cornerIndices[i + 1], closedPath.Count)
+                : WrapNodeIndex(current + 1, closedPath.Count);
+            Vector2 p0 = closedPath[WrapNodeIndex(current - 1, closedPath.Count)];
+            Vector2 p1 = closedPath[current];
+            Vector2 p2 = closedPath[next];
+            Vector2 p3 = closedPath[WrapNodeIndex(next + 1, closedPath.Count)];
+
+            for (int step = 0; step < subdivisions; step++)
+            {
+                float t = step / (float)subdivisions;
+                Vector2 sample = EvaluateCatmullRom(p0, p1, p2, p3, t);
+                float padding = Vector2.Distance(p1, p2) * 0.2f;
+                sample.x = Mathf.Clamp(sample.x, Mathf.Min(p1.x, p2.x) - padding, Mathf.Max(p1.x, p2.x) + padding);
+                sample.y = Mathf.Clamp(sample.y, Mathf.Min(p1.y, p2.y) - padding, Mathf.Max(p1.y, p2.y) + padding);
+                samples.Add(sample);
+            }
+        }
+
+        int last = WrapNodeIndex(cornerIndices[cornerIndices.Count - 1], closedPath.Count);
+        samples.Add(closedPath[WrapNodeIndex(last + 1, closedPath.Count)]);
+        return samples.ToArray();
+    }
+
+    private static Vector2 EvaluateCatmullRom(
+        Vector2 p0,
+        Vector2 p1,
+        Vector2 p2,
+        Vector2 p3,
+        float t)
+    {
+        float t2 = t * t;
+        float t3 = t2 * t;
+        return 0.5f * ((2f * p1)
+            + (-p0 + p2) * t
+            + (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2
+            + (-p0 + 3f * p1 - 3f * p2 + p3) * t3);
+    }
+
     public static int GetLaneCount(string trackId)
     {
         return trackId == IndianapolisTrackId ? 4 : 2;

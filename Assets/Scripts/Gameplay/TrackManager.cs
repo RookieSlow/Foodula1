@@ -29,12 +29,23 @@ public class TrackManager : MonoBehaviour
     [Header("游玩时赛道蒙版")]
     [Tooltip("游玩时覆盖弯道道路区域的黄色半透明蒙版。")]
     public Color cornerMaskColor = new Color(1f, 0.82f, 0.05f, 0.34f);
+    [Tooltip("Lv1 高速弯：安全绿。")]
+    public Color cornerLevelOneColor = new Color(0.247f, 0.725f, 0.314f, 0.38f);
+    [Tooltip("Lv2 中速弯：琥珀黄。")]
+    public Color cornerLevelTwoColor = new Color(0.824f, 0.600f, 0.133f, 0.46f);
+    [Tooltip("Lv3 低速弯：警示珊瑚红。")]
+    public Color cornerLevelThreeColor = new Color(0.969f, 0.506f, 0.400f, 0.54f);
+    [Tooltip("等级色弯道带下方的深色外沿。")]
+    public Color cornerEdgeColor = new Color(0.025f, 0.04f, 0.06f, 0.72f);
     [Tooltip("游玩时覆盖弯心的红色半透明蒙版。")]
     public Color apexMaskColor = new Color(1f, 0.12f, 0.08f, 0.72f);
     [Min(0.01f)]
     public float cornerMaskWidth = 1.05f;
     [Min(0.01f)]
     public float apexMaskDiameter = 0.72f;
+    [Range(1, 8)]
+    [Tooltip("每两个赛道格之间仅供渲染使用的曲线采样数；不会改变游戏节点。")]
+    public int cornerCurveSubdivisions = 5;
     [Tooltip("调试模式：游玩时按 F8 显示/隐藏带编号的节点覆盖层。")]
     public bool showDebugTrackNodesInPlay;
 
@@ -42,11 +53,15 @@ public class TrackManager : MonoBehaviour
     private List<TrackNode> nodes = new List<TrackNode>();
     private List<GameObject> nodeObjects = new List<GameObject>();
     private List<LineRenderer> laneLineRenderers = new List<LineRenderer>();
+    private List<LineRenderer> cornerEdgeRenderers = new List<LineRenderer>();
     private List<LineRenderer> cornerMaskRenderers = new List<LineRenderer>();
     private List<GameObject> apexMaskObjects = new List<GameObject>();
     private List<GameObject> speedLimitLabelObjects = new List<GameObject>();
     private Vector2[] worldPathCoordinates = new Vector2[0];
     private float[] laneOffsets = new float[0];
+    private TrackReadabilityOverlay readabilityOverlay;
+    private float medianNodeSpacing;
+    private float roadVisualWidth;
 
     /// <summary>弯道 ID → 限速的快速查找表。</summary>
     private Dictionary<int, int> cornerSpeedLimits = new Dictionary<int, int>();
@@ -65,6 +80,11 @@ public class TrackManager : MonoBehaviour
     // --- 公开属性 ---
     public int TotalNodes => nodes.Count;
     public int LaneCount => laneOffsets.Length > 0 ? laneOffsets.Length : 1;
+    public float MedianNodeSpacing => medianNodeSpacing;
+    public float RoadVisualWidth => roadVisualWidth > 0f ? roadVisualWidth : Mathf.Max(0.01f, cornerMaskWidth);
+    public Sprite NodeVisualSprite => nodePrefab != null
+        ? nodePrefab.GetComponent<SpriteRenderer>()?.sprite
+        : null;
     public IReadOnlyList<TrackNode> Nodes => nodes;
     public int StartFinishNodeIndex => TrackRules.FindStartFinishNodeIndex(nodes);
     public string TrackId => LoadedTrackConfig != null
@@ -112,6 +132,11 @@ public class TrackManager : MonoBehaviour
         }
 
         RenderTrack();
+
+        readabilityOverlay = GetComponent<TrackReadabilityOverlay>();
+        if (readabilityOverlay == null)
+            readabilityOverlay = gameObject.AddComponent<TrackReadabilityOverlay>();
+        readabilityOverlay.Configure(this, FindObjectOfType<TMP_Text>()?.font);
 
         TrackDebugOverlay overlay = GetComponent<TrackDebugOverlay>();
         if (overlay == null)
@@ -299,6 +324,77 @@ public class TrackManager : MonoBehaviour
         return new Vector3(position.x, position.y, 0f);
     }
 
+    public Vector2 GetNodeNormal(int index)
+    {
+        if (worldPathCoordinates == null || worldPathCoordinates.Length < 2)
+            return Vector2.up;
+        return GetPathNormal(TrackPresentationRules.WrapNodeIndex(index, worldPathCoordinates.Length));
+    }
+
+    public int GetCornerLevelAtNode(int index)
+    {
+        if (nodes.Count == 0)
+            return 0;
+
+        int safeIndex = TrackPresentationRules.WrapNodeIndex(index, nodes.Count);
+        if (LoadedTrackConfig != null && LoadedTrackConfig.cells != null)
+        {
+            if (safeIndex < LoadedTrackConfig.cells.Length && LoadedTrackConfig.cells[safeIndex] != null
+                && LoadedTrackConfig.cells[safeIndex].index == safeIndex)
+            {
+                return Mathf.Clamp(LoadedTrackConfig.cells[safeIndex].cornerLevel, 0, 3);
+            }
+
+            for (int i = 0; i < LoadedTrackConfig.cells.Length; i++)
+            {
+                CellData cell = LoadedTrackConfig.cells[i];
+                if (cell != null && cell.index == safeIndex)
+                    return Mathf.Clamp(cell.cornerLevel, 0, 3);
+            }
+        }
+
+        TrackNode node = nodes[safeIndex];
+        return node.cornerId > 0
+            ? TrackPresentationRules.InferCornerLevel(node.speedLimit)
+            : 0;
+    }
+
+    public Color GetCornerVisualColorAtNode(int index)
+    {
+        int level = GetCornerLevelAtNode(index);
+        return TrackPresentationRules.GetCornerLevelColor(
+            level,
+            cornerLevelOneColor,
+            cornerLevelTwoColor,
+            cornerLevelThreeColor);
+    }
+
+    public Color GetNodeReadabilityColor(int index)
+    {
+        TrackNode node = GetNode(TrackPresentationRules.WrapNodeIndex(index, nodes.Count));
+        if (node.isStartFinish)
+            return new Color(0.247f, 0.725f, 0.314f, 0.94f);
+        if (node.cornerId > 0)
+        {
+            Color cornerColor = GetCornerVisualColorAtNode(index);
+            cornerColor.a = 0.92f;
+            return cornerColor;
+        }
+        return new Color(0.90f, 0.93f, 0.96f, 0.66f);
+    }
+
+    public void BindPlayerReadability(Transform playerCar)
+    {
+        if (readabilityOverlay == null)
+        {
+            readabilityOverlay = GetComponent<TrackReadabilityOverlay>();
+            if (readabilityOverlay == null)
+                readabilityOverlay = gameObject.AddComponent<TrackReadabilityOverlay>();
+            readabilityOverlay.Configure(this, FindObjectOfType<TMP_Text>()?.font);
+        }
+        readabilityOverlay.BindPlayer(playerCar);
+    }
+
     public int GetDefaultLaneIndex(bool isAi)
     {
         if (LaneCount <= 1) return 0;
@@ -345,7 +441,9 @@ public class TrackManager : MonoBehaviour
         laneOffsets = TrackPresentationRules.CalculateCenteredLaneOffsets(
             TrackPresentationRules.GetLaneCount(trackId),
             config != null ? config.trackLaneSpacing : 0.28f);
+        roadVisualWidth = GetEffectiveCornerMaskWidth();
         float medianSpacing = TrackPresentationRules.CalculateMedianNeighborDistance(pathCoords);
+        medianNodeSpacing = medianSpacing;
         float nodeScaleMultiplier = TrackPresentationRules.CalculateNodeScaleMultiplier(
             medianSpacing,
             GetNodeVisualDiameter(),
@@ -508,6 +606,7 @@ public class TrackManager : MonoBehaviour
 
     private void RenderCornerMasks(Vector2[] pathCoords)
     {
+        cornerEdgeRenderers.Clear();
         cornerMaskRenderers.Clear();
         apexMaskObjects.Clear();
 
@@ -532,34 +631,27 @@ public class TrackManager : MonoBehaviour
             if (indices.Count == 0)
                 continue;
 
-            GameObject maskObject = new GameObject($"CornerMask_{pair.Key}");
-            LineRenderer mask = maskObject.AddComponent<LineRenderer>();
-            mask.useWorldSpace = true;
-            mask.material = new Material(Shader.Find("Sprites/Default"));
-            mask.startColor = cornerMaskColor;
-            mask.endColor = cornerMaskColor;
-            float effectiveMaskWidth = GetEffectiveCornerMaskWidth();
-            mask.startWidth = effectiveMaskWidth;
-            mask.endWidth = effectiveMaskWidth;
-            mask.numCapVertices = 4;
-            mask.numCornerVertices = 4;
-            mask.sortingOrder = -2;
+            float effectiveMaskWidth = roadVisualWidth;
+            Color cornerColor = GetCornerVisualColorAtNode(indices[0]);
+            Vector2[] smoothPath = TrackPresentationRules.BuildSmoothCornerPath(
+                pathCoords,
+                indices,
+                cornerCurveSubdivisions);
 
-            int pointCount = indices.Count + 1;
-            mask.positionCount = pointCount;
-            for (int i = 0; i < indices.Count; i++)
-            {
-                mask.SetPosition(i, new Vector3(
-                    pathCoords[indices[i]].x,
-                    pathCoords[indices[i]].y,
-                    0f));
-            }
+            LineRenderer edge = CreateCornerRibbon(
+                $"CornerEdge_{pair.Key}",
+                smoothPath,
+                effectiveMaskWidth + 0.18f,
+                cornerEdgeColor,
+                -3);
+            cornerEdgeRenderers.Add(edge);
 
-            int exitIndex = (indices[indices.Count - 1] + 1) % pathCoords.Length;
-            mask.SetPosition(pointCount - 1, new Vector3(
-                pathCoords[exitIndex].x,
-                pathCoords[exitIndex].y,
-                0f));
+            LineRenderer mask = CreateCornerRibbon(
+                $"CornerMask_{pair.Key}",
+                smoothPath,
+                effectiveMaskWidth,
+                cornerColor,
+                -2);
             cornerMaskRenderers.Add(mask);
 
             int apexIndex = -1;
@@ -574,10 +666,34 @@ public class TrackManager : MonoBehaviour
 
             if (apexIndex >= 0)
             {
-                CreateApexMask(pathCoords[apexIndex], pair.Key);
+                CreateApexMask(pathCoords[apexIndex], pair.Key, cornerColor);
                 CreateSpeedLimitLabels(pathCoords, apexIndex, pair.Key);
             }
         }
+    }
+
+    private LineRenderer CreateCornerRibbon(
+        string objectName,
+        IReadOnlyList<Vector2> positions,
+        float width,
+        Color color,
+        int sortingOrder)
+    {
+        GameObject ribbonObject = new GameObject(objectName);
+        LineRenderer ribbon = ribbonObject.AddComponent<LineRenderer>();
+        ribbon.useWorldSpace = true;
+        ribbon.material = new Material(Shader.Find("Sprites/Default"));
+        ribbon.startColor = color;
+        ribbon.endColor = color;
+        ribbon.startWidth = width;
+        ribbon.endWidth = width;
+        ribbon.numCapVertices = 10;
+        ribbon.numCornerVertices = 10;
+        ribbon.sortingOrder = sortingOrder;
+        ribbon.positionCount = positions != null ? positions.Count : 0;
+        for (int i = 0; positions != null && i < positions.Count; i++)
+            ribbon.SetPosition(i, new Vector3(positions[i].x, positions[i].y, 0f));
+        return ribbon;
     }
 
     private float GetEffectiveCornerMaskWidth()
@@ -589,16 +705,28 @@ public class TrackManager : MonoBehaviour
         return Mathf.Max(configuredWidth, laneSpan + 0.45f);
     }
 
-    private void CreateApexMask(Vector2 position, int cornerId)
+    private void CreateApexMask(Vector2 position, int cornerId, Color cornerColor)
     {
         GameObject apex = new GameObject($"ApexMask_{cornerId}");
         apex.transform.position = new Vector3(position.x, position.y, 0f);
+
+        GameObject borderObject = new GameObject("Border");
+        borderObject.transform.SetParent(apex.transform, false);
+        SpriteRenderer border = borderObject.AddComponent<SpriteRenderer>();
+        border.sprite = nodePrefab != null
+            ? nodePrefab.GetComponent<SpriteRenderer>()?.sprite
+            : null;
+        border.color = cornerEdgeColor;
+        border.sortingOrder = -1;
+        borderObject.transform.localScale = Vector3.one * 1.24f;
+
         SpriteRenderer renderer = apex.AddComponent<SpriteRenderer>();
         renderer.sprite = nodePrefab != null
             ? nodePrefab.GetComponent<SpriteRenderer>()?.sprite
             : null;
-        renderer.color = apexMaskColor;
-        renderer.sortingOrder = -1;
+        cornerColor.a = Mathf.Max(cornerColor.a, apexMaskColor.a);
+        renderer.color = cornerColor;
+        renderer.sortingOrder = 0;
         apex.transform.localScale = Vector3.one * apexMaskDiameter;
         apexMaskObjects.Add(apex);
     }
@@ -683,6 +811,11 @@ public class TrackManager : MonoBehaviour
         {
             if (mask != null)
                 Destroy(mask.gameObject);
+        }
+        foreach (LineRenderer edge in cornerEdgeRenderers)
+        {
+            if (edge != null)
+                Destroy(edge.gameObject);
         }
         foreach (GameObject apex in apexMaskObjects)
         {

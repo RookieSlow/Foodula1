@@ -47,11 +47,11 @@
 | 11 | Visual Style | `foodula-1-visual-style.md` | In Progress | Main menu, race backgrounds, masks, minimap and card visuals are integrated; polish remains |
 | 12 | Tech Tree | `foodula-1-tech-tree.md` | In Progress | Rules/database, persistent profiles, main-menu configuration UI and race-loop hooks are integrated; balance/playtest remains |
 
-## 2026-08-23 Implementation Snapshot
+## 2026-08-24 Implementation Snapshot
 
 The index was stale relative to the Unity project and is now aligned with the
 current implementation stage. `production/stage.txt` is `Production`. The
-project has 381 passing EditMode tests; the remaining `In Progress` items are
+project has 402 passing EditMode tests; the remaining `In Progress` items are
 deliberate feature gaps, not missing source files accidentally hidden by this
 index. The required `production/session-state/active.md` continuity file is
 currently missing and has not been created automatically.

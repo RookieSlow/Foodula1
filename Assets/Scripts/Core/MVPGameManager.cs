@@ -781,6 +781,7 @@ public class MVPGameManager : MonoBehaviour
         }
 
         RefreshVisualCarLanes();
+        trackManager.BindPlayerReadability(PlayerCarTransform);
     }
 
     // ====== 主游戏循环 ======

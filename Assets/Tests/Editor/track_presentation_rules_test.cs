@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -132,5 +133,125 @@ public class TrackPresentationRulesTests
             0.2f);
 
         Assert.That(result, Is.EqualTo(1f));
+    }
+
+    [Test]
+    public void test_player_cell_text_is_one_based_and_wraps()
+    {
+        Assert.That(TrackPresentationRules.FormatCellPosition(0, 60), Is.EqualTo("格 1/60"));
+        Assert.That(TrackPresentationRules.FormatCellPosition(59, 60), Is.EqualTo("格 60/60"));
+        Assert.That(TrackPresentationRules.FormatCellPosition(60, 60), Is.EqualTo("格 1/60"));
+        Assert.That(TrackPresentationRules.FormatCellPosition(-1, 60), Is.EqualTo("格 60/60"));
+    }
+
+    [Test]
+    public void test_local_cell_labels_sample_dense_tracks_but_keep_center_and_edges()
+    {
+        Assert.That(TrackPresentationRules.CalculateLocalLabelStride(0.9f), Is.EqualTo(1));
+        Assert.That(TrackPresentationRules.CalculateLocalLabelStride(0.34f), Is.EqualTo(3));
+        Assert.That(TrackPresentationRules.ShouldShowLocalCellLabel(0, 3, 6), Is.True);
+        Assert.That(TrackPresentationRules.ShouldShowLocalCellLabel(6, 3, 6), Is.True);
+        Assert.That(TrackPresentationRules.ShouldShowLocalCellLabel(-3, 3, 6), Is.True);
+        Assert.That(TrackPresentationRules.ShouldShowLocalCellLabel(2, 3, 6), Is.False);
+    }
+
+    [Test]
+    public void test_smooth_corner_path_preserves_authored_endpoints_without_mutating_nodes()
+    {
+        Vector2[] path =
+        {
+            new Vector2(0f, 0f),
+            new Vector2(1f, 0f),
+            new Vector2(2f, 1f),
+            new Vector2(2f, 2f),
+            new Vector2(1f, 3f),
+            new Vector2(0f, 3f)
+        };
+        Vector2[] original = (Vector2[])path.Clone();
+
+        Vector2[] smooth = TrackPresentationRules.BuildSmoothCornerPath(
+            path,
+            new[] { 1, 2, 3 },
+            4);
+
+        Assert.That(smooth.Length, Is.EqualTo(13));
+        Assert.That(smooth[0], Is.EqualTo(path[1]));
+        Assert.That(smooth[smooth.Length - 1], Is.EqualTo(path[4]));
+        Assert.That(path, Is.EqualTo(original));
+        Assert.That(smooth[5], Is.Not.EqualTo(path[2]));
+    }
+
+    [Test]
+    public void test_corner_level_and_closest_node_rules_match_visual_semantics()
+    {
+        Assert.That(TrackPresentationRules.InferCornerLevel(4), Is.EqualTo(1));
+        Assert.That(TrackPresentationRules.InferCornerLevel(3), Is.EqualTo(2));
+        Assert.That(TrackPresentationRules.InferCornerLevel(2), Is.EqualTo(3));
+
+        Vector2[] positions =
+        {
+            new Vector2(0f, 0f),
+            new Vector2(2f, 0f),
+            new Vector2(4f, 0f)
+        };
+        Assert.That(
+            TrackPresentationRules.FindClosestNodeIndex(positions, new Vector2(2.3f, 0.1f)),
+            Is.EqualTo(1));
+    }
+
+    [Test]
+    public void test_all_authored_tracks_build_valid_smooth_corner_paths()
+    {
+        string[] trackIds =
+        {
+            "silverstone_afternoon_tea",
+            "nurburgring_bier",
+            "monza_pasta",
+            "indianapolis_burger",
+            "shanghai_dim_sum",
+            "suzuka_sushi",
+            "le_mans_old_mulsanne",
+            "nurburgring_24h_endurance",
+            "fallback_42"
+        };
+
+        foreach (string trackId in trackIds)
+        {
+            TrackConfig config = TrackDataLoader.LoadConfig(trackId);
+            Assert.That(config, Is.Not.Null, $"Track config missing: {trackId}");
+            Vector2[] positions = TrackDataLoader.ConfigToWorldPositions(config, 30f, 18f);
+            List<TrackNode> nodes = TrackDataLoader.ConfigToNodes(config);
+            var corners = new Dictionary<int, List<int>>();
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].cornerId <= 0)
+                    continue;
+                if (!corners.TryGetValue(nodes[i].cornerId, out List<int> indices))
+                {
+                    indices = new List<int>();
+                    corners.Add(nodes[i].cornerId, indices);
+                }
+                indices.Add(i);
+            }
+
+            Assert.That(corners.Count, Is.GreaterThan(0), $"No corners found: {trackId}");
+            foreach (KeyValuePair<int, List<int>> corner in corners)
+            {
+                Vector2[] smooth = TrackPresentationRules.BuildSmoothCornerPath(
+                    positions,
+                    corner.Value,
+                    5);
+                Assert.That(smooth.Length, Is.EqualTo(corner.Value.Count * 5 + 1),
+                    $"Unexpected sample count: {trackId}, corner {corner.Key}");
+                for (int i = 0; i < smooth.Length; i++)
+                {
+                    Assert.That(float.IsNaN(smooth[i].x) || float.IsNaN(smooth[i].y), Is.False,
+                        $"NaN sample: {trackId}, corner {corner.Key}");
+                    Assert.That(float.IsInfinity(smooth[i].x) || float.IsInfinity(smooth[i].y), Is.False,
+                        $"Infinite sample: {trackId}, corner {corner.Key}");
+                }
+            }
+        }
     }
 }

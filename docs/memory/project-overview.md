@@ -49,7 +49,7 @@ The verified scene flow is:
 - Demo framework Phase 1 is complete.
 - Phase 2 asset replacement is in progress.
 - The project is in Production stage. The latest editor audit on 2026-08-24
-  verified a clean Unity editor state and 396/396 EditMode tests. The
+  verified a clean Unity editor state and 402/402 EditMode tests. The
   MainMenu-to-Race flow, race card/icon references, and Chinese font support
   remain the current presentation baseline.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
@@ -72,6 +72,10 @@ The verified scene flow is:
   integrated. The current selectable catalog contains eight official JSON
   tracks; `fallback_42` is retained only as a fallback. Full multi-weather,
   multi-lap, and pit-flow Play Mode walkthroughs remain open.
+- Runtime track readability now adds a technology-blue player halo, 1-based
+  local cell badges and level-colored smoothed corner ribbons without changing
+  authored JSON nodes or gameplay positions. Silverstone received a clean
+  Play Mode screenshot check; the remaining track catalog still needs spot checks.
 - The four Scheme A refactor sources were committed in `58d1bba`.
   `RaceRules.cs` and `AIPlanner.cs` are integrated into the runtime.
   `AIController` and `CardDeck` accept injectable `IRandomSource`
@@ -79,7 +83,7 @@ The verified scene flow is:
   passes its historical original 16 EditMode tests with no Unity warnings or errors;
   the current full suite is tracked separately below.
 - `Gameplay/TrackRules.cs` now provides pure, tested track traversal rules.
-  Together with the current feature tests, the project passes 396 EditMode
+  Together with the current feature tests, the project passes 401 EditMode
   tests. `RaceTestLogWriter` can capture a manual race into a timestamped log
   for later review; the latest audit did not create a new gameplay log.
 
