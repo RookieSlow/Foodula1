@@ -44,6 +44,7 @@ public class CardHandUI : MonoBehaviour
     private Coroutine actionButtonCooldown;
     private CardPilePreviewUI drawPilePreview;
     private CardPilePreviewUI discardPilePreview;
+    private CardZoneTransitionUI zoneTransition;
 
     /// <summary>Compatibility accessor for callers that expect a single selection.</summary>
     public CardData PendingPlayCard
@@ -512,6 +513,94 @@ public class CardHandUI : MonoBehaviour
             GetSelectedSpeedCount(),
             player.deck.CountSpeedInHand(),
             player.deck.heatPool != null ? player.deck.heatPool.remaining : 0);
+    }
+
+    /// <summary>Plays a non-blocking card flight between authored table zones.</summary>
+    public void PlayCardTransitions(
+        IReadOnlyList<CardData> cards,
+        CardVisualZone source,
+        CardVisualZone destination)
+    {
+        EnsureZoneTransition();
+        if (zoneTransition == null)
+            return;
+
+        RectTransform sourceRect = ResolveZoneRect(source);
+        RectTransform destinationRect = ResolveZoneRect(destination);
+        zoneTransition.Play(cards, sourceRect, destinationRect);
+    }
+
+    /// <summary>Plays one or more heat cards between engine, hand and pile zones.</summary>
+    public void PlayHeatTransitions(int count, CardVisualZone source, CardVisualZone destination)
+    {
+        EnsureZoneTransition();
+        if (zoneTransition == null)
+            return;
+
+        zoneTransition.PlayHeat(count, ResolveZoneRect(source), ResolveZoneRect(destination));
+    }
+
+    private void EnsureZoneTransition()
+    {
+        if (zoneTransition != null)
+            return;
+
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas == null)
+            return;
+
+        Transform existing = canvas.transform.Find("CardZoneTransitionFX");
+        if (existing != null)
+            zoneTransition = existing.GetComponent<CardZoneTransitionUI>();
+
+        if (zoneTransition == null)
+        {
+            GameObject overlayObject = new GameObject(
+                "CardZoneTransitionFX",
+                typeof(RectTransform),
+                typeof(CardZoneTransitionUI));
+            overlayObject.transform.SetParent(canvas.transform, false);
+            RectTransform rect = overlayObject.GetComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            rect.SetAsLastSibling();
+            zoneTransition = overlayObject.GetComponent<CardZoneTransitionUI>();
+        }
+
+        TMP_FontAsset font = drawPileText != null
+            ? drawPileText.font
+            : deckInfoText != null ? deckInfoText.font : null;
+        zoneTransition.Configure(
+            canvas,
+            speedBgSprite,
+            heatBgSprite,
+            numberSprites,
+            heatIconSprite,
+            font);
+    }
+
+    private RectTransform ResolveZoneRect(CardVisualZone zone)
+    {
+        Transform target = null;
+        switch (zone)
+        {
+            case CardVisualZone.Hand:
+                target = handContainer;
+                break;
+            case CardVisualZone.DrawPile:
+                target = drawPileText != null ? drawPileText.transform.parent : null;
+                break;
+            case CardVisualZone.DiscardPile:
+                target = discardPileText != null ? discardPileText.transform.parent : null;
+                break;
+            case CardVisualZone.Engine:
+                target = enginePileText != null ? enginePileText.transform.parent : null;
+                break;
+        }
+
+        return target as RectTransform;
     }
 
     public void UpdateDeckInfo(PlayerState player)

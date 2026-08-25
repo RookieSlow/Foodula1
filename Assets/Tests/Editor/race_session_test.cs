@@ -106,6 +106,22 @@ public class RaceSessionTest
     }
 
     [Test]
+    public void test_finished_player_does_not_resolve_end_of_turn_tech()
+    {
+        var session = CreateSession();
+        var player = CreatePlayer(session, TeamId.CN);
+        player.usesChinaGearSystem = true;
+        player.gear = ChinaGearShiftRules.GoGear;
+        player.hasFinished = true;
+
+        YinYangResult result = session.ResolveEndOfTurn(player);
+
+        Assert.IsFalse(result.triggered,
+            "A locked finisher must not pay heat or move through Yin Yang Tea on later turns.");
+        Assert.AreEqual(0, session.GetGrillSpezialCooldown(player));
+    }
+
+    [Test]
     public void test_effective_hand_size_and_pool_add_bonuses()
     {
         var session = CreateSession();

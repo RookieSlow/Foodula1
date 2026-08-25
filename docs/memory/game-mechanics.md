@@ -4,9 +4,7 @@ This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
 > **Implementation snapshot (2026-08-25)**: Unity `2022.3.62f3c1`; the latest
-> latest successful editor EditMode run passed `417/417`; a later
-> benchmark-only rerun failed to initialize 0/417 tests and did not produce an
-> assertion failure. The required
+> latest successful editor EditMode run passed `430/430`. The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.
 
@@ -37,7 +35,12 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 - The selected speed-card values determine movement.
 - The draw-pile and discard-pile panels show stacked backs, up to three live
   card thumbnails, and a quantity badge. Draw previews follow the actual draw
-  order; discard previews start from the most recently discarded card.
+  order; discard previews start from the most recently discarded card. Visible
+  stack thickness grows by one layer per three cards up to seven layers, while
+  the badge remains exact.
+- Card ownership changes use a non-blocking table overlay: played/discarded
+  cards fly from hand to discard, heat payments fly from engine to their rule
+  destination, and cooling flies from the actual source zone back to engine.
 - Played speed cards enter the discard pile during end-of-turn cleanup; only
   non-heat cards are reshuffled when the draw pile is empty.
 - Heat cards cannot be played as speed cards and can clog the hand after they
@@ -135,7 +138,7 @@ prototype and is no longer the authoritative model.
   snap immediately to the next-node direction, while normal movement rotates
   smoothly according to `carRotateSpeed`.
 - Track authoring workflow, pit behavior, and a full multi-lap manual playthrough
-  still need completion or broader validation.
+  now have full-race evidence; broader multi-track validation remains open.
 
 ## Weather
 
@@ -175,6 +178,10 @@ prototype and is no longer the authoritative model.
 - A participant reaching the configured lap count locks its finish order; the
   race ends after all non-blown participants have finished, or no active
   participant remains.
+- `hasFinished` and `isBlown` are terminal gameplay states. A finisher still
+  clears already-played speed cards into discard, but no longer resolves
+  Yin/Yang Tea, Grill Spezial, heat payments, movement, or other end-of-turn
+  technology while waiting for the remaining racers.
 - A blown/DNF participant is removed from future turns and ranks below active
   and finished racers; it does not immediately terminate the race.
 - Final ranking compares completed laps and track position.

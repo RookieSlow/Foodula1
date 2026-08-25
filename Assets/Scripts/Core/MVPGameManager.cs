@@ -1055,7 +1055,7 @@ public class MVPGameManager : MonoBehaviour
         bool eliminated = p.spinCounter >= spinMax;
 
         // 回收全部热量回引擎
-        p.deck.RecoverAllHeatToPool();
+        RecoverAllHeatWithPresentation(p);
 
         // 回退位置
         p.position = rewindPos;
@@ -1143,6 +1143,15 @@ public class MVPGameManager : MonoBehaviour
             session.TrackHeatPaid(p, drawn);
         if (p.techState != null)
             TechTreeRules.TrackDimSumCombo(p.techState, false, false, true);
+
+        if (!p.isAI && cardHandUI != null)
+        {
+            CardVisualZone target = destination == HeatPaymentDestination.Discard
+                ? CardVisualZone.DiscardPile
+                : CardVisualZone.Hand;
+            cardHandUI.PlayHeatTransitions(drawn, CardVisualZone.Engine, target);
+            cardHandUI.UpdateDeckInfo(p);
+        }
         return true;
     }
 
@@ -1212,9 +1221,68 @@ public class MVPGameManager : MonoBehaviour
 
         if (cooldown > 0)
         {
-            int removed = p.deck.CoolHeat(cooldown);
+            int removed = CoolHeatWithPresentation(p, cooldown);
             if (removed > 0 && hudUI != null)
                 hudUI.AppendLog($"{p.name} ({TeamGearRules.GetDisplayName(p.teamId, p.gear)}): cools {removed} Heat → engine.");
+        }
+    }
+
+    private int CoolHeatWithPresentation(PlayerState p, int amount)
+    {
+        if (p == null || p.deck == null || amount <= 0)
+            return 0;
+
+        int handHeat = p.deck.CountHeatInHand();
+        int drawHeat = p.deck.CountHeatInDrawPile();
+        int discardHeat = p.deck.CountHeatInDiscardPile();
+        int cooled = p.deck.CoolHeat(amount);
+        if (!p.isAI && cooled > 0 && cardHandUI != null)
+        {
+            int remaining = cooled;
+            int fromHand = Mathf.Min(remaining, handHeat);
+            remaining -= fromHand;
+            int fromDraw = Mathf.Min(remaining, drawHeat);
+            remaining -= fromDraw;
+            int fromDiscard = Mathf.Min(remaining, discardHeat);
+
+            cardHandUI.PlayHeatTransitions(fromHand, CardVisualZone.Hand, CardVisualZone.Engine);
+            cardHandUI.PlayHeatTransitions(fromDraw, CardVisualZone.DrawPile, CardVisualZone.Engine);
+            cardHandUI.PlayHeatTransitions(fromDiscard, CardVisualZone.DiscardPile, CardVisualZone.Engine);
+            cardHandUI.UpdateDeckInfo(p);
+        }
+        return cooled;
+    }
+
+    private int RemoveHandHeatWithPresentation(PlayerState p, int amount)
+    {
+        if (p == null || p.deck == null || amount <= 0)
+            return 0;
+
+        int cooled = p.deck.RemoveHeatFromHand(amount);
+        if (!p.isAI && cooled > 0 && cardHandUI != null)
+        {
+            cardHandUI.PlayHeatTransitions(cooled, CardVisualZone.Hand, CardVisualZone.Engine);
+            cardHandUI.UpdateDeckInfo(p);
+        }
+        return cooled;
+    }
+
+    private void RecoverAllHeatWithPresentation(PlayerState p)
+    {
+        if (p == null || p.deck == null)
+            return;
+
+        int handHeat = p.deck.CountHeatInHand();
+        int drawHeat = p.deck.CountHeatInDrawPile();
+        int discardHeat = p.deck.CountHeatInDiscardPile();
+        p.deck.RecoverAllHeatToPool();
+
+        if (!p.isAI && cardHandUI != null)
+        {
+            cardHandUI.PlayHeatTransitions(handHeat, CardVisualZone.Hand, CardVisualZone.Engine);
+            cardHandUI.PlayHeatTransitions(drawHeat, CardVisualZone.DrawPile, CardVisualZone.Engine);
+            cardHandUI.PlayHeatTransitions(discardHeat, CardVisualZone.DiscardPile, CardVisualZone.Engine);
+            cardHandUI.UpdateDeckInfo(p);
         }
     }
 
@@ -1633,7 +1701,7 @@ public class MVPGameManager : MonoBehaviour
             return;
         }
 
-        p.deck.RecoverAllHeatToPool(); // 进站冷却全部热量回引擎
+        RecoverAllHeatWithPresentation(p); // 进站冷却全部热量回引擎
         p.gear = TeamGearRules.IsChina(p.teamId) ? ChinaGearShiftRules.RecoverGear : config.minGear;
         p.chinaConsecutiveGearCount = 0;
         p.pitChoiceResolvedThisLap = false;
@@ -1653,7 +1721,7 @@ public class MVPGameManager : MonoBehaviour
         {
             case MotherRoadResult.MotherRoadPhase.Prosperity:
             {
-                int cooled = p.deck.CoolHeat(result.freeCooldown);
+                int cooled = CoolHeatWithPresentation(p, result.freeCooldown);
                 if (hudUI != null)
                     hudUI.AppendLog($"<color=green>{p.name} 母亲之路(繁荣)：自动冷却 {cooled} 张热量牌。</color>");
                 break;
@@ -1737,6 +1805,14 @@ public class MVPGameManager : MonoBehaviour
             Debug.LogError($"Failed to move confirmed trick card '{card.trickId}' from hand to discard.");
             return false;
         }
+        if (!p.isAI && cardHandUI != null)
+        {
+            cardHandUI.PlayCardTransitions(
+                new List<CardData> { card },
+                CardVisualZone.Hand,
+                CardVisualZone.DiscardPile);
+            cardHandUI.UpdateDeckInfo(p);
+        }
         raceLogWriter?.Append(
             $"[TRICK] {p.name} source={(p.isAI ? "AI" : "PLAYER")} id={card.trickId} " +
             $"effect={(def != null ? def.effectType.ToString() : "unknown")}");
@@ -1764,7 +1840,7 @@ public class MVPGameManager : MonoBehaviour
         // 冷却（红茶 / 关东慢煮）
         if (result.heatToCool > 0)
         {
-            int cooled = p.deck.CoolHeat(result.heatToCool);
+            int cooled = CoolHeatWithPresentation(p, result.heatToCool);
             if (cooled > 0 && hudUI != null)
                 hudUI.AppendLog($"{p.name} 特技冷却 {cooled} 张热量牌。");
         }
@@ -1916,6 +1992,8 @@ public class MVPGameManager : MonoBehaviour
         if (cardHandUI != null)
         {
             List<CardData> toDiscard = cardHandUI.GetSelectedCards();
+            cardHandUI.PlayCardTransitions(
+                toDiscard, CardVisualZone.Hand, CardVisualZone.DiscardPile);
             int discarded = player.deck.DiscardPlayableCardsFromHand(toDiscard);
             if (discarded > 0 && hudUI != null)
                 hudUI.AppendLog($"{player.name} discards {discarded} card(s).");
@@ -1929,6 +2007,13 @@ public class MVPGameManager : MonoBehaviour
     private void CleanupTurn(PlayerState p)
     {
         // 速度牌 → 弃牌堆。热量牌不参与普通抽牌/弃牌，只能通过冷却回引擎。
+        if (!p.isAI && cardHandUI != null && p.playedSpeedCardsThisTurn.Count > 0)
+        {
+            cardHandUI.PlayCardTransitions(
+                p.playedSpeedCardsThisTurn,
+                CardVisualZone.Hand,
+                CardVisualZone.DiscardPile);
+        }
         p.deck.DiscardSpeedCards(p.playedSpeedCardsThisTurn);
 
         // 限时热量牌销毁（薯条）
@@ -1936,8 +2021,10 @@ public class MVPGameManager : MonoBehaviour
         if (tempRemoved > 0 && hudUI != null)
             hudUI.AppendLog($"{p.name} 限时热量牌销毁 {tempRemoved} 张。");
 
-        // 回合结束科技结算
-        if (p.techState != null)
+        // A participant can cross the finish line during phase B. Its played
+        // cards still need to leave the played area, but no end-of-turn effect
+        // may mutate a locked finish result afterwards.
+        if (!RaceTurnRules.IsTerminal(p) && p.techState != null)
         {
             // CN L1 阴阳茶：阴（无手牌热）→ 付 1 热 +1 格；阳（有手牌热）→ 自动冷却 1
             ApplyYinYang(p, session.ResolveEndOfTurn(p));
@@ -1955,7 +2042,7 @@ public class MVPGameManager : MonoBehaviour
             if (grillCooldown > 0)
             {
                 session.ActivateGrillSpezial(p);
-                int cooled = p.deck.CoolHeat(grillCooldown);
+                int cooled = CoolHeatWithPresentation(p, grillCooldown);
                 if (cooled > 0 && hudUI != null)
                     hudUI.AppendLog($"<color=green>{p.name} 烤肉拼盘：自动冷却 {cooled} 张热量牌。</color>");
             }
@@ -1988,7 +2075,7 @@ public class MVPGameManager : MonoBehaviour
         else if (result.isYang)
         {
             // 阴阳茶的 Recover 分支是明确的“手牌冷却”，不使用全牌区优先级冷却。
-            int cooled = p.deck.RemoveHeatFromHand(result.heatToCool);
+            int cooled = RemoveHandHeatWithPresentation(p, result.heatToCool);
             if (cooled > 0 && hudUI != null)
                 hudUI.AppendLog($"<color=cyan>{p.name} 阴阳茶(阳)：自动冷却 {cooled} 张热量牌。</color>");
         }

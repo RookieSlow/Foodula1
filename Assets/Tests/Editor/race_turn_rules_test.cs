@@ -42,5 +42,20 @@ public class RaceTurnRulesTests
     {
         Assert.That(RaceTurnRules.ShouldSkip(null), Is.False);
         Assert.That(RaceTurnRules.IsInactive(null, null), Is.True);
+        Assert.That(RaceTurnRules.IsTerminal(null), Is.True);
+    }
+
+    [Test]
+    public void TerminalStateLocksFinishedAndBlownParticipants()
+    {
+        var player = new PlayerState("driver", false, 0, 1);
+
+        Assert.That(RaceTurnRules.IsTerminal(player), Is.False);
+        player.hasFinished = true;
+        Assert.That(RaceTurnRules.IsTerminal(player), Is.True);
+
+        player.hasFinished = false;
+        player.isBlown = true;
+        Assert.That(RaceTurnRules.IsTerminal(player), Is.True);
     }
 }

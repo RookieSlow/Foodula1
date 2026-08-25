@@ -328,11 +328,21 @@ public class CardDeck
     /// </summary>
     public int CountHeatInHand()
     {
+        return CountHeatCards(hand);
+    }
+
+    /// <summary>Heat currently stranded in the ordinary draw zone (legacy/test compatibility).</summary>
+    public int CountHeatInDrawPile() => CountHeatCards(drawPile);
+
+    /// <summary>Heat currently waiting for cooling in the discard zone.</summary>
+    public int CountHeatInDiscardPile() => CountHeatCards(discardPile);
+
+    private static int CountHeatCards(IReadOnlyList<CardData> cards)
+    {
+        if (cards == null) return 0;
         int count = 0;
-        foreach (CardData card in hand)
-        {
-            if (card.IsHeat) count++;
-        }
+        foreach (CardData card in cards)
+            if (card != null && card.IsHeat) count++;
         return count;
     }
 
@@ -458,10 +468,7 @@ public class CardDeck
     /// <summary>牌组+弃牌堆中热量牌数量。</summary>
     public int CountHeatInDeck()
     {
-        int count = 0;
-        foreach (var c in drawPile) if (c.IsHeat) count++;
-        foreach (var c in discardPile) if (c.IsHeat) count++;
-        return count;
+        return CountHeatInDrawPile() + CountHeatInDiscardPile();
     }
 
     /// <summary>牌组+弃牌堆中特技牌数量。</summary>

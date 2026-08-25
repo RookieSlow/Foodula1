@@ -219,13 +219,17 @@ public class CardDeckTest
         // never becomes a normal draw-pile card.
         Assert.AreEqual(1, deck.DrawHeatFromPoolToHand(1));
         Assert.AreEqual(1, deck.CountHeatInHand());
+        Assert.AreEqual(0, deck.CountHeatInDrawPile());
         Assert.AreEqual(2, deck.DrawHeatFromPool(2));
+        Assert.AreEqual(2, deck.CountHeatInDiscardPile());
         int poolBefore = deck.heatPool.remaining;
 
         int cooled = deck.CoolHeat(2);
 
         Assert.AreEqual(2, cooled);
         Assert.AreEqual(0, deck.CountHeatInHand(), "hand must be cooled first");
+        Assert.AreEqual(0, deck.CountHeatInDrawPile());
+        Assert.AreEqual(1, deck.CountHeatInDiscardPile());
         Assert.AreEqual(1, deck.DiscardPileCount, "one discard-pile heat should remain");
         Assert.AreEqual(poolBefore + 2, deck.heatPool.remaining);
 

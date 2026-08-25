@@ -604,14 +604,16 @@ public class RaceSession
     /// <summary>回合结束时按中国队当前 Go/Recover 模式结算阴阳茶。</summary>
     public YinYangResult ResolveEndOfTurn(PlayerState p)
     {
-        if (p.techState == null) return YinYangResult.NoTrigger;
+        if (RaceTurnRules.IsTerminal(p) || p.techState == null)
+            return YinYangResult.NoTrigger;
         return TechTreeRules.ResolveYinYang(p.techState, TechDb, IsGoMode(p));
     }
 
     /// <summary>回合结束时可用的 DE 烤肉拼盘冷却量（本回合已支付的热量）。</summary>
     public int GetGrillSpezialCooldown(PlayerState p)
     {
-        if (p.techState == null) return 0;
+        if (RaceTurnRules.IsTerminal(p) || p.techState == null)
+            return 0;
         return TechTreeRules.CanUseGrillSpezial(p.techState, TechDb)
             ? TechTreeRules.GetGrillSpezialCooldown(p.techState)
             : 0;

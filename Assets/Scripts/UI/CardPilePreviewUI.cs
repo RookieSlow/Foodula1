@@ -15,6 +15,13 @@ public sealed class CardPilePreviewUI : MonoBehaviour
     public Vector2 cardSize = new Vector2(42f, 58f);
     public float cardSpacing = 18f;
 
+    [Header("牌堆厚度")]
+    [Tooltip("用于表达牌堆数量的最大可见牌背层数；精确数量仍由徽标显示。")]
+    public int maxStackLayers = 7;
+    [Tooltip("每增加多少张牌，多显示一层牌背。")]
+    public int cardsPerStackLayer = 3;
+    public Vector2 stackLayerOffset = new Vector2(2.4f, 1.7f);
+
     private readonly List<Image> cardImages = new List<Image>();
     private readonly List<Image> cardIconImages = new List<Image>();
     private readonly List<TMP_Text> cardLabels = new List<TMP_Text>();
@@ -32,6 +39,7 @@ public sealed class CardPilePreviewUI : MonoBehaviour
 
     public int DisplayedCardCount { get; private set; }
     public int DisplayedPileCount { get; private set; }
+    public int DisplayedStackLayerCount { get; private set; }
 
     /// <summary>
     /// Configures art references and whether the pile's newest card is at the
@@ -91,8 +99,10 @@ public sealed class CardPilePreviewUI : MonoBehaviour
         if (countBadge != null)
             countBadge.text = DisplayedPileCount.ToString();
 
+        DisplayedStackLayerCount = CardPilePreviewRules.GetStackLayerCount(
+            DisplayedPileCount, maxStackLayers, cardsPerStackLayer);
         for (int i = 0; i < stackBackImages.Count; i++)
-            stackBackImages[i].gameObject.SetActive(DisplayedPileCount > 0);
+            stackBackImages[i].gameObject.SetActive(i < DisplayedStackLayerCount);
     }
 
     private void EnsureVisuals()
@@ -108,8 +118,15 @@ public sealed class CardPilePreviewUI : MonoBehaviour
             cardLayer.offsetMax = Vector2.zero;
             cardLayer.pivot = new Vector2(0.5f, 0.5f);
 
-            CreateStackBack("StackBackA", new Vector2(-7f, -4f), 0.60f);
-            CreateStackBack("StackBackB", new Vector2(-3.5f, -2f), 0.78f);
+            int stackLayers = Mathf.Max(1, maxStackLayers);
+            for (int i = stackLayers - 1; i >= 0; i--)
+            {
+                Vector2 offset = new Vector2(
+                    -stackLayerOffset.x * i,
+                    -stackLayerOffset.y * i);
+                float alpha = Mathf.Lerp(0.34f, 0.82f, 1f - i / (float)stackLayers);
+                CreateStackBack("StackBack" + i, offset, alpha);
+            }
             for (int i = 0; i < Mathf.Max(1, visibleCardCount); i++)
                 CreateCardThumb(i);
         }
@@ -135,7 +152,9 @@ public sealed class CardPilePreviewUI : MonoBehaviour
         image.color = new Color(0.16f, 0.22f, 0.34f, alpha);
         image.preserveAspect = true;
         image.raycastTarget = false;
-        stackBackImages.Add(image);
+        // Layers are created from deepest to nearest for correct draw order;
+        // keep the list nearest-first so increasing pile counts reveal outward.
+        stackBackImages.Insert(0, image);
     }
 
     private void CreateCardThumb(int index)
@@ -239,6 +258,19 @@ public sealed class CardPilePreviewUI : MonoBehaviour
 /// <summary>Pure ordering rules for the small draw/discard pile preview.</summary>
 public static class CardPilePreviewRules
 {
+    /// <summary>
+    /// Converts an exact card count into a compact physical stack. One visual
+    /// layer represents a small packet of cards; the badge remains exact.
+    /// </summary>
+    public static int GetStackLayerCount(int pileCount, int maxLayers, int cardsPerLayer)
+    {
+        if (pileCount <= 0 || maxLayers <= 0)
+            return 0;
+
+        int layerSize = Mathf.Max(1, cardsPerLayer);
+        return Mathf.Clamp(Mathf.CeilToInt(pileCount / (float)layerSize), 1, maxLayers);
+    }
+
     public static List<CardData> SelectVisibleCards(
         IReadOnlyList<CardData> pile,
         int maxCards,

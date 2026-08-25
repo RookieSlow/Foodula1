@@ -3,6 +3,12 @@ using System.Collections.Generic;
 /// <summary>Pure participation rules shared by the turn coordinator and tests.</summary>
 public static class RaceTurnRules
 {
+    /// <summary>Returns whether gameplay must no longer mutate this participant.</summary>
+    public static bool IsTerminal(PlayerState player)
+    {
+        return player == null || player.isBlown || player.hasFinished;
+    }
+
     /// <summary>Returns whether a participant has a turn-scoped skip flag.</summary>
     public static bool ShouldSkip(PlayerState player)
     {
@@ -20,7 +26,6 @@ public static class RaceTurnRules
 
         return (turnSkipped != null && turnSkipped.Contains(player)) ||
                ShouldSkip(player) ||
-               player.isBlown ||
-               player.hasFinished;
+               IsTerminal(player);
     }
 }

@@ -62,10 +62,23 @@ public class CardPilePreviewTests
 
             Assert.That(preview.DisplayedCardCount, Is.EqualTo(3));
             Assert.That(preview.DisplayedPileCount, Is.EqualTo(4));
+            Assert.That(preview.DisplayedStackLayerCount, Is.EqualTo(2));
         }
         finally
         {
             Object.DestroyImmediate(previewObject);
         }
+    }
+
+    [TestCase(0, 0)]
+    [TestCase(1, 1)]
+    [TestCase(3, 1)]
+    [TestCase(4, 2)]
+    [TestCase(18, 6)]
+    [TestCase(30, 7)]
+    public void StackThicknessScalesWithPileCountAndClamps(int pileCount, int expectedLayers)
+    {
+        Assert.That(CardPilePreviewRules.GetStackLayerCount(pileCount, 7, 3),
+            Is.EqualTo(expectedLayers));
     }
 }
