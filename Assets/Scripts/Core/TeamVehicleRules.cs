@@ -58,9 +58,19 @@ public static class TeamVehicleRules
     public static int GetCooling(TeamId teamId) => GetProfile(teamId).Cooling;
     public static int GetSlipstreamBonus(TeamId teamId) => GetProfile(teamId).Slipstream;
 
-    /// <summary>Base straight-line movement contribution.</summary>
+    /// <summary>
+    /// Base straight-line movement contribution after bespoke team mechanics.
+    /// America's profile values describe its identity, but Straight Roar is
+    /// resolved separately as one flat turn bonus and must not be stacked here.
+    /// </summary>
     public static int GetStraightMovementBonus(TeamId teamId)
     {
+        // Italy's acceleration stat is expressed by its one-shot corner-exit
+        // boost, not as a permanent bonus on every straight turn.  America
+        // likewise resolves its profile through the flat Straight Roar rule.
+        if (teamId == TeamId.IT || teamId == TeamId.US)
+            return 0;
+
         TeamVehicleProfile profile = GetProfile(teamId);
         return profile.TopSpeed + profile.Acceleration;
     }

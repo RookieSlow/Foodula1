@@ -48,8 +48,10 @@ The verified scene flow is:
 
 - Demo framework Phase 1 is complete.
 - Phase 2 asset replacement is in progress.
-- The project is in Production stage. The latest editor audit on 2026-08-24
-  verified a clean Unity editor state and 406/406 EditMode tests. The
+- The project is in Production stage. The latest editor audit on 2026-08-25
+  recorded a latest successful 417/417 EditMode run. A later benchmark-only
+  parameter-alignment rerun did not initialize any tests before the MCP timeout;
+  no assertion failure was reported. The
   MainMenu-to-Race flow, race card/icon references, and Chinese font support
   remain the current presentation baseline.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
@@ -86,9 +88,20 @@ The verified scene flow is:
   passes its historical original 16 EditMode tests with no Unity warnings or errors;
   the current full suite is tracked separately below.
 - `Gameplay/TrackRules.cs` now provides pure, tested track traversal rules.
-  Together with the current feature tests, the project passes 406 EditMode
+  Together with the current feature tests, the project passes 417 EditMode
   tests. `RaceTestLogWriter` can capture a manual race into a timestamped log
   for later review; the latest audit did not create a new gameplay log.
+- The deterministic full-race test and `TrackTeamBalanceBenchmark` now freeze
+  every racer's non-slipstream plan before resolving the same two-step chain as
+  runtime. The corrected 2026-08-25 benchmark covers nine track configurations,
+  uses real heat-card payments, records individual finish turns, and rotates team
+  insertion order. US straight-profile stacking is fixed and China's former 92%
+  Le Mans DNF was confirmed as a benchmark artifact. Italy's corner-exit bonus
+  now resolves on the following turn and its undocumented permanent straight
+  `+1` is removed. China corner safety now judges the lowest legal Go hand,
+  sums unique projected apex costs, and accepts one heat only when every
+  committed cost is payable. The remaining China/UK/Japan spread is tracked in
+  the balance-check report.
 
 ## Memory Provenance
 

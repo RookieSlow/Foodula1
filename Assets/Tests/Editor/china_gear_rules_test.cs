@@ -2,6 +2,21 @@ using NUnit.Framework;
 
 public class ChinaGearRulesTests
 {
+    [TestCase(1, 0, 6, 1, false, TestName = "china_ai_accepts_one_affordable_corner_heat")]
+    [TestCase(2, 0, 6, 1, true, TestName = "china_ai_rejects_corner_heat_above_tolerance")]
+    [TestCase(1, 1, 1, 1, true, TestName = "china_ai_rejects_unpayable_combined_heat")]
+    [TestCase(-1, -1, -1, -1, false, TestName = "china_ai_clamps_negative_heat_inputs")]
+    public void china_ai_corner_heat_budget_is_safe(
+        int cornerHeat,
+        int committedHeat,
+        int availableHeat,
+        int tolerance,
+        bool expected)
+    {
+        Assert.AreEqual(expected, ChinaGearShiftRules.ShouldForceRecoverForCorner(
+            cornerHeat, committedHeat, availableHeat, tolerance));
+    }
+
     [Test]
     public void first_go_uses_three_cards_without_heat()
     {

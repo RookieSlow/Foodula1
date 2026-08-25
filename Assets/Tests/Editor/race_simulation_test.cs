@@ -76,7 +76,11 @@ public class RaceSimulationTest
             foreach (var p in players)
                 session.BeginTurn(p);
 
-            foreach (var p in session.GetTurnOrder())
+            List<PlayerState> turnOrder = session.GetTurnOrder();
+            var skipped = new HashSet<PlayerState>();
+
+            // Phase A：全员先完成跳过、进站、选档和出牌，保持与运行时同步结算一致。
+            foreach (var p in turnOrder)
             {
                 if (p.pitStopScheduled)
                 {
@@ -85,15 +89,27 @@ public class RaceSimulationTest
                     if (scheduledPit.success)
                     {
                         p.deck.RecoverAllHeatToPool();
+                        p.position = scheduledPit.exitPosition;
                         p.pitChoiceResolvedThisLap = false;
                         violations.Check(p.position >= 0 && p.position < totalNodes,
                             $"{p.name} 进站后位置越界: {p.position}");
                     }
+                    skipped.Add(p);
                     continue;
                 }
 
-                if (p.skipNextTurn) { p.skipNextTurn = false; p.gear = 1; continue; }
-                if (p.isBlown || p.hasFinished) continue;
+                if (p.skipNextTurn)
+                {
+                    p.skipNextTurn = false;
+                    p.gear = 1;
+                    skipped.Add(p);
+                    continue;
+                }
+                if (p.isBlown || p.hasFinished)
+                {
+                    skipped.Add(p);
+                    continue;
+                }
 
                 if (!p.pitChoiceResolvedThisLap &&
                     PitLaneRules.IsWithinPitApproachWindow(p.position, nodes))
@@ -141,6 +157,7 @@ public class RaceSimulationTest
                 if (missing > 0 && p.deck.DrawHeatFromPoolToHand(missing) < missing)
                 {
                     SimSpin(p, p.position, session.EffectiveSpinMax(p));
+                    skipped.Add(p);
                     continue;
                 }
                 foreach (CardData card in chosen)
@@ -150,19 +167,51 @@ public class RaceSimulationTest
                         $"{p.name} 速度牌提交失败: {commit}");
                 }
 
-                // 移动计算（与管理器同构的纯层版本）
                 p.cornerTotalThisTurn = RaceRules.SumCardValues(p.playedSpeedCardsThisTurn);
+            }
+
+            // Phase B：先冻结全员完整的非尾流计划终点。
+            var plannedMovements = new Dictionary<PlayerState, int>(turnOrder.Count);
+            foreach (PlayerState p in turnOrder)
+            {
+                if (skipped.Contains(p) || p.isBlown || p.hasFinished)
+                {
+                    p.totalMovementThisTurn = 0;
+                    plannedMovements[p] = 0;
+                    continue;
+                }
+
                 int rawEnd = p.position + p.cornerTotalThisTurn;
                 var crossed = TrackRules.GetUniqueApexCornersCrossed(nodes, p.position, rawEnd);
                 int bonus = session.ComputeMovementBonus(p, crossed.Count > 0);
-                bonus += session.ComputeSlipstreamBonus(p, players, totalNodes);
+                bonus += session.ConsumeItalyCornerExitBonus(p);
                 if (p.techState != null && TechTreeRules.ShouldTriggerWurstplatte(p.techState, session.TechDb, crossed.Count > 0))
                     bonus += 1;
                 p.totalMovementThisTurn = p.cornerTotalThisTurn + bonus;
+                plannedMovements[p] = p.totalMovementThisTurn;
+            }
+
+            // Phase C：所有计划终点稳定后统一解析最多两段的链式尾流。
+            foreach (PlayerState p in turnOrder)
+            {
+                if (skipped.Contains(p) || p.isBlown || p.hasFinished)
+                    continue;
+                SlipstreamChainResult chain = session.ComputeSlipstreamChain(
+                    p, players, totalNodes, plannedMovements);
+                p.totalMovementThisTurn += chain.TotalBonus;
+            }
+
+            // Phase D：按排名顺序执行移动、圈数、弯道与维修区入口判定。
+            foreach (PlayerState p in turnOrder)
+            {
+                if (skipped.Contains(p) || p.isBlown || p.hasFinished)
+                    continue;
 
                 // 移动 + 圈数
                 int oldPos = p.position;
                 int newPos = p.position + p.totalMovementThisTurn;
+                int rawEnd = oldPos + p.cornerTotalThisTurn;
+                var crossed = TrackRules.GetUniqueApexCornersCrossed(nodes, oldPos, rawEnd);
                 for (int i = oldPos + 1; i <= newPos; i++)
                 {
                     if (nodes[i % totalNodes].isStartFinish)
@@ -191,6 +240,7 @@ public class RaceSimulationTest
                     $"{p.name} 位置越界: {p.position}");
 
                 // 弯道判定（科技+天气限速）
+                bool completedCorner = crossed.Count > 0;
                 if (p.cornerTotalThisTurn > 0 && !p.isBlown)
                 {
                     foreach (var cid in crossed)
@@ -203,11 +253,13 @@ public class RaceSimulationTest
                             if (drawn < heat)
                             {
                                 SimSpin(p, oldPos, session.EffectiveSpinMax(p));
+                                completedCorner = false;
                                 break;
                             }
                         }
                     }
                 }
+                session.ArmItalyCornerExitBonus(p, completedCorner);
                 violations.Check(p.deck.heatPool.remaining >= 0,
                     $"{p.name} 热量池为负: {p.deck.heatPool.remaining}");
 

@@ -216,6 +216,10 @@ public class GameConfigSO : ScriptableObject
     [Range(0f, 1f)]
     public float aiCautiousHeatThreshold = 0.5f;
 
+    [Tooltip("中国 AI 在引擎可支付时允许承担的单回合弯道热量")]
+    [Min(0)]
+    public int aiChinaAffordableCornerHeat = 1;
+
     [Tooltip("AI 对已选速度牌顺序进行随机变化的概率")]
     [Range(0f, 1f)]
     public float aiCardVariationChance = 0.1f;

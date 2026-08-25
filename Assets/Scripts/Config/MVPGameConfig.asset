@@ -41,3 +41,4 @@ MonoBehaviour:
   aiHeatWarningThreshold: 0.7
   aiLookAheadNodes: 6
   aiAggressiveHeatThreshold: 0.3
+  aiChinaAffordableCornerHeat: 1

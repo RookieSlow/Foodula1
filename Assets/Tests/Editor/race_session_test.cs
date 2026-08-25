@@ -297,6 +297,47 @@ public class RaceSessionTest
     }
 
     [Test]
+    public void test_us_straight_roar_is_one_flat_bonus_without_profile_stacking()
+    {
+        var session = CreateSession();
+        var p = CreatePlayer(session, TeamId.US);
+        p.techState = null;
+
+        // The profile's +2 top-speed/+1 acceleration values are descriptive;
+        // runtime Straight Roar is the tuned flat +1 once any speed card is played.
+        Assert.AreEqual(0, session.ComputeMovementBonus(p, crossedCorner: false), "no-card straight bonus");
+        p.playedSpeedCardsThisTurn.Add(new CardData(CardType.Speed, 4));
+        Assert.AreEqual(1, session.ComputeMovementBonus(p, crossedCorner: false), "played-card straight bonus");
+        Assert.AreEqual(0, session.ComputeMovementBonus(p, crossedCorner: true), "corner bonus");
+    }
+
+    [Test]
+    public void test_italy_corner_exit_bonus_arms_after_corner_and_applies_next_turn()
+    {
+        var session = CreateSession();
+        var p = CreatePlayer(session, TeamId.IT);
+        p.techState = null;
+        p.playedSpeedCardsThisTurn.Add(new CardData(CardType.Speed, 2));
+
+        Assert.AreEqual(0, session.ComputeMovementBonus(p, crossedCorner: false),
+            "Italy must not receive a permanent straight bonus");
+        Assert.AreEqual(0, session.ComputeMovementBonus(p, crossedCorner: true));
+        Assert.AreEqual(0, session.ConsumeItalyCornerExitBonus(p));
+
+        session.ArmItalyCornerExitBonus(p, completedCorner: true);
+        Assert.IsTrue(p.italyCornerExitBoostReady);
+
+        p.playedSpeedCardsThisTurn.Clear();
+        Assert.AreEqual(0, session.ConsumeItalyCornerExitBonus(p), "empty turn must preserve the boost");
+        Assert.IsTrue(p.italyCornerExitBoostReady);
+
+        p.playedSpeedCardsThisTurn.Add(new CardData(CardType.Speed, 3));
+        Assert.AreEqual(1, session.ConsumeItalyCornerExitBonus(p));
+        Assert.IsFalse(p.italyCornerExitBoostReady);
+        Assert.AreEqual(0, session.ConsumeItalyCornerExitBonus(p), "boost is one-shot");
+    }
+
+    [Test]
     public void test_compute_movement_bonus_sauerkraut_crossed_corner()
     {
         var session = CreateSession();
@@ -572,6 +613,104 @@ public class RaceSessionTest
         leader.cornerTotalThisTurn = 4; // leader 到 15, p 到 13 → 距离 2... >1 无
         p.cornerTotalThisTurn = 3;      // p 到 13, leader 到 15 → 距离 2
         Assert.AreEqual(0, session.ComputeSlipstreamBonus(p, session.Players, 60));
+    }
+
+    [Test]
+    public void test_slipstream_chain_can_trigger_twice_against_two_leaders()
+    {
+        var session = CreateSession();
+        var follower = AddRacer(session, "Follower", 10, TeamId.CN, false);
+        var firstLeader = AddRacer(session, "First", 11, TeamId.UK);
+        var secondLeader = AddRacer(session, "Second", 13, TeamId.DE);
+        follower.cornerTotalThisTurn = 3;     // 13
+        firstLeader.cornerTotalThisTurn = 3;  // 14：第一段 +2 后到 15
+        secondLeader.cornerTotalThisTurn = 3; // 16：第二段再次命中
+
+        SlipstreamChainResult chain = session.ComputeSlipstreamChain(
+            follower, session.Players, 60);
+
+        Assert.IsTrue(chain.Triggered);
+        Assert.AreEqual(2, chain.Steps.Count);
+        Assert.AreSame(firstLeader, chain.Steps[0].Leader);
+        Assert.AreSame(secondLeader, chain.Steps[1].Leader);
+        Assert.AreEqual(RaceSession.SLIPSTREAM_BASE_BONUS * 2, chain.TotalBonus);
+    }
+
+    [Test]
+    public void test_slipstream_chain_is_capped_at_two_triggers()
+    {
+        var session = CreateSession();
+        var follower = AddRacer(session, "Follower", 10, TeamId.CN, false);
+        AddRacer(session, "First", 11, TeamId.UK).cornerTotalThisTurn = 3;
+        AddRacer(session, "Second", 13, TeamId.DE).cornerTotalThisTurn = 3;
+        var thirdLeader = AddRacer(session, "Third", 15, TeamId.US);
+        thirdLeader.cornerTotalThisTurn = 3;
+        follower.cornerTotalThisTurn = 3;
+
+        SlipstreamChainResult chain = session.ComputeSlipstreamChain(
+            follower, session.Players, 60, null, 99);
+
+        Assert.AreEqual(2, chain.Steps.Count);
+        Assert.AreEqual(RaceSession.SLIPSTREAM_BASE_BONUS * 2, chain.TotalBonus);
+        Assert.AreNotSame(thirdLeader, chain.Steps[chain.Steps.Count - 1].Leader);
+    }
+
+    [Test]
+    public void test_cloudy_chain_does_not_reuse_same_leader_after_one_cell_bonus()
+    {
+        var session = CreateSession();
+        var follower = AddRacer(session, "Follower", 10, TeamId.CN, false);
+        var leader = AddRacer(session, "Leader", 11, TeamId.UK);
+        follower.cornerTotalThisTurn = 3;
+        leader.cornerTotalThisTurn = 3;
+        session.Weather = WeatherType.Cloudy;
+
+        SlipstreamChainResult chain = session.ComputeSlipstreamChain(
+            follower, session.Players, 60);
+
+        Assert.AreEqual(1, chain.Steps.Count);
+        Assert.AreSame(leader, chain.Steps[0].Leader);
+        Assert.AreEqual(1, chain.TotalBonus);
+    }
+
+    [Test]
+    public void test_slipstream_chain_uses_complete_non_slipstream_movement_plan()
+    {
+        var session = CreateSession();
+        var follower = AddRacer(session, "Follower", 10, TeamId.CN, false);
+        var leader = AddRacer(session, "Leader", 11, TeamId.UK);
+        follower.cornerTotalThisTurn = 3;
+        leader.cornerTotalThisTurn = 3;
+        var plannedMovements = new Dictionary<PlayerState, int>
+        {
+            [follower] = 5, // 科技/特技把最终非尾流终点推进到 15，已超过前车的 14。
+            [leader] = 3
+        };
+
+        SlipstreamChainResult chain = session.ComputeSlipstreamChain(
+            follower, session.Players, 60, plannedMovements);
+
+        Assert.IsFalse(chain.Triggered);
+        Assert.AreEqual(0, chain.TotalBonus);
+    }
+
+    [Test]
+    public void test_ice_jelly_on_nearest_leader_stops_chain_instead_of_skipping_ahead()
+    {
+        var session = CreateSession();
+        var follower = AddRacer(session, "Follower", 10, TeamId.CN, false);
+        var blocker = AddRacer(session, "Blocker", 11, TeamId.UK);
+        AddRacer(session, "Farther", 13, TeamId.DE).cornerTotalThisTurn = 3;
+        follower.cornerTotalThisTurn = 3;
+        blocker.cornerTotalThisTurn = 3;
+        blocker.trickState.iceJellyActive = true;
+        follower.slipstreamRangeBonusThisTurn = 2;
+
+        SlipstreamChainResult chain = session.ComputeSlipstreamChain(
+            follower, session.Players, 60);
+
+        Assert.IsFalse(chain.Triggered);
+        Assert.AreEqual(0, chain.TotalBonus);
     }
 
     // ===== 地标（US 科技/特技） =====

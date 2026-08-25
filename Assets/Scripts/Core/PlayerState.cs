@@ -79,6 +79,13 @@ public class PlayerState
     /// <summary>本回合尾流距离加成（FullEnglish / 其他临时来源）。</summary>
     public int slipstreamRangeBonusThisTurn;
 
+    /// <summary>
+    /// Italy's Passione in Curva reward armed by a successfully completed
+    /// corner. It persists until the next playable turn consumes it on the
+    /// first speed card; ordinary per-turn cleanup must not clear it.
+    /// </summary>
+    public bool italyCornerExitBoostReady;
+
     /// <summary>回合开始时的位置（失控回退 / 阴阳茶结算用）。</summary>
     public int positionAtTurnStart;
 

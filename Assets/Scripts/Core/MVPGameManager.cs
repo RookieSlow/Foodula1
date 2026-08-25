@@ -62,7 +62,7 @@ public class MVPGameManager : MonoBehaviour
     private List<int> laneIndices = new List<int>();
     private Dictionary<PlayerState, AIController> aiControllers = new Dictionary<PlayerState, AIController>();
     private Dictionary<PlayerState, int> overtakesThisTurn = new Dictionary<PlayerState, int>();
-    private readonly Dictionary<PlayerState, SlipstreamResult> slipstreamsThisTurn = new Dictionary<PlayerState, SlipstreamResult>();
+    private readonly Dictionary<PlayerState, SlipstreamChainResult> slipstreamsThisTurn = new Dictionary<PlayerState, SlipstreamChainResult>();
     private readonly RaceWeatherState weatherState = new RaceWeatherState();
     private RaceCameraController raceCameraController;
     private CarOrientationController carOrientationController;
@@ -959,7 +959,8 @@ public class MVPGameManager : MonoBehaviour
                 // 移动 → 反应(冷却) → 弯道判定
                 yield return StartCoroutine(AnimateMovement(p, GetCarIndex(p)));
                 ReactStep(p);
-                ResolveCorners(p, oldPos, rawEnd);
+                bool completedCorner = ResolveCorners(p, oldPos, rawEnd);
+                session.ArmItalyCornerExitBonus(p, completedCorner);
 
                 // US L3 母亲之路：经过地标自动结算（繁荣→冷却2 / 衰退→自动修复 / 复兴→终极转化）
                 if (p.techState != null && config.enableTechTree &&
@@ -1322,6 +1323,7 @@ public class MVPGameManager : MonoBehaviour
             bool crossedCorner = trackManager.GetUniqueCornersCrossed(p.position, rawEnd).Count > 0;
 
             int bonus = session.ComputeMovementBonus(p, crossedCorner);
+            bonus += session.ConsumeItalyCornerExitBonus(p);
             // DE L2 猪肘悬挂：过弯 → 出弯后 +1 移动（弯道判定在 ResolveCorners 跳过）
             if (p.techState != null && TechTreeRules.ShouldTriggerWurstplatte(p.techState, session.TechDb, crossedCorner))
                 bonus += 1;
@@ -1333,11 +1335,6 @@ public class MVPGameManager : MonoBehaviour
             bonus += CardPlayRules.GetHotpotMovementBonus(p);
             // 特技牌即时移动（司康 +2 等）
             bonus += p.trickMoveBonusThisTurn;
-
-            // 尾流：模拟移动后紧跟前方车 → 基础 +2（帕尔玛/筋斗云叠加；前车冰糕阻断）
-            SlipstreamResult slipstream = session.ComputeSlipstream(p, session.Players, trackManager.TotalNodes);
-            slipstreamsThisTurn[p] = slipstream;
-            bonus += slipstream.Bonus;
 
             // DE L1 黑啤酒燃料：付 1 热 → +2 移动（自动激活；引擎预留 1 热防失控）
             if (p.techState != null && config.enableTechTree &&
@@ -1376,7 +1373,27 @@ public class MVPGameManager : MonoBehaviour
                     hudUI.AppendLog($"{p.name} 美式烧烤区：+2 移动。");
             }
 
+            // 先保存不含尾流的计划移动。所有车辆都有稳定终点后再统一判定尾流，
+            // 避免按 turnOrder 逐个计算造成前后车辆使用不同阶段的数据。
             p.totalMovementThisTurn = p.cornerTotalThisTurn + bonus;
+        }
+
+        var plannedMovements = new Dictionary<PlayerState, int>(turnOrder.Count);
+        foreach (PlayerState p in turnOrder)
+            plannedMovements[p] = p.totalMovementThisTurn;
+
+        // 第三轮：按 GDD 最多结算两段链式尾流；科技/特技等非尾流移动已计入模拟终点。
+        foreach (PlayerState p in turnOrder)
+        {
+            if (RaceTurnRules.IsInactive(p, turnSkipped))
+                continue;
+
+            SlipstreamChainResult chain = session.ComputeSlipstreamChain(
+                p, session.Players, trackManager.TotalNodes, plannedMovements);
+            slipstreamsThisTurn[p] = chain;
+            p.totalMovementThisTurn += chain.TotalBonus;
+
+            int bonus = p.totalMovementThisTurn - p.cornerTotalThisTurn;
             raceLogWriter?.Append(
                 $"[MOVE_PLAN] {p.name} role={(p.isAI ? "AI" : "PLAYER")} position={p.position} " +
                 $"corner_speed={p.cornerTotalThisTurn} bonus={bonus} total={p.totalMovementThisTurn}");
@@ -1403,27 +1420,32 @@ public class MVPGameManager : MonoBehaviour
     /// </summary>
     private IEnumerator PlaySlipstreamPhase(List<PlayerState> turnOrder, HashSet<PlayerState> turnSkipped)
     {
-        if (raceEventFX == null)
-            yield break;
-
         var events = new List<RaceEventFX.SlipstreamVisualEvent>();
         foreach (PlayerState follower in turnOrder)
         {
             if (RaceTurnRules.IsInactive(follower, turnSkipped))
                 continue;
-            if (!slipstreamsThisTurn.TryGetValue(follower, out SlipstreamResult result) || !result.Triggered)
+            if (!slipstreamsThisTurn.TryGetValue(follower, out SlipstreamChainResult chain) || !chain.Triggered)
                 continue;
 
-            Transform followerCar = GetCarTransform(follower);
-            Transform leaderCar = GetCarTransform(result.Leader);
-            if (followerCar == null || leaderCar == null)
-                continue;
+            for (int stepIndex = 0; stepIndex < chain.Steps.Count; stepIndex++)
+            {
+                SlipstreamResult step = chain.Steps[stepIndex];
+                raceLogWriter?.Append(
+                    $"[SLIPSTREAM] {follower.name} chain={stepIndex + 1}/{chain.Steps.Count} " +
+                    $"follows={step.Leader.name} bonus={step.Bonus} total_bonus={chain.TotalBonus}");
 
-            events.Add(new RaceEventFX.SlipstreamVisualEvent(followerCar, leaderCar, result.Bonus));
-            raceLogWriter?.Append($"[SLIPSTREAM] {follower.name} follows={result.Leader.name} bonus={result.Bonus}");
+                if (raceEventFX == null)
+                    continue;
+
+                Transform followerCar = GetCarTransform(follower);
+                Transform leaderCar = GetCarTransform(step.Leader);
+                if (followerCar != null && leaderCar != null)
+                    events.Add(new RaceEventFX.SlipstreamVisualEvent(followerCar, leaderCar, step.Bonus));
+            }
         }
 
-        if (events.Count > 0)
+        if (raceEventFX != null && events.Count > 0)
             yield return StartCoroutine(raceEventFX.PlaySlipstreams(events));
     }
 
@@ -1452,12 +1474,13 @@ public class MVPGameManager : MonoBehaviour
 
     // ====== 弯道判定（per-corner-segment，含天气/科技修正） ======
 
-    private void ResolveCorners(PlayerState p, int oldPos, int rawEndPos)
+    private bool ResolveCorners(PlayerState p, int oldPos, int rawEndPos)
     {
-        if (p.cornerTotalThisTurn <= 0) return;
-        if (p.isBlown) return;
+        if (p.cornerTotalThisTurn <= 0) return false;
+        if (p.isBlown) return false;
 
         HashSet<int> corners = trackManager.GetUniqueCornersCrossed(oldPos, rawEndPos);
+        if (corners.Count == 0) return false;
         int totalSpeed = p.cornerTotalThisTurn;
         int laneIndex = GetLane(p);
         string log = "";
@@ -1468,7 +1491,7 @@ public class MVPGameManager : MonoBehaviour
         {
             if (hudUI != null)
                 hudUI.AppendLog($"{p.name} 猪肘悬挂：跳过本回合弯道判定。");
-            return;
+            return true;
         }
 
         foreach (int cornerId in corners)
@@ -1488,7 +1511,7 @@ public class MVPGameManager : MonoBehaviour
                 if (!TryPayHeat(p, heat, oldPos, $"overspeed at {cname} ({totalSpeed}>{limit})"))
                 {
                     if (hudUI != null) hudUI.AppendLog(log);
-                    return; // 失控中断后续弯道判定
+                    return false; // 失控中断后续弯道判定
                 }
 
                 log += $"{p.name} 在 {cname} 超速 (lane {laneIndex + 1}, 限速 {limit}) 超 {overspeed}！+{heat} 热量。\n";
@@ -1503,6 +1526,7 @@ public class MVPGameManager : MonoBehaviour
             log = $"{p.name} 直道 - 无弯道。\n";
 
         if (hudUI != null) hudUI.AppendLog(log);
+        return true;
     }
 
     // ====== 维修区 ======

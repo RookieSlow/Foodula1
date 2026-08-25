@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 /// <summary>尾流判定结果；规则层同时返回加成与被跟随的前车，供表现层使用。</summary>
@@ -11,6 +12,35 @@ public readonly struct SlipstreamResult
     {
         Leader = leader;
         Bonus = bonus;
+    }
+}
+
+/// <summary>
+/// 一回合内的完整尾流链。规则最多保留两次触发，表现层可逐段展示命中的前车。
+/// </summary>
+public readonly struct SlipstreamChainResult
+{
+    private static readonly IReadOnlyList<SlipstreamResult> EmptySteps = Array.Empty<SlipstreamResult>();
+    private readonly IReadOnlyList<SlipstreamResult> steps;
+
+    public IReadOnlyList<SlipstreamResult> Steps => steps ?? EmptySteps;
+    public int TotalBonus { get; }
+    public bool Triggered => Steps.Count > 0 && TotalBonus > 0;
+
+    public SlipstreamChainResult(List<SlipstreamResult> resolvedSteps)
+    {
+        if (resolvedSteps == null || resolvedSteps.Count == 0)
+        {
+            steps = EmptySteps;
+            TotalBonus = 0;
+            return;
+        }
+
+        steps = resolvedSteps.ToArray();
+        int total = 0;
+        for (int i = 0; i < steps.Count; i++)
+            total += steps[i].Bonus;
+        TotalBonus = total;
     }
 }
 
@@ -392,10 +422,30 @@ public class RaceSession
         if (p.techState != null && !crossedCorner &&
             (!TeamGearRules.IsChina(p.teamId) || !p.usesChinaGearSystem || IsGoMode(p)))
             bonus += GetModifiers(p).EffectiveSpeedBonusStraight;
-        if (crossedCorner)
-            bonus += TeamVehicleRules.GetCornerExitBonus(p.teamId);
         bonus += TrickCardRules.GetSauerkrautBonus(p.trickState, crossedCorner);
         return bonus;
+    }
+
+    /// <summary>
+    /// Consumes Italy's stored corner-exit acceleration on the next playable
+    /// turn. The GDD grants +1 to the first speed card after a corner, not to
+    /// the movement that is currently crossing that corner.
+    /// </summary>
+    public int ConsumeItalyCornerExitBonus(PlayerState p)
+    {
+        if (p == null || p.teamId != TeamId.IT || !p.italyCornerExitBoostReady ||
+            p.playedSpeedCardsThisTurn == null || p.playedSpeedCardsThisTurn.Count == 0)
+            return 0;
+
+        p.italyCornerExitBoostReady = false;
+        return TeamVehicleRules.GetCornerExitBonus(p.teamId);
+    }
+
+    /// <summary>Arms Italy's next-turn acceleration after a corner was completed without spinning.</summary>
+    public void ArmItalyCornerExitBonus(PlayerState p, bool completedCorner)
+    {
+        if (p != null && p.teamId == TeamId.IT && completedCorner)
+            p.italyCornerExitBoostReady = true;
     }
 
     /// <summary>本回合是否跨过起点/终点线（US 特技牌/科技以起点线为地标 1）。</summary>
@@ -409,61 +459,106 @@ public class RaceSession
     // ═══════════════════════════════════════════════════════════════════
 
     /// <summary>
-    /// 计算本回合尾流加成。条件：模拟移动后，前方最近的车在尾流距离内（基础 1 格，
-    /// 科技 slipstreamRangeBonus / FullEnglish 临时加成可扩展）。
-    /// 加成 = 基础 +2 + 帕尔玛干酪 +2 + 筋斗云 +2（本回合打过 ATTACK 特技）。
-    /// 前方车的冰糕会阻断尾流（CN 特技牌）。
+    /// 计算完整尾流链。第一次判定使用所有车辆的计划移动终点；获得尾流后从新位置
+    /// 再判定一次，且不会重复跟随同一辆前车。GDD 规定每回合最多触发两次。
+    /// plannedMovements 为空时使用速度牌总值，供纯模拟和兼容调用使用。
     /// </summary>
-    public SlipstreamResult ComputeSlipstream(PlayerState p, IReadOnlyList<PlayerState> players, int totalNodes)
+    public SlipstreamChainResult ComputeSlipstreamChain(
+        PlayerState p,
+        IReadOnlyList<PlayerState> players,
+        int totalNodes,
+        IReadOnlyDictionary<PlayerState, int> plannedMovements = null,
+        int maxTriggers = 2)
     {
-        if (p == null || players == null || totalNodes <= 0) return default;
-        if (p.isBlown || p.hasFinished) return default;
-        if (!WeatherRules.CanSlipstream(Weather)) return default;
+        if (p == null || players == null || totalNodes <= 0 || maxTriggers <= 0)
+            return default;
+        if (p.isBlown || p.hasFinished || !WeatherRules.CanSlipstream(Weather))
+            return default;
 
-        int mySim = p.position + p.cornerTotalThisTurn;
-        PlayerState leader = null;
-        int bestGap = int.MaxValue;
-
-        foreach (var q in players)
-        {
-            if (q == p || q.isBlown || q.hasFinished) continue;
-            int qSim = q.position + q.cornerTotalThisTurn;
-            int gap = ForwardDistance(mySim, qSim, totalNodes);
-            if (gap < bestGap)
-            {
-                bestGap = gap;
-                leader = q;
-            }
-        }
-
-        if (leader == null) return default;
-
-        // 距离判定：最近的前车必须在尾流距离内（≤ 半圈才算"前方"）
-        if (bestGap > totalNodes / 2) return default;
         int range = 1 + GetModifiers(p).slipstreamRangeBonus + p.slipstreamRangeBonusThisTurn;
         range = WeatherRules.ApplyWeatherToSlipstreamRange(range, Weather);
-        if (bestGap > range) return default;
+        if (range <= 0)
+            return default;
 
-        // 冰糕：前车开启 → 身后赛车无法享受尾流
-        if (TrickCardRules.IsIceJellyActive(leader.trickState)) return default;
+        int triggerLimit = Math.Min(2, maxTriggers);
+        int mySim = p.position + GetPlannedMovement(p, plannedMovements);
+        var usedLeaders = new HashSet<PlayerState>();
+        var steps = new List<SlipstreamResult>(triggerLimit);
 
+        for (int trigger = 0; trigger < triggerLimit; trigger++)
+        {
+            PlayerState leader = null;
+            int bestGap = int.MaxValue;
+
+            foreach (PlayerState candidate in players)
+            {
+                if (candidate == null || candidate == p || candidate.isBlown || candidate.hasFinished ||
+                    usedLeaders.Contains(candidate))
+                    continue;
+
+                int candidateSim = candidate.position + GetPlannedMovement(candidate, plannedMovements);
+                int gap = ForwardDistance(mySim, candidateSim, totalNodes);
+                if (gap < bestGap)
+                {
+                    bestGap = gap;
+                    leader = candidate;
+                }
+            }
+
+            // 最近车辆不在前方半圈或超出尾流范围时，链条结束。
+            if (leader == null || bestGap > totalNodes / 2 || bestGap > range)
+                break;
+
+            // 冰糕阻断身后气流；不能越过最近车辆去吸更远的车。
+            if (TrickCardRules.IsIceJellyActive(leader.trickState))
+                break;
+
+            int bonus = GetSlipstreamMovementBonus(p);
+            if (bonus <= 0)
+                break;
+
+            steps.Add(new SlipstreamResult(leader, bonus));
+            usedLeaders.Add(leader);
+            mySim += bonus;
+        }
+
+        return new SlipstreamChainResult(steps);
+    }
+
+    /// <summary>兼容只需要第一次命中前车的表现与既有调用。</summary>
+    public SlipstreamResult ComputeSlipstream(PlayerState p, IReadOnlyList<PlayerState> players, int totalNodes)
+    {
+        SlipstreamChainResult chain = ComputeSlipstreamChain(p, players, totalNodes, null, 1);
+        return chain.Triggered ? chain.Steps[0] : default;
+    }
+
+    /// <summary>兼容只需要数值的模拟与 AI；返回最多两段尾流的总移动。</summary>
+    public int ComputeSlipstreamBonus(PlayerState p, IReadOnlyList<PlayerState> players, int totalNodes)
+    {
+        return ComputeSlipstreamChain(p, players, totalNodes).TotalBonus;
+    }
+
+    private static int GetPlannedMovement(
+        PlayerState player,
+        IReadOnlyDictionary<PlayerState, int> plannedMovements)
+    {
+        if (plannedMovements != null && plannedMovements.TryGetValue(player, out int movement))
+            return movement;
+        return player.cornerTotalThisTurn;
+    }
+
+    private int GetSlipstreamMovementBonus(PlayerState p)
+    {
         int bonus = SLIPSTREAM_BASE_BONUS + TeamVehicleRules.GetSlipstreamBonus(p.teamId);
         bonus += TrickCardRules.GetParmigianoBonus(p.trickState);
-        // 筋斗云：本回合打过 ATTACK 特技牌 → 尾流 +2
+        // 筋斗云：本回合打过 ATTACK 特技牌 → 每段尾流 +2。
         if (p.techState != null &&
             TechTreeRules.HasSomersaultCloud(p.techState, TechDb) &&
             PlayedAttackTrickThisTurn(p))
         {
             bonus += TechTreeRules.GetSomersaultCloudSlipstreamBonus();
         }
-        bonus = WeatherRules.ApplyWeatherToSlipstreamBonus(bonus, Weather);
-        return new SlipstreamResult(leader, bonus);
-    }
-
-    /// <summary>兼容只需要数值的模拟、AI 与既有测试调用。</summary>
-    public int ComputeSlipstreamBonus(PlayerState p, IReadOnlyList<PlayerState> players, int totalNodes)
-    {
-        return ComputeSlipstream(p, players, totalNodes).Bonus;
+        return WeatherRules.ApplyWeatherToSlipstreamBonus(bonus, Weather);
     }
 
     /// <summary>环形赛道前向距离（a 到 b 沿赛道方向）。</summary>

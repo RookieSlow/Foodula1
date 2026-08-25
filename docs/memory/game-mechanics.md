@@ -3,8 +3,10 @@
 This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
-> **Implementation snapshot (2026-08-24)**: Unity `2022.3.62f3c1`; the latest
-> editor EditMode run passed `406/406`. The required
+> **Implementation snapshot (2026-08-25)**: Unity `2022.3.62f3c1`; the latest
+> latest successful editor EditMode run passed `417/417`; a later
+> benchmark-only rerun failed to initialize 0/417 tests and did not produce an
+> assertion failure. The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.
 
@@ -59,6 +61,13 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   hand, then draw pile, then discard pile.
 - Gear 2 removes up to one heat card through the same priority.
 - Higher gears provide no automatic cooling.
+- Italy has no permanent straight movement bonus. Completing a corner arms a
+  one-shot `+1` for the first speed card played on a later turn; an empty turn
+  preserves it, and a failed/spun corner does not arm it.
+- China AI projects every unique apex crossed by the lowest legal Go card set.
+  It may accept at most one corner heat when the engine can also pay overclock
+  and missing-card costs; larger or unaffordable risks force Recover. The
+  tolerance is `GameConfigSO.aiChinaAffordableCornerHeat` (currently `1`).
 
 Gear-shift heat cost and gear-one/gear-two cooling values are configured in
 `GameConfigSO`. `MVPGameManager` resolves these rules through `RaceRules` for
@@ -141,10 +150,17 @@ prototype and is no longer the authoritative model.
   limits by two, adds two spin-counter points, and disables slipstream. Hot
   reduces reaction-step cooling by one. Corner limits, slipstream, cooling,
   spin-out increments, and HUD labels all resolve through `WeatherRules`.
-- A successful slipstream now also records the nearest leader for presentation.
-  Before movement, all slipstreams in the turn are merged into one 0.9-second
-  unscaled visual phase with a blue moving dash trail, a two-car focus pulse,
-  and the final bonus text; this presentation does not alter movement totals.
+- Slipstream uses every racer's complete non-slipstream movement plan, including
+  vehicle, technology and trick bonuses. A successful first slipstream advances
+  the simulated endpoint and may follow one different car for a second bonus;
+  the same leader cannot be reused and the chain is capped at two triggers.
+  Before movement, every resolved chain segment is merged into one 0.9-second
+  unscaled visual phase with blue moving dash trails, two-car focus pulses, and
+  total bonus text; each segment is also written to the manual race log.
+- The deterministic full-race test and track/team balance benchmark use the
+  same four phase boundary as runtime: all racers choose cards, all non-slipstream
+  plans are frozen, all slipstream chains resolve, then movement executes in
+  rank order. The benchmark reports trigger count and movement gained per team.
 - Weather rolls once per newly crossed lap; the `RaceWeatherState` gate prevents
   multiple cars crossing the same start/finish node from rerolling the lap.
 

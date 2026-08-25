@@ -39,12 +39,21 @@ public class AIController : MonoBehaviour
                 ai.HeatRatio,
                 config.aiHeatWarningThreshold);
 
-            // The two-gear policy still needs the same look-ahead safety check
-            // as standard teams. Without this guard China AI enters Go just
-            // before a tight apex, repeatedly spends engine heat and reaches
-            // the three-spin DNF threshold before its Recover cycle can help.
-            if (target == ChinaGearShiftRules.GoGear && HasChinaCornerRisk())
-                return ChinaGearShiftRules.RecoverGear;
+            if (target == ChinaGearShiftRules.GoGear)
+            {
+                ChinaGearShiftRules.Result go = ChinaGearShiftRules.Resolve(
+                    ai.gear, ai.chinaConsecutiveGearCount, target);
+                int projectedCornerHeat = GetChinaProjectedCornerHeat(go.SpeedCardCount);
+                int missingCardHeat = RaceRules.GetMissingSpeedCardCount(
+                    go.SpeedCardCount, ai.deck.CountSpeedInHand());
+                int engineHeat = ai.deck.heatPool != null ? ai.deck.heatPool.remaining : 0;
+                if (ChinaGearShiftRules.ShouldForceRecoverForCorner(
+                    projectedCornerHeat,
+                    go.AdditionalHeat + missingCardHeat,
+                    engineHeat,
+                    config.aiChinaAffordableCornerHeat))
+                    return ChinaGearShiftRules.RecoverGear;
+            }
 
             return target;
         }
@@ -184,6 +193,19 @@ public class AIController : MonoBehaviour
     }
 
     /// <summary>
+    /// Minimum movement the current hand can produce while still satisfying
+    /// a mandatory card count. Used to distinguish avoidable corner risk
+    /// (select low cards) from unavoidable risk (switch China to Recover).
+    /// </summary>
+    private int EstimateMinimumMovement(int cardLimit)
+    {
+        List<CardData> bottomN = ai.deck.GetBottomNSpeedCards(cardLimit);
+        int sum = 0;
+        foreach (var c in bottomN) sum += c.value;
+        return sum;
+    }
+
+    /// <summary>
     /// 检查前方第一个弯道是否有超速风险。
     /// </summary>
     private bool HasCornerRisk(int cardLimit)
@@ -223,27 +245,33 @@ public class AIController : MonoBehaviour
             : baseLimit;
     }
 
-    private bool HasChinaCornerRisk()
+    private int GetChinaProjectedCornerHeat(int cardCount)
     {
         if (track == null || track.TotalNodes == 0)
-            return false;
+            return 0;
 
-        int cardCount = ai.chinaConsecutiveGearCount > 0 ? 4 : 3;
-        int estimatedMove = EstimateMovement(cardCount);
+        // Gear choice must use the lowest legal Go hand. If that hand is
+        // safe, Go can remain active and SelectCards will deliberately choose
+        // those low cards. Small, affordable overspeed is controlled by the
+        // configured heat tolerance; repeated apex IDs are charged once.
+        int estimatedMove = EstimateMinimumMovement(cardCount);
         int lookAhead = Mathf.Min(
             Mathf.Min(config.aiLookAheadNodes, track.TotalNodes - 1),
             Mathf.Max(1, estimatedMove));
+        int projectedHeat = 0;
+        var visitedCorners = new HashSet<int>();
         for (int i = 1; i <= lookAhead; i++)
         {
             TrackNode node = track.GetNode((ai.position + i) % track.TotalNodes);
-            if (node.cornerId <= 0)
+            if (node.cornerId <= 0 || !visitedCorners.Add(node.cornerId))
                 continue;
 
-            if (estimatedMove > GetEffectiveCornerLimit(node.cornerId))
-                return true;
+            projectedHeat += Mathf.Max(
+                0,
+                estimatedMove - GetEffectiveCornerLimit(node.cornerId));
         }
 
-        return false;
+        return projectedHeat;
     }
 
 }

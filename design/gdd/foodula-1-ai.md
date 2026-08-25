@@ -4,7 +4,7 @@
 > **关联文档**：`foodula-1-concept.md`（主框架）、`foodula-1-core-mechanics.md`（核心机制）  
 > **创建日期**：2026-07-13  
 > **适用范围**：Demo 快速比赛模式，中等难度 AI
-> **实现快照**：2026-08-23；当前运行时为 `AIController` + `AIPlanner`，
+> **实现快照**：2026-08-25；当前运行时为 `AIController` + `AIPlanner`，
 > 共享 `ChinaGearShiftRules`，默认一名 AI；`aiOpponentCount` 可配置更多对手。
 > P3 尾流策略、个性化难度和完整 Play Mode 调参仍属于未完成项。
 
@@ -278,25 +278,21 @@ Go/Recover 的连续使用和热量代价由 `ChinaGearShiftRules` 统一计算�
 // 当前运行时：AI 与玩家一样在 pit_entry 前 1–10 格作出进站预选，
 // 越过入口后下一回合执行停站；AI 以热量比例作为选择启发式。
 
-IF 热量 ≥ 60%：
+IF 热量 ≥ 配置警戒值（当前 70%）：
     → 选 Recover 档（连续 Recover 冷却 3→2→1→0 + 出 1 张牌）
-    如果连续 R 惩罚严重，仅选 1 回合 R 后切回 Go
-
-ELSE IF 前方有长直道（≥ 5 格直道）：
-    → 选 Go 档（3 张牌冲刺）
-    检查连续 Go 惩罚：第 1 次 Go 出 3 张，之后出 4 张并按连续次数产生 1/2/3 热量
-
 ELSE：
-    → Go ↔ Recover 交替（最优节奏）
-    如果上回合是 Go → 本回合 Recover
-    如果上回合是 Recover → 本回合 Go
+    → 默认采用 Go → Go → Recover 节奏
+    → 准备进入 Go 时，以必须打出的最低牌组合投影本回合会跨过的全部唯一弯心
+    → 累加预计弯道热量，并同时预留超频热量与缺牌热量
+    → 若弯道热量 ≤ 1 且引擎可支付全部已承诺成本：保持 Go、弯前改打低牌
+    → 否则强制 Recover；容忍值由 aiChinaAffordableCornerHeat 配置
 ```
 
 ### 出牌策略
 
 ```
-Go 档（3 张牌）：正常选最大的 3 张速度牌（同标准 AI）
-Recover 档（1 张牌）：选中间值速度牌（不太快不过弯，不太慢不浪费）
+Go 档：无弯道风险时选高牌；预计经过弯心时选最低的合法 3/4 张组合
+Recover 档：按同一弯道风险与热量阈值选择 1 张牌
 ```
 
 ---

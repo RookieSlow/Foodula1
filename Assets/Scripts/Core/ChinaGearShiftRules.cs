@@ -80,6 +80,25 @@ public static class ChinaGearShiftRules
         return GoGear;
     }
 
+    /// <summary>
+    /// Returns whether China AI must leave Go because projected corner heat is
+    /// outside its configured risk budget or cannot be paid after already
+    /// committed overclock/missing-card heat. Negative inputs are treated as
+    /// zero so malformed tuning data cannot create free heat capacity.
+    /// </summary>
+    public static bool ShouldForceRecoverForCorner(
+        int projectedCornerHeat,
+        int committedHeat,
+        int availableEngineHeat,
+        int affordableCornerHeat)
+    {
+        int cornerHeat = Math.Max(0, projectedCornerHeat);
+        int committed = Math.Max(0, committedHeat);
+        int available = Math.Max(0, availableEngineHeat);
+        int tolerance = Math.Max(0, affordableCornerHeat);
+        return cornerHeat > tolerance || cornerHeat + committed > available;
+    }
+
     public static int ClampMode(int gear)
     {
         return gear <= RecoverGear ? RecoverGear : GoGear;
