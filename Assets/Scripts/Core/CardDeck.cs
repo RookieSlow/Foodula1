@@ -337,12 +337,49 @@ public class CardDeck
     /// <summary>Heat currently waiting for cooling in the discard zone.</summary>
     public int CountHeatInDiscardPile() => CountHeatCards(discardPile);
 
+    /// <summary>Permanent heat cards currently outside the independent engine pool.</summary>
+    public int CountPermanentHeatOutsideEngine()
+    {
+        return CountHeatCards(hand, includeTemporary: false)
+            + CountHeatCards(drawPile, includeTemporary: false)
+            + CountHeatCards(discardPile, includeTemporary: false);
+    }
+
+    /// <summary>Temporary heat cards in all card zones; these do not increase engine capacity.</summary>
+    public int CountTemporaryHeatOutsideEngine()
+    {
+        return CountTemporaryHeatCards(hand)
+            + CountTemporaryHeatCards(drawPile)
+            + CountTemporaryHeatCards(discardPile);
+    }
+
     private static int CountHeatCards(IReadOnlyList<CardData> cards)
     {
         if (cards == null) return 0;
         int count = 0;
         foreach (CardData card in cards)
             if (card != null && card.IsHeat) count++;
+        return count;
+    }
+
+    private static int CountHeatCards(IReadOnlyList<CardData> cards, bool includeTemporary)
+    {
+        if (cards == null) return 0;
+        int count = 0;
+        foreach (CardData card in cards)
+        {
+            if (card == null || !card.IsHeat) continue;
+            if (includeTemporary || !card.isTemp) count++;
+        }
+        return count;
+    }
+
+    private static int CountTemporaryHeatCards(IReadOnlyList<CardData> cards)
+    {
+        if (cards == null) return 0;
+        int count = 0;
+        foreach (CardData card in cards)
+            if (card != null && card.IsHeat && card.isTemp) count++;
         return count;
     }
 

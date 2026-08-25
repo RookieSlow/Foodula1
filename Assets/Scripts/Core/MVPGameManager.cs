@@ -70,7 +70,6 @@ public class MVPGameManager : MonoBehaviour
 
     private WaitForSeconds nodeWait;
     private readonly RaceInputState inputState = new RaceInputState();
-    private Dictionary<int, Image> gearButtonImages = new Dictionary<int, Image>();
     private Dictionary<int, Button> gearButtons = new Dictionary<int, Button>();
     private Button confirmGearControl;
 
@@ -351,12 +350,10 @@ public class MVPGameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 从 HUDUI 的 public 按钮字段收集档位按钮 Image 引用，
-    /// 用于选中高亮和重置颜色。
+    /// 从 HUDUI 的 public 字段收集档位按钮引用，并接入旋钮表现。
     /// </summary>
     private void CollectGearButtonImages()
     {
-        gearButtonImages.Clear();
         gearButtons.Clear();
         confirmGearControl = null;
 
@@ -364,6 +361,8 @@ public class MVPGameManager : MonoBehaviour
         RegisterGearButton(2, hudUI != null ? hudUI.gear2Button : null, "Gear2Btn");
         RegisterGearButton(3, hudUI != null ? hudUI.gear3Button : null, "Gear3Btn");
         RegisterGearButton(4, hudUI != null ? hudUI.gear4Button : null, "Gear4Btn");
+
+        hudUI?.EnsurePresentation();
 
         confirmGearControl = hudUI != null ? hudUI.confirmGearButton : null;
         if (confirmGearControl == null)
@@ -385,9 +384,6 @@ public class MVPGameManager : MonoBehaviour
 
         if (button == null) return;
         gearButtons[gear] = button;
-        Image image = button.GetComponent<Image>();
-        if (image != null)
-            gearButtonImages[gear] = image;
     }
 
     private void SetGearControlsInteractable(bool interactable)
@@ -415,6 +411,7 @@ public class MVPGameManager : MonoBehaviour
         SetGearButtonLabel(2, china ? "Go" : "G2");
         SetGearButtonLabel(3, "G3");
         SetGearButtonLabel(4, "G4");
+        hudUI?.ConfigureGearPresentation(china, player != null ? player.gear : 1);
     }
 
     private void SetGearButtonVisible(int gear, bool visible)
@@ -690,9 +687,11 @@ public class MVPGameManager : MonoBehaviour
             values += player.playedSpeedCardsThisTurn[i].value;
         }
 
+        TeamGearRules.SpeedCardRequirement requirement = GetSpeedCardRequirement(player);
         raceLogWriter.Append(
             $"[CARDS] {player.name} source={source} count={player.playedSpeedCardsThisTurn.Count} values=[{values}] " +
-            $"gear_limit={GetMaxSpeedCardsThisTurn(player)}");
+            $"gear_limit={requirement.TotalCardCount} base_limit={requirement.BaseCardCount} " +
+            $"extra_slots={requirement.ExtraCardCount}");
     }
 
     /// <summary>
@@ -841,8 +840,7 @@ public class MVPGameManager : MonoBehaviour
                     inputState.BeginGearSelection(p.gear);
                     SetGearControlsInteractable(true);
                     ConfigureGearControls(p);
-                    foreach (var kv in gearButtonImages)
-                        kv.Value.color = (kv.Key == p.gear) ? new Color(0.3f, 0.8f, 0.3f, 0.9f) : new Color(1f, 1f, 1f, 0.8f);
+                    hudUI?.SelectGearPresentation(p.gear);
                     if (hudUI != null)
                         hudUI.SetStatus($"选择档位 (当前: {TeamGearRules.GetDisplayName(p.teamId, p.gear)})");
                     if (cardHandUI != null) { cardHandUI.SetGearSelectionMode(true); cardHandUI.UpdateDeckInfo(p); }
@@ -920,7 +918,7 @@ public class MVPGameManager : MonoBehaviour
                     if (hudUI != null)
                     {
                         hudUI.RefreshPlayerResources(p);
-                        hudUI.SetStatus($"{TeamGearRules.GetDisplayName(p.teamId, p.gear)} 档 - 可多选速度牌后确认（最多 {GetMaxSpeedCardsThisTurn(p)} 张；特技牌单张确认）");
+                        hudUI.SetStatus($"{GetSpeedCardRequirementLabel(p)} - 可多选速度牌后确认（最多 {GetMaxSpeedCardsThisTurn(p)} 张；特技牌单张确认）");
                     }
                     if (cardHandUI != null)
                         cardHandUI.RefreshRequirementFeedback(p);
@@ -1347,14 +1345,31 @@ public class MVPGameManager : MonoBehaviour
 
     // ====== 移动力计算（科技 + 特技加成） ======
 
-    /// <summary>本回合最大可出速度牌数 = 档位 + 额外槽（关东慢煮/火锅底料）。</summary>
+    /// <summary>Returns the base and extra speed-card slots for the current turn.</summary>
+    public TeamGearRules.SpeedCardRequirement GetSpeedCardRequirement(PlayerState p)
+    {
+        int extraSlots = p.extraCardSlotsThisTurn;
+        if (TrickCardRules.HasHotpotAttack(p.trickState))
+            extraSlots += 1;
+
+        return TeamGearRules.GetSpeedCardRequirement(
+            p.teamId, p.gear, p.chinaConsecutiveGearCount, extraSlots);
+    }
+
+    /// <summary>Formats the base-versus-extra slot breakdown for player feedback.</summary>
+    public string GetSpeedCardRequirementLabel(PlayerState p)
+    {
+        TeamGearRules.SpeedCardRequirement requirement = GetSpeedCardRequirement(p);
+        string gearName = TeamGearRules.GetDisplayName(p.teamId, p.gear);
+        return requirement.ExtraCardCount > 0
+            ? $"{gearName} 档（基础 {requirement.BaseCardCount} + 额外 {requirement.ExtraCardCount}）"
+            : $"{gearName} 档";
+    }
+
+    /// <summary>本回合最大可出速度牌数 = 档位基础要求 + 额外槽。</summary>
     public int GetMaxSpeedCardsThisTurn(PlayerState p)
     {
-        int max = TeamGearRules.GetSpeedCardCount(
-            p.teamId, p.gear, p.chinaConsecutiveGearCount,
-            p.extraCardSlotsThisTurn);
-        if (TrickCardRules.HasHotpotAttack(p.trickState)) max += 1;
-        return max;
+        return GetSpeedCardRequirement(p).TotalCardCount;
     }
 
     /// <summary>Returns the lane currently used to render and judge a racer.</summary>
@@ -2342,10 +2357,7 @@ public class MVPGameManager : MonoBehaviour
             return;
         if (!inputState.SelectGear(gear)) return;
         // 高亮选中的档位按钮
-        foreach (var kv in gearButtonImages)
-        {
-            kv.Value.color = (kv.Key == gear) ? new Color(0.3f, 0.8f, 0.3f, 0.9f) : new Color(1f, 1f, 1f, 0.8f);
-        }
+        hudUI?.SelectGearPresentation(gear);
         if (hudUI != null)
             hudUI.SetStatus($"已选 {TeamGearRules.GetDisplayName(Player.teamId, gear)} 档 - 点击确认锁定");
     }

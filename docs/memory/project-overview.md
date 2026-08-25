@@ -49,11 +49,9 @@ The verified scene flow is:
 - Demo framework Phase 1 is complete.
 - Phase 2 asset replacement is in progress.
 - The project is in Production stage. The latest editor audit on 2026-08-25
-  recorded a latest successful 417/417 EditMode run. A later benchmark-only
-  parameter-alignment rerun did not initialize any tests before the MCP timeout;
-  no assertion failure was reported. The
-  MainMenu-to-Race flow, race card/icon references, and Chinese font support
-  remain the current presentation baseline.
+  recorded a successful 436/436 EditMode run. The MainMenu-to-Race flow, race
+  card/icon references, and Chinese font support remain the current
+  presentation baseline.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
   nodes; `RaceSession` centralizes numeric tech modifiers while the manager
   invokes explicit `TechTreeRules` event hooks at documented race phases.
@@ -68,7 +66,9 @@ The verified scene flow is:
   live card thumbnails, and count badges.
 - The final four-zone race HUD is baked into `RaceCanvas.prefab` for WYSIWYG
   authoring. Runtime preserves authored RectTransforms and only rebuilds the
-  default layout for legacy canvases missing the required panels.
+  default layout for legacy canvases missing the required panels. The authored
+  HUD now includes arc-arranged stove-dial gear controls and a ten-segment
+  vertical heat thermometer with 50%/70% warning thresholds.
 - The custom Track Node Editor experiment was reverted after Scene View
   interaction problems.
 - The Race scene defaults to the 60-node Silverstone JSON track. Runtime apex
@@ -79,8 +79,9 @@ The verified scene flow is:
   multi-lap, and pit-flow Play Mode walkthroughs remain open.
 - Runtime track readability now adds a technology-blue player halo, 1-based
   local cell badges and level-colored smoothed corner ribbons without changing
-  authored JSON nodes or gameplay positions. Silverstone received a clean
-  Play Mode screenshot check; the remaining track catalog still needs spot checks.
+  authored JSON nodes or gameplay positions. All eight selectable official
+  tracks passed a clean Play Mode screenshot/Console spot check on 2026-08-25;
+  only the full mechanics-focused manual race walkthrough remains open.
 - The four Scheme A refactor sources were committed in `58d1bba`.
   `RaceRules.cs` and `AIPlanner.cs` are integrated into the runtime.
   `AIController` and `CardDeck` accept injectable `IRandomSource`
@@ -88,9 +89,11 @@ The verified scene flow is:
   passes its historical original 16 EditMode tests with no Unity warnings or errors;
   the current full suite is tracked separately below.
 - `Gameplay/TrackRules.cs` now provides pure, tested track traversal rules.
-  Together with the current feature tests, the project passes 417 EditMode
+  Together with the current feature tests, the project passes 436 EditMode
   tests. `RaceTestLogWriter` can capture a manual race into a timestamped log
-  for later review; the latest audit did not create a new gameplay log.
+  for later review; a controlled four-car Silverstone Play Mode smoke on
+  2026-08-25 produced two `[SLIPSTREAM]` entries and confirmed `RaceEventFX`
+  was present, while full manual chain/visual acceptance remains open.
 - The deterministic full-race test and `TrackTeamBalanceBenchmark` now freeze
   every racer's non-slipstream plan before resolving the same two-step chain as
   runtime. The corrected 2026-08-25 benchmark covers nine track configurations,

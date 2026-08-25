@@ -81,6 +81,25 @@ public class ChinaGearRulesTests
     }
 
     [Test]
+    public void effective_limit_separates_go_base_cards_from_extra_slot()
+    {
+        TeamGearRules.SpeedCardRequirement firstGo = TeamGearRules.GetSpeedCardRequirement(
+            TeamId.CN, ChinaGearShiftRules.GoGear, 1, 0);
+        TeamGearRules.SpeedCardRequirement firstGoWithHotpot = TeamGearRules.GetSpeedCardRequirement(
+            TeamId.CN, ChinaGearShiftRules.GoGear, 1, 1);
+        TeamGearRules.SpeedCardRequirement secondGo = TeamGearRules.GetSpeedCardRequirement(
+            TeamId.CN, ChinaGearShiftRules.GoGear, 2, 0);
+
+        Assert.AreEqual(3, firstGo.BaseCardCount);
+        Assert.AreEqual(3, firstGo.TotalCardCount);
+        Assert.AreEqual(3, firstGoWithHotpot.BaseCardCount);
+        Assert.AreEqual(1, firstGoWithHotpot.ExtraCardCount);
+        Assert.AreEqual(4, firstGoWithHotpot.TotalCardCount);
+        Assert.AreEqual(4, secondGo.BaseCardCount);
+        Assert.AreEqual(4, secondGo.TotalCardCount);
+    }
+
+    [Test]
     public void china_ai_alternates_and_recovers_when_hot()
     {
         Assert.AreEqual(ChinaGearShiftRules.GoGear,

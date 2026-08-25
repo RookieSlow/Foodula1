@@ -5,6 +5,19 @@
 /// </summary>
 public static class TeamGearRules
 {
+    public readonly struct SpeedCardRequirement
+    {
+        public SpeedCardRequirement(int baseCardCount, int extraCardCount)
+        {
+            BaseCardCount = baseCardCount;
+            ExtraCardCount = extraCardCount < 0 ? 0 : extraCardCount;
+        }
+
+        public int BaseCardCount { get; }
+        public int ExtraCardCount { get; }
+        public int TotalCardCount => BaseCardCount + ExtraCardCount;
+    }
+
     public readonly struct Resolution
     {
         public Resolution(int targetGear, int heatCost, int consecutiveCount,
@@ -55,10 +68,16 @@ public static class TeamGearRules
     public static int GetSpeedCardCount(TeamId teamId, int gear,
         int consecutiveCount, int extraSlots)
     {
+        return GetSpeedCardRequirement(teamId, gear, consecutiveCount, extraSlots).TotalCardCount;
+    }
+
+    public static SpeedCardRequirement GetSpeedCardRequirement(TeamId teamId, int gear,
+        int consecutiveCount, int extraSlots)
+    {
         int baseCount = IsChina(teamId)
             ? ChinaGearShiftRules.GetSpeedCardCount(gear, consecutiveCount)
             : gear;
-        return baseCount + extraSlots;
+        return new SpeedCardRequirement(baseCount, extraSlots);
     }
 
     public static int GetCooldown(TeamId teamId, int gear, int consecutiveCount,

@@ -43,6 +43,11 @@ public class HUDUI : MonoBehaviour
     private MVPGameManager gameManager;
     private string logBuffer = "";
     private Action<string> logSink;
+    [SerializeField] private HeatThermometerUI heatThermometer;
+    [SerializeField] private GearDialPresentationUI gearDialPresentation;
+
+    public HeatThermometerUI HeatThermometer => heatThermometer;
+    public GearDialPresentationUI GearDialPresentation => gearDialPresentation;
 
     void Start()
     {
@@ -75,6 +80,8 @@ public class HUDUI : MonoBehaviour
 
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
+
+        EnsurePresentation();
     }
 
     private void BindGearButton(UnityEngine.UI.Button btn, int gear)
@@ -160,14 +167,46 @@ public class HUDUI : MonoBehaviour
 
         if (heatText != null)
         {
+            EnsurePresentation();
             int handHeat = player.deck.CountHeatInHand();
-            int engineRemaining = player.deck.heatPool.remaining;
-            // Keep runtime HUD text within the configured CJK font's glyph set.
-            // Emoji warning symbols were rendered as empty boxes in the editor.
-            string heatWarning = handHeat >= 4 ? " <color=orange>警告</color>" : "";
+            int drawHeat = player.deck.CountHeatInDrawPile();
+            int discardHeat = player.deck.CountHeatInDiscardPile();
+            HeatGaugeState gauge = HeatGaugeRules.Evaluate(player.deck);
+            string heatColor = gauge.WarningLevel == HeatWarningLevel.Critical
+                ? "#F74840"
+                : gauge.WarningLevel == HeatWarningLevel.Elevated ? "#F79A3D" : "#58A6FF";
+            string tempInfo = gauge.TemporaryHeat > 0 ? $" 临{gauge.TemporaryHeat}" : "";
             string spinInfo = player.spinCounter > 0 ? $" | 失控 {player.spinCounter}/3" : "";
-            heatText.text = $"引擎: {engineRemaining} | 手牌热量: {handHeat}{heatWarning}{spinInfo}";
+            heatText.text = $"引擎 {gauge.EngineRemaining}/{gauge.Capacity}  <color={heatColor}>热量 {gauge.TotalHeat}</color>\n"
+                + $"手{handHeat} 抽{drawHeat} 弃{discardHeat}{tempInfo}{spinInfo}";
+            heatThermometer?.Refresh(player.deck);
         }
+    }
+
+    /// <summary>Builds the authored visual wrappers without changing button ownership.</summary>
+    public void EnsurePresentation()
+    {
+        if (heatText != null && heatThermometer == null)
+            heatThermometer = HeatThermometerUI.Attach(heatText);
+
+        Transform gearContainer = gear1Button != null ? gear1Button.transform.parent : null;
+        if (gearContainer != null && gearDialPresentation == null)
+        {
+            gearDialPresentation = GearDialPresentationUI.Attach(
+                gearContainer, gear1Button, gear2Button, gear3Button, gear4Button);
+        }
+    }
+
+    public void ConfigureGearPresentation(bool chinaMode, int currentGear)
+    {
+        EnsurePresentation();
+        gearDialPresentation?.Configure(chinaMode, currentGear);
+    }
+
+    public void SelectGearPresentation(int gear)
+    {
+        EnsurePresentation();
+        gearDialPresentation?.SetSelectedGear(gear);
     }
 
     /// <summary>生成多车排行榜文本（含自己的标记）。</summary>

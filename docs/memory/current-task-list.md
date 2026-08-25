@@ -40,16 +40,47 @@
   降到 `22.5`。
 - [x] 本轮新增意大利时序与中国热量预算回归，Unity EditMode 全量 `417/417` 通过；九赛道基准已按
   最终规则重跑，设计说明、平衡报告和项目记忆已同步。
-- [ ] 最终仅调整基准参数接线后再次请求全量测试，但 Unity Test Runner 在 120 秒内
-  初始化 0 项并自动失败；未产生断言失败。此前同一运行时代码与新增 4 个热量预算
-  用例已真实 `417/417` 通过，最终基准菜单也已成功编译执行。当前环境没有 .NET SDK，
-  `dotnet build --no-restore` 无法作为替代；下轮先恢复测试运行器状态再复跑。
+- [x] 参数接线后的最终 Unity EditMode 全量回归已真实通过 `435/435`；本轮结束时
+  Console 清理后为 0 错误/警告。当前环境没有可用的 .NET SDK，因此
+  `dotnet build --no-restore` 仍不能作为替代验证。
 - [ ] 平衡后续：中国在银石/铃鹿仍偏弱；先做人工手感验证，再考虑最后一圈风险容忍或
   路线策略。英国/日本的主动特技未被纯车体基准充分使用，不应直接按当前排名加数值。
-- [ ] 仍需在人工 Play Mode 对局中实际触发两段尾流，并人工确认修正后的美国直道
-  `+1` 与中国 Go/Recover 节奏，核对气流连线、反馈和比赛手感。
+- [x] 受控 Play Mode 尾流冒烟已实际走通：临时将运行时配置设为玩家 + 3 AI，注入相邻
+  计划终点后，日志出现 `AI3 follows=AI2 bonus=2` 与 `AI2 follows=AI3 bonus=2`；
+  `RaceEventFX` 在场且尾流阶段可进入，证明运行时事件链和表现组件均被调用。日志路径为
+  `C:/Users/Admin/AppData/LocalLow/DefaultCompany/Foodula1/race-logs/race-20260825-124729-silverstone_afternoon_tea-5e5ee1a868b04cf9ba61ee3303abde34.log`。
+  本次是受控单段命中冒烟，不等同于两段链式人工验收；完整人工对局仍需确认气流连线、
+  特写遮罩、后续回合推进，以及修正后的美国直道 `+1` 与中国 Go/Recover 节奏。
+
+- [x] 分析 2026-08-25 11:34 的中国队印第安纳波利斯日志：第 1 回合 Go 的有效上限为
+  4 张，是基础 Go 3 张加火锅底料的 1 个 ATTACK 额外槽；第 2 回合连续 Go 的基础上限
+  才是 4 张。第 3 回合失控进入 Recover 后计数清零，第 4 回合重新 Go 的基础上限已重置
+  为 3 张，但当回合再次打出火锅底料后有效上限仍为 4 张。定向 EditMode 133/133、全量
+  EditMode 436/436 通过；当前日志未出现尾流事件。
+
+- [x] 2026-08-25 受控上海/中国队首回合走查：日志记录了 AI 档位与出牌、玩家挡位缺牌后
+  `Engine failure! Missing 1 speed card(s). +1 Heat to hand.`，以及中国队 Recover 冷却
+  1 张热量回引擎；日志路径为
+  `C:/Users/Admin/AppData/LocalLow/DefaultCompany/Foodula1/race-logs/race-20260825-110823-shanghai_dim_sum-dbfbc7c7595a4e3db687d3597f296342.log`。
+  本轮定向 EditMode 195/195、全量 EditMode 435/435 通过，Race 场景退出后保持未修改，Console
+  清理后为 0 条；该日志只覆盖首回合，未出现 `[SLIPSTREAM]`，不能替代尾流人工验收。
+- [x] 复核受控输入中 `Animating` 超过 10 秒的现象：代码确认移动后会进入 `DiscardStep()`，
+  由 `inputState.WaitingForDiscard` 等待玩家确认弃牌，而阶段枚举在收尾前仍保持
+  `Animating`；本次退出发生在确认弃牌之前，因此不是已证实的移动动画死锁。
+- [ ] 继续完整人工走查：下一轮先确认弃牌完成收尾，再用不插入查询的方式单独构造相邻车辆
+  尾流，确认气流连线、`[SLIPSTREAM]` 日志、尾流奖励和后续回合是否正常推进。
 
 ## 待推进（2026-08-23 比赛视觉信息强化）
+
+- [x] 赛道目录健康检查：Unity `Foodula1/Tools/Validate Track JSONs` 已校验全部
+  9 条赛道，节点连续性、起终点、弯心/限速、维修区成对、坐标、圈数、天气与闭环
+  布局全部通过；维修区、天气、尾流、纯层完整比赛和全部赛道显示回归定向测试
+  `67/67` 通过。
+- [x] Play Mode 已逐条抽查全部 8 条官方赛道：银石、纽博格林大奖、蒙扎、印第安纳波利斯、
+  上海、铃鹿、纽博格林北环和勒芒旧慕尚。分别确认 JSON 加载、2/4 车道布局、格数/弯道
+  标识、玩家光环、四区 HUD 与缩略图均可见，最终 Console 无错误/警告。
+- [ ] 完成包含牌堆变化、挡位缺牌、尾流与维修区的完整人工走查；本轮仅验证了各赛道的
+  初始 Play Mode 画面与加载状态。
 
 - [x] 根据 2026-08-25 上海完整对局日志修复终局锁定：玩家第 38 回合完赛后不再继续
   触发阴阳茶、支付热量或移动，避免已完赛状态在等待 AI 时反向变成爆缸；新增终态规则和
@@ -85,8 +116,8 @@
 - [x] P1：基于赛道 JSON 增加科技蓝玩家光环、1-based `格 X/N` 和玩家前后各 6 格
   的局部刻度；密集节点会自动抽样文字。弯道覆盖层同步重制为 Lv1 绿 / Lv2 黄 /
   Lv3 红的圆角平滑双层曲线带，弯心和限速徽标保持清晰。Unity EditMode 全量回归
-  403/403 通过，并覆盖全部 8 条官方 JSON 与 fallback 的弯道曲线采样；Silverstone
-  Play Mode 截图与 Console 走查通过，其余官方赛道待抽查。
+  403/403 通过，并覆盖全部 8 条官方 JSON 与 fallback 的弯道曲线采样；8 条官方赛道
+  均已完成 Play Mode 截图与 Console 走查。
 - [x] P2：尾流结算现在返回命中的前车与最终加成，并在移动前把同回合全部事件合并为
   0.9 秒独立表现：两车同步聚焦、科技蓝流动虚线和“尾流 +N”提示；计时使用
   unscaled time，不改变规则层移动结果。Unity EditMode 当前全量回归 411/411 通过，
@@ -317,8 +348,12 @@ with 0 failures, warnings, or errors.
 
 - [x] Reconcile the Phase 2 planning document with assets already completed; remaining gaps are listed in `design/planning/asset-manifest.md`.
 - [ ] Finish remaining UI panel artwork.
-- [ ] Replace gear-button placeholders with the approved gear controls.
-- [ ] Replace the heat text placeholder with the approved thermometer UI.
+- [x] Replace gear-button placeholders with arc-arranged circular stove-dial
+  controls; China uses a two-position Recover/Go layout and selected gear uses
+  the technology-blue state.
+- [x] Replace the heat text placeholder with a ten-segment vertical thermometer;
+  it counts real heat across all zones, excludes temporary heat from capacity,
+  and marks the 50%/70% warning thresholds.
 - [ ] Replace remaining flag/UI-node placeholders; track layouts and runtime corner masks are already integrated.
 - [ ] Verify card and vehicle sprites in both scenes at target resolution.
 

@@ -48,6 +48,7 @@ public static class RaceCanvasBuilder
         // when an older canvas does not contain the authored panel structure.
         var layout = root.AddComponent<RaceUILayoutController>();
         layout.RebuildDefaultLayout(hud, ch);
+        hud.EnsurePresentation();
 
         // ── Save Prefab ──
         EnsureDir("Assets/Prefabs/UI");

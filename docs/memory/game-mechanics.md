@@ -4,9 +4,12 @@ This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
 > **Implementation snapshot (2026-08-25)**: Unity `2022.3.62f3c1`; the latest
-> latest successful editor EditMode run passed `430/430`. The required
+> latest successful editor EditMode run passed `436/436`. The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.
+> A controlled four-car Silverstone Play Mode smoke on 2026-08-25 produced
+> `[SLIPSTREAM]` log entries and found `RaceEventFX` present; this is runtime
+> event-chain evidence, not a substitute for a manual two-link visual check.
 
 ## Turn and Card Loop
 
@@ -54,6 +57,10 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   decision.
 - Hotpot grants its +1 movement only when an ATTACK trick actually occupies the
   optional Hotpot slot beyond the gear and Kanto Oden card slots.
+- For China Go, the base requirement remains 3 speed cards on the first
+  consecutive Go. When Hotpot's optional ATTACK slot is active, the effective
+  turn limit is base 3 + 1 extra card, so the HUD/log may correctly show a
+  4-card limit even when the consecutive-Go counter has just reset.
 
 ## Gear and Cooling Rules
 
@@ -64,6 +71,14 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   hand, then draw pile, then discard pile.
 - Gear 2 removes up to one heat card through the same priority.
 - Higher gears provide no automatic cooling.
+- The race HUD derives its heat percentage from permanent heat in hand, draw
+  pile, and discard pile plus temporary heat. Permanent heat outside the engine
+  and the engine remainder define capacity; temporary heat raises the displayed
+  load without increasing that capacity. The thermometer changes from cool to
+  elevated at 50% and critical/pulsing at 70%.
+- Standard G1-G4 controls are arranged as a stove-dial arc; China reuses the
+  same circular controls as a two-position Recover/Go selector. This is
+  presentation-only and does not change gear legality or shift costs.
 - Italy has no permanent straight movement bonus. Completing a corner arms a
   one-shot `+1` for the first speed card played on a later turn; an empty turn
   preserves it, and a failed/spun corner does not arm it.

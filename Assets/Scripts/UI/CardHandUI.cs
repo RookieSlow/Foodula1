@@ -442,7 +442,7 @@ public class CardHandUI : MonoBehaviour
             player.deck.CountSpeedInHand(),
             player.deck.heatPool != null ? player.deck.heatPool.remaining : 0);
         string requirementStatus = GearRequirementFeedbackRules.FormatStatus(
-            TeamGearRules.GetDisplayName(player.teamId, player.gear), feedback);
+            gameManager.GetSpeedCardRequirementLabel(player), feedback);
 
         if (selected.Count == 0)
         {
