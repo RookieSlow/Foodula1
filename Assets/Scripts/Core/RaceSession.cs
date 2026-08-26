@@ -461,6 +461,8 @@ public class RaceSession
     /// <summary>
     /// 计算完整尾流链。若传入 plannedMovements，则使用其中的移动量模拟终点；
     /// 运行时在回合末传入全员为 0 的映射，以直接比较基础移动结算后的实际落位。
+    /// 同格时按设计案比较本回合基础移动力；基础移动力相同时，按 arrivalOrder
+    /// 的先后决定谁先到达、谁是后车。这样不会把同一格误判成双向前车。
     /// 获得尾流后从新位置再判定一次，且不会重复跟随同一辆前车。GDD 规定每回合最多触发两次。
     /// plannedMovements 为空时使用速度牌总值，供纯模拟和兼容调用使用。
     /// </summary>
@@ -469,7 +471,8 @@ public class RaceSession
         IReadOnlyList<PlayerState> players,
         int totalNodes,
         IReadOnlyDictionary<PlayerState, int> plannedMovements = null,
-        int maxTriggers = 2)
+        int maxTriggers = 2,
+        IReadOnlyList<PlayerState> arrivalOrder = null)
     {
         if (p == null || players == null || totalNodes <= 0 || maxTriggers <= 0)
             return default;
@@ -499,6 +502,9 @@ public class RaceSession
 
                 int candidateSim = candidate.position + GetPlannedMovement(candidate, plannedMovements);
                 int gap = ForwardDistance(mySim, candidateSim, totalNodes);
+                if (gap == 0 && !IsSameCellLeader(
+                        p, candidate, players, plannedMovements, arrivalOrder))
+                    continue;
                 if (gap < bestGap)
                 {
                     bestGap = gap;
@@ -524,6 +530,56 @@ public class RaceSession
         }
 
         return new SlipstreamChainResult(steps);
+    }
+
+    private static bool IsSameCellLeader(
+        PlayerState follower,
+        PlayerState candidate,
+        IReadOnlyList<PlayerState> players,
+        IReadOnlyDictionary<PlayerState, int> plannedMovements,
+        IReadOnlyList<PlayerState> arrivalOrder)
+    {
+        // Cars on different laps may share a node index, but they are not
+        // physically alongside one another for slipstream purposes.
+        if (follower.lap != candidate.lap)
+            return false;
+
+        int followerMovement = GetBaseMovementForTie(follower, plannedMovements);
+        int candidateMovement = GetBaseMovementForTie(candidate, plannedMovements);
+        if (candidateMovement != followerMovement)
+            return candidateMovement > followerMovement;
+
+        // Runtime passes the actual base-movement order. Pure callers that do
+        // not have a separate order use the player list as a deterministic
+        // fallback, which still prevents a same-cell cycle.
+        IReadOnlyList<PlayerState> order = arrivalOrder ?? players;
+        int followerIndex = IndexOfReference(order, follower);
+        int candidateIndex = IndexOfReference(order, candidate);
+        return candidateIndex >= 0 && followerIndex >= 0 && candidateIndex < followerIndex;
+    }
+
+    private static int GetBaseMovementForTie(
+        PlayerState player,
+        IReadOnlyDictionary<PlayerState, int> plannedMovements)
+    {
+        // During the end-of-turn resolver totalMovementThisTurn is still the
+        // non-slipstream base total. Older pure tests only populate the raw
+        // card total, so retain that compatibility fallback.
+        if (player.totalMovementThisTurn != 0)
+            return player.totalMovementThisTurn;
+        if (player.cornerTotalThisTurn != 0)
+            return player.cornerTotalThisTurn;
+        return GetPlannedMovement(player, plannedMovements);
+    }
+
+    private static int IndexOfReference(IReadOnlyList<PlayerState> players, PlayerState target)
+    {
+        if (players == null)
+            return -1;
+        for (int i = 0; i < players.Count; i++)
+            if (ReferenceEquals(players[i], target))
+                return i;
+        return -1;
     }
 
     /// <summary>兼容只需要第一次命中前车的表现与既有调用。</summary>

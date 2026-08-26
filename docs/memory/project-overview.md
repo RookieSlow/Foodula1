@@ -21,7 +21,8 @@ the CCGS project framework.
   `fallback_42` 42-node fallback track.
 - `Gameplay/TrackDataLoader.cs` converts track JSON into runtime nodes and
   world positions.
-- `AI/AIController.cs` controls the current opponent.
+- `AI/AIController.cs` controls the current opponent and uses `AIPlanner` for
+  heat/corner-aware card selection plus low-risk active slipstream planning.
 - `AI/AIController.cs` delegates team-specific China gear decisions to the
   pure `ChinaGearShiftRules` module.
 - `TechTree/` contains the pure tech database/rules plus the
@@ -48,8 +49,8 @@ The verified scene flow is:
 
 - Demo framework Phase 1 is complete.
 - Phase 2 asset replacement is in progress.
-- The project is in Production stage. The latest editor audit on 2026-08-25
-  recorded a successful 436/436 EditMode run. The MainMenu-to-Race flow, race
+- The project is in Production stage. The latest editor audit on 2026-08-26
+  recorded a successful 446/446 EditMode run. The MainMenu-to-Race flow, race
   card/icon references, and Chinese font support remain the current
   presentation baseline.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
@@ -89,11 +90,14 @@ The verified scene flow is:
   passes its historical original 16 EditMode tests with no Unity warnings or errors;
   the current full suite is tracked separately below.
 - `Gameplay/TrackRules.cs` now provides pure, tested track traversal rules.
-  Together with the current feature tests, the project passes 436 EditMode
+  Together with the current feature tests, the project passes 446 EditMode
   tests. `RaceTestLogWriter` can capture a manual race into a timestamped log
   for later review; a controlled four-car Silverstone Play Mode smoke on
   2026-08-25 produced two `[SLIPSTREAM]` entries and confirmed `RaceEventFX`
-  was present, while full manual chain/visual acceptance remains open.
+  was present, while full manual chain/visual acceptance remains open. The
+  2026-08-26 tailwind/HUD regression passed 56 focused tests plus the full
+  446-test suite, followed by a 5-second MainMenu Play Mode smoke with no project
+  errors or warnings.
 - The deterministic full-race test and `TrackTeamBalanceBenchmark` now freeze
   every racer's non-slipstream plan before resolving the same two-step chain as
   runtime. The corrected 2026-08-25 benchmark covers nine track configurations,

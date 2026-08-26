@@ -483,6 +483,58 @@ public class RaceSessionTest
     }
 
     [Test]
+    public void test_same_cell_slipstream_only_later_arrival_gets_bonus()
+    {
+        var session = CreateSession();
+        var first = AddRacer(session, "First", 9, TeamId.UK);
+        var later = AddRacer(session, "Later", 9, TeamId.CN, false);
+        first.totalMovementThisTurn = 9;
+        later.totalMovementThisTurn = 9;
+
+        var settledMovements = new Dictionary<PlayerState, int>
+        {
+            [first] = 0,
+            [later] = 0
+        };
+        var arrivalOrder = new List<PlayerState> { first, later };
+
+        SlipstreamChainResult firstChain = session.ComputeSlipstreamChain(
+            first, session.Players, 60, settledMovements, 2, arrivalOrder);
+        SlipstreamChainResult laterChain = session.ComputeSlipstreamChain(
+            later, session.Players, 60, settledMovements, 2, arrivalOrder);
+
+        Assert.IsFalse(firstChain.Triggered, "The first car to arrive is the same-cell leader");
+        Assert.IsTrue(laterChain.Triggered, "Only the later car should follow from the same cell");
+        Assert.AreSame(first, laterChain.Steps[0].Leader);
+    }
+
+    [Test]
+    public void test_same_cell_slipstream_prefers_higher_base_movement_before_arrival_order()
+    {
+        var session = CreateSession();
+        var lower = AddRacer(session, "Lower", 12, TeamId.CN, false);
+        var higher = AddRacer(session, "Higher", 12, TeamId.UK);
+        lower.totalMovementThisTurn = 5;
+        higher.totalMovementThisTurn = 8;
+
+        var settledMovements = new Dictionary<PlayerState, int>
+        {
+            [lower] = 0,
+            [higher] = 0
+        };
+        var arrivalOrder = new List<PlayerState> { lower, higher };
+
+        SlipstreamChainResult lowerChain = session.ComputeSlipstreamChain(
+            lower, session.Players, 60, settledMovements, 2, arrivalOrder);
+        SlipstreamChainResult higherChain = session.ComputeSlipstreamChain(
+            higher, session.Players, 60, settledMovements, 2, arrivalOrder);
+
+        Assert.IsTrue(lowerChain.Triggered, "The lower-movement car should follow the higher-movement car");
+        Assert.AreSame(higher, lowerChain.Steps[0].Leader);
+        Assert.IsFalse(higherChain.Triggered, "The higher-movement car is the same-cell leader");
+    }
+
+    [Test]
     public void test_slipstream_bonus_when_within_range()
     {
         var session = CreateSession();

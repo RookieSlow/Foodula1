@@ -4,11 +4,11 @@ This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
 > **Implementation snapshot (2026-08-26)**: Unity `2022.3.62f3c1`; the latest
-> successful editor EditMode run passed `444/444`. The required
+> successful editor EditMode run passed `446/446`. The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.
 > On 2026-08-26, the tailwind/HUD-focused regression passed 56/56 and the full
-> EditMode suite passed 444/444; a 5-second MainMenu Play Mode smoke produced
+> EditMode suite passed 446/446; a 5-second MainMenu Play Mode smoke produced
 > no project errors or warnings.
 > A controlled four-car Silverstone Play Mode smoke on 2026-08-25 produced
 > `[SLIPSTREAM]` log entries and found `RaceEventFX` present; this is runtime
@@ -182,6 +182,9 @@ prototype and is no longer the authoritative model.
 - Slipstream resolves only after every racer completes base movement, reaction,
   and corner checks. It uses the actual settled positions, including vehicle,
   technology, and trick bonuses already applied during base movement. A
+  same-cell tie compares base movement first and then base-movement arrival
+  order, so only the car that arrived later can be the trailing follower;
+  a same-cell pair can never generate reciprocal slipstream.
   successful first slipstream advances the simulated endpoint and may follow one
   different car for a second bonus; the same leader cannot be reused and the chain
   is capped at two triggers.

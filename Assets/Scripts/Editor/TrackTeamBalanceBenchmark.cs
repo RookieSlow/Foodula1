@@ -447,16 +447,27 @@ public static class TrackTeamBalanceBenchmark
             foreach (PlayerState p in turnOrder)
                 settledMovements[p] = 0;
 
+            var slipstreamChains = new Dictionary<PlayerState, SlipstreamChainResult>();
             foreach (PlayerState p in turnOrder)
             {
                 if (skipped.Contains(p) || p.hasFinished || p.isBlown)
                     continue;
 
                 SlipstreamChainResult chain = session.ComputeSlipstreamChain(
-                    p, session.Players, nodes.Count, settledMovements);
-                p.totalMovementThisTurn += chain.TotalBonus;
+                    p, session.Players, nodes.Count, settledMovements, 2, turnOrder);
+                slipstreamChains[p] = chain;
                 slipstreamTriggers[p.teamId] += chain.Steps.Count;
                 slipstreamMovement[p.teamId] += chain.TotalBonus;
+            }
+
+            // Apply rewards after all chains are resolved from the same base
+            // positions, so a same-cell tie cannot become bidirectional.
+            foreach (PlayerState p in turnOrder)
+            {
+                if (!slipstreamChains.TryGetValue(p, out SlipstreamChainResult chain))
+                    continue;
+
+                p.totalMovementThisTurn += chain.TotalBonus;
 
                 if (chain.TotalBonus <= 0)
                     continue;

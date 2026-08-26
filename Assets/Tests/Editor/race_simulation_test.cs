@@ -263,13 +263,26 @@ public class RaceSimulationTest
             foreach (PlayerState p in players)
                 settledMovements[p] = 0;
 
+            var slipstreamChains = new Dictionary<PlayerState, SlipstreamChainResult>();
             foreach (PlayerState p in turnOrder)
             {
                 if (skipped.Contains(p) || p.isBlown || p.hasFinished)
                     continue;
 
                 SlipstreamChainResult chain = session.ComputeSlipstreamChain(
-                    p, players, totalNodes, settledMovements);
+                    p, players, totalNodes, settledMovements, 2, turnOrder);
+                slipstreamChains[p] = chain;
+            }
+
+            // Apply all resolved bonuses only after every car has been judged
+            // from the same settled base state. This preserves same-cell
+            // arrival ordering and prevents a bonus from becoming a false
+            // tie-break for another car.
+            foreach (PlayerState p in turnOrder)
+            {
+                if (!slipstreamChains.TryGetValue(p, out SlipstreamChainResult chain))
+                    continue;
+
                 p.totalMovementThisTurn += chain.TotalBonus;
 
                 if (chain.TotalBonus <= 0)

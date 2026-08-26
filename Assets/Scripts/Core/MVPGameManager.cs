@@ -1499,6 +1499,7 @@ public class MVPGameManager : MonoBehaviour
                 settledMovements[racer] = 0;
         }
 
+        var resolvedChains = new Dictionary<PlayerState, SlipstreamChainResult>();
         foreach (PlayerState follower in turnOrder)
         {
             if (RaceTurnRules.IsInactive(follower, turnSkipped))
@@ -1508,9 +1509,24 @@ public class MVPGameManager : MonoBehaviour
             }
 
             SlipstreamChainResult chain = session.ComputeSlipstreamChain(
-                follower, session.Players, trackManager.TotalNodes, settledMovements);
+                follower,
+                session.Players,
+                trackManager.TotalNodes,
+                settledMovements,
+                2,
+                turnOrder);
             slipstreamsThisTurn[follower] = chain;
+            resolvedChains[follower] = chain;
+        }
 
+        // Resolve every chain from the same settled base state before adding
+        // any bonus. Otherwise an earlier follower's tailwind could alter its
+        // tie-break movement and accidentally make a second car look like a
+        // front car in the same-cell case.
+        foreach (PlayerState follower in turnOrder)
+        {
+            if (!resolvedChains.TryGetValue(follower, out SlipstreamChainResult chain))
+                continue;
             int baseMovement = follower.totalMovementThisTurn;
             follower.totalMovementThisTurn += chain.TotalBonus;
             raceLogWriter?.Append(
