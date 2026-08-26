@@ -97,7 +97,7 @@ public static class TrackTeamBalanceBenchmark
         report.AppendLine($"> Deterministic pure-layer benchmark generated {DateTime.Now:yyyy-MM-dd HH:mm:ss}.");
         report.AppendLine($"> {RACES_PER_TRACK} six-team races per track, seeds `{BASE_SEED}..`, max {MAX_TURNS} turns.");
         report.AppendLine("> All six teams run the same policy; ranks are compared within each track. Results are directional tuning evidence, not player skill data.");
-        report.AppendLine("> Each turn freezes every non-slipstream plan, resolves up to two slipstream segments, then executes movement in rank order, matching the runtime phase boundary.");
+        report.AppendLine("> Each turn executes the non-slipstream movement in rank order, then resolves up to two slipstream segments from settled positions and applies the bonus movement, matching the runtime phase boundary.");
         report.AppendLine("> AI tuning matches the active config baseline: lookahead 6, heat thresholds 0.7/0.5/0.3, China affordable corner heat 1.");
         report.AppendLine();
         report.AppendLine("## Runtime team profile used");
@@ -375,14 +375,13 @@ public static class TrackTeamBalanceBenchmark
                 }
             }
 
-            // Freeze every non-slipstream movement before resolving any slipstream.
-            var plannedMovements = new Dictionary<PlayerState, int>(turnOrder.Count);
+            // Freeze and execute every non-slipstream movement before resolving
+            // any slipstream. This mirrors the runtime's end-of-turn boundary.
             foreach (PlayerState p in turnOrder)
             {
                 if (skipped.Contains(p) || p.hasFinished || p.isBlown)
                 {
                     p.totalMovementThisTurn = 0;
-                    plannedMovements[p] = 0;
                     continue;
                 }
 
@@ -393,17 +392,6 @@ public static class TrackTeamBalanceBenchmark
                 bonus += session.ConsumeItalyCornerExitBonus(p);
                 p.totalMovementThisTurn = p.cornerTotalThisTurn + bonus;
                 nonSlipstreamMovement[p.teamId] += p.totalMovementThisTurn;
-                plannedMovements[p] = p.totalMovementThisTurn;
-            }
-
-            foreach (PlayerState p in turnOrder)
-            {
-                if (skipped.Contains(p) || p.hasFinished || p.isBlown) continue;
-                SlipstreamChainResult chain = session.ComputeSlipstreamChain(
-                    p, session.Players, nodes.Count, plannedMovements);
-                p.totalMovementThisTurn += chain.TotalBonus;
-                slipstreamTriggers[p.teamId] += chain.Steps.Count;
-                slipstreamMovement[p.teamId] += chain.TotalBonus;
             }
 
             foreach (PlayerState p in turnOrder)
@@ -451,6 +439,54 @@ public static class TrackTeamBalanceBenchmark
                     }
                 }
                 session.ArmItalyCornerExitBonus(p, completedCorner);
+            }
+
+            // Resolve the chain from actual settled positions, then apply the
+            // bonus as a separate end-of-turn movement pass.
+            var settledMovements = new Dictionary<PlayerState, int>(turnOrder.Count);
+            foreach (PlayerState p in turnOrder)
+                settledMovements[p] = 0;
+
+            foreach (PlayerState p in turnOrder)
+            {
+                if (skipped.Contains(p) || p.hasFinished || p.isBlown)
+                    continue;
+
+                SlipstreamChainResult chain = session.ComputeSlipstreamChain(
+                    p, session.Players, nodes.Count, settledMovements);
+                p.totalMovementThisTurn += chain.TotalBonus;
+                slipstreamTriggers[p.teamId] += chain.Steps.Count;
+                slipstreamMovement[p.teamId] += chain.TotalBonus;
+
+                if (chain.TotalBonus <= 0)
+                    continue;
+
+                int oldPos = p.position;
+                int newPos = oldPos + chain.TotalBonus;
+                for (int position = oldPos + 1; position <= newPos; position++)
+                {
+                    int index = Normalize(position, nodes.Count);
+                    if (!nodes[index].isStartFinish)
+                        continue;
+
+                    p.lap++;
+                    session.OnNewLap(p);
+                    if (p.lap >= track.laps)
+                    {
+                        p.hasFinished = true;
+                        session.AssignFinish(p);
+                        finishTurns[p] = turn;
+                        break;
+                    }
+                }
+                p.position = Normalize(newPos, nodes.Count);
+
+                if (!p.hasFinished && PitLaneRules.CrossedPitEntry(oldPos, newPos, nodes) &&
+                    p.pitStopRequested)
+                {
+                    p.pitStopRequested = false;
+                    p.pitStopScheduled = true;
+                }
             }
 
             foreach (PlayerState p in session.Players)

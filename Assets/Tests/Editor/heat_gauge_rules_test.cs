@@ -60,6 +60,40 @@ public class HeatGaugeRulesTests
         Object.DestroyImmediate(parent);
     }
 
+    [Test]
+    public void HudRefreshesAuthoredThermometerWhenHeatLabelReferenceIsMissing()
+    {
+        GameObject hudObject = new GameObject("HUD");
+        HUDUI hud = hudObject.AddComponent<HUDUI>();
+        GameObject thermometerObject = new GameObject(
+            "HeatThermometer", typeof(RectTransform), typeof(CanvasGroup));
+        thermometerObject.transform.SetParent(hudObject.transform, false);
+        HeatThermometerUI thermometer = thermometerObject.AddComponent<HeatThermometerUI>();
+
+        for (int i = 0; i < HeatThermometerUI.SegmentTotal; i++)
+        {
+            GameObject segment = new GameObject(
+                $"Segment{i + 1:00}",
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(UnityEngine.UI.Image));
+            segment.transform.SetParent(thermometerObject.transform, false);
+        }
+
+        PlayerState player = new PlayerState("Player", false, 0, 1);
+        player.deck = CreateDeck(10);
+        player.deck.DrawHeatFromPool(7);
+
+        hud.RefreshPlayerResources(player);
+
+        Assert.AreSame(thermometer, hud.HeatThermometer);
+        Assert.AreEqual(70, thermometer.CurrentState.Percent);
+        Assert.AreEqual(3, thermometer.CurrentState.EngineRemaining);
+        Assert.AreEqual(HeatWarningLevel.Critical, thermometer.CurrentState.WarningLevel);
+
+        Object.DestroyImmediate(hudObject);
+    }
+
     private static CardDeck CreateDeck(int poolSize)
     {
         GameConfigSO config = ScriptableObject.CreateInstance<GameConfigSO>();

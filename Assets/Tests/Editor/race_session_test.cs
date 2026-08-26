@@ -461,6 +461,28 @@ public class RaceSessionTest
     }
 
     [Test]
+    public void test_slipstream_chain_can_resolve_from_settled_positions()
+    {
+        var session = CreateSession();
+        var follower = AddRacer(session, "Follower", 10, TeamId.CN, false);
+        var leader = AddRacer(session, "Leader", 11, TeamId.UK);
+        follower.cornerTotalThisTurn = 8;
+        leader.cornerTotalThisTurn = 0;
+
+        var settledMovements = new Dictionary<PlayerState, int>
+        {
+            [follower] = 0,
+            [leader] = 0
+        };
+        SlipstreamChainResult chain = session.ComputeSlipstreamChain(
+            follower, session.Players, 60, settledMovements);
+
+        Assert.IsTrue(chain.Triggered);
+        Assert.AreEqual(RaceSession.SLIPSTREAM_BASE_BONUS, chain.TotalBonus);
+        Assert.AreSame(leader, chain.Steps[0].Leader);
+    }
+
+    [Test]
     public void test_slipstream_bonus_when_within_range()
     {
         var session = CreateSession();

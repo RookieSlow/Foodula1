@@ -25,6 +25,14 @@ public sealed class HeatThermometerUI : MonoBehaviour
     public HeatGaugeState CurrentState => currentState;
     public int SegmentCount => segments != null ? segments.Length : 0;
 
+    private void Awake()
+    {
+        // RaceCanvas.prefab serializes the thermometer children directly. The
+        // runtime-created fallback calls Build(), but authored instances must
+        // also become refreshable before HUDUI's first Refresh call.
+        TryInitializeSerializedLayout();
+    }
+
     private void Update()
     {
         if (pulseGroup == null)
@@ -62,6 +70,7 @@ public sealed class HeatThermometerUI : MonoBehaviour
 
     public void Refresh(CardDeck deck)
     {
+        TryInitializeSerializedLayout();
         if (!initialized)
             return;
 
@@ -84,6 +93,43 @@ public sealed class HeatThermometerUI : MonoBehaviour
                     ? WarmColor
                     : ColdColor;
         }
+    }
+
+    private void TryInitializeSerializedLayout()
+    {
+        if (initialized)
+            return;
+
+        if (segments == null || segments.Length != SegmentTotal)
+            segments = new Image[SegmentTotal];
+
+        bool hasAllSegments = true;
+        for (int i = 0; i < SegmentTotal; i++)
+        {
+            if (segments[i] == null)
+            {
+                Transform child = transform.Find($"Segment{i + 1:00}");
+                if (child != null)
+                    segments[i] = child.GetComponent<Image>();
+            }
+
+            if (segments[i] == null)
+                hasAllSegments = false;
+        }
+
+        if (percentText == null)
+        {
+            Transform child = transform.Find("HeatPercent");
+            if (child != null)
+                percentText = child.GetComponent<TMP_Text>();
+        }
+
+        if (pulseGroup == null)
+            pulseGroup = GetComponent<CanvasGroup>();
+
+        // The segment references are the minimum contract. A percentage label
+        // is optional so older compact gauges can still display their fill.
+        initialized = hasAllSegments;
     }
 
     private void Build(TMP_Text sourceText)

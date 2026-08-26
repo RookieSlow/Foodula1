@@ -170,14 +170,12 @@ public class RaceSimulationTest
                 p.cornerTotalThisTurn = RaceRules.SumCardValues(p.playedSpeedCardsThisTurn);
             }
 
-            // Phase B：先冻结全员完整的非尾流计划终点。
-            var plannedMovements = new Dictionary<PlayerState, int>(turnOrder.Count);
+            // Phase B：先冻结并执行全员不含尾流的基础移动。
             foreach (PlayerState p in turnOrder)
             {
                 if (skipped.Contains(p) || p.isBlown || p.hasFinished)
                 {
                     p.totalMovementThisTurn = 0;
-                    plannedMovements[p] = 0;
                     continue;
                 }
 
@@ -188,20 +186,9 @@ public class RaceSimulationTest
                 if (p.techState != null && TechTreeRules.ShouldTriggerWurstplatte(p.techState, session.TechDb, crossed.Count > 0))
                     bonus += 1;
                 p.totalMovementThisTurn = p.cornerTotalThisTurn + bonus;
-                plannedMovements[p] = p.totalMovementThisTurn;
             }
 
-            // Phase C：所有计划终点稳定后统一解析最多两段的链式尾流。
-            foreach (PlayerState p in turnOrder)
-            {
-                if (skipped.Contains(p) || p.isBlown || p.hasFinished)
-                    continue;
-                SlipstreamChainResult chain = session.ComputeSlipstreamChain(
-                    p, players, totalNodes, plannedMovements);
-                p.totalMovementThisTurn += chain.TotalBonus;
-            }
-
-            // Phase D：按排名顺序执行移动、圈数、弯道与维修区入口判定。
+            // Phase C：按排名顺序完成基础移动、圈数、弯道和维修区入口判定。
             foreach (PlayerState p in turnOrder)
             {
                 if (skipped.Contains(p) || p.isBlown || p.hasFinished)
@@ -265,6 +252,61 @@ public class RaceSimulationTest
 
                 // 维修区（热量高自动进站）
                 if (PitLaneRules.CrossedPitEntry(oldPos, newPos, nodes) && p.pitStopRequested)
+                {
+                    p.pitStopRequested = false;
+                    p.pitStopScheduled = true;
+                }
+            }
+
+            // Phase D：基础移动完成后，按实际落位统一结算尾流，再执行额外移动。
+            var settledMovements = new Dictionary<PlayerState, int>(players.Count);
+            foreach (PlayerState p in players)
+                settledMovements[p] = 0;
+
+            foreach (PlayerState p in turnOrder)
+            {
+                if (skipped.Contains(p) || p.isBlown || p.hasFinished)
+                    continue;
+
+                SlipstreamChainResult chain = session.ComputeSlipstreamChain(
+                    p, players, totalNodes, settledMovements);
+                p.totalMovementThisTurn += chain.TotalBonus;
+
+                if (chain.TotalBonus <= 0)
+                    continue;
+
+                int oldPos = p.position;
+                int newPos = oldPos + chain.TotalBonus;
+                for (int i = oldPos + 1; i <= newPos; i++)
+                {
+                    if (!nodes[i % totalNodes].isStartFinish)
+                        continue;
+
+                    RaceLapWeatherTransition transition = RaceLapWeatherRules.Advance(
+                        p.lap,
+                        trackCfg.laps,
+                        weatherState.LastRolledLap,
+                        true);
+                    p.lap = transition.Lap;
+                    session.OnNewLap(p);
+                    if (transition.ShouldRollWeather)
+                    {
+                        weatherState.MarkLapRolled(transition.Lap);
+                        session.RollWeatherForLap();
+                    }
+                    if (transition.HasFinished)
+                    {
+                        p.hasFinished = true;
+                        session.AssignFinish(p);
+                        break;
+                    }
+                }
+                p.position = newPos % totalNodes;
+                violations.Check(p.position >= 0 && p.position < totalNodes,
+                    $"{p.name} 尾流后位置越界: {p.position}");
+
+                if (!p.hasFinished && PitLaneRules.CrossedPitEntry(oldPos, newPos, nodes) &&
+                    p.pitStopRequested)
                 {
                     p.pitStopRequested = false;
                     p.pitStopScheduled = true;

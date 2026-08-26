@@ -931,6 +931,7 @@ public class MVPGameManager : MonoBehaviour
                 if (p.isAI && p.techState != null && p.playedSpeedCardsThisTurn.Count > 0)
                     TechTreeRules.TrackDimSumCombo(p.techState, false, true, false);
             }
+            raceLogWriter?.Append("[CARD_PHASE] end");
 
             // ====== 维修区预选 ======
             // 在车辆本回合移动前检查入口前十格窗口；选择只登记意图，
@@ -943,10 +944,9 @@ public class MVPGameManager : MonoBehaviour
 
             // ====== 计算移动力（科技 + 特技加成） ======
             ComputeMovements(turnOrder, turnSkipped);
-            yield return StartCoroutine(PlaySlipstreamPhase(turnOrder, turnSkipped));
-
-            // ====== PHASE B: 执行阶段 ======
+            // ====== PHASE B：先完成所有车辆的基础移动结算 ======
             phaseState.BeginAnimation();
+            raceLogWriter?.Append("[MOVE_PHASE] begin");
             foreach (var p in turnOrder)
             {
                 if (RaceTurnRules.IsInactive(p, turnSkipped)) continue;
@@ -960,38 +960,17 @@ public class MVPGameManager : MonoBehaviour
                 bool completedCorner = ResolveCorners(p, oldPos, rawEnd);
                 session.ArmItalyCornerExitBonus(p, completedCorner);
 
-                // US L3 母亲之路：经过地标自动结算（繁荣→冷却2 / 衰退→自动修复 / 复兴→终极转化）
-                if (p.techState != null && config.enableTechTree &&
-                    TechTreeRules.HasUniqueTech(p.techState, session.TechDb, TechEffectType.MotherRoad))
-                {
-                    var (lm1, lm2) = RaceSession.GetLandmarks(trackManager.TotalNodes);
-                    if (RaceSession.CrossedLandmark(oldPos, p.position, lm1, trackManager.TotalNodes))
-                        ResolveMotherRoadPass(p, 0, oldPos);
-                    if (RaceSession.CrossedLandmark(oldPos, p.position, lm2, trackManager.TotalNodes))
-                        ResolveMotherRoadPass(p, 1, oldPos);
-                }
-
-                // 维修区入口检测：入口前已经选择进站的车辆在此登记，
-                // 下一回合 A1 再执行停靠；本回合不会被传送或额外跳过。
-                int rawMovementEnd = oldPos + p.totalMovementThisTurn;
-                if (config.enablePitLane && PitLaneRules.HasPitLane(trackManager.Nodes) &&
-                    PitLaneRules.CrossedPitEntry(oldPos, rawMovementEnd, trackManager.Nodes))
-                {
-                    if (p.pitStopRequested && !p.isBlown && !p.hasFinished)
-                    {
-                        p.pitStopRequested = false;
-                        p.pitStopScheduled = true;
-                        if (hudUI != null)
-                            hudUI.AppendLog($"{p.name} 已越过维修区入口，下一回合执行进站。");
-                    }
-                    else
-                    {
-                        // 本次通过未选择进站；下一圈再次接近入口时可重新选择。
-                        p.pitStopRequested = false;
-                        p.pitChoiceResolvedThisLap = false;
-                    }
-                }
+                ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
+                RegisterPitEntryCrossing(p, oldPos, oldPos + p.totalMovementThisTurn);
             }
+            raceLogWriter?.Append("[MOVE_PHASE] end");
+
+            // ====== PHASE C：回合结束时按实际落位结算尾流 ======
+            // 尾流不能在回合开始或基础移动前触发；此处所有车辆都已完成
+            // 移动、反应和弯道判定，规则层读取的是本回合结束时的实际位置。
+            ResolveSlipstreamsAtTurnEnd(turnOrder, turnSkipped);
+            yield return StartCoroutine(PlaySlipstreamPhase(turnOrder, turnSkipped));
+            yield return StartCoroutine(ApplySlipstreamMovement(turnOrder, turnSkipped));
 
             // ====== 弃牌（可选，仅玩家） ======
             var human = Player;
@@ -1288,12 +1267,35 @@ public class MVPGameManager : MonoBehaviour
 
     private IEnumerator AnimateMovement(PlayerState p, int carIndex)
     {
-        if (carIndex < 0 || carIndex >= carInstances.Count || carInstances[carIndex] == null) yield break;
+        yield return StartCoroutine(AnimateMovementByAmount(
+            p,
+            carIndex,
+            p != null ? p.totalMovementThisTurn : 0,
+            true));
+    }
+
+    private IEnumerator AnimateMovementByAmount(
+        PlayerState p,
+        int carIndex,
+        int totalMove,
+        bool playOvertake)
+    {
+        if (p == null || trackManager == null || trackManager.TotalNodes <= 0)
+            yield break;
+
+        totalMove = Mathf.Max(0, totalMove);
+
+        // Keep the pure game state correct even when a car presentation is
+        // unavailable (for example in a headless/editor validation run).
+        if (carIndex < 0 || carIndex >= carInstances.Count || carInstances[carIndex] == null)
+        {
+            p.position = (p.position + Mathf.Max(0, totalMove)) % trackManager.TotalNodes;
+            yield break;
+        }
 
         GameObject car = carInstances[carIndex];
         int laneIndex = GetVisualLaneIndex(p);
         laneIndices[carIndex] = laneIndex;
-        int totalMove = p.totalMovementThisTurn;
         int totalNodes = trackManager.TotalNodes;
         int targetPos = p.position + totalMove;
 
@@ -1327,7 +1329,7 @@ public class MVPGameManager : MonoBehaviour
 
         int overtakeCount = 0;
         overtakesThisTurn.TryGetValue(p, out overtakeCount);
-        if (overtakeCount > 0 && raceEventFX != null)
+        if (playOvertake && overtakeCount > 0 && raceEventFX != null)
         {
             // Keep the movement camera on the winner for a dedicated
             // slow-motion close-up before returning to normal race pacing.
@@ -1456,35 +1458,17 @@ public class MVPGameManager : MonoBehaviour
                     hudUI.AppendLog($"{p.name} 美式烧烤区：+2 移动。");
             }
 
-            // 先保存不含尾流的计划移动。所有车辆都有稳定终点后再统一判定尾流，
-            // 避免按 turnOrder 逐个计算造成前后车辆使用不同阶段的数据。
+            // 先保存不含尾流的基础移动。尾流必须等所有车辆完成这段移动、
+            // 反应和弯道判定后，依据实际落位在回合末结算。
             p.totalMovementThisTurn = p.cornerTotalThisTurn + bonus;
-        }
-
-        var plannedMovements = new Dictionary<PlayerState, int>(turnOrder.Count);
-        foreach (PlayerState p in turnOrder)
-            plannedMovements[p] = p.totalMovementThisTurn;
-
-        // 第三轮：按 GDD 最多结算两段链式尾流；科技/特技等非尾流移动已计入模拟终点。
-        foreach (PlayerState p in turnOrder)
-        {
-            if (RaceTurnRules.IsInactive(p, turnSkipped))
-                continue;
-
-            SlipstreamChainResult chain = session.ComputeSlipstreamChain(
-                p, session.Players, trackManager.TotalNodes, plannedMovements);
-            slipstreamsThisTurn[p] = chain;
-            p.totalMovementThisTurn += chain.TotalBonus;
-
-            int bonus = p.totalMovementThisTurn - p.cornerTotalThisTurn;
             raceLogWriter?.Append(
                 $"[MOVE_PLAN] {p.name} role={(p.isAI ? "AI" : "PLAYER")} position={p.position} " +
-                $"corner_speed={p.cornerTotalThisTurn} bonus={bonus} total={p.totalMovementThisTurn}");
+                $"corner_speed={p.cornerTotalThisTurn} non_slipstream_bonus={bonus} " +
+                $"base_total={p.totalMovementThisTurn}");
         }
 
-        // Visual overtake events use the final movement values, including
-        // technology and trick bonuses, so the close-up matches what players
-        // actually see on the track.
+        // Overtake presentation belongs to the base movement pass. Tailwind is
+        // resolved later from the settled positions and gets its own phase.
         foreach (var p in turnOrder)
         {
             if (RaceTurnRules.IsInactive(p, turnSkipped))
@@ -1498,8 +1482,140 @@ public class MVPGameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 合并播放本回合全部尾流事件：同时突出前后车并显示气流，
-    /// 只增加一个短表现阶段，不改变移动顺序、奖励或时间缩放。
+    /// Resolves slipstream only after every racer has completed the base
+    /// movement pass. A zero additional-movement map tells the pure rules
+    /// layer to compare the actual settled positions rather than simulating
+    /// the turn a second time.
+    /// </summary>
+    private void ResolveSlipstreamsAtTurnEnd(List<PlayerState> turnOrder, HashSet<PlayerState> turnSkipped)
+    {
+        if (session == null || trackManager == null || turnOrder == null)
+            return;
+
+        var settledMovements = new Dictionary<PlayerState, int>(session.Players.Count);
+        foreach (PlayerState racer in session.Players)
+        {
+            if (racer != null)
+                settledMovements[racer] = 0;
+        }
+
+        foreach (PlayerState follower in turnOrder)
+        {
+            if (RaceTurnRules.IsInactive(follower, turnSkipped))
+            {
+                slipstreamsThisTurn[follower] = default;
+                continue;
+            }
+
+            SlipstreamChainResult chain = session.ComputeSlipstreamChain(
+                follower, session.Players, trackManager.TotalNodes, settledMovements);
+            slipstreamsThisTurn[follower] = chain;
+
+            int baseMovement = follower.totalMovementThisTurn;
+            follower.totalMovementThisTurn += chain.TotalBonus;
+            raceLogWriter?.Append(
+                $"[MOVE_PLAN_FINAL] {follower.name} position={follower.position} " +
+                $"base_total={baseMovement} tailwind_bonus={chain.TotalBonus} " +
+                $"total={follower.totalMovementThisTurn}");
+        }
+    }
+
+    /// <summary>
+    /// Applies the extra movement awarded by the already-resolved end-of-turn
+    /// slipstream. It deliberately skips another reaction/corner check: those
+    /// checks belong to the speed-card movement pass, while this is a bonus
+    /// movement performed after the tailwind presentation.
+    /// </summary>
+    private IEnumerator ApplySlipstreamMovement(List<PlayerState> turnOrder, HashSet<PlayerState> turnSkipped)
+    {
+        bool hasMovement = false;
+        foreach (PlayerState follower in turnOrder)
+        {
+            if (RaceTurnRules.IsInactive(follower, turnSkipped))
+                continue;
+            if (slipstreamsThisTurn.TryGetValue(follower, out SlipstreamChainResult chain) &&
+                chain.TotalBonus > 0)
+            {
+                hasMovement = true;
+                break;
+            }
+        }
+
+        if (!hasMovement)
+            yield break;
+
+        raceLogWriter?.Append("[SLIPSTREAM_MOVE_PHASE] begin");
+        if (hudUI != null)
+            hudUI.SetStatus("尾流阶段结束 · 执行额外移动");
+
+        foreach (PlayerState follower in turnOrder)
+        {
+            if (RaceTurnRules.IsInactive(follower, turnSkipped))
+                continue;
+            if (!slipstreamsThisTurn.TryGetValue(follower, out SlipstreamChainResult chain) ||
+                chain.TotalBonus <= 0)
+                continue;
+
+            int oldPos = follower.position;
+            int tailwindMovement = chain.TotalBonus;
+            raceLogWriter?.Append(
+                $"[SLIPSTREAM_MOVE] {follower.name} from={oldPos} " +
+                $"bonus={tailwindMovement} to={(oldPos + tailwindMovement) % trackManager.TotalNodes}");
+            yield return StartCoroutine(AnimateMovementByAmount(
+                follower, GetCarIndex(follower), tailwindMovement, false));
+
+            ResolveLandmarkPasses(follower, oldPos, oldPos + tailwindMovement);
+            RegisterPitEntryCrossing(follower, oldPos, oldPos + tailwindMovement);
+        }
+
+        raceLogWriter?.Append("[SLIPSTREAM_MOVE_PHASE] end");
+        if (hudUI != null)
+            hudUI.SetStatus("尾流加成已执行 · 正在弃牌");
+    }
+
+    private void ResolveLandmarkPasses(PlayerState p, int oldPos, int rawMovementEnd)
+    {
+        if (p == null || p.hasFinished || p.techState == null ||
+            !config.enableTechTree || session == null || trackManager == null ||
+            !TechTreeRules.HasUniqueTech(p.techState, session.TechDb, TechEffectType.MotherRoad))
+            return;
+
+        var (lm1, lm2) = RaceSession.GetLandmarks(trackManager.TotalNodes);
+        if (RaceSession.CrossedLandmark(oldPos, rawMovementEnd, lm1, trackManager.TotalNodes))
+            ResolveMotherRoadPass(p, 0, oldPos);
+        if (RaceSession.CrossedLandmark(oldPos, rawMovementEnd, lm2, trackManager.TotalNodes))
+            ResolveMotherRoadPass(p, 1, oldPos);
+    }
+
+    private void RegisterPitEntryCrossing(PlayerState p, int oldPos, int rawMovementEnd)
+    {
+        if (p == null || trackManager == null || !config.enablePitLane ||
+            !PitLaneRules.HasPitLane(trackManager.Nodes) ||
+            !PitLaneRules.CrossedPitEntry(oldPos, rawMovementEnd, trackManager.Nodes))
+            return;
+
+        // The approach-window choice is only a reservation. Crossing the entry
+        // turns it into a stop scheduled for the next turn; no teleport or
+        // skipped movement is performed in the current movement phase.
+        if (p.pitStopRequested && !p.isBlown && !p.hasFinished)
+        {
+            p.pitStopRequested = false;
+            p.pitStopScheduled = true;
+            if (hudUI != null)
+                hudUI.AppendLog($"{p.name} 已越过维修区入口，下一回合执行进站。");
+        }
+        else
+        {
+            // Passing without a reservation leaves the next approach window
+            // available on the following lap.
+            p.pitStopRequested = false;
+            p.pitChoiceResolvedThisLap = false;
+        }
+    }
+
+    /// <summary>
+    /// 合并播放本回合全部尾流事件：所有车辆完成基础移动后，
+    /// 进入独立的回合末尾流表现阶段，再执行额外移动。
     /// </summary>
     private IEnumerator PlaySlipstreamPhase(List<PlayerState> turnOrder, HashSet<PlayerState> turnSkipped)
     {
@@ -1518,18 +1634,56 @@ public class MVPGameManager : MonoBehaviour
                     $"[SLIPSTREAM] {follower.name} chain={stepIndex + 1}/{chain.Steps.Count} " +
                     $"follows={step.Leader.name} bonus={step.Bonus} total_bonus={chain.TotalBonus}");
 
-                if (raceEventFX == null)
-                    continue;
-
                 Transform followerCar = GetCarTransform(follower);
                 Transform leaderCar = GetCarTransform(step.Leader);
-                if (followerCar != null && leaderCar != null)
+                if (followerCar != null && leaderCar != null && step.Bonus > 0)
                     events.Add(new RaceEventFX.SlipstreamVisualEvent(followerCar, leaderCar, step.Bonus));
             }
         }
 
-        if (raceEventFX != null && events.Count > 0)
-            yield return StartCoroutine(raceEventFX.PlaySlipstreams(events));
+        if (events.Count == 0)
+            yield break;
+
+        // Card flights are deliberately non-blocking for rule resolution, but the
+        // tailwind close-up still waits for them before the end-of-turn reveal.
+        if (hudUI != null)
+            hudUI.SetStatus("移动阶段结束 · 正在结算尾流");
+        if (cardHandUI != null)
+            yield return StartCoroutine(cardHandUI.WaitForCardTransitions());
+        yield return new WaitForSecondsRealtime(0.12f);
+
+        raceLogWriter?.Append(
+            $"[SLIPSTREAM_PHASE] begin events={events.Count} " +
+            $"visuals={(raceEventFX != null ? "enabled" : "disabled")}");
+        if (hudUI != null)
+            hudUI.SetStatus($"尾流阶段：{events.Count} 段气流，额外移动即将执行");
+
+        if (raceEventFX != null)
+        {
+            Transform focus = events[0].Follower != null
+                ? events[0].Follower
+                : events[0].Leader;
+            raceCameraController?.BeginVehicleMovement(focus);
+            try
+            {
+                yield return StartCoroutine(raceEventFX.PlaySlipstreams(events));
+            }
+            finally
+            {
+                raceCameraController?.EndVehicleMovement();
+            }
+        }
+
+        raceLogWriter?.Append("[SLIPSTREAM_PHASE] end");
+        if (hudUI != null)
+            hudUI.SetStatus("尾流阶段结束 · 即将执行额外移动");
+        float postGap = raceEventFX != null
+            ? Mathf.Max(0f, raceEventFX.slipstreamPostGapDuration)
+            : 0.16f;
+        if (postGap > 0f)
+            yield return new WaitForSecondsRealtime(postGap);
+        if (hudUI != null)
+            hudUI.SetStatus("尾流加成阶段：按奖励推进");
     }
 
     private int GetNigiriBonus(PlayerState p, bool crossedCorner, int rawEnd, int lane)
@@ -2007,13 +2161,17 @@ public class MVPGameManager : MonoBehaviour
         if (cardHandUI != null)
         {
             List<CardData> toDiscard = cardHandUI.GetSelectedCards();
+            List<CardData> discardedCards = player.deck.DiscardPlayableCardInstancesFromHand(toDiscard);
             cardHandUI.PlayCardTransitions(
-                toDiscard, CardVisualZone.Hand, CardVisualZone.DiscardPile);
-            int discarded = player.deck.DiscardPlayableCardsFromHand(toDiscard);
-            if (discarded > 0 && hudUI != null)
-                hudUI.AppendLog($"{player.name} discards {discarded} card(s).");
+                discardedCards, CardVisualZone.Hand, CardVisualZone.DiscardPile);
+            cardHandUI.RemoveCardUIs(discardedCards);
+            cardHandUI.UpdateDeckInfo(player);
+            raceLogWriter?.Append(
+                $"[DISCARD] {player.name} selected={toDiscard.Count} " +
+                $"discarded={discardedCards.Count}");
+            if (discardedCards.Count > 0 && hudUI != null)
+                hudUI.AppendLog($"{player.name} discards {discardedCards.Count} card(s).");
             cardHandUI.SetDiscardMode(false);
-            RefreshHumanHand(player);
         }
     }
 

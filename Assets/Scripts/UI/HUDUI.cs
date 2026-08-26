@@ -162,16 +162,20 @@ public class HUDUI : MonoBehaviour
     {
         if (player == null || player.deck == null) return;
 
+        // Resolve the authored thermometer even when an older RaceCanvas
+        // instance lost the private serialized field during prefab rebuild.
+        // The gauge is a live view of the player's deck, not a static label.
+        EnsurePresentation();
+        HeatGaugeState gauge = HeatGaugeRules.Evaluate(player.deck);
+
         if (gearText != null)
             gearText.text = $"档位: {TeamGearRules.GetDisplayName(player.teamId, player.gear)}";
 
         if (heatText != null)
         {
-            EnsurePresentation();
             int handHeat = player.deck.CountHeatInHand();
             int drawHeat = player.deck.CountHeatInDrawPile();
             int discardHeat = player.deck.CountHeatInDiscardPile();
-            HeatGaugeState gauge = HeatGaugeRules.Evaluate(player.deck);
             string heatColor = gauge.WarningLevel == HeatWarningLevel.Critical
                 ? "#F74840"
                 : gauge.WarningLevel == HeatWarningLevel.Elevated ? "#F79A3D" : "#58A6FF";
@@ -179,13 +183,16 @@ public class HUDUI : MonoBehaviour
             string spinInfo = player.spinCounter > 0 ? $" | 失控 {player.spinCounter}/3" : "";
             heatText.text = $"引擎 {gauge.EngineRemaining}/{gauge.Capacity}  <color={heatColor}>热量 {gauge.TotalHeat}</color>\n"
                 + $"手{handHeat} 抽{drawHeat} 弃{discardHeat}{tempInfo}{spinInfo}";
-            heatThermometer?.Refresh(player.deck);
         }
+
+        heatThermometer?.Refresh(player.deck);
     }
 
     /// <summary>Builds the authored visual wrappers without changing button ownership.</summary>
     public void EnsurePresentation()
     {
+        if (heatThermometer == null)
+            heatThermometer = GetComponentInChildren<HeatThermometerUI>(true);
         if (heatText != null && heatThermometer == null)
             heatThermometer = HeatThermometerUI.Attach(heatText);
 

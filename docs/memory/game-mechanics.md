@@ -3,10 +3,13 @@
 This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
-> **Implementation snapshot (2026-08-25)**: Unity `2022.3.62f3c1`; the latest
-> latest successful editor EditMode run passed `436/436`. The required
+> **Implementation snapshot (2026-08-26)**: Unity `2022.3.62f3c1`; the latest
+> successful editor EditMode run passed `444/444`. The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.
+> On 2026-08-26, the tailwind/HUD-focused regression passed 56/56 and the full
+> EditMode suite passed 444/444; a 5-second MainMenu Play Mode smoke produced
+> no project errors or warnings.
 > A controlled four-car Silverstone Play Mode smoke on 2026-08-25 produced
 > `[SLIPSTREAM]` log entries and found `RaceEventFX` present; this is runtime
 > event-chain evidence, not a substitute for a manual two-link visual check.
@@ -44,6 +47,9 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 - Card ownership changes use a non-blocking table overlay: played/discarded
   cards fly from hand to discard, heat payments fly from engine to their rule
   destination, and cooling flies from the actual source zone back to engine.
+  Optional discard resolves the exact card instances that actually moved before
+  starting the animation, removes only those card views, and keeps unselected
+  cards visible in the hand presentation.
 - Played speed cards enter the discard pile during end-of-turn cleanup; only
   non-heat cards are reshuffled when the draw pile is empty.
 - Heat cards cannot be played as speed cards and can clog the hand after they
@@ -86,6 +92,11 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   It may accept at most one corner heat when the engine can also pay overclock
   and missing-card costs; larger or unaffordable risks force Recover. The
   tolerance is `GameConfigSO.aiChinaAffordableCornerHeat` (currently `1`).
+- Standard AI, when heat is below the cautious threshold and no corner risk is
+  predicted, considers an opponent within `GameConfigSO.aiSlipstreamPlanningRange`
+  (default `2`) and searches the current gear's hand for an exact movement
+  combination that ends one cell behind the opponent's estimated endpoint;
+  otherwise it falls back to the normal high/low-card policy.
 
 Gear-shift heat cost and gear-one/gear-two cooling values are configured in
 `GameConfigSO`. `MVPGameManager` resolves these rules through `RaceRules` for
@@ -168,17 +179,24 @@ prototype and is no longer the authoritative model.
   limits by two, adds two spin-counter points, and disables slipstream. Hot
   reduces reaction-step cooling by one. Corner limits, slipstream, cooling,
   spin-out increments, and HUD labels all resolve through `WeatherRules`.
-- Slipstream uses every racer's complete non-slipstream movement plan, including
-  vehicle, technology and trick bonuses. A successful first slipstream advances
-  the simulated endpoint and may follow one different car for a second bonus;
-  the same leader cannot be reused and the chain is capped at two triggers.
-  Before movement, every resolved chain segment is merged into one 0.9-second
-  unscaled visual phase with blue moving dash trails, two-car focus pulses, and
-  total bonus text; each segment is also written to the manual race log.
-- The deterministic full-race test and track/team balance benchmark use the
-  same four phase boundary as runtime: all racers choose cards, all non-slipstream
-  plans are frozen, all slipstream chains resolve, then movement executes in
-  rank order. The benchmark reports trigger count and movement gained per team.
+- Slipstream resolves only after every racer completes base movement, reaction,
+  and corner checks. It uses the actual settled positions, including vehicle,
+  technology, and trick bonuses already applied during base movement. A
+  successful first slipstream advances the simulated endpoint and may follow one
+  different car for a second bonus; the same leader cannot be reused and the chain
+  is capped at two triggers.
+  After `[MOVE_PHASE] end`, every resolved chain segment is merged into one explicit
+  0.95-second visual phase with a card-play handoff, blue moving dash trails,
+  two-car camera focus pulses, total bonus text, and a 0.28 time-scale close-up.
+  The phase waits for pending card flights, uses unscaled timing, and only after
+  `[SLIPSTREAM_PHASE] end` applies the bonus movement. Each segment and the
+  `[CARD_PHASE]`/`[MOVE_PHASE]`/`[SLIPSTREAM_PHASE]` boundaries is written to the
+  manual log.
+- The deterministic full-race test and track/team balance benchmark use the same
+  boundary as runtime: all racers choose cards, base movement/reaction/corners
+  execute in rank order, settled positions resolve tailwind, the visual boundary
+  completes, and bonus movement is applied. The benchmark reports trigger count
+  and movement gained per team.
 - Weather rolls once per newly crossed lap; the `RaceWeatherState` gate prevents
   multiple cars crossing the same start/finish node from rerolling the lap.
 
