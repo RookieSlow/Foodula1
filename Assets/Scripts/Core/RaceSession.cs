@@ -497,6 +497,7 @@ public class RaceSession
             foreach (PlayerState candidate in players)
             {
                 if (candidate == null || candidate == p || candidate.isBlown || candidate.hasFinished ||
+                    candidate.lap != p.lap ||
                     usedLeaders.Contains(candidate))
                     continue;
 

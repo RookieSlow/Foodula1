@@ -194,12 +194,41 @@ public class CardHandUI : MonoBehaviour
             {
                 if (pendingPlayCard == cardUIs[i])
                     pendingPlayCard = null;
-                Destroy(cardUIs[i].gameObject);
+                GameObject cardObject = cardUIs[i].gameObject;
                 cardUIs.RemoveAt(i);
+                // Deactivate before Destroy so the LayoutGroup removes only this
+                // card immediately; the remaining hand cards stay visible.
+                cardObject.SetActive(false);
+                Destroy(cardObject);
                 break; // 只移除第一个匹配的（同一 CardData 引用不会重复出现）
             }
         }
         UpdateActionButtonLabel();
+    }
+
+    /// <summary>
+    /// Removes only the specified card presentations from the hand. This is used
+    /// by optional discard so unselected cards are not destroyed and recreated as
+    /// if they had entered the discard pile.
+    /// </summary>
+    public void RemoveCardUIs(IReadOnlyList<CardData> cards)
+    {
+        if (cards == null || cards.Count == 0)
+            return;
+
+        foreach (CardData card in cards)
+            RemoveCardUI(card);
+
+        RectTransform layoutRect = handContainer as RectTransform;
+        if (layoutRect != null)
+            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(layoutRect);
+    }
+
+    /// <summary>Waits until already-started card flights have visually settled.</summary>
+    public IEnumerator WaitForCardTransitions()
+    {
+        while (zoneTransition != null && zoneTransition.ActiveTransitionCount > 0)
+            yield return null;
     }
 
     /// <summary>
@@ -527,7 +556,14 @@ public class CardHandUI : MonoBehaviour
 
         RectTransform sourceRect = ResolveZoneRect(source);
         RectTransform destinationRect = ResolveZoneRect(destination);
-        zoneTransition.Play(cards, sourceRect, destinationRect);
+        if (cards == null || cards.Count == 0 || sourceRect == null || destinationRect == null)
+            return;
+
+        zoneTransition.PlayFromCardSources(
+            cards,
+            ResolveCardSourceRects(cards),
+            sourceRect,
+            destinationRect);
     }
 
     /// <summary>Plays one or more heat cards between engine, hand and pile zones.</summary>
@@ -579,6 +615,29 @@ public class CardHandUI : MonoBehaviour
             numberSprites,
             heatIconSprite,
             font);
+    }
+
+    private List<RectTransform> ResolveCardSourceRects(IReadOnlyList<CardData> cards)
+    {
+        List<RectTransform> sources = new List<RectTransform>(cards != null ? cards.Count : 0);
+        if (cards == null)
+            return sources;
+
+        foreach (CardData card in cards)
+        {
+            RectTransform source = null;
+            for (int i = 0; i < cardUIs.Count; i++)
+            {
+                CardUI ui = cardUIs[i];
+                if (ui != null && ui.cardData == card)
+                {
+                    source = ui.GetComponent<RectTransform>();
+                    break;
+                }
+            }
+            sources.Add(source);
+        }
+        return sources;
     }
 
     private RectTransform ResolveZoneRect(CardVisualZone zone)

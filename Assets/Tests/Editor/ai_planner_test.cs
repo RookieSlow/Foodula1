@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -74,6 +75,94 @@ public class AIPlannerTests
             deck, 2, 0f, false, 0.7f, 0.5f, 1f, randomSource);
 
         assert_values(chosen, 3, 4);
+    }
+
+    [Test]
+    public void test_slipstream_target_accounts_for_leader_movement()
+    {
+        int targetMovement;
+
+        bool found = AIPlanner.TryGetSlipstreamTargetMovement(
+            0, 2, 1, 42, 2, out targetMovement);
+
+        Assert.That(found, Is.True);
+        Assert.That(targetMovement, Is.EqualTo(2));
+    }
+
+    [TestCase(0, 1, 4, 4)]
+    [TestCase(41, 0, 3, 3)]
+    public void test_slipstream_target_can_maintain_one_cell_gap(
+        int followerPosition,
+        int leaderPosition,
+        int leaderMovement,
+        int expectedTarget)
+    {
+        int targetMovement;
+
+        bool found = AIPlanner.TryGetSlipstreamTargetMovement(
+            followerPosition,
+            leaderPosition,
+            leaderMovement,
+            42,
+            2,
+            out targetMovement);
+
+        Assert.That(found, Is.True);
+        Assert.That(targetMovement, Is.EqualTo(expectedTarget));
+    }
+
+    [Test]
+    public void test_slipstream_target_rejects_distant_or_rear_opponent()
+    {
+        int targetMovement;
+
+        Assert.That(
+            AIPlanner.TryGetSlipstreamTargetMovement(0, 5, 0, 42, 2, out targetMovement),
+            Is.False);
+        Assert.That(
+            AIPlanner.TryGetSlipstreamTargetMovement(10, 5, 0, 42, 2, out targetMovement),
+            Is.False);
+    }
+
+    [Test]
+    public void test_exact_speed_combination_matches_tailwind_target()
+    {
+        var deck = new CardDeck();
+        deck.InitializeDeck(config, new HeatPool(0), new StubRandomSource());
+        deck.AddCardsToHand(new List<CardData>
+        {
+            new CardData(CardType.Speed, 1),
+            new CardData(CardType.Speed, 2),
+            new CardData(CardType.Speed, 3),
+            new CardData(CardType.Speed, 4)
+        });
+
+        List<CardData> chosen;
+        bool found = AIPlanner.TryFindExactSpeedCards(deck, 2, 5, out chosen);
+
+        Assert.That(found, Is.True);
+        Assert.That(chosen.Count, Is.EqualTo(2));
+        Assert.That(RaceRules.SumCardValues(chosen), Is.EqualTo(5));
+        Assert.That(deck.ContainsInHand(chosen[0]), Is.True);
+        Assert.That(deck.ContainsInHand(chosen[1]), Is.True);
+    }
+
+    [Test]
+    public void test_exact_speed_combination_falls_back_when_target_is_impossible()
+    {
+        var deck = new CardDeck();
+        deck.InitializeDeck(config, new HeatPool(0), new StubRandomSource());
+        deck.AddCardsToHand(new List<CardData>
+        {
+            new CardData(CardType.Speed, 1),
+            new CardData(CardType.Speed, 3)
+        });
+
+        List<CardData> chosen;
+        bool found = AIPlanner.TryFindExactSpeedCards(deck, 2, 5, out chosen);
+
+        Assert.That(found, Is.False);
+        Assert.That(chosen, Is.Null);
     }
 
     private CardDeck create_full_hand_deck(int seed)
@@ -163,6 +252,7 @@ public class RandomSourceTests
 public class AIControllerTests
 {
     private GameObject gameObject;
+    private GameObject trackObject;
     private GameConfigSO config;
 
     [SetUp]
@@ -179,7 +269,114 @@ public class AIControllerTests
     public void tear_down()
     {
         Object.DestroyImmediate(gameObject);
+        Object.DestroyImmediate(trackObject);
         Object.DestroyImmediate(config);
+    }
+
+    [Test]
+    public void test_controller_selects_exact_cards_for_nearby_leader()
+    {
+        config.speedCardDistribution = new[] { 4 };
+        config.aiSlipstreamPlanningRange = 2;
+
+        MVPGameManager game = gameObject.AddComponent<MVPGameManager>();
+        game.config = config;
+
+        trackObject = new GameObject("AIControllerTrack");
+        trackObject.SetActive(false);
+        TrackManager track = trackObject.AddComponent<TrackManager>();
+        var nodes = new List<TrackNode>();
+        for (int i = 0; i < 42; i++)
+            nodes.Add(new TrackNode(i, 99));
+        typeof(TrackManager)
+            .GetField("nodes", BindingFlags.Instance | BindingFlags.NonPublic)
+            .SetValue(track, nodes);
+        game.trackManager = track;
+
+        var ai = new PlayerState("AI", true, 0, 2) { teamId = TeamId.UK };
+        ai.deck.InitializeDeck(config, new HeatPool(0), new StubRandomSource());
+        ai.deck.AddCardsToHand(new List<CardData>
+        {
+            new CardData(CardType.Speed, 1),
+            new CardData(CardType.Speed, 1),
+            new CardData(CardType.Speed, 3)
+        });
+
+        var leader = new PlayerState("Leader", true, 2, 1) { teamId = TeamId.DE };
+        leader.deck.InitializeDeck(config, new HeatPool(0), new StubRandomSource());
+        leader.deck.AddCardsToHand(new List<CardData>
+        {
+            new CardData(CardType.Speed, 1)
+        });
+
+        var session = new RaceSession();
+        session.Players.Add(ai);
+        session.Players.Add(leader);
+        typeof(MVPGameManager)
+            .GetField("session", BindingFlags.Instance | BindingFlags.NonPublic)
+            .SetValue(game, session);
+
+        AIController controller = gameObject.AddComponent<AIController>();
+        controller.Initialize(game, ai, new StubRandomSource());
+        controller.SelectCards();
+
+        Assert.That(ai.playedSpeedCardsThisTurn.Count, Is.EqualTo(2));
+        Assert.That(RaceRules.SumCardValues(ai.playedSpeedCardsThisTurn), Is.EqualTo(2));
+        Assert.That(ai.deck.HandCount, Is.EqualTo(1));
+        Assert.That(ai.deck.Hand[0].value, Is.EqualTo(3));
+    }
+
+    [Test]
+    public void test_controller_ignores_leader_on_different_lap()
+    {
+        config.speedCardDistribution = new[] { 4 };
+        config.aiSlipstreamPlanningRange = 2;
+
+        MVPGameManager game = gameObject.AddComponent<MVPGameManager>();
+        game.config = config;
+
+        trackObject = new GameObject("AIControllerTrack");
+        trackObject.SetActive(false);
+        TrackManager track = trackObject.AddComponent<TrackManager>();
+        var nodes = new List<TrackNode>();
+        for (int i = 0; i < 42; i++)
+            nodes.Add(new TrackNode(i, 99));
+        typeof(TrackManager)
+            .GetField("nodes", BindingFlags.Instance | BindingFlags.NonPublic)
+            .SetValue(track, nodes);
+        game.trackManager = track;
+
+        var ai = new PlayerState("AI", true, 0, 2) { teamId = TeamId.UK, lap = 0 };
+        ai.deck.InitializeDeck(config, new HeatPool(0), new StubRandomSource());
+        ai.deck.AddCardsToHand(new List<CardData>
+        {
+            new CardData(CardType.Speed, 1),
+            new CardData(CardType.Speed, 1),
+            new CardData(CardType.Speed, 3)
+        });
+
+        var leader = new PlayerState("Leader", true, 2, 1) { teamId = TeamId.DE, lap = 1 };
+        leader.deck.InitializeDeck(config, new HeatPool(0), new StubRandomSource());
+        leader.deck.AddCardsToHand(new List<CardData>
+        {
+            new CardData(CardType.Speed, 1)
+        });
+
+        var session = new RaceSession();
+        session.Players.Add(ai);
+        session.Players.Add(leader);
+        typeof(MVPGameManager)
+            .GetField("session", BindingFlags.Instance | BindingFlags.NonPublic)
+            .SetValue(game, session);
+
+        AIController controller = gameObject.AddComponent<AIController>();
+        controller.Initialize(game, ai, new StubRandomSource());
+        controller.SelectCards();
+
+        Assert.That(ai.playedSpeedCardsThisTurn.Count, Is.EqualTo(2));
+        Assert.That(RaceRules.SumCardValues(ai.playedSpeedCardsThisTurn), Is.EqualTo(4));
+        Assert.That(ai.deck.HandCount, Is.EqualTo(1));
+        Assert.That(ai.deck.Hand[0].value, Is.EqualTo(1));
     }
 
     [Test]

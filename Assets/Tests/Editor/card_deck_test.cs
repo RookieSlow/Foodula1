@@ -500,6 +500,26 @@ public class CardDeckTest
     }
 
     [Test]
+    public void test_optional_discard_returns_only_exact_instances_that_moved()
+    {
+        var config = CreateConfig();
+        var deck = CreateDeck(config);
+        var selected = new CardData(CardType.Speed, 2);
+        var unselected = new CardData(CardType.Speed, 3);
+        var staleSelection = new CardData(CardType.Speed, 5);
+        deck.AddCardsToHand(new List<CardData> { selected, unselected });
+
+        List<CardData> discarded = deck.DiscardPlayableCardInstancesFromHand(
+            new List<CardData> { selected, staleSelection });
+
+        Assert.AreEqual(1, discarded.Count);
+        Assert.AreSame(selected, discarded[0]);
+        Assert.IsTrue(deck.ContainsInHand(unselected));
+        Assert.IsFalse(deck.ContainsInHand(selected));
+        Assert.AreEqual(1, deck.DiscardPileCount);
+    }
+
+    [Test]
     public void test_remove_temp_cards_from_hand_removes_only_temp()
     {
         var config = CreateConfig();

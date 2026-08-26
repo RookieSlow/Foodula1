@@ -43,15 +43,16 @@
 | 7 | Teams & Cars | `foodula-1-teams-cars.md` | In Progress | 6 national food-themed teams; car sprites, team profiles, and tech modifiers are wired; presentation and balance review remain |
 | 8 | Drivers | `foodula-1-drivers.md` | In Progress | 12 driver catalog entries, XP/tier rules and menu selection are implemented; signature effects remain |
 | 9 | Tracks | `foodula-1-tracks.md` | In Progress | 8 JSON tracks with real-layout presentation, lanes, apex masks and limits; full pit/weather Play Mode playthrough remains |
-| 10 | AI | `foodula-1-ai.md` | In Progress | Deterministic planner and one-default-opponent controller are implemented; configured multi-opponent personality tuning remains |
+| 10 | AI | `foodula-1-ai.md` | In Progress | Deterministic planner, active low-risk slipstream card planning, and one-default-opponent controller are implemented; configured multi-opponent personality tuning remains |
 | 11 | Visual Style | `foodula-1-visual-style.md` | In Progress | Main menu, race backgrounds, masks, minimap and card visuals are integrated; polish remains |
 | 12 | Tech Tree | `foodula-1-tech-tree.md` | In Progress | Rules/database, persistent profiles, main-menu configuration UI and race-loop hooks are integrated; balance/playtest remains |
 
-## 2026-08-25 Implementation Snapshot
+## 2026-08-26 Implementation Snapshot
 
 The index was stale relative to the Unity project and is now aligned with the
 current implementation stage. `production/stage.txt` is `Production`. The
-project has 417 passing EditMode tests; the remaining `In Progress` items are
+project's last successful full EditMode run passed 451 tests, including the three
+new AI tailwind boundary/integration cases. The remaining `In Progress` items are
 deliberate feature gaps, not missing source files accidentally hidden by this
 index. The required `production/session-state/active.md` continuity file is
 currently missing and has not been created automatically.

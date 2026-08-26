@@ -186,25 +186,35 @@ public class CardDeck
     }
 
     /// <summary>
-    /// Removes playable cards from hand and puts them directly into the discard pile.
-    /// Heat cards are deliberately ignored because they can only leave hand through cooling.
-    /// Returns the number of cards discarded.
+    /// Removes playable cards from hand and puts them directly into the discard pile,
+    /// returning the exact runtime card instances that moved. Heat cards are deliberately
+    /// ignored because they can only leave hand through cooling.
     /// </summary>
-    public int DiscardPlayableCardsFromHand(IReadOnlyList<CardData> cards)
+    public List<CardData> DiscardPlayableCardInstancesFromHand(IReadOnlyList<CardData> cards)
     {
-        if (cards == null) return 0;
+        List<CardData> discarded = new List<CardData>();
+        if (cards == null) return discarded;
 
-        int discarded = 0;
         foreach (CardData card in cards)
         {
             if (card == null || card.IsHeat) continue;
             if (hand.Remove(card))
             {
                 discardPile.Add(card);
-                discarded++;
+                discarded.Add(card);
             }
         }
         return discarded;
+    }
+
+    /// <summary>
+    /// Removes playable cards from hand and puts them directly into the discard pile.
+    /// Returns the number of cards discarded; use the instance-returning overload when
+    /// a presentation needs to animate only cards that actually moved.
+    /// </summary>
+    public int DiscardPlayableCardsFromHand(IReadOnlyList<CardData> cards)
+    {
+        return DiscardPlayableCardInstancesFromHand(cards).Count;
     }
 
     /// <summary>

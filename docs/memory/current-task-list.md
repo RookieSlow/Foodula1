@@ -40,10 +40,21 @@
 - [x] 修正 AI 行为树中明确标注“P3 尾流 — MVP 跳过”但运行时没有主动规划的问题：低热量、
   无弯道风险且前车当前前向距离在配置窗口内时，AI 会估算前车计划移动并尝试精确组合当前
   档位的速度牌，使计划终点保持 1 格尾流触发距离；没有精确组合时安全回退到原策略。
+- [x] 修正 AI 已经落后前车 1 格时被错误排除在主动规划窗口外的问题；现在会按前车预估
+  移动量寻找维持 1 格尾流距离的精确牌组，仍将同格车辆交给回合末到达顺序判定。
 - [x] 新增 `GameConfigSO.aiSlipstreamPlanningRange`（默认 2）和 `AIPlanner` 纯函数：覆盖
   环形赛道前向距离、前车移动估算后的目标移动力、精确卡牌组合与不可达回退边界。
-- [x] Unity EditMode AI 定向测试 `12/12` 通过；全量 EditMode `441/441` 通过，0 失败、
-  0 跳过。测试后 Console 已清理为 0 错误/警告；未进行完整多车 Play Mode 调参。
+- [x] 历史 Unity EditMode AI 定向测试 `12/12`、全量 `441/441` 通过，0 失败、0 跳过；
+  本轮新增 2 个“一格尾流规划”边界用例。完整多车
+  Play Mode 调参仍未完成。
+- [x] AI 主动尾流候选与运行时规则对齐：不同圈车辆不再作为规划目标；新增 1 个跨圈
+  集成回归用例。
+- [x] Unity 编辑器恢复后完成 AI 尾流定向回归 `15/15`、全量 EditMode `451/451`，
+  0 失败、0 跳过；覆盖同圈主动规划、一格边界、不可达回退和跨圈候选过滤。
+- [x] 读取最新人工日志 `C:\Users\Admin\AppData\LocalLow\DefaultCompany\Foodula1\race-logs\race-20260826-085042-silverstone_afternoon_tea-f5f194d14b67484292b35b8db9c240fc.log`：
+  `CARD_PHASE end → MOVE_PHASE end → SLIPSTREAM → SLIPSTREAM_PHASE → SLIPSTREAM_MOVE_PHASE`
+  顺序正确，且本局只有玩家获得 1 次 `+2` 尾流移动；本局在 `RACE_END` 前没有进入弃牌阶段，
+  因而不能替代弃牌视觉验收。
 - [ ] 下一步人工构造相邻 AI/玩家位置，确认 AI 实际选牌后日志出现 `[SLIPSTREAM]`，并观察
   尾流特写与后续回合；这与现有规则层/受控事件链测试互补。
 

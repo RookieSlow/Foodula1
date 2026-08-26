@@ -36,6 +36,16 @@ public sealed class RaceEventFX : MonoBehaviour
     private bool initialized;
     private bool effectBusy;
 
+    [Header("尾流阶段")]
+    [Min(0.8f)]
+    public float slipstreamDuration = 0.95f;
+    [Range(0.1f, 1f)]
+    public float slipstreamTimeScale = 0.28f;
+    [Min(0f)]
+    public float slipstreamLeadInDuration = 0.16f;
+    [Min(0f)]
+    public float slipstreamPostGapDuration = 0.16f;
+
     private static readonly Color PanelColor = new Color(0.025f, 0.04f, 0.07f, 0.94f);
     private static readonly Color OvertakeColor = new Color(1f, 0.75f, 0.24f, 1f);
     private static readonly Color SlipstreamColor = new Color(0.12f, 0.76f, 1f, 1f);
@@ -184,12 +194,19 @@ public sealed class RaceEventFX : MonoBehaviour
         string detail = events.Count == 1
             ? $"尾流 +{totalBonus} · 气流牵引"
             : $"尾流 ×{airflowRoots.Count} · 总加成 +{totalBonus}";
+        SetMessage("尾流阶段", "速度牌已锁定 · 正在进入气流", SlipstreamColor);
+        if (slipstreamLeadInDuration > 0f)
+            yield return new WaitForSecondsRealtime(slipstreamLeadInDuration);
         SetMessage("SLIPSTREAM!", detail, SlipstreamColor);
 
+        float previousTimeScale = Time.timeScale;
+        Time.timeScale = Mathf.Min(
+            previousTimeScale,
+            Mathf.Clamp(slipstreamTimeScale, 0.1f, 1f));
         try
         {
             float elapsed = 0f;
-            const float duration = 0.9f;
+            float duration = Mathf.Max(0.8f, slipstreamDuration);
             while (elapsed < duration)
             {
                 elapsed += Time.unscaledDeltaTime;

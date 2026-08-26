@@ -50,7 +50,7 @@ The verified scene flow is:
 - Demo framework Phase 1 is complete.
 - Phase 2 asset replacement is in progress.
 - The project is in Production stage. The latest editor audit on 2026-08-26
-  recorded a successful 446/446 EditMode run. The MainMenu-to-Race flow, race
+  recorded a successful 451/451 EditMode run. The MainMenu-to-Race flow, race
   card/icon references, and Chinese font support remain the current
   presentation baseline.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
@@ -90,14 +90,15 @@ The verified scene flow is:
   passes its historical original 16 EditMode tests with no Unity warnings or errors;
   the current full suite is tracked separately below.
 - `Gameplay/TrackRules.cs` now provides pure, tested track traversal rules.
-  Together with the current feature tests, the project passes 446 EditMode
+  Together with the current feature tests, the project passes 451 EditMode
   tests. `RaceTestLogWriter` can capture a manual race into a timestamped log
   for later review; a controlled four-car Silverstone Play Mode smoke on
   2026-08-25 produced two `[SLIPSTREAM]` entries and confirmed `RaceEventFX`
   was present, while full manual chain/visual acceptance remains open. The
   2026-08-26 tailwind/HUD regression passed 56 focused tests plus the full
   446-test suite, followed by a 5-second MainMenu Play Mode smoke with no project
-  errors or warnings.
+  errors or warnings. The subsequent AI tailwind rerun passed 15/15 focused
+  tests and 451/451 full EditMode tests, including the new boundary cases.
 - The deterministic full-race test and `TrackTeamBalanceBenchmark` now freeze
   every racer's non-slipstream plan before resolving the same two-step chain as
   runtime. The corrected 2026-08-25 benchmark covers nine track configurations,

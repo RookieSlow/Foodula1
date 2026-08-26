@@ -658,6 +658,23 @@ public class RaceSessionTest
         Assert.AreEqual(RaceSession.SLIPSTREAM_BASE_BONUS, session.ComputeSlipstreamBonus(p, session.Players, 60));
     }
 
+    [TestCase(0, 1)]
+    [TestCase(1, 0)]
+    public void test_slipstream_requires_same_lap(int followerLap, int leaderLap)
+    {
+        var session = CreateSession();
+        var follower = AddRacer(session, "Follower", 10, TeamId.CN, false);
+        var leader = AddRacer(session, "Leader", 11, TeamId.UK);
+        follower.lap = followerLap;
+        leader.lap = leaderLap;
+        follower.cornerTotalThisTurn = 3;
+        leader.cornerTotalThisTurn = 3;
+
+        // Both cars would be one cell apart after movement, but a different
+        // lap means they are not physically in the same race group.
+        Assert.AreEqual(0, session.ComputeSlipstreamBonus(follower, session.Players, 60));
+    }
+
     [Test]
     public void test_slipstream_blocked_by_ice_jelly()
     {

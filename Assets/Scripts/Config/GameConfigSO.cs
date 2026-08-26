@@ -216,6 +216,10 @@ public class GameConfigSO : ScriptableObject
     [Range(0f, 1f)]
     public float aiCautiousHeatThreshold = 0.5f;
 
+    [Tooltip("AI 计划尾流时考虑的前车当前前向距离（格）")]
+    [Min(1)]
+    public int aiSlipstreamPlanningRange = 2;
+
     [Tooltip("中国 AI 在引擎可支付时允许承担的单回合弯道热量")]
     [Min(0)]
     public int aiChinaAffordableCornerHeat = 1;

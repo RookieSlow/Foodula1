@@ -57,15 +57,40 @@ public sealed class CardZoneTransitionUI : MonoBehaviour
         RectTransform source,
         RectTransform destination)
     {
-        if (cards == null || cards.Count == 0 || source == null || destination == null)
+        PlayFromCardSources(cards, null, source, destination);
+    }
+
+    /// <summary>
+    /// Plays a transition using one source anchor per card when available. Source and
+    /// destination positions are captured before the coroutines start so callers may
+    /// safely rebuild or destroy their hand UI immediately after changing card ownership.
+    /// </summary>
+    public void PlayFromCardSources(
+        IReadOnlyList<CardData> cards,
+        IReadOnlyList<RectTransform> cardSources,
+        RectTransform fallbackSource,
+        RectTransform destination)
+    {
+        if (cards == null || cards.Count == 0 || destination == null)
             return;
 
         int visuals = CardZoneTransitionRules.GetVisualCount(cards.Count, maxBatchVisuals);
+        Vector2 end = ToOverlayPosition(destination);
         for (int i = 0; i < visuals; i++)
         {
             int represented = i == visuals - 1 ? cards.Count - visuals + 1 : 1;
             CardData card = cards[Mathf.Min(i, cards.Count - 1)];
-            StartCoroutine(PlayOne(card, represented, source, destination, i * stagger));
+            RectTransform source = cardSources != null && i < cardSources.Count
+                ? cardSources[i]
+                : null;
+            if (source == null)
+                source = fallbackSource;
+            if (source == null)
+                continue;
+
+            Vector2 start = ToOverlayPosition(source);
+            ActiveTransitionCount++;
+            StartCoroutine(PlayOne(card, represented, start, end, i * stagger));
         }
     }
 
@@ -83,44 +108,48 @@ public sealed class CardZoneTransitionUI : MonoBehaviour
     private IEnumerator PlayOne(
         CardData card,
         int representedCount,
-        RectTransform source,
-        RectTransform destination,
+        Vector2 start,
+        Vector2 end,
         float delay)
     {
-        if (delay > 0f)
-            yield return new WaitForSecondsRealtime(delay);
-
-        if (overlayRect == null || canvas == null)
-            yield break;
-
-        Vector2 start = ToOverlayPosition(source);
-        Vector2 end = ToOverlayPosition(destination);
-        GameObject visual = CreateVisual(card, representedCount);
-        RectTransform visualRect = visual.GetComponent<RectTransform>();
-        CanvasGroup group = visual.GetComponent<CanvasGroup>();
-        visualRect.anchoredPosition = start;
-        visualRect.localScale = Vector3.one * 0.88f;
-        ActiveTransitionCount++;
-
-        float elapsed = 0f;
-        float safeDuration = Mathf.Max(0.01f, duration);
-        while (elapsed < safeDuration)
+        GameObject visual = null;
+        try
         {
-            elapsed += Time.unscaledDeltaTime;
-            float t = Mathf.Clamp01(elapsed / safeDuration);
-            float eased = CardZoneTransitionRules.Smooth(t);
-            visualRect.anchoredPosition = CardZoneTransitionRules.EvaluateArc(
-                start, end, arcHeight, eased);
-            float scale = t < 0.55f
-                ? Mathf.Lerp(0.88f, 1.08f, t / 0.55f)
-                : Mathf.Lerp(1.08f, 0.76f, (t - 0.55f) / 0.45f);
-            visualRect.localScale = Vector3.one * scale;
-            group.alpha = t < 0.78f ? 1f : Mathf.InverseLerp(1f, 0.78f, t);
-            yield return null;
-        }
+            if (delay > 0f)
+                yield return new WaitForSecondsRealtime(delay);
 
-        ActiveTransitionCount = Mathf.Max(0, ActiveTransitionCount - 1);
-        Destroy(visual);
+            if (overlayRect == null || canvas == null)
+                yield break;
+
+            visual = CreateVisual(card, representedCount);
+            RectTransform visualRect = visual.GetComponent<RectTransform>();
+            CanvasGroup group = visual.GetComponent<CanvasGroup>();
+            visualRect.anchoredPosition = start;
+            visualRect.localScale = Vector3.one * 0.88f;
+
+            float elapsed = 0f;
+            float safeDuration = Mathf.Max(0.01f, duration);
+            while (elapsed < safeDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / safeDuration);
+                float eased = CardZoneTransitionRules.Smooth(t);
+                visualRect.anchoredPosition = CardZoneTransitionRules.EvaluateArc(
+                    start, end, arcHeight, eased);
+                float scale = t < 0.55f
+                    ? Mathf.Lerp(0.88f, 1.08f, t / 0.55f)
+                    : Mathf.Lerp(1.08f, 0.76f, (t - 0.55f) / 0.45f);
+                visualRect.localScale = Vector3.one * scale;
+                group.alpha = t < 0.78f ? 1f : Mathf.InverseLerp(1f, 0.78f, t);
+                yield return null;
+            }
+        }
+        finally
+        {
+            ActiveTransitionCount = Mathf.Max(0, ActiveTransitionCount - 1);
+            if (visual != null)
+                Destroy(visual);
+        }
     }
 
     private Vector2 ToOverlayPosition(RectTransform target)

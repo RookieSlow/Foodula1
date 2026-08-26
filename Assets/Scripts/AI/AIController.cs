@@ -115,7 +115,9 @@ public class AIController : MonoBehaviour
             }
         }
 
-        // ── P3: 尾流 — MVP 跳过 ──
+        // ── P3: 尾流 ──
+        // 具体牌组选取在 A4 执行；此处保持当前合法档位，避免为了追尾流
+        // 绕过 P1 生存检查或 P2 弯道预判。
 
         // ── P4: 常规推进 ──
         if (heatRatio <= config.aiAggressiveHeatThreshold && speedInHand >= 3)
@@ -144,17 +146,24 @@ public class AIController : MonoBehaviour
         ai.playedSpeedCardsThisTurn.Clear();
         ai.playedHeatCardsThisTurn.Clear();
 
-        int gear = ai.gear;
         int maxCards = game.GetMaxSpeedCardsThisTurn(ai);
-        List<CardData> chosen = AIPlanner.ChooseSpeedCards(
-            ai.deck,
-            maxCards,
-            ai.HeatRatio,
-            HasCornerRisk(maxCards),
-            config.aiHeatWarningThreshold,
-            config.aiCautiousHeatThreshold,
-            config.aiCardVariationChance,
-            randomSource);
+        bool cornerRisk = HasCornerRisk(maxCards);
+        List<CardData> chosen = null;
+        if (!cornerRisk && ai.HeatRatio < config.aiCautiousHeatThreshold)
+            chosen = TryChooseSlipstreamCards(maxCards);
+
+        if (chosen == null)
+        {
+            chosen = AIPlanner.ChooseSpeedCards(
+                ai.deck,
+                maxCards,
+                ai.HeatRatio,
+                cornerRisk,
+                config.aiHeatWarningThreshold,
+                config.aiCautiousHeatThreshold,
+                config.aiCardVariationChance,
+                randomSource);
+        }
 
         // 引擎故障：速度牌不足时，每缺 1 张 +1 热量到弃牌堆。引擎不足 → 失控
         int requiredCards = game.GetMaxSpeedCardsThisTurn(ai);
@@ -180,6 +189,77 @@ public class AIController : MonoBehaviour
     }
 
     // ====== 辅助方法 ======
+
+    /// <summary>
+    /// Tries to select an exact-card-count combination that places the AI
+    /// within one cell of a nearby opponent after both planned movements.
+    /// Corner-risk and heat gates are applied by <see cref="SelectCards"/>.
+    /// </summary>
+    private List<CardData> TryChooseSlipstreamCards(int cardLimit)
+    {
+        if (game == null || game.Session == null || track == null || ai == null ||
+            track.TotalNodes <= 0 || cardLimit <= 0 || config == null)
+            return null;
+
+        int planningRange = Mathf.Max(1, config.aiSlipstreamPlanningRange);
+        int bestTargetMovement = int.MaxValue;
+        List<CardData> bestCards = null;
+
+        foreach (PlayerState candidate in game.Session.Players)
+        {
+            if (candidate == null || candidate == ai || candidate.isBlown || candidate.hasFinished ||
+                candidate.lap != ai.lap)
+                continue;
+
+            int leaderMovement = EstimateOpponentMovement(candidate);
+            if (!AIPlanner.TryGetSlipstreamTargetMovement(
+                ai.position,
+                candidate.position,
+                leaderMovement,
+                track.TotalNodes,
+                planningRange,
+                out int targetMovement))
+            {
+                continue;
+            }
+
+            if (targetMovement >= bestTargetMovement)
+                continue;
+
+            if (AIPlanner.TryFindExactSpeedCards(
+                ai.deck,
+                cardLimit,
+                targetMovement,
+                out List<CardData> cards))
+            {
+                bestTargetMovement = targetMovement;
+                bestCards = cards;
+            }
+        }
+
+        return bestCards;
+    }
+
+    /// <summary>
+    /// Estimates a leader's non-slipstream movement for the current planning
+    /// pass. Already selected cards take precedence; otherwise the leader's
+    /// highest legal speed cards provide a deterministic approximation.
+    /// </summary>
+    private int EstimateOpponentMovement(PlayerState opponent)
+    {
+        if (opponent == null || opponent.deck == null)
+            return 0;
+        if (opponent.playedSpeedCardsThisTurn != null &&
+            opponent.playedSpeedCardsThisTurn.Count > 0)
+        {
+            return RaceRules.SumCardValues(opponent.playedSpeedCardsThisTurn);
+        }
+
+        int cardLimit = game != null
+            ? game.GetMaxSpeedCardsThisTurn(opponent)
+            : opponent.gear;
+        return RaceRules.SumCardValues(opponent.deck.GetTopNSpeedCards(Mathf.Max(0, cardLimit)));
+    }
 
     /// <summary>
     /// 预估本回合移动力 = 手牌中最大 N 张速度牌之和。

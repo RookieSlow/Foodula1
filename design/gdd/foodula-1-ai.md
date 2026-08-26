@@ -4,9 +4,10 @@
 > **关联文档**：`foodula-1-concept.md`（主框架）、`foodula-1-core-mechanics.md`（核心机制）  
 > **创建日期**：2026-07-13  
 > **适用范围**：Demo 快速比赛模式，中等难度 AI
-> **实现快照**：2026-08-25；当前运行时为 `AIController` + `AIPlanner`，
+> **实现快照**：2026-08-26；当前运行时为 `AIController` + `AIPlanner`，
 > 共享 `ChinaGearShiftRules`，默认一名 AI；`aiOpponentCount` 可配置更多对手。
-> P3 尾流策略、个性化难度和完整 Play Mode 调参仍属于未完成项。
+> P3 尾流主动规划已接入：低热量且无弯道风险时，AI 会尝试精确组合牌面接近前车；
+> 个性化难度和完整多车 Play Mode 调参仍属于未完成项。
 
 ---
 
@@ -41,7 +42,7 @@ ROOT（每回合执行一次）
 │   │   └─ NO → 继续
 │
 ├─ PRIORITY 3：尾流利用
-│   ├─ 移动后能触发尾流？
+│   ├─ 计划移动后能触发尾流？
 │   │   ├─ YES → 优先出足够的牌来接近前车
 │   │   └─ NO → 继续
 │
@@ -130,14 +131,19 @@ def evaluate_corner_risk(current_pos, gear, hand, track):
 ### 2.3 尾流利用（P3）
 
 ```
-IF 前方 ≤ 2 格范围内有对手：
-    target_distance = 到前车的距离
-    needed_move = target_distance + 1（保证贴上前车，≤ 1 格触发尾流）
+IF 前方 ≤ aiSlipstreamPlanningRange 格范围内有同圈对手（默认 2 格，含已贴后一格）：
+    gap = AI 到前车的当前前向距离
+    leader_move = 根据前车已选牌或最高合法牌面的预计移动
+    needed_move = gap + leader_move - 1（让双方计划终点相差 1 格）
     
-    IF 手中可以组合出 needed_move：
+    IF 热量低于谨慎阈值、预计不经过超速弯道，且当前档位的手牌
+       可以组合出 needed_move：
         → 选择能精确达到 needed_move 的出牌组合
-        → 如果触发尾流 +2 后能追上更前的车，更优先
+        → 否则回退到原有的高牌/低牌常规策略，不制造额外缺牌故障
 ```
+
+运行时尾流触发范围仍由 `RaceSession` 的天气、车队、科技和特技规则统一决定；
+AI 这里只负责在当前档位内规划接近目标，不直接提前结算尾流奖励。
 
 ### 2.4 常规推进（P4）
 
@@ -182,10 +188,11 @@ ELSE：
 | 热量 | 前方弯道风险 | 尾流机会 | 决策 |
 |---|---|---|---|
 | ≥ 70% | 任意 | 任意 | **降至 1 档**，出最小牌，全力冷却 |
-| 50-69% | 有风险 | 有 | 不换档，保守出牌，兼顾尾流 |
+| 50-69% | 有风险 | 有 | 不换档，保守出牌；不主动精确规划尾流 |
 | 50-69% | 有风险 | 无 | 降 1 档，出小牌 |
-| 50-69% | 安全 | 有 | 不换档，激进出牌追尾流 |
-| ≤ 49% | 有风险 | 有 | 不换档，精确打到尾流距离 |
+| 50-69% | 安全 | 有 | 不换档，常规推进；不主动精确规划尾流 |
+| ≤ 49% | 有风险 | 有 | 优先安全通过弯道；不主动规划尾流 |
+| ≤ 49% | 安全 | 有 | 保持/升档，尝试精确打到尾流距离 |
 | ≤ 49% | 有风险 | 无 | 降 1 档（或保持 1-2 档），保守 |
 | ≤ 49% | 安全 | 任意 | **升档**（如果未到 4 档），大方出牌 |
 | ≤ 30% | 安全 | 任意 | 优先升到 4 档，全力冲刺 |
@@ -209,30 +216,21 @@ def select_cards(hand, gear, target_move=None):
         return speed_cards  # 打出所有可用的
     
     if target_move:
-        # 尾流场景：精确匹配目标距离
-        return find_closest_combination(speed_cards, gear, target_move)
+        # 尾流场景：只有精确组合才改变常规选牌，否则安全回退
+        exact = find_exact_combination(speed_cards, gear, target_move)
+        return exact if exact else speed_cards[:gear]
     else:
         # 常规场景：取最大的 N 张
         return speed_cards[:gear]
 
-def find_closest_combination(cards, count, target):
-    """在 cards 中选择 count 张，使它们的和最接近 target（≥ target 优先）"""
+def find_exact_combination(cards, count, target):
+    """返回恰好达到 target 的 count 张牌；不存在时返回 None"""
     from itertools import combinations
-    best = None
-    best_diff = float('inf')
-    
     for combo in combinations(cards, count):
         total = sum(c.value for c in combo)
-        if total >= target:
-            diff = total - target
-        else:
-            diff = (target - total) * 2  # 惩罚小于目标的情况
-        
-        if diff < best_diff:
-            best_diff = diff
-            best = combo
-    
-    return list(best) if best else cards[:count]
+        if total == target:
+            return list(combo)
+    return None
 ```
 
 ---
@@ -364,5 +362,6 @@ AI 需要访问以下游戏状态：
 | 当前档位 | `currentGear` | 选档基础 |
 | 赛道数据 | `trackCells[]` | 弯道位置和限速 |
 | 所有玩家位置 | `allPlayerPositions[]` | 尾流和追赶目标 |
+| AI 尾流规划窗口 | `GameConfigSO.aiSlipstreamPlanningRange` | 限制主动接近目标的当前前向距离 |
 | 当前圈数 | `currentLap` | 最后一圈判断 |
 | 车队类型 | `teamType` | 选中国 AI 还是标准 AI |
