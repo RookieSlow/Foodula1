@@ -23,6 +23,7 @@
 | 11 | Visual Style | `foodula-1-visual-style.md` | In Progress | Race visuals are Demo-grade; menu/driver/team/tech-tree identity assets remain |
 | 12 | Tech Tree | `foodula-1-tech-tree.md` | In Review | Rules, persistent profiles, menu UI and race hooks are wired; presentation and playtest sign-off remain |
 | 13 | Audio Style | `foodula-1-audio-style.md` | Not Started | Design/event map exists; no project audio files, AudioMixer or runtime audio service yet |
+| 14 | Tutorial, Settings & Encyclopedia | `foodula-1-tutorial-settings-encyclopedia.md` | In Progress | Isolated tutorial/practice, exact deck, guide gates, settings persistence and 17-entry data-driven encyclopedia are wired; per-step reset/recovery and final Play Mode acceptance remain |
 
 ## Project Planning
 
@@ -36,11 +37,28 @@
 
 ## 2026-08-27 Implementation Snapshot
 
-- Project stage is `Production`; the latest successful full EditMode run passed `471/471`, with 0 failures and 0 skips.
+- Project stage is `Production`; the latest successful full EditMode run passed `503/503`, with 0 failures and 0 skips.
 - The latest manual tailwind log confirms scoped slow motion during the independent tailwind presentation/bonus movement and restoration to `time_scale=1.00` afterward.
 - Current runtime scope is 8 selectable official JSON tracks plus `fallback_42`, six teams, twelve selectable drivers and configurable AI opponents.
 - Missing presentation assets are now explicitly tracked in `asset-manifest.md`; runtime-generated effects and retired 42-node artwork are no longer reported as missing files.
 - `production/session-state/active.md` remains missing and has not been created automatically.
+- The tutorial foundation now defines UK + Le Mans isolation, exact non-seeded card order,
+  scripted weather/opponent cues and the complete guided-step order with EditMode coverage.
+- The menu-to-Race tutorial launch, runtime Director, guide panel and mechanic event gates are wired.
+  Guide completion/skip now rebuilds a deterministic one-lap practice session with restart, replay,
+  exit and zero-reward completion feedback. Focused tutorial EditMode is `16/16`; full EditMode is
+  checkpoints now bring focused tutorial coverage to `20/20` and full EditMode to `503/503`.
+  The earlier exact-opening/zero-benefit and separate Quick Race smokes remain valid.
+- The main menu settings overlay now persists versioned audio placeholders, display mode, resolution,
+  animation speed, reduced motion and the separate tutorial-completion preference. Display and supported
+  presentation timings apply at runtime; audio values are explicitly data-only until an AudioMixer exists.
+  Settings plus tutorial focused EditMode is `22/22`; full EditMode is `493/493`.
+- The settings overlay now opens a scrollable encyclopedia backed by a versioned 17-entry JSON catalog.
+  Catalog validation and runtime trace checks for 12 trick cards, 12 drivers and five weather profiles pass `6/6`;
+  the resulting full EditMode suite passes `499/499`.
+- Eight guided player-state checkpoints now rebuild exact card/heat zones at safe turn boundaries.
+  A tutorial-only 132/4 virtual pit view reuses normal pit rules because the official Le Mans JSON has no pit;
+  official nodes remain unchanged. Tutorial focused passes `20/20`; full EditMode passes `503/503`.
 - `design/registry/entities.yaml` exists but is empty, so entity-level automated consistency checking cannot yet be treated as evidence.
 
 ## Design Dependencies

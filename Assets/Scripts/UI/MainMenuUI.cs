@@ -15,11 +15,16 @@ public class MainMenuUI : MonoBehaviour
     private TrackSelectionUI trackSelectionUI;
     private DriverSelectionUI driverSelectionUI;
     private TechTreeUI techTreeUI;
+    private GameSettingsUI gameSettingsUI;
     private Button driverSelectionButton;
     private Button techTreeButton;
+    private Button tutorialButton;
+    private Button settingsButton;
 
     void Start()
     {
+        GameSettingsRuntime.EnsureLoadedAndApplyDisplay();
+
         trackSelectionUI = GetComponent<TrackSelectionUI>();
         if (trackSelectionUI == null)
         {
@@ -38,6 +43,11 @@ public class MainMenuUI : MonoBehaviour
         if (techTreeUI == null)
             techTreeUI = gameObject.AddComponent<TechTreeUI>();
         techTreeUI.Initialize();
+
+        gameSettingsUI = GetComponent<GameSettingsUI>();
+        if (gameSettingsUI == null)
+            gameSettingsUI = gameObject.AddComponent<GameSettingsUI>();
+        gameSettingsUI.Initialize(UpdateTutorialButtonLabel);
 
         if (startRaceButton != null)
         {
@@ -70,6 +80,8 @@ public class MainMenuUI : MonoBehaviour
         }
 
         EnsureTechTreeButton();
+        EnsureTutorialButton();
+        EnsureSettingsButton();
     }
 
     /// <summary>
@@ -146,15 +158,129 @@ public class MainMenuUI : MonoBehaviour
         if (rect != null) rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, y);
     }
 
+    private void EnsureTutorialButton()
+    {
+        Transform buttonTransform = transform.Find("TutorialBtn");
+        if (buttonTransform == null)
+        {
+            GameObject buttonObject = new GameObject(
+                "TutorialBtn", typeof(RectTransform), typeof(Image), typeof(Button));
+            buttonObject.transform.SetParent(transform, false);
+            RectTransform rect = buttonObject.GetComponent<RectTransform>();
+            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = new Vector2(0f, -260f);
+            rect.sizeDelta = new Vector2(320f, 64f);
+            buttonObject.GetComponent<Image>().color = new Color(0.16f, 0.47f, 0.56f);
+
+            GameObject labelObject = new GameObject(
+                "Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+            labelObject.transform.SetParent(buttonObject.transform, false);
+            RectTransform labelRect = labelObject.GetComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = Vector2.zero;
+            labelRect.offsetMax = Vector2.zero;
+            TMP_Text label = labelObject.GetComponent<TMP_Text>();
+            label.text = "新手教程";
+            label.fontSize = 28f;
+            label.alignment = TextAlignmentOptions.Center;
+            label.color = Color.white;
+            TMP_Text sourceFont = GetComponentInChildren<TMP_Text>(true);
+            if (sourceFont != null) label.font = sourceFont.font;
+
+            buttonTransform = buttonObject.transform;
+            MoveMenuButton("QuitBtn", -350f);
+        }
+
+        tutorialButton = buttonTransform.GetComponent<Button>();
+        if (tutorialButton == null) return;
+
+        ButtonClickAnimation.Attach(tutorialButton);
+        tutorialButton.onClick.RemoveAllListeners();
+        tutorialButton.onClick.AddListener(OnStartTutorial);
+        UpdateTutorialButtonLabel();
+
+        Transform quit = transform.Find("QuitBtn");
+        if (quit != null)
+            buttonTransform.SetSiblingIndex(quit.GetSiblingIndex());
+    }
+
+    private void EnsureSettingsButton()
+    {
+        Transform buttonTransform = transform.Find("SettingsBtn");
+        if (buttonTransform == null)
+        {
+            GameObject buttonObject = new GameObject(
+                "SettingsBtn", typeof(RectTransform), typeof(Image), typeof(Button));
+            buttonObject.transform.SetParent(transform, false);
+            RectTransform rect = buttonObject.GetComponent<RectTransform>();
+            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = new Vector2(0f, -350f);
+            rect.sizeDelta = new Vector2(320f, 64f);
+            buttonObject.GetComponent<Image>().color = new Color(0.28f, 0.34f, 0.48f);
+
+            GameObject labelObject = new GameObject(
+                "Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+            labelObject.transform.SetParent(buttonObject.transform, false);
+            RectTransform labelRect = labelObject.GetComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = Vector2.zero;
+            labelRect.offsetMax = Vector2.zero;
+            TMP_Text label = labelObject.GetComponent<TMP_Text>();
+            label.text = "设置";
+            label.fontSize = 28f;
+            label.alignment = TextAlignmentOptions.Center;
+            label.color = Color.white;
+            TMP_Text sourceFont = GetComponentInChildren<TMP_Text>(true);
+            if (sourceFont != null) label.font = sourceFont.font;
+
+            buttonTransform = buttonObject.transform;
+            MoveMenuButton("QuitBtn", -440f);
+        }
+
+        settingsButton = buttonTransform.GetComponent<Button>();
+        if (settingsButton == null) return;
+        ButtonClickAnimation.Attach(settingsButton);
+        settingsButton.onClick.RemoveAllListeners();
+        settingsButton.onClick.AddListener(gameSettingsUI.Show);
+
+        Transform quit = transform.Find("QuitBtn");
+        if (quit != null)
+            buttonTransform.SetSiblingIndex(quit.GetSiblingIndex());
+    }
+
+    private void UpdateTutorialButtonLabel()
+    {
+        if (tutorialButton == null) return;
+        TMP_Text label = tutorialButton.GetComponentInChildren<TMP_Text>(true);
+        if (label != null)
+            label.text = GameSettingsRuntime.Current.tutorialCompleted
+                ? "重播新手教程"
+                : "新手教程";
+    }
+
     /// <summary>开始比赛 → 加载 Race 场景。</summary>
     public void OnStartRace()
     {
+        TutorialLaunchState.Clear();
         trackSelectionUI.Show();
+    }
+
+    /// <summary>Starts the isolated Le Mans tutorial without changing quick-race selections.</summary>
+    public void OnStartTutorial()
+    {
+        TutorialLaunchState.Request(TutorialScenarioDefinition.CreateLeMansUk());
+        Debug.Log($"[MainMenuUI] Starting tutorial: {TutorialScenarioDefinition.ScenarioId}");
+        SceneLoader.LoadRace();
     }
 
     /// <summary>Loads the Race scene after a valid track has been selected.</summary>
     public void OnTrackSelected(string trackId)
     {
+        TutorialLaunchState.Clear();
         Debug.Log($"[MainMenuUI] Starting race on track: {trackId}");
         if (trackSelectionUI != null)
             trackSelectionUI.Hide();

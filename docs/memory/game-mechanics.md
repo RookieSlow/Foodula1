@@ -4,7 +4,9 @@ This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
 > **Implementation snapshot (2026-08-27)**: Unity `2022.3.62f3c1`; the latest
-> successful editor EditMode run passed `471/471`. The required
+> successful editor EditMode run passed `503/503`; tutorial checkpoint tests pass `20/20` and
+> the encyclopedia catalog checks pass `6/6`.
+> The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.
 > The 2026-08-27 tailwind time-scale regression passed focused `5/5` and full
@@ -30,6 +32,16 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 - The default hand limit is 7.
 - The default speed deck contains twelve cards:
   `[1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 4]`.
+- Authored tutorial scenarios may initialize `CardDeck` with an explicit
+  top-first sequence. That path never shuffles or consumes a random seed, and
+  recycles playable discards in discard chronology. Normal races still use
+  the randomized `InitializeDeck` path.
+- `TutorialLaunchState` is session-only: it resolves Le Mans for a requested tutorial
+  without changing `TrackSelectionState`. Returning to the main menu or starting a
+  normal Quick Race clears the tutorial override.
+- The tutorial runtime fixes the player to UK with six engine heat, exact opening/future
+  draws, no tech state and no intrinsic team-vehicle handling/cooling/pace/slipstream
+  bonuses. UK special cards remain because they are explicit teaching content.
 - Heat cards do not start in the normal deck. Each player's independent engine
   heat pool is the only source of permanent heat cards.
 - When trick cards are enabled, four team cards (two attack and two defense)
@@ -133,6 +145,65 @@ both the player and AI race flow.
 
 The earlier "Cold Storage below zero" description belongs to the original
 prototype and is no longer the authoritative model.
+
+## Tutorial Mode Foundation
+
+- `tutorial_le_mans_uk_v1` fixes the player to UK on
+  `le_mans_old_mulsanne`, with tech-tree modifiers, driver skills, normal
+  rewards and normal progression writes disabled by definition.
+- Its pure state machine orders 16 guided topics from objectives/UI through
+  UK special cards and review, rejects out-of-order actions without advancing,
+  then enters a restartable one-lap practice phase.
+- `TutorialRuntimeDirector` drains ordered state-machine events exactly once and
+  exposes one-shot weather/opponent checkpoint cues. The Race adapter applies rain
+  or cloudy weather through the existing session weather state.
+- The tutorial leader checkpoint is queued on entering the slipstream step and only
+  positions the leader at cell 42/player at cell 40 after base movement, immediately
+  before the unchanged end-of-turn slipstream resolver. This preserves the rule that
+  only the rear car benefits.
+- A runtime-built guide panel displays authored title/body/progress. Reading steps
+  advance through its button; operation steps advance only from matching real race
+  events for turn completion, exact card requirement, movement, heat, cooling,
+  missing cards, spin, slipstream, pit timing and UK trick cards.
+- Completing or skipping the guide rebuilds the Race session directly into `Practice`:
+  lap and positions return to zero/start, the exact deck and six-heat pool are recreated,
+  the teaching opponent is restored and scripted cloudy weather is applied. Practice uses
+  a one-lap override without changing `GameConfigSO` or track JSON; completion ends the
+  tutorial immediately and never enters RP/XP/progression settlement. Restart, guide replay
+  and exit are available from the guide panel and emit tutorial log events.
+- Eight risky guided steps now enter authored safe states at a gear-input gate or the next turn
+  boundary. Exact normal/heat zones guarantee heat payment/cooling, a one-card G2 shortage,
+  a zero-engine Dunlop spin after G2 cooling, and valid Scone/Tea targets; reset also clears spin,
+  skip-turn and pit flags so the following lesson cannot inherit a soft lock.
+- Official Le Mans has no pit nodes. Tutorial mode creates a separate 142-cell rule-only view with
+  entry 132 and exit 4, then passes that view to unchanged `PitLaneRules`; official JSON/runtime
+  track nodes remain unmodified. The full guided-to-practice Play Mode walkthrough remains open.
+
+## Player Settings
+
+- `Foodula1.Settings.V1` stores master, music and SFX volume values; fullscreen/window mode;
+  resolution; animation speed; reduced motion; and a separate tutorial-completed preference.
+- The project still has no AudioMixer, audio service or playable audio assets. Volume values are
+  persisted and explicitly labelled as placeholders in the UI, but are not falsely applied to
+  nonexistent channels.
+- Display mode and resolution apply through an isolated runtime target. Animation speed scales
+  race node pauses, camera lead/trail delays and button feedback; reduced motion skips those
+  optional presentation durations without changing race rules, card values or movement results.
+- Completing the tutorial only marks the tutorial preference. Resetting it changes the main-menu
+  replay label and does not clear or write RP, tech-tree, driver XP, unlock or race-progress data.
+
+## Game Encyclopedia
+
+- The settings overlay opens a separate scrollable reader backed by
+  `Resources/Configs/encyclopedia_zh.json`; UI code contains layout only, not rule prose.
+- Catalog version 1 contains 17 stable topics covering the turn loop, all three card types, gears,
+  card zones, heat/cooling, missing-card penalties, corners/spins, slipstream, weather, pits, teams,
+  all special cards, drivers, the tech tree and HUD terminology.
+- Startup validation rejects unsupported versions, duplicate/blank IDs, missing required topics and
+  incomplete content. Tests also match the encyclopedia's related IDs against all 12 runtime trick
+  definitions, all 12 drivers and all five active weather profiles.
+- The driver entry explicitly states that configured signature skills are not yet applied in race
+  resolution, while the audio-related settings remain labelled as data-only placeholders.
 
 ## Track and Race
 

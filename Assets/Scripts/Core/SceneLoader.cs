@@ -14,6 +14,7 @@ public static class SceneLoader
     public static void LoadMainMenu()
     {
         Debug.Log("[SceneLoader] Loading MainMenu...");
+        TutorialLaunchState.Clear();
         LoadSceneInternal(MAIN_MENU);
     }
 

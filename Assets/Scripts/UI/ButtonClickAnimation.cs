@@ -52,7 +52,14 @@ public sealed class ButtonClickAnimation : MonoBehaviour,
         if (!isActiveAndEnabled) return;
         if (scaleRoutine != null)
             StopCoroutine(scaleRoutine);
-        scaleRoutine = StartCoroutine(ScaleRoutine(target, duration));
+        float scaledDuration = GameSettingsRuntime.ScaleAnimationDuration(duration);
+        if (scaledDuration <= 0f)
+        {
+            transform.localScale = target;
+            scaleRoutine = null;
+            return;
+        }
+        scaleRoutine = StartCoroutine(ScaleRoutine(target, scaledDuration));
     }
 
     private IEnumerator ScaleRoutine(Vector3 target, float duration)

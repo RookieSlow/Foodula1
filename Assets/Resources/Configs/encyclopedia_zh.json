@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": "turn-flow",
+      "category": "基础规则",
+      "title": "回合流程",
+      "summary": "先选挡位，再按固定阶段结算移动、风险与回合结束效果。",
+      "body": "每回合依次进行：1 选择挡位；2 将普通手牌补到 7 张；3 打出与挡位数量相同的速度牌；4 计算基础移动；5 执行移动；6 结算反应与冷却；7 在弯心检查限速；8 所有车辆完成基础结算后检查尾流；9 弃牌、清理临时效果并为下一回合准备。",
+      "keywords": ["回合", "阶段", "流程"],
+      "relatedRuleIds": ["gear", "draw", "movement", "reaction", "corner", "slipstream", "cleanup"]
+    },
+    {
+      "id": "cards-speed",
+      "category": "卡牌",
+      "title": "速度牌",
+      "summary": "速度值决定本回合基础移动，也参与弯心限速判断。",
+      "body": "标准普通牌组含 12 张速度牌：1×3、2×5、3×3、4×1。所打速度之和形成基础移动；通常必须打出与当前挡位相同的张数。速度牌结算后进入弃牌堆。",
+      "keywords": ["速度牌", "移动", "牌组"],
+      "relatedRuleIds": ["Speed"]
+    },
+    {
+      "id": "cards-heat",
+      "category": "卡牌",
+      "title": "热量牌",
+      "summary": "热量牌在引擎池、手牌与牌区之间守恒，不是普通速度牌。",
+      "body": "赛车初始有 6 张独立热量牌。支付热量会把牌从引擎池送入手牌；热量牌不能当速度牌打出，会占用手牌空间。冷却会按手牌→抽牌堆→弃牌堆的顺序把热量送回引擎池。热量牌不会通过普通洗牌凭空生成或消失。",
+      "keywords": ["热量牌", "引擎", "冷却"],
+      "relatedRuleIds": ["Heat"]
+    },
+    {
+      "id": "cards-trick",
+      "category": "卡牌",
+      "title": "特技牌",
+      "summary": "每队两种专属效果，各两张；每回合最多使用一张。",
+      "body": "特技牌本身没有速度值，不占挡位要求的速度牌张数，也不计入弯道速度。每支车队带入 4 张特技牌，即两种专属牌各 2 张。每回合最多打出 1 张，具体效果见“特殊牌”。",
+      "keywords": ["特技牌", "攻击", "防御"],
+      "relatedRuleIds": ["Trick"]
+    },
+    {
+      "id": "gear",
+      "category": "基础规则",
+      "title": "挡位",
+      "summary": "G1–G4 同时决定必须打出的速度牌张数和基础冷却。",
+      "body": "普通赛车使用 G1–G4：挡位数字就是本回合必须打出的速度牌张数。相邻换挡免费，跨两挡换挡需要支付热量。G1 基础冷却 3，G2 基础冷却 1，G3/G4 不提供基础冷却。中国车队使用 Go/Recover 双态：Go 打 3 张，Recover 打 1 张并强化冷却。",
+      "keywords": ["挡位", "G1", "G4", "Go", "Recover"],
+      "relatedRuleIds": ["G1", "G2", "G3", "G4", "Go", "Recover"]
+    },
+    {
+      "id": "deck-zones",
+      "category": "卡牌",
+      "title": "抽牌、手牌、弃牌与洗牌",
+      "summary": "普通牌从抽牌堆进入手牌，使用后进入弃牌堆，耗尽时回收。",
+      "body": "回合开始把普通手牌补到 7 张。打出的速度牌和结算后的特技牌进入弃牌堆。需要抽牌而抽牌堆不足时，将弃牌堆中的非热量牌洗回抽牌堆后继续。热量牌遵循独立引擎池规则，不作为普通洗牌补充。",
+      "keywords": ["抽牌", "手牌", "弃牌", "洗牌"],
+      "relatedRuleIds": ["drawPile", "hand", "discardPile", "reshuffle"]
+    },
+    {
+      "id": "heat-cooling",
+      "category": "风险",
+      "title": "引擎热量、支付与冷却",
+      "summary": "热量是有限资源；冷却只是把已经离开引擎的热量归还。",
+      "body": "引擎池中的热量牌代表仍可支付的余量。超速过弯、缺少速度牌、部分换挡和特技会要求支付。G1 冷却 3、G2 冷却 1；天气、车队与科技可能修正实际值。冷却只归还已有热量，不能让总热量超过初始数量。",
+      "keywords": ["热量", "支付", "冷却", "守恒"],
+      "relatedRuleIds": ["engineHeat", "cooling"]
+    },
+    {
+      "id": "missing-card",
+      "category": "风险",
+      "title": "缺牌惩罚",
+      "summary": "少打每一张挡位要求的速度牌，就必须支付 1 热量。",
+      "body": "若可用速度牌不足，仍可提交该回合，但每缺 1 张必须从引擎支付 1 张热量牌。引擎热量不足以支付全部缺口时会打转，因此高挡位前应同时检查手牌和引擎余量。",
+      "keywords": ["缺牌", "惩罚", "热量"],
+      "relatedRuleIds": ["missingSpeedHeat"]
+    },
+    {
+      "id": "corners-spin",
+      "category": "风险",
+      "title": "弯道限速与打转",
+      "summary": "经过弯心时比较本回合弯道速度和限速，超出部分需要热量。",
+      "body": "车辆经过弯心时，用本回合计入弯道的速度与当前限速比较；每超出 1 点支付 1 热量。无法支付则打转：热量回收、车辆回退到安全位置、挡位重置为 G1，并跳过下一回合。累计 3 次打转会退赛；雨天会降低限速并提高打转计数风险。",
+      "keywords": ["弯道", "弯心", "限速", "打转"],
+      "relatedRuleIds": ["cornerLimit", "spinOut"]
+    },
+    {
+      "id": "slipstream",
+      "category": "赛道机制",
+      "title": "尾流",
+      "summary": "尾流在回合结束统一判定，只让符合距离的后车受益。",
+      "body": "所有车辆完成基础移动、反应与弯道结算后才检查尾流。后车在规则距离内跟随前车时获得基础 +2 移动，前车不会被推动；链式尾流最多连续 2 次。多云使奖励 -1，大雨禁用尾流，车队、科技和特技可继续修正奖励或阻断后车。",
+      "keywords": ["尾流", "后车", "回合结束"],
+      "relatedRuleIds": ["rearOnly", "endOfTurn", "baseBonus2", "maxChain2"]
+    },
+    {
+      "id": "weather",
+      "category": "赛道机制",
+      "title": "天气",
+      "summary": "天气直接修正弯道、尾流、冷却和打转风险。",
+      "body": "晴天无修正；多云使尾流奖励 -1；小雨使弯道限速 -1，且每次打转额外增加 1 点计数；大雨使限速 -2、禁用尾流，且每次打转额外增加 2 点计数；高温使反应阶段冷却 -1。普通赛事按赛道天气池变化，教程使用脚本天气。",
+      "keywords": ["天气", "晴天", "多云", "雨", "高温"],
+      "relatedRuleIds": ["Sunny", "Cloudy", "LightRain", "HeavyRain", "Hot"]
+    },
+    {
+      "id": "pit-lane",
+      "category": "赛道机制",
+      "title": "维修区",
+      "summary": "维修选择先预设，跨过入口后在下一回合延迟执行。",
+      "body": "进入维修区前选择 1–10 的维修量。车辆跨过维修区入口时只登记选择；下一回合跳过正常驾驶并执行维修，冷却相应热量后从维修区出口获得离场移动。维修不是在点击选择时立刻发生。",
+      "keywords": ["维修区", "维修量", "延迟执行"],
+      "relatedRuleIds": ["pitPreselect", "pitDelayedExecution"]
+    },
+    {
+      "id": "teams-vehicles",
+      "category": "车队",
+      "title": "车队与车型",
+      "summary": "六支车队拥有不同基础参数、换挡体系与场景化专长。",
+      "body": "UK 是稳定教学车型；DE 擅长出弯；IT 以弯后一次性加速和尾流特技形成爆发；US 直道基础移动 +1，但转向较弱且过弯额外产热；CN 使用 Go/Recover 双态；JP 偏向超车与高风险节奏。正式比赛会应用车型与已激活科技，教程固定 UK 并关闭全部额外增益。",
+      "keywords": ["车队", "车型", "UK", "DE", "IT", "US", "CN", "JP"],
+      "relatedRuleIds": ["UK", "DE", "IT", "US", "CN", "JP"]
+    },
+    {
+      "id": "special-cards",
+      "category": "车队",
+      "title": "全部特殊牌",
+      "summary": "六队共 12 种实际特技；条件、代价和结算时机各不相同。",
+      "body": "UK：司康付 1 热量换 +2 移动；英式红茶冷却手牌 1 热量。DE：酸菜发酵过弯后 +2、否则 +1；黑面包令下一次热量支付 -1 但至少付 1。IT：帕尔马干酪令本回合尾流额外 +2；基安蒂弃 1 速度牌冷却 1 热量。US：薯条在上回合经过地标时获得本回合限时热量；可乐在同条件下抽 1。CN：火锅底料在 Go 模式追加一张 +1 的 ATTACK 速度牌，额外 +1 不计弯道；冰糕在 Recover 模式阻断身后车辆尾流。JP：鱼雷天妇罗超车时自己 +1、被超时对方 +1；关东慢煮跳过本回合并把本挡出牌数累加到下一回合。",
+      "keywords": ["特殊牌", "特技牌", "司康", "英式红茶"],
+      "relatedRuleIds": ["uk-scone", "uk-english-breakfast-tea", "de-sauerkraut", "de-schwarzbrot", "it-parmigiano", "it-chianti", "us-fries", "us-cola", "cn-hotpot-base", "cn-ice-jelly", "jp-torpedo-tempura", "jp-kanto-oden"]
+    },
+    {
+      "id": "drivers",
+      "category": "成长",
+      "title": "车手",
+      "summary": "当前有 12 名可选车手和进度数据；技能描述尚未接入比赛执行。",
+      "body": "每支车队有 2 名车手，目录记录姓名、风格、被动技、主动技与 RP/XP 成长参数。主菜单可选择车手，比赛与日志会记录选择。重要现状：当前版本尚未把这些被动技和主动技接入比赛规则结算；教程会固定 UK 车手并关闭车手增益，百科不把配置描述冒充为已生效能力。",
+      "keywords": ["车手", "技能", "XP", "RP"],
+      "relatedRuleIds": ["uk_hunter_hart", "uk_nigel_mansell", "de_michael_schumacher", "de_sebastian_vettel", "it_alberto_ascari", "it_tazio_nuvolari", "us_tony_stewart", "us_kyle_busch", "cn_zhou_guanyu", "cn_ma_qinghua", "jp_keiichi_tsuchiya", "jp_takumi_fujiwara"]
+    },
+    {
+      "id": "tech-tree",
+      "category": "成长",
+      "title": "科技树",
+      "summary": "使用 RP 解锁并激活分层节点，正式比赛读取已激活效果。",
+      "body": "主菜单车队科技树包含通用节点和六队专属节点，并按层级逐步解锁。比赛奖励的 RP 写入车队档案，玩家可购买、激活或关闭节点；正式赛事从持久化档案构建比赛修正。教程强制零科技、零科技点且禁用奖励写入，因此不会污染普通档案。",
+      "keywords": ["科技树", "RP", "解锁", "激活"],
+      "relatedRuleIds": ["common", "teamSpecific", "tier1", "tier2", "tier3"]
+    },
+    {
+      "id": "ui-terms",
+      "category": "界面",
+      "title": "主要 UI 术语",
+      "summary": "HUD 将赛道状态、风险资源、操作区和手牌分区呈现。",
+      "body": "顶部显示赛道、天气、圈数与名次；左侧是挡位/模式、提交等回合操作及比赛日志；右侧显示引擎热量、抽牌堆和弃牌堆数量；底部是手牌与已选牌。弯道标记显示限速，维修区控件显示预设量与待执行状态；教程面板会显示当前目标、允许操作和恢复提示。",
+      "keywords": ["HUD", "界面", "手牌", "日志"],
+      "relatedRuleIds": ["hudTop", "turnControls", "enginePool", "deckCounts", "hand", "tutorialPanel"]
+    }
+  ]
+}

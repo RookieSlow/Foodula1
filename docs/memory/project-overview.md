@@ -35,6 +35,13 @@ the CCGS project framework.
   `Core/DriverSelectionState.cs` stores the current menu choice.
 - `Config/GameConfigSO.cs` contains tunable race, deck, gear, animation, and
   AI parameters.
+- `Tutorial/` contains the isolated Le Mans/UK scenario definition, explicit
+  non-seeded deck order, pure guided-state machine, runtime Director, runtime-built
+  guide panel and session-only launch state. Race events now advance authored steps.
+- `Settings/` contains versioned player settings, an injectable PlayerPrefs adapter and
+  runtime display/presentation application; `UI/GameSettingsUI.cs` builds the menu overlay.
+- `Encyclopedia/` contains the versioned catalog loader/validator; the Chinese JSON source under
+  `Resources/Configs/` drives `UI/GameEncyclopediaUI.cs` without embedding rule prose in UI code.
 
 ## Scenes
 
@@ -51,7 +58,7 @@ The verified scene flow is:
 - Core race presentation is Demo-grade; formal brand/portrait/tech-tree art and
   the entire audio layer remain as the next asset-completion package.
 - The project is in Production stage. The latest editor audit on 2026-08-27
-  recorded a successful 471/471 EditMode run. The MainMenu-to-Race flow, race
+  recorded a successful 503/503 EditMode run. The MainMenu-to-Race flow, race
   card/icon references, and Chinese font support remain the current
   presentation baseline.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
@@ -62,6 +69,25 @@ The verified scene flow is:
   and AI through the same pure rules module.
 - The driver-selection vertical slice is now implemented: 12 catalog entries,
   XP/tier rules, main-menu selection UI, and race initialization integration.
+- `tutorial_le_mans_uk_v1` now has a playable menu-to-Race launch: UK, Le Mans,
+  no tech/driver/team-vehicle/reward/progression benefits, a 16-card exact player
+  draw order and a deterministic teaching opponent. Its runtime Director maps real
+  turn/card/heat/corner/slipstream/pit/trick events to 16 ordered steps, applies
+  scripted weather, and defers the 42/40 opponent checkpoint until normal end-of-turn
+  slipstream resolution. Completing or skipping the guide now rebuilds a fresh one-lap
+  practice session with the exact deck, six heat, teaching opponent, start positions and
+  cloudy weather. Eight safe-boundary checkpoints now rebuild exact card/heat zones for the
+  risky guided mechanics. Because official Le Mans has no pit, a tutorial-only 132/4 rule view
+  reuses normal pit rules without mutating official nodes. Final guided Play Mode remains open.
+- The tutorial runtime slice now passes `20/20` focused and `503/503` full EditMode tests.
+  Play Mode verified the exact seven-card opening and zero-benefit session; a separate
+  Monza Quick Race retained the randomized deck, tech state and vehicle bonuses. The
+  guide-panel smoke confirmed its first authored step; full guided Play Mode remains open.
+- Main-menu settings now persist master/music/SFX placeholders, fullscreen/window mode,
+  resolution, animation speed, reduced motion and the separate tutorial-completion flag.
+  Display and supported presentation timings are applied at runtime; audio remains explicitly
+  data-only because no AudioMixer/service exists. Settings plus tutorial focused tests passed
+  `22/22`, and the full EditMode suite passed `493/493`.
 - Card number and heat icons, Chinese UI, Chinese font support, team car
   sprites, the main-menu flow, and the selected-card scale/lift/shadow feedback
   have been implemented. Draw/discard pile previews now show stacked backs,

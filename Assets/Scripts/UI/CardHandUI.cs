@@ -347,6 +347,7 @@ public class CardHandUI : MonoBehaviour
     private void OnCardClicked(CardUI card)
     {
         if (gameManager == null) return;
+        if (gameManager.IsTutorialActionInputBlocked) return;
         if (isGearSelectionMode) return;
 
         // 热量牌不可打出/不可弃掉 — 忽略点击

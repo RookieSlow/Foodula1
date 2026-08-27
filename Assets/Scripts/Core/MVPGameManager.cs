@@ -54,6 +54,13 @@ public class MVPGameManager : MonoBehaviour
 
     // --- 运行时状态 ---
     private RaceSession session;
+    private TutorialScenarioDefinition tutorialScenario;
+    private TutorialRuntimeDirector tutorialDirector;
+    private TutorialGuideUI tutorialGuideUI;
+    private TutorialOpponentCue pendingTutorialOpponentCue;
+    private TutorialPlayerCheckpoint pendingTutorialPlayerCheckpoint;
+    private IReadOnlyList<TrackNode> tutorialPitRuleNodes;
+    private bool initializeTutorialInPractice;
     private readonly RacePhaseState phaseState = new RacePhaseState();
     private RaceTestLogWriter raceLogWriter;
     private int raceTurnNumber;
@@ -90,6 +97,11 @@ public class MVPGameManager : MonoBehaviour
     public PlayerState AI => session != null && session.Players.Count > 1 ? session.Players[1] : null;
     /// <summary>当前比赛的完整会话（多车/天气/特技/科技状态）。</summary>
     public RaceSession Session => session;
+    public bool IsTutorialMode => tutorialScenario != null;
+    public TutorialScenarioDefinition TutorialScenario => tutorialScenario;
+    public TutorialRuntimeDirector TutorialDirector => tutorialDirector;
+    public bool IsTutorialActionInputBlocked =>
+        tutorialDirector != null && tutorialDirector.BlocksRaceInput;
     public GamePhase CurrentPhase => phaseState.Current;
     public GameConfigSO Config => config;
     public TrackManager Track => trackManager;
@@ -114,6 +126,7 @@ public class MVPGameManager : MonoBehaviour
 
     void Start()
     {
+        GameSettingsRuntime.EnsureLoadedAndApplyDisplay();
         // 自动创建默认配置
         if (config == null)
         {
@@ -153,8 +166,10 @@ public class MVPGameManager : MonoBehaviour
         CreateLaneChangeUI();
         CreatePitChoiceUI();
 
-        nodeWait = new WaitForSeconds(config.nodeDelay);
+        nodeWait = new WaitForSeconds(
+            GameSettingsRuntime.ScaleAnimationDuration(config.nodeDelay));
         InitializeGame();
+        InitializeTutorialGuideUI();
         InitializeRaceCamera();
         // Event visuals are optional presentation. If a stale runtime UI
         // object survives an editor scene reload, it must not prevent the
@@ -568,30 +583,58 @@ public class MVPGameManager : MonoBehaviour
     {
         int startFinishNodeIndex = trackManager.StartFinishNodeIndex;
 
-        session = new RaceSession();
+        tutorialScenario = TutorialLaunchState.ActivateRequested();
+        tutorialDirector = tutorialScenario != null
+            ? new TutorialRuntimeDirector(tutorialScenario, initializeTutorialInPractice)
+            : null;
+        initializeTutorialInPractice = false;
+        pendingTutorialOpponentCue = null;
+        pendingTutorialPlayerCheckpoint = null;
+        tutorialPitRuleNodes = tutorialScenario != null && tutorialScenario.tutorialPitLane != null
+            ? TutorialCheckpointRules.CreateVirtualPitRuleNodes(
+                trackManager.TotalNodes,
+                tutorialScenario.tutorialPitLane)
+            : null;
+        session = tutorialScenario != null
+            ? new RaceSession(new SystemRandomSource(TutorialScenarioDefinition.RuntimeSeed))
+            : new RaceSession();
+        session.TeamVehicleBonusesEnabled = tutorialScenario == null;
+        if (tutorialScenario != null && tutorialScenario.opponentScript.Count > 0)
+            session.SlipstreamRangeOverride = tutorialScenario.opponentScript[0].expectedSlipstreamDistance;
         aiControllers.Clear();
         weatherState.Reset();
         raceTurnNumber = 0;
 
         // 人类玩家（Players[0]）
-        DriverProfile humanDriver = DriverSelectionState.ResolveDriver(config.playerDriverId, config.playerTeam);
+        DriverProfile humanDriver = tutorialScenario != null
+            ? DriverCatalog.GetDefaultForTeam(tutorialScenario.playerTeam)
+            : DriverSelectionState.ResolveDriver(config.playerDriverId, config.playerTeam);
         var human = new PlayerState("你", false, startFinishNodeIndex, config.minGear);
         human.driverId = humanDriver.Id;
         SetupPlayerForRace(human, humanDriver.Team);
         session.Players.Add(human);
 
         // AI 对手
-        int aiCount = Mathf.Clamp(config.aiOpponentCount, 0, 3);
+        int aiCount = tutorialScenario != null
+            ? tutorialScenario.opponentCount
+            : Mathf.Clamp(config.aiOpponentCount, 0, 3);
         for (int i = 0; i < aiCount; i++)
         {
-            TeamId team = i < config.aiTeams.Length ? config.aiTeams[i] : TeamId.JP;
+            TeamId team = tutorialScenario != null
+                ? tutorialScenario.opponentTeam
+                : (i < config.aiTeams.Length ? config.aiTeams[i] : TeamId.JP);
             DriverProfile aiDriver = DriverCatalog.GetDefaultForTeam(team);
             var aiState = new PlayerState($"AI{i + 1}", true, startFinishNodeIndex, config.minGear);
             aiState.driverId = aiDriver.Id;
             SetupPlayerForRace(aiState, team);
             session.Players.Add(aiState);
             var ctrl = gameObject.AddComponent<AIController>();
-            ctrl.Initialize(this, aiState);
+            ctrl.Initialize(
+                this,
+                aiState,
+                tutorialScenario != null
+                    ? new SystemRandomSource(TutorialScenarioDefinition.RuntimeSeed + i + 1)
+                    : null);
             aiControllers[aiState] = ctrl;
         }
 
@@ -599,10 +642,32 @@ public class MVPGameManager : MonoBehaviour
         BeginRaceTestLog(humanDriver, human);
 
         if (hudUI != null)
-            hudUI.AppendLog($"车手: {humanDriver.DisplayName}（{humanDriver.Style}，XP {humanDriver.TalentMultiplier:0.0}x）");
+        {
+            hudUI.AppendLog(tutorialScenario != null
+                ? $"教程车辆: UK / {humanDriver.DisplayName}（车手增益关闭）"
+                : $"车手: {humanDriver.DisplayName}（{humanDriver.Style}，XP {humanDriver.TalentMultiplier:0.0}x）");
+        }
 
         // 天气：比赛开始时从赛道天气池抽取
-        if (config.enableWeather)
+        if (tutorialScenario != null)
+        {
+            string tutorialWeatherId = tutorialDirector != null &&
+                                       tutorialDirector.Phase == TutorialRunPhase.Practice
+                ? tutorialScenario.practiceWeatherId
+                : tutorialScenario.guidedStartWeatherId;
+            session.InitializeWeather(
+                new[] { tutorialWeatherId },
+                tutorialWeatherId);
+            if (hudUI != null)
+                hudUI.AppendLog($"教程脚本天气: {session.WeatherLabel}");
+            if (tutorialDirector != null && tutorialDirector.Phase == TutorialRunPhase.Practice)
+            {
+                raceLogWriter?.Append(
+                    $"[TUTORIAL_PRACTICE] event=started laps=1 weather={tutorialWeatherId} " +
+                    $"deck=exact rewards=false progression=false");
+            }
+        }
+        else if (config.enableWeather)
         {
             var trackCfg = trackManager.LoadedTrackConfig;
             session.InitializeWeather(
@@ -633,6 +698,259 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.ShowHand(this, Player);
             cardHandUI.UpdateDeckInfo(Player);
         }
+
+        ApplyTutorialPendingCue();
+        FlushTutorialEvents();
+    }
+
+    private void InitializeTutorialGuideUI()
+    {
+        if (tutorialDirector == null)
+        {
+            if (tutorialGuideUI != null)
+                tutorialGuideUI.gameObject.SetActive(false);
+            return;
+        }
+
+        if (tutorialGuideUI == null)
+        {
+            Canvas canvas = hudUI != null
+                ? hudUI.GetComponentInParent<Canvas>()
+                : FindObjectOfType<Canvas>();
+            TMP_FontAsset font = hudUI != null && hudUI.statusText != null
+                ? hudUI.statusText.font
+                : TMP_Settings.defaultFontAsset;
+            tutorialGuideUI = TutorialGuideUI.Create(this, canvas, font);
+        }
+        else
+        {
+            tutorialGuideUI.Refresh();
+        }
+    }
+
+    private bool TryAdvanceTutorialIfExpected(TutorialAction action, string detail)
+    {
+        if (tutorialDirector == null || !tutorialDirector.IsExpecting(action))
+            return false;
+
+        TutorialRunPhase previousPhase = tutorialDirector.Phase;
+        bool accepted = tutorialDirector.TryPerform(action, out string failureReason);
+        FlushTutorialEvents();
+        if (!accepted)
+        {
+            raceLogWriter?.Append(
+                $"[TUTORIAL_GATE] action={action} accepted=false reason={failureReason} detail={detail}");
+            tutorialGuideUI?.Refresh();
+            return false;
+        }
+
+        raceLogWriter?.Append(
+            $"[TUTORIAL_GATE] action={action} accepted=true detail={detail}");
+        ApplyTutorialPendingCue();
+        tutorialGuideUI?.Refresh();
+        if (previousPhase == TutorialRunPhase.Guided &&
+            tutorialDirector.Phase == TutorialRunPhase.Practice)
+        {
+            raceLogWriter?.Append(
+                "[TUTORIAL_PRACTICE] event=guided_complete reset=full_lap weather=" +
+                tutorialScenario.practiceWeatherId);
+            ResetTutorialRace(true, "guided_complete");
+        }
+        return true;
+    }
+
+    private void FlushTutorialEvents()
+    {
+        if (tutorialDirector == null || raceLogWriter == null)
+            return;
+
+        IReadOnlyList<TutorialEventRecord> newEvents = tutorialDirector.DrainNewEvents();
+        for (int i = 0; i < newEvents.Count; i++)
+            raceLogWriter.Append(newEvents[i].ToString());
+    }
+
+    private void ApplyTutorialPendingCue()
+    {
+        TutorialCheckpointCue cue = tutorialDirector?.TakePendingCue();
+        if (cue == null)
+            return;
+
+        if (cue.Weather != null && session != null)
+        {
+            WeatherType? scriptedWeather = WeatherRules.ParseWeather(cue.Weather.weatherId);
+            if (scriptedWeather.HasValue)
+            {
+                session.Weather = scriptedWeather.Value;
+                raceLogWriter?.Append(
+                    $"[TUTORIAL_CUE] type=weather step={cue.Weather.step} " +
+                    $"weather={cue.Weather.weatherId} applied=true");
+                hudUI?.AppendLog($"<color=cyan>教程脚本天气：{session.WeatherLabel}</color>");
+                hudUI?.Refresh(this, Player, AI, session.Players);
+            }
+            else
+            {
+                raceLogWriter?.Append(
+                    $"[TUTORIAL_CUE] type=weather step={cue.Weather.step} " +
+                    $"weather={cue.Weather.weatherId} applied=false reason=unknown_weather");
+            }
+        }
+
+        if (cue.Opponent != null)
+        {
+            // Positioning is deferred until every racer has finished its base
+            // movement. Applying it immediately would let later movement alter
+            // the authored end-of-turn distance before normal tailwind rules run.
+            pendingTutorialOpponentCue = cue.Opponent;
+            raceLogWriter?.Append(
+                $"[TUTORIAL_CUE] type=opponent step={cue.Opponent.step} queued=true " +
+                $"leader={cue.Opponent.leaderCell} player={cue.Opponent.playerCell}");
+        }
+
+        if (cue.Player != null)
+        {
+            pendingTutorialPlayerCheckpoint = cue.Player;
+            raceLogWriter?.Append(
+                $"[TUTORIAL_CHECKPOINT] step={cue.Player.step} queued=true " +
+                $"cell={cue.Player.playerCell} gear={cue.Player.gear} " +
+                $"normal_hand={cue.Player.normalHandSize} heat_hand={cue.Player.heatInHand} " +
+                $"heat_discard={cue.Player.heatInDiscard}");
+            ApplyPendingTutorialPlayerCheckpoint(force: false);
+        }
+    }
+
+    private void ApplyPendingTutorialPlayerCheckpoint(bool force)
+    {
+        TutorialPlayerCheckpoint checkpoint = pendingTutorialPlayerCheckpoint;
+        if (checkpoint == null || tutorialScenario == null || Player == null)
+            return;
+        if (!force &&
+            (phaseState.Current != GamePhase.WaitingForGear || !inputState.WaitingForGear))
+            return;
+
+        pendingTutorialPlayerCheckpoint = null;
+        TutorialCheckpointApplyResult result = TutorialCheckpointRules.ApplyPlayerCheckpoint(
+            tutorialScenario,
+            checkpoint,
+            Player);
+        if (!result.success)
+        {
+            raceLogWriter?.Append(
+                $"[TUTORIAL_CHECKPOINT] step={checkpoint.step} applied=false " +
+                $"reason={result.failureReason}");
+            pendingTutorialPlayerCheckpoint = checkpoint;
+            return;
+        }
+
+        MoveCarTo(Player, Player.position);
+        RefreshVisualCarLanes();
+        if (phaseState.Current == GamePhase.WaitingForGear && inputState.WaitingForGear)
+        {
+            inputState.BeginGearSelection(Player.gear);
+            ConfigureGearControls(Player);
+            hudUI?.SelectGearPresentation(Player.gear);
+        }
+        if (cardHandUI != null)
+        {
+            cardHandUI.SetDiscardMode(false);
+            cardHandUI.SetGearSelectionMode(true);
+            cardHandUI.ShowHand(this, Player);
+            cardHandUI.UpdateDeckInfo(Player);
+        }
+        hudUI?.Refresh(this, Player, AI, session.Players);
+        raceLogWriter?.Append(
+            $"[TUTORIAL_CHECKPOINT] step={checkpoint.step} applied=true " +
+            $"cell={Player.position} gear={Player.gear} hand={result.handCount} " +
+            $"draw={result.drawCount} discard={result.discardCount} engine={result.engineHeat}");
+    }
+
+    private void ApplyPendingTutorialOpponentCue()
+    {
+        TutorialOpponentCue cue = pendingTutorialOpponentCue;
+        if (cue == null || session == null || trackManager == null ||
+            Player == null || AI == null || trackManager.TotalNodes <= 0)
+            return;
+
+        pendingTutorialOpponentCue = null;
+        Player.position = Mathf.Clamp(cue.playerCell, 0, trackManager.TotalNodes - 1);
+        AI.position = Mathf.Clamp(cue.leaderCell, 0, trackManager.TotalNodes - 1);
+        Player.lap = AI.lap;
+        MoveCarTo(Player, Player.position);
+        MoveCarTo(AI, AI.position);
+        RefreshVisualCarLanes();
+
+        int distance = RaceSession.ForwardDistance(
+            Player.position,
+            AI.position,
+            trackManager.TotalNodes);
+        raceLogWriter?.Append(
+            $"[TUTORIAL_CUE] type=opponent step={cue.step} applied=true " +
+            $"leader={AI.position} player={Player.position} distance={distance}");
+    }
+
+    public void OnTutorialContinueClicked()
+    {
+        TutorialStepDefinition step = tutorialDirector?.CurrentStep;
+        if (step == null || !step.allowManualAdvance)
+            return;
+        if (phaseState.Current == GamePhase.Animating)
+        {
+            hudUI?.SetStatus("请等待当前移动与结算动画结束");
+            return;
+        }
+
+        TryAdvanceTutorialIfExpected(step.requiredAction, "guide_continue");
+    }
+
+    public void SkipTutorialGuidedSection()
+    {
+        if (tutorialDirector == null || tutorialDirector.Phase != TutorialRunPhase.Guided)
+            return;
+
+        tutorialDirector.SkipGuidedSection();
+        FlushTutorialEvents();
+        raceLogWriter?.Append(
+            "[TUTORIAL_PRACTICE] event=guided_skipped reset=full_lap weather=" +
+            tutorialScenario.practiceWeatherId);
+        ResetTutorialRace(true, "guided_skipped");
+    }
+
+    public void RestartTutorialGuidedSection()
+    {
+        if (tutorialDirector == null)
+            return;
+
+        tutorialDirector.RestartGuidedSection();
+        FlushTutorialEvents();
+        ResetTutorialRace(false, "guided_restarted");
+    }
+
+    public void RestartTutorialPracticeLap()
+    {
+        if (tutorialDirector == null ||
+            (tutorialDirector.Phase != TutorialRunPhase.Practice &&
+             tutorialDirector.Phase != TutorialRunPhase.Completed))
+            return;
+
+        tutorialDirector.RestartPracticeLap();
+        FlushTutorialEvents();
+        raceLogWriter?.Append(
+            "[TUTORIAL_PRACTICE] event=restart_requested reset=full_lap");
+        ResetTutorialRace(true, "practice_restarted");
+    }
+
+    public void ExitTutorialToMainMenu()
+    {
+        if (tutorialDirector != null)
+        {
+            tutorialDirector.ExitTutorial();
+            FlushTutorialEvents();
+            raceLogWriter?.Append("[TUTORIAL_PRACTICE] event=exit_requested");
+        }
+
+        StopAllCoroutines();
+        if (raceLogWriter != null && raceLogWriter.IsActive)
+            raceLogWriter.End("tutorial exited without normal rewards");
+        SceneLoader.LoadMainMenu();
     }
 
     private void BeginRaceTestLog(DriverProfile humanDriver, PlayerState human)
@@ -652,6 +970,37 @@ public class MVPGameManager : MonoBehaviour
             ? trackManager.LoadedTrackConfig.trackName
             : trackId;
         raceLogWriter.BeginRace(trackId, trackName, human.name, human.teamId, session.Players.Count - 1);
+        if (tutorialScenario != null)
+        {
+            raceLogWriter.Append(
+                $"[TUTORIAL_SETUP] event=runtime_ready scenario={tutorialScenario.id} " +
+                $"phase={tutorialDirector.Phase}");
+            raceLogWriter.Append(
+                $"[TUTORIAL_SETUP] event=exact_deck_loaded " +
+                $"count={tutorialScenario.exactDrawOrder.Count} opening={tutorialScenario.openingHandSize}");
+            raceLogWriter.Append(
+                $"[TUTORIAL_SETUP] event=weather_script_ready " +
+                $"start={tutorialScenario.guidedStartWeatherId} practice={tutorialScenario.practiceWeatherId}");
+            raceLogWriter.Append(
+                $"[TUTORIAL_SETUP] event=player_checkpoints_ready " +
+                $"count={tutorialScenario.playerCheckpoints.Count} exact_zones=true");
+            if (tutorialScenario.tutorialPitLane != null)
+            {
+                raceLogWriter.Append(
+                    $"[TUTORIAL_SETUP] event=virtual_pit_ready " +
+                    $"entry={tutorialScenario.tutorialPitLane.entryCell} " +
+                    $"exit={tutorialScenario.tutorialPitLane.exitCell} official_track_mutated=false");
+            }
+            TutorialOpponentCue cue = tutorialScenario.opponentScript.Count > 0
+                ? tutorialScenario.opponentScript[0]
+                : null;
+            if (cue != null)
+            {
+                raceLogWriter.Append(
+                    $"[TUTORIAL_SETUP] event=opponent_script_ready step={cue.step} " +
+                    $"leader={cue.leaderCell} player={cue.playerCell} distance={cue.expectedSlipstreamDistance}");
+            }
+        }
         if (hudUI != null)
             hudUI.SetLogSink(raceLogWriter.Append);
         Debug.Log($"[RaceTestLog] Started: {raceLogWriter.FilePath}");
@@ -701,9 +1050,15 @@ public class MVPGameManager : MonoBehaviour
     {
         p.teamId = teamId;
         p.usesChinaGearSystem = teamId == TeamId.CN;
-        int poolSize = TeamVehicleRules.GetBaseHeatPoolSize(teamId, config.heatPoolPerPlayer);
+        int poolSize = tutorialScenario != null
+            ? tutorialScenario.engineHeatCapacity
+            : TeamVehicleRules.GetBaseHeatPoolSize(teamId, config.heatPoolPerPlayer);
 
-        if (config.enableTechTree)
+        if (tutorialScenario != null)
+        {
+            p.techState = null;
+        }
+        else if (config.enableTechTree)
         {
             p.techState = p.isAI
                 ? session.CreateDemoTechState(teamId)
@@ -724,16 +1079,25 @@ public class MVPGameManager : MonoBehaviour
             p.techState = null;
         }
 
-        p.deck.InitializeDeck(config, new HeatPool(poolSize));
-
         p.trickState = new TrickCardState();
         p.trickState.ResetPerRace();
-        if (config.enableTrickCards)
-            p.deck.AddTrickCardsToDrawPile(session.CreateInitialTrickCards(teamId));
+        if (tutorialScenario != null)
+        {
+            List<CardData> exactCards = p.isAI
+                ? tutorialScenario.CreateOpponentDeck()
+                : tutorialScenario.CreateExactDeck();
+            p.deck.InitializeExactOrder(exactCards, new HeatPool(poolSize));
+            p.deck.DrawToHand(tutorialScenario.openingHandSize);
+        }
+        else
+        {
+            p.deck.InitializeDeck(config, new HeatPool(poolSize));
+            if (config.enableTrickCards)
+                p.deck.AddTrickCardsToDrawPile(session.CreateInitialTrickCards(teamId));
+            p.deck.DrawToHand(session.EffectiveHandSize(p, config.handSize));
+        }
 
-        p.deck.DrawToHand(session.EffectiveHandSize(p, config.handSize));
-
-        if (!p.isAI && teamId == TeamId.CN && config.ensurePlayerAttackTrickInOpeningHand)
+        if (tutorialScenario == null && !p.isAI && teamId == TeamId.CN && config.ensurePlayerAttackTrickInOpeningHand)
         {
             string attackId = session.TrickDb.GetAttackId(teamId);
             if (!p.deck.EnsureTrickCardInHand(attackId))
@@ -795,6 +1159,9 @@ public class MVPGameManager : MonoBehaviour
     {
         while (phaseState.IsRunning)
         {
+            // Step transitions often occur during movement/reaction resolution.
+            // Apply the authored recovery state only at the next turn boundary.
+            ApplyPendingTutorialPlayerCheckpoint(force: true);
             raceTurnNumber++;
             raceLogWriter?.Append($"[TURN_START] turn={raceTurnNumber} weather={WeatherLabel}");
             LogPlayerSnapshots();
@@ -965,6 +1332,13 @@ public class MVPGameManager : MonoBehaviour
                 bool completedCorner = ResolveCorners(p, oldPos, rawEnd);
                 session.ArmItalyCornerExitBonus(p, completedCorner);
 
+                if (!p.isAI)
+                {
+                    TryAdvanceTutorialIfExpected(
+                        TutorialAction.ResolveSpeedMovement,
+                        $"from:{oldPos},to:{p.position},movement:{p.totalMovementThisTurn}");
+                }
+
                 ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
                 RegisterPitEntryCrossing(p, oldPos, oldPos + p.totalMovementThisTurn);
             }
@@ -973,7 +1347,16 @@ public class MVPGameManager : MonoBehaviour
             // ====== PHASE C：回合结束时按实际落位结算尾流 ======
             // 尾流不能在回合开始或基础移动前触发；此处所有车辆都已完成
             // 移动、反应和弯道判定，规则层读取的是本回合结束时的实际位置。
+            ApplyPendingTutorialOpponentCue();
             ResolveSlipstreamsAtTurnEnd(turnOrder, turnSkipped);
+            if (Player != null &&
+                slipstreamsThisTurn.TryGetValue(Player, out SlipstreamChainResult tutorialSlipstream) &&
+                tutorialSlipstream.Triggered)
+            {
+                TryAdvanceTutorialIfExpected(
+                    TutorialAction.ResolveSlipstream,
+                    $"leader:{tutorialSlipstream.Steps[0].Leader.position},bonus:{tutorialSlipstream.TotalBonus}");
+            }
             yield return StartCoroutine(PlaySlipstreamPhase(turnOrder, turnSkipped));
             yield return StartCoroutine(ApplySlipstreamMovement(turnOrder, turnSkipped));
 
@@ -988,6 +1371,10 @@ public class MVPGameManager : MonoBehaviour
             // ====== 收尾 + 补牌 ======
             foreach (var p in session.Players)
                 CleanupTurn(p);
+
+            TryAdvanceTutorialIfExpected(
+                TutorialAction.CompleteTurnFlow,
+                $"turn:{raceTurnNumber}");
 
             // 检查游戏是否结束
             if (CheckGameEnd()) break;
@@ -1073,6 +1460,13 @@ public class MVPGameManager : MonoBehaviour
             if (hudUI != null)
                 hudUI.AppendLog($"<color=red><b>{p.name} has retired from the race!</b></color>");
         }
+
+        if (!p.isAI)
+        {
+            TryAdvanceTutorialIfExpected(
+                TutorialAction.ResolveCornerSpin,
+                $"reason:{reason},rewind:{rewindPos},eliminated:{eliminated}");
+        }
     }
 
     private IEnumerator PlaySpinPresentation(Transform car, string reason, bool blown)
@@ -1134,6 +1528,12 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.PlayHeatTransitions(drawn, CardVisualZone.Engine, target);
             cardHandUI.UpdateDeckInfo(p);
         }
+        if (!p.isAI)
+        {
+            TryAdvanceTutorialIfExpected(
+                TutorialAction.PayHeat,
+                $"amount:{drawn},destination:{destination},reason:{reason}");
+        }
         return true;
     }
 
@@ -1189,7 +1589,7 @@ public class MVPGameManager : MonoBehaviour
         // Standard teams layer their cooling-efficiency stat on the normal
         // G1/G2 reaction step. China's Recover cooldown is self-contained and
         // remains governed solely by ChinaGearShiftRules.
-        if (!TeamGearRules.IsChina(p.teamId))
+        if (!TeamGearRules.IsChina(p.teamId) && session.TeamVehicleBonusesEnabled)
             cooldown += TeamVehicleRules.GetCooling(p.teamId);
 
         if (p.techState != null)
@@ -1231,6 +1631,12 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.PlayHeatTransitions(fromDraw, CardVisualZone.DrawPile, CardVisualZone.Engine);
             cardHandUI.PlayHeatTransitions(fromDiscard, CardVisualZone.DiscardPile, CardVisualZone.Engine);
             cardHandUI.UpdateDeckInfo(p);
+        }
+        if (!p.isAI && cooled > 0)
+        {
+            TryAdvanceTutorialIfExpected(
+                TutorialAction.CoolHeatCard,
+                $"cooled:{cooled},requested:{amount}");
         }
         return cooled;
     }
@@ -1307,8 +1713,10 @@ public class MVPGameManager : MonoBehaviour
         if (totalMove > 0)
         {
             raceCameraController?.BeginVehicleMovement(car.transform);
-            if (config.movementFocusLeadDelay > 0f)
-                yield return new WaitForSeconds(config.movementFocusLeadDelay);
+            float leadDelay = GameSettingsRuntime.ScaleAnimationDuration(
+                config.movementFocusLeadDelay);
+            if (leadDelay > 0f)
+                yield return new WaitForSeconds(leadDelay);
         }
 
         for (int i = p.position + 1; i <= targetPos; i++)
@@ -1344,8 +1752,10 @@ public class MVPGameManager : MonoBehaviour
 
         if (totalMove > 0)
         {
-            if (config.movementFocusTrailDelay > 0f)
-                yield return new WaitForSeconds(config.movementFocusTrailDelay);
+            float trailDelay = GameSettingsRuntime.ScaleAnimationDuration(
+                config.movementFocusTrailDelay);
+            if (trailDelay > 0f)
+                yield return new WaitForSeconds(trailDelay);
             raceCameraController?.EndVehicleMovement();
         }
     }
@@ -1626,9 +2036,10 @@ public class MVPGameManager : MonoBehaviour
 
     private void RegisterPitEntryCrossing(PlayerState p, int oldPos, int rawMovementEnd)
     {
-        if (p == null || trackManager == null || !config.enablePitLane ||
-            !PitLaneRules.HasPitLane(trackManager.Nodes) ||
-            !PitLaneRules.CrossedPitEntry(oldPos, rawMovementEnd, trackManager.Nodes))
+        IReadOnlyList<TrackNode> pitNodes = GetPitRuleNodes();
+        if (p == null || trackManager == null || !IsPitLaneEnabledForCurrentSession() ||
+            !PitLaneRules.HasPitLane(pitNodes) ||
+            !PitLaneRules.CrossedPitEntry(oldPos, rawMovementEnd, pitNodes))
             return;
 
         // The approach-window choice is only a reservation. Crossing the entry
@@ -1779,7 +2190,8 @@ public class MVPGameManager : MonoBehaviour
                 // 科技：每圈 1 次热量减免（最少为 1）
                 int heat = Mathf.Max(1,
                     overspeed - session.ConsumeHeatReduction(p));
-                heat += TeamVehicleRules.GetCornerHeatPenalty(p.teamId);
+                if (session.TeamVehicleBonusesEnabled)
+                    heat += TeamVehicleRules.GetCornerHeatPenalty(p.teamId);
                 string cname = trackManager.GetCornerName(cornerId);
 
                 // 尝试支付热量；引擎不足 → 失控
@@ -1808,13 +2220,14 @@ public class MVPGameManager : MonoBehaviour
 
     private IEnumerator ResolvePitApproachChoice(PlayerState p)
     {
-        if (p == null || !config.enablePitLane || !PitLaneRules.HasPitLane(trackManager.Nodes))
+        IReadOnlyList<TrackNode> pitNodes = GetPitRuleNodes();
+        if (p == null || !IsPitLaneEnabledForCurrentSession() || !PitLaneRules.HasPitLane(pitNodes))
             yield break;
         if (p.isBlown || p.hasFinished || p.pitChoiceResolvedThisLap ||
             p.pitStopRequested || p.pitStopScheduled)
             yield break;
 
-        int distance = PitLaneRules.GetDistanceToPitEntry(p.position, trackManager.Nodes);
+        int distance = PitLaneRules.GetDistanceToPitEntry(p.position, pitNodes);
         if (distance <= 0 || distance > PitLaneRules.DEFAULT_APPROACH_WINDOW)
             yield break;
 
@@ -1873,6 +2286,12 @@ public class MVPGameManager : MonoBehaviour
             hudUI.AppendLog(enter
                 ? $"{p.name} 预定进站：越过维修区入口后下一回合执行。"
                 : $"{p.name} 选择本圈不进站。接近下一圈入口时可再次选择。");
+        if (!p.isAI && enter)
+        {
+            TryAdvanceTutorialIfExpected(
+                TutorialAction.SelectPit,
+                $"position:{p.position},requested:true");
+        }
     }
 
     private void DecideAIPit(PlayerState p, int distance)
@@ -1901,7 +2320,7 @@ public class MVPGameManager : MonoBehaviour
         if (config != null && config.enableTechTree && session != null && p.techState != null)
             exitMoveBonus += session.GetModifiers(p).pitExitMoveBonus;
 
-        var result = PitLaneRules.EnterPit(p, trackManager.Nodes, exitMoveBonus);
+        var result = PitLaneRules.EnterPit(p, GetPitRuleNodes(), exitMoveBonus);
         if (!result.success)
         {
             if (hudUI != null) hudUI.AppendLog(result.message);
@@ -1915,6 +2334,22 @@ public class MVPGameManager : MonoBehaviour
         MoveCarTo(p, p.position);       // 移动到维修区出口
         if (hudUI != null)
             hudUI.AppendLog($"<color=green>{p.name} 进站执行：本回合停靠，冷却全部热量，出站后前进 {result.exitMoveBonus} 格（{result.pitExitPosition}→{result.exitPosition}）。</color>");
+        if (!p.isAI)
+        {
+            TryAdvanceTutorialIfExpected(
+                TutorialAction.ResolvePitOnNextTurn,
+                $"pit_exit:{result.pitExitPosition},exit:{result.exitPosition},bonus:{result.exitMoveBonus}");
+        }
+    }
+
+    private bool IsPitLaneEnabledForCurrentSession()
+    {
+        return tutorialPitRuleNodes != null || (config != null && config.enablePitLane);
+    }
+
+    private IReadOnlyList<TrackNode> GetPitRuleNodes()
+    {
+        return tutorialPitRuleNodes ?? trackManager?.Nodes;
     }
 
     /// <summary>
@@ -1973,6 +2408,7 @@ public class MVPGameManager : MonoBehaviour
     /// </summary>
     public void OnTrickCardClicked(CardData card)
     {
+        if (IsTutorialActionInputBlocked) return;
         if (!phaseState.CanAcceptCards(inputState)) return;
         if (!config.enableTrickCards) return;
         if (Player == null) return;
@@ -2027,6 +2463,22 @@ public class MVPGameManager : MonoBehaviour
             hudUI.AppendLog($"{p.name} 打出特技牌: {result.message}");
 
         ApplyTrickEffects(p, card, result);
+
+        if (!p.isAI)
+        {
+            if (card.trickId == "uk-scone")
+            {
+                TryAdvanceTutorialIfExpected(
+                    TutorialAction.PlayUkScone,
+                    $"trick:{card.trickId}");
+            }
+            else if (card.trickId == "uk-english-breakfast-tea")
+            {
+                TryAdvanceTutorialIfExpected(
+                    TutorialAction.PlayUkEnglishBreakfastTea,
+                    $"trick:{card.trickId}");
+            }
+        }
 
         // CN L2 连击追踪：特技
         if (p.techState != null)
@@ -2298,11 +2750,30 @@ public class MVPGameManager : MonoBehaviour
     {
         if (p.hasFinished) return;
 
+        TutorialRunPhase? tutorialPhase = tutorialDirector != null
+            ? tutorialDirector.Phase
+            : (TutorialRunPhase?)null;
+        if (TutorialPracticeRules.IsGuidedLap(tutorialPhase))
+        {
+            p.lap++;
+            session.OnNewLap(p);
+            raceLogWriter?.Append(
+                $"[TUTORIAL_GUIDED_LAP] player={p.name} lap={p.lap} counts_for_practice=false");
+            if (hudUI != null)
+                hudUI.AppendLog($"{p.name} 越过终点线；引导阶段不计入自由练习圈。");
+            return;
+        }
+
+        int requiredLaps = TutorialPracticeRules.GetRequiredLapCount(
+            tutorialPhase,
+            config.totalLaps);
+        bool allowWeatherRoll = tutorialScenario == null && config.enableWeather;
+
         RaceLapWeatherTransition transition = RaceLapWeatherRules.Advance(
             p.lap,
-            config.totalLaps,
+            requiredLaps,
             weatherState.LastRolledLap,
-            config.enableWeather);
+            allowWeatherRoll);
         p.lap = transition.Lap;
         session.OnNewLap(p);
         if (hudUI != null)
@@ -2326,6 +2797,19 @@ public class MVPGameManager : MonoBehaviour
             session.AssignFinish(p);
             if (hudUI != null)
                 hudUI.AppendLog($"<color=green><b>{p.name} 完赛！</b></color>");
+
+            if (!p.isAI && tutorialDirector != null &&
+                tutorialDirector.Phase == TutorialRunPhase.Practice)
+            {
+                bool completed = tutorialDirector.CompletePracticeLap(out string failureReason);
+                if (completed)
+                    GameSettingsRuntime.MarkTutorialCompleted();
+                FlushTutorialEvents();
+                raceLogWriter?.Append(
+                    $"[TUTORIAL_PRACTICE] event=lap_complete accepted={completed} " +
+                    $"lap={p.lap} required={requiredLaps} reason={failureReason ?? "none"}");
+                tutorialGuideUI?.Refresh();
+            }
         }
     }
 
@@ -2334,6 +2818,11 @@ public class MVPGameManager : MonoBehaviour
     private bool CheckGameEnd()
     {
         if (session == null) return true;
+        TutorialRunPhase? tutorialPhase = tutorialDirector != null
+            ? tutorialDirector.Phase
+            : (TutorialRunPhase?)null;
+        if (TutorialPracticeRules.ShouldEndImmediately(tutorialPhase))
+            return true;
         // A blown player is removed from future turns, but does not end the
         // race for the remaining active participants.  A finisher also only
         // locks its own result; the loop ends when no non-blown participant
@@ -2348,11 +2837,23 @@ public class MVPGameManager : MonoBehaviour
         RefreshCarBadges();
 
         string result = RaceRanking.FormatResults(session.Players);
-        result += "\n\n" + BuildRPReport();
-        result += "\n\n" + BuildDriverXpReport();
+        if (tutorialScenario != null)
+        {
+            if (tutorialDirector != null && tutorialDirector.Phase == TutorialRunPhase.Completed)
+                result = "勒芒教程练习完成！\n\n" + result;
+            else
+                result = "本次练习未完成；可以使用教程面板重新开始。\n\n" + result;
+            result += "\n\n教程模式：不发放 RP、车手 XP、解锁或正常赛事进度。";
+        }
+        else
+        {
+            result += "\n\n" + BuildRPReport();
+            result += "\n\n" + BuildDriverXpReport();
+        }
 
         if (hudUI != null) hudUI.ShowGameOver(result);
         if (cardHandUI != null) cardHandUI.HideAll();
+        tutorialGuideUI?.Refresh();
         if (raceLogWriter != null && raceLogWriter.IsActive)
         {
             raceLogWriter.End(result);
@@ -2569,6 +3070,7 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnGearButtonClicked(int gear)
     {
+        if (IsTutorialActionInputBlocked) return;
         if (!phaseState.CanAcceptGear(inputState)) return;
         if (Player != null && TeamGearRules.IsChina(Player.teamId) && gear > ChinaGearShiftRules.GoGear)
             return;
@@ -2581,6 +3083,7 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnConfirmGearClicked()
     {
+        if (IsTutorialActionInputBlocked) return;
         if (!phaseState.CanAcceptGear(inputState)) return;
         if (!inputState.ConfirmGear()) return;
         SetGearControlsInteractable(false);
@@ -2588,6 +3091,7 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnPlayCardsButtonClicked()
     {
+        if (IsTutorialActionInputBlocked) return;
         // 弃牌模式 — 点击按钮确认整组弃牌
         if (inputState.WaitingForDiscard)
         {
@@ -2725,7 +3229,11 @@ public class MVPGameManager : MonoBehaviour
         int missing = RaceRules.GetMissingSpeedCardCount(required, speedCount);
         if (missing > 0)
         {
-            if (!TryPayHeat(player, missing, player.position, "engine failure"))
+            bool heatPaid = TryPayHeat(player, missing, player.position, "engine failure");
+            TryAdvanceTutorialIfExpected(
+                TutorialAction.TriggerMissingCardPenalty,
+                $"required:{required},played:{speedCount},missing:{missing},paid:{heatPaid}");
+            if (!heatPaid)
             {
                 // 已确认速度牌仍属于本回合已打出区域，CleanupTurn 会将其放入弃牌堆。
                 player.playedHeatCardsThisTurn.Clear();
@@ -2738,6 +3246,13 @@ public class MVPGameManager : MonoBehaviour
             }
             if (hudUI != null)
                 hudUI.AppendLog($"Engine failure! Missing {missing} speed card(s). +{missing} Heat to hand.");
+        }
+
+        else
+        {
+            TryAdvanceTutorialIfExpected(
+                TutorialAction.SelectRequiredGearAndCards,
+                $"gear:{player.gear},required:{required},played:{speedCount}");
         }
 
         if (hudUI != null)
@@ -2758,11 +3273,40 @@ public class MVPGameManager : MonoBehaviour
 
     public void ResetGame()
     {
+        if (tutorialDirector != null)
+        {
+            if (tutorialDirector.Phase == TutorialRunPhase.Practice ||
+                tutorialDirector.Phase == TutorialRunPhase.Completed)
+                RestartTutorialPracticeLap();
+            else
+                RestartTutorialGuidedSection();
+            return;
+        }
+
+        ResetRaceRuntime();
+    }
+
+    private void ResetTutorialRace(bool startInPractice, string reason)
+    {
+        if (tutorialScenario == null)
+            return;
+
+        if (raceLogWriter != null && raceLogWriter.IsActive)
+            raceLogWriter.End($"tutorial reset: {reason}");
+        initializeTutorialInPractice = startInPractice;
+        ResetRaceRuntime();
+    }
+
+    private void ResetRaceRuntime()
+    {
         StopAllCoroutines();
         foreach (var c in GetComponents<AIController>())
             Destroy(c);
         aiControllers.Clear();
+        if (hudUI != null && hudUI.gameOverPanel != null)
+            hudUI.gameOverPanel.SetActive(false);
         InitializeGame();
+        InitializeTutorialGuideUI();
         StartCoroutine(GameLoop());
     }
 }

@@ -41,6 +41,7 @@ public class CardDeck
     private List<CardData> hand = new List<CardData>();
     private List<CardData> discardPile = new List<CardData>();
     private IRandomSource randomSource = new UnityRandomSource();
+    private bool usesExactOrder;
 
     /// <summary>该玩家的引擎牌库 — 每玩家独立的 HeatPool 实例，支付热量时从此扣除。</summary>
     public HeatPool heatPool;
@@ -52,6 +53,7 @@ public class CardDeck
     public int HandCount => hand.Count;
     public int DrawPileCount => drawPile.Count;
     public int DiscardPileCount => discardPile.Count;
+    public bool UsesExactOrder => usesExactOrder;
 
     /// <summary>牌组 + 弃牌堆中仍可普通抽取的卡牌数量。</summary>
     public int TotalAvailableForDraw => CountPlayableCards(drawPile) + CountPlayableCards(discardPile);
@@ -68,6 +70,7 @@ public class CardDeck
     {
         heatPool = enginePool;
         randomSource = source ?? new UnityRandomSource();
+        usesExactOrder = false;
         drawPile.Clear();
         hand.Clear();
         discardPile.Clear();
@@ -82,10 +85,39 @@ public class CardDeck
     }
 
     /// <summary>
+    /// Initializes a non-random deck whose first item is the next card drawn.
+    /// This is intended for authored scenarios such as the tutorial. It does
+    /// not rely on a random seed, and recycled playable cards preserve their
+    /// discard order. Normal races continue to use <see cref="InitializeDeck"/>.
+    /// </summary>
+    public void InitializeExactOrder(IReadOnlyList<CardData> topFirstDrawOrder, HeatPool enginePool)
+    {
+        if (topFirstDrawOrder == null)
+            throw new System.ArgumentNullException(nameof(topFirstDrawOrder));
+
+        heatPool = enginePool;
+        usesExactOrder = true;
+        drawPile.Clear();
+        hand.Clear();
+        discardPile.Clear();
+
+        foreach (CardData card in topFirstDrawOrder)
+        {
+            if (card == null || card.IsHeat)
+                throw new System.ArgumentException(
+                    "Exact draw order may contain only non-null speed or trick cards.",
+                    nameof(topFirstDrawOrder));
+            drawPile.Add(card);
+        }
+    }
+
+    /// <summary>
     /// Fisher-Yates 洗牌 — 仅洗牌组（drawPile）。
     /// </summary>
     public void ShuffleDrawPile()
     {
+        if (usesExactOrder) return;
+
         for (int i = drawPile.Count - 1; i > 0; i--)
         {
             int j = randomSource.NextInt(0, i + 1);
@@ -141,14 +173,33 @@ public class CardDeck
     private void RecyclePlayableDiscardCards()
     {
         bool moved = false;
-        for (int i = discardPile.Count - 1; i >= 0; i--)
+        if (usesExactOrder)
         {
-            CardData card = discardPile[i];
-            if (card == null || card.IsHeat) continue;
+            for (int i = 0; i < discardPile.Count;)
+            {
+                CardData card = discardPile[i];
+                if (card == null || card.IsHeat)
+                {
+                    i++;
+                    continue;
+                }
 
-            drawPile.Add(card);
-            discardPile.RemoveAt(i);
-            moved = true;
+                drawPile.Add(card);
+                discardPile.RemoveAt(i);
+                moved = true;
+            }
+        }
+        else
+        {
+            for (int i = discardPile.Count - 1; i >= 0; i--)
+            {
+                CardData card = discardPile[i];
+                if (card == null || card.IsHeat) continue;
+
+                drawPile.Add(card);
+                discardPile.RemoveAt(i);
+                moved = true;
+            }
         }
 
         if (moved)

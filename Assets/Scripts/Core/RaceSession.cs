@@ -75,6 +75,19 @@ public class RaceSession
     /// <summary>确定性随机源（测试注入种子）。</summary>
     public IRandomSource Random;
 
+    /// <summary>
+    /// Enables intrinsic team vehicle stat bonuses. The tutorial disables this
+    /// while retaining the selected team identity and its explicitly taught cards.
+    /// </summary>
+    public bool TeamVehicleBonusesEnabled { get; set; } = true;
+
+    /// <summary>
+    /// Optional scenario-only tailwind range. Normal races leave this unset and
+    /// use team/tech modifiers; the isolated tutorial may widen the teaching
+    /// cue without granting a campaign or vehicle bonus.
+    /// </summary>
+    public int? SlipstreamRangeOverride { get; set; }
+
     /// <summary>尾流基础加成（紧跟前方赛车获得的额外移动）。</summary>
     public const int SLIPSTREAM_BASE_BONUS = 2;
 
@@ -292,7 +305,9 @@ public class RaceSession
         if (baseLimit >= 99) return baseLimit;
         // Team handling is a base-car attribute; tech-tree bonuses layer on
         // top of it. This keeps the corner formula in one pure entry point.
-        int bonus = p != null ? TeamVehicleRules.GetHandling(p.teamId) : 0;
+        int bonus = TeamVehicleBonusesEnabled && p != null
+            ? TeamVehicleRules.GetHandling(p.teamId)
+            : 0;
         if (p.techState != null)
         {
             var m = GetModifiers(p);
@@ -392,7 +407,7 @@ public class RaceSession
     public int ComputeMovementBonus(PlayerState p, bool crossedCorner)
     {
         int bonus = 0;
-        if (!crossedCorner)
+        if (TeamVehicleBonusesEnabled && !crossedCorner)
         {
             // Base vehicle pace applies on straights. Standard teams use the
             // chassis profile plus any team-specific card conversion. China
@@ -433,7 +448,7 @@ public class RaceSession
     /// </summary>
     public int ConsumeItalyCornerExitBonus(PlayerState p)
     {
-        if (p == null || p.teamId != TeamId.IT || !p.italyCornerExitBoostReady ||
+        if (!TeamVehicleBonusesEnabled || p == null || p.teamId != TeamId.IT || !p.italyCornerExitBoostReady ||
             p.playedSpeedCardsThisTurn == null || p.playedSpeedCardsThisTurn.Count == 0)
             return 0;
 
@@ -444,7 +459,7 @@ public class RaceSession
     /// <summary>Arms Italy's next-turn acceleration after a corner was completed without spinning.</summary>
     public void ArmItalyCornerExitBonus(PlayerState p, bool completedCorner)
     {
-        if (p != null && p.teamId == TeamId.IT && completedCorner)
+        if (TeamVehicleBonusesEnabled && p != null && p.teamId == TeamId.IT && completedCorner)
             p.italyCornerExitBoostReady = true;
     }
 
@@ -479,7 +494,8 @@ public class RaceSession
         if (p.isBlown || p.hasFinished || !WeatherRules.CanSlipstream(Weather))
             return default;
 
-        int range = 1 + GetModifiers(p).slipstreamRangeBonus + p.slipstreamRangeBonusThisTurn;
+        int range = SlipstreamRangeOverride ??
+            (1 + GetModifiers(p).slipstreamRangeBonus + p.slipstreamRangeBonusThisTurn);
         range = WeatherRules.ApplyWeatherToSlipstreamRange(range, Weather);
         if (range <= 0)
             return default;
@@ -607,7 +623,9 @@ public class RaceSession
 
     private int GetSlipstreamMovementBonus(PlayerState p)
     {
-        int bonus = SLIPSTREAM_BASE_BONUS + TeamVehicleRules.GetSlipstreamBonus(p.teamId);
+        int bonus = SLIPSTREAM_BASE_BONUS;
+        if (TeamVehicleBonusesEnabled)
+            bonus += TeamVehicleRules.GetSlipstreamBonus(p.teamId);
         bonus += TrickCardRules.GetParmigianoBonus(p.trickState);
         // 筋斗云：本回合打过 ATTACK 特技牌 → 每段尾流 +2。
         if (p.techState != null &&
