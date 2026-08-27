@@ -35,16 +35,44 @@ public sealed class RaceEventFX : MonoBehaviour
     private TMP_FontAsset font;
     private bool initialized;
     private bool effectBusy;
+    private bool timeScaleOverrideActive;
+
+    private const float GameplayTimeScale = 1f;
 
     [Header("尾流阶段")]
     [Min(0.8f)]
     public float slipstreamDuration = 0.95f;
+    [Tooltip("尾流特写与尾流奖励移动期间的全局时间倍率；阶段结束后恢复为 1")]
     [Range(0.1f, 1f)]
     public float slipstreamTimeScale = 0.28f;
     [Min(0f)]
     public float slipstreamLeadInDuration = 0.16f;
     [Min(0f)]
     public float slipstreamPostGapDuration = 0.16f;
+
+    [Header("失控阶段")]
+    [Tooltip("失控旋转提示的持续时间 (秒)，设计案基准为 1 秒")]
+    [Min(0.01f)]
+    public float spinOutDuration = 1f;
+    [Tooltip("失控阶段赛车完成的旋转角度，设计案基准为 360 度")]
+    [Min(0f)]
+    public float spinOutRotationDegrees = 360f;
+
+    /// <summary>
+    /// Starts the scoped slow-motion window used by the separate tailwind
+    /// bonus movement. The visual close-up has its own scope; this second
+    /// window keeps the actual reward movement visibly slowed as well.
+    /// </summary>
+    public void BeginSlipstreamBonusMovementSlowMotion()
+    {
+        BeginSlowMotion(slipstreamTimeScale);
+    }
+
+    /// <summary>Ends the tailwind bonus-movement slow-motion window safely.</summary>
+    public void EndSlipstreamBonusMovementSlowMotion()
+    {
+        EndSlowMotion();
+    }
 
     private static readonly Color PanelColor = new Color(0.025f, 0.04f, 0.07f, 0.94f);
     private static readonly Color OvertakeColor = new Color(1f, 0.75f, 0.24f, 1f);
@@ -131,8 +159,7 @@ public sealed class RaceEventFX : MonoBehaviour
         SetMessage("OVERTAKE!", count > 1 ? $"超车 ×{count} · 领先车手抓住了机会" : "超车成功 · 领先车手抓住了机会", OvertakeColor);
         Vector3 originalScale = car.localScale;
         Quaternion originalRotation = car.rotation;
-        float previousTimeScale = Time.timeScale;
-        Time.timeScale = Mathf.Min(previousTimeScale, 0.28f);
+        BeginSlowMotion(0.28f);
 
         try
         {
@@ -153,7 +180,7 @@ public sealed class RaceEventFX : MonoBehaviour
         {
             car.localScale = originalScale;
             car.rotation = originalRotation;
-            Time.timeScale = previousTimeScale;
+            EndSlowMotion();
             effectBusy = false;
             HideMessage();
         }
@@ -199,10 +226,7 @@ public sealed class RaceEventFX : MonoBehaviour
             yield return new WaitForSecondsRealtime(slipstreamLeadInDuration);
         SetMessage("SLIPSTREAM!", detail, SlipstreamColor);
 
-        float previousTimeScale = Time.timeScale;
-        Time.timeScale = Mathf.Min(
-            previousTimeScale,
-            Mathf.Clamp(slipstreamTimeScale, 0.1f, 1f));
+        BeginSlowMotion(slipstreamTimeScale);
         try
         {
             float elapsed = 0f;
@@ -234,6 +258,10 @@ public sealed class RaceEventFX : MonoBehaviour
         }
         finally
         {
+            // The close-up owns the only global time-scale override in the
+            // race. Restore it before cleaning up visual children so an
+            // interrupted/failed visual can never slow later movement.
+            EndSlowMotion();
             foreach (KeyValuePair<Transform, Vector3> pair in originalScales)
             {
                 if (pair.Key != null)
@@ -262,14 +290,18 @@ public sealed class RaceEventFX : MonoBehaviour
         try
         {
             float elapsed = 0f;
-            const float duration = 0.92f;
+            float duration = Mathf.Max(0.01f, spinOutDuration);
+            float rotationDegrees = Mathf.Max(0f, spinOutRotationDegrees);
             while (elapsed < duration)
             {
                 elapsed += Time.unscaledDeltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
+                float t = RaceEventPresentationRules.GetSpinProgress(elapsed, duration);
                 float punch = 1f + Mathf.Sin(t * Mathf.PI) * 0.15f;
                 car.localScale = originalScale * punch;
-                car.rotation = originalRotation * Quaternion.Euler(0f, 0f, 360f * EaseOut(t));
+                car.rotation = originalRotation * Quaternion.Euler(
+                    0f,
+                    0f,
+                    RaceEventPresentationRules.GetSpinRotation(t, rotationDegrees));
                 canvasGroup.alpha = t < 0.1f ? t / 0.1f : (t > 0.82f ? (1f - t) / 0.18f : 1f);
                 yield return null;
             }
@@ -365,8 +397,35 @@ public sealed class RaceEventFX : MonoBehaviour
 
     private void OnDisable()
     {
-        Time.timeScale = 1f;
+        EndSlowMotion();
+        // Safety net for a coroutine stopped before it could enter its
+        // finally block. This project has no other gameplay time-scale owner.
+        Time.timeScale = GameplayTimeScale;
         effectBusy = false;
+    }
+
+    private void OnDestroy()
+    {
+        EndSlowMotion();
+        Time.timeScale = GameplayTimeScale;
+    }
+
+    private void BeginSlowMotion(float requestedScale)
+    {
+        if (timeScaleOverrideActive)
+            return;
+
+        timeScaleOverrideActive = true;
+        Time.timeScale = Mathf.Clamp(requestedScale, 0.1f, GameplayTimeScale);
+    }
+
+    private void EndSlowMotion()
+    {
+        if (!timeScaleOverrideActive)
+            return;
+
+        timeScaleOverrideActive = false;
+        Time.timeScale = GameplayTimeScale;
     }
 
     private IEnumerator PlayBlowupPulse(Transform car, Vector3 originalScale, Quaternion originalRotation)
@@ -452,9 +511,29 @@ public sealed class RaceEventFX : MonoBehaviour
         return target.AddComponent<T>();
     }
 
-    private static float EaseOut(float t)
+}
+
+/// <summary>Pure timing and easing rules for race-event presentation.</summary>
+public static class RaceEventPresentationRules
+{
+    /// <summary>Normalizes elapsed time to the requested effect duration.</summary>
+    public static float GetSpinProgress(float elapsed, float duration)
     {
+        if (duration <= 0f)
+            return 1f;
+
+        return Mathf.Clamp01(Mathf.Max(0f, elapsed) / duration);
+    }
+
+    /// <summary>
+    /// Returns the eased rotation angle. The curve reaches the configured
+    /// angle exactly at the end while remaining presentation-only.
+    /// </summary>
+    public static float GetSpinRotation(float progress, float degrees)
+    {
+        float t = Mathf.Clamp01(progress);
         float inverse = 1f - t;
-        return 1f - inverse * inverse * inverse;
+        float eased = 1f - inverse * inverse * inverse;
+        return Mathf.Max(0f, degrees) * eased;
     }
 }

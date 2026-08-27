@@ -777,6 +777,11 @@ public class MVPGameManager : MonoBehaviour
                     sr.color = TeamCarPresentationRules.GetFallbackColor(p.teamId);
             }
 
+            RaceCarBadgeUI badge = instance.GetComponent<RaceCarBadgeUI>();
+            if (badge == null)
+                badge = instance.AddComponent<RaceCarBadgeUI>();
+            badge.Initialize(p.teamId);
+
             carInstances.Add(instance);
         }
 
@@ -1560,31 +1565,47 @@ public class MVPGameManager : MonoBehaviour
         if (!hasMovement)
             yield break;
 
-        raceLogWriter?.Append("[SLIPSTREAM_MOVE_PHASE] begin");
+        raceLogWriter?.Append(
+            $"[SLIPSTREAM_MOVE_PHASE] begin time_scale_before={Time.timeScale:F2}");
         if (hudUI != null)
             hudUI.SetStatus("尾流阶段结束 · 执行额外移动");
 
-        foreach (PlayerState follower in turnOrder)
+        if (raceEventFX != null)
         {
-            if (RaceTurnRules.IsInactive(follower, turnSkipped))
-                continue;
-            if (!slipstreamsThisTurn.TryGetValue(follower, out SlipstreamChainResult chain) ||
-                chain.TotalBonus <= 0)
-                continue;
-
-            int oldPos = follower.position;
-            int tailwindMovement = chain.TotalBonus;
+            raceEventFX.BeginSlipstreamBonusMovementSlowMotion();
             raceLogWriter?.Append(
-                $"[SLIPSTREAM_MOVE] {follower.name} from={oldPos} " +
-                $"bonus={tailwindMovement} to={(oldPos + tailwindMovement) % trackManager.TotalNodes}");
-            yield return StartCoroutine(AnimateMovementByAmount(
-                follower, GetCarIndex(follower), tailwindMovement, false));
-
-            ResolveLandmarkPasses(follower, oldPos, oldPos + tailwindMovement);
-            RegisterPitEntryCrossing(follower, oldPos, oldPos + tailwindMovement);
+                $"[SLIPSTREAM_MOVE_PHASE] slow_motion time_scale={Time.timeScale:F2}");
         }
 
-        raceLogWriter?.Append("[SLIPSTREAM_MOVE_PHASE] end");
+        try
+        {
+            foreach (PlayerState follower in turnOrder)
+            {
+                if (RaceTurnRules.IsInactive(follower, turnSkipped))
+                    continue;
+                if (!slipstreamsThisTurn.TryGetValue(follower, out SlipstreamChainResult chain) ||
+                    chain.TotalBonus <= 0)
+                    continue;
+
+                int oldPos = follower.position;
+                int tailwindMovement = chain.TotalBonus;
+                raceLogWriter?.Append(
+                    $"[SLIPSTREAM_MOVE] {follower.name} from={oldPos} " +
+                    $"bonus={tailwindMovement} to={(oldPos + tailwindMovement) % trackManager.TotalNodes}");
+                yield return StartCoroutine(AnimateMovementByAmount(
+                    follower, GetCarIndex(follower), tailwindMovement, false));
+
+                ResolveLandmarkPasses(follower, oldPos, oldPos + tailwindMovement);
+                RegisterPitEntryCrossing(follower, oldPos, oldPos + tailwindMovement);
+            }
+        }
+        finally
+        {
+            if (raceEventFX != null)
+                raceEventFX.EndSlipstreamBonusMovementSlowMotion();
+        }
+
+        raceLogWriter?.Append($"[SLIPSTREAM_MOVE_PHASE] end time_scale_after={Time.timeScale:F2}");
         if (hudUI != null)
             hudUI.SetStatus("尾流加成已执行 · 正在弃牌");
     }
@@ -1670,7 +1691,8 @@ public class MVPGameManager : MonoBehaviour
 
         raceLogWriter?.Append(
             $"[SLIPSTREAM_PHASE] begin events={events.Count} " +
-            $"visuals={(raceEventFX != null ? "enabled" : "disabled")}");
+            $"visuals={(raceEventFX != null ? "enabled" : "disabled")} " +
+            $"time_scale_before={Time.timeScale:F2}");
         if (hudUI != null)
             hudUI.SetStatus($"尾流阶段：{events.Count} 段气流，额外移动即将执行");
 
@@ -1690,7 +1712,7 @@ public class MVPGameManager : MonoBehaviour
             }
         }
 
-        raceLogWriter?.Append("[SLIPSTREAM_PHASE] end");
+        raceLogWriter?.Append($"[SLIPSTREAM_PHASE] end time_scale_after={Time.timeScale:F2}");
         if (hudUI != null)
             hudUI.SetStatus("尾流阶段结束 · 即将执行额外移动");
         float postGap = raceEventFX != null
@@ -2323,6 +2345,7 @@ public class MVPGameManager : MonoBehaviour
     {
         // 为未完赛玩家按当前排名补记名次
         AssignRemainingFinishers();
+        RefreshCarBadges();
 
         string result = RaceRanking.FormatResults(session.Players);
         result += "\n\n" + BuildRPReport();
@@ -2478,6 +2501,25 @@ public class MVPGameManager : MonoBehaviour
             laneIndices[i] = lane;
             MoveCarToNode(p, p.position, lane);
         }
+
+        RefreshCarBadges();
+    }
+
+    private void RefreshCarBadges()
+    {
+        if (session == null)
+            return;
+
+        foreach (RaceRanking.RankEntry entry in session.GetRankings())
+        {
+            int carIndex = GetCarIndex(entry.player);
+            if (carIndex < 0 || carIndex >= carInstances.Count || carInstances[carIndex] == null)
+                continue;
+
+            RaceCarBadgeUI badge = carInstances[carIndex].GetComponent<RaceCarBadgeUI>();
+            if (badge != null)
+                badge.Refresh(entry.player, entry.rank);
+        }
     }
 
     private AIController GetAIController(PlayerState p)
@@ -2493,6 +2535,7 @@ public class MVPGameManager : MonoBehaviour
         int lane = GetVisualLaneIndex(p);
         laneIndices[idx] = lane;
         MoveCarToNode(p, position, lane);
+        RefreshCarBadges();
     }
 
     private void MoveCarToNode(PlayerState p, int position, int lane)

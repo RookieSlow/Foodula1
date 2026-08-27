@@ -48,9 +48,10 @@ The verified scene flow is:
 ## Current Development State
 
 - Demo framework Phase 1 is complete.
-- Phase 2 asset replacement is in progress.
-- The project is in Production stage. The latest editor audit on 2026-08-26
-  recorded a successful 451/451 EditMode run. The MainMenu-to-Race flow, race
+- Core race presentation is Demo-grade; formal brand/portrait/tech-tree art and
+  the entire audio layer remain as the next asset-completion package.
+- The project is in Production stage. The latest editor audit on 2026-08-27
+  recorded a successful 471/471 EditMode run. The MainMenu-to-Race flow, race
   card/icon references, and Chinese font support remain the current
   presentation baseline.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
@@ -70,6 +71,11 @@ The verified scene flow is:
   default layout for legacy canvases missing the required panels. The authored
   HUD now includes arc-arranged stove-dial gear controls and a ten-segment
   vertical heat thermometer with 50%/70% warning thresholds.
+- `Gameplay/RaceEventFX.cs` now scopes tailwind slow motion to the active
+  close-up and its immediately following bonus movement, while overtake keeps
+  its own close-up scope. Both restore normal gameplay time when the effect
+  finishes or is interrupted; the regression suite passed `471/471` EditMode
+  tests after this fix.
 - The custom Track Node Editor experiment was reverted after Scene View
   interaction problems.
 - The Race scene defaults to the 60-node Silverstone JSON track. Runtime apex
@@ -83,6 +89,24 @@ The verified scene flow is:
   authored JSON nodes or gameplay positions. All eight selectable official
   tracks passed a clean Play Mode screenshot/Console spot check on 2026-08-25;
   only the full mechanics-focused manual race walkthrough remains open.
+- Vehicle movement presentation now treats each node as a discrete 0.15-second
+  hop with a small configurable arc; this is visual-only and leaves race
+  positions, lap crossings and corner calculations unchanged.
+- Runtime cars now receive a scene-independent world-space team badge showing a
+  stable team code and current rank. It stays upright while the car follows
+  track tangents and uses a high-contrast team-color fill. This is a temporary
+  readability fallback until authored flag and driver-avatar art is available;
+  the car prefab and Race scene remain untouched.
+- Race-event presentation keeps spin-out behavior outside the rules layer; its
+  default cue is now a configurable 1-second, 360-degree rotation with pure
+  timing/easing coverage, while the blow-up and normal spin state transitions
+  remain owned by `MVPGameManager`.
+- `Core/RaceLogAnalyzer.cs` provides pure checks for turn phase ordering,
+  active-discard count integrity, and complete-vs-partial manual logs so new
+  Play Mode evidence can be reviewed repeatably.
+- `Core/RaceLogFileAnalyzer.cs` and the `Foodula1 > Tools > Analyze Latest Race Log`
+  editor entry load saved manual logs without changing race state, making the
+  phase/order checks repeatable against real playtest files.
 - The four Scheme A refactor sources were committed in `58d1bba`.
   `RaceRules.cs` and `AIPlanner.cs` are integrated into the runtime.
   `AIController` and `CardDeck` accept injectable `IRandomSource`
@@ -90,7 +114,8 @@ The verified scene flow is:
   passes its historical original 16 EditMode tests with no Unity warnings or errors;
   the current full suite is tracked separately below.
 - `Gameplay/TrackRules.cs` now provides pure, tested track traversal rules.
-  Together with the current feature tests, the project passes 451 EditMode
+  Together with the current feature tests, the latest full project run passes
+  471 EditMode
   tests. `RaceTestLogWriter` can capture a manual race into a timestamped log
   for later review; a controlled four-car Silverstone Play Mode smoke on
   2026-08-25 produced two `[SLIPSTREAM]` entries and confirmed `RaceEventFX`
@@ -99,6 +124,9 @@ The verified scene flow is:
   446-test suite, followed by a 5-second MainMenu Play Mode smoke with no project
   errors or warnings. The subsequent AI tailwind rerun passed 15/15 focused
   tests and 451/451 full EditMode tests, including the new boundary cases.
+  The 2026-08-27 team-badge change passed 18/18 focused and 469/469 full
+  EditMode tests; the only Console error was an existing LogAssert-expected
+  missing-track test message, with no unhandled compilation error.
 - The deterministic full-race test and `TrackTeamBalanceBenchmark` now freeze
   every racer's non-slipstream plan before resolving the same two-step chain as
   runtime. The corrected 2026-08-25 benchmark covers nine track configurations,

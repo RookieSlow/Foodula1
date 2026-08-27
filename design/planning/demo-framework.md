@@ -1,347 +1,185 @@
 # Foodula1 — Demo 游戏框架
 
-> **文档类型**: 框架设计 + 资源需求  
-> **创建日期**: 2026-07-22  
-> **状态**: Phase 1 完成 ✅ | Phase 2 资产替换与验证进行中 🚧
-> **实现快照**：2026-08-23；Prefab 优先 + `RaceUIFactory` 回退 UI、8 条赛道布局
-> 背景、车队赛车精灵、天气、维修区、科技树和车手选择已部分或全部接入；
-> 本文中的“目标重构映射”不等同于当前文件已被重命名。
+> **文档类型**：当前框架、场景边界与资源入口
+> **创建日期**：2026-07-22
+> **实现快照**：2026-08-27
+> **状态**：核心 Demo 已实现，进入人工验收与封版准备。历史目标重构不再作为当前缺失项。
 
 ---
 
-## 一、架构总览
+## 一、当前项目结构
 
 ```
 Assets/
-├── Scripts/                    # C# 游戏逻辑
-│   ├── Core/                   # 核心系统（纯逻辑，非 MonoBehaviour）
-│   ├── Gameplay/               # 玩法系统
-│   ├── AI/                     # AI 系统
-│   ├── UI/                     # UI 系统
-│   └── Config/                 # ScriptableObject 配置
-│
-├── Prefabs/                    # Unity 预制体
-│   ├── UI/                     # UI 预制体（Canvas 面板、按钮、卡牌）
-│   ├── Cars/                   # 赛车预制体（6 辆）
-│   ├── Track/                  # 赛道预制体（节点、弯心标记）
-│   └── Effects/                # 特效预制体
-│
-├── Sprites/                    # 精灵图资源
-│   ├── UI/                     # UI 精灵（面板、按钮、图标）
-│   ├── Cars/                   # 赛车精灵（各车队）
-│   ├── Track/                  # 赛道精灵
-│   ├── Cards/                  # 卡牌精灵
-│   └── Effects/                # 特效精灵
-│
-├── Scenes/                     # Unity 场景
-│   ├── MainMenu.unity          # 主菜单
-│   ├── Race.unity              # 比赛场景（核心）
-│   └── Garage.unity            # 车库/车队选择（后续）
-│
-├── Audio/                      # 音频资源
-│   ├── Music/
-│   └── SFX/
-│
-├── Fonts/                      # 字体资源
-│
-└── Resources/                  # 动态加载资源
-    └── Configs/                # 运行时配置
+├── Scripts/
+│   ├── Core/          # 比赛编排、状态、规则门面、日志分析
+│   ├── Gameplay/      # 赛道、车辆表现、维修区、赛事特效
+│   ├── AI/            # AIController 与纯规划规则
+│   ├── UI/            # 主菜单、比赛 HUD、卡牌、牌堆、科技树
+│   ├── Config/        # GameConfigSO 与运行时配置
+│   ├── Drivers/       # 12 位车手目录与成长规则
+│   ├── TechTree/      # 科技数据库、规则与持久化
+│   └── TrickCards/    # 车队特技牌数据与规则
+├── Prefab/            # 既有卡牌、赛车和节点 Prefab
+├── Prefabs/UI/        # 当前权威 RaceCanvas.prefab
+├── Sprites/
+│   ├── Cards/         # 已接入卡牌资源
+│   ├── Cars/          # 已接入六队赛车资源
+│   ├── Track/         # 已接入八张 4K 赛道图
+│   └── UI/            # 当前档位旋钮；其余多为运行时绘制
+├── Scenes/
+│   ├── MainMenu.unity
+│   └── Race.unity
+├── Resources/Configs/Tracks/  # 8 条官方 JSON + fallback_42
+├── ttf/                       # 字体源文件
+└── TmpFont/                   # TMP 字体资产
 ```
+
+`Assets/Audio/Music/` 与 `Assets/Audio/SFX/` 当前只有目录和 `.meta`，
+没有实际音频文件；应在音频工作包开始时按
+`design/gdd/foodula-1-audio-style.md` 接入。
 
 ---
 
-## 二、脚本架构
+## 二、当前脚本架构
 
-### 2.1 现有脚本 → 新位置映射
+| 模块 | 当前入口 | 职责 |
+|---|---|---|
+| 比赛编排 | `Core/MVPGameManager.cs` | 协调回合阶段、UI、表现与规则服务；不是未来重命名任务 |
+| 会话聚合 | `Core/RaceSession.cs` | 聚合天气、维修区、特技、科技和尾流等纯规则调用 |
+| 卡牌/热量 | `Core/CardDeck.cs`、`CardData.cs`、`PlayerState.cs` | 牌区所有权、引擎热量与比赛状态 |
+| 赛道 | `Gameplay/TrackManager.cs`、`TrackDataLoader.cs` | JSON 加载、运行时节点、背景与遮罩 |
+| AI | `AI/AIController.cs`、`AIPlanner.cs` | 可重复的热量/弯道/尾流规划 |
+| UI | `Prefabs/UI/RaceCanvas.prefab`、`UI/RaceUIFactory.cs` | Prefab 优先，旧场景回退路径 |
+| 科技树 | `TechTree/`、`UI/TechTreeUI.cs` | RP、解锁/激活、持久化和比赛钩子 |
+| 车手 | `Drivers/DriverData.cs`、`UI/DriverSelectionUI.cs` | 12 位车手目录、XP/等级与选择 |
+| 表现 | `Gameplay/RaceEventFX.cs`、`CarMovementAnimator.cs` | 卡牌/车辆/尾流/失控等视觉反馈，不改变规则 |
+| 日志 | `Core/RaceTestLogWriter.cs`、`RaceLogAnalyzer.cs` | 人工对局证据采集与结构分析 |
 
-| 现有文件 | → 新位置 | 重构说明 |
-|---------|---------|---------|
-| `MVPGameManager.cs` | `Scripts/Core/GameManager.cs` | 重命名，分割职责 |
-| `CardDeck.cs` | `Scripts/Core/CardDeck.cs` | 保持，已纯 C# |
-| `CardData.cs` | `Scripts/Core/CardData.cs` | 保持 |
-| `PlayerState.cs` | `Scripts/Core/PlayerState.cs` | 保持 |
-| `HeatPool.cs` | `Scripts/Core/HeatPool.cs` | 从 CardDeck.cs 中独立出来 |
-| `TrackManager.cs` | `Scripts/Gameplay/TrackManager.cs` | 重构，数据驱动赛道 |
-| `AIController.cs` | `Scripts/AI/AIController.cs` | 保持 |
-| `GameConfigSO.cs` | `Scripts/Config/GameConfigSO.cs` | 拆分 |
-| `CardUI.cs` | `Scripts/UI/CardUI.cs` | 重构，支持 sprite |
-| `CardHandUI.cs` | `Scripts/UI/CardHandUI.cs` | 重构，Canvas 预制体 |
-| `HUDUI.cs` | `Scripts/UI/HUDUI.cs` | 重构，Canvas 预制体 |
-| `TrackNode.cs` | `Scripts/Gameplay/TrackNode.cs` | 保持 |
+### 尚未实现但明确需要的模块
 
-### 2.2 需要新增的脚本
+| 模块 | 优先级 | 边界 |
+|---|---|---|
+| 音频服务 + AudioMixer | P1 | 音乐/音效事件路由、混音、限频、设置持久化 |
+| 车手签名技能执行层 | P2 | 当前仅有目录、成长与选择；属于 Demo 后功能扩展 |
+| 难度/手柄/比赛中途存档 | P3 | 不属于当前 Demo 验收阻塞项 |
 
-| 文件 | 位置 | 职责 |
-|------|------|------|
-| `RaceManager.cs` | `Scripts/Core/` | 比赛流程管理（从 GameManager 分离） |
-| `InputManager.cs` | `Scripts/Core/` | 输入管理（键盘/鼠标） |
-| `CarEntity.cs` | `Scripts/Gameplay/` | 赛车实体（MonoBehaviour，挂载到赛车 Prefab） |
-| `CarStats.cs` | `Scripts/Gameplay/` | 赛车属性配置（纯数据） |
-| `TrackDataSO.cs` | `Scripts/Config/` | 赛道数据 ScriptableObject |
-| `CarConfigSO.cs` | `Scripts/Config/` | 赛车配置 ScriptableObject |
-| `DriverConfigSO.cs` | `Scripts/Config/` | 车手配置 ScriptableObject |
-| `TechTreeConfigSO.cs` | `Scripts/Config/` | 技能树配置 ScriptableObject |
-| `UIPanel.cs` | `Scripts/UI/` | UI 面板基类 |
-| `MainMenuUI.cs` | `Scripts/UI/` | 主菜单 |
-| `GarageUI.cs` | `Scripts/UI/` | 车库/车队选择 |
-| `ResultsUI.cs` | `Scripts/UI/` | 比赛结果面板 |
-| `AIDriverProfile.cs` | `Scripts/AI/` | AI 车手个性配置 |
-| `AudioManager.cs` | `Scripts/Core/` | 音效/音乐管理 |
-| `SceneLoader.cs` | `Scripts/Core/` | 场景切换 |
+`RaceManager`、`InputManager`、`TrackDataSO`、`CarConfigSO`、
+`DriverConfigSO`、`Garage.unity` 等旧目标只有在后续需求证明现架构不足时再提 ADR；
+它们不是“为了完成 Demo 必须创建”的文件。
 
 ---
 
-## 三、UI 系统框架
+## 三、UI 框架
 
-当前运行时优先使用 Canvas Prefab，旧场景仍可回退到 `RaceUIFactory` 的程序化 UI；
-`AutoCreateUI()` 不再是唯一实现方式。
+### 3.1 比赛 HUD
 
-### 3.1 UI Canvas 层级
+`RaceCanvas.prefab` 是当前可视化编辑权威，运行时保留人工设置的 RectTransform；
+只有旧 Canvas 缺少关键面板时才由 `RaceUIFactory` 补齐。
 
-```
-RaceCanvas (Canvas, Screen Space - Overlay)
-├── TopBar
-│   ├── LapText (圈数/总圈数)
-│   ├── PositionText (当前名次)
-│   └── WeatherIcon (天气图标)
-│
-├── RightPanel
-│   ├── GearIndicator (档位旋钮)
-│   ├── HeatMeter (热量温度计)
-│   ├── SpinCounter (失控计数器)
-│   └── DriverPortrait (车手头像)
-│
-├── BottomBar (手牌区)
-│   ├── CardSlot_0..6 (7 个卡牌槽位)
-│   └── DeckInfoText (牌堆信息)
-│
-├── GearSelectionPanel (档位选择)
-│   ├── GearButton_G1..G4
-│   └── ConfirmGearButton
-│
-├── ActionButtons
-│   ├── PlayButton
-│   └── ResetButton
-│
-├── LogPanel (左下角日志)
-│   └── LogText
-│
-├── GameOverPanel (比赛结束，默认隐藏)
-│   ├── ResultText
-│   ├── RankingList
-│   └── BackToMenuButton
-│
-└── StatusText (顶部居中状态提示)
-```
+当前 HUD 由四个主要区域组成：
 
-### 3.2 UI 组件规范
+- 顶部/赛道信息：圈数、排名、天气、阶段提示和迷你地图。
+- 左侧操作栏：档位/模式、确认/重置、返回主菜单与事件日志。
+- 右侧资源栏：引擎热量、牌堆/弃牌堆缩略和精确数量。
+- 底部手牌区：卡牌高亮、打出/弃牌与热量流转动画。
 
-| 组件 | 类型 | 说明 |
-|------|------|------|
-| GearIndicator | Image + TMP | 圆形旋钮风格，弧形排列 G1-G4，当前档位高亮 |
-| HeatMeter | Image(Filled) | 垂直温度计，引擎/手牌双轨显示 |
-| CardSlot | Button + Image + TMP | 卡牌槽位，支持选中/未选中/不可选三态 |
-| GearButton | Button + TMP | 方形按钮，选中态绿色，禁止态灰色(+2档需1热提示) |
-| DriverPortrait | Image | 圆形头像框 + 国旗图标 + 车手名 |
+比赛中的赛车上方使用运行时车队代码 + 名次徽标。正式六队徽章和车手头像接入后，
+应替换图形内容但保留当前名次和正向显示规则。
+
+### 3.2 主菜单
+
+当前 `MainMenu.unity` 提供：
+
+- Foodula1 标题、开始比赛、车库/配置入口、科技树和退出。
+- 赛道、车队、车手选择与科技树配置的运行时面板。
+- 纯色深色背景和 TMP 文字。
+
+正式主菜单背景、Logo、车手头像、车队徽章和科技树背景尚缺；清单见
+`design/planning/asset-manifest.md`。
 
 ---
 
-## 四、资产需求清单
+## 四、场景与数据
 
-### 4.1 卡牌精灵
+### 4.1 Race.unity
 
-| 资产 | 文件名 | 规格 | 说明 |
-|------|--------|------|------|
-| 速度牌底图 | `card_speed_bg.png` | 256×384, PNG | 速度牌通用底图，科技蓝边框，圆角 |
-| 热量牌底图 | `card_heat_bg.png` | 256×384, PNG | 热量牌底图，暗橙/红棕色调，"沉重"感 |
-| 速度牌高亮 | `card_speed_selected.png` | 256×384, PNG | 选中态叠加，绿色半透明覆盖 |
-| 卡牌背图 | `card_back.png` | 256×384, PNG | 牌组背面，赛车主题 |
-| 数字 1-4 | `card_num_1..4.png` | 128×128, PNG | 速度牌中央大号数字，自定义风格字体 |
-| 热量图标 | `card_heat_icon.png` | 128×128, PNG | 火焰简化图标 |
+- 主相机 + 固定全图小地图相机。
+- `TrackManager` 按选择的 JSON 构建运行时赛道，`TrackEnvironmentController`
+  选择对应 4K 背景。
+- 赛车按赛道切线转向，并以逐格跳跃表现移动。
+- `RaceCanvas.prefab` 负责 HUD；`MVPGameManager` 编排比赛阶段。
 
-**设计要求**: 参考 `foodula-1-visual-style.md` §5 卡牌视觉设计。保留桌游实体卡质感：轻微圆角（8px）、细边框、阴影。具体色值见 `foodula-1-visual-style.md` §2.2。
+### 4.2 MainMenu.unity
 
-### 4.2 UI 精灵
+- 负责快速比赛入口与赛前配置。
+- 不依赖独立 `Garage.unity` 才能完成 Demo 流程。
+- 正式背景图和品牌资源尚未接入。
 
-| 资产 | 文件名 | 规格 | 说明 |
-|------|--------|------|------|
-| 档位旋钮底 | `gear_knob_bg.png` | 200×200, PNG | 圆形，炉灶旋钮风格的扁平化版本 |
-| 档位旋钮指针 | `gear_knob_pointer.png` | 200×200, PNG | 指针层，旋转到当前档位方向 |
-| 热量温度计 | `heat_meter_bg.png` | 48×256, PNG | 垂直柱状，蓝→红渐变 |
-| 热量温度计填充 | `heat_meter_fill.png` | 44×252, PNG(9-slice) | Filled Image 用 |
-| 面板底图 | `panel_bg.png` | 动态尺寸, 9-slice | 暗灰蓝 `#161B22`，细线边框 `#30363D` |
-| 按钮常态 | `btn_normal.png` | 动态尺寸, 9-slice | 白色半透明，细边框 |
-| 按钮悬浮 | `btn_hover.png` | 同上 | 边框变亮 |
-| 按钮按下 | `btn_pressed.png` | 同上 | 填充 |
-| 国旗图标 ×6 | `flag_uk/de/it/us/cn/jp.png` | 64×64, PNG | 六国国旗，圆形裁切 |
+### 4.3 当前数据权威
 
-### 4.3 赛车精灵
+| 数据 | 当前权威 |
+|---|---|
+| 赛道格数、弯道、维修区、天气、圈数 | `Assets/Resources/Configs/Tracks/*.json` |
+| 比赛参数、AI 数量、动画时间 | `GameConfigSO` 及其资产 |
+| 六队车辆与机制 | `TeamVehicleRules`、科技/特技数据库 |
+| 十二位车手 | `DriverCatalog` |
+| 科技树 | `TechTreeDatabaseFactory` + `TechTreeProfileStore` |
 
-| 资产 | 文件名 | 规格 | 说明 |
-|------|--------|------|------|
-| 英国炸鱼薯条赛车 | `car_uk.png` | 256×128, PNG | 金黄车身+薯条尾翼，参考 visual-style §3.2 |
-| 德国啤酒黑面包赛车 | `car_de.png` | 256×128, PNG | 银灰+深棕，碱水面包防滚架 |
-| 意大利意面披萨赛车 | `car_it.png` | 256×128, PNG | 法拉利红+芝士白顶盖 |
-| 美国汉堡可乐赛车 | `car_us.png` | 256×128, PNG | 可乐红+双层肉饼 |
-| 中国电动点心赛车 | `car_cn.png` | 256×128, PNG | 瓷白蒸笼+翡翠绿点缀 |
-| 日本寿司拉面赛车 | `car_jp.png` | 256×128, PNG | 玄黑海苔+彩色截面 |
-
-**设计要求**: 俯视图（赛道从上方看）。手绘质感（Hand-Painted），非 PBR 写实。多边形面数 ~2000-4000 tri（如果用 3D）或 256px 宽精灵图（如果用 2D）。当前 Demo 用 2D 精灵。
-
-### 4.4 赛道精灵
-
-| 资产 | 文件名 | 规格 | 说明 |
-|------|--------|------|------|
-| 赛道节点（直道）| `track_straight.png` | 32×32, PNG | 灰色圆点/方块 |
-| 赛道节点（弯心）| `track_apex.png` | 32×32, PNG | 红色圆点+限速数字 |
-| 起终点线 | `track_start_finish.png` | 32×32, PNG | 绿色+方格旗图案 |
-| 背景赛道底图 | `track_bg_demo.png` | 2048×2048, PNG | 42 节点赛道整体底图（可用程序化替代） |
-
-**替代方案**: 赛道可用 LineRenderer 画线（现有方案），节点用简单精灵标记。后期切换到完整赛道底图。
-
-### 4.5 特效精灵
-
-| 资产 | 文件名 | 规格 | 说明 |
-|------|--------|------|------|
-| 尾流虚线箭头 | `fx_slipstream.png` | 64×32, PNG | 科技蓝虚线箭头，参考 visual-style §6.1 |
-| 失控旋转帧 | `fx_spin_*.png` | 128×128, PNG, 4 帧 | 赛车旋转动画序列 |
-| 弯道判定脉冲 | `fx_corner_flash.png` | 32×32, PNG | 红色脉冲圈 |
-| 冷却粒子 | `fx_cool.png` | 16×16, PNG | 蓝色光点，飘出效果 |
-
-### 4.6 音频需求（后续）
-
-| 资产 | 文件名 | 格式 | 说明 |
-|------|--------|------|------|
-| BGM 比赛 | `bgm_race.ogg` | OGG, loop | 节奏感强，非干扰性 |
-| BGM 菜单 | `bgm_menu.ogg` | OGG, loop | 轻松 |
-| SFX 选牌 | `sfx_card_select.wav` | WAV | 轻微咔嗒声 |
-| SFX 出牌 | `sfx_card_play.wav` | WAV | 刷刷声 |
-| SFX 过弯 | `sfx_corner.wav` | WAV | 弯道判定音效 |
-| SFX 失控 | `sfx_spin.wav` | WAV | 轮胎尖叫+撞击 |
-| SFX 完赛 | `sfx_finish.wav` | WAV | 欢呼/旗帜 |
+不要依据旧版 42 格示意图或废弃的 ScriptableObject 草案覆盖当前数据。
 
 ---
 
-## 五、场景设计
+## 五、资源状态
 
-### 5.1 Race.unity — 比赛场景（核心）
+### 已完成
 
-```
-Main Camera (Orthographic, Size 自适应赛道)
-└── Background (深灰底色)
+- 9 张核心卡牌图。
+- 6 辆车队赛车图。
+- 8 张 3840×2160 官方赛道布局图。
+- 档位旋钮、中文 TMP 字体、RaceCanvas HUD。
+- 运行时卡牌流转、牌堆层数、赛道标识、逐格移动、失控和尾流阶段表现。
 
-RaceCanvas (Screen Space - Overlay)
-└── [见 §3.1 层级]
+### 仍缺
 
-TrackContainer (World Space)
-├── TrackLine (LineRenderer)
-├── NodeMarkers (实例化 TrackNode Prefab  × N)
-├── CarInstances (实例化 CarPrefab × 玩家数)
-└── CornerLabels (限速标签 TMP)
+- 主菜单背景与 Foodula1 Logo。
+- 六队徽章/国旗、12 位车手头像。
+- 科技树背景、节点三态与层级徽章。
+- 赛道选择缩略图（可从现有 4K 图派生）。
+- 天气/结果/特技牌等 P1 美术。
+- 全部音乐、音效、AudioMixer 和音量设置。
 
-GameManager (MonoBehaviour)
-├── TrackManager
-├── AIController
-└── AudioManager
-```
-
-### 5.2 MainMenu.unity — 主菜单
-
-```
-- 标题: "Foodula1" (大号 TMP)
-- 快速比赛 按钮 → Race.unity
-- 车队/车手与科技树配置通过当前 MainMenu 面板完成；`Garage.unity` 仍是未来独立车库场景目标。
-- 退出 按钮
-- 背景: 赛道剪影 + 动画赛车
-```
+完整文件名、规格和优先级只在
+`design/planning/asset-manifest.md` 维护，避免与本框架重复漂移。
 
 ---
 
-## 六、配置数据架构
+## 六、下一阶段
 
-### 6.1 TrackDataSO（未来配置方案；当前不使用）
+### Phase A — Demo 验收与冻结
 
-> 当前赛道配置以 `Assets/Resources/Configs/Tracks/*.json` 为权威，
-> `TrackDataSO` 保留为后续编辑器化方案，不应视为缺失的当前运行时资产。
+- 完整比赛日志与高风险机制场景验收。
+- 多车排名、引擎量表、维修区、天气、尾流和结果返回验收。
+- 1920×1080 / 2560×1440 视觉检查。
+- 定向 + 全量 EditMode 回归，记录 Console 和日志证据。
 
-```csharp
-[CreateAssetMenu(menuName = "Foodula1/Track Config")]
-public class TrackDataSO : ScriptableObject
-{
-    public string trackName;
-    public string trackNameEn;
-    public int totalLaps;
-    public Vector2[] nodePositions;         // 节点坐标
-    public int[] apexNodeIndices;           // 弯心节点索引
-    public int[] cornerSpeedLimits;         // 弯心限速
-    public string[] cornerNames;            // 弯心名称
-    public int startFinishIndex;            // 起点/终点索引
-}
-```
+### Phase B — 视觉身份包
 
-### 6.2 CarConfigSO（赛车配置）
+- 主菜单、Logo、车队、车手、科技树和赛道缩略图。
+- 接入后替换运行时占位图形，但不改变规则层。
 
-```csharp
-[CreateAssetMenu(menuName = "Foodula1/Car Config")]
-public class CarConfigSO : ScriptableObject
-{
-    public string carName;
-    public string country;
-    public Sprite carSprite;
-    public int topSpeed;    // 极速加成
-    public int accel;       // 加速加成
-    public int handling;    // 操控加成（弯道限速 +N）
-    public int cooling;     // 冷却效率加成
-    public int durability;  // 耐久（影响失控容错？）
-    public int slipstream;  // 尾流效率加成
-}
-```
+### Phase C — 核心音频包
 
-### 6.3 DriverConfigSO（车手配置 — 后续）
+- AudioMixer、音频服务与音量设置。
+- 菜单/比赛音乐和核心玩法音效。
+- 通过实际比赛阶段与日志验证播放时机。
 
-```csharp
-[CreateAssetMenu(menuName = "Foodula1/Driver Config")]
-public class DriverConfigSO : ScriptableObject
-{
-    public string driverName;
-    public string country;
-    public Sprite portrait;
-    public DriverStyle style;         // Aggressive/Balanced/Technical
-    public PassiveSkill passive;
-    public ActiveSkill signature;
-}
-```
+### Phase D — Demo 后扩展
+
+- 车手签名技能、多 AI 难度、独立车库/生涯、平台适配和更多内容。
 
 ---
 
-## 七、实施路线图
-
-### Phase 1 — 框架搭建 ✅（2026-07-25 完成）
-- [x] 建立 `Assets/` 目录结构
-- [x] 创建 RaceCanvas Prefab（UI 层级）
-- [x] 重命名 + 移动现有脚本到新目录（13 脚本迁移，GUID 保留）
-- [x] Scripts/ 拆分为 Core/Gameplay/AI/UI/Config + Editor
-- [x] RaceCanvas Prefab 生成（Editor 工具: Foodula1 → Build RaceCanvas Prefab）
-- [ ] ~~拆分 GameConfigSO → TrackDataSO + CarConfigSO~~ → 延后至 Phase 2
-- [ ] ~~GameManager 分割：RaceManager + InputManager~~ → 延后至 Phase 2
-
-### Phase 2 — 资源替换与验证（进行中）
-- [x] 卡牌底图、数字、热量图标和选中态资源已存在并接入
-- [x] 六支车队赛车精灵已存在并接入
-- [ ] UI 面板底图、国旗和完整按钮状态仍待资源补齐
-- [x] 中文 TMP 字体支持已接入；Inter / JetBrains Mono 仍是可选的后续替换
-
-### Phase 3 — 功能补全（核心已接入，调优未完成）
-- [x] 多车循环和可配置 AI 对手数量已接入；多对手平衡仍待调参
-- [x] 尾流机制已接入纯规则层
-- [x] 车队属性、科技树规则和比赛钩子已接入
-- [x] 车手目录、XP 规则、主菜单选择和比赛初始化已接入；签名效果仍待实现
-
-### Phase 4 — 打磨
-- [ ] 音效
-- [x] 基础移动插值、朝向、失控旋转提示和事件 FX 已接入；动画表现仍可打磨
-- [x] 五种天气规则和 HUD 文案已接入；多天气多圈 Play Mode 走查仍待完成
-
----
-
-> 📄 关联文档: `design/gdd/foodula-1-visual-style.md`（视觉规范）、`design/gdd/foodula-1-core-mechanics.md`（规则）、`design/gdd/foodula-1-teams-cars.md`（车队数据）、`design/planning/asset-manifest.md`（资产清单）、`design/planning/ai-art-prompts.md`（AI 生成 Prompt）
+> 关联：`design/gdd/systems-index.md`、`design/planning/roadmap.md`、
+> `design/planning/asset-manifest.md`、`design/gdd/foodula-1-visual-style.md`、
+> `design/gdd/foodula-1-audio-style.md`。

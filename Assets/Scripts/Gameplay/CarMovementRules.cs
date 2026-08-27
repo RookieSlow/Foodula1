@@ -21,4 +21,15 @@ public static class CarMovementRules
     {
         return Mathf.Max(0f, moveSpeed) * Mathf.Max(0f, deltaTime);
     }
+
+    /// <summary>
+    /// Returns the presentation-only hop height for a car moving between two
+    /// adjacent nodes. The offset is zero at both nodes and peaks at the
+    /// midpoint, keeping the gameplay position and target unchanged.
+    /// </summary>
+    public static float GetBounceOffset(float progress, float height)
+    {
+        float clampedProgress = Mathf.Clamp01(progress);
+        return Mathf.Sin(clampedProgress * Mathf.PI) * Mathf.Max(0f, height);
+    }
 }

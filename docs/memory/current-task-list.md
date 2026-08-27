@@ -1,8 +1,76 @@
 # Current Task List
 
-> Updated: 2026-08-26
+> Updated: 2026-08-27
 > Sources: Claude Code project memory, active session state, session history,
 > current Git worktree, and current Unity project structure.
+
+## 下一阶段（2026-08-27 Demo 验收、资源与音频）
+
+- [x] 审计当前 `Assets/`：核心卡牌、六队赛车、八张 4K 赛道图、档位旋钮和中文
+  TMP 已接入；主菜单背景/Logo、六队徽章、12 位车手头像、科技树美术和全部音频缺失。
+- [x] 重写 `design/planning/asset-manifest.md`，把旧 42 格节点图、已被运行时替代的
+  FX/Prefab 与真正缺失资源分开；增加美术规格、完整音乐/音效事件表和制作顺序。
+- [x] 新增 `design/gdd/foodula-1-audio-style.md`，定义音乐方向、事件声纹、Mixer
+  分组、限频、慢放边界和 Demo 音频验收标准。
+- [x] 同步 `systems-index.md`、`roadmap.md`、`demo-framework.md` 与视觉 GDD：
+  当前阶段改为 Demo 候选，最新全量 EditMode 证据为 `471/471`，粒子火花等冲突需求已移除。
+- [ ] P0：用户进行完整比赛与高风险机制验收；读取日志并仅修复明确缺陷。
+- [ ] P0：验收修复完成后重跑定向 + 全量 EditMode，记录 Console/日志/分辨率证据并冻结 Demo 基线。
+- [ ] P1：按资源清单制作并接入主菜单/Logo、车队/车手、科技树和赛道缩略图。
+- [ ] P1：建立 AudioMixer/音频服务，接入菜单/比赛 BGM 与核心玩法音效。
+
+## 本轮修复（2026-08-27 尾流慢放作用域）
+
+- [x] 修正 `RaceEventFX` 尾流特写遗漏恢复 `Time.timeScale` 的问题；慢放现在覆盖尾流
+  特写及紧接的尾流奖励移动，演出/奖励移动结束、异常清理、组件禁用或销毁时都会恢复
+  到正常比赛倍率 `1`。基础速度牌移动和后续回合不在慢放作用域内。
+- [x] 超车特写复用同一安全的慢放作用域，避免两个事件表现留下全局慢速状态。
+- [x] 新增慢放作用域回归测试；定向 EditMode `5/5`、全量 EditMode `471/471` 通过，
+  0 失败、0 跳过、Console 无错误/警告。Play Mode 回归作业因当前项目缺少独立 PlayMode
+  测试程序集而在初始化阶段未启动，未将其记为通过；新增的无效测试文件已撤回。
+
+## 本轮完成（2026-08-27 车队可读性工作包）
+
+- [x] 为运行时每辆赛车增加不改场景/Prefab 的世界空间车队徽标：显示稳定车队代码与实时名次，
+  车体转向时徽标保持正向，并使用车队颜色与高对比文字。
+- [x] 新增车队代码、徽标颜色和文字对比度纯规则测试；徽标是当前缺少国旗/车手头像素材时的
+  可读性回退，不宣称已经完成设计案要求的正式国旗图标与头像素材。
+- [x] Unity MCP 已完成脚本重新导入；车队徽标定向 EditMode `18/18`、全量 EditMode
+  `469/469` 通过，0 失败、0 跳过。
+- [ ] 待进行一次多车 Play Mode 视觉验收，确认徽标尺寸、遮挡关系和名次刷新；正式国旗/头像
+  素材仍属于后续视觉资产工作包。
+
+## 本轮完成（2026-08-27 日志证据自动化）
+
+- [x] 新增纯 C# `RaceLogAnalyzer`：逐回合检查 `[CARD_PHASE]`→`[MOVE_PHASE]`→可选
+  `[SLIPSTREAM_PHASE]` 的顺序，拒绝尾流早于基础移动的旧日志，并校验
+  `[DISCARD] selected=N discarded=M` 的数量关系。
+- [x] 新增 4 个日志分析回归用例，覆盖有效尾流/弃牌、旧版尾流顺序错误、弃牌数量溢出和
+  未结束的半局日志；分析器区分结构错误与仅缺少 `RACE_END` 的不完整日志。
+- [x] 新增文件级适配器与 Unity 菜单入口：`Foodula1 > Tools > Analyze Latest Race Log`
+  会读取最新真实日志，输出回合数、尾流阶段、弃牌事件和结构错误；也可选择指定 `.log` 文件。
+- [x] 文件适配器新增 2 个回归用例已包含在本轮全量 EditMode `469/469` 通过结果中。
+- [ ] 仍待对最新完整试玩日志执行一次 Unity 菜单检查；这项真人日志入口验收尚未冒充为已完成。
+
+## 本轮完成（2026-08-27 失控动画参数化）
+
+- [x] 将 `RaceEventFX` 的失控旋转从硬编码 0.92 秒改为默认 1 秒、360 度，并保留
+  爆缸脉冲和规则层状态不变；旋转仍为克制的单车体表现，不新增粒子、镜头震动或速度线。
+- [x] 新增纯层 `RaceEventPresentationRules` 的时间归一化与缓出旋转覆盖，以及默认字段的
+  EditMode 测试；测试文件和 `.meta` 已加入，未修改 Race 场景或 HUD 预制体。
+- [ ] Unity EditMode/Play Mode 视觉验收待 MCP 实例恢复后执行；本轮只做静态实现断言，
+  不将未运行的 Unity 测试标记为通过。
+
+## 本轮完成（2026-08-27 车辆移动弹跳表现）
+
+- [x] 按视觉设计案将相邻赛道格移动改为逐格跳跃：默认每格 0.15 秒、
+  0.08 世界单位弧高；目标节点和规则层位置在动画结束时精确对齐，传送/静止移动
+  仍直接定位。
+- [x] 新增 `CarMovementRules.GetBounceOffset` 纯函数和车辆移动回归覆盖，保留
+  `moveAnimSpeed` 作为旧配置的时长回退；两个默认 `GameConfigSO` 资产已接线。
+- [ ] Unity EditMode/Play Mode 视觉验收待 MCP 实例恢复后执行；本轮已完成静态差异检查，
+  但 dotnet CLI 只有 runtime、没有 SDK，因此未能进行 C# 构建验证，也未将未运行的 Unity
+  测试标记为通过。
 
 ## 本轮手动试玩视觉回归（2026-08-26）
 
@@ -423,7 +491,9 @@ with 0 failures, warnings, or errors.
 - [x] Implement the driver-selection flow as a catalog, session state, and
   runtime-built main-menu panel; connect the selected driver to race setup.
 - [ ] Add sound effects.
-- [ ] Add card-play, vehicle movement, bounce, and spin-out animations.
+- [ ] Complete Play Mode visual acceptance for card-play, vehicle movement, bounce, and spin-out
+  animations; card transitions, per-node bounce, and the 1-second/360-degree `RaceEventFX` cue
+  are implemented, while the final combined visual walkthrough remains open.
 - [x] Add weather gameplay after track data and race rules are stable; the five
   design profiles are now wired into limits, slipstream, cooling, spin-out and HUD.
 

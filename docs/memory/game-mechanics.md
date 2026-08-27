@@ -3,10 +3,14 @@
 This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
-> **Implementation snapshot (2026-08-26)**: Unity `2022.3.62f3c1`; the latest
-> successful editor EditMode run passed `451/451`. The required
+> **Implementation snapshot (2026-08-27)**: Unity `2022.3.62f3c1`; the latest
+> successful editor EditMode run passed `471/471`. The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.
+> The 2026-08-27 tailwind time-scale regression passed focused `5/5` and full
+> EditMode `471/471`; the Play Mode attempt did not initialize because this
+> project has no standalone PlayMode test assembly, so it is not counted as a
+> passing runtime test.
 > On 2026-08-26, the tailwind/HUD-focused regression passed 56/56 and the full
 > EditMode suite passed 451/451; a 5-second MainMenu Play Mode smoke produced
 > no project errors or warnings.
@@ -15,6 +19,9 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 > event-chain evidence, not a substitute for a manual two-link visual check.
 > The AI tailwind rerun covered 15 focused tests and the full 451-test suite,
 > including the same-lap and cross-lap boundary cases; all passed with no skips.
+> The team-badge rerun covered 18 focused tests and the full 469-test suite;
+> all passed with no skips. Console retained only the existing
+> LogAssert-expected missing-track error from its regression test.
 
 ## Turn and Card Loop
 
@@ -41,6 +48,11 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   played area. Pressing the action button with no pending card ends card play;
   any missing required speed cards use the existing engine-failure rule.
 - The selected speed-card values determine movement.
+- Tailwind close-ups and the immediately following bonus movement use a scoped
+  `0.28` time scale. The close-up keeps realtime presentation timing, while the
+  actual reward movement uses the scaled Unity clock so the slowdown is visible.
+  Cleanup, disable, and destroy paths restore normal gameplay time (`1`), so
+  base movement and later turns are not slowed.
 - The draw-pile and discard-pile panels show stacked backs, up to three live
   card thumbnails, and a quantity badge. Draw previews follow the actual draw
   order; discard previews start from the most recently discarded card. Visible
@@ -163,8 +175,28 @@ prototype and is no longer the authoritative model.
   lane inward, keep the current lane, or move one lane outward; boundary
   choices are disabled and the AI keeps its lane.
 - Vehicle sprites follow the track tangent: spawning and teleport-style moves
-  snap immediately to the next-node direction, while normal movement rotates
-  smoothly according to `carRotateSpeed`.
+  snap immediately to the next-node direction, while normal movement performs
+  a presentation-only hop between adjacent nodes (`nodeMoveDuration=0.15s`,
+  `nodeBounceHeight=0.08`) and rotates toward the tangent according to
+  `carRotateSpeed`; the stored gameplay position still snaps exactly to the
+  destination node after each hop.
+- A spin-out presentation is visual-only: `RaceEventFX` defaults to a 1-second
+  360-degree eased rotation, then restores the authored scale and track-facing
+  rotation. Spin counters, heat recovery, rewind, skipped turns and DNF remain
+  resolved synchronously by the gameplay rules before the cue is started.
+- Each runtime car now gets a non-interactive world-space badge above its sprite,
+  displaying the stable team code and current rank. The badge remains upright
+  while the car rotates along the track and refreshes after position/ranking
+  changes. It is a code/color fallback only; the GDD's authored flag icon and
+  driver avatar are still pending visual assets.
+- Manual race logs can be checked with the pure `RaceLogAnalyzer`: a valid turn
+  ends card selection before base movement, ends base movement before the
+  optional slipstream phase, and records active discard counts where
+  `discarded` never exceeds `selected`. A log without `RACE_END` is reported as
+  incomplete rather than being mistaken for a completed race.
+- The file adapter and Unity editor menu can run the same checks against the
+  latest or a selected saved `.log`; file-read failures are reported as
+  analysis errors rather than interrupting gameplay.
 - Track authoring workflow, pit behavior, and a full multi-lap manual playthrough
   now have full-race evidence; broader multi-track validation remains open.
 

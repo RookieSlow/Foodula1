@@ -16,7 +16,9 @@ public interface ICarMovementAnimator
 /// </summary>
 public sealed class CarMovementAnimator : ICarMovementAnimator
 {
-    private readonly float moveSpeed;
+    private readonly float fallbackMoveSpeed;
+    private readonly float nodeMoveDuration;
+    private readonly float nodeBounceHeight;
     private readonly float arrivalThreshold;
     private readonly CarOrientationController orientationController;
     private readonly Func<float> deltaTimeProvider;
@@ -27,7 +29,12 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
         CarOrientationController orientationController,
         Func<float> deltaTimeProvider = null)
     {
-        moveSpeed = config != null ? Mathf.Max(0f, config.moveAnimSpeed) : 12f;
+        fallbackMoveSpeed = config != null ? Mathf.Max(0f, config.moveAnimSpeed) : 12f;
+        float fallbackDuration = fallbackMoveSpeed > 0f ? 1f / fallbackMoveSpeed : 0.15f;
+        nodeMoveDuration = config != null
+            ? Mathf.Max(0.01f, config.nodeMoveDuration > 0f ? config.nodeMoveDuration : fallbackDuration)
+            : 0.15f;
+        nodeBounceHeight = config != null ? Mathf.Max(0f, config.nodeBounceHeight) : 0.08f;
         arrivalThreshold = CarMovementRules.DefaultArrivalThreshold;
         this.orientationController = orientationController ?? new CarOrientationController(config);
         this.deltaTimeProvider = deltaTimeProvider ?? (() => Time.deltaTime);
@@ -39,21 +46,33 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
         if (car == null)
             yield break;
 
-        if (moveSpeed <= 0f)
+        if (nodeMoveDuration <= 0f)
         {
             car.transform.position = targetPosition;
             orientationController.RotateTowards(car, targetPosition, 0f);
             yield break;
         }
 
-        while (!CarMovementRules.HasReachedTarget(
-            car.transform.position, targetPosition, arrivalThreshold))
+        Vector3 startPosition = car.transform.position;
+        if (CarMovementRules.HasReachedTarget(startPosition, targetPosition, arrivalThreshold))
+        {
+            car.transform.position = targetPosition;
+            orientationController.RotateTowards(car, targetPosition, 0f);
+            yield break;
+        }
+
+        // Each node is a discrete board-space step: interpolate only within
+        // the current hop, then snap to the exact target. The vertical arc is
+        // presentation-only and never changes the stored track position.
+        float elapsed = 0f;
+        while (elapsed < nodeMoveDuration)
         {
             float deltaTime = Mathf.Max(0f, deltaTimeProvider());
-            car.transform.position = Vector3.MoveTowards(
-                car.transform.position,
-                targetPosition,
-                CarMovementRules.GetStepDistance(moveSpeed, deltaTime));
+            elapsed += deltaTime;
+            float progress = Mathf.Clamp01(elapsed / nodeMoveDuration);
+            Vector3 position = Vector3.LerpUnclamped(startPosition, targetPosition, progress);
+            position += Vector3.up * CarMovementRules.GetBounceOffset(progress, nodeBounceHeight);
+            car.transform.position = position;
             orientationController.RotateTowards(car, targetPosition, deltaTime);
             yield return null;
         }

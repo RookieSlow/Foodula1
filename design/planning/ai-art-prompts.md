@@ -4,7 +4,22 @@
 > **当前工具**: GPT Image (ChatGPT 内置)  
 > **输出格式**: PNG, RGBA (需手动去底)  
 > **关联文档**: `design/gdd/foodula-1-visual-style.md`（配色与风格）、`design/planning/asset-manifest.md`（完整清单）
-> **实现审计**：2026-08-23；赛道布局背景当前为 8 条官方可选赛道，资源清单中的状态以实际文件为准。
+> **实现审计**：2026-08-27。本文保留已生成资源的历史 Prompt 以便重制，
+> 但不再是制作任务清单；唯一资源事实表是 `design/planning/asset-manifest.md`。
+> 卡牌、赛车、赛道和档位旋钮已经存在，不应按本文旧 P0/P1 标记重复生成。
+
+### 当前待制作 Prompt 包
+
+新一轮 AI 美术只应围绕以下缺口展开：
+
+1. 主菜单 4K 背景与透明 Foodula1 Logo。
+2. 12 位车手统一构图头像（文件 ID 见资源清单）。
+3. 六队原创徽章；国旗只作辅助，发布前核对许可。
+4. 科技树 4K 背景、节点三态和 L1/L2/L3 层级徽章。
+5. 天气、结果、车手/车队卡框和 12 张特技牌插画（P1）。
+
+八张赛道缩略图应由现有 `track_layout_*.png` 派生，不重新生成。
+运行时尾流、冷却、失控和弯道提示已达到 Demo 基线，FX Prompt 仅用于可选替换。
 
 ---
 
@@ -219,11 +234,10 @@ Background: transparent. Style: Pixar Cars meets board game token.
 
 > ⚠️ **不建议用 AI 生成 UI 元素**。以下是更快的制作方法。
 
-### 国旗图标 (#18-23, 64×64px)
+### 车队标识（旧国旗方案）
 
-不需要 AI。直接下载：
-- https://flagicons.lipis.dev/ — 免费国旗 SVG/PNG，选 64px 圆形裁切
-- 6 面国旗放到 `Assets/Sprites/UI/flag_*.png`
+当前建议优先绘制六枚原创队徽，国旗只作为次级信息。若使用第三方国旗图标，
+必须保存来源与许可证，并统一导出到资源清单规定的 256×256 透明安全区。
 
 ### 面板底图 `panel_bg.png`
 
@@ -940,7 +954,7 @@ Style: flat 2D icon, like a checkered flag emoji but simpler. Absolute minimalis
 
 ---
 
-## 📋 完整 AI 生成清单
+## 📋 历史 AI 生成清单（非当前待办）
 
 | # | 文件名 | 类别 | 尺寸 | 用 AI? |
 |---|--------|------|------|--------|
@@ -979,7 +993,8 @@ Style: flat 2D icon, like a checkered flag emoji but simpler. Absolute minimalis
 | — | 热量温度计 | UI | 48×256 | ❌ Unity Image.Filled |
 | — | 字体 ×2 | 字体 | — | ❌ Google Fonts |
 
-**AI 生成总计: 43 张**（9 卡牌 + 6 赛车 + 10 赛道 + 8 赛道布局 + 5 UI + 5 特效）
+**历史规划总计：43 张**。其中大量资源已经接入或被运行时方案替代；
+不得用这个数量衡量当前缺口。
 
 ---
 
