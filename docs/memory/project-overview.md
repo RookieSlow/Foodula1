@@ -58,7 +58,7 @@ The verified scene flow is:
 - Core race presentation is Demo-grade; formal brand/portrait/tech-tree art and
   the entire audio layer remain as the next asset-completion package.
 - The project is in Production stage. The latest editor audit on 2026-08-28
-  recorded a successful 509/509 EditMode run. The MainMenu-to-Race flow, race
+  recorded a successful 514/514 EditMode run. The MainMenu-to-Race flow, race
   card/icon references, and Chinese font support remain the current
   presentation baseline.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
@@ -88,7 +88,7 @@ The verified scene flow is:
   authored in `Assets/Resources/Prefabs/UI/TutorialOverlay.prefab`: its root exposes all sixteen lesson
   copies, while the panel and spotlight retain manually edited RectTransforms. Runtime reuses an instance
   under `RaceCanvas` before loading the Resources fallback. Final guided Play Mode remains open.
-- The tutorial runtime slice now passes `26/26` focused and `509/509` full EditMode tests.
+- The tutorial runtime slice now passes `31/31` focused and `514/514` full EditMode tests.
   Play Mode verified the exact seven-card opening and zero-benefit session; a separate
   Monza Quick Race retained the randomized deck, tech state and vehicle bonuses. The
   earlier guide-panel smoke confirmed its first authored step. A 2026-08-28 visual smoke stayed in

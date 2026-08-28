@@ -324,6 +324,95 @@ public class TutorialScenarioTests
         Assert.That(prefab.transform.Find("TutorialFocusHighlight"), Is.Not.Null);
     }
 
+    [Test]
+    public void TutorialOverlayAuthoringCanPreviewStepAndPracticeWithoutRuntimeDirector()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        try
+        {
+            TutorialOverlayAuthoring authoring =
+                instance.GetComponent<TutorialOverlayAuthoring>();
+            Transform panel = instance.transform.Find("TutorialGuidePanel");
+
+            Assert.That(authoring.PreviewStep(TutorialStepId.UkScone), Is.True);
+            Assert.That(
+                panel.Find("TutorialTitle").GetComponent<TMPro.TMP_Text>().text,
+                Is.EqualTo(authoring.Find(TutorialStepId.UkScone).title));
+            Assert.That(
+                panel.Find("TutorialInstruction").GetComponent<TMPro.TMP_Text>().text,
+                Does.Contain("轮到你了"));
+
+            Assert.That(authoring.PreviewPractice(completed: true), Is.True);
+            Assert.That(
+                panel.Find("TutorialTitle").GetComponent<TMPro.TMP_Text>().text,
+                Is.EqualTo("练习圈完成"));
+            Assert.That(
+                panel.Find("TutorialContinueButton")
+                    .GetComponentInChildren<TMPro.TMP_Text>(true).text,
+                Is.EqualTo("再练一圈"));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void TutorialOverlayAuthoringValidationAcceptsCompletePrefabCopy()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        TutorialOverlayAuthoring authoring =
+            prefab.GetComponent<TutorialOverlayAuthoring>();
+
+        Assert.That(authoring.CollectValidationIssues(), Is.Empty);
+    }
+
+    [Test]
+    public void TutorialOverlayValidationReportsDuplicateMissingAndBlankCopy()
+    {
+        TutorialScenarioDefinition scenario =
+            TutorialScenarioDefinition.CreateLeMansUk();
+        var presentations = scenario.steps
+            .Select(TutorialStepPresentation.FromDefinition)
+            .ToList();
+        presentations[1].id = presentations[0].id;
+        presentations[2].title = " ";
+
+        var issues = TutorialOverlayValidation.CollectIssues(
+            presentations,
+            guide: null,
+            focusHighlight: null);
+
+        Assert.That(issues, Has.Some.Contains("ID 重复"));
+        Assert.That(issues, Has.Some.Contains("缺少步骤 ID"));
+        Assert.That(issues, Has.Some.Contains("标题为空"));
+        Assert.That(issues, Has.Some.Contains("缺少 TutorialGuideUI"));
+        Assert.That(issues, Has.Some.Contains("缺少 TutorialFocusHighlightUI"));
+    }
+
+    [Test]
+    public void TutorialOverlayAuthoringUsesDedicatedEditorInspector()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        UnityEditor.Editor editor = null;
+        try
+        {
+            TutorialOverlayAuthoring authoring =
+                instance.GetComponent<TutorialOverlayAuthoring>();
+            editor = UnityEditor.Editor.CreateEditor(authoring);
+
+            Assert.That(editor, Is.TypeOf<TutorialOverlayAuthoringEditor>());
+        }
+        finally
+        {
+            if (editor != null)
+                UnityEngine.Object.DestroyImmediate(editor);
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
     [TestCase(1920, 1080, false)]
     [TestCase(1280, 720, false)]
     [TestCase(960, 540, false)]

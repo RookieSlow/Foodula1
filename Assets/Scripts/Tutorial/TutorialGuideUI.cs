@@ -176,6 +176,63 @@ public sealed class TutorialGuideUI : MonoBehaviour
         authoredLayoutCaptured = false;
     }
 
+    public void PreviewAuthoredStep(
+        TutorialStepPresentation presentation,
+        int oneBasedIndex,
+        int totalSteps)
+    {
+        if (presentation == null || !HasPresentationReferences())
+            return;
+
+        gameObject.SetActive(true);
+        isExpanded = true;
+        ApplyLayout();
+        titleText.text = presentation.title;
+        completionText.text = "先看高光区域，再完成这一小步";
+        instructionText.text = presentation.BuildGuideText();
+        progressText.text =
+            $"{presentation.sectionLabel} · 第 {oneBasedIndex}/{totalSteps} 步";
+        SetContinueState(
+            !string.IsNullOrWhiteSpace(presentation.manualAdvanceLabel),
+            string.IsNullOrWhiteSpace(presentation.manualAdvanceLabel)
+                ? "等待本步操作"
+                : presentation.manualAdvanceLabel);
+        SetModeState(true, "跳过引导");
+    }
+
+    public void PreviewAuthoredPractice(
+        string previewTitle,
+        string previewCompletion,
+        string previewInstruction,
+        int totalSteps,
+        bool completed)
+    {
+        if (!HasPresentationReferences())
+            return;
+
+        gameObject.SetActive(true);
+        isExpanded = true;
+        ApplyLayout();
+        titleText.text = previewTitle;
+        completionText.text = previewCompletion;
+        instructionText.text = previewInstruction;
+        progressText.text = $"{totalSteps}/{totalSteps}";
+        SetContinueState(true, completed ? "再练一圈" : "重新开始");
+        SetModeState(true, "重播引导");
+    }
+
+    private bool HasPresentationReferences()
+    {
+        return titleText != null &&
+               completionText != null &&
+               instructionText != null &&
+               progressText != null &&
+               continueButton != null &&
+               continueLabel != null &&
+               modeButton != null &&
+               modeLabel != null;
+    }
+
     public void Refresh()
     {
         TutorialRuntimeDirector director = manager != null ? manager.TutorialDirector : null;

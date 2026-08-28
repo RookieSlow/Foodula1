@@ -37,7 +37,7 @@
 
 ## 2026-08-28 Implementation Snapshot
 
-- Project stage is `Production`; the latest successful full EditMode run passed `509/509`, with 0 failures and 0 skips.
+- Project stage is `Production`; the latest successful full EditMode run passed `514/514`, with 0 failures and 0 skips.
 - The latest manual tailwind log confirms scoped slow motion during the independent tailwind presentation/bonus movement and restoration to `time_scale=1.00` afterward.
 - Current runtime scope is 8 selectable official JSON tracks plus `fallback_42`, six teams, twelve selectable drivers and configurable AI opponents.
 - Missing presentation assets are now explicitly tracked in `asset-manifest.md`; runtime-generated effects and retired 42-node artwork are no longer reported as missing files.
@@ -47,7 +47,7 @@
 - The menu-to-Race tutorial launch, runtime Director, guide panel and mechanic event gates are wired.
   Guide completion/skip now rebuilds a deterministic one-lap practice session with restart, replay,
   exit and zero-reward completion feedback. Focused tutorial EditMode is `16/16`; full EditMode is
-  checkpoints, progressive copy and 13 semantic spotlight targets now bring focused tutorial coverage to `26/26` and full EditMode to `509/509`.
+  checkpoints, progressive copy, the dedicated Prefab authoring inspector and 13 semantic spotlight targets now bring focused tutorial coverage to `31/31` and full EditMode to `514/514`.
   The earlier exact-opening/zero-benefit and separate Quick Race smokes remain valid.
 - Tutorial presentation is now authored in `Resources/Prefabs/UI/TutorialOverlay.prefab`. Its root exposes all
   sixteen step copies, while the guide panel and spotlight retain manually authored RectTransforms. Runtime reuses
@@ -62,7 +62,7 @@
 - Eight guided player-state checkpoints now rebuild exact card/heat zones at safe turn boundaries. Each of the
   16 lessons now exposes goal/current state/action/success/recovery text plus previous-step success feedback.
   A tutorial-only 132/4 virtual pit view reuses normal pit rules because the official Le Mans JSON has no pit;
-  official nodes remain unchanged. Tutorial focused passes `26/26`; full EditMode passes `509/509`.
+  official nodes remain unchanged. Tutorial focused passes `31/31`; full EditMode passes `514/514`.
 - `design/registry/entities.yaml` exists but is empty, so entity-level automated consistency checking cannot yet be treated as evidence.
 
 ## Design Dependencies

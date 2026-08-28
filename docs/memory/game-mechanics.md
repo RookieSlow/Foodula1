@@ -4,7 +4,7 @@ This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
 > **Implementation snapshot (2026-08-28)**: Unity `2022.3.62f3c1`; the latest
-> successful editor EditMode run passed `509/509`; tutorial guidance/checkpoint tests pass `26/26` and
+> successful editor EditMode run passed `514/514`; tutorial guidance/checkpoint tests pass `31/31` and
 > the encyclopedia catalog checks pass `6/6`.
 > The required
 > `production/session-state/active.md` file is currently absent, so this

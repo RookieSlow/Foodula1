@@ -57,7 +57,7 @@ Assets/
 | 车手 | `Drivers/DriverData.cs`、`UI/DriverSelectionUI.cs` | 12 位车手目录、XP/等级与选择 |
 | 表现 | `Gameplay/RaceEventFX.cs`、`CarMovementAnimator.cs` | 卡牌/车辆/尾流/失控等视觉反馈，不改变规则 |
 | 日志 | `Core/RaceTestLogWriter.cs`、`RaceLogAnalyzer.cs` | 人工对局证据采集与结构分析 |
-| 教程运行时 | `Tutorial/TutorialScenarioDefinition.cs`、`TutorialCheckpointRules.cs`、`TutorialStateMachine.cs`、`TutorialRuntimeDirector.cs`、`TutorialPracticeRules.cs`、`TutorialGuideUI.cs`、`TutorialFocusHighlightUI.cs`、`TutorialOverlayAuthoring.cs`、`Resources/Prefabs/UI/TutorialOverlay.prefab` | 勒芒/UK 隔离 Race、精确牌序、16 步可视化编辑文案与门控、可人工布局的指引 Prefab、13 类机制聚光、上一项成功反馈、8 个安全边界检查点、天气/尾流 cue、虚拟维修规则视图及一圈练习日志 |
+| 教程运行时 | `Tutorial/TutorialScenarioDefinition.cs`、`TutorialCheckpointRules.cs`、`TutorialStateMachine.cs`、`TutorialRuntimeDirector.cs`、`TutorialPracticeRules.cs`、`TutorialGuideUI.cs`、`TutorialFocusHighlightUI.cs`、`TutorialOverlayAuthoring.cs`、`Editor/TutorialOverlayAuthoringEditor.cs`、`Resources/Prefabs/UI/TutorialOverlay.prefab` | 勒芒/UK 隔离 Race、精确牌序、16 步可视化编辑/专用 Inspector 非 Play Mode 预览/只读校验与门控、可人工布局的指引 Prefab、13 类机制聚光、上一项成功反馈、8 个安全边界检查点、天气/尾流 cue、虚拟维修规则视图及一圈练习日志 |
 | 玩家设置 | `Settings/GameSettingsData.cs`、`GameSettingsStore.cs`、`GameSettingsRuntime.cs`、`UI/GameSettingsUI.cs` | 版本化持久化显示/分辨率/动画/教程偏好；音量为诚实预留数据，待 AudioMixer 接入 |
 | 游戏百科 | `Encyclopedia/EncyclopediaCatalog.cs`、`Resources/Configs/encyclopedia_zh.json`、`UI/GameEncyclopediaUI.cs` | 版本化规则条目、必需主题/重复 ID 校验、运行时目录追踪及设置内滚动阅读 |
 

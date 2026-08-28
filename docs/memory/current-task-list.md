@@ -37,6 +37,12 @@
 - [x] 将运行时生成的表现层转换为 `Assets/Resources/Prefabs/UI/TutorialOverlay.prefab`：根节点可编辑
   16 步与练习文案，面板/按钮/聚光说明可在 Hierarchy 手工调整；运行时优先复用 `RaceCanvas`
   下的实例，缺失时自动加载 Prefab，展开时恢复人工布局。
+- [x] 为 `TutorialOverlayAuthoring` 增加非 Play Mode 步骤/练习/完成态预览入口，使文案换行与
+  RectTransform 能在 Prefab Mode 联合校正；预览不创建 Director、不推进步骤也不写进度。
+- [x] 增加只读作者校验，报告 16 步缺失/重复 ID、空白展示字段和断开的 Guide/Focus 引用，绝不
+  自动覆盖手工文本或布局。
+- [x] 增加 `TutorialOverlayAuthoringEditor` 专用 Inspector：常驻步骤/练习/完成态预览按钮、Undo
+  支持和内联校验结果；教程定向 `31/31`、全量 EditMode `514/514` 通过，0 失败、0 跳过。
 - [ ] 教程体验优化验收：完整人工走查渐进式面板与高光，确认 16:9 常用分辨率下文字、按钮、
   遮罩边界和关键 HUD 无遮挡，并按实际操作节奏继续精简过长步骤。
 - [ ] 下一工作包：执行完整引导到练习的一次安全人工 Play Mode 验收，并单独走查普通
