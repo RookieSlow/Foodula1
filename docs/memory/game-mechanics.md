@@ -3,8 +3,8 @@
 This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
-> **Implementation snapshot (2026-08-27)**: Unity `2022.3.62f3c1`; the latest
-> successful editor EditMode run passed `503/503`; tutorial checkpoint tests pass `20/20` and
+> **Implementation snapshot (2026-08-28)**: Unity `2022.3.62f3c1`; the latest
+> successful editor EditMode run passed `509/509`; tutorial guidance/checkpoint tests pass `26/26` and
 > the encyclopedia catalog checks pass `6/6`.
 > The required
 > `production/session-state/active.md` file is currently absent, so this
@@ -42,6 +42,15 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 - The tutorial runtime fixes the player to UK with six engine heat, exact opening/future
   draws, no tech state and no intrinsic team-vehicle handling/cooling/pace/slipstream
   bonuses. UK special cards remain because they are explicit teaching content.
+- Each guided step owns a semantic focus target and a short standalone mechanism introduction.
+- Tutorial presentation is data-bound through `TutorialOverlayAuthoring` on
+  `Assets/Resources/Prefabs/UI/TutorialOverlay.prefab`. The Prefab exposes the sixteen lesson copies and
+  practice/completion text without changing step IDs or action gates. Its guide panel and spotlight keep
+  manually authored layout values; runtime first reuses a copy placed under `RaceCanvas`, then falls back
+  to loading the Resources Prefab when no scene instance exists.
+  `TutorialFocusHighlightUI` resolves live HUD, track, pit-choice and specific UK-card rectangles,
+  dims only the surrounding area without intercepting clicks, and disables border pulsing under
+  reduced-motion settings. Highlighting is presentation-only and never advances tutorial state.
 - Heat cards do not start in the normal deck. Each player's independent engine
   heat pool is the only source of permanent heat cards.
 - When trick cards are enabled, four team cards (two attack and two defense)
@@ -157,6 +166,13 @@ prototype and is no longer the authoritative model.
 - `TutorialRuntimeDirector` drains ordered state-machine events exactly once and
   exposes one-shot weather/opponent checkpoint cues. The Race adapter applies rain
   or cloudy weather through the existing session weather state.
+- Every guided step carries a section label plus explicit goal, current scripted state, ordered
+  player action, observable success signal and safe recovery hint. Knowledge steps use specific
+  confirmation labels, while operation steps keep the primary button disabled. The state machine
+  exposes the most recently completed lesson so the following panel can retain its success feedback.
+- The guide panel uses a pure safe-area rule for common 16:9 resolutions. Its expanded form scales
+  down from 540x440 and switches to compact typography at small sizes; collapse leaves only the
+  title, section progress and expand control. Toggling presentation never advances tutorial state.
 - The tutorial leader checkpoint is queued on entering the slipstream step and only
   positions the leader at cell 42/player at cell 40 after base movement, immediately
   before the unchanged end-of-turn slipstream resolver. This preserves the rule that

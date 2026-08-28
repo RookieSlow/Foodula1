@@ -40,6 +40,7 @@ public sealed class TutorialStateMachine
             ? scenario.steps[stepIndex]
             : null;
     public int CompletedStepCount => stepIndex;
+    public TutorialStepDefinition LastCompletedStep { get; private set; }
     public IReadOnlyList<TutorialEventRecord> Events => events;
 
     public TutorialStateMachine(
@@ -93,6 +94,7 @@ public sealed class TutorialStateMachine
         }
 
         TutorialStepId completed = CurrentStep.id;
+        LastCompletedStep = CurrentStep;
         stepIndex++;
         AddEvent("step_completed", completed, action.ToString());
 
@@ -112,6 +114,7 @@ public sealed class TutorialStateMachine
     public void SkipGuidedSection()
     {
         if (Phase != TutorialRunPhase.Guided) return;
+        LastCompletedStep = null;
         stepIndex = scenario.steps.Count;
         Phase = TutorialRunPhase.Practice;
         AddEvent("guided_skipped", null, scenario.id);
@@ -121,6 +124,7 @@ public sealed class TutorialStateMachine
     public void RestartGuidedSection()
     {
         stepIndex = 0;
+        LastCompletedStep = null;
         Phase = TutorialRunPhase.Guided;
         AddEvent("guided_restarted", CurrentStep?.id, scenario.id);
     }

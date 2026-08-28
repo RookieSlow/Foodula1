@@ -37,6 +37,7 @@ public sealed class TutorialRuntimeDirector
 
     public TutorialRunPhase Phase => stateMachine.Phase;
     public TutorialStepDefinition CurrentStep => stateMachine.CurrentStep;
+    public TutorialStepDefinition LastCompletedStep => stateMachine.LastCompletedStep;
     public int CompletedStepCount => stateMachine.CompletedStepCount;
     public int StepCount => scenario.steps.Count;
     public bool BlocksRaceInput =>

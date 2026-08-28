@@ -57,7 +57,7 @@ Assets/
 | 车手 | `Drivers/DriverData.cs`、`UI/DriverSelectionUI.cs` | 12 位车手目录、XP/等级与选择 |
 | 表现 | `Gameplay/RaceEventFX.cs`、`CarMovementAnimator.cs` | 卡牌/车辆/尾流/失控等视觉反馈，不改变规则 |
 | 日志 | `Core/RaceTestLogWriter.cs`、`RaceLogAnalyzer.cs` | 人工对局证据采集与结构分析 |
-| 教程运行时 | `Tutorial/TutorialScenarioDefinition.cs`、`TutorialCheckpointRules.cs`、`TutorialStateMachine.cs`、`TutorialRuntimeDirector.cs`、`TutorialPracticeRules.cs`、`TutorialGuideUI.cs` | 勒芒/UK 隔离 Race、精确牌序、16 步门控、8 个安全边界检查点、天气/尾流 cue、虚拟维修规则视图及一圈练习日志 |
+| 教程运行时 | `Tutorial/TutorialScenarioDefinition.cs`、`TutorialCheckpointRules.cs`、`TutorialStateMachine.cs`、`TutorialRuntimeDirector.cs`、`TutorialPracticeRules.cs`、`TutorialGuideUI.cs`、`TutorialFocusHighlightUI.cs`、`TutorialOverlayAuthoring.cs`、`Resources/Prefabs/UI/TutorialOverlay.prefab` | 勒芒/UK 隔离 Race、精确牌序、16 步可视化编辑文案与门控、可人工布局的指引 Prefab、13 类机制聚光、上一项成功反馈、8 个安全边界检查点、天气/尾流 cue、虚拟维修规则视图及一圈练习日志 |
 | 玩家设置 | `Settings/GameSettingsData.cs`、`GameSettingsStore.cs`、`GameSettingsRuntime.cs`、`UI/GameSettingsUI.cs` | 版本化持久化显示/分辨率/动画/教程偏好；音量为诚实预留数据，待 AudioMixer 接入 |
 | 游戏百科 | `Encyclopedia/EncyclopediaCatalog.cs`、`Resources/Configs/encyclopedia_zh.json`、`UI/GameEncyclopediaUI.cs` | 版本化规则条目、必需主题/重复 ID 校验、运行时目录追踪及设置内滚动阅读 |
 
@@ -66,7 +66,7 @@ Assets/
 | 模块 | 优先级 | 边界 |
 |---|---|---|
 | 音频服务 + AudioMixer | P1 | 音乐/音效事件路由、混音、限频、设置持久化 |
-| 教程最终验收 | P0T | 引导、逐机制检查点、虚拟维修区、一圈练习、设置和百科已实现；完整 Play Mode 与 Quick Race 人工防回归待收口 |
+| 教程最终验收 | P0T | 引导、渐进式步骤说明、逐机制聚光/检查点、虚拟维修区、一圈练习、设置和百科已实现；完整 Play Mode、聚光边界/面板遮挡与 Quick Race 人工防回归待收口 |
 | 车手签名技能执行层 | P2 | 当前仅有目录、成长与选择；属于 Demo 后功能扩展 |
 | 难度/手柄/比赛中途存档 | P3 | 不属于当前 Demo 验收阻塞项 |
 

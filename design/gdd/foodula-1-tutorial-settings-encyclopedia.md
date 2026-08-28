@@ -28,9 +28,47 @@
 `TutorialStepId` 是顺序权威；UI 只能报告已完成的 `TutorialAction`，不能直接跳过
 状态。错误操作返回期望动作且不推进，以避免软锁和状态漂移。
 
-当前 `TutorialGuideUI` 从步骤定义读取标题、正文和“可手动继续”标记。目标、牌区说明、
-天气观察和总结属于阅读确认；其余步骤只能由 `MVPGameManager` 收到对应的真实比赛事件后
-调用 `TutorialRuntimeDirector` 推进，面板按钮在这些步骤不可交互。
+当前 `TutorialGuideUI` 从步骤定义读取章节、标题和渐进式操作指引。正文先用一两句说明“为什么
+要学”，再以 `现在场上 -> 轮到你了 -> 完成后 -> 没反应？` 交代脚本状态、唯一操作、即时结果与
+安全恢复，不再连续使用“目标/当前/操作/成功/卡住时”的说明书式命令。完成一步后，下一步以
+“做得好”保留刚才的可观察结果，避免自动推进吞掉反馈。阅读步骤继续使用明确按钮文案；实际
+操作仍只能由 `MVPGameManager` 收到对应比赛事件后调用 `TutorialRuntimeDirector` 推进。
+
+每个 `TutorialStepDefinition` 还声明一个语义化 `TutorialFocusTarget` 和独立的
+`focusIntroduction`。`TutorialFocusHighlightUI` 将目标解析到实时 HUD、手牌中特定 UK 卡牌、
+维修选择或赛道区域，用四块无射线遮罩留出聚光窗口，并显示金色边框和一条短说明。高光层不
+拦截鼠标、不改变教程状态；特殊牌和维修面板会随运行时对象重建重新解析。开启“减少动态”时
+边框保持静态，不播放呼吸变化。
+
+正文面板使用纯 `TutorialGuideLayoutRules` 根据当前分辨率计算安全边距、宽高和正文尺寸；
+1920×1080、1280×720、960×540 使用完整布局，854×480 使用紧凑字号。玩家可随时点击右上角
+“收起指引”，将面板缩为仅显示标题、章节进度和“展开指引”的窄条，以查看右侧牌堆、热量、
+天气或赛道；展开/收起只改变表现，不发送教程动作，也不改变比赛输入门或步骤状态。
+
+教程表现层的可视化编辑权威为 `Assets/Resources/Prefabs/UI/TutorialOverlay.prefab`。根节点
+`TutorialOverlayAuthoring` 保存 16 步展示文案及练习/完成态文案；`TutorialGuidePanel` 的
+RectTransform、字号和按钮位置由 Prefab 人工布局决定；`TutorialFocusHighlight` 暴露目标留白、
+边框、短说明偏移/尺寸和外部压暗强度。运行时优先绑定当前 `RaceCanvas` 下已有实例，否则从
+Resources 自动实例化该 Prefab；收起后再次展开会恢复人工布局快照，不重新套用旧的自动排版。
+
+指引按 `起步 -> 基础驾驶 -> 卡牌循环 -> 热量管理 -> 赛道规则/互动 -> 维修区 -> UK 特殊牌
+-> 总结` 分组。特别处理两个容易产生流程误解的跨回合步骤：维修区预定后要求等待下一回合
+自动执行；司康完成后，英式早餐茶步骤明确要求先结束当前回合，再等待下一回合检查点发牌。
+
+### 同类教程研究基线（2026-08-28）
+
+- Legends of Runeterra 官方新手流程按理解程度逐步开放 AI、Challenges 与 PVP；其首批 AI 对局
+  还会固定匹配、抽牌和 AI 行为。Foodula1 对应采用“一步一个概念 + 精确脚本状态”。
+- MARVEL SNAP 官方新手体验用独立对局教授卡牌协同，并延后回合计时压力。Foodula1 对应采用
+  单机制聚光、阅读步骤暂停输入，待玩家实际操作后再推进。
+- Hearthstone 官方把基础学习包装成轻量教程任务与 Apprentice Track。Foodula1 对应采用短句、
+  鼓励式结果和“先看这里/轮到你了”的赛事实况口吻，同时保留精确规则信息。
+
+以上是从官方说明提炼出的设计原则，不复制任何游戏的具体文案或玩法规则。参考：
+[LoR 1.0 notes](https://playruneterra.com/en-us/news/patch-1-0-notes/)、
+[LoR 2.11 prologue](https://playruneterra.com/en-us/news/game-updates/patch-2-11-0-notes/)、
+[Marvel Snap 2026-05-19 notes](https://marvelsnap.com/patch-notes-may-19th-2026/)、
+[Hearthstone new-player guide](https://news.blizzard.com/en-us/article/24166335/launch-into-heroes-of-starcraft)。
 
 ## 状态机与恢复
 
@@ -111,6 +149,15 @@ AudioMixer 应用。教程完成标记也位于该设置键中，仅改变主菜
   对手脚本就绪事件。
 - [x] Runtime Director、引导面板、一次性天气/对手 cue 和各机制真实事件钩子已接入；
   加入检查点后的教程定向 `20/20` 与全量 EditMode `503/503` 通过。
+- [x] 16 步运行时指引已改为渐进、鼓励式短句，每步仍精确声明场上状态、唯一操作、成功反馈与
+  恢复；13 类语义高光目标全部有独立短说明，挡位/天气/维修区/两张 UK 卡均固定到对应区域。
+  教程定向 `26/26`、全量 EditMode `509/509` 通过，0 失败、0 跳过。
+- [x] 指引面板已增加响应式安全区域和收起/展开交互；收起时保留标题与步骤进度，且不触发任何
+  教程状态变化。常用 16:9 尺寸边界由纯布局测试覆盖，实际画面遮挡仍需 Play Mode 确认。
+- [x] `TutorialFocusHighlightUI` 已接入无输入拦截的聚光窗口、边框和独立机制短说明；减少动态时
+  边框静止，运行时对象可重新解析。实际像素位置、遮罩边界和文字换行仍需 Play Mode 确认。
+- [x] 指引表现层已转换为 `TutorialOverlay.prefab`：16 步正文和练习文案可在 Inspector 修改，
+  面板/按钮/聚光短说明可在 Prefab Mode 或 `RaceCanvas` 实例中手工布局；运行时保留自动加载回退。
 - [x] 为支付/冷却热量、缺牌、打转恢复、维修区和两张 UK 特殊牌建立 8 个确定性检查点；
   正式勒芒无维修区时使用教程专用 132/4 规则视图复用正常 `PitLaneRules`，不修改赛道数据。
   教程定向 `20/20`、全量 EditMode `503/503` 通过。
@@ -121,5 +168,5 @@ AudioMixer 应用。教程完成标记也位于该设置键中，仅改变主菜
 - [x] 数据驱动百科以 17 条版本化 JSON 覆盖全部必需主题，设置内可滚动浏览；ID、必需主题、
   12 张特技牌、12 名车手和 5 种天气均有运行时目录对照测试，百科定向 `6/6`、
   当前全量 EditMode `503/503` 通过。
-- [ ] 全量 EditMode 已为 `503/503`；完整引导到练习的受控 Play Mode、最终 Console/日志和
+- [ ] 完整引导到练习的受控 Play Mode、渐进式面板与高光的实际分辨率/遮挡验收、最终 Console/日志和
   正常 Quick Race 人工防回归仍待完成。

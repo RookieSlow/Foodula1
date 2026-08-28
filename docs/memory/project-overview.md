@@ -57,8 +57,8 @@ The verified scene flow is:
 - Demo framework Phase 1 is complete.
 - Core race presentation is Demo-grade; formal brand/portrait/tech-tree art and
   the entire audio layer remain as the next asset-completion package.
-- The project is in Production stage. The latest editor audit on 2026-08-27
-  recorded a successful 503/503 EditMode run. The MainMenu-to-Race flow, race
+- The project is in Production stage. The latest editor audit on 2026-08-28
+  recorded a successful 509/509 EditMode run. The MainMenu-to-Race flow, race
   card/icon references, and Chinese font support remain the current
   presentation baseline.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
@@ -78,11 +78,22 @@ The verified scene flow is:
   practice session with the exact deck, six heat, teaching opponent, start positions and
   cloudy weather. Eight safe-boundary checkpoints now rebuild exact card/heat zones for the
   risky guided mechanics. Because official Le Mans has no pit, a tutorial-only 132/4 rule view
-  reuses normal pit rules without mutating official nodes. Final guided Play Mode remains open.
-- The tutorial runtime slice now passes `20/20` focused and `503/503` full EditMode tests.
+  reuses normal pit rules without mutating official nodes. Each lesson now presents an explicit
+  mechanism purpose, current scripted state, one next action, success signal and recovery hint in a
+  progressive, encouraging voice; the following lesson retains the previous success result. Every
+  lesson also authors one of 13 semantic focus targets and a standalone mechanism introduction.
+  A non-interactive spotlight dims outside the live HUD/card/track region, uses a static border when
+  reduced motion is enabled, and follows rebuilt pit/card objects. The panel resolves a safe-area
+  layout for common 16:9 sizes and can collapse without changing tutorial state. Presentation is now
+  authored in `Assets/Resources/Prefabs/UI/TutorialOverlay.prefab`: its root exposes all sixteen lesson
+  copies, while the panel and spotlight retain manually edited RectTransforms. Runtime reuses an instance
+  under `RaceCanvas` before loading the Resources fallback. Final guided Play Mode remains open.
+- The tutorial runtime slice now passes `26/26` focused and `509/509` full EditMode tests.
   Play Mode verified the exact seven-card opening and zero-benefit session; a separate
   Monza Quick Race retained the randomized deck, tech state and vehicle bonuses. The
-  guide-panel smoke confirmed its first authored step; full guided Play Mode remains open.
+  earlier guide-panel smoke confirmed its first authored step. A 2026-08-28 visual smoke stayed in
+  Unity's play-mode transition and was stopped without retrying; the later spotlight smoke did the same,
+  so the revised progressive panel, spotlight boundaries and full guided flow still require manual Play Mode acceptance.
 - Main-menu settings now persist master/music/SFX placeholders, fullscreen/window mode,
   resolution, animation speed, reduced motion and the separate tutorial-completion flag.
   Display and supported presentation timings are applied at runtime; audio remains explicitly

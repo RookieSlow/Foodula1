@@ -100,6 +100,9 @@ Saved/
 *.temp
 *.cache
 *.log
+# Unity Test Runner auto-generated scenes (InitTestScene<timestamp>.unity)
+/Assets/InitTestScene*.unity
+/Assets/InitTestScene*.unity.meta
 __pycache__/
 *.pyc
 node_modules/

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using UnityEngine;
 
 public class TutorialScenarioTests
 {
@@ -202,8 +203,33 @@ public class TutorialScenarioTests
     {
         TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
 
+        Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.sectionLabel)), Is.True);
         Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.title)), Is.True);
+        Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.goal)), Is.True);
+        Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.currentState)), Is.True);
+        Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.actionPrompt)), Is.True);
+        Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.successSignal)), Is.True);
+        Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.recoveryHint)), Is.True);
+        Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.focusIntroduction)), Is.True);
         Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.instruction)), Is.True);
+        Assert.That(scenario.steps.All(step => step.instruction.Contains("<b>现在场上</b>")), Is.True);
+        Assert.That(scenario.steps.All(step => step.instruction.Contains("<b>轮到你了</b>")), Is.True);
+        Assert.That(scenario.steps.All(step => step.instruction.Contains("<b>完成后</b>")), Is.True);
+        Assert.That(scenario.steps.All(step => step.instruction.Contains("没反应？")), Is.True);
+        Assert.That(scenario.steps.All(step => !step.instruction.Contains("<b>目标</b>")), Is.True);
+        Assert.That(
+            scenario.steps.Select(step => step.sectionLabel),
+            Is.EqualTo(new[]
+            {
+                "起步",
+                "基础驾驶", "基础驾驶", "基础驾驶",
+                "卡牌循环",
+                "热量管理", "热量管理", "热量管理",
+                "赛道规则", "赛道规则", "赛道互动",
+                "维修区", "维修区",
+                "UK 特殊牌", "UK 特殊牌",
+                "总结"
+            }));
         Assert.That(
             scenario.steps.Where(step => step.allowManualAdvance).Select(step => step.id),
             Is.EqualTo(new[]
@@ -213,6 +239,143 @@ public class TutorialScenarioTests
                 TutorialStepId.Weather,
                 TutorialStepId.Review
             }));
+        Assert.That(
+            scenario.steps.Where(step => step.allowManualAdvance).Select(step => step.manualAdvanceLabel),
+            Is.EqualTo(new[]
+            {
+                "开始第一回合",
+                "牌区已看懂",
+                "天气规则已看懂",
+                "重置并开始练习"
+            }));
+        Assert.That(
+            scenario.steps.Where(step => !step.allowManualAdvance)
+                .All(step => string.IsNullOrEmpty(step.manualAdvanceLabel)),
+            Is.True);
+        Assert.That(
+            scenario.steps.Single(step => step.id == TutorialStepId.PitDelayedResolution)
+                .actionPrompt,
+            Does.Contain("下一回合"));
+        Assert.That(
+            scenario.steps.Single(step => step.id == TutorialStepId.UkEnglishBreakfastTea)
+                .actionPrompt,
+            Does.Contain("下一回合"));
+        Assert.That(
+            scenario.steps.Single(step => step.id == TutorialStepId.ObjectiveAndInterface)
+                .recoveryHint,
+            Does.Contain("收起指引"));
+        Assert.That(
+            scenario.steps.Single(step => step.id == TutorialStepId.ObjectiveAndInterface).goal,
+            Does.Contain("一次认识一个区域"));
+        Assert.That(
+            scenario.steps.Single(step => step.id == TutorialStepId.Review).goal,
+            Does.Contain("已经分别用过"));
+    }
+
+    [Test]
+    public void EveryGuidedFocusTargetHasOneAuthoredStandaloneIntroduction()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
+        TutorialFocusTarget[] requiredTargets =
+            (TutorialFocusTarget[])System.Enum.GetValues(typeof(TutorialFocusTarget));
+
+        Assert.That(scenario.steps.Select(step => step.focusTarget).Distinct(),
+            Is.EquivalentTo(requiredTargets));
+        Assert.That(scenario.steps.All(step => step.focusIntroduction.Length >= 12), Is.True);
+        Assert.That(
+            scenario.steps.Single(step => step.id == TutorialStepId.GearAndRequiredCards)
+                .focusTarget,
+            Is.EqualTo(TutorialFocusTarget.GearControls));
+        Assert.That(
+            scenario.steps.Single(step => step.id == TutorialStepId.Weather)
+                .focusTarget,
+            Is.EqualTo(TutorialFocusTarget.Weather));
+        Assert.That(
+            scenario.steps.Single(step => step.id == TutorialStepId.PitSelection)
+                .focusTarget,
+            Is.EqualTo(TutorialFocusTarget.PitChoice));
+        Assert.That(
+            scenario.steps.Single(step => step.id == TutorialStepId.UkScone)
+                .focusTarget,
+            Is.EqualTo(TutorialFocusTarget.UkSconeCard));
+        Assert.That(
+            scenario.steps.Single(step => step.id == TutorialStepId.UkEnglishBreakfastTea)
+                .focusTarget,
+            Is.EqualTo(TutorialFocusTarget.UkTeaCard));
+    }
+
+    [Test]
+    public void TutorialOverlayPrefabExposesAllEditableStepCopyAndLayoutComponents()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+
+        Assert.That(prefab, Is.Not.Null);
+        TutorialOverlayAuthoring authoring = prefab.GetComponent<TutorialOverlayAuthoring>();
+        Assert.That(authoring, Is.Not.Null);
+        Assert.That(authoring.Guide, Is.Not.Null);
+        Assert.That(authoring.FocusHighlight, Is.Not.Null);
+        Assert.That(authoring.Steps.Count, Is.EqualTo(16));
+        Assert.That(authoring.Steps.Select(step => step.id).Distinct().Count(), Is.EqualTo(16));
+        Assert.That(authoring.Find(TutorialStepId.GearAndRequiredCards).title,
+            Is.EqualTo("挡位决定你要出几张牌"));
+        Assert.That(authoring.Find(TutorialStepId.UkScone).focusIntroduction,
+            Does.Contain("司康"));
+        Assert.That(prefab.transform.Find("TutorialGuidePanel"), Is.Not.Null);
+        Assert.That(prefab.transform.Find("TutorialFocusHighlight"), Is.Not.Null);
+    }
+
+    [TestCase(1920, 1080, false)]
+    [TestCase(1280, 720, false)]
+    [TestCase(960, 540, false)]
+    [TestCase(854, 480, true)]
+    public void TutorialGuideLayoutFitsCommon16By9SafeAreaAndCanCollapse(
+        int screenWidth,
+        int screenHeight,
+        bool expectedCompact)
+    {
+        TutorialGuideLayout expanded = TutorialGuideLayoutRules.Resolve(
+            screenWidth, screenHeight, expanded: true);
+        TutorialGuideLayout collapsed = TutorialGuideLayoutRules.Resolve(
+            screenWidth, screenHeight, expanded: false);
+
+        Assert.That(expanded.Width + expanded.Margin * 2f,
+            Is.LessThanOrEqualTo(screenWidth + 0.01f));
+        Assert.That(expanded.Height + expanded.Margin * 2f,
+            Is.LessThanOrEqualTo(screenHeight + 0.01f));
+        Assert.That(collapsed.Width + collapsed.Margin * 2f,
+            Is.LessThanOrEqualTo(screenWidth + 0.01f));
+        Assert.That(collapsed.Height + collapsed.Margin * 2f,
+            Is.LessThanOrEqualTo(screenHeight + 0.01f));
+        Assert.That(expanded.Width, Is.GreaterThan(collapsed.Width));
+        Assert.That(expanded.Height, Is.GreaterThan(collapsed.Height));
+        Assert.That(collapsed.Height, Is.LessThanOrEqualTo(104f));
+        Assert.That(collapsed.IsCompact, Is.True);
+        Assert.That(expanded.IsCompact, Is.EqualTo(expectedCompact));
+        Assert.That(expanded.InstructionFontSize,
+            Is.EqualTo(expectedCompact ? 13f : 15f));
+    }
+
+    [Test]
+    public void CompletedStepSuccessRemainsAvailableUntilNextGuidedAction()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
+        var machine = new TutorialStateMachine(scenario);
+
+        Assert.That(machine.LastCompletedStep, Is.Null);
+        Assert.That(machine.TryPerform(TutorialAction.AcknowledgeObjective, out string reason),
+            Is.True, reason);
+        Assert.That(machine.LastCompletedStep.id, Is.EqualTo(TutorialStepId.ObjectiveAndInterface));
+        Assert.That(machine.LastCompletedStep.successSignal,
+            Is.EqualTo(scenario.steps[0].successSignal));
+        Assert.That(machine.CurrentStep.id, Is.EqualTo(TutorialStepId.TurnFlow));
+
+        Assert.That(machine.TryPerform(TutorialAction.CompleteTurnFlow, out reason),
+            Is.True, reason);
+        Assert.That(machine.LastCompletedStep.id, Is.EqualTo(TutorialStepId.TurnFlow));
+
+        machine.RestartGuidedSection();
+        Assert.That(machine.LastCompletedStep, Is.Null);
+        Assert.That(machine.CurrentStep.id, Is.EqualTo(TutorialStepId.ObjectiveAndInterface));
     }
 
     [Test]
