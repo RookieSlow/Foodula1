@@ -23,7 +23,7 @@
 | 11 | Visual Style | `foodula-1-visual-style.md` | In Progress | Race visuals are Demo-grade; menu/driver/team/tech-tree identity assets remain |
 | 12 | Tech Tree | `foodula-1-tech-tree.md` | In Review | Rules, persistent profiles, menu UI and race hooks are wired; presentation and playtest sign-off remain |
 | 13 | Audio Style | `foodula-1-audio-style.md` | Not Started | Design/event map exists; no project audio files, AudioMixer or runtime audio service yet |
-| 14 | Tutorial, Settings & Encyclopedia | `foodula-1-tutorial-settings-encyclopedia.md` | In Progress | Isolated tutorial/practice, exact deck, progressive responsive guidance, per-mechanic spotlight, safe checkpoints, settings persistence and 17-entry data-driven encyclopedia are wired; final guided Play Mode acceptance remains |
+| 14 | Tutorial, Settings & Encyclopedia | `foodula-1-tutorial-settings-encyclopedia.md` | In Progress | Isolated tutorial/practice, exact deck, author-refined guidance with optional detail sections, per-mechanic spotlight, safe checkpoints, settings persistence and 17-entry data-driven encyclopedia are wired; final guided Play Mode acceptance remains |
 
 ## Project Planning
 
@@ -62,7 +62,7 @@
 - Eight guided player-state checkpoints now rebuild exact card/heat zones at safe turn boundaries. Each of the
   16 lessons now exposes goal/current state/action/success/recovery text plus previous-step success feedback.
   A tutorial-only 132/4 virtual pit view reuses normal pit rules because the official Le Mans JSON has no pit;
-  official nodes remain unchanged. Tutorial focused passes `31/31`; full EditMode passes `514/514`.
+  official nodes remain unchanged. The author-refined copy and optional-section rendering bring the latest full EditMode run to `516/516`.
 - `design/registry/entities.yaml` exists but is empty, so entity-level automated consistency checking cannot yet be treated as evidence.
 
 ## Design Dependencies

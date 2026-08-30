@@ -32,6 +32,7 @@ public sealed class RaceCameraController : MonoBehaviour
     private bool initialized;
 
     public bool ManualOverrideThisTurn => focusState.ManualOverrideThisTurn;
+    public bool IsInitialized => initialized;
 
     /// <summary>
     /// Connects the controller to the current race and creates its optional minimap UI.
@@ -100,6 +101,22 @@ public sealed class RaceCameraController : MonoBehaviour
         focusState.BeginTurn();
         dragArmed = false;
         SetAutomaticFocus(gameManager != null ? gameManager.PlayerCarTransform : null);
+    }
+
+    /// <summary>
+    /// Immediately frames the player after a tutorial checkpoint teleports the
+    /// car. Normal race turns keep their smooth camera movement.
+    /// </summary>
+    public void SnapToPlayer()
+    {
+        if (!initialized)
+            return;
+
+        focusState.BeginTurn();
+        dragArmed = false;
+        SetAutomaticFocus(gameManager != null ? gameManager.PlayerCarTransform : null);
+        UpdateMainCamera(snap: true);
+        UpdateMinimapMarkers();
     }
 
     /// <summary>Returns to the player's car after card play, unless manually overridden.</summary>

@@ -3,6 +3,51 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+public sealed class TutorialFocusDismissState
+{
+    private bool hasStep;
+    private TutorialStepId stepId;
+
+    public bool IsVisible { get; private set; }
+    public bool IsWaitingForPointerRelease { get; private set; }
+
+    public void Show(TutorialStepId nextStepId, bool pointerHeld)
+    {
+        if (hasStep && stepId == nextStepId)
+            return;
+
+        hasStep = true;
+        stepId = nextStepId;
+        IsVisible = true;
+        IsWaitingForPointerRelease = pointerHeld;
+    }
+
+    public bool Update(bool pointerHeld, bool pointerPressedThisFrame)
+    {
+        if (!IsVisible)
+            return false;
+
+        if (IsWaitingForPointerRelease)
+        {
+            if (!pointerHeld)
+                IsWaitingForPointerRelease = false;
+            return false;
+        }
+
+        if (!pointerPressedThisFrame)
+            return false;
+
+        IsVisible = false;
+        return true;
+    }
+
+    public void Hide()
+    {
+        IsVisible = false;
+        IsWaitingForPointerRelease = false;
+    }
+}
+
 /// <summary>
 /// Non-interactive spotlight for one authored tutorial concept. Four dimming
 /// panels leave a clear hole around the live target, while a border and short
@@ -32,6 +77,8 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
     private string cachedCardTrickId;
     private TutorialFocusTarget focusTarget;
     private string focusIntroduction;
+    private readonly TutorialFocusDismissState dismissState =
+        new TutorialFocusDismissState();
 
     public static TutorialFocusHighlightUI Create(
         Canvas canvas,
@@ -90,26 +137,44 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
             return;
         }
 
-        Show(step.focusTarget, step.focusIntroduction);
+        Show(step.id, step.focusTarget, step.focusIntroduction);
     }
 
     public void Show(TutorialFocusTarget target, string introduction)
     {
+        Show(default, target, introduction);
+    }
+
+    public void Show(
+        TutorialStepId stepId,
+        TutorialFocusTarget target,
+        string introduction)
+    {
         focusTarget = target;
         focusIntroduction = introduction ?? string.Empty;
-        if (!gameObject.activeSelf)
+        dismissState.Show(stepId, Input.GetMouseButton(0));
+        if (dismissState.IsVisible && !gameObject.activeSelf)
             gameObject.SetActive(true);
-        RefreshFocus();
+        if (dismissState.IsVisible)
+            RefreshFocus();
     }
 
     public void Hide()
     {
+        dismissState.Hide();
         if (gameObject.activeSelf)
             gameObject.SetActive(false);
     }
 
     private void LateUpdate()
     {
+        if (dismissState.Update(
+                Input.GetMouseButton(0),
+                Input.GetMouseButtonDown(0)))
+        {
+            gameObject.SetActive(false);
+            return;
+        }
         RefreshFocus();
     }
 

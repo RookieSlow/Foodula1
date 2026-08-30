@@ -2,6 +2,46 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
+/// Presentation timing for lessons that need a freshly prepared turn. The
+/// state machine may accept the previous real event immediately, while the
+/// race adapter keeps the previous lesson visible until the next turn boundary.
+/// </summary>
+public static class TutorialGuideTimingRules
+{
+    public static bool StartsAtNextTurn(TutorialStepId stepId)
+    {
+        return stepId == TutorialStepId.GearAndRequiredCards ||
+               stepId == TutorialStepId.DeckHandDiscardAndRecycle ||
+               stepId == TutorialStepId.HeatCardsAndCooling;
+    }
+
+    public static bool RequiresFullHandPresentation(TutorialStepId stepId)
+    {
+        return stepId == TutorialStepId.DeckHandDiscardAndRecycle;
+    }
+
+    public static bool SkipsOptionalDiscardBeforePresentation(TutorialStepId stepId)
+    {
+        return stepId == TutorialStepId.DeckHandDiscardAndRecycle;
+    }
+
+    public static bool IsTurnPresentationReady(GamePhase phase)
+    {
+        return phase == GamePhase.WaitingForGear;
+    }
+
+    public static bool IsInitialPresentationReady(
+        bool raceSceneLoaded,
+        bool cameraInitialized,
+        GamePhase phase)
+    {
+        return raceSceneLoaded &&
+               cameraInitialized &&
+               IsTurnPresentationReady(phase);
+    }
+}
+
+/// <summary>
 /// One-shot runtime commands authored for a tutorial step. The race adapter
 /// decides when to apply the command; normal race rules never inspect it.
 /// </summary>

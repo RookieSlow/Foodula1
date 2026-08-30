@@ -206,16 +206,10 @@ public class TutorialScenarioTests
         Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.sectionLabel)), Is.True);
         Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.title)), Is.True);
         Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.goal)), Is.True);
-        Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.currentState)), Is.True);
         Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.actionPrompt)), Is.True);
-        Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.successSignal)), Is.True);
-        Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.recoveryHint)), Is.True);
         Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.focusIntroduction)), Is.True);
         Assert.That(scenario.steps.All(step => !string.IsNullOrWhiteSpace(step.instruction)), Is.True);
-        Assert.That(scenario.steps.All(step => step.instruction.Contains("<b>现在场上</b>")), Is.True);
         Assert.That(scenario.steps.All(step => step.instruction.Contains("<b>轮到你了</b>")), Is.True);
-        Assert.That(scenario.steps.All(step => step.instruction.Contains("<b>完成后</b>")), Is.True);
-        Assert.That(scenario.steps.All(step => step.instruction.Contains("没反应？")), Is.True);
         Assert.That(scenario.steps.All(step => !step.instruction.Contains("<b>目标</b>")), Is.True);
         Assert.That(
             scenario.steps.Select(step => step.sectionLabel),
@@ -266,7 +260,7 @@ public class TutorialScenarioTests
             Does.Contain("收起指引"));
         Assert.That(
             scenario.steps.Single(step => step.id == TutorialStepId.ObjectiveAndInterface).goal,
-            Does.Contain("一次认识一个区域"));
+            Does.Contain("欢迎来到围场"));
         Assert.That(
             scenario.steps.Single(step => step.id == TutorialStepId.Review).goal,
             Does.Contain("已经分别用过"));
@@ -317,7 +311,7 @@ public class TutorialScenarioTests
         Assert.That(authoring.Steps.Count, Is.EqualTo(16));
         Assert.That(authoring.Steps.Select(step => step.id).Distinct().Count(), Is.EqualTo(16));
         Assert.That(authoring.Find(TutorialStepId.GearAndRequiredCards).title,
-            Is.EqualTo("挡位决定你要出几张牌"));
+            Is.EqualTo("来一次换挡"));
         Assert.That(authoring.Find(TutorialStepId.UkScone).focusIntroduction,
             Does.Contain("司康"));
         Assert.That(prefab.transform.Find("TutorialGuidePanel"), Is.Not.Null);
@@ -366,6 +360,51 @@ public class TutorialScenarioTests
             prefab.GetComponent<TutorialOverlayAuthoring>();
 
         Assert.That(authoring.CollectValidationIssues(), Is.Empty);
+    }
+
+    [Test]
+    public void OptionalGuideSectionsAreOmittedWhenAuthorLeavesThemBlank()
+    {
+        var presentation = new TutorialStepPresentation
+        {
+            goal = "先理解核心规则。",
+            currentState = " ",
+            actionPrompt = "选择一张速度牌。",
+            successSignal = "",
+            recoveryHint = null
+        };
+
+        string text = presentation.BuildGuideText();
+
+        Assert.That(text, Does.Contain("先理解核心规则。"));
+        Assert.That(text, Does.Contain("<b>轮到你了</b>"));
+        Assert.That(text, Does.Not.Contain("<b>现在场上</b>"));
+        Assert.That(text, Does.Not.Contain("<b>完成后</b>"));
+        Assert.That(text, Does.Not.Contain("没反应？"));
+        Assert.That(text, Does.Not.Contain("\n\n\n"));
+    }
+
+    [Test]
+    public void PrefabCopyMatchesScenarioFallbackCopy()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        TutorialOverlayAuthoring authoring = prefab.GetComponent<TutorialOverlayAuthoring>();
+
+        foreach (TutorialStepDefinition definition in scenario.steps)
+        {
+            TutorialStepPresentation presentation = authoring.Find(definition.id);
+            Assert.That(presentation, Is.Not.Null, definition.id.ToString());
+            Assert.That(presentation.sectionLabel, Is.EqualTo(definition.sectionLabel), definition.id.ToString());
+            Assert.That(presentation.title, Is.EqualTo(definition.title), definition.id.ToString());
+            Assert.That(presentation.goal, Is.EqualTo(definition.goal), definition.id.ToString());
+            Assert.That(presentation.currentState, Is.EqualTo(definition.currentState), definition.id.ToString());
+            Assert.That(presentation.actionPrompt, Is.EqualTo(definition.actionPrompt), definition.id.ToString());
+            Assert.That(presentation.successSignal, Is.EqualTo(definition.successSignal), definition.id.ToString());
+            Assert.That(presentation.recoveryHint, Is.EqualTo(definition.recoveryHint), definition.id.ToString());
+            Assert.That(presentation.focusIntroduction, Is.EqualTo(definition.focusIntroduction), definition.id.ToString());
+            Assert.That(presentation.manualAdvanceLabel, Is.EqualTo(definition.manualAdvanceLabel), definition.id.ToString());
+        }
     }
 
     [Test]
@@ -442,6 +481,196 @@ public class TutorialScenarioTests
         Assert.That(expanded.IsCompact, Is.EqualTo(expectedCompact));
         Assert.That(expanded.InstructionFontSize,
             Is.EqualTo(expectedCompact ? 13f : 15f));
+    }
+
+    [Test]
+    public void TutorialGuideLayoutGrowsForLongCopyAndStopsAtSafeArea()
+    {
+        TutorialGuideLayout roomy = TutorialGuideLayoutRules.Resolve(
+            1920, 1080, expanded: true, preferredExpandedHeight: 720f);
+        TutorialGuideLayout constrained = TutorialGuideLayoutRules.Resolve(
+            854, 480, expanded: true, preferredExpandedHeight: 720f);
+
+        Assert.That(roomy.Height, Is.EqualTo(720f));
+        Assert.That(constrained.Height + constrained.Margin * 2f,
+            Is.EqualTo(480f).Within(0.01f));
+    }
+
+    [Test]
+    public void TutorialFocusDismissesOncePerStepAndDoesNotReappearOnRefresh()
+    {
+        var state = new TutorialFocusDismissState();
+
+        state.Show(TutorialStepId.ObjectiveAndInterface, pointerHeld: false);
+        Assert.That(state.IsVisible, Is.True);
+        Assert.That(state.Update(pointerHeld: true, pointerPressedThisFrame: true), Is.True);
+        Assert.That(state.IsVisible, Is.False);
+
+        state.Show(TutorialStepId.ObjectiveAndInterface, pointerHeld: false);
+        Assert.That(state.IsVisible, Is.False, "same-step refresh must not resurrect focus");
+
+        state.Show(TutorialStepId.TurnFlow, pointerHeld: false);
+        Assert.That(state.IsVisible, Is.True, "a new step should receive its own focus");
+    }
+
+    [Test]
+    public void TutorialFocusIgnoresClickThatOpenedStepUntilPointerIsReleased()
+    {
+        var state = new TutorialFocusDismissState();
+
+        state.Show(TutorialStepId.TurnFlow, pointerHeld: true);
+        Assert.That(state.IsWaitingForPointerRelease, Is.True);
+        Assert.That(state.Update(pointerHeld: true, pointerPressedThisFrame: true), Is.False);
+        Assert.That(state.IsVisible, Is.True);
+
+        state.Update(pointerHeld: false, pointerPressedThisFrame: false);
+        Assert.That(state.IsWaitingForPointerRelease, Is.False);
+        Assert.That(state.Update(pointerHeld: true, pointerPressedThisFrame: true), Is.True);
+        Assert.That(state.IsVisible, Is.False);
+    }
+
+    [Test]
+    public void FifthStepManualAcknowledgementIsAcceptedDuringAnimationCleanup()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
+        TutorialStepDefinition fifthStep = scenario.steps[4];
+
+        Assert.That(fifthStep.id, Is.EqualTo(TutorialStepId.DeckHandDiscardAndRecycle));
+        Assert.That(fifthStep.allowManualAdvance, Is.True);
+        Assert.That(
+            MVPGameManager.CanRequestTutorialManualAdvance(
+                fifthStep,
+                GamePhase.Animating),
+            Is.True,
+            "the card-zone acknowledgement must not deadlock during movement cleanup");
+        Assert.That(
+            MVPGameManager.CanRequestTutorialManualAdvance(
+                fifthStep,
+                GamePhase.WaitingForGear),
+            Is.True);
+        Assert.That(
+            MVPGameManager.CanRequestTutorialManualAdvance(
+                scenario.steps[5],
+                GamePhase.WaitingForGear),
+            Is.False,
+            "action-driven lessons must remain protected from manual skipping");
+        Assert.That(
+            MVPGameManager.CanRequestTutorialManualAdvance(
+                fifthStep,
+                GamePhase.GameOver),
+            Is.False);
+    }
+
+    [Test]
+    public void GearCardZoneAndCoolingLessonsWaitForFreshTurnPresentation()
+    {
+        Assert.That(
+            TutorialGuideTimingRules.StartsAtNextTurn(
+                TutorialStepId.GearAndRequiredCards),
+            Is.True,
+            "step 3 must not appear during the previous turn cleanup");
+        Assert.That(
+            TutorialGuideTimingRules.StartsAtNextTurn(
+                TutorialStepId.HeatCardsAndCooling),
+            Is.True,
+            "step 7 must not appear immediately after paying heat on gear shift");
+        Assert.That(
+            TutorialGuideTimingRules.StartsAtNextTurn(
+                TutorialStepId.DeckHandDiscardAndRecycle),
+            Is.True,
+            "card-zone lesson must wait until cleanup and a visible hand refill complete");
+        Assert.That(
+            TutorialGuideTimingRules.RequiresFullHandPresentation(
+                TutorialStepId.DeckHandDiscardAndRecycle),
+            Is.True);
+        Assert.That(
+            TutorialGuideTimingRules.SkipsOptionalDiscardBeforePresentation(
+                TutorialStepId.DeckHandDiscardAndRecycle),
+            Is.True,
+            "the hidden optional-discard prompt must not stall the movement lesson");
+
+        Assert.That(
+            TutorialGuideTimingRules.StartsAtNextTurn(
+                TutorialStepId.SpeedCardsAndMovement),
+            Is.False,
+            "movement explanation remains the immediate result of card confirmation");
+        Assert.That(
+            TutorialGuideTimingRules.RequiresFullHandPresentation(
+                TutorialStepId.SpeedCardsAndMovement),
+            Is.False,
+            "movement lesson must focus the track instead of rebuilding the spent hand");
+        Assert.That(
+            TutorialGuideTimingRules.SkipsOptionalDiscardBeforePresentation(
+                TutorialStepId.SpeedCardsAndMovement),
+            Is.False);
+        Assert.That(
+            TutorialGuideTimingRules.StartsAtNextTurn(
+                TutorialStepId.HeatPayment),
+            Is.False,
+            "heat payment remains the immediate result of selecting G3");
+    }
+
+    [Test]
+    public void MovementLessonFocusesTrackAfterCardsLeaveHand()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
+        TutorialStepDefinition movement = scenario.steps[3];
+
+        Assert.That(movement.id, Is.EqualTo(TutorialStepId.SpeedCardsAndMovement));
+        Assert.That(movement.focusTarget, Is.EqualTo(TutorialFocusTarget.Track));
+        StringAssert.DoesNotContain("手牌", movement.actionPrompt);
+        StringAssert.Contains("赛道", movement.focusIntroduction);
+    }
+
+    [Test]
+    public void DeferredLessonWaitsUntilPlayerTurnPresentationIsReady()
+    {
+        Assert.That(
+            TutorialGuideTimingRules.IsTurnPresentationReady(GamePhase.Animating),
+            Is.False,
+            "guide must not appear before the checkpoint view has changed");
+        Assert.That(
+            TutorialGuideTimingRules.IsTurnPresentationReady(GamePhase.WaitingForGear),
+            Is.True,
+            "camera, HUD and gear input are ready at this presentation point");
+        Assert.That(
+            TutorialGuideTimingRules.IsTurnPresentationReady(GamePhase.WaitingForCards),
+            Is.False);
+        Assert.That(
+            TutorialGuideTimingRules.IsTurnPresentationReady(GamePhase.GameOver),
+            Is.False);
+    }
+
+    [Test]
+    public void InitialGuideWaitsForRaceSceneCameraAndInputPresentation()
+    {
+        Assert.That(
+            TutorialGuideTimingRules.IsInitialPresentationReady(
+                raceSceneLoaded: false,
+                cameraInitialized: true,
+                GamePhase.WaitingForGear),
+            Is.False,
+            "the authoring overlay must not appear while MainMenu is still active");
+        Assert.That(
+            TutorialGuideTimingRules.IsInitialPresentationReady(
+                raceSceneLoaded: true,
+                cameraInitialized: false,
+                GamePhase.WaitingForGear),
+            Is.False,
+            "the guide must not precede the initial race-camera snap");
+        Assert.That(
+            TutorialGuideTimingRules.IsInitialPresentationReady(
+                raceSceneLoaded: true,
+                cameraInitialized: true,
+                GamePhase.Animating),
+            Is.False,
+            "the guide must not appear before the player input presentation is ready");
+        Assert.That(
+            TutorialGuideTimingRules.IsInitialPresentationReady(
+                raceSceneLoaded: true,
+                cameraInitialized: true,
+                GamePhase.WaitingForGear),
+            Is.True);
     }
 
     [Test]

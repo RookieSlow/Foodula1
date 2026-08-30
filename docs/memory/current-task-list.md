@@ -26,8 +26,8 @@
   引擎、位置和挡位并清除失控/维修残留；缺牌、打转、司康和红茶均有确定性前置状态。
 - [x] 勒芒正式 JSON 无维修区时，教程以配置的 132/4 入口/出口生成独立规则视图并复用正常
   `PitLaneRules`；正式节点未修改。教程定向 `20/20`、全量 EditMode `503/503` 通过。
-- [x] 教程体验优化：16 步改为渐进、鼓励式短句，按“机制用途 -> 现在场上 -> 轮到你了 ->
-  完成后 -> 没反应？”逐步展开；阅读步骤使用专用按钮，下一步持续显示上一项成功反馈。
+- [x] 教程体验优化：16 步采用人工修订后的渐进、鼓励式短句；“轮到你了”保持核心操作，
+  “现在场上 / 完成后 / 没反应？”改为可选段落，空字段不显示标签、空行或顶部泛化反馈。
 - [x] 为每步增加语义化高光目标和独立机制短说明；13 类目标覆盖状态、挡位、手牌、牌区、引擎、
   赛道、天气、维修选择及两张 UK 卡。四块无遮拦遮罩形成聚光窗口，减少动态时边框静止。
 - [x] 渐进式指引与高光回归：教程定向 EditMode `26/26`、全量 `509/509` 通过，0 失败、0 跳过；
@@ -39,10 +39,21 @@
   下的实例，缺失时自动加载 Prefab，展开时恢复人工布局。
 - [x] 为 `TutorialOverlayAuthoring` 增加非 Play Mode 步骤/练习/完成态预览入口，使文案换行与
   RectTransform 能在 Prefab Mode 联合校正；预览不创建 Director、不推进步骤也不写进度。
-- [x] 增加只读作者校验，报告 16 步缺失/重复 ID、空白展示字段和断开的 Guide/Focus 引用，绝不
-  自动覆盖手工文本或布局。
+- [x] 增加只读作者校验，报告 16 步缺失/重复 ID、空白必填展示字段和断开的 Guide/Focus 引用；
+  可选提示允许留空，绝不自动覆盖手工文本或布局。
 - [x] 增加 `TutorialOverlayAuthoringEditor` 专用 Inspector：常驻步骤/练习/完成态预览按钮、Undo
-  支持和内联校验结果；教程定向 `31/31`、全量 EditMode `514/514` 通过，0 失败、0 跳过。
+  支持和内联校验结果；人工文案同步与条件渲染回归后全量 EditMode `516/516` 通过，0 失败、0 跳过。
+- [x] 指引框按当前 TMP 正文首选高度自动增长，底部进度与按钮同步下移且不超过屏幕安全高度；
+  每步高光可由下一次独立单击关闭，同步刷新不会复现。全量 EditMode `519/519` 通过，0 失败、0 跳过。
+- [x] 修正教程回合边界：第 3 步与第 7 步在上一回合完整结束、检查点落位后才刷新显示；同回合
+  的操作与结果观察保持连续；延迟课程仅在镜头已对准玩家、选挡 HUD 已就绪后出现。显示时序
+  回归后全量 EditMode `522/522` 通过。
+- [x] 修正首次进入教程的显示同步：MainMenu 可继续保留启用的作者预览实例供手工排版，
+  但运行时会在首帧渲染前隐藏；Race 随后先完成比赛状态和摄像机初始化，再对准玩家并显示第一步。
+- [x] 修正基础驾驶牌区与检查点显示时机：确认速度牌后的移动课改为高亮赛道；牌区课延迟到
+  下一回合并先按固定牌序补齐可见手牌。所有玩家检查点应用后立即同步赛车 Transform、车道、
+  摄像机、手牌和 HUD，不再等待下一次挡位确认才显示脚本位置；进入牌区课前自动跳过被旧面板
+  遮住的可选弃牌输入，避免第 4 步移动完成后看似卡住。
 - [ ] 教程体验优化验收：完整人工走查渐进式面板与高光，确认 16:9 常用分辨率下文字、按钮、
   遮罩边界和关键 HUD 无遮挡，并按实际操作节奏继续精简过长步骤。
 - [ ] 下一工作包：执行完整引导到练习的一次安全人工 Play Mode 验收，并单独走查普通
@@ -109,16 +120,14 @@
 - [ ] Unity EditMode/Play Mode 视觉验收待 MCP 实例恢复后执行；本轮只做静态实现断言，
   不将未运行的 Unity 测试标记为通过。
 
-## 本轮完成（2026-08-27 车辆移动弹跳表现）
+## 本轮完成（2026-08-30 移除车辆移动弹跳）
 
-- [x] 按视觉设计案将相邻赛道格移动改为逐格跳跃：默认每格 0.15 秒、
-  0.08 世界单位弧高；目标节点和规则层位置在动画结束时精确对齐，传送/静止移动
-  仍直接定位。
-- [x] 新增 `CarMovementRules.GetBounceOffset` 纯函数和车辆移动回归覆盖，保留
-  `moveAnimSpeed` 作为旧配置的时长回退；两个默认 `GameConfigSO` 资产已接线。
-- [ ] Unity EditMode/Play Mode 视觉验收待 MCP 实例恢复后执行；本轮已完成静态差异检查，
-  但 dotnet CLI 只有 runtime、没有 SDK，因此未能进行 C# 构建验证，也未将未运行的 Unity
-  测试标记为通过。
+- [x] 移除逐格移动的垂直跳跃、弧高配置和对应纯函数；车辆保留每格 0.15 秒的
+  赛道平面线性插值、切线朝向与节点精确对齐，传送/静止移动仍直接定位。
+- [x] 更新车辆移动回归，逐帧验证中间位置不偏离起点到目标节点的赛道平面线段；
+  `moveAnimSpeed` 继续作为旧配置的时长回退。
+- [x] Unity 全量 EditMode 回归 `521/521` 通过，0 失败、0 跳过；Play Mode 视觉验收
+  仍待手动走一段比赛确认最终观感。
 
 ## 本轮手动试玩视觉回归（2026-08-26）
 
@@ -539,8 +548,8 @@ with 0 failures, warnings, or errors.
 - [x] Implement the driver-selection flow as a catalog, session state, and
   runtime-built main-menu panel; connect the selected driver to race setup.
 - [ ] Add sound effects.
-- [ ] Complete Play Mode visual acceptance for card-play, vehicle movement, bounce, and spin-out
-  animations; card transitions, per-node bounce, and the 1-second/360-degree `RaceEventFX` cue
+- [ ] Complete Play Mode visual acceptance for card-play, linear vehicle movement, and spin-out
+  animations; card transitions, per-node interpolation, and the 1-second/360-degree `RaceEventFX` cue
   are implemented, while the final combined visual walkthrough remains open.
 - [x] Add weather gameplay after track data and race rules are stable; the five
   design profiles are now wired into limits, slipstream, cooling, spin-out and HUD.

@@ -153,12 +153,48 @@ public sealed class TutorialStepDefinition
 
     public string BuildGuideText()
     {
-        return
-            $"{goal}\n\n" +
-            $"<color=#8BD7FF><b>现在场上</b></color>　{currentState}\n" +
-            $"<color=#FFD27A><b>轮到你了</b></color>　{actionPrompt}\n" +
-            $"<color=#8FE0A6><b>完成后</b></color>　{successSignal}\n" +
-            $"<size=90%><color=#B9C7D8>没反应？{recoveryHint}</color></size>";
+        return TutorialGuideTextBuilder.Build(
+            goal,
+            currentState,
+            actionPrompt,
+            successSignal,
+            recoveryHint);
+    }
+}
+
+public static class TutorialGuideTextBuilder
+{
+    public static string Build(
+        string goal,
+        string currentState,
+        string actionPrompt,
+        string successSignal,
+        string recoveryHint)
+    {
+        var sections = new List<string>();
+        AddPlainText(sections, goal);
+        AddLabelledText(sections, "#8BD7FF", "现在场上", currentState);
+        AddLabelledText(sections, "#FFD27A", "轮到你了", actionPrompt);
+        AddLabelledText(sections, "#8FE0A6", "完成后", successSignal);
+        if (!string.IsNullOrWhiteSpace(recoveryHint))
+            sections.Add($"<size=90%><color=#B9C7D8>没反应？{recoveryHint.Trim()}</color></size>");
+        return string.Join("\n\n", sections);
+    }
+
+    private static void AddPlainText(ICollection<string> sections, string value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+            sections.Add(value.Trim());
+    }
+
+    private static void AddLabelledText(
+        ICollection<string> sections,
+        string color,
+        string label,
+        string value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+            sections.Add($"<color={color}><b>{label}</b></color>　{value.Trim()}");
     }
 }
 
@@ -355,48 +391,48 @@ public sealed class TutorialScenarioDefinition
         {
             Step(TutorialStepId.ObjectiveAndInterface, TutorialAction.AcknowledgeObjective,
                 "起步", "欢迎来到勒芒",
-                "先不用记住所有规则。我们会一次认识一个区域，再马上用它跑一小段。",
-                "你驾驶 UK 赛车；科技、车手技能和正常奖励都已暂时关闭，练习不会影响存档。",
-                "看看高光区域里的比赛状态。准备好后，我们就从一个完整回合开始。",
-                "比赛操作会解锁，接下来只需要跟着“轮到你了”完成一个动作。",
+                "欢迎来到围场，新人！赛车固然刺激，但驾驶起来并不困难。一步一步来，你就能成为冠军。",
+                "现在，你正在驾驶属于UK的炸鱼薯条赛车。这辆传统的赛车很适合你冠军之旅的启程，它具有四个挡位，并有着均衡的性能。",
+                "看看高光区域里的比赛状态。准备好后，我们就开始你的第一圈吧。",
+                "五盏红灯熄灭！你可以上手了。接下来只需要跟着“轮到你了”完成操作。",
                 "想看被面板挡住的位置，可先点“收起指引”，看完再展开。",
                 TutorialFocusTarget.RaceStatus,
                 "比赛状态：这里会告诉你当前阶段、圈数和下一件要做的事。",
                 "开始第一回合", true),
             Step(TutorialStepId.TurnFlow, TutorialAction.CompleteTurnFlow,
-                "基础驾驶", "先跑完一小段",
-                "一回合就像一段短冲刺：先选挡，再出牌，赛车移动后才会结算赛道效果和补牌。",
+                "基础驾驶", "起步",
+                "一回合内的操作很简单：先选挡，再出牌。赛车移动后才会结算赛道效果，并进行弃牌和补牌。",
                 "回合提示正在等你选择挡位，起步挡位是 G1。",
-                "选 G1，再选 1 张速度牌并确认。之后先别急着点，让这一回合自然跑完。",
+                "选 G1，再选 1 张速度牌并确认。",
                 "提示会依次经过移动、赛道结算和回合清理，然后回到新回合。",
                 "按钮暂时不可用通常代表动画还没结束，等提示变化即可。",
                 TutorialFocusTarget.TurnPrompt,
                 "回合提示：迷路时先看这里，它会告诉你现在处于哪个阶段。"),
             Step(TutorialStepId.GearAndRequiredCards, TutorialAction.SelectRequiredGearAndCards,
-                "基础驾驶", "挡位决定你要出几张牌",
-                "挡位不只代表快慢，它也规定本回合必须打出的速度牌张数：G2 就是 2 张。",
+                "基础驾驶", "来一次换挡",
+                "挡位指示了本回合必须打出的速度牌张数：G2 就是 2 张。如果你选择了过高的挡位而不能打出足量的牌，那就会受到惩罚，这一点我们稍后再说",
                 "新的回合已经停在选挡阶段，G2 可以直接选择。",
-                "先点 G2，再从手牌里选恰好 2 张速度牌并确认。",
-                "出牌计数会显示 2/2；接着我们观察这两张牌怎样推动赛车。",
+                "先点 G2，再从手牌里选 2 张速度牌并确认。",
+                "出牌计数会显示 2/2；接着我们观察这两张牌怎样驱动赛车。",
                 "多选了一张就再点一次取消，留下恰好 2 张即可。",
                 TutorialFocusTarget.GearControls,
                 "挡位区：数字同时决定本回合需要打出的速度牌张数。"),
             Step(TutorialStepId.SpeedCardsAndMovement, TutorialAction.ResolveSpeedMovement,
-                "基础驾驶", "让速度牌变成移动",
+                "基础驾驶", "打出速度牌让赛车前进",
                 "速度牌很直观：本回合打出的数字相加，就是赛车的基础移动格数。",
-                "刚才的两张牌已经确认，系统正在计算它们的总值。",
-                "这一步不用再点。看看高光中的手牌数值，再观察赛车逐格前进。",
+                "刚才的两张牌已经确认，赛车正在按它们的总值移动。",
+                "这一步不用再点。观察赛车沿高光赛道逐格前进。",
                 "赛车落位后会记录起点、终点和总移动值。",
                 "镜头还在跟车时耐心等一下，落位后教程会自动继续。",
-                TutorialFocusTarget.Hand,
-                "手牌区：速度牌左上角的数字会相加，决定本回合基础移动。"),
+                TutorialFocusTarget.Track,
+                "赛道：赛车会按本回合速度牌总和逐格前进，落位后再结算赛道效果。"),
             Step(TutorialStepId.DeckHandDiscardAndRecycle, TutorialAction.InspectCardZonesAndRecycle,
                 "卡牌循环", "看看牌去了哪里",
                 "用过的牌不会消失：它们进入弃牌堆；抽牌堆空时，可用牌会按固定顺序回到抽牌堆。",
                 "上回合的速度牌已经进入弃牌堆，底部手牌也补回了上限。",
-                "沿着高光区域看一遍抽牌堆、引擎库和弃牌堆的数量，然后确认即可。",
-                "下一课会为热量机制准备一个干净、可重复的牌区状态。",
-                "不用故意把牌抽空；教程会替你保留精确牌序。",
+                "沿着高光区域看一遍抽牌堆、引擎库和弃牌堆的数量，随后确认",
+                "下一课会为热量机制准备一个干净的牌区状态。",
+                "",
                 TutorialFocusTarget.CardPiles,
                 "牌区：从抽牌堆拿牌，用过后进弃牌堆；引擎库只保存可支付的热量。",
                 "牌区已看懂", true),
@@ -424,7 +460,7 @@ public sealed class TutorialScenarioDefinition
                 "当前是 G2，但手牌只有 1 张速度牌；引擎也刚好只剩 1 热量。",
                 "打出这 1 张速度牌，然后点高光中的结束出牌按钮。",
                 "系统会提示少 1 张，并把最后 1 张引擎热量支付到手牌。",
-                "别打司康；卡牌选中后还要点结束出牌，惩罚才会结算。",
+                "卡牌选中后还要点结束出牌，惩罚才会结算。",
                 TutorialFocusTarget.ActionButton,
                 "结束出牌：没凑齐挡位张数也能结束，但缺少的每张牌都要支付热量。"),
             Step(TutorialStepId.CornerLimitAndSpin, TutorialAction.ResolveCornerSpin,
@@ -432,8 +468,8 @@ public sealed class TutorialScenarioDefinition
                 "穿过弯心时，总速度超过限速就要支付差额热量；付不起，赛车便会打转并回退。",
                 "赛车已在 Dunlop 弯前 8 格，G2 手牌前两张是 3 和 2，弯心限速为 3。",
                 "选 3 和 2 两张速度牌并确认，观察赛车穿过高光中的弯道。",
-                "G2 会先冷回 1 热量，但超速差额是 2；因此这次会稳定触发打转。",
-                "结算时别重置，下一检查点会自动清除跳回合状态。",
+                "注意到热量不足以支付需要的数量了吗？这时赛车就打滑了",
+                "",
                 TutorialFocusTarget.Track,
                 "赛道与弯心：弯心标出的数字是通过它时允许的总速度上限。"),
             Step(TutorialStepId.Weather, TutorialAction.ObserveWeatherEffect,
@@ -441,18 +477,18 @@ public sealed class TutorialScenarioDefinition
                 "天气不是背景装饰：不同天气会改变弯道、尾流或冷却，所以每回合都值得看一眼。",
                 "打转状态已经清除，脚本正把比赛切换为雨天。",
                 "看高光中的天气标签，再对照弯道提示；雨天会让弯道更难控制。",
-                "确认后会进入尾流课，天气效果仍由正常比赛规则计算。",
-                "标签还没变成雨天时先等检查点应用，不需要移动车辆。",
+                "",
+                "",
                 TutorialFocusTarget.Weather,
                 "天气：这里显示当前环境；它会真实改变弯道、尾流或冷却规则。",
                 "天气规则已看懂", true),
             Step(TutorialStepId.Slipstream, TutorialAction.ResolveSlipstream,
                 "赛道互动", "跟在前车后面吃尾流",
-                "尾流只在所有赛车完成基础移动后检查，而且只帮助距离合适的后车。",
+                "尾流只在所有赛车完成基础移动后检查，而且只帮助距离合适的后车。当回合结束时，你的车距离前车距离合适时，就会让你的赛车前进",
                 "教学领航车会在结算前稳定停到你前方 2 格。",
                 "跑一个普通 G1 回合：选 1 张速度牌并确认，然后看高光中的两辆赛车。",
                 "回合末只有后方的 UK 获得额外移动，前方 JP 不会反向受益。",
-                "不用主动追车；脚本会准备好距离，等尾流动画完整结束即可。",
+                "",
                 TutorialFocusTarget.Track,
                 "两车距离：尾流在回合末判定，只把后车向前带，不会推动领航车。"),
             Step(TutorialStepId.PitSelection, TutorialAction.SelectPit,
@@ -461,7 +497,7 @@ public sealed class TutorialScenarioDefinition
                 "赛车已在 130 格和 G2，前两张速度牌是 1+1，教程入口位于 132 格。",
                 "打出两张 1。维修选择出现后，点高光中的“预定进站”。",
                 "系统只会记下进站意图，本回合仍会照常完成。",
-                "提示没出现时，检查是否已用 1+1 结束出牌；不要选“继续比赛”。",
+                "",
                 TutorialFocusTarget.PitChoice,
                 "维修选择：现在只是预约进站，不会立刻停下或传送。"),
             Step(TutorialStepId.PitDelayedResolution, TutorialAction.ResolvePitOnNextTurn,
@@ -475,20 +511,20 @@ public sealed class TutorialScenarioDefinition
                 "回合提示：当它进入下一回合时，预约的维修才会正式执行。"),
             Step(TutorialStepId.UkScone, TutorialAction.PlayUkScone,
                 "UK 特殊牌", "尝一块司康，换一次冲刺",
-                "UK 的司康是一张主动特殊牌：支付 1 热量，换取本回合额外 +2 移动。",
+                "特技牌是各个车队的特色之一，能够为赛场带来多变的因素，并提供特别的增益。\nUK 的司康是一张主动特殊牌：支付 1 热量，换取本回合额外 +2 移动。",
                 "赛车已在 16 格，司康放进了手牌，引擎也准备好至少 1 热量。",
                 "进入出牌阶段后点高光中的司康并确认，再照常结束本回合出牌。",
                 "引擎支付 1 热量，本回合获得 +2 移动，司康随后进入弃牌堆。",
-                "暂时点不了牌就等出牌阶段开放；司康不是速度牌。",
+                "",
                 TutorialFocusTarget.UkSconeCard,
                 "司康：支付 1 引擎热量，让本回合额外前进 2 格。"),
             Step(TutorialStepId.UkEnglishBreakfastTea, TutorialAction.PlayUkEnglishBreakfastTea,
                 "UK 特殊牌", "用英式早餐茶清理手牌热量",
                 "英式早餐茶不加速，它会把 1 张手牌热量冷回引擎，为之后腾出空间。",
-                "司康回合可能还没结束；下一回合检查点会准备红茶和 1 张手牌热量。",
+                "",
                 "若还在上一回合，先用速度牌结束；下一回合点高光中的红茶并确认。",
                 "1 张手牌热量会回到引擎，红茶本身进入弃牌堆。",
-                "红茶还没出现就先完成当前回合，等待下一回合检查点。",
+                "",
                 TutorialFocusTarget.UkTeaCard,
                 "英式早餐茶：把 1 张手牌热量送回引擎，不提供额外移动。"),
             Step(TutorialStepId.Review, TutorialAction.CompleteReview,

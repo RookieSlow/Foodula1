@@ -137,13 +137,9 @@ public class GameConfigSO : ScriptableObject
     [Tooltip("赛车每步移动速度 (单位/秒)")]
     public float moveAnimSpeed = 12f;
 
-    [Tooltip("赛车在两个相邻赛道格之间完成一次跳跃的时长 (秒)")]
+    [Tooltip("赛车在两个相邻赛道格之间完成一次移动的时长 (秒)")]
     [Min(0.01f)]
     public float nodeMoveDuration = 0.15f;
-
-    [Tooltip("赛车逐格跳跃时相对赛道中心线的视觉高度 (世界单位)")]
-    [Min(0f)]
-    public float nodeBounceHeight = 0.08f;
 
     [Tooltip("每节点移动后的暂停时间 (秒)")]
     [Min(0f)]

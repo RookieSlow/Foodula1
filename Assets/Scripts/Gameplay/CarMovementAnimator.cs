@@ -18,7 +18,6 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
 {
     private readonly float fallbackMoveSpeed;
     private readonly float nodeMoveDuration;
-    private readonly float nodeBounceHeight;
     private readonly float arrivalThreshold;
     private readonly CarOrientationController orientationController;
     private readonly Func<float> deltaTimeProvider;
@@ -34,7 +33,6 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
         nodeMoveDuration = config != null
             ? Mathf.Max(0.01f, config.nodeMoveDuration > 0f ? config.nodeMoveDuration : fallbackDuration)
             : 0.15f;
-        nodeBounceHeight = config != null ? Mathf.Max(0f, config.nodeBounceHeight) : 0.08f;
         arrivalThreshold = CarMovementRules.DefaultArrivalThreshold;
         this.orientationController = orientationController ?? new CarOrientationController(config);
         this.deltaTimeProvider = deltaTimeProvider ?? (() => Time.deltaTime);
@@ -61,18 +59,15 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
             yield break;
         }
 
-        // Each node is a discrete board-space step: interpolate only within
-        // the current hop, then snap to the exact target. The vertical arc is
-        // presentation-only and never changes the stored track position.
+        // Each node is a discrete board-space step: interpolate along the
+        // track plane, then snap to the exact target.
         float elapsed = 0f;
         while (elapsed < nodeMoveDuration)
         {
             float deltaTime = Mathf.Max(0f, deltaTimeProvider());
             elapsed += deltaTime;
             float progress = Mathf.Clamp01(elapsed / nodeMoveDuration);
-            Vector3 position = Vector3.LerpUnclamped(startPosition, targetPosition, progress);
-            position += Vector3.up * CarMovementRules.GetBounceOffset(progress, nodeBounceHeight);
-            car.transform.position = position;
+            car.transform.position = Vector3.LerpUnclamped(startPosition, targetPosition, progress);
             orientationController.RotateTowards(car, targetPosition, deltaTime);
             yield return null;
         }

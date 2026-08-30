@@ -31,7 +31,11 @@ public readonly struct TutorialGuideLayout
 /// </summary>
 public static class TutorialGuideLayoutRules
 {
-    public static TutorialGuideLayout Resolve(int screenWidth, int screenHeight, bool expanded)
+    public static TutorialGuideLayout Resolve(
+        int screenWidth,
+        int screenHeight,
+        bool expanded,
+        float preferredExpandedHeight = 0f)
     {
         float width = Mathf.Max(1f, screenWidth);
         float height = Mathf.Max(1f, screenHeight);
@@ -56,8 +60,9 @@ public static class TutorialGuideLayoutRules
         float expandedWidth = Mathf.Min(
             Mathf.Clamp(width * 0.48f, 360f, 540f),
             safeWidth);
+        float defaultExpandedHeight = Mathf.Clamp(height * 0.72f, 340f, 440f);
         float expandedHeight = Mathf.Min(
-            Mathf.Clamp(height * 0.72f, 340f, 440f),
+            Mathf.Max(defaultExpandedHeight, preferredExpandedHeight),
             safeHeight);
         bool compact = expandedWidth < 460f || expandedHeight < 380f;
         return new TutorialGuideLayout(
@@ -101,6 +106,11 @@ public sealed class TutorialGuideUI : MonoBehaviour
     private RectTransformSnapshot titleSnapshot;
     private RectTransformSnapshot progressSnapshot;
     private RectTransformSnapshot collapseSnapshot;
+    private RectTransformSnapshot completionSnapshot;
+    private RectTransformSnapshot instructionSnapshot;
+    private RectTransformSnapshot continueSnapshot;
+    private RectTransformSnapshot modeSnapshot;
+    private RectTransformSnapshot exitSnapshot;
     private float authoredTitleFontSize;
     private float authoredProgressFontSize;
 
@@ -186,9 +196,8 @@ public sealed class TutorialGuideUI : MonoBehaviour
 
         gameObject.SetActive(true);
         isExpanded = true;
-        ApplyLayout();
         titleText.text = presentation.title;
-        completionText.text = "先看高光区域，再完成这一小步";
+        SetOptionalText(completionText, string.Empty);
         instructionText.text = presentation.BuildGuideText();
         progressText.text =
             $"{presentation.sectionLabel} · 第 {oneBasedIndex}/{totalSteps} 步";
@@ -198,6 +207,7 @@ public sealed class TutorialGuideUI : MonoBehaviour
                 ? "等待本步操作"
                 : presentation.manualAdvanceLabel);
         SetModeState(true, "跳过引导");
+        ApplyLayout();
     }
 
     public void PreviewAuthoredPractice(
@@ -212,13 +222,13 @@ public sealed class TutorialGuideUI : MonoBehaviour
 
         gameObject.SetActive(true);
         isExpanded = true;
-        ApplyLayout();
         titleText.text = previewTitle;
-        completionText.text = previewCompletion;
+        SetOptionalText(completionText, previewCompletion);
         instructionText.text = previewInstruction;
         progressText.text = $"{totalSteps}/{totalSteps}";
         SetContinueState(true, completed ? "再练一圈" : "重新开始");
         SetModeState(true, "重播引导");
+        ApplyLayout();
     }
 
     private bool HasPresentationReferences()
@@ -244,7 +254,6 @@ public sealed class TutorialGuideUI : MonoBehaviour
         }
 
         gameObject.SetActive(true);
-        ApplyLayout();
         TutorialStepDefinition step = director.CurrentStep;
         if (step == null)
         {
@@ -253,11 +262,11 @@ public sealed class TutorialGuideUI : MonoBehaviour
             titleText.text = authoring != null
                 ? authoring.GetPracticeTitle(completed)
                 : completed ? "练习圈完成" : "勒芒自由练习";
-            completionText.text = authoring != null
+            SetOptionalText(completionText, authoring != null
                 ? authoring.GetPracticeCompletion(completed)
                 : completed
                     ? "✓ 一整圈练习已经完成"
-                    : "✓ 引导已结束，比赛状态已完整重置";
+                    : "✓ 引导已结束，比赛状态已完整重置");
             instructionText.text = authoring != null
                 ? authoring.GetPracticeInstruction(completed)
                 : completed
@@ -267,6 +276,7 @@ public sealed class TutorialGuideUI : MonoBehaviour
             primaryRestartsPractice = true;
             SetContinueState(true, completed ? "再练一圈" : "重新开始");
             SetModeState(true, "重播引导");
+            ApplyLayout();
             return;
         }
 
@@ -275,6 +285,7 @@ public sealed class TutorialGuideUI : MonoBehaviour
             ? authoring.Find(step.id)
             : null;
         focusHighlighter?.Show(
+            step.id,
             step.focusTarget,
             presentation != null ? presentation.focusIntroduction : step.focusIntroduction);
         titleText.text = presentation != null ? presentation.title : step.title;
@@ -283,9 +294,16 @@ public sealed class TutorialGuideUI : MonoBehaviour
             completedStep != null && authoring != null
                 ? authoring.Find(completedStep.id)
                 : null;
-        completionText.text = completedStep != null
-            ? $"✓ 做得好：{(completedPresentation != null ? completedPresentation.successSignal : completedStep.successSignal)}"
-            : "先看高光区域，再完成这一小步";
+        string completedMessage = completedPresentation != null
+            ? completedPresentation.successSignal
+            : completedStep != null
+                ? completedStep.successSignal
+                : string.Empty;
+        SetOptionalText(
+            completionText,
+            string.IsNullOrWhiteSpace(completedMessage)
+                ? string.Empty
+                : $"✓ {completedMessage}");
         instructionText.text = presentation != null
             ? presentation.BuildGuideText()
             : step.BuildGuideText();
@@ -303,6 +321,16 @@ public sealed class TutorialGuideUI : MonoBehaviour
                         : step.manualAdvanceLabel)
                 : "等待本步操作");
         SetModeState(true, "跳过引导");
+        ApplyLayout();
+    }
+
+    private static void SetOptionalText(TMP_Text target, string value)
+    {
+        if (target == null)
+            return;
+        bool visible = !string.IsNullOrWhiteSpace(value);
+        target.gameObject.SetActive(visible);
+        target.text = visible ? value.Trim() : string.Empty;
     }
 
     private void Build(TMP_FontAsset font)
@@ -374,7 +402,8 @@ public sealed class TutorialGuideUI : MonoBehaviour
         TutorialGuideLayout layout = TutorialGuideLayoutRules.Resolve(
             Screen.width,
             Screen.height,
-            isExpanded);
+            isExpanded,
+            isExpanded ? CalculateRuntimePreferredHeight() : 0f);
         RectTransform panelRect = (RectTransform)transform;
         panelRect.anchoredPosition = new Vector2(-layout.Margin, -layout.Margin);
         panelRect.sizeDelta = new Vector2(layout.Width, layout.Height);
@@ -446,7 +475,8 @@ public sealed class TutorialGuideUI : MonoBehaviour
 
     private void SetExpandedContentActive(bool active)
     {
-        completionText.gameObject.SetActive(active);
+        completionText.gameObject.SetActive(
+            active && !string.IsNullOrWhiteSpace(completionText.text));
         instructionText.gameObject.SetActive(active);
         continueButton.gameObject.SetActive(active);
         modeButton.gameObject.SetActive(active);
@@ -494,6 +524,12 @@ public sealed class TutorialGuideUI : MonoBehaviour
         progressSnapshot = RectTransformSnapshot.Capture(progressText.rectTransform);
         collapseSnapshot = RectTransformSnapshot.Capture(
             collapseButton.GetComponent<RectTransform>());
+        completionSnapshot = RectTransformSnapshot.Capture(completionText.rectTransform);
+        instructionSnapshot = RectTransformSnapshot.Capture(instructionText.rectTransform);
+        continueSnapshot = RectTransformSnapshot.Capture(
+            continueButton.GetComponent<RectTransform>());
+        modeSnapshot = RectTransformSnapshot.Capture(modeButton.GetComponent<RectTransform>());
+        exitSnapshot = RectTransformSnapshot.Capture(exitButton.GetComponent<RectTransform>());
         authoredTitleFontSize = titleText.fontSize;
         authoredProgressFontSize = progressText.fontSize;
         authoredLayoutCaptured = true;
@@ -512,6 +548,24 @@ public sealed class TutorialGuideUI : MonoBehaviour
             titleSnapshot.Restore();
             progressSnapshot.Restore();
             collapseSnapshot.Restore();
+            completionSnapshot.Restore();
+            instructionSnapshot.Restore();
+            continueSnapshot.Restore();
+            modeSnapshot.Restore();
+            exitSnapshot.Restore();
+
+            float preferredInstructionHeight = ResolvePreferredTextHeight(
+                instructionText,
+                instructionSnapshot.Size.x,
+                instructionSnapshot.Size.y);
+            float safeHeight = Mathf.Max(1f, Screen.height - 24f);
+            float desiredHeight = panelSnapshot.Size.y +
+                                  Mathf.Max(
+                                      0f,
+                                      preferredInstructionHeight - instructionSnapshot.Size.y);
+            float resolvedHeight = Mathf.Min(desiredHeight, safeHeight);
+            float addedHeight = Mathf.Max(0f, resolvedHeight - panelSnapshot.Size.y);
+            ApplyAuthoredExpandedHeight(addedHeight);
             titleText.fontSize = authoredTitleFontSize;
             progressText.fontSize = authoredProgressFontSize;
             collapseLabel.text = "收起指引";
@@ -532,6 +586,70 @@ public sealed class TutorialGuideUI : MonoBehaviour
             new Vector2(halfWidth - 50f, 0f),
             new Vector2(84f, 38f));
         collapseLabel.text = "展开指引";
+    }
+
+    private float CalculateRuntimePreferredHeight()
+    {
+        if (instructionText == null)
+            return 0f;
+
+        float width = Mathf.Max(220f, instructionText.rectTransform.rect.width);
+        float instructionHeight = ResolvePreferredTextHeight(
+            instructionText,
+            width,
+            100f);
+        return instructionHeight + 216f;
+    }
+
+    private static float ResolvePreferredTextHeight(
+        TMP_Text text,
+        float width,
+        float minimumHeight)
+    {
+        if (text == null || string.IsNullOrWhiteSpace(text.text))
+            return minimumHeight;
+
+        text.ForceMeshUpdate(ignoreActiveState: true, forceTextReparsing: true);
+        float preferred = text.GetPreferredValues(
+            text.text,
+            Mathf.Max(1f, width),
+            0f).y;
+        return Mathf.Max(minimumHeight, preferred + 12f);
+    }
+
+    private void ApplyAuthoredExpandedHeight(float addedHeight)
+    {
+        RectTransform panelRect = (RectTransform)transform;
+        Vector2 panelSize = panelSnapshot.Size;
+        panelSize.y += addedHeight;
+        panelRect.sizeDelta = panelSize;
+
+        // The authored panel is top anchored. Grow it downward while keeping
+        // the title at the same screen position and the controls at the bottom.
+        Vector2 panelPosition = panelSnapshot.Position;
+        panelPosition.y -= addedHeight * (1f - panelRect.pivot.y);
+        panelRect.anchoredPosition = panelPosition;
+
+        float halfAdded = addedHeight * 0.5f;
+        ShiftVertical(titleText.rectTransform, halfAdded);
+        ShiftVertical(completionText.rectTransform, halfAdded);
+        ShiftVertical(collapseButton.GetComponent<RectTransform>(), halfAdded);
+        ShiftVertical(progressText.rectTransform, -halfAdded);
+        ShiftVertical(continueButton.GetComponent<RectTransform>(), -halfAdded);
+        ShiftVertical(modeButton.GetComponent<RectTransform>(), -halfAdded);
+        ShiftVertical(exitButton.GetComponent<RectTransform>(), -halfAdded);
+        instructionText.rectTransform.sizeDelta = new Vector2(
+            instructionSnapshot.Size.x,
+            instructionSnapshot.Size.y + addedHeight);
+    }
+
+    private static void ShiftVertical(RectTransform rect, float delta)
+    {
+        if (rect == null)
+            return;
+        Vector2 position = rect.anchoredPosition;
+        position.y += delta;
+        rect.anchoredPosition = position;
     }
 
     private readonly struct RectTransformSnapshot

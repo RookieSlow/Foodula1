@@ -21,6 +21,21 @@ public class MainMenuUI : MonoBehaviour
     private Button tutorialButton;
     private Button settingsButton;
 
+    void Awake()
+    {
+        // The overlay may be kept in MainMenu for Prefab-layout authoring.
+        // Hide that preview before the first rendered frame; the Race scene
+        // creates and binds its own runtime instance after race presentation
+        // initialization is complete.
+        TutorialOverlayAuthoring[] authoringPreviews =
+            FindObjectsOfType<TutorialOverlayAuthoring>(true);
+        for (int i = 0; i < authoringPreviews.Length; i++)
+        {
+            if (authoringPreviews[i] != null)
+                authoringPreviews[i].gameObject.SetActive(false);
+        }
+    }
+
     void Start()
     {
         GameSettingsRuntime.EnsureLoadedAndApplyDisplay();

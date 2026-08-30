@@ -80,7 +80,8 @@ The verified scene flow is:
   risky guided mechanics. Because official Le Mans has no pit, a tutorial-only 132/4 rule view
   reuses normal pit rules without mutating official nodes. Each lesson now presents an explicit
   mechanism purpose, current scripted state, one next action, success signal and recovery hint in a
-  progressive, encouraging voice; the following lesson retains the previous success result. Every
+  progressive, encouraging voice. Current-state, success and recovery sections are optional and disappear
+  completely when blank; the following lesson only retains an explicitly authored success result. Every
   lesson also authors one of 13 semantic focus targets and a standalone mechanism introduction.
   A non-interactive spotlight dims outside the live HUD/card/track region, uses a static border when
   reduced motion is enabled, and follows rebuilt pit/card objects. The panel resolves a safe-area
@@ -88,7 +89,8 @@ The verified scene flow is:
   authored in `Assets/Resources/Prefabs/UI/TutorialOverlay.prefab`: its root exposes all sixteen lesson
   copies, while the panel and spotlight retain manually edited RectTransforms. Runtime reuses an instance
   under `RaceCanvas` before loading the Resources fallback. Final guided Play Mode remains open.
-- The tutorial runtime slice now passes `31/31` focused and `514/514` full EditMode tests.
+- The latest full project EditMode run passes `521/521`; the tutorial runtime slice retains its
+  focused regression coverage.
   Play Mode verified the exact seven-card opening and zero-benefit session; a separate
   Monza Quick Race retained the randomized deck, tech state and vehicle bonuses. The
   earlier guide-panel smoke confirmed its first authored step. A 2026-08-28 visual smoke stayed in
@@ -127,8 +129,8 @@ The verified scene flow is:
   tracks passed a clean Play Mode screenshot/Console spot check on 2026-08-25;
   only the full mechanics-focused manual race walkthrough remains open.
 - Vehicle movement presentation now treats each node as a discrete 0.15-second
-  hop with a small configurable arc; this is visual-only and leaves race
-  positions, lap crossings and corner calculations unchanged.
+  linear interpolation along the track plane, without a vertical hop; race
+  positions, lap crossings and corner calculations remain unchanged.
 - Runtime cars now receive a scene-independent world-space team badge showing a
   stable team code and current rank. It stays upright while the car follows
   track tangents and uses a high-contrast team-color fill. This is a temporary

@@ -24,16 +24,7 @@ public class CarMovementTests
     }
 
     [Test]
-    public void BounceOffsetPeaksBetweenNodesAndReturnsToTrack()
-    {
-        Assert.That(CarMovementRules.GetBounceOffset(0f, 0.08f), Is.EqualTo(0f).Within(0.0001f));
-        Assert.That(CarMovementRules.GetBounceOffset(0.5f, 0.08f), Is.EqualTo(0.08f).Within(0.0001f));
-        Assert.That(CarMovementRules.GetBounceOffset(1f, 0.08f), Is.EqualTo(0f).Within(0.0001f));
-        Assert.That(CarMovementRules.GetBounceOffset(0.5f, -1f), Is.EqualTo(0f));
-    }
-
-    [Test]
-    public void AnimatorMovesToTargetUsingInjectedDeltaTime()
+    public void AnimatorMovesLinearlyToTargetUsingInjectedDeltaTime()
     {
         var config = ScriptableObject.CreateInstance<GameConfigSO>();
         var car = new GameObject("CarMovementAnimatorTestCar");
@@ -41,18 +32,21 @@ public class CarMovementTests
         {
             config.moveAnimSpeed = 2f;
             config.nodeMoveDuration = 0.15f;
-            config.nodeBounceHeight = 0.08f;
             var animator = new CarMovementAnimator(
                 config,
                 new CarOrientationController(config),
                 () => 0.05f);
             IEnumerator routine = animator.MoveToNode(car, Vector3.right);
 
-            bool sawBounce = false;
+            bool leftTrackLine = false;
             while (routine.MoveNext())
-                sawBounce |= car.transform.position.y > 0.001f;
+            {
+                Vector3 position = car.transform.position;
+                leftTrackLine |= Mathf.Abs(position.y) > 0.0001f || Mathf.Abs(position.z) > 0.0001f;
+                Assert.That(position.x, Is.InRange(0f, 1f));
+            }
 
-            Assert.That(sawBounce, Is.True);
+            Assert.That(leftTrackLine, Is.False);
             Assert.That(car.transform.position, Is.EqualTo(Vector3.right));
         }
         finally

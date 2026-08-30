@@ -18,12 +18,12 @@ public sealed class TutorialStepPresentation
 
     public string BuildGuideText()
     {
-        return
-            $"{goal}\n\n" +
-            $"<color=#8BD7FF><b>现在场上</b></color>　{currentState}\n" +
-            $"<color=#FFD27A><b>轮到你了</b></color>　{actionPrompt}\n" +
-            $"<color=#8FE0A6><b>完成后</b></color>　{successSignal}\n" +
-            $"<size=90%><color=#B9C7D8>没反应？{recoveryHint}</color></size>";
+        return TutorialGuideTextBuilder.Build(
+            goal,
+            currentState,
+            actionPrompt,
+            successSignal,
+            recoveryHint);
     }
 
     public static TutorialStepPresentation FromDefinition(TutorialStepDefinition step)
@@ -77,10 +77,7 @@ public static class TutorialOverlayValidation
             ValidateText(step.id, "章节", step.sectionLabel, issues);
             ValidateText(step.id, "标题", step.title, issues);
             ValidateText(step.id, "机制说明", step.goal, issues);
-            ValidateText(step.id, "当前状态", step.currentState, issues);
             ValidateText(step.id, "操作提示", step.actionPrompt, issues);
-            ValidateText(step.id, "成功反馈", step.successSignal, issues);
-            ValidateText(step.id, "恢复提示", step.recoveryHint, issues);
             ValidateText(step.id, "高光说明", step.focusIntroduction, issues);
         }
 

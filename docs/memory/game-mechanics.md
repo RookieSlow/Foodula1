@@ -4,7 +4,7 @@ This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
 > **Implementation snapshot (2026-08-28)**: Unity `2022.3.62f3c1`; the latest
-> successful editor EditMode run passed `514/514`; tutorial guidance/checkpoint tests pass `31/31` and
+> successful editor EditMode run passed `521/521`; tutorial guidance/checkpoint tests previously passed `31/31` and
 > the encyclopedia catalog checks pass `6/6`.
 > The required
 > `production/session-state/active.md` file is currently absent, so this
@@ -43,6 +43,8 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   draws, no tech state and no intrinsic team-vehicle handling/cooling/pace/slipstream
   bonuses. UK special cards remain because they are explicit teaching content.
 - Each guided step owns a semantic focus target and a short standalone mechanism introduction.
+- Tutorial copy always presents the next action. Current-state, success and recovery sections are optional;
+  blank optional fields render no label, spacer or generic previous-step feedback.
 - Tutorial presentation is data-bound through `TutorialOverlayAuthoring` on
   `Assets/Resources/Prefabs/UI/TutorialOverlay.prefab`. The Prefab exposes the sixteen lesson copies and
   practice/completion text without changing step IDs or action gates. Its guide panel and spotlight keep
@@ -263,10 +265,10 @@ prototype and is no longer the authoritative model.
   choices are disabled and the AI keeps its lane.
 - Vehicle sprites follow the track tangent: spawning and teleport-style moves
   snap immediately to the next-node direction, while normal movement performs
-  a presentation-only hop between adjacent nodes (`nodeMoveDuration=0.15s`,
-  `nodeBounceHeight=0.08`) and rotates toward the tangent according to
+  a linear interpolation between adjacent nodes (`nodeMoveDuration=0.15s`)
+  without a vertical offset and rotates toward the tangent according to
   `carRotateSpeed`; the stored gameplay position still snaps exactly to the
-  destination node after each hop.
+  destination node after each step.
 - A spin-out presentation is visual-only: `RaceEventFX` defaults to a 1-second
   360-degree eased rotation, then restores the authored scale and track-facing
   rotation. Spin counters, heat recovery, rewind, skipped turns and DNF remain

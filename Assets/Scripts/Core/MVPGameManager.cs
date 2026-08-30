@@ -59,6 +59,7 @@ public class MVPGameManager : MonoBehaviour
     private TutorialGuideUI tutorialGuideUI;
     private TutorialOpponentCue pendingTutorialOpponentCue;
     private TutorialPlayerCheckpoint pendingTutorialPlayerCheckpoint;
+    private bool pendingTutorialGuideRefreshAtTurnStart;
     private IReadOnlyList<TrackNode> tutorialPitRuleNodes;
     private bool initializeTutorialInPractice;
     private readonly RacePhaseState phaseState = new RacePhaseState();
@@ -169,8 +170,8 @@ public class MVPGameManager : MonoBehaviour
         nodeWait = new WaitForSeconds(
             GameSettingsRuntime.ScaleAnimationDuration(config.nodeDelay));
         InitializeGame();
-        InitializeTutorialGuideUI();
         InitializeRaceCamera();
+        InitializeTutorialGuideUI();
         // Event visuals are optional presentation. If a stale runtime UI
         // object survives an editor scene reload, it must not prevent the
         // gameplay loop from starting.
@@ -590,6 +591,7 @@ public class MVPGameManager : MonoBehaviour
         initializeTutorialInPractice = false;
         pendingTutorialOpponentCue = null;
         pendingTutorialPlayerCheckpoint = null;
+        pendingTutorialGuideRefreshAtTurnStart = false;
         tutorialPitRuleNodes = tutorialScenario != null && tutorialScenario.tutorialPitLane != null
             ? TutorialCheckpointRules.CreateVirtualPitRuleNodes(
                 trackManager.TotalNodes,
@@ -712,6 +714,22 @@ public class MVPGameManager : MonoBehaviour
             return;
         }
 
+        bool presentationReady = TutorialGuideTimingRules.IsInitialPresentationReady(
+            gameObject.scene.IsValid() && gameObject.scene.isLoaded,
+            raceCameraController != null && raceCameraController.IsInitialized,
+            phaseState.Current);
+        if (!presentationReady)
+        {
+            if (tutorialGuideUI != null)
+                tutorialGuideUI.gameObject.SetActive(false);
+            Debug.LogWarning(
+                "[TUTORIAL_GUIDE] Initial guide held until the Race scene, camera and input HUD are ready.");
+            return;
+        }
+
+        raceCameraController.SnapToPlayer();
+        Canvas.ForceUpdateCanvases();
+
         if (tutorialGuideUI == null)
         {
             Canvas canvas = hudUI != null
@@ -747,7 +765,17 @@ public class MVPGameManager : MonoBehaviour
         raceLogWriter?.Append(
             $"[TUTORIAL_GATE] action={action} accepted=true detail={detail}");
         ApplyTutorialPendingCue();
-        tutorialGuideUI?.Refresh();
+        TutorialStepDefinition nextStep = tutorialDirector.CurrentStep;
+        if (nextStep != null && TutorialGuideTimingRules.StartsAtNextTurn(nextStep.id))
+        {
+            pendingTutorialGuideRefreshAtTurnStart = true;
+            raceLogWriter?.Append(
+                $"[TUTORIAL_GUIDE] step={nextStep.id} refresh=deferred boundary=next_turn");
+        }
+        else
+        {
+            tutorialGuideUI?.Refresh();
+        }
         if (previousPhase == TutorialRunPhase.Guided &&
             tutorialDirector.Phase == TutorialRunPhase.Practice)
         {
@@ -857,10 +885,45 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.UpdateDeckInfo(Player);
         }
         hudUI?.Refresh(this, Player, AI, session.Players);
+        // Tutorial checkpoints change the authoritative race position outside
+        // normal movement animation. Synchronize every visible consumer now,
+        // before a guide panel can describe the newly prepared state.
+        raceCameraController?.SnapToPlayer();
+        Canvas.ForceUpdateCanvases();
         raceLogWriter?.Append(
             $"[TUTORIAL_CHECKPOINT] step={checkpoint.step} applied=true " +
             $"cell={Player.position} gear={Player.gear} hand={result.handCount} " +
-            $"draw={result.drawCount} discard={result.discardCount} engine={result.engineHeat}");
+            $"draw={result.drawCount} discard={result.discardCount} engine={result.engineHeat} " +
+            "visual_sync=true");
+    }
+
+    private void PrepareTutorialTurnPresentation()
+    {
+        TutorialStepDefinition step = tutorialDirector?.CurrentStep;
+        PlayerState player = Player;
+        if (step == null || player == null || session == null ||
+            !TutorialGuideTimingRules.RequiresFullHandPresentation(step.id))
+            return;
+
+        // The normal draw phase follows gear selection. This lesson is shown
+        // before gear input, so fill the hand once at the presentation boundary;
+        // the regular draw phase will then be a harmless no-op for this player.
+        int handSize = session.EffectiveHandSize(player, config.handSize) +
+                       player.extraCardSlotsThisTurn;
+        bool fullyDrawn = player.deck.DrawToHand(handSize);
+        if (cardHandUI != null)
+        {
+            cardHandUI.SetDiscardMode(false);
+            cardHandUI.SetGearSelectionMode(true);
+            cardHandUI.ShowHand(this, player);
+            cardHandUI.UpdateDeckInfo(player);
+        }
+        hudUI?.Refresh(this, Player, AI, session.Players);
+        raceLogWriter?.Append(
+            $"[TUTORIAL_GUIDE] step={step.id} hand_presentation=true " +
+            $"target={handSize} hand={player.deck.HandCount} " +
+            $"draw={player.deck.DrawPileCount} discard={player.deck.DiscardPileCount} " +
+            $"fully_drawn={fullyDrawn}");
     }
 
     private void ApplyPendingTutorialOpponentCue()
@@ -890,15 +953,28 @@ public class MVPGameManager : MonoBehaviour
     public void OnTutorialContinueClicked()
     {
         TutorialStepDefinition step = tutorialDirector?.CurrentStep;
-        if (step == null || !step.allowManualAdvance)
+        if (!CanRequestTutorialManualAdvance(step, phaseState.Current))
             return;
-        if (phaseState.Current == GamePhase.Animating)
-        {
-            hudUI?.SetStatus("请等待当前移动与结算动画结束");
-            return;
-        }
 
         TryAdvanceTutorialIfExpected(step.requiredAction, "guide_continue");
+    }
+
+    /// <summary>
+    /// Reading/acknowledgement steps may appear while the previous movement
+    /// animation is still finishing. Accepting their button at that point is
+    /// safe: authored checkpoint state is already queued and is only applied
+    /// by ApplyPendingTutorialPlayerCheckpoint at a turn boundary.
+    /// </summary>
+    public static bool CanRequestTutorialManualAdvance(
+        TutorialStepDefinition step,
+        GamePhase currentPhase)
+    {
+        if (step == null || !step.allowManualAdvance)
+            return false;
+
+        // Keep the phase in this contract so the regression explicitly covers
+        // Animating. Manual acknowledgement never mutates race state directly.
+        return currentPhase != GamePhase.GameOver;
     }
 
     public void SkipTutorialGuidedSection()
@@ -1217,6 +1293,21 @@ public class MVPGameManager : MonoBehaviour
                         hudUI.SetStatus($"选择档位 (当前: {TeamGearRules.GetDisplayName(p.teamId, p.gear)})");
                     if (cardHandUI != null) { cardHandUI.SetGearSelectionMode(true); cardHandUI.UpdateDeckInfo(p); }
 
+                    if (pendingTutorialGuideRefreshAtTurnStart &&
+                        TutorialGuideTimingRules.IsTurnPresentationReady(phaseState.Current))
+                    {
+                        // Checkpoint, camera and input HUD must all be visible
+                        // before the next lesson panel and spotlight appear.
+                        pendingTutorialGuideRefreshAtTurnStart = false;
+                        PrepareTutorialTurnPresentation();
+                        raceCameraController?.SnapToPlayer();
+                        Canvas.ForceUpdateCanvases();
+                        tutorialGuideUI?.Refresh();
+                        raceLogWriter?.Append(
+                            $"[TUTORIAL_GUIDE] step={tutorialDirector?.CurrentStep?.id} " +
+                            "refresh=applied boundary=player_input_ready");
+                    }
+
                     yield return new WaitWhile(() => inputState.WaitingForGear);
                     SetGearControlsInteractable(false);
                     ApplyGearShift(p, inputState.PlayerGearChoice);
@@ -1365,7 +1456,20 @@ public class MVPGameManager : MonoBehaviour
             if (human != null && !human.hasFinished && !human.isBlown &&
                 !turnSkipped.Contains(human) && !RaceTurnRules.ShouldSkip(human))
             {
-                yield return StartCoroutine(DiscardStep());
+                TutorialStepDefinition tutorialStep = tutorialDirector?.CurrentStep;
+                bool skipOptionalDiscard = tutorialStep != null &&
+                    TutorialGuideTimingRules.SkipsOptionalDiscardBeforePresentation(
+                        tutorialStep.id);
+                if (skipOptionalDiscard)
+                {
+                    raceLogWriter?.Append(
+                        $"[TUTORIAL_GUIDE] step={tutorialStep.id} " +
+                        "optional_discard=skipped reason=next_turn_card_zone_presentation");
+                }
+                else
+                {
+                    yield return StartCoroutine(DiscardStep());
+                }
             }
 
             // ====== 收尾 + 补牌 ======

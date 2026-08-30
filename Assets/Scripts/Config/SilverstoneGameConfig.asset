@@ -35,7 +35,6 @@ MonoBehaviour:
   maxGear: 4
   moveAnimSpeed: 12
   nodeMoveDuration: 0.15
-  nodeBounceHeight: 0.08
   nodeDelay: 0.06
   movementFocusLeadDelay: 0.14
   movementFocusTrailDelay: 0.1
