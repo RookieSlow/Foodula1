@@ -33,7 +33,12 @@
   ],
   "defaultWeather": "sunny",
   "weatherConfigurationStatus": "configured",
-  "laneCornerSpeedLimits": [4, 5, 6, 7],
+  "laneCornerSpeedLimits": [
+    4,
+    5,
+    6,
+    7
+  ],
   "allowStartFinishLaneChange": true,
   "layout": {
     "coordinateSpace": "normalized_2d_schematic",
@@ -62,9 +67,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.676569,
-        "y": 0.704969
-      }
+        "x": 0.666238,
+        "y": 0.70518
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 2,
@@ -73,9 +82,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.73215,
-        "y": 0.703853
-      }
+        "x": 0.711486,
+        "y": 0.704268
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 3,
@@ -84,9 +97,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.787727,
-        "y": 0.702645
-      }
+        "x": 0.756735,
+        "y": 0.703319
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 4,
@@ -95,12 +112,31 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.842389,
-        "y": 0.693718
-      }
+        "x": 0.801924,
+        "y": 0.700326
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 5,
+      "type": "straight",
+      "name": "炭烤前直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.846756,
+        "y": 0.691057
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
+    },
+    {
+      "index": 6,
       "type": "corner",
       "name": "炭火第一弯",
       "segmentId": "charcoal_turn_1",
@@ -115,7 +151,7 @@
       "isApex": false
     },
     {
-      "index": 6,
+      "index": 7,
       "type": "corner",
       "name": "炭火第一弯",
       "segmentId": "charcoal_turn_1",
@@ -130,26 +166,19 @@
       "isApex": true
     },
     {
-      "index": 7,
-      "type": "straight",
-      "name": "炭烤前直道",
-      "segmentId": "straight",
-      "distanceMeters": 96,
-      "position": {
-        "x": 0.939326,
-        "y": 0.56866
-      }
-    },
-    {
       "index": 8,
       "type": "straight",
       "name": "炭烤前直道",
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.939288,
-        "y": 0.513092
-      }
+        "x": 0.939317,
+        "y": 0.555653
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 9,
@@ -158,9 +187,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.938332,
-        "y": 0.457509
-      }
+        "x": 0.938771,
+        "y": 0.483015
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 10,
@@ -169,9 +202,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.934499,
-        "y": 0.402147
-      }
+        "x": 0.935093,
+        "y": 0.410729
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 11,
@@ -210,9 +247,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.823482,
-        "y": 0.289003
-      }
+        "x": 0.824655,
+        "y": 0.289542
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 14,
@@ -221,9 +262,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.768177,
-        "y": 0.285809
-      }
+        "x": 0.774091,
+        "y": 0.286151
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 15,
@@ -232,9 +277,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.71259,
-        "y": 0.286534
-      }
+        "x": 0.723466,
+        "y": 0.286392
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 16,
@@ -243,9 +292,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.657015,
-        "y": 0.287863
-      }
+        "x": 0.672841,
+        "y": 0.287485
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 17,
@@ -254,9 +307,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.601439,
-        "y": 0.289189
-      }
+        "x": 0.622216,
+        "y": 0.288693
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 18,
@@ -265,9 +322,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.545862,
-        "y": 0.290463
-      }
+        "x": 0.571592,
+        "y": 0.289873
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 19,
@@ -276,9 +337,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.490285,
-        "y": 0.291715
-      }
+        "x": 0.520967,
+        "y": 0.291024
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 20,
@@ -287,9 +352,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.434707,
-        "y": 0.292975
-      }
+        "x": 0.470342,
+        "y": 0.292167
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 21,
@@ -298,9 +367,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.379131,
-        "y": 0.294274
-      }
+        "x": 0.419717,
+        "y": 0.293325
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 22,
@@ -309,9 +382,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.323555,
-        "y": 0.295605
-      }
+        "x": 0.369093,
+        "y": 0.294514
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 23,
@@ -320,9 +397,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.267977,
-        "y": 0.296811
-      }
+        "x": 0.318468,
+        "y": 0.295715
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 24,
@@ -331,9 +412,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.212396,
-        "y": 0.297872
-      }
+        "x": 0.267843,
+        "y": 0.296814
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 25,
@@ -342,9 +427,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.157716,
-        "y": 0.306609
-      }
+        "x": 0.217217,
+        "y": 0.29778
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 26,
@@ -353,12 +442,31 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.110524,
-        "y": 0.335323
-      }
+        "x": 0.166772,
+        "y": 0.305162
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 27,
+      "type": "straight",
+      "name": "芝士后直道",
+      "segmentId": "straight",
+      "distanceMeters": 96,
+      "position": {
+        "x": 0.118417,
+        "y": 0.33052
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
+    },
+    {
+      "index": 28,
       "type": "corner",
       "name": "芝士第三弯",
       "segmentId": "cheese_turn_3",
@@ -373,7 +481,7 @@
       "isApex": false
     },
     {
-      "index": 28,
+      "index": 29,
       "type": "corner",
       "name": "芝士第三弯",
       "segmentId": "cheese_turn_3",
@@ -388,26 +496,19 @@
       "isApex": true
     },
     {
-      "index": 29,
-      "type": "straight",
-      "name": "可乐短直道",
-      "segmentId": "straight",
-      "distanceMeters": 96,
-      "position": {
-        "x": 0.060632,
-        "y": 0.487007
-      }
-    },
-    {
       "index": 30,
       "type": "straight",
       "name": "可乐短直道",
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.061698,
-        "y": 0.542588
-      }
+        "x": 0.061055,
+        "y": 0.50904
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 31,
@@ -416,9 +517,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.06527,
-        "y": 0.597949
-      }
+        "x": 0.064522,
+        "y": 0.58635
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 32,
@@ -427,9 +532,13 @@
       "segmentId": "straight",
       "distanceMeters": 96,
       "position": {
-        "x": 0.087277,
-        "y": 0.64867
-      }
+        "x": 0.088199,
+        "y": 0.649599
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 33,
@@ -468,9 +577,13 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.231939,
-        "y": 0.71443
-      }
+        "x": 0.232151,
+        "y": 0.714424
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 36,
@@ -479,9 +592,13 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.287509,
-        "y": 0.712884
-      }
+        "x": 0.287696,
+        "y": 0.71288
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 37,
@@ -490,9 +607,13 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.343087,
-        "y": 0.711643
-      }
+        "x": 0.343244,
+        "y": 0.71164
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 38,
@@ -501,9 +622,13 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.398666,
-        "y": 0.710497
-      }
+        "x": 0.398793,
+        "y": 0.710494
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 39,
@@ -512,9 +637,13 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.454247,
-        "y": 0.709389
-      }
+        "x": 0.454342,
+        "y": 0.709387
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 40,
@@ -523,9 +652,13 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.509828,
-        "y": 0.7083
-      }
+        "x": 0.509891,
+        "y": 0.708299
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     },
     {
       "index": 41,
@@ -534,9 +667,13 @@
       "segmentId": "straight",
       "distanceMeters": 95,
       "position": {
-        "x": 0.565409,
-        "y": 0.707211
-      }
+        "x": 0.56544,
+        "y": 0.70721
+      },
+      "cornerId": "",
+      "cornerLevel": 0,
+      "cornerLimit": 0,
+      "isApex": false
     }
   ]
 }

@@ -138,8 +138,8 @@
         "y": 0.777301
       },
       "cornerId": "dunlop",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -153,8 +153,8 @@
         "y": 0.783459
       },
       "cornerId": "dunlop",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": true
     },
     {
@@ -213,8 +213,8 @@
         "y": 0.80381
       },
       "cornerId": "tertre_rouge",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -228,8 +228,8 @@
         "y": 0.80381
       },
       "cornerId": "tertre_rouge",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": true
     },
     {
@@ -1205,8 +1205,8 @@
         "y": 0.288047
       },
       "cornerId": "porsche_curves",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -1220,8 +1220,8 @@
         "y": 0.274204
       },
       "cornerId": "porsche_curves",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -1235,8 +1235,8 @@
         "y": 0.260361
       },
       "cornerId": "porsche_curves",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -1250,8 +1250,8 @@
         "y": 0.246517
       },
       "cornerId": "porsche_curves",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -1265,8 +1265,8 @@
         "y": 0.234181
       },
       "cornerId": "porsche_curves",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -1280,8 +1280,8 @@
         "y": 0.224185
       },
       "cornerId": "porsche_curves",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": true
     },
     {
@@ -1295,8 +1295,8 @@
         "y": 0.21419
       },
       "cornerId": "porsche_curves",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -1310,8 +1310,8 @@
         "y": 0.204194
       },
       "cornerId": "porsche_curves",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -1325,8 +1325,8 @@
         "y": 0.197326
       },
       "cornerId": "porsche_curves",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -1340,8 +1340,8 @@
         "y": 0.203025
       },
       "cornerId": "porsche_curves",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {

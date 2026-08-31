@@ -201,8 +201,8 @@
         "y": 0.767869
       },
       "cornerId": "yin_exit",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 6,
       "isApex": true
     },
     {
@@ -238,8 +238,8 @@
         "y": 0.741884
       },
       "cornerId": "siu_mai_kink",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": true
     },
     {
@@ -353,8 +353,8 @@
         "y": 0.776957
       },
       "cornerId": "cheung_fun_s",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": true
     },
     {
@@ -453,8 +453,8 @@
         "y": 0.456913
       },
       "cornerId": "anting_spiral",
-      "cornerLevel": 3,
-      "cornerLimit": 2,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -468,8 +468,8 @@
         "y": 0.419617
       },
       "cornerId": "anting_spiral",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -484,7 +484,7 @@
       },
       "cornerId": "anting_spiral",
       "cornerLevel": 1,
-      "cornerLimit": 4,
+      "cornerLimit": 5,
       "isApex": true
     },
     {
@@ -499,7 +499,7 @@
       },
       "cornerId": "anting_spiral",
       "cornerLevel": 1,
-      "cornerLimit": 4,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -558,7 +558,7 @@
       },
       "cornerId": "long_straight_right_turn",
       "cornerLevel": 1,
-      "cornerLimit": 4,
+      "cornerLimit": 6,
       "isApex": true
     },
     {
@@ -782,8 +782,8 @@
         "y": 0.184914
       },
       "cornerId": "malay_cake_kink",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": true
     },
     {
@@ -808,8 +808,8 @@
         "y": 0.249463
       },
       "cornerId": "almond_cookie_final",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": true
     }
   ]

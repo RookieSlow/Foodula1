@@ -277,7 +277,7 @@
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
-      "cornerLimit": 4,
+      "cornerLimit": 6,
       "isApex": false
     },
     {
@@ -292,7 +292,7 @@
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
-      "cornerLimit": 4,
+      "cornerLimit": 6,
       "isApex": false
     },
     {
@@ -307,7 +307,7 @@
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
-      "cornerLimit": 4,
+      "cornerLimit": 6,
       "isApex": false
     },
     {
@@ -322,7 +322,7 @@
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
-      "cornerLimit": 4,
+      "cornerLimit": 6,
       "isApex": false
     },
     {
@@ -337,7 +337,7 @@
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
-      "cornerLimit": 4,
+      "cornerLimit": 6,
       "isApex": true
     },
     {
@@ -352,7 +352,7 @@
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
-      "cornerLimit": 4,
+      "cornerLimit": 6,
       "isApex": false
     },
     {
@@ -367,7 +367,7 @@
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
-      "cornerLimit": 4,
+      "cornerLimit": 6,
       "isApex": false
     },
     {
@@ -382,7 +382,7 @@
       },
       "cornerId": "schwedenkreuz",
       "cornerLevel": 1,
-      "cornerLimit": 4,
+      "cornerLimit": 6,
       "isApex": false
     },
     {
@@ -1055,8 +1055,8 @@
         "y": 0.775321
       },
       "cornerId": "bergwerk",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1070,8 +1070,8 @@
         "y": 0.788623
       },
       "cornerId": "bergwerk",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1085,8 +1085,8 @@
         "y": 0.799396
       },
       "cornerId": "bergwerk",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1100,8 +1100,8 @@
         "y": 0.803258
       },
       "cornerId": "bergwerk",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": true
     },
     {
@@ -1115,8 +1115,8 @@
         "y": 0.798458
       },
       "cornerId": "bergwerk",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1130,8 +1130,8 @@
         "y": 0.79112
       },
       "cornerId": "bergwerk",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1680,8 +1680,8 @@
         "y": 0.709007
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1695,8 +1695,8 @@
         "y": 0.712572
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1710,8 +1710,8 @@
         "y": 0.719845
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1725,8 +1725,8 @@
         "y": 0.728688
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1740,8 +1740,8 @@
         "y": 0.737833
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1755,8 +1755,8 @@
         "y": 0.742374
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1770,8 +1770,8 @@
         "y": 0.743849
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1785,8 +1785,8 @@
         "y": 0.747382
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1800,8 +1800,8 @@
         "y": 0.746383
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1815,8 +1815,8 @@
         "y": 0.734351
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1830,8 +1830,8 @@
         "y": 0.725972
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1845,8 +1845,8 @@
         "y": 0.717799
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1860,8 +1860,8 @@
         "y": 0.711504
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": true
     },
     {
@@ -1875,8 +1875,8 @@
         "y": 0.699529
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1890,8 +1890,8 @@
         "y": 0.698255
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1905,8 +1905,8 @@
         "y": 0.708558
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1920,8 +1920,8 @@
         "y": 0.715692
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1935,8 +1935,8 @@
         "y": 0.720771
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1950,8 +1950,8 @@
         "y": 0.72396
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1965,8 +1965,8 @@
         "y": 0.729024
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1980,8 +1980,8 @@
         "y": 0.73909
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -1995,8 +1995,8 @@
         "y": 0.750504
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -2010,8 +2010,8 @@
         "y": 0.763814
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -2025,8 +2025,8 @@
         "y": 0.776939
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -2040,8 +2040,8 @@
         "y": 0.786015
       },
       "cornerId": "pflanzgarten",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 4,
       "isApex": false
     },
     {
@@ -2205,8 +2205,8 @@
         "y": 0.694041
       },
       "cornerId": "galgenkopf",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -2220,8 +2220,8 @@
         "y": 0.688665
       },
       "cornerId": "galgenkopf",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -2235,8 +2235,8 @@
         "y": 0.677864
       },
       "cornerId": "galgenkopf",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -2250,8 +2250,8 @@
         "y": 0.664124
       },
       "cornerId": "galgenkopf",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -2265,8 +2265,8 @@
         "y": 0.652671
       },
       "cornerId": "galgenkopf",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": true
     },
     {
@@ -2280,8 +2280,8 @@
         "y": 0.651934
       },
       "cornerId": "galgenkopf",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -2295,8 +2295,8 @@
         "y": 0.653582
       },
       "cornerId": "galgenkopf",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -2310,8 +2310,8 @@
         "y": 0.646945
       },
       "cornerId": "galgenkopf",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {
@@ -2325,8 +2325,8 @@
         "y": 0.634664
       },
       "cornerId": "galgenkopf",
-      "cornerLevel": 2,
-      "cornerLimit": 3,
+      "cornerLevel": 1,
+      "cornerLimit": 5,
       "isApex": false
     },
     {

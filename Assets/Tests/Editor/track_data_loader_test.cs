@@ -22,6 +22,149 @@ public class TrackDataLoaderTest
     }
 
     [Test]
+    public void test_silverstone_nodes_are_evenly_distributed_after_realistic_straight_scaling()
+    {
+        TrackConfig cfg = TrackDataLoader.LoadConfig("silverstone_afternoon_tea");
+        Vector2[] positions = TrackDataLoader.ConfigToWorldPositions(cfg, 30f, 16.875f);
+        float median = TrackPresentationRules.CalculateMedianNeighborDistance(positions);
+        float maxSpacing = 0f;
+        for (int i = 0; i < positions.Length; i++)
+            maxSpacing = Mathf.Max(
+                maxSpacing,
+                Vector2.Distance(positions[i], positions[(i + 1) % positions.Length]));
+
+        Assert.AreEqual(77, cfg.cells.Length);
+        Assert.AreEqual(3, cfg.laps);
+        Assert.AreEqual(20, System.Array.FindAll(cfg.cells, cell => cell.IsCorner).Length);
+        Assert.AreEqual(13, System.Array.FindAll(cfg.cells, cell => cell.isApex).Length);
+        Assert.That(cfg.cells[0].position.x, Is.EqualTo(0.676042f).Within(0.000001f));
+        Assert.That(cfg.cells[0].position.y, Is.EqualTo(0.129630f).Within(0.000001f));
+        Assert.LessOrEqual(
+            maxSpacing,
+            median * 1.5f,
+            $"银石最大格距 {maxSpacing:F3} 不应显著大于全图中位数 {median:F3}");
+
+        CellData[] maggotts = System.Array.FindAll(
+            cfg.cells,
+            cell => cell.cornerId == "maggotts_becketts_chapel");
+        Assert.AreEqual(5, maggotts.Length, "银石五连 S 弯应保持五个连续弯道格");
+        for (int i = 1; i < maggotts.Length; i++)
+            Assert.AreEqual(maggotts[i - 1].index + 1, maggotts[i].index);
+        Assert.IsTrue(maggotts[maggotts.Length - 1].isApex);
+    }
+
+    [Test]
+    public void test_all_selectable_tracks_have_a_twelve_cell_major_straight()
+    {
+        string[] trackIds =
+        {
+            "silverstone_afternoon_tea",
+            "nurburgring_bier",
+            "monza_pasta",
+            "indianapolis_burger",
+            "shanghai_dim_sum",
+            "suzuka_sushi",
+            "nurburgring_24h_endurance",
+            "le_mans_old_mulsanne"
+        };
+
+        foreach (string trackId in trackIds)
+        {
+            TrackConfig cfg = TrackDataLoader.LoadConfig(trackId);
+            int longestStraight = CalculateLongestCircularStraight(cfg.cells);
+            Assert.GreaterOrEqual(
+                longestStraight,
+                12,
+                $"{trackId} 至少应有一段可完整执行 4+3+3+2（12 格）冲刺的大直道");
+        }
+
+        Assert.AreEqual(77, TrackDataLoader.LoadConfig("silverstone_afternoon_tea").cells.Length);
+        Assert.AreEqual(63, TrackDataLoader.LoadConfig("monza_pasta").cells.Length);
+        Assert.AreEqual(59, TrackDataLoader.LoadConfig("nurburgring_bier").cells.Length);
+
+        TrackConfig silverstone = TrackDataLoader.LoadConfig("silverstone_afternoon_tea");
+        Assert.AreEqual(
+            12,
+            System.Array.FindAll(silverstone.cells, cell => cell.name == "机库直道").Length,
+            "银石机库直道应保留 12 格完整冲刺容量");
+    }
+
+    [Test]
+    public void test_real_track_straight_proportions_distinguish_major_medium_and_short_runs()
+    {
+        CollectionAssert.AreEqual(
+            new[] { 12, 10, 10, 9, 7, 4, 3, 1, 1 },
+            CalculateCircularStraightLengths(TrackDataLoader.LoadConfig("silverstone_afternoon_tea").cells));
+        CollectionAssert.AreEqual(
+            new[] { 15, 12, 11, 8, 1, 1 },
+            CalculateCircularStraightLengths(TrackDataLoader.LoadConfig("monza_pasta").cells));
+        CollectionAssert.AreEqual(
+            new[] { 15, 13, 3, 3 },
+            CalculateCircularStraightLengths(TrackDataLoader.LoadConfig("indianapolis_burger").cells));
+        CollectionAssert.AreEqual(
+            new[] { 12, 10, 3, 2, 2, 2, 2, 1 },
+            CalculateCircularStraightLengths(TrackDataLoader.LoadConfig("suzuka_sushi").cells));
+    }
+
+    [Test]
+    public void test_real_world_flat_and_high_speed_corners_use_fast_limits()
+    {
+        AssertApexLimit("shanghai_dim_sum", "yin_exit", 6);
+        AssertApexLimit("shanghai_dim_sum", "long_straight_right_turn", 6);
+        AssertApexLimit("silverstone_afternoon_tea", "abbey_tea", 6);
+        AssertApexLimit("silverstone_afternoon_tea", "copse_espresso", 6);
+        AssertApexLimit("nurburgring_bier", "schumacher_s", 6);
+        AssertApexLimit("monza_pasta", "grande_lasagna", 6);
+        AssertApexLimit("suzuka_sushi", "unagi_200r", 6);
+        AssertApexLimit("suzuka_sushi", "wagyu_130r", 6);
+        AssertApexLimit("le_mans_old_mulsanne", "porsche_curves", 5);
+        AssertApexLimit("nurburgring_24h_endurance", "schwedenkreuz", 6);
+    }
+
+    private static int CalculateLongestCircularStraight(CellData[] cells)
+    {
+        int longest = 0;
+        for (int start = 0; start < cells.Length; start++)
+        {
+            int previous = (start - 1 + cells.Length) % cells.Length;
+            if (cells[start].IsCorner || !cells[previous].IsCorner)
+                continue;
+
+            int length = 0;
+            while (length < cells.Length && !cells[(start + length) % cells.Length].IsCorner)
+                length++;
+            longest = Mathf.Max(longest, length);
+        }
+        return longest;
+    }
+
+    private static List<int> CalculateCircularStraightLengths(CellData[] cells)
+    {
+        var lengths = new List<int>();
+        for (int start = 0; start < cells.Length; start++)
+        {
+            int previous = (start - 1 + cells.Length) % cells.Length;
+            if (cells[start].IsCorner || !cells[previous].IsCorner)
+                continue;
+
+            int length = 0;
+            while (length < cells.Length && !cells[(start + length) % cells.Length].IsCorner)
+                length++;
+            lengths.Add(length);
+        }
+        lengths.Sort((left, right) => right.CompareTo(left));
+        return lengths;
+    }
+
+    private static void AssertApexLimit(string trackId, string cornerId, int expectedLimit)
+    {
+        TrackConfig cfg = TrackDataLoader.LoadConfig(trackId);
+        CellData apex = System.Array.Find(cfg.cells, cell => cell.cornerId == cornerId && cell.isApex);
+        Assert.IsNotNull(apex, $"{trackId} 缺少 {cornerId} 弯心");
+        Assert.AreEqual(expectedLimit, apex.cornerLimit, $"{trackId}/{cornerId} 现实速度等级不匹配");
+    }
+
+    [Test]
     public void test_load_config_missing_track_returns_null()
     {
         LogAssert.Expect(LogType.Error,
@@ -203,8 +346,8 @@ public class TrackDataLoaderTest
     public void test_monza_corner_landmarks_follow_visible_turn_sections()
     {
         TrackConfig cfg = TrackDataLoader.LoadConfig("monza_pasta");
-        int[] expectedCornerIndexes = { 8, 9, 11, 12, 13, 22, 23, 25, 26, 34, 35, 36, 44, 45, 46 };
-        int[] misplacedStraightIndexes = { 5, 6, 17, 18, 31, 32, 33, 40, 41, 42 };
+        int[] expectedCornerIndexes = { 8, 9, 11, 12, 13, 29, 30, 32, 33, 45, 46, 47, 56, 57, 58 };
+        int[] misplacedStraightIndexes = { 5, 6, 17, 18, 34, 35, 43, 44, 52, 53 };
 
         foreach (int index in expectedCornerIndexes)
             Assert.IsTrue(cfg.cells[index].IsCorner, $"蒙扎节点 {index} 应属于可见弯道段");
@@ -246,7 +389,7 @@ public class TrackDataLoaderTest
     public void test_indianapolis_corner_landmarks_follow_visible_oval_turns()
     {
         TrackConfig cfg = TrackDataLoader.LoadConfig("indianapolis_burger");
-        int[] expectedCornerIndexes = { 5, 6, 11, 12, 27, 28, 33, 34 };
+        int[] expectedCornerIndexes = { 6, 7, 11, 12, 28, 29, 33, 34 };
         int[] misplacedStraightIndexes = { 17, 18 };
 
         foreach (int index in expectedCornerIndexes)
@@ -258,7 +401,7 @@ public class TrackDataLoaderTest
         Assert.AreEqual(4, new HashSet<string>(System.Array.ConvertAll(
             expectedCornerIndexes,
             index => cfg.cells[index].cornerId)).Count);
-        Assert.IsTrue(cfg.cells[6].isApex, "印第第一弯的弯心应位于右侧弯道入口");
+        Assert.IsTrue(cfg.cells[7].isApex, "印第第一弯的弯心应位于右侧弯道入口");
         Assert.IsTrue(cfg.cells[12].isApex, "印第第二弯的弯心应位于右侧弯道出口");
     }
 
@@ -266,8 +409,8 @@ public class TrackDataLoaderTest
     public void test_nurburgring_gp_corner_landmarks_follow_visible_turn_sections()
     {
         TrackConfig cfg = TrackDataLoader.LoadConfig("nurburgring_bier");
-        int[] expectedCornerIndexes = { 39, 40 };
-        int[] misplacedStraightIndexes = { 41, 42 };
+        int[] expectedCornerIndexes = { 41, 42 };
+        int[] misplacedStraightIndexes = { 43, 44 };
 
         foreach (int index in expectedCornerIndexes)
             Assert.IsTrue(cfg.cells[index].IsCorner, $"纽北 GP 节点 {index} 应属于维多尔弯的可见转向段");
@@ -275,8 +418,8 @@ public class TrackDataLoaderTest
         foreach (int index in misplacedStraightIndexes)
             Assert.IsFalse(cfg.cells[index].IsCorner, $"纽北 GP 节点 {index} 位于维多尔弯出口直道，不应显示弯道蒙版");
 
-        Assert.AreEqual("veedol_gurken", cfg.cells[39].cornerId);
-        Assert.IsTrue(cfg.cells[39].isApex, "纽北 GP 维多尔弯的弯心应落在右上方回头点");
+        Assert.AreEqual("veedol_gurken", cfg.cells[41].cornerId);
+        Assert.IsTrue(cfg.cells[41].isApex, "纽北 GP 维多尔弯的弯心应落在右上方回头点");
     }
 
     [Test]
