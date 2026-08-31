@@ -1258,7 +1258,15 @@ public class MVPGameManager : MonoBehaviour
     {
         failureReason = string.Empty;
         CareerLoadResult loaded = CareerRuntimeRepository.CreateDefault().Load();
-        if (loaded.Status != CareerLoadStatus.Loaded || !careerRaceLaunch.Matches(loaded.State))
+        if (loaded.Status != CareerLoadStatus.Loaded)
+        {
+            failureReason = loaded.Status == CareerLoadStatus.Invalid
+                ? "生涯存档校验失败"
+                : "未找到当前生涯存档";
+            return false;
+        }
+
+        if (!careerRaceLaunch.Matches(loaded.State))
         {
             failureReason = "启动请求与当前生涯存档不一致";
             return false;
@@ -2034,16 +2042,19 @@ public class MVPGameManager : MonoBehaviour
             // 特技牌即时移动（司康 +2 等）
             bonus += p.trickMoveBonusThisTurn;
 
-            // DE L1 黑啤酒燃料：付 1 热 → +2 移动（自动激活；引擎预留 1 热防失控）
+            // DE L1 黑啤酒燃料：每圈一次，付 1 热 → +2 移动
+            // （自动激活；引擎预留 1 热防失控）。
             if (p.techState != null && config.enableTechTree &&
                 session.GetModifiers(p).hasSchwarzbierFuel &&
-                p.deck.heatPool != null && p.deck.heatPool.remaining > 1)
+                p.deck.heatPool != null && p.deck.heatPool.remaining > 1 &&
+                TechTreeRules.CanTriggerSchwarzbierFuelThisLap(p.techState, p.lap))
             {
                 if (TryPayHeat(p, 1, p.positionAtTurnStart, "schwarzbier fuel"))
                 {
+                    TechTreeRules.UseSchwarzbierFuel(p.techState, p.lap);
                     bonus += 2;
                     if (hudUI != null)
-                        hudUI.AppendLog($"{p.name} 黑啤酒燃料：付 1 热 → +2 移动。");
+                        hudUI.AppendLog($"{p.name} 黑啤酒燃料（本圈一次）：付 1 热 → +2 移动。");
                 }
             }
 
@@ -3048,6 +3059,8 @@ public class MVPGameManager : MonoBehaviour
             if (careerResultRecorded)
             {
                 result += "\n\n生涯赛果已保存。返回主菜单可查看更新后的积分榜。";
+                raceLogWriter?.Append(
+                    $"[CAREER_RESULT] status=already_saved result_id={careerRaceLaunch.ResultId}");
             }
             else if (CareerRaceSettlement.TryRecord(
                          careerRaceLaunch,
@@ -3060,18 +3073,26 @@ public class MVPGameManager : MonoBehaviour
                          out string failureReason))
             {
                 careerResultRecorded = true;
-                CareerStanding playerStanding = CareerModeRules.GetStandings(updatedCareer)
+                List<CareerStanding> careerStandings = CareerModeRules.GetStandings(updatedCareer);
+                CareerStanding playerStanding = careerStandings
                     .Find(entry => entry.TeamId == updatedCareer.LockedTeam);
                 result += $"\n\n生涯赛果已保存：总分 {playerStanding?.Points ?? 0}，" +
                           $"总排名第 {playerStanding?.Rank ?? 0} 名。";
                 if (updatedCareer.Phase == CareerPhase.SummerBreak)
                     result += "\n已进入夏休，返回主菜单调整一次生涯科技树。";
                 else if (updatedCareer.Phase == CareerPhase.Completed)
-                    result += "\n八站生涯已完成。";
+                {
+                    CareerStanding champion = careerStandings.Count > 0 ? careerStandings[0] : null;
+                    result += $"\n八站生涯已完成。总冠军：" +
+                              $"{(champion == null ? "—" : champion.TeamId.ToString())}" +
+                              $"（{champion?.Points ?? 0} 分）。";
+                }
+                raceLogWriter?.Append(CareerRaceLogFormatter.BuildSaved(careerRaceLaunch, updatedCareer));
             }
             else
             {
                 result += $"\n\n<color=red>{failureReason}</color>。返回主菜单后可重新开始当前站。";
+                raceLogWriter?.Append(CareerRaceLogFormatter.BuildRejected(careerRaceLaunch, failureReason));
             }
         }
         else

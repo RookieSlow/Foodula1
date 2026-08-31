@@ -367,6 +367,26 @@ public class TechTreeRulesTests
     }
 
     [Test]
+    public void test_de_l1_schwarzbier_fuel_is_limited_to_once_per_lap()
+    {
+        var deState = new TechTreeState(TeamId.DE, TechTreeRules.DEMO_BUDGET);
+        UnlockL1TierGate(deState);
+        Assert.That(TechTreeRules.UnlockNode(deState, "de-l1-schwarzbier-fuel", db), Is.True);
+        TechTreeRules.SelectActiveNodes(deState, new[] { "de-l1-schwarzbier-fuel" }, db);
+        Assert.That(deState.IsActive("de-l1-schwarzbier-fuel"), Is.True);
+
+        Assert.That(TechTreeRules.CanUseSchwarzbierFuel(deState, db, 1, 0), Is.True);
+        TechTreeRules.UseSchwarzbierFuel(deState, 0);
+        Assert.That(TechTreeRules.CanUseSchwarzbierFuel(deState, db, 1, 0), Is.False);
+        Assert.That(TechTreeRules.CanUseSchwarzbierFuel(deState, db, 1, 1), Is.True);
+
+        TechTreeRules.UseSchwarzbierFuel(deState, 1);
+        TechTreeRules.ResetPerRaceState(deState);
+        Assert.That(TechTreeRules.CanUseSchwarzbierFuel(deState, db, 1, 0), Is.True);
+        Assert.That(TechTreeRules.CanUseSchwarzbierFuel(deState, db, 0, 0), Is.False);
+    }
+
+    [Test]
     public void test_de_l3_grill_spezial_once_per_race()
     {
         var deState = new TechTreeState(TeamId.DE, TechTreeRules.DEMO_BUDGET);

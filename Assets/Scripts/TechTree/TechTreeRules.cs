@@ -426,12 +426,38 @@ public static class TechTreeRules
     // ═══════════════════════════════════════════════════════════════════
 
     /// <summary>
-    /// DE L1: Schwarzbier Fuel — pay 1 heat from engine for +2 move.
-    /// Returns true if the tech is active (caller checks engine heat availability).
+    /// DE L1: Schwarzbier Fuel — pay 1 heat from engine for +2 move, once per lap.
     /// </summary>
+    public static bool CanUseSchwarzbierFuel(
+        TechTreeState state,
+        TechTreeDatabase db,
+        int engineHeatRemaining,
+        int currentLap)
+    {
+        return currentLap >= 0 && HasEffect(state, db, TechEffectType.SchwarzbierFuel) &&
+               engineHeatRemaining > 0 && CanTriggerSchwarzbierFuelThisLap(state, currentLap);
+    }
+
+    /// <summary>
+    /// Per-lap gate kept separate from effect lookup so copied effects such as
+    /// Sun Never Sets share the same usage limit.
+    /// </summary>
+    public static bool CanTriggerSchwarzbierFuelThisLap(TechTreeState state, int currentLap)
+    {
+        return state != null && currentLap >= 0 && state.schwarzbierFuelLastLap != currentLap;
+    }
+
+    /// <summary>Compatibility overload for callers that do not model laps; treated as lap zero.</summary>
     public static bool CanUseSchwarzbierFuel(TechTreeState state, TechTreeDatabase db, int engineHeatRemaining)
     {
-        return HasEffect(state, db, TechEffectType.SchwarzbierFuel) && engineHeatRemaining > 0;
+        return CanUseSchwarzbierFuel(state, db, engineHeatRemaining, 0);
+    }
+
+    /// <summary>Records the lap only after the heat payment succeeds.</summary>
+    public static void UseSchwarzbierFuel(TechTreeState state, int currentLap)
+    {
+        if (state != null && currentLap >= 0)
+            state.schwarzbierFuelLastLap = currentLap;
     }
 
     /// <summary>DE L2: Wurstplatte Suspension triggers after exiting a corner.</summary>
@@ -781,6 +807,7 @@ public static class TechTreeRules
 
         state.heatReductionUsedThisLap = false;
         state.fishAndChipsUsed = false;
+        state.schwarzbierFuelLastLap = -1;
         state.grillSpezialUsed = false;
         state.grillSpezialHeatPaidThisTurn = 0;
         state.brothSelection = BrothType.None;

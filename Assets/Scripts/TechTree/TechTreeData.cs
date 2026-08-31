@@ -345,6 +345,9 @@ public class TechTreeState
     /// <summary>DE L3: Total heat paid this turn (tracked for GrillSpezial auto-cool).</summary>
     public int grillSpezialHeatPaidThisTurn;
 
+    /// <summary>DE L1: Last lap on which Schwarzbier Fuel was consumed; -1 means unused.</summary>
+    public int schwarzbierFuelLastLap = -1;
+
     // ── JP L2 ──
     /// <summary>JP L2: Which broth was chosen (0=none).</summary>
     public BrothType brothSelection;

@@ -157,10 +157,9 @@ public static class CareerSaveCodec
             if (!TryReadTechSnapshot(data.summerBreakTech, lockedTeam, out summerTech))
                 return false;
         }
-        else if (data.summerBreakTech != null)
-        {
-            return false;
-        }
+        // JsonUtility serializes a null nested DTO as a default object. Before
+        // the summer break this field has no gameplay meaning, so its serialized
+        // placeholder must not invalidate an otherwise valid new career save.
 
         var rebuilt = new CareerSeasonState();
         if (!CareerModeRules.TryStartSeason(rebuilt, lockedTeam, competitors, initialTech))

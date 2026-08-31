@@ -53,8 +53,15 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 - Track resolution has one precedence rule: Tutorial, then Career, then Quick Race. Settlement requires the
   actually loaded track and exact four-car roster, maps blown cars to DNF, reloads the authoritative career save,
   and advances atomically once. Career races skip normal RP and driver-XP settlement.
-- The combined career rules, persistence, presentation and Race integration passed `38/38` focused source-level
-  NUnit cases on 2026-08-31. Summer-break technology editing and Play Mode visual/runtime acceptance remain open.
+- At the race-four summer break, the menu creates a mutable draft from the career-owned active technology snapshot
+  for the locked team only. Unlocking spends only the captured career RP, active-node changes remain in the draft,
+  cancel discards every change, and explicit confirmation atomically stores the sole summer snapshot before race five.
+  The normal `TechTreeProfileStore` is never read or written by this editor.
+- Race eight preserves the final standings, identifies the championship leader, and reports the player's score/rank.
+  The completed overview offers a new-season path but still requires the existing explicit replacement confirmation.
+  Every settlement writes one structured `[CAREER_RESULT]` saved or rejected line before `RACE_END`.
+- The combined career rules, persistence, presentation, Race integration, summer-break editor and completion flow
+  passed `46/46` focused source-level NUnit cases on 2026-08-31. Play Mode visual/runtime acceptance remains open.
 
 ## Turn and Card Loop
 

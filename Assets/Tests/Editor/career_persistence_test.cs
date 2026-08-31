@@ -48,6 +48,23 @@ public class CareerPersistenceTests
     }
 
     [Test]
+    public void JsonUtility_RoundTripPreservesCareerBeforeSummerBreak()
+    {
+        CareerSeasonState original = StartSeason(CreateTech("node-a"));
+        Assert.That(CareerSaveCodec.TryToData(original, out CareerSaveData data), Is.True);
+
+        var serializer = new JsonUtilityCareerSerializer();
+        string json = serializer.Serialize(data);
+        CareerSaveData deserialized = serializer.Deserialize(json);
+
+        Assert.That(CareerSaveCodec.TryFromData(deserialized, out CareerSeasonState loaded), Is.True);
+        Assert.That(loaded.Phase, Is.EqualTo(CareerPhase.Racing));
+        Assert.That(loaded.NextTrackIndex, Is.Zero);
+        Assert.That(loaded.SummerBreakUsed, Is.False);
+        Assert.That(loaded.SummerBreakTechSnapshot, Is.Null);
+    }
+
+    [Test]
     public void Codec_RoundTripPreservesSummerBreakSnapshotAndFifthRaceProgress()
     {
         CareerSeasonState original = StartSeason(CreateTech("node-a"));

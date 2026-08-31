@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Runtime-built main-menu surface for the persistent eight-race career.
-/// Race and career-tech editing are deliberately disabled until their runtime
-/// integration is available; this screen never mutates Quick Race selections.
+/// Race and career-tech editing use career-owned session state; this screen
+/// never mutates Quick Race selections or the normal technology profile.
 /// </summary>
 public sealed class CareerModeUI : MonoBehaviour
 {
@@ -15,6 +15,7 @@ public sealed class CareerModeUI : MonoBehaviour
 
     private readonly Dictionary<TeamId, Button> teamButtons = new Dictionary<TeamId, Button>();
     private CareerModeService service;
+    private CareerTechTreeUI summerTechUI;
     private Action requestRaceLaunch;
     private bool raceLaunchAvailable;
     private GameObject overlay;
@@ -43,6 +44,9 @@ public sealed class CareerModeUI : MonoBehaviour
         raceLaunchAvailable = canLaunchRace;
         requestRaceLaunch = launchCallback;
         if (overlay == null) Build();
+        summerTechUI = GetComponent<CareerTechTreeUI>();
+        if (summerTechUI == null)
+            summerTechUI = gameObject.AddComponent<CareerTechTreeUI>();
         Hide();
     }
 
@@ -210,10 +214,8 @@ public sealed class CareerModeUI : MonoBehaviour
         careerStatus.text = view.Status;
         calendarText.text = view.Calendar;
         standingsText.text = view.Standings;
-        primaryLabel.text = view.CanAdjustTech
-            ? "夏休科技编辑将在下一阶段启用"
-            : view.PrimaryAction;
-        primaryButton.interactable = view.CanLaunchRace;
+        primaryLabel.text = view.PrimaryAction;
+        primaryButton.interactable = view.CanAdjustTech || view.CanLaunchRace || view.CanStartNewSeason;
     }
 
     private void SelectTeam(TeamId team)
@@ -235,6 +237,8 @@ public sealed class CareerModeUI : MonoBehaviour
 
     private void RequestReplace()
     {
+        if (service.CurrentState != null && service.CurrentState.HasLockedTeam)
+            selectedTeam = service.CurrentState.LockedTeam;
         choosingReplacement = true;
         Refresh();
     }
@@ -292,6 +296,19 @@ public sealed class CareerModeUI : MonoBehaviour
 
     private void OnPrimaryAction()
     {
+        if (service.CurrentState.Phase == CareerPhase.Completed)
+        {
+            RequestReplace();
+            return;
+        }
+
+        if (CareerModeRules.CanAdjustTechTree(service.CurrentState))
+        {
+            if (!summerTechUI.Show(service.CurrentState, ConfirmSummerBreakTech, Refresh))
+                careerStatus.text = "无法读取生涯科技快照；夏休仍未消费。";
+            return;
+        }
+
         if (!raceLaunchAvailable || !CareerModeRules.CanStartNextRace(service.CurrentState))
             return;
 
@@ -302,6 +319,13 @@ public sealed class CareerModeUI : MonoBehaviour
             return;
         }
         requestRaceLaunch?.Invoke();
+    }
+
+    private bool ConfirmSummerBreakTech(CareerTechSnapshot snapshot)
+    {
+        bool saved = service.TryConfirmSummerBreak(snapshot);
+        if (saved) Refresh();
+        return saved;
     }
 
     private static GameObject CreatePanel(Transform parent, string name, Vector2 size)

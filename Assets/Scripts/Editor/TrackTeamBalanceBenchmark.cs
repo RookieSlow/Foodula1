@@ -17,6 +17,12 @@ public static class TrackTeamBalanceBenchmark
     private const int MAX_TURNS = 700;
     private const int BASE_SEED = 20260815;
 
+    private enum SchwarzbierMode
+    {
+        OncePerLap,
+        EveryTurn
+    }
+
     private static readonly TeamId[] TEAMS =
     {
         TeamId.UK, TeamId.DE, TeamId.IT, TeamId.US, TeamId.CN, TeamId.JP
@@ -39,6 +45,8 @@ public static class TrackTeamBalanceBenchmark
         public int totalGoTurns;
         public int totalRecoverTurns;
         public int totalForcedRecoverTurns;
+        public int totalSchwarzbierTriggers;
+        public int totalSchwarzbierMovement;
 
         public float AverageRank => races == 0 ? 0f : (float)totalRank / races;
         public float AverageTurns => finishes == 0 ? 0f : (float)totalTurns / finishes;
@@ -53,6 +61,8 @@ public static class TrackTeamBalanceBenchmark
         public float AverageGoTurns => races == 0 ? 0f : (float)totalGoTurns / races;
         public float AverageRecoverTurns => races == 0 ? 0f : (float)totalRecoverTurns / races;
         public float AverageForcedRecoverTurns => races == 0 ? 0f : (float)totalForcedRecoverTurns / races;
+        public float AverageSchwarzbierTriggers => races == 0 ? 0f : (float)totalSchwarzbierTriggers / races;
+        public float AverageSchwarzbierMovement => races == 0 ? 0f : (float)totalSchwarzbierMovement / races;
     }
 
     private sealed class RaceResult
@@ -66,6 +76,8 @@ public static class TrackTeamBalanceBenchmark
         public Dictionary<TeamId, int> goTurns;
         public Dictionary<TeamId, int> recoverTurns;
         public Dictionary<TeamId, int> forcedRecoverTurns;
+        public Dictionary<TeamId, int> schwarzbierTriggers;
+        public Dictionary<TeamId, int> schwarzbierMovement;
     }
 
     private sealed class BenchmarkConfig
@@ -104,6 +116,7 @@ public static class TrackTeamBalanceBenchmark
         report.AppendLine();
 
         var chinaVariantRows = new StringBuilder();
+        var germanLegacyRows = new StringBuilder();
         report.AppendLine("| Team | Handling | Cooling | Durability | Straight base | Straight turn | Slipstream |");
         report.AppendLine("|---|---:|---:|---:|---:|---:|---:|");
         foreach (TeamId team in TEAMS)
@@ -129,8 +142,23 @@ public static class TrackTeamBalanceBenchmark
                     track,
                     BASE_SEED + raceIndex * 7919 + StableHash(trackId),
                     raceIndex % TEAMS.Length,
-                    chinaCornerHeatTolerance: 1);
+                    chinaCornerHeatTolerance: 1,
+                    schwarzbierMode: SchwarzbierMode.OncePerLap);
                 AccumulateResult(aggregates, result);
+            }
+
+            var germanLegacyAggregates = new Dictionary<TeamId, TeamAggregate>();
+            foreach (TeamId team in TEAMS)
+                germanLegacyAggregates[team] = new TeamAggregate();
+            for (int raceIndex = 0; raceIndex < RACES_PER_TRACK; raceIndex++)
+            {
+                RaceResult result = SimulateRace(
+                    track,
+                    BASE_SEED + raceIndex * 7919 + StableHash(trackId),
+                    raceIndex % TEAMS.Length,
+                    chinaCornerHeatTolerance: 1,
+                    schwarzbierMode: SchwarzbierMode.EveryTurn);
+                AccumulateResult(germanLegacyAggregates, result);
             }
 
             var chinaVariantAggregates = new Dictionary<TeamId, TeamAggregate>();
@@ -142,7 +170,8 @@ public static class TrackTeamBalanceBenchmark
                     track,
                     BASE_SEED + raceIndex * 7919 + StableHash(trackId),
                     raceIndex % TEAMS.Length,
-                    chinaCornerHeatTolerance: 0);
+                    chinaCornerHeatTolerance: 0,
+                    schwarzbierMode: SchwarzbierMode.OncePerLap);
                 AccumulateResult(chinaVariantAggregates, result);
             }
 
@@ -172,7 +201,24 @@ public static class TrackTeamBalanceBenchmark
                 $"{chinaVariant.AverageRank:F2} | {(float)chinaVariant.wins / chinaVariant.races:P0} | {chinaVariant.DnfRate:P0} | " +
                 $"{chinaVariant.AverageGoTurns:F1} / {chinaVariant.AverageRecoverTurns:F1} |");
 
+            TeamAggregate german = aggregates[TeamId.DE];
+            TeamAggregate germanLegacy = germanLegacyAggregates[TeamId.DE];
+            germanLegacyRows.AppendLine(
+                $"| {track.trackName} | {german.AverageRank:F2} | {(float)german.wins / german.races:P0} | " +
+                $"{german.AverageSchwarzbierTriggers:F1} | {german.AverageSchwarzbierMovement:F1} | " +
+                $"{germanLegacy.AverageRank:F2} | {(float)germanLegacy.wins / germanLegacy.races:P0} | " +
+                $"{germanLegacy.AverageSchwarzbierTriggers:F1} | {germanLegacy.AverageSchwarzbierMovement:F1} |");
+
         }
+
+        report.AppendLine("## Controlled variant: Germany Schwarzbier Fuel cadence");
+        report.AppendLine();
+        report.AppendLine("> Current uses the runtime once-per-lap gate. Legacy uses the former every-turn trigger with the same heat reserve, seeds, team order, AI policy and track configuration.");
+        report.AppendLine();
+        report.AppendLine("| Track | Current rank | Current win | Current triggers | Current move | Legacy rank | Legacy win | Legacy triggers | Legacy move |");
+        report.AppendLine("|---|---:|---:|---:|---:|---:|---:|---:|---:|");
+        report.Append(germanLegacyRows);
+        report.AppendLine();
 
         report.AppendLine("## Controlled variant: China uses a strict zero-heat corner guard");
         report.AppendLine();
@@ -228,6 +274,8 @@ public static class TrackTeamBalanceBenchmark
             aggregate.totalGoTurns += result.goTurns[team];
             aggregate.totalRecoverTurns += result.recoverTurns[team];
             aggregate.totalForcedRecoverTurns += result.forcedRecoverTurns[team];
+            aggregate.totalSchwarzbierTriggers += result.schwarzbierTriggers[team];
+            aggregate.totalSchwarzbierMovement += result.schwarzbierMovement[team];
         }
     }
 
@@ -251,7 +299,8 @@ public static class TrackTeamBalanceBenchmark
         TrackConfig track,
         int seed,
         int teamOrderOffset,
-        int chinaCornerHeatTolerance)
+        int chinaCornerHeatTolerance,
+        SchwarzbierMode schwarzbierMode)
     {
         var cfg = new BenchmarkConfig();
         GameConfigSO deckConfig = CreateConfig(cfg);
@@ -265,6 +314,8 @@ public static class TrackTeamBalanceBenchmark
         var goTurns = new Dictionary<TeamId, int>();
         var recoverTurns = new Dictionary<TeamId, int>();
         var forcedRecoverTurns = new Dictionary<TeamId, int>();
+        var schwarzbierTriggers = new Dictionary<TeamId, int>();
+        var schwarzbierMovement = new Dictionary<TeamId, int>();
         foreach (TeamId team in TEAMS)
         {
             slipstreamTriggers[team] = 0;
@@ -274,6 +325,8 @@ public static class TrackTeamBalanceBenchmark
             goTurns[team] = 0;
             recoverTurns[team] = 0;
             forcedRecoverTurns[team] = 0;
+            schwarzbierTriggers[team] = 0;
+            schwarzbierMovement[team] = 0;
         }
         List<TrackNode> nodes = TrackDataLoader.ConfigToNodes(track);
         TrackDataLoader.BuildCornerMaps(track, nodes, out Dictionary<int, int> cornerLimits, out _);
@@ -390,6 +443,19 @@ public static class TrackTeamBalanceBenchmark
                 bool crossedCorner = TrackRules.GetUniqueApexCornersCrossed(nodes, oldPos, rawEnd).Count > 0;
                 int bonus = session.ComputeMovementBonus(p, crossedCorner);
                 bonus += session.ConsumeItalyCornerExitBonus(p);
+                bool canTriggerSchwarzbier = p.techState != null &&
+                    session.GetModifiers(p).hasSchwarzbierFuel &&
+                    p.deck.heatPool != null && p.deck.heatPool.remaining > 1 &&
+                    (schwarzbierMode == SchwarzbierMode.EveryTurn ||
+                     TechTreeRules.CanTriggerSchwarzbierFuelThisLap(p.techState, p.lap));
+                if (canTriggerSchwarzbier && PayHeatOrSpin(p, 1, p.position))
+                {
+                    if (schwarzbierMode == SchwarzbierMode.OncePerLap)
+                        TechTreeRules.UseSchwarzbierFuel(p.techState, p.lap);
+                    bonus += 2;
+                    schwarzbierTriggers[p.teamId]++;
+                    schwarzbierMovement[p.teamId] += 2;
+                }
                 p.totalMovementThisTurn = p.cornerTotalThisTurn + bonus;
                 nonSlipstreamMovement[p.teamId] += p.totalMovementThisTurn;
             }
@@ -528,7 +594,9 @@ public static class TrackTeamBalanceBenchmark
             nonSlipstreamMovement = nonSlipstreamMovement,
             goTurns = goTurns,
             recoverTurns = recoverTurns,
-            forcedRecoverTurns = forcedRecoverTurns
+            forcedRecoverTurns = forcedRecoverTurns,
+            schwarzbierTriggers = schwarzbierTriggers,
+            schwarzbierMovement = schwarzbierMovement
         };
     }
 

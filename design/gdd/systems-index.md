@@ -24,7 +24,7 @@
 | 12 | Tech Tree | `foodula-1-tech-tree.md` | In Review | Rules, persistent profiles, menu UI and race hooks are wired; presentation and playtest sign-off remain |
 | 13 | Audio Style | `foodula-1-audio-style.md` | Not Started | Design/event map exists; no project audio files, AudioMixer or runtime audio service yet |
 | 14 | Tutorial, Settings & Encyclopedia | `foodula-1-tutorial-settings-encyclopedia.md` | In Progress | Isolated tutorial/practice, exact deck, author-refined guidance with optional detail sections, per-mechanic spotlight, safe checkpoints, settings persistence and 17-entry data-driven encyclopedia are wired; final guided Play Mode acceptance remains |
-| 15 | Career Mode | `foodula-1-career-mode.md` | In Progress | Rules, isolated persistence, menu/overview and Race launch/settlement are implemented; summer-break tech UI and Play Mode acceptance remain |
+| 15 | Career Mode | `foodula-1-career-mode.md` | In Review | The full eight-race rules, isolated persistence, menu/Race flow, summer-break editor, final champion feedback, restart confirmation and structured settlement logs are implemented; Play Mode acceptance remains |
 
 ## Project Planning
 

@@ -75,7 +75,11 @@ public sealed class CareerMenuPresentationTests
 
         CareerMenuViewModel completed = CareerMenuPresentation.Build(state, CareerLoadStatus.Loaded, true);
         Assert.That(completed.Status, Does.Contain("已完成"));
-        Assert.That(completed.PrimaryAction, Is.EqualTo("生涯已完成"));
+        Assert.That(completed.Status, Does.Contain("总冠军"));
+        Assert.That(completed.Status, Does.Contain("中国 CN"));
+        Assert.That(completed.PlayerSummary, Does.Contain("最终第 1 名"));
+        Assert.That(completed.PrimaryAction, Is.EqualTo("开启新一轮生涯"));
+        Assert.That(completed.CanStartNewSeason, Is.True);
         Assert.That(completed.CanLaunchRace, Is.False);
         Assert.That(completed.Calendar, Does.Not.Contain("▶"));
     }

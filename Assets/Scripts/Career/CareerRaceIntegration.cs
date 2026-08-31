@@ -251,3 +251,30 @@ public static class CareerRaceSettlement
         return true;
     }
 }
+
+/// <summary>Stable structured entries written to RaceTestLog for career settlement.</summary>
+public static class CareerRaceLogFormatter
+{
+    public static string BuildSaved(CareerRaceLaunchRequest launch, CareerSeasonState state)
+    {
+        if (launch == null || state == null)
+            return "[CAREER_RESULT] status=invalid_context";
+
+        List<CareerStanding> standings = CareerModeRules.GetStandings(state);
+        CareerStanding player = standings.Find(entry => entry.TeamId == state.LockedTeam);
+        CareerStanding champion = standings.Count > 0 ? standings[0] : null;
+        return $"[CAREER_RESULT] status=saved result_id={launch.ResultId} " +
+               $"race={launch.RaceIndex + 1}/{CareerModeRules.RaceCount} track={launch.TrackId} " +
+               $"phase={state.Phase} player_points={player?.Points ?? 0} " +
+               $"player_rank={player?.Rank ?? 0} champion={champion?.TeamId.ToString() ?? "none"}";
+    }
+
+    public static string BuildRejected(CareerRaceLaunchRequest launch, string reason)
+    {
+        string resultId = launch != null ? launch.ResultId : "none";
+        string safeReason = string.IsNullOrWhiteSpace(reason)
+            ? "unknown"
+            : reason.Replace('\r', ' ').Replace('\n', ' ').Trim();
+        return $"[CAREER_RESULT] status=rejected result_id={resultId} reason={safeReason}";
+    }
+}

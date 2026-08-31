@@ -23,6 +23,7 @@ public sealed class CareerMenuViewModel
     public bool RequiresRecovery { get; internal set; }
     public bool CanLaunchRace { get; internal set; }
     public bool CanAdjustTech { get; internal set; }
+    public bool CanStartNewSeason { get; internal set; }
 }
 
 /// <summary>Pure formatting and deterministic field selection for career UI.</summary>
@@ -94,8 +95,15 @@ public static class CareerMenuPresentation
                 view.CanAdjustTech = true;
                 break;
             case CareerPhase.Completed:
-                view.Status = $"八站生涯已完成。最终排名：第 {(player == null ? 0 : player.Rank)} 名。";
-                view.PrimaryAction = "生涯已完成";
+                CareerStanding champion = standings.Count > 0 ? standings[0] : null;
+                if (player != null)
+                    view.PlayerSummary = $"锁定车队：{GetTeamLabel(state.LockedTeam)}　总分 {player.Points}　最终第 {player.Rank} 名";
+                view.Status = champion == null
+                    ? "八站生涯已完成。最终积分榜不可用。"
+                    : $"八站生涯已完成。总冠军：{GetTeamLabel(champion.TeamId)}（{champion.Points} 分）；" +
+                      $"你的最终排名：第 {(player == null ? 0 : player.Rank)} 名。";
+                view.PrimaryAction = "开启新一轮生涯";
+                view.CanStartNewSeason = true;
                 break;
             default:
                 string trackName = GetTrackDisplayName(CareerModeRules.GetNextTrackId(state));

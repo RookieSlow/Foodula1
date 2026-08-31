@@ -332,7 +332,7 @@ public static class TechTreeDatabaseFactory
             tier: TechTreeTier.L1, teamId: TeamId.DE, index: 1, rpCost: 5000,
             prerequisites: new string[0], upgradesTo: "",
             effects: new[] { new TechEffect(TechEffectType.SchwarzbierFuel, 1) },
-            description: "任意时刻，将引擎中1张热量牌支付到弃牌堆，前进2格。"
+            description: "每圈最多一次，将引擎中1张热量牌支付到弃牌堆，前进2格。"
         ));
 
         db.Add(new TechNodeDef(

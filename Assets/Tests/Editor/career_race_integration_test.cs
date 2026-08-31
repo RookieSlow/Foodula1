@@ -129,6 +129,38 @@ public sealed class CareerRaceIntegrationTests
         Assert.That(repository.Load().State.NextTrackIndex, Is.Zero);
     }
 
+    [Test]
+    public void LogFormatter_RecordsCompletedChampionAndPlayerRank()
+    {
+        CareerSeasonState state = StartSeason();
+        CareerRaceLaunchRequest finalLaunch = null;
+        for (int race = 0; race < CareerModeRules.RaceCount; race++)
+        {
+            if (state.Phase == CareerPhase.SummerBreak)
+                Assert.That(CareerModeRules.ConfirmSummerBreakTechTree(state), Is.True);
+            finalLaunch = CreateRequest(state, $"log-{race}");
+            Assert.That(CareerModeRules.TryRecordRace(state, BuildCareerResult(state, $"log-{race}")), Is.True);
+        }
+
+        string line = CareerRaceLogFormatter.BuildSaved(finalLaunch, state);
+        Assert.That(line, Does.Contain("status=saved"));
+        Assert.That(line, Does.Contain("race=8/8"));
+        Assert.That(line, Does.Contain("phase=Completed"));
+        Assert.That(line, Does.Contain("player_rank=1"));
+        Assert.That(line, Does.Contain("champion=UK"));
+    }
+
+    [Test]
+    public void LogFormatter_RecordsRejectedResultWithoutMultilineReason()
+    {
+        CareerRaceLaunchRequest request = CreateRequest(StartSeason(), "log-rejected");
+        string line = CareerRaceLogFormatter.BuildRejected(request, "保存失败\r\n进度未推进");
+        Assert.That(line, Does.Contain("status=rejected"));
+        Assert.That(line, Does.Contain("result_id=log-rejected"));
+        Assert.That(line, Does.Not.Contain("\r"));
+        Assert.That(line, Does.Not.Contain("\n"));
+    }
+
     private static CareerSeasonState StartSeason()
     {
         var state = new CareerSeasonState();

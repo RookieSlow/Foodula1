@@ -68,8 +68,11 @@ The verified scene flow is:
   Free Race path from six-team career creation, confirmed replacement/abandonment, calendar and standings.
   Race now consumes an immutable request for the scheduled track, locked team, stable field and cloned tech
   snapshot, then atomically records mapped finishes/DNF against the reloaded authoritative save without normal
-  RP/driver-XP writes. Focused career execution passed `38/38`; summer-break technology editing and Play Mode
-  acceptance remain open.
+  RP/driver-XP writes. The race-four summer break now opens an isolated locked-team technology draft: cancel
+  discards it, while explicit confirmation atomically saves the sole mid-season snapshot and enables race five
+  without touching `TechTreeProfileStore`. Race eight now reports the champion plus the player's final score/rank,
+  the completed overview starts a replacement-confirmed new-season flow, and structured `[CAREER_RESULT]` lines
+  capture saved/rejected settlement evidence. Focused career execution passed `46/46`; Play Mode acceptance remains open.
 - Demo framework Phase 1 is complete.
 - Core race presentation is Demo-grade; formal brand/portrait/tech-tree art and
   the entire audio layer remain as the next asset-completion package.
