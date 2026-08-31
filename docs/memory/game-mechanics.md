@@ -25,6 +25,37 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 > all passed with no skips. Console retained only the existing
 > LogAssert-expected missing-track error from its regression test.
 
+## Career Season
+
+- A career season uses the eight entries in `TrackSelectionState.AvailableTracks` in their explicit
+  order; Resources enumeration, `fallback_42` and tutorial-only track rules are not part of the calendar.
+- The current career rules model a four-car field, matching the configured player-plus-up-to-three-AI
+  race boundary. Any of the six teams may be selected, but confirmation locks that team in the rules
+  state until the career is completed or later abandoned through the persistence/UI layer.
+- Classified finishes score `10/6/4/2`; DNF and invalid positions score zero. Duplicate team entries,
+  wrong-track results and repeated result IDs are rejected before state advancement.
+- Championship ties compare points, wins, podiums, best finish, most recent finish and finally the
+  stable season competitor order.
+- Technology configuration is locked during races 1–4. Resolving race four enters `SummerBreak` and
+  blocks race five until the sole technology adjustment is confirmed. Races 5–8 are locked again, and
+  completing race eight does not create another adjustment window.
+- Career progress is stored only under `Foodula1.Career.V1`. The versioned DTO carries the locked team,
+  stable competitors, exact schedule/version, results, reconstructed standings, phase and initial/mid-season
+  technology snapshots. Loading replays every result through the same rules and rejects drift or tampering.
+- Missing or malformed career data returns a safe `NotStarted` state without touching normal tech profiles,
+  RP, drivers, tutorial completion or settings. Invalid raw data is retained until explicit replacement or
+  abandonment. Candidate progress replaces live state only after storage succeeds.
+- The main menu presents the existing single-race route as `自由赛事` without changing its track-selection
+  callback. A separate runtime career overlay creates a season from any team, shows the locked team, eight-race
+  calendar and computed standings, and requires blocking confirmation before replacement or abandonment.
+  Race launch copies the authoritative scheduled track, locked team, stable competitors and career-owned tech
+  snapshot into a session request; it does not mutate Quick Race selection or the normal tech profile.
+- Track resolution has one precedence rule: Tutorial, then Career, then Quick Race. Settlement requires the
+  actually loaded track and exact four-car roster, maps blown cars to DNF, reloads the authoritative career save,
+  and advances atomically once. Career races skip normal RP and driver-XP settlement.
+- The combined career rules, persistence, presentation and Race integration passed `38/38` focused source-level
+  NUnit cases on 2026-08-31. Summer-break technology editing and Play Mode visual/runtime acceptance remain open.
+
 ## Turn and Card Loop
 
 - Each player has a draw pile, hand, discard pile, and independent engine

@@ -82,30 +82,33 @@ public static class MainMenuBuilder
             TextAlignmentOptions.Center, FontStyles.Normal,
             new Color(0.345f, 0.65f, 1f)); // #58A6FF
 
-        // ── 开始比赛 按钮 ──
-        menuUI.startRaceButton = MakeMenuBtn(canvasGO, "StartRaceBtn", "开始比赛",
-            new Vector2(0, 10), new Color(0.18f, 0.72f, 0.22f))
+        // ── 自由赛事 / 生涯模式 ──
+        menuUI.startRaceButton = MakeMenuBtn(canvasGO, "StartRaceBtn", MainMenuLabels.QuickRace,
+            new Vector2(-170, 20), new Color(0.18f, 0.72f, 0.22f))
             .GetComponent<Button>();
+
+        MakeMenuBtn(canvasGO, "CareerBtn", MainMenuLabels.Career,
+            new Vector2(170, 20), new Color(0.5f, 0.25f, 0.62f));
 
         // ── 车手选择按钮 ──
         MakeMenuBtn(canvasGO, "GarageBtn", "车手选择",
-            new Vector2(0, -170), new Color(0.18f, 0.42f, 0.62f));
+            new Vector2(170, -70), new Color(0.18f, 0.42f, 0.62f));
 
         // ── 车队科技树按钮 ──
         MakeMenuBtn(canvasGO, "TechTreeBtn", "车队科技树",
-            new Vector2(0, -80), new Color(0.42f, 0.28f, 0.14f));
+            new Vector2(-170, -70), new Color(0.42f, 0.28f, 0.14f));
 
         // ── 新手教程按钮 ──
         MakeMenuBtn(canvasGO, "TutorialBtn", "新手教程",
-            new Vector2(0, -260), new Color(0.16f, 0.47f, 0.56f));
+            new Vector2(-170, -160), new Color(0.16f, 0.47f, 0.56f));
 
         // ── 设置按钮 ──
         MakeMenuBtn(canvasGO, "SettingsBtn", "设置",
-            new Vector2(0, -350), new Color(0.28f, 0.34f, 0.48f));
+            new Vector2(170, -160), new Color(0.28f, 0.34f, 0.48f));
 
         // ── 退出游戏 按钮 ──
         menuUI.quitButton = MakeMenuBtn(canvasGO, "QuitBtn", "退出游戏",
-            new Vector2(0, -440), new Color(0.5f, 0.15f, 0.15f))
+            new Vector2(0, -250), new Color(0.5f, 0.15f, 0.15f))
             .GetComponent<Button>();
 
         // ── 版本号（底部居中） ──

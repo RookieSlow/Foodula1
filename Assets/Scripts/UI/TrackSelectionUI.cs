@@ -56,6 +56,7 @@ public sealed class TrackSelectionUI : MonoBehaviour
 
         RefreshSelectionVisuals();
         overlay.SetActive(true);
+        overlay.transform.SetAsLastSibling();
     }
 
     /// <summary>Closes the selection overlay without starting a race.</summary>
@@ -80,9 +81,9 @@ public sealed class TrackSelectionUI : MonoBehaviour
         panelRect.sizeDelta = new Vector2(1360f, 820f);
         panel.AddComponent<Image>().color = PanelColor;
 
-        CreateText(panel.transform, "Title", "选择赛道", 48f,
+        CreateText(panel.transform, "Title", MainMenuLabels.QuickRaceTrackTitle, 48f,
             new Vector2(0f, 335f), new Vector2(900f, 70f), FontStyles.Bold);
-        CreateText(panel.transform, "Hint", "选择一条赛道后立即开始比赛", 22f,
+        CreateText(panel.transform, "Hint", "选择一条赛道后立即开始自由赛事", 22f,
             new Vector2(0f, 285f), new Vector2(900f, 40f), FontStyles.Normal,
             new Color(0.62f, 0.72f, 0.84f));
 

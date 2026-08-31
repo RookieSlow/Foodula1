@@ -15,6 +15,7 @@ public static class SceneLoader
     {
         Debug.Log("[SceneLoader] Loading MainMenu...");
         TutorialLaunchState.Clear();
+        CareerRaceLaunchState.Clear();
         LoadSceneInternal(MAIN_MENU);
     }
 

@@ -55,6 +55,9 @@ public class MVPGameManager : MonoBehaviour
     // --- 运行时状态 ---
     private RaceSession session;
     private TutorialScenarioDefinition tutorialScenario;
+    private CareerRaceLaunchRequest careerRaceLaunch;
+    private bool careerResultRecorded;
+    private string careerInitializationFailure;
     private TutorialRuntimeDirector tutorialDirector;
     private TutorialGuideUI tutorialGuideUI;
     private TutorialOpponentCue pendingTutorialOpponentCue;
@@ -99,6 +102,7 @@ public class MVPGameManager : MonoBehaviour
     /// <summary>当前比赛的完整会话（多车/天气/特技/科技状态）。</summary>
     public RaceSession Session => session;
     public bool IsTutorialMode => tutorialScenario != null;
+    public bool IsCareerMode => careerRaceLaunch != null;
     public TutorialScenarioDefinition TutorialScenario => tutorialScenario;
     public TutorialRuntimeDirector TutorialDirector => tutorialDirector;
     public bool IsTutorialActionInputBlocked =>
@@ -170,6 +174,14 @@ public class MVPGameManager : MonoBehaviour
         nodeWait = new WaitForSeconds(
             GameSettingsRuntime.ScaleAnimationDuration(config.nodeDelay));
         InitializeGame();
+        if (!string.IsNullOrEmpty(careerInitializationFailure))
+        {
+            string message = $"生涯比赛无法启动：{careerInitializationFailure}\n进度未改变，请返回主菜单重试。";
+            hudUI?.SetStatus($"<color=red>{message}</color>");
+            hudUI?.ShowGameOver(message);
+            Debug.LogError($"[CAREER] {message}");
+            return;
+        }
         InitializeRaceCamera();
         InitializeTutorialGuideUI();
         // Event visuals are optional presentation. If a stale runtime UI
@@ -585,6 +597,15 @@ public class MVPGameManager : MonoBehaviour
         int startFinishNodeIndex = trackManager.StartFinishNodeIndex;
 
         tutorialScenario = TutorialLaunchState.ActivateRequested();
+        careerRaceLaunch = tutorialScenario == null
+            ? CareerRaceLaunchState.ActivateRequested()
+            : null;
+        if (tutorialScenario != null)
+            CareerRaceLaunchState.Clear();
+        careerResultRecorded = false;
+        careerInitializationFailure = string.Empty;
+        if (careerRaceLaunch != null && !ValidateCareerRaceLaunch(out careerInitializationFailure))
+            return;
         tutorialDirector = tutorialScenario != null
             ? new TutorialRuntimeDirector(tutorialScenario, initializeTutorialInPractice)
             : null;
@@ -610,21 +631,30 @@ public class MVPGameManager : MonoBehaviour
         // 人类玩家（Players[0]）
         DriverProfile humanDriver = tutorialScenario != null
             ? DriverCatalog.GetDefaultForTeam(tutorialScenario.playerTeam)
-            : DriverSelectionState.ResolveDriver(config.playerDriverId, config.playerTeam);
+            : careerRaceLaunch != null
+                ? DriverCatalog.GetDefaultForTeam(careerRaceLaunch.PlayerTeam)
+                : DriverSelectionState.ResolveDriver(config.playerDriverId, config.playerTeam);
         var human = new PlayerState("你", false, startFinishNodeIndex, config.minGear);
         human.driverId = humanDriver.Id;
-        SetupPlayerForRace(human, humanDriver.Team);
+        SetupPlayerForRace(
+            human,
+            humanDriver.Team,
+            careerRaceLaunch != null ? careerRaceLaunch.TechSnapshot : null);
         session.Players.Add(human);
 
         // AI 对手
         int aiCount = tutorialScenario != null
             ? tutorialScenario.opponentCount
-            : Mathf.Clamp(config.aiOpponentCount, 0, 3);
+            : careerRaceLaunch != null
+                ? careerRaceLaunch.Competitors.Count - 1
+                : Mathf.Clamp(config.aiOpponentCount, 0, 3);
         for (int i = 0; i < aiCount; i++)
         {
             TeamId team = tutorialScenario != null
                 ? tutorialScenario.opponentTeam
-                : (i < config.aiTeams.Length ? config.aiTeams[i] : TeamId.JP);
+                : careerRaceLaunch != null
+                    ? GetCareerOpponentTeam(i)
+                    : (i < config.aiTeams.Length ? config.aiTeams[i] : TeamId.JP);
             DriverProfile aiDriver = DriverCatalog.GetDefaultForTeam(team);
             var aiState = new PlayerState($"AI{i + 1}", true, startFinishNodeIndex, config.minGear);
             aiState.driverId = aiDriver.Id;
@@ -647,7 +677,9 @@ public class MVPGameManager : MonoBehaviour
         {
             hudUI.AppendLog(tutorialScenario != null
                 ? $"教程车辆: UK / {humanDriver.DisplayName}（车手增益关闭）"
-                : $"车手: {humanDriver.DisplayName}（{humanDriver.Style}，XP {humanDriver.TalentMultiplier:0.0}x）");
+                : careerRaceLaunch != null
+                    ? $"生涯第 {careerRaceLaunch.RaceIndex + 1}/8 站：锁定 {careerRaceLaunch.PlayerTeam} 车队"
+                    : $"车手: {humanDriver.DisplayName}（{humanDriver.Style}，XP {humanDriver.TalentMultiplier:0.0}x）");
         }
 
         // 天气：比赛开始时从赛道天气池抽取
@@ -1077,6 +1109,14 @@ public class MVPGameManager : MonoBehaviour
                     $"leader={cue.leaderCell} player={cue.playerCell} distance={cue.expectedSlipstreamDistance}");
             }
         }
+        else if (careerRaceLaunch != null)
+        {
+            raceLogWriter.Append(
+                $"[CAREER_SETUP] result_id={careerRaceLaunch.ResultId} " +
+                $"race={careerRaceLaunch.RaceIndex + 1}/{CareerModeRules.RaceCount} " +
+                $"track={careerRaceLaunch.TrackId} team={careerRaceLaunch.PlayerTeam} " +
+                $"competitors={careerRaceLaunch.Competitors.Count} tech_snapshot=true");
+        }
         if (hudUI != null)
             hudUI.SetLogSink(raceLogWriter.Append);
         Debug.Log($"[RaceTestLog] Started: {raceLogWriter.FilePath}");
@@ -1122,7 +1162,10 @@ public class MVPGameManager : MonoBehaviour
     /// <summary>
     /// 单个玩家的比赛初始化：车队分配、科技树、独立引擎热量池，以及速度/特技普通牌组。
     /// </summary>
-    private void SetupPlayerForRace(PlayerState p, TeamId teamId)
+    private void SetupPlayerForRace(
+        PlayerState p,
+        TeamId teamId,
+        CareerTechSnapshot careerTechSnapshot = null)
     {
         p.teamId = teamId;
         p.usesChinaGearSystem = teamId == TeamId.CN;
@@ -1133,6 +1176,22 @@ public class MVPGameManager : MonoBehaviour
         if (tutorialScenario != null)
         {
             p.techState = null;
+        }
+        else if (careerTechSnapshot != null)
+        {
+            if (!CareerTechSnapshotMapper.TryCreateRuntimeState(
+                    careerTechSnapshot, session.TechDb, out TechTreeState careerTechState))
+            {
+                Debug.LogError("[CAREER] Invalid technology snapshot; career race has no active technology.");
+                p.techState = null;
+                careerInitializationFailure = "科技快照无法映射到当前科技数据库";
+            }
+            else
+            {
+                p.techState = careerTechState;
+                TechTreeRules.ResetPerRaceState(p.techState);
+                poolSize = session.EffectiveHeatPoolSize(p, poolSize);
+            }
         }
         else if (config.enableTechTree)
         {
@@ -1179,6 +1238,41 @@ public class MVPGameManager : MonoBehaviour
             if (!p.deck.EnsureTrickCardInHand(attackId))
                 Debug.LogWarning($"[MVPGameManager] 无法保证中国队 ATTACK 牌 {attackId} 进入开局手牌。");
         }
+    }
+
+    private TeamId GetCareerOpponentTeam(int opponentIndex)
+    {
+        int current = 0;
+        for (int i = 0; i < careerRaceLaunch.Competitors.Count; i++)
+        {
+            TeamId team = careerRaceLaunch.Competitors[i];
+            if (team == careerRaceLaunch.PlayerTeam)
+                continue;
+            if (current++ == opponentIndex)
+                return team;
+        }
+        return TeamId.JP;
+    }
+
+    private bool ValidateCareerRaceLaunch(out string failureReason)
+    {
+        failureReason = string.Empty;
+        CareerLoadResult loaded = CareerRuntimeRepository.CreateDefault().Load();
+        if (loaded.Status != CareerLoadStatus.Loaded || !careerRaceLaunch.Matches(loaded.State))
+        {
+            failureReason = "启动请求与当前生涯存档不一致";
+            return false;
+        }
+
+        string loadedTrackId = trackManager != null && trackManager.LoadedTrackConfig != null
+            ? trackManager.LoadedTrackConfig.trackId
+            : string.Empty;
+        if (!string.Equals(loadedTrackId, careerRaceLaunch.TrackId, System.StringComparison.Ordinal))
+        {
+            failureReason = "指定正式赛道加载失败，已阻止 fallback 赛道计入生涯";
+            return false;
+        }
+        return true;
     }
 
     private void SpawnCars()
@@ -2949,6 +3043,37 @@ public class MVPGameManager : MonoBehaviour
                 result = "本次练习未完成；可以使用教程面板重新开始。\n\n" + result;
             result += "\n\n教程模式：不发放 RP、车手 XP、解锁或正常赛事进度。";
         }
+        else if (careerRaceLaunch != null)
+        {
+            if (careerResultRecorded)
+            {
+                result += "\n\n生涯赛果已保存。返回主菜单可查看更新后的积分榜。";
+            }
+            else if (CareerRaceSettlement.TryRecord(
+                         careerRaceLaunch,
+                         trackManager != null && trackManager.LoadedTrackConfig != null
+                             ? trackManager.LoadedTrackConfig.trackId
+                             : string.Empty,
+                         session.Players,
+                         CareerRuntimeRepository.CreateDefault(),
+                         out CareerSeasonState updatedCareer,
+                         out string failureReason))
+            {
+                careerResultRecorded = true;
+                CareerStanding playerStanding = CareerModeRules.GetStandings(updatedCareer)
+                    .Find(entry => entry.TeamId == updatedCareer.LockedTeam);
+                result += $"\n\n生涯赛果已保存：总分 {playerStanding?.Points ?? 0}，" +
+                          $"总排名第 {playerStanding?.Rank ?? 0} 名。";
+                if (updatedCareer.Phase == CareerPhase.SummerBreak)
+                    result += "\n已进入夏休，返回主菜单调整一次生涯科技树。";
+                else if (updatedCareer.Phase == CareerPhase.Completed)
+                    result += "\n八站生涯已完成。";
+            }
+            else
+            {
+                result += $"\n\n<color=red>{failureReason}</color>。返回主菜单后可重新开始当前站。";
+            }
+        }
         else
         {
             result += "\n\n" + BuildRPReport();
@@ -3384,6 +3509,12 @@ public class MVPGameManager : MonoBehaviour
                 RestartTutorialPracticeLap();
             else
                 RestartTutorialGuidedSection();
+            return;
+        }
+
+        if (careerRaceLaunch != null && careerResultRecorded)
+        {
+            SceneLoader.LoadMainMenu();
             return;
         }
 

@@ -42,6 +42,10 @@ the CCGS project framework.
   runtime display/presentation application; `UI/GameSettingsUI.cs` builds the menu overlay.
 - `Encyclopedia/` contains the versioned catalog loader/validator; the Chinese JSON source under
   `Resources/Configs/` drives `UI/GameEncyclopediaUI.cs` without embedding rule prose in UI code.
+- `Career/` contains the pure eight-race season calendar, four-car points and stable standings,
+  locked-team state, idempotent result advancement, the race-four summer-break technology gate,
+  versioned save DTO/validation, isolated PlayerPrefs adapters, an atomic application service and
+  the session-only Race launch/result settlement boundary.
 
 ## Scenes
 
@@ -54,6 +58,18 @@ The verified scene flow is:
 
 ## Current Development State
 
+- Career mode foundation is in progress. `CareerModeRules` reuses the explicit eight-track menu
+  catalog as its only calendar source, accepts any of the six teams and locks the confirmed team,
+  applies centralized 10/6/4/2 points with DNF zero, opens one technology adjustment after race four,
+  and completes after race eight. `CareerSaveCodec` now rebuilds saves through the rules layer,
+  validates schema/calendar/standings, preserves initial and summer-break tech snapshots, and returns
+  a safe empty state for malformed data. `CareerModeService` requires confirmation before replacement
+  or abandonment and does not advance runtime state when persistence fails. `CareerModeUI` separates the
+  Free Race path from six-team career creation, confirmed replacement/abandonment, calendar and standings.
+  Race now consumes an immutable request for the scheduled track, locked team, stable field and cloned tech
+  snapshot, then atomically records mapped finishes/DNF against the reloaded authoritative save without normal
+  RP/driver-XP writes. Focused career execution passed `38/38`; summer-break technology editing and Play Mode
+  acceptance remain open.
 - Demo framework Phase 1 is complete.
 - Core race presentation is Demo-grade; formal brand/portrait/tech-tree art and
   the entire audio layer remain as the next asset-completion package.

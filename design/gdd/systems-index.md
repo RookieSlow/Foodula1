@@ -2,7 +2,7 @@
 
 > Design order: Foundation → Core → Feature → Presentation → Polish
 > Status: Not Started | In Progress | In Review | Approved | Needs Revision | Retired
-> Snapshot: 2026-08-27
+> Snapshot: 2026-08-31
 
 ## MVP
 
@@ -24,6 +24,7 @@
 | 12 | Tech Tree | `foodula-1-tech-tree.md` | In Review | Rules, persistent profiles, menu UI and race hooks are wired; presentation and playtest sign-off remain |
 | 13 | Audio Style | `foodula-1-audio-style.md` | Not Started | Design/event map exists; no project audio files, AudioMixer or runtime audio service yet |
 | 14 | Tutorial, Settings & Encyclopedia | `foodula-1-tutorial-settings-encyclopedia.md` | In Progress | Isolated tutorial/practice, exact deck, author-refined guidance with optional detail sections, per-mechanic spotlight, safe checkpoints, settings persistence and 17-entry data-driven encyclopedia are wired; final guided Play Mode acceptance remains |
+| 15 | Career Mode | `foodula-1-career-mode.md` | In Progress | Rules, isolated persistence, menu/overview and Race launch/settlement are implemented; summer-break tech UI and Play Mode acceptance remain |
 
 ## Project Planning
 
@@ -64,6 +65,16 @@
   A tutorial-only 132/4 virtual pit view reuses normal pit rules because the official Le Mans JSON has no pit;
   official nodes remain unchanged. The author-refined copy and optional-section rendering bring the latest full EditMode run to `516/516`.
 - `design/registry/entities.yaml` exists but is empty, so entity-level automated consistency checking cannot yet be treated as evidence.
+- Career mode now has a pure-rule foundation tied to the eight-track catalog: six teams can be selected,
+  the selected team is locked for the season, four-car results use a centralized 10/6/4/2 table,
+  race four opens the sole summer-break tech window, and race eight completes the season. Focused
+  source-level NUnit execution passed `16/16` for that initial pure-rule slice.
+- Career persistence now uses `Foodula1.Career.V1`, validates schema and the exact track calendar,
+  rebuilds standings from saved race results, preserves initial/summer-break technology snapshots,
+  returns a safe empty state for malformed data, and only swaps runtime progress after storage succeeds.
+  The runtime menu now exposes Free Race and Career separately, supports six-team creation plus confirmed
+  replacement/abandonment, and renders the eight-race calendar and computed standings. The combined focused
+  rules/persistence/presentation run passes `31/31`; Race and summer-break technology wiring remain open.
 
 ## Design Dependencies
 

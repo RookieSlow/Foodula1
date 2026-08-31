@@ -89,7 +89,7 @@ public class TrackManager : MonoBehaviour
     public int StartFinishNodeIndex => TrackRules.FindStartFinishNodeIndex(nodes);
     public string TrackId => LoadedTrackConfig != null
         ? LoadedTrackConfig.trackId
-        : (config != null ? TutorialLaunchState.ResolveTrackId(config.trackId) : FallbackTrackId);
+        : (config != null ? RaceModeLaunchResolver.ResolveTrackId(config.trackId) : FallbackTrackId);
     public bool AllowsStartFinishLaneChange
     {
         get
@@ -106,7 +106,7 @@ public class TrackManager : MonoBehaviour
     void Awake()
     {
         string configuredTrackId = config != null ? config.trackId : string.Empty;
-        string trackId = TutorialLaunchState.ResolveTrackId(configuredTrackId);
+        string trackId = RaceModeLaunchResolver.ResolveTrackId(configuredTrackId);
 
         if (config == null)
         {

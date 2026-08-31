@@ -41,7 +41,7 @@ public sealed class TrackEnvironmentController : MonoBehaviour
             return;
         }
 
-        string trackId = TutorialLaunchState.ResolveTrackId(config.trackId);
+        string trackId = RaceModeLaunchResolver.ResolveTrackId(config.trackId);
         Sprite selectedSprite = ResolveSprite(trackId);
         if (selectedSprite == null)
         {

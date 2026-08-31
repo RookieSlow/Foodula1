@@ -16,7 +16,9 @@ public class MainMenuUI : MonoBehaviour
     private DriverSelectionUI driverSelectionUI;
     private TechTreeUI techTreeUI;
     private GameSettingsUI gameSettingsUI;
+    private CareerModeUI careerModeUI;
     private Button driverSelectionButton;
+    private Button careerButton;
     private Button techTreeButton;
     private Button tutorialButton;
     private Button settingsButton;
@@ -64,10 +66,16 @@ public class MainMenuUI : MonoBehaviour
             gameSettingsUI = gameObject.AddComponent<GameSettingsUI>();
         gameSettingsUI.Initialize(UpdateTutorialButtonLabel);
 
+        careerModeUI = GetComponent<CareerModeUI>();
+        if (careerModeUI == null)
+            careerModeUI = gameObject.AddComponent<CareerModeUI>();
+        careerModeUI.Initialize(CareerRuntimeRepository.CreateDefault(), true, OnStartCareerRace);
+
         if (startRaceButton != null)
         {
             ButtonClickAnimation.Attach(startRaceButton);
             startRaceButton.onClick.AddListener(OnStartRace);
+            SetButtonLabel(startRaceButton, MainMenuLabels.QuickRace);
         }
         else
         {
@@ -95,8 +103,79 @@ public class MainMenuUI : MonoBehaviour
         }
 
         EnsureTechTreeButton();
+        EnsureCareerButton();
         EnsureTutorialButton();
         EnsureSettingsButton();
+        ApplyMenuLayout();
+    }
+
+    private void EnsureCareerButton()
+    {
+        Transform buttonTransform = transform.Find("CareerBtn");
+        if (buttonTransform == null)
+        {
+            GameObject buttonObject = CreateRuntimeMenuButton(
+                "CareerBtn", MainMenuLabels.Career, new Color(0.5f, 0.25f, 0.62f));
+            buttonTransform = buttonObject.transform;
+        }
+
+        careerButton = buttonTransform.GetComponent<Button>();
+        if (careerButton == null) return;
+        ButtonClickAnimation.Attach(careerButton);
+        careerButton.onClick.RemoveAllListeners();
+        careerButton.onClick.AddListener(careerModeUI.Show);
+        SetButtonLabel(careerButton, MainMenuLabels.Career);
+    }
+
+    private GameObject CreateRuntimeMenuButton(string name, string text, Color color)
+    {
+        GameObject buttonObject = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
+        buttonObject.transform.SetParent(transform, false);
+        RectTransform rect = buttonObject.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = new Vector2(320f, 64f);
+        buttonObject.GetComponent<Image>().color = color;
+
+        GameObject labelObject = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+        labelObject.transform.SetParent(buttonObject.transform, false);
+        RectTransform labelRect = labelObject.GetComponent<RectTransform>();
+        labelRect.anchorMin = Vector2.zero;
+        labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = Vector2.zero;
+        labelRect.offsetMax = Vector2.zero;
+        TMP_Text label = labelObject.GetComponent<TMP_Text>();
+        label.text = text;
+        label.fontSize = 28f;
+        label.alignment = TextAlignmentOptions.Center;
+        label.color = Color.white;
+        TMP_Text sourceFont = GetComponentInChildren<TMP_Text>(true);
+        if (sourceFont != null) label.font = sourceFont.font;
+        return buttonObject;
+    }
+
+    private void ApplyMenuLayout()
+    {
+        PlaceMenuButton("StartRaceBtn", new Vector2(-170f, 20f));
+        PlaceMenuButton("CareerBtn", new Vector2(170f, 20f));
+        PlaceMenuButton("TechTreeBtn", new Vector2(-170f, -70f));
+        PlaceMenuButton("GarageBtn", new Vector2(170f, -70f));
+        PlaceMenuButton("TutorialBtn", new Vector2(-170f, -160f));
+        PlaceMenuButton("SettingsBtn", new Vector2(170f, -160f));
+        PlaceMenuButton("QuitBtn", new Vector2(0f, -250f));
+    }
+
+    private void PlaceMenuButton(string objectName, Vector2 position)
+    {
+        Transform button = transform.Find(objectName);
+        RectTransform rect = button != null ? button.GetComponent<RectTransform>() : null;
+        if (rect != null) rect.anchoredPosition = position;
+    }
+
+    private static void SetButtonLabel(Button button, string text)
+    {
+        TMP_Text label = button != null ? button.GetComponentInChildren<TMP_Text>(true) : null;
+        if (label != null) label.text = text;
     }
 
     /// <summary>
@@ -281,12 +360,20 @@ public class MainMenuUI : MonoBehaviour
     public void OnStartRace()
     {
         TutorialLaunchState.Clear();
+        CareerRaceLaunchState.Clear();
         trackSelectionUI.Show();
+    }
+
+    private void OnStartCareerRace()
+    {
+        TutorialLaunchState.Clear();
+        SceneLoader.LoadRace();
     }
 
     /// <summary>Starts the isolated Le Mans tutorial without changing quick-race selections.</summary>
     public void OnStartTutorial()
     {
+        CareerRaceLaunchState.Clear();
         TutorialLaunchState.Request(TutorialScenarioDefinition.CreateLeMansUk());
         Debug.Log($"[MainMenuUI] Starting tutorial: {TutorialScenarioDefinition.ScenarioId}");
         SceneLoader.LoadRace();
@@ -296,6 +383,7 @@ public class MainMenuUI : MonoBehaviour
     public void OnTrackSelected(string trackId)
     {
         TutorialLaunchState.Clear();
+        CareerRaceLaunchState.Clear();
         Debug.Log($"[MainMenuUI] Starting race on track: {trackId}");
         if (trackSelectionUI != null)
             trackSelectionUI.Hide();
