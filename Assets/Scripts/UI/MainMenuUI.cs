@@ -25,6 +25,8 @@ public class MainMenuUI : MonoBehaviour
 
     void Awake()
     {
+        EnsureBrandArt();
+
         // The overlay may be kept in MainMenu for Prefab-layout authoring.
         // Hide that preview before the first rendered frame; the Race scene
         // creates and binds its own runtime instance after race presentation
@@ -36,6 +38,49 @@ public class MainMenuUI : MonoBehaviour
             if (authoringPreviews[i] != null)
                 authoringPreviews[i].gameObject.SetActive(false);
         }
+    }
+
+    private void EnsureBrandArt()
+    {
+        Sprite backgroundSprite = BrandArtResources.LoadMainMenuBackground();
+        if (backgroundSprite != null && transform.Find("BrandBackground") == null)
+        {
+            GameObject backgroundObject = new GameObject(
+                "BrandBackground", typeof(RectTransform), typeof(Image), typeof(AspectRatioFitter));
+            backgroundObject.transform.SetParent(transform, false);
+            backgroundObject.transform.SetAsFirstSibling();
+            RectTransform backgroundRect = backgroundObject.GetComponent<RectTransform>();
+            backgroundRect.anchorMin = Vector2.zero;
+            backgroundRect.anchorMax = Vector2.one;
+            backgroundRect.offsetMin = Vector2.zero;
+            backgroundRect.offsetMax = Vector2.zero;
+            Image background = backgroundObject.GetComponent<Image>();
+            background.sprite = backgroundSprite;
+            background.preserveAspect = true;
+            background.raycastTarget = false;
+            AspectRatioFitter fitter = backgroundObject.GetComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio = backgroundSprite.rect.width / backgroundSprite.rect.height;
+        }
+
+        Sprite logoSprite = BrandArtResources.LoadMainMenuLogo();
+        if (logoSprite == null) return;
+
+        Transform authoredTitle = transform.Find("TitleText");
+        if (authoredTitle != null) authoredTitle.gameObject.SetActive(false);
+        if (transform.Find("BrandLogo") != null) return;
+
+        GameObject logoObject = new GameObject("BrandLogo", typeof(RectTransform), typeof(Image));
+        logoObject.transform.SetParent(transform, false);
+        RectTransform logoRect = logoObject.GetComponent<RectTransform>();
+        logoRect.anchorMin = logoRect.anchorMax = new Vector2(0.5f, 0.5f);
+        logoRect.pivot = new Vector2(0.5f, 0.5f);
+        logoRect.anchoredPosition = new Vector2(0f, 330f);
+        logoRect.sizeDelta = new Vector2(720f, 270f);
+        Image logo = logoObject.GetComponent<Image>();
+        logo.sprite = logoSprite;
+        logo.preserveAspect = true;
+        logo.raycastTarget = false;
     }
 
     void Start()

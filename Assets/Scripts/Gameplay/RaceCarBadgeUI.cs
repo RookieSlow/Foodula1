@@ -20,6 +20,7 @@ public sealed class RaceCarBadgeUI : MonoBehaviour
     private Canvas badgeCanvas;
     private RectTransform badgeRect;
     private Image badgeBackground;
+    private Image badgeLogo;
     private TextMeshProUGUI badgeLabel;
     private SpriteRenderer carRenderer;
     private TeamId teamId;
@@ -44,8 +45,9 @@ public sealed class RaceCarBadgeUI : MonoBehaviour
         if (!initialized || player.teamId != teamId)
             Initialize(player.teamId);
 
-        badgeLabel.text = string.Format("{0}  P{1}",
-            TeamCarPresentationRules.GetBadgeCode(teamId), Mathf.Max(1, rank));
+        badgeLabel.text = badgeLogo != null && badgeLogo.sprite != null
+            ? string.Format("P{0}", Mathf.Max(1, rank))
+            : string.Format("{0}  P{1}", TeamCarPresentationRules.GetBadgeCode(teamId), Mathf.Max(1, rank));
         UpdateBadgeTransform();
     }
 
@@ -101,6 +103,18 @@ public sealed class RaceCarBadgeUI : MonoBehaviour
         outline.effectColor = new Color(0f, 0f, 0f, 0.85f);
         outline.effectDistance = new Vector2(2f, -2f);
 
+        GameObject logoObject = new GameObject(
+            "TeamBadgeLogo", typeof(RectTransform), typeof(Image));
+        logoObject.transform.SetParent(canvasObject.transform, false);
+        RectTransform logoRect = logoObject.GetComponent<RectTransform>();
+        logoRect.anchorMin = logoRect.anchorMax = new Vector2(0f, 0.5f);
+        logoRect.pivot = new Vector2(0f, 0.5f);
+        logoRect.anchoredPosition = new Vector2(5f, 0f);
+        logoRect.sizeDelta = new Vector2(30f, 24f);
+        badgeLogo = logoObject.GetComponent<Image>();
+        badgeLogo.preserveAspect = true;
+        badgeLogo.raycastTarget = false;
+
         GameObject labelObject = new GameObject(
             "TeamBadgeLabel",
             typeof(RectTransform),
@@ -109,7 +123,7 @@ public sealed class RaceCarBadgeUI : MonoBehaviour
         RectTransform labelRect = labelObject.GetComponent<RectTransform>();
         labelRect.anchorMin = Vector2.zero;
         labelRect.anchorMax = Vector2.one;
-        labelRect.offsetMin = new Vector2(5f, 0f);
+        labelRect.offsetMin = new Vector2(37f, 0f);
         labelRect.offsetMax = new Vector2(-5f, 0f);
 
         badgeLabel = labelObject.GetComponent<TextMeshProUGUI>();
@@ -133,8 +147,11 @@ public sealed class RaceCarBadgeUI : MonoBehaviour
             return;
 
         badgeBackground.color = TeamCarPresentationRules.GetBadgeColor(teamId);
+        badgeLogo.sprite = BrandArtResources.LoadTeamLogo(teamId);
+        badgeLogo.enabled = badgeLogo.sprite != null;
+        badgeLabel.rectTransform.offsetMin = new Vector2(badgeLogo.enabled ? 37f : 5f, 0f);
         badgeLabel.color = TeamCarPresentationRules.GetBadgeTextColor(teamId);
-        badgeLabel.text = TeamCarPresentationRules.GetBadgeCode(teamId);
+        badgeLabel.text = badgeLogo.enabled ? string.Empty : TeamCarPresentationRules.GetBadgeCode(teamId);
     }
 
     private void UpdateBadgeTransform()

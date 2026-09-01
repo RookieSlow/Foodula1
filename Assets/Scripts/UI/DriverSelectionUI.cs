@@ -101,13 +101,30 @@ public sealed class DriverSelectionUI : MonoBehaviour
         string id = driver.Id;
         button.onClick.AddListener(() => SelectDriver(id));
 
-        CreateText(card.transform, "Name", driver.DisplayName, 22f, new Vector2(0f, 72f), new Vector2(285f, 34f), FontStyles.Bold);
+        AddTeamLogo(card.transform, driver.Team, new Vector2(-108f, 70f), new Vector2(48f, 48f));
+
+        CreateText(card.transform, "Name", driver.DisplayName, 22f, new Vector2(22f, 72f), new Vector2(225f, 34f), FontStyles.Bold);
         CreateText(card.transform, "Meta", $"{driver.Team} · {driver.Style} · XP {driver.TalentMultiplier:0.0}x", 16f,
             new Vector2(0f, 42f), new Vector2(285f, 26f), FontStyles.Normal, new Color(0.92f, 0.95f, 1f));
         CreateText(card.transform, "Passive", $"被动：{driver.PassiveName}\n{driver.PassiveSummary}", 14f,
             new Vector2(0f, -4f), new Vector2(282f, 58f), FontStyles.Normal, new Color(0.98f, 0.82f, 0.42f));
         CreateText(card.transform, "Active", $"主动：{driver.ActiveName}\n{driver.ActiveSummary}", 14f,
             new Vector2(0f, -62f), new Vector2(282f, 58f), FontStyles.Normal, new Color(0.62f, 0.88f, 1f));
+    }
+
+    private static void AddTeamLogo(Transform parent, TeamId team, Vector2 position, Vector2 size)
+    {
+        Sprite sprite = BrandArtResources.LoadTeamLogo(team);
+        if (sprite == null) return;
+        GameObject logoObject = CreateObject("TeamLogo", parent);
+        RectTransform rect = logoObject.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = position;
+        rect.sizeDelta = size;
+        Image image = logoObject.AddComponent<Image>();
+        image.sprite = sprite;
+        image.preserveAspect = true;
+        image.raycastTarget = false;
     }
 
     private void SelectDriver(string driverId)

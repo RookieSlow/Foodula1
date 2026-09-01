@@ -1,7 +1,7 @@
 # Foodula1 — Demo 资源清单
 
 > **用途**：当前版本的美术、字体、音乐与音效资源事实表。
-> **审计日期**：2026-08-27。
+> **审计日期**：2026-09-01。
 > **状态含义**：✅ 已有并接入；🟨 运行时生成/占位可用；⬜ 尚缺；◻ 可选升级。
 > **事实来源**：`Assets/` 文件、当前 UI/Gameplay 代码和运行时配置；旧版 42 格赛道与未来架构草案不再作为资源缺口。
 
@@ -10,8 +10,8 @@
 ## 一、当前结论
 
 - 核心比赛视觉已经达到 Demo 可玩基线：9 张卡牌图、6 辆车、8 张 4K 赛道布局、档位旋钮、中文 TMP 字体均已存在并接入。
-- 主菜单当前只有深色纯色背景和 TMP 标题，没有正式背景图或独立 Logo。
-- 12 位车手已有数据与选择界面，但没有正式头像；比赛中的车队/名次徽标目前使用运行时色块和文字代码。
+- 主菜单正式背景图与透明 Logo 已通过统一 `Resources/Brand` 加载边界接入，资源缺失时保留旧标题回退。
+- 六队原创抽象徽章已接入车手选择、生涯选队、科技树标签和比赛头顶名次徽标；12 位车手仍缺正式头像。
 - 科技树规则、存档和菜单界面已接入，但树状背景、节点图标和节点状态框仍由运行时代码绘制。
 - `Assets/Audio/Music/` 与 `Assets/Audio/SFX/` 已建目录但没有实际音频文件；
   代码中也没有 `AudioSource`、`AudioClip`、`AudioMixer` 或音频管理器，音乐与音效尚未接入。
@@ -23,12 +23,12 @@
 
 | 资源 | 建议文件 | 规格 | 用途与验收 | 状态 |
 |---|---|---|---|---|
-| 主菜单背景 | `Assets/Sprites/Menu/main_menu_background.png` | 3840×2160 PNG，16:9 | 赛道俯视剪影、餐车元素与深空黑留白；标题和按钮区域必须保持可读 | ⬜ |
-| 游戏 Logo | `Assets/Sprites/Menu/foodula1_logo.png` | 1600×600 透明 PNG | 统一使用 **Foodula1**；可缩放到 1080p 主菜单且边缘清晰 | ⬜ |
+| 主菜单背景 | `Assets/Resources/Brand/main_menu_background.png` | 1672×941 PNG，16:9 | 赛道俯视剪影、餐车元素与深空黑留白；运行时全屏铺设 | ✅ |
+| 游戏 Logo | `Assets/Resources/Brand/foodula1_logo.png` | 2048×768 透明 PNG | 统一使用 **Foodula1**；主菜单等比显示 | ✅ |
 | 科技树背景 | `Assets/Sprites/TechTree/tech_tree_background.png` | 3840×2160 PNG，16:9 | 深灰蓝电路/路线图底纹，不抢节点文字 | ⬜ |
 | 科技节点框 | `Assets/Sprites/TechTree/tech_node_{locked,available,active}.png` | 360×160，9-slice | 明确区分锁定、可解锁、已激活三态 | ⬜ |
 | 科技层级徽章 | `Assets/Sprites/TechTree/tech_tier_{l1,l2,l3}.png` | 128×128 透明 PNG | L1/L2/L3 视觉层级，不依赖颜色作为唯一信息 | ⬜ |
-| 六队徽章/国旗 | `Assets/Sprites/UI/team_{uk,de,it,us,cn,jp}.png` | 256×256 透明 PNG | 主菜单、排行榜、赛车头顶徽标共用；建议采用原创队徽，国旗仅作辅助 | ⬜ |
+| 六队徽章/国旗 | `Assets/Resources/Brand/team_{uk,de,it,us,cn,jp}.png` | 1254×1254 透明 PNG | 原创抽象队徽；车手卡、生涯选队、科技树与赛车头顶标识共用 | ✅ |
 | 12 位车手头像 | `Assets/Sprites/Drivers/driver_<driver_id>.png` | 768×768 透明 PNG | 两位/队；肩部以上、统一视角与光源、圆形裁切安全区 80% | ⬜ |
 | 8 条赛道选择缩略图 | `Assets/Sprites/Track/Thumbnails/track_<track_id>.png` | 640×360 PNG | 可从现有 4K 赛道图派生，叠加赛道名/天气不应烘焙进图 | 🟨 可派生 |
 

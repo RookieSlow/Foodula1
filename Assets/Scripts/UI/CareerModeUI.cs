@@ -119,6 +119,7 @@ public sealed class CareerModeUI : MonoBehaviour
             button.GetComponent<RectTransform>().sizeDelta = new Vector2(300f, 88f);
             TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
             label.color = TeamCarPresentationRules.GetBadgeTextColor(team);
+            AddTeamLogo(button.transform, team);
             teamButtons[team] = button;
         }
 
@@ -130,6 +131,29 @@ public sealed class CareerModeUI : MonoBehaviour
         Button create = factory.CreateActionButton(parent, "CareerCreate", "确认车队并新建",
             new Vector2(0f, -245f), new Color(0.18f, 0.62f, 0.38f), RequestCreate);
         create.GetComponent<RectTransform>().sizeDelta = new Vector2(340f, 58f);
+    }
+
+    private static void AddTeamLogo(Transform parent, TeamId team)
+    {
+        Sprite sprite = BrandArtResources.LoadTeamLogo(team);
+        if (sprite == null) return;
+        GameObject logoObject = new GameObject("TeamLogo", typeof(RectTransform), typeof(Image));
+        logoObject.transform.SetParent(parent, false);
+        RectTransform rect = logoObject.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = new Vector2(-105f, 0f);
+        rect.sizeDelta = new Vector2(56f, 56f);
+        Image image = logoObject.GetComponent<Image>();
+        image.sprite = sprite;
+        image.preserveAspect = true;
+        image.raycastTarget = false;
+
+        TMP_Text label = parent.GetComponentInChildren<TMP_Text>(true);
+        if (label != null)
+        {
+            label.rectTransform.offsetMin = new Vector2(66f, label.rectTransform.offsetMin.y);
+            label.rectTransform.offsetMax = new Vector2(-12f, label.rectTransform.offsetMax.y);
+        }
     }
 
     private void BuildOverview(RaceUIFactory factory, Transform parent)

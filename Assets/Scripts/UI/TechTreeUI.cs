@@ -48,6 +48,7 @@ public sealed class TechTreeUI : MonoBehaviour
         selectedTeam = DriverSelectionState.ResolveDriver(TeamId.CN).Team;
         Refresh();
         overlay.SetActive(true);
+        overlay.transform.SetAsLastSibling();
     }
 
     public void Hide()
@@ -93,6 +94,7 @@ public sealed class TechTreeUI : MonoBehaviour
             TeamId team = Teams[i];
             Button button = CreateButton(tabs.transform, team.ToString(), GetTeamLabel(team),
                 Color.Lerp(UnlockedColor, Color.white, 0.06f), 17f);
+            AddTeamLogo(button, team);
             button.onClick.AddListener(() => SelectTeam(team));
         }
 
@@ -122,6 +124,29 @@ public sealed class TechTreeUI : MonoBehaviour
         back.onClick.AddListener(Hide);
 
         overlay.SetActive(false);
+    }
+
+    private static void AddTeamLogo(Button button, TeamId team)
+    {
+        Sprite sprite = BrandArtResources.LoadTeamLogo(team);
+        if (sprite == null || button == null) return;
+        GameObject logoObject = CreateObject("TeamLogo", button.transform);
+        RectTransform rect = logoObject.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0f, 0.5f);
+        rect.pivot = new Vector2(0f, 0.5f);
+        rect.anchoredPosition = new Vector2(10f, 0f);
+        rect.sizeDelta = new Vector2(36f, 36f);
+        Image image = logoObject.AddComponent<Image>();
+        image.sprite = sprite;
+        image.preserveAspect = true;
+        image.raycastTarget = false;
+
+        TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+        if (label != null)
+        {
+            label.rectTransform.offsetMin = new Vector2(48f, label.rectTransform.offsetMin.y);
+            label.rectTransform.offsetMax = new Vector2(-6f, label.rectTransform.offsetMax.y);
+        }
     }
 
     private void Refresh()
