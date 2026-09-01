@@ -63,6 +63,7 @@ public class MVPGameManager : MonoBehaviour
     private TutorialOpponentCue pendingTutorialOpponentCue;
     private TutorialPlayerCheckpoint pendingTutorialPlayerCheckpoint;
     private bool pendingTutorialGuideRefreshAtTurnStart;
+    private int pendingTutorialGuideEarliestTurn;
     private IReadOnlyList<TrackNode> tutorialPitRuleNodes;
     private bool initializeTutorialInPractice;
     private readonly RacePhaseState phaseState = new RacePhaseState();
@@ -613,6 +614,7 @@ public class MVPGameManager : MonoBehaviour
         pendingTutorialOpponentCue = null;
         pendingTutorialPlayerCheckpoint = null;
         pendingTutorialGuideRefreshAtTurnStart = false;
+        pendingTutorialGuideEarliestTurn = 0;
         tutorialPitRuleNodes = tutorialScenario != null && tutorialScenario.tutorialPitLane != null
             ? TutorialCheckpointRules.CreateVirtualPitRuleNodes(
                 trackManager.TotalNodes,
@@ -798,11 +800,19 @@ public class MVPGameManager : MonoBehaviour
             $"[TUTORIAL_GATE] action={action} accepted=true detail={detail}");
         ApplyTutorialPendingCue();
         TutorialStepDefinition nextStep = tutorialDirector.CurrentStep;
-        if (nextStep != null && TutorialGuideTimingRules.StartsAtNextTurn(nextStep.id))
+        if (nextStep != null &&
+            (TutorialGuideTimingRules.StartsAtNextTurn(nextStep.id) ||
+             pendingTutorialPlayerCheckpoint != null))
         {
             pendingTutorialGuideRefreshAtTurnStart = true;
+            pendingTutorialGuideEarliestTurn =
+                TutorialGuideTimingRules.EarliestPresentationTurn(
+                    nextStep.id,
+                    raceTurnNumber);
+            tutorialGuideUI?.SuspendPresentation();
             raceLogWriter?.Append(
-                $"[TUTORIAL_GUIDE] step={nextStep.id} refresh=deferred boundary=next_turn");
+                $"[TUTORIAL_GUIDE] step={nextStep.id} refresh=deferred " +
+                $"boundary=prepared_input_state earliest_turn={pendingTutorialGuideEarliestTurn}");
         }
         else
         {
@@ -956,6 +966,20 @@ public class MVPGameManager : MonoBehaviour
             $"target={handSize} hand={player.deck.HandCount} " +
             $"draw={player.deck.DrawPileCount} discard={player.deck.DiscardPileCount} " +
             $"fully_drawn={fullyDrawn}");
+    }
+
+    private TutorialPlayerCheckpoint FindTutorialPlayerCheckpoint(TutorialStepId? stepId)
+    {
+        if (!stepId.HasValue || tutorialScenario == null)
+            return null;
+
+        for (int i = 0; i < tutorialScenario.playerCheckpoints.Count; i++)
+        {
+            TutorialPlayerCheckpoint checkpoint = tutorialScenario.playerCheckpoints[i];
+            if (checkpoint.step == stepId.Value)
+                return checkpoint;
+        }
+        return null;
     }
 
     private void ApplyPendingTutorialOpponentCue()
@@ -1396,7 +1420,10 @@ public class MVPGameManager : MonoBehaviour
                     if (cardHandUI != null) { cardHandUI.SetGearSelectionMode(true); cardHandUI.UpdateDeckInfo(p); }
 
                     if (pendingTutorialGuideRefreshAtTurnStart &&
-                        TutorialGuideTimingRules.IsTurnPresentationReady(phaseState.Current))
+                        raceTurnNumber >= pendingTutorialGuideEarliestTurn &&
+                        TutorialGuideTimingRules.IsTurnPresentationReady(phaseState.Current) &&
+                        !TutorialGuideTimingRules.BeginsAtCardSelection(
+                            FindTutorialPlayerCheckpoint(tutorialDirector?.CurrentStep?.id)))
                     {
                         // Checkpoint, camera and input HUD must all be visible
                         // before the next lesson panel and spotlight appear.
@@ -1408,6 +1435,21 @@ public class MVPGameManager : MonoBehaviour
                         raceLogWriter?.Append(
                             $"[TUTORIAL_GUIDE] step={tutorialDirector?.CurrentStep?.id} " +
                             "refresh=applied boundary=player_input_ready");
+                    }
+
+                    TutorialPlayerCheckpoint cardStartCheckpoint =
+                        FindTutorialPlayerCheckpoint(tutorialDirector?.CurrentStep?.id);
+                    if (pendingTutorialGuideRefreshAtTurnStart &&
+                        raceTurnNumber >= pendingTutorialGuideEarliestTurn &&
+                        TutorialGuideTimingRules.BeginsAtCardSelection(cardStartCheckpoint))
+                    {
+                        inputState.SelectGear(p.gear);
+                        inputState.ConfirmGear();
+                        SetGearControlsInteractable(false);
+                        hudUI?.SelectGearPresentation(p.gear);
+                        raceLogWriter?.Append(
+                            $"[TUTORIAL_GUIDE] step={tutorialDirector?.CurrentStep?.id} " +
+                            $"gear_preselected={p.gear} boundary=card_selection");
                     }
 
                     yield return new WaitWhile(() => inputState.WaitingForGear);
@@ -1487,6 +1529,21 @@ public class MVPGameManager : MonoBehaviour
                     }
                     if (cardHandUI != null)
                         cardHandUI.RefreshRequirementFeedback(p);
+
+                    TutorialPlayerCheckpoint cardStartCheckpoint =
+                        FindTutorialPlayerCheckpoint(tutorialDirector?.CurrentStep?.id);
+                    if (pendingTutorialGuideRefreshAtTurnStart &&
+                        raceTurnNumber >= pendingTutorialGuideEarliestTurn &&
+                        TutorialGuideTimingRules.BeginsAtCardSelection(cardStartCheckpoint))
+                    {
+                        pendingTutorialGuideRefreshAtTurnStart = false;
+                        raceCameraController?.SnapToPlayer();
+                        Canvas.ForceUpdateCanvases();
+                        tutorialGuideUI?.Refresh();
+                        raceLogWriter?.Append(
+                            $"[TUTORIAL_GUIDE] step={tutorialDirector?.CurrentStep?.id} " +
+                            "refresh=applied boundary=card_input_ready");
+                    }
 
                     yield return new WaitWhile(() => inputState.WaitingForCards);
                     raceCameraController?.FocusPlayerAfterCardPlay();

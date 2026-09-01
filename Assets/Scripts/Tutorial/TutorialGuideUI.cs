@@ -186,6 +186,12 @@ public sealed class TutorialGuideUI : MonoBehaviour
         authoredLayoutCaptured = false;
     }
 
+    public void SuspendPresentation()
+    {
+        focusHighlighter?.Hide();
+        gameObject.SetActive(false);
+    }
+
     public void PreviewAuthoredStep(
         TutorialStepPresentation presentation,
         int oneBasedIndex,
@@ -261,17 +267,17 @@ public sealed class TutorialGuideUI : MonoBehaviour
             bool completed = director.Phase == TutorialRunPhase.Completed;
             titleText.text = authoring != null
                 ? authoring.GetPracticeTitle(completed)
-                : completed ? "练习圈完成" : "勒芒自由练习";
+                : completed ? "训练圈完成" : "勒芒自由练习";
             SetOptionalText(completionText, authoring != null
                 ? authoring.GetPracticeCompletion(completed)
                 : completed
-                    ? "✓ 一整圈练习已经完成"
-                    : "✓ 引导已结束，比赛状态已完整重置");
+                    ? "✓ 做得漂亮，你完成了整圈训练"
+                    : "✓ 赛车和牌组都已重新准备好");
             instructionText.text = authoring != null
                 ? authoring.GetPracticeInstruction(completed)
                 : completed
-                    ? "你已完成一整圈勒芒练习。该结果不会发放 RP、车手 XP、解锁或赛事进度。可以再练一圈、重播引导或退出。"
-                    : "状态已重置为 UK、零科技和教程精确牌组。自由完成一整圈；本圈使用脚本阴天，仍不写入正常奖励与进度。";
+                    ? "很好，新车手。你已经独立完成一整圈勒芒训练。这里不会发放 RP、车手 XP 或解锁；想再练一圈、重温引导或回到主菜单都可以。"
+                    : "接下来由你自己做决定。用准备好的 UK 赛车和教程牌组跑完一圈；这只是训练，不会影响正常奖励或赛事进度。";
             progressText.text = $"{director.CompletedStepCount}/{director.StepCount}";
             primaryRestartsPractice = true;
             SetContinueState(true, completed ? "再练一圈" : "重新开始");

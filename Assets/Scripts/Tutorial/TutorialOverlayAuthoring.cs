@@ -121,15 +121,15 @@ public sealed class TutorialOverlayAuthoring : MonoBehaviour
 
     [Header("练习圈文本")]
     [SerializeField] private string practiceTitle = "勒芒自由练习";
-    [SerializeField] private string completedTitle = "练习圈完成";
+    [SerializeField] private string completedTitle = "训练圈完成";
     [TextArea(2, 3)] [SerializeField] private string practiceCompletion =
-        "✓ 引导已结束，比赛状态已完整重置";
+        "✓ 赛车和牌组都已重新准备好";
     [TextArea(2, 3)] [SerializeField] private string completedCompletion =
-        "✓ 一整圈练习已经完成";
+        "✓ 做得漂亮，你完成了整圈训练";
     [TextArea(3, 5)] [SerializeField] private string practiceInstruction =
-        "状态已重置为 UK、零科技和教程精确牌组。自由完成一整圈；本圈使用脚本阴天，仍不写入正常奖励与进度。";
+        "接下来由你自己做决定。用准备好的 UK 赛车和教程牌组跑完一圈；这只是训练，不会影响正常奖励或赛事进度。";
     [TextArea(3, 5)] [SerializeField] private string completedInstruction =
-        "你已完成一整圈勒芒练习。该结果不会发放 RP、车手 XP、解锁或赛事进度。可以再练一圈、重播引导或退出。";
+        "很好，新车手。你已经独立完成一整圈勒芒训练。这里不会发放 RP、车手 XP 或解锁；想再练一圈、重温引导或回到主菜单都可以。";
 
     public TutorialGuideUI Guide => guide;
     public TutorialFocusHighlightUI FocusHighlight => focusHighlight;

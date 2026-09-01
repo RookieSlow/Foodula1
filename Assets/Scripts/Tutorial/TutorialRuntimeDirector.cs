@@ -22,7 +22,25 @@ public static class TutorialGuideTimingRules
 
     public static bool SkipsOptionalDiscardBeforePresentation(TutorialStepId stepId)
     {
-        return stepId == TutorialStepId.DeckHandDiscardAndRecycle;
+        // Keep the first complete turn intact so the player sees the normal
+        // loop once. Later guided lessons move directly into the next prepared
+        // state instead of repeatedly stopping at optional discard.
+        return stepId != TutorialStepId.ObjectiveAndInterface &&
+               stepId != TutorialStepId.TurnFlow;
+    }
+
+    public static bool BeginsAtCardSelection(TutorialPlayerCheckpoint checkpoint)
+    {
+        return checkpoint != null && checkpoint.beginAtCardSelection;
+    }
+
+    public static int EarliestPresentationTurn(
+        TutorialStepId stepId,
+        int currentTurn)
+    {
+        return StartsAtNextTurn(stepId)
+            ? currentTurn + 1
+            : currentTurn;
     }
 
     public static bool IsTurnPresentationReady(GamePhase phase)

@@ -57,6 +57,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
 {
     private Canvas canvas;
     private MVPGameManager manager;
+    private CanvasGroup canvasGroup;
     [Header("手动高光布局")]
     [SerializeField, Min(0f)] private float targetPadding = 10f;
     [SerializeField, Min(1f)] private float borderThickness = 4f;
@@ -113,6 +114,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
             highlight = root.AddComponent<TutorialFocusHighlightUI>();
         highlight.canvas = canvas;
         highlight.manager = manager;
+        highlight.canvasGroup = group;
         highlight.rootRect = rect;
         highlight.Build(font);
         highlight.Bind(canvas, manager);
@@ -124,8 +126,11 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
     {
         canvas = targetCanvas;
         manager = targetManager;
+        if (canvasGroup == null)
+            canvasGroup = GetComponent<CanvasGroup>();
         if (rootRect == null)
             rootRect = transform as RectTransform;
+        EnsureCalloutMask();
         CacheNamedTargets();
     }
 
@@ -153,26 +158,43 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         focusTarget = target;
         focusIntroduction = introduction ?? string.Empty;
         dismissState.Show(stepId, Input.GetMouseButton(0));
-        if (dismissState.IsVisible && !gameObject.activeSelf)
-            gameObject.SetActive(true);
+        if (!dismissState.IsVisible)
+        {
+            // Refreshes for the same tutorial step are common while the HUD is
+            // rebuilding. A dismissed spotlight must actively clear itself on
+            // every such refresh, otherwise TMP may submit its callout again.
+            DeactivateVisuals();
+            return;
+        }
+
         if (dismissState.IsVisible)
+        {
+            SetCanvasVisible(true);
+            if (!gameObject.activeSelf)
+                gameObject.SetActive(true);
             RefreshFocus();
+        }
     }
 
     public void Hide()
     {
         dismissState.Hide();
-        if (gameObject.activeSelf)
-            gameObject.SetActive(false);
+        DeactivateVisuals();
     }
 
     private void LateUpdate()
     {
+        if (!dismissState.IsVisible)
+        {
+            DeactivateVisuals();
+            return;
+        }
+
         if (dismissState.Update(
                 Input.GetMouseButton(0),
                 Input.GetMouseButtonDown(0)))
         {
-            gameObject.SetActive(false);
+            DeactivateVisuals();
             return;
         }
         RefreshFocus();
@@ -214,8 +236,10 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         calloutText.fontStyle = FontStyles.Bold;
         calloutText.alignment = TextAlignmentOptions.MidlineLeft;
         calloutText.enableWordWrapping = true;
+        calloutText.overflowMode = TextOverflowModes.Ellipsis;
         calloutText.color = new Color(1f, 0.87f, 0.56f);
         calloutText.raycastTarget = false;
+        EnsureCalloutMask();
     }
 
     private Image CreateImage(string name, Color color)
@@ -277,12 +301,21 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         LayoutRect(borders[3].rectTransform,
             new Rect(focus.xMax - borderThickness, focus.yMin, borderThickness, focus.height));
 
-        if (calloutText.text != focusIntroduction)
+        if (calloutText != null && calloutText.text != focusIntroduction)
             calloutText.text = focusIntroduction;
         float resolvedCalloutWidth = Mathf.Min(
             calloutWidth,
             Mathf.Max(250f, bounds.width - 32f));
-        float resolvedCalloutHeight = calloutHeight;
+        float preferredTextHeight = calloutText != null
+            ? calloutText.GetPreferredValues(
+                focusIntroduction,
+                Mathf.Max(1f, resolvedCalloutWidth - 24f),
+                0f).y + 14f
+            : calloutHeight;
+        float resolvedCalloutHeight = Mathf.Clamp(
+            Mathf.Max(calloutHeight, preferredTextHeight),
+            calloutHeight,
+            Mathf.Max(calloutHeight, bounds.height - 16f));
         float calloutX = Mathf.Clamp(
             focus.center.x + calloutOffset.x,
             bounds.xMin + resolvedCalloutWidth * 0.5f + 8f,
@@ -384,6 +417,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         return null;
     }
 
+
     private void CacheNamedTargets()
     {
         namedTargets.Clear();
@@ -419,10 +453,83 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
     private void SetVisualsActive(bool active)
     {
         for (int i = 0; i < dimmers.Length; i++)
-            dimmers[i].gameObject.SetActive(active);
+        {
+            if (dimmers[i] != null)
+                dimmers[i].gameObject.SetActive(active);
+        }
         for (int i = 0; i < borders.Length; i++)
-            borders[i].gameObject.SetActive(active);
-        calloutRect.gameObject.SetActive(active);
+        {
+            if (borders[i] != null)
+                borders[i].gameObject.SetActive(active);
+        }
+        if (calloutRect != null)
+            calloutRect.gameObject.SetActive(active);
+        if (calloutText != null)
+        {
+            calloutText.enabled = active;
+            calloutText.gameObject.SetActive(active);
+        }
+
+        if (active)
+        {
+            CanvasRenderer[] renderers =
+                GetComponentsInChildren<CanvasRenderer>(includeInactive: true);
+            for (int i = 0; i < renderers.Length; i++)
+                renderers[i].cull = false;
+        }
+    }
+
+    private void DeactivateVisuals()
+    {
+        // Hide the parent group first, then explicitly clear every generated
+        // mesh. TextMesh Pro fallback glyphs can own separate CanvasRenderers;
+        // merely disabling their GameObjects may leave the last submitted mesh
+        // visible for a frame in a standalone player.
+        SetCanvasVisible(false);
+        ClearRenderedGeometry();
+        SetVisualsActive(false);
+        cachedCardTarget = null;
+        cachedCardTrickId = null;
+        if (gameObject.activeSelf)
+            gameObject.SetActive(false);
+        Canvas.ForceUpdateCanvases();
+    }
+
+    private void ClearRenderedGeometry()
+    {
+        if (calloutText != null)
+        {
+            calloutText.text = string.Empty;
+            calloutText.ForceMeshUpdate(
+                ignoreActiveState: true,
+                forceTextReparsing: true);
+            calloutText.ClearMesh();
+            calloutText.enabled = false;
+        }
+
+        CanvasRenderer[] renderers =
+            GetComponentsInChildren<CanvasRenderer>(includeInactive: true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].cull = true;
+            renderers[i].Clear();
+        }
+    }
+
+    private void EnsureCalloutMask()
+    {
+        if (calloutRect != null && calloutRect.GetComponent<RectMask2D>() == null)
+            calloutRect.gameObject.AddComponent<RectMask2D>();
+        if (calloutText != null)
+            calloutText.overflowMode = TextOverflowModes.Ellipsis;
+    }
+
+    private void SetCanvasVisible(bool visible)
+    {
+        if (canvasGroup == null)
+            canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup != null)
+            canvasGroup.alpha = visible ? 1f : 0f;
     }
 
     private static RectTransform RectOf(Component component)

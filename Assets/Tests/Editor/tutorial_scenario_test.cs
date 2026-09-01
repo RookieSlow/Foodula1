@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TutorialScenarioTests
 {
@@ -260,10 +262,10 @@ public class TutorialScenarioTests
             Does.Contain("收起指引"));
         Assert.That(
             scenario.steps.Single(step => step.id == TutorialStepId.ObjectiveAndInterface).goal,
-            Does.Contain("欢迎来到围场"));
+            Does.Contain("教练"));
         Assert.That(
             scenario.steps.Single(step => step.id == TutorialStepId.Review).goal,
-            Does.Contain("已经分别用过"));
+            Does.Contain("关键机制"));
     }
 
     [Test]
@@ -311,7 +313,7 @@ public class TutorialScenarioTests
         Assert.That(authoring.Steps.Count, Is.EqualTo(16));
         Assert.That(authoring.Steps.Select(step => step.id).Distinct().Count(), Is.EqualTo(16));
         Assert.That(authoring.Find(TutorialStepId.GearAndRequiredCards).title,
-            Is.EqualTo("来一次换挡"));
+            Is.EqualTo("试着升到 G2"));
         Assert.That(authoring.Find(TutorialStepId.UkScone).focusIntroduction,
             Does.Contain("司康"));
         Assert.That(prefab.transform.Find("TutorialGuidePanel"), Is.Not.Null);
@@ -340,7 +342,7 @@ public class TutorialScenarioTests
             Assert.That(authoring.PreviewPractice(completed: true), Is.True);
             Assert.That(
                 panel.Find("TutorialTitle").GetComponent<TMPro.TMP_Text>().text,
-                Is.EqualTo("练习圈完成"));
+                Is.EqualTo("训练圈完成"));
             Assert.That(
                 panel.Find("TutorialContinueButton")
                     .GetComponentInChildren<TMPro.TMP_Text>(true).text,
@@ -380,7 +382,7 @@ public class TutorialScenarioTests
         Assert.That(text, Does.Contain("<b>轮到你了</b>"));
         Assert.That(text, Does.Not.Contain("<b>现在场上</b>"));
         Assert.That(text, Does.Not.Contain("<b>完成后</b>"));
-        Assert.That(text, Does.Not.Contain("没反应？"));
+        Assert.That(text, Does.Not.Contain("需要帮忙？"));
         Assert.That(text, Does.Not.Contain("\n\n\n"));
     }
 
@@ -530,6 +532,69 @@ public class TutorialScenarioTests
     }
 
     [Test]
+    public void TutorialFocusHideDeactivatesEveryAuthoredVisual()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        GameObject instance = Object.Instantiate(prefab);
+        TutorialOverlayAuthoring authoring = instance.GetComponent<TutorialOverlayAuthoring>();
+        TutorialFocusHighlightUI highlight = authoring.FocusHighlight;
+        GameObject canvasObject = new GameObject("TutorialFocusTestCanvas", typeof(Canvas));
+        Canvas canvas = canvasObject.GetComponent<Canvas>();
+        instance.transform.SetParent(canvas.transform, false);
+        highlight.Bind(canvas, null);
+
+        highlight.gameObject.SetActive(true);
+        Graphic[] visuals = highlight.GetComponentsInChildren<Graphic>(true);
+        TMP_Text focusText = highlight.GetComponentInChildren<TMP_Text>(true);
+        Assert.That(visuals.Length, Is.GreaterThanOrEqualTo(9));
+        Assert.That(focusText, Is.Not.Null);
+        focusText.text = "This text must not remain in the canvas mesh.";
+        for (int i = 0; i < visuals.Length; i++)
+            visuals[i].gameObject.SetActive(true);
+
+        highlight.Hide();
+
+        Assert.That(highlight.gameObject.activeSelf, Is.False);
+        Assert.That(highlight.GetComponent<CanvasGroup>().alpha, Is.Zero);
+        Assert.That(focusText.text, Is.Empty,
+            "dismissal must clear TMP content as well as deactivate its object");
+        Assert.That(focusText.enabled, Is.False,
+            "dismissal must disable the TMP component so it cannot rebuild a stale mesh");
+        Assert.That(focusText.transform.parent.GetComponent<RectMask2D>(), Is.Not.Null,
+            "the callout must clip text that exceeds its fitted background");
+        Assert.That(
+            visuals.All(visual => !visual.gameObject.activeSelf),
+            Is.True,
+            "all dimmers, borders and the callout must be disabled explicitly");
+
+        Object.DestroyImmediate(canvasObject);
+    }
+
+    [Test]
+    public void TutorialFocusSameStepRefreshActivelyKeepsDismissedVisualsCleared()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        GameObject instance = Object.Instantiate(prefab);
+        TutorialOverlayAuthoring authoring = instance.GetComponent<TutorialOverlayAuthoring>();
+        TutorialFocusHighlightUI highlight = authoring.FocusHighlight;
+        GameObject canvasObject = new GameObject("TutorialFocusRefreshCanvas", typeof(Canvas));
+        Canvas canvas = canvasObject.GetComponent<Canvas>();
+        instance.transform.SetParent(canvas.transform, false);
+        highlight.Bind(canvas, null);
+
+        highlight.Show(TutorialStepId.Review, TutorialFocusTarget.Review, "stale callout");
+        highlight.Hide();
+        highlight.Show(TutorialStepId.Review, TutorialFocusTarget.Review, "must not return");
+
+        TMP_Text focusText = highlight.GetComponentInChildren<TMP_Text>(true);
+        Assert.That(highlight.gameObject.activeSelf, Is.False);
+        Assert.That(focusText.text, Is.Empty);
+        Assert.That(focusText.enabled, Is.False);
+
+        Object.DestroyImmediate(canvasObject);
+    }
+
+    [Test]
     public void FifthStepManualAcknowledgementIsAcceptedDuringAnimationCleanup()
     {
         TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
@@ -602,12 +667,64 @@ public class TutorialScenarioTests
         Assert.That(
             TutorialGuideTimingRules.SkipsOptionalDiscardBeforePresentation(
                 TutorialStepId.SpeedCardsAndMovement),
-            Is.False);
+            Is.True,
+            "after the first complete turn, guided lessons bypass optional discard");
         Assert.That(
             TutorialGuideTimingRules.StartsAtNextTurn(
                 TutorialStepId.HeatPayment),
             Is.False,
             "heat payment remains the immediate result of selecting G3");
+    }
+
+    [Test]
+    public void CompactMechanicCheckpointsBeginWithPreparedGearAtCardSelection()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
+        TutorialStepId[] compactSteps =
+        {
+            TutorialStepId.HeatCardsAndCooling,
+            TutorialStepId.MissingCardPenalty,
+            TutorialStepId.CornerLimitAndSpin,
+            TutorialStepId.PitSelection,
+            TutorialStepId.UkScone,
+            TutorialStepId.UkEnglishBreakfastTea
+        };
+
+        foreach (TutorialStepId stepId in compactSteps)
+        {
+            TutorialPlayerCheckpoint checkpoint = scenario.playerCheckpoints.Single(
+                checkpoint => checkpoint.step == stepId);
+            Assert.That(TutorialGuideTimingRules.BeginsAtCardSelection(checkpoint), Is.True,
+                stepId.ToString());
+            Assert.That(TutorialGuideTimingRules.SkipsOptionalDiscardBeforePresentation(stepId),
+                Is.True, stepId.ToString());
+        }
+
+        TutorialPlayerCheckpoint payment = scenario.playerCheckpoints.Single(
+            checkpoint => checkpoint.step == TutorialStepId.HeatPayment);
+        Assert.That(TutorialGuideTimingRules.BeginsAtCardSelection(payment), Is.False,
+            "heat payment still teaches the G1 to G3 shift itself");
+        Assert.That(TutorialGuideTimingRules.SkipsOptionalDiscardBeforePresentation(
+            TutorialStepId.TurnFlow), Is.False,
+            "the first full turn remains the one complete-loop demonstration");
+    }
+
+    [Test]
+    public void CoolingLessonCannotPresentDuringHeatPaymentTurn()
+    {
+        const int paymentTurn = 6;
+
+        int coolingPresentationTurn = TutorialGuideTimingRules.EarliestPresentationTurn(
+            TutorialStepId.HeatCardsAndCooling,
+            paymentTurn);
+        int immediatePresentationTurn = TutorialGuideTimingRules.EarliestPresentationTurn(
+            TutorialStepId.HeatPayment,
+            paymentTurn);
+
+        Assert.That(coolingPresentationTurn, Is.EqualTo(paymentTurn + 1),
+            "step 7 must not reuse step 6's card-selection phase");
+        Assert.That(immediatePresentationTurn, Is.EqualTo(paymentTurn),
+            "step 6 still presents as soon as its checkpoint is ready");
     }
 
     [Test]
