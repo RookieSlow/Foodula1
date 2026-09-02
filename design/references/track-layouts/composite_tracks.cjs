@@ -27,7 +27,8 @@ const tracks = [
   },
   {
     id: "nurburgring_bier",
-    environment: "call_DIBbQgBPe9otdJgNVrZT7KVi.png",
+    environment: "design/references/track-layouts/environments/nurburgring_bier_environment.png",
+    projectEnvironment: true,
     output: "track_layout_de.png",
   },
   {
@@ -279,7 +280,9 @@ async function main() {
       `${track.id}.json`,
     );
     const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
-    const environmentPath = path.join(generatedRoot, track.environment);
+    const environmentPath = track.projectEnvironment
+      ? path.join(projectRoot, track.environment)
+      : path.join(generatedRoot, track.environment);
     const outputPath = path.join(outputDirectory, track.output);
 
     await sharp(environmentPath)

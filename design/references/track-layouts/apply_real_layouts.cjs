@@ -24,7 +24,10 @@ const trackSources = [
   {
     id: "nurburgring_bier",
     source: "nurburgring_gp.svg",
-    points: () => readSvgPathByIndex("nurburgring_gp.svg", 7),
+    // This SVG path contains a stray move command after the closed circuit.
+    // Read only the first closed subpath so the annotation point is not
+    // treated as another track node and connected back into the racing line.
+    points: () => readSvgClosedPathByIndex("nurburgring_gp.svg", 7),
     rotate: 90,
   },
   {
@@ -362,9 +365,25 @@ for (const track of trackSources) {
   const sourcePoints = rotate(track.points(), track.rotate);
   const normalized = normalize(sourcePoints);
   const sampled = resampleClosed(normalized, config.cells.length);
+  const normalizedForValidation =
+    normalized.length > 1 &&
+    Math.hypot(
+      normalized[0][0] - normalized[normalized.length - 1][0],
+      normalized[0][1] - normalized[normalized.length - 1][1],
+    ) <= 1e-8
+      ? normalized.slice(0, -1)
+      : normalized;
+  const sourceCrossings = countSelfIntersections(normalizedForValidation);
   const crossings = countSelfIntersections(sampled);
-  if (track.id === "nurburgring_24h_endurance" && crossings !== 0) {
-    throw new Error(`Nordschleife source produced ${crossings} self-intersections`);
+  if (
+    (track.id === "nurburgring_bier" ||
+      track.id === "nurburgring_24h_endurance") &&
+    (sourceCrossings !== 0 || crossings !== 0)
+  ) {
+    throw new Error(
+      `${track.id} source produced ${sourceCrossings} source crossings and ` +
+        `${crossings} sampled crossings`,
+    );
   }
 
   config.cells.forEach((cell, index) => {
@@ -375,7 +394,8 @@ for (const track of trackSources) {
   });
   fs.writeFileSync(configPath, `${JSON.stringify(config, null, 2)}\n`);
   console.log(
-    `${track.id}: ${track.source}, ${sourcePoints.length} source points -> ` +
-      `${sampled.length} cells, ${crossings} crossings`,
+    `${track.id}: ${track.source}, ${sourcePoints.length} source points, ` +
+      `${sourceCrossings} source crossings -> ${sampled.length} cells, ` +
+      `${crossings} sampled crossings`,
   );
 }

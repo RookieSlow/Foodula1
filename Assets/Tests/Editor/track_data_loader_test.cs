@@ -423,6 +423,65 @@ public class TrackDataLoaderTest
     }
 
     [Test]
+    public void test_nurburgring_gp_final_sector_has_no_overlapping_or_reversing_nodes()
+    {
+        TrackConfig cfg = TrackDataLoader.LoadConfig("nurburgring_bier");
+        Vector2[] positions = TrackDataLoader.ConfigToWorldPositions(cfg, 30f, 16.875f);
+
+        for (int index = 46; index <= 58; index++)
+        {
+            int next = (index + 1) % positions.Length;
+            int following = (index + 2) % positions.Length;
+            float spacing = Vector2.Distance(positions[index], positions[next]);
+            float directionChange = Vector2.Angle(
+                positions[next] - positions[index],
+                positions[following] - positions[next]);
+
+            Assert.GreaterOrEqual(
+                spacing,
+                0.5f,
+                $"纽博格林 GP 节点 {index}->{next} 不应近距离重叠");
+            Assert.Less(
+                directionChange,
+                120f,
+                $"纽博格林 GP 节点 {index}->{next}->{following} 不应瞬间折返");
+        }
+
+        for (int first = 0; first < positions.Length; first++)
+        {
+            int firstNext = (first + 1) % positions.Length;
+            for (int second = first + 2; second < positions.Length; second++)
+            {
+                int secondNext = (second + 1) % positions.Length;
+                if (first == secondNext || firstNext == second)
+                    continue;
+
+                Assert.IsFalse(
+                    SegmentsProperlyIntersect(
+                        positions[first],
+                        positions[firstNext],
+                        positions[second],
+                        positions[secondNext]),
+                    $"纽博格林 GP 线路 {first}->{firstNext} 不应与 {second}->{secondNext} 自相交");
+            }
+        }
+    }
+
+    private static bool SegmentsProperlyIntersect(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
+    {
+        float abC = Cross(b - a, c - a);
+        float abD = Cross(b - a, d - a);
+        float cdA = Cross(d - c, a - c);
+        float cdB = Cross(d - c, b - c);
+        return abC * abD < 0f && cdA * cdB < 0f;
+    }
+
+    private static float Cross(Vector2 a, Vector2 b)
+    {
+        return a.x * b.y - a.y * b.x;
+    }
+
+    [Test]
     public void test_build_corner_maps_assigns_limits_and_names()
     {
         TrackConfig cfg = TrackDataLoader.LoadConfig("suzuka_sushi");

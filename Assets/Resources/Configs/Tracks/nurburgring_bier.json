@@ -59,8 +59,8 @@
       "segmentId": "straight",
       "distanceMeters": 88,
       "position": {
-        "x": 0.593135,
-        "y": 0.468777
+        "x": 0.600814,
+        "y": 0.458902
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -74,8 +74,8 @@
       "segmentId": "straight",
       "distanceMeters": 88,
       "position": {
-        "x": 0.579535,
-        "y": 0.525011
+        "x": 0.570587,
+        "y": 0.499439
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -89,8 +89,8 @@
       "segmentId": "straight",
       "distanceMeters": 88,
       "position": {
-        "x": 0.625788,
-        "y": 0.504764
+        "x": 0.588455,
+        "y": 0.529077
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -104,8 +104,8 @@
       "segmentId": "straight",
       "distanceMeters": 88,
       "position": {
-        "x": 0.673045,
-        "y": 0.510571
+        "x": 0.631018,
+        "y": 0.502324
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -119,8 +119,8 @@
       "segmentId": "straight",
       "distanceMeters": 88,
       "position": {
-        "x": 0.681162,
-        "y": 0.574751
+        "x": 0.675986,
+        "y": 0.500011
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -134,8 +134,8 @@
       "segmentId": "castrol_bier",
       "distanceMeters": 88,
       "position": {
-        "x": 0.648179,
-        "y": 0.63471
+        "x": 0.688791,
+        "y": 0.546723
       },
       "cornerId": "castrol_bier",
       "cornerLevel": 3,
@@ -149,8 +149,8 @@
       "segmentId": "castrol_bier",
       "distanceMeters": 88,
       "position": {
-        "x": 0.606642,
-        "y": 0.595293
+        "x": 0.675652,
+        "y": 0.595514
       },
       "cornerId": "castrol_bier",
       "cornerLevel": 3,
@@ -164,8 +164,8 @@
       "segmentId": "straight",
       "distanceMeters": 88,
       "position": {
-        "x": 0.543224,
-        "y": 0.582494
+        "x": 0.647201,
+        "y": 0.635028
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -179,8 +179,8 @@
       "segmentId": "mercedes_rye_arena",
       "distanceMeters": 88,
       "position": {
-        "x": 0.479935,
-        "y": 0.598034
+        "x": 0.609214,
+        "y": 0.610666
       },
       "cornerId": "mercedes_rye_arena",
       "cornerLevel": 2,
@@ -194,8 +194,8 @@
       "segmentId": "mercedes_rye_arena",
       "distanceMeters": 88,
       "position": {
-        "x": 0.415813,
-        "y": 0.618378
+        "x": 0.577423,
+        "y": 0.580005
       },
       "cornerId": "mercedes_rye_arena",
       "cornerLevel": 2,
@@ -209,8 +209,8 @@
       "segmentId": "mercedes_rye_arena",
       "distanceMeters": 88,
       "position": {
-        "x": 0.350261,
-        "y": 0.63259
+        "x": 0.527235,
+        "y": 0.585184
       },
       "cornerId": "mercedes_rye_arena",
       "cornerLevel": 2,
@@ -224,8 +224,8 @@
       "segmentId": "straight",
       "distanceMeters": 88,
       "position": {
-        "x": 0.307278,
-        "y": 0.590847
+        "x": 0.478457,
+        "y": 0.598497
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -239,8 +239,8 @@
       "segmentId": "straight",
       "distanceMeters": 88,
       "position": {
-        "x": 0.262414,
-        "y": 0.555952
+        "x": 0.430265,
+        "y": 0.613869
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -254,8 +254,8 @@
       "segmentId": "straight",
       "distanceMeters": 88,
       "position": {
-        "x": 0.225579,
-        "y": 0.61131
+        "x": 0.381658,
+        "y": 0.62783
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -269,8 +269,8 @@
       "segmentId": "valvoline_dunkel",
       "distanceMeters": 87,
       "position": {
-        "x": 0.187979,
-        "y": 0.667107
+        "x": 0.332305,
+        "y": 0.6285
       },
       "cornerId": "valvoline_dunkel",
       "cornerLevel": 2,
@@ -284,8 +284,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.141124,
-        "y": 0.718336
+        "x": 0.304634,
+        "y": 0.587169
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -299,8 +299,8 @@
       "segmentId": "ford_weizen",
       "distanceMeters": 87,
       "position": {
-        "x": 0.091382,
-        "y": 0.760133
+        "x": 0.274527,
+        "y": 0.55004
       },
       "cornerId": "ford_weizen",
       "cornerLevel": 2,
@@ -314,8 +314,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.065351,
-        "y": 0.815082
+        "x": 0.239949,
+        "y": 0.583763
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -329,8 +329,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.110389,
-        "y": 0.81062
+        "x": 0.216372,
+        "y": 0.628509
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -344,8 +344,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.150506,
-        "y": 0.776329
+        "x": 0.186321,
+        "y": 0.669086
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -359,8 +359,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.19066,
-        "y": 0.739883
+        "x": 0.15267,
+        "y": 0.70684
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -374,8 +374,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.232916,
-        "y": 0.714978
+        "x": 0.115984,
+        "y": 0.741625
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -389,8 +389,8 @@
       "segmentId": "dunlop_brezel",
       "distanceMeters": 87,
       "position": {
-        "x": 0.277721,
-        "y": 0.705707
+        "x": 0.076558,
+        "y": 0.773209
       },
       "cornerId": "dunlop_brezel",
       "cornerLevel": 3,
@@ -404,8 +404,8 @@
       "segmentId": "dunlop_brezel",
       "distanceMeters": 87,
       "position": {
-        "x": 0.343674,
-        "y": 0.706267
+        "x": 0.064195,
+        "y": 0.817992
       },
       "cornerId": "dunlop_brezel",
       "cornerLevel": 3,
@@ -419,8 +419,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.407835,
-        "y": 0.686848
+        "x": 0.107151,
+        "y": 0.819237
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -434,8 +434,8 @@
       "segmentId": "schumacher_s",
       "distanceMeters": 87,
       "position": {
-        "x": 0.471773,
-        "y": 0.665232
+        "x": 0.142765,
+        "y": 0.783347
       },
       "cornerId": "schumacher_s",
       "cornerLevel": 1,
@@ -449,8 +449,8 @@
       "segmentId": "schumacher_s",
       "distanceMeters": 87,
       "position": {
-        "x": 0.536242,
-        "y": 0.646203
+        "x": 0.179425,
+        "y": 0.748502
       },
       "cornerId": "schumacher_s",
       "cornerLevel": 1,
@@ -464,8 +464,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.577825,
-        "y": 0.682033
+        "x": 0.218519,
+        "y": 0.716443
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -479,8 +479,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.614312,
-        "y": 0.732052
+        "x": 0.265039,
+        "y": 0.702553
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -494,8 +494,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.657115,
-        "y": 0.721455
+        "x": 0.314486,
+        "y": 0.711942
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -509,8 +509,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.699984,
-        "y": 0.691492
+        "x": 0.363752,
+        "y": 0.700767
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -524,8 +524,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.741301,
-        "y": 0.654742
+        "x": 0.411972,
+        "y": 0.685494
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -539,8 +539,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.781662,
-        "y": 0.614847
+        "x": 0.459875,
+        "y": 0.669246
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -554,8 +554,8 @@
       "segmentId": "kumho_malz",
       "distanceMeters": 87,
       "position": {
-        "x": 0.819466,
-        "y": 0.567606
+        "x": 0.507958,
+        "y": 0.653548
       },
       "cornerId": "kumho_malz",
       "cornerLevel": 2,
@@ -569,8 +569,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.835335,
-        "y": 0.502895
+        "x": 0.556615,
+        "y": 0.649253
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -584,8 +584,8 @@
       "segmentId": "bit_hopfen",
       "distanceMeters": 87,
       "position": {
-        "x": 0.848533,
-        "y": 0.436317
+        "x": 0.584925,
+        "y": 0.690521
       },
       "cornerId": "bit_hopfen",
       "cornerLevel": 2,
@@ -599,8 +599,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.864704,
-        "y": 0.364739
+        "x": 0.611079,
+        "y": 0.733573
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -614,8 +614,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.893864,
-        "y": 0.308053
+        "x": 0.655117,
+        "y": 0.727177
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -629,8 +629,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.932198,
-        "y": 0.271802
+        "x": 0.695146,
+        "y": 0.696299
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -644,8 +644,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.934189,
-        "y": 0.201983
+        "x": 0.733056,
+        "y": 0.66282
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -659,8 +659,8 @@
       "segmentId": "veedol_gurken",
       "distanceMeters": 87,
       "position": {
-        "x": 0.894034,
-        "y": 0.171771
+        "x": 0.769619,
+        "y": 0.627872
       },
       "cornerId": "veedol_gurken",
       "cornerLevel": 3,
@@ -674,8 +674,8 @@
       "segmentId": "veedol_gurken",
       "distanceMeters": 87,
       "position": {
-        "x": 0.84384,
-        "y": 0.216012
+        "x": 0.80441,
+        "y": 0.591172
       },
       "cornerId": "veedol_gurken",
       "cornerLevel": 3,
@@ -689,8 +689,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.804919,
-        "y": 0.253181
+        "x": 0.825702,
+        "y": 0.54613
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -704,8 +704,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.765999,
-        "y": 0.290352
+        "x": 0.836598,
+        "y": 0.49674
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -719,8 +719,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.727078,
-        "y": 0.327522
+        "x": 0.846414,
+        "y": 0.447118
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -734,8 +734,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.688158,
-        "y": 0.364692
+        "x": 0.856336,
+        "y": 0.397517
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -749,8 +749,8 @@
       "segmentId": "ngk_wurst",
       "distanceMeters": 87,
       "position": {
-        "x": 0.649237,
-        "y": 0.401861
+        "x": 0.867076,
+        "y": 0.348088
       },
       "cornerId": "ngk_wurst",
       "cornerLevel": 3,
@@ -764,8 +764,8 @@
       "segmentId": "ngk_wurst",
       "distanceMeters": 87,
       "position": {
-        "x": 0.662998,
-        "y": 0.389639
+        "x": 0.894862,
+        "y": 0.311327
       },
       "cornerId": "ngk_wurst",
       "cornerLevel": 3,
@@ -779,8 +779,8 @@
       "segmentId": "ngk_wurst",
       "distanceMeters": 87,
       "position": {
-        "x": 0.712363,
-        "y": 0.343937
+        "x": 0.929483,
+        "y": 0.282822
       },
       "cornerId": "ngk_wurst",
       "cornerLevel": 3,
@@ -794,8 +794,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.761729,
-        "y": 0.298235
+        "x": 0.938962,
+        "y": 0.233198
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -809,8 +809,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.811095,
-        "y": 0.252533
+        "x": 0.932969,
+        "y": 0.183958
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -824,8 +824,8 @@
       "segmentId": "coca_cola_pils",
       "distanceMeters": 87,
       "position": {
-        "x": 0.860461,
-        "y": 0.206831
+        "x": 0.88798,
+        "y": 0.174649
       },
       "cornerId": "coca_cola_pils",
       "cornerLevel": 2,
@@ -839,8 +839,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.858502,
-        "y": 0.208645
+        "x": 0.851053,
+        "y": 0.209124
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -854,8 +854,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.820679,
-        "y": 0.243661
+        "x": 0.814472,
+        "y": 0.24406
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -869,8 +869,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.782856,
-        "y": 0.278677
+        "x": 0.77789,
+        "y": 0.278995
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -884,8 +884,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.745033,
-        "y": 0.313692
+        "x": 0.741309,
+        "y": 0.313931
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -899,8 +899,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.70721,
-        "y": 0.348708
+        "x": 0.704727,
+        "y": 0.348867
       },
       "cornerId": "",
       "cornerLevel": 0,
@@ -914,8 +914,8 @@
       "segmentId": "straight",
       "distanceMeters": 87,
       "position": {
-        "x": 0.669387,
-        "y": 0.383723
+        "x": 0.668146,
+        "y": 0.383803
       },
       "cornerId": "",
       "cornerLevel": 0,
