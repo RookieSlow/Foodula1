@@ -1466,7 +1466,10 @@ public class MVPGameManager : MonoBehaviour
                 if (turnSkipped.Contains(p)) continue;
 
                 int handSize = session.EffectiveHandSize(p, config.handSize) + p.extraCardSlotsThisTurn;
+                int handCountBeforeDraw = p.deck.HandCount;
                 bool canDraw = p.deck.DrawToHand(handSize);
+                if (!p.isAI && p.deck.HandCount > handCountBeforeDraw)
+                    AudioService.PlaySfx(AudioEventNames.CardDraw);
                 if (!canDraw && hudUI != null)
                     hudUI.AppendLog($"<color=orange>{p.name}: 牌库耗尽! 以 {p.deck.HandCount} 张手牌继续。</color>");
 
@@ -1793,6 +1796,7 @@ public class MVPGameManager : MonoBehaviour
         }
         if (!p.isAI)
         {
+            AudioService.PlaySfx(AudioEventNames.HeatPay);
             TryAdvanceTutorialIfExpected(
                 TutorialAction.PayHeat,
                 $"amount:{drawn},destination:{destination},reason:{reason}");
@@ -1804,6 +1808,7 @@ public class MVPGameManager : MonoBehaviour
 
     private void ApplyGearShift(PlayerState p, int targetGear)
     {
+        int previousGear = p.gear;
         TeamGearRules.Resolution shift = TeamGearRules.Resolve(
             p.teamId,
             p.gear,
@@ -1819,12 +1824,18 @@ public class MVPGameManager : MonoBehaviour
         {
             p.gear = shift.TargetGear;
             p.chinaConsecutiveGearCount = shift.IsChina ? shift.ConsecutiveCount : 0;
+            if (previousGear != p.gear)
+                AudioService.PlaySfx(AudioEventNames.GearShift);
 
             // China Go overclock heat is a distinct cost from the standard
             // two-gear shift payment and follows the normal spin-out path.
             if (shift.AdditionalHeat > 0)
                 TryPayHeat(p, shift.AdditionalHeat, p.position,
                     $"{TeamGearRules.GetDisplayName(p.teamId, p.gear)} overclock");
+        }
+        else if (!p.isAI)
+        {
+            AudioService.PlaySfx(AudioEventNames.GearFailure);
         }
         // 若 TryPayHeat 失败（失控），HandleSpin 已将档位设为最低档
 
@@ -1897,6 +1908,7 @@ public class MVPGameManager : MonoBehaviour
         }
         if (!p.isAI && cooled > 0)
         {
+            AudioService.PlaySfx(AudioEventNames.HeatCool);
             TryAdvanceTutorialIfExpected(
                 TutorialAction.CoolHeatCard,
                 $"cooled:{cooled},requested:{amount}");
@@ -1915,6 +1927,8 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.PlayHeatTransitions(cooled, CardVisualZone.Hand, CardVisualZone.Engine);
             cardHandUI.UpdateDeckInfo(p);
         }
+        if (!p.isAI && cooled > 0)
+            AudioService.PlaySfx(AudioEventNames.HeatCool);
         return cooled;
     }
 
@@ -1935,6 +1949,8 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.PlayHeatTransitions(discardHeat, CardVisualZone.DiscardPile, CardVisualZone.Engine);
             cardHandUI.UpdateDeckInfo(p);
         }
+        if (!p.isAI && handHeat + drawHeat + discardHeat > 0)
+            AudioService.PlaySfx(AudioEventNames.HeatCool);
     }
 
     // ====== 移动动画（含圈数检测） ======
@@ -2241,6 +2257,8 @@ public class MVPGameManager : MonoBehaviour
         if (!hasMovement)
             yield break;
 
+        AudioService.PlaySfx(AudioEventNames.SlipstreamMove);
+
         raceLogWriter?.Append(
             $"[SLIPSTREAM_MOVE_PHASE] begin time_scale_before={Time.timeScale:F2}");
         if (hudUI != null)
@@ -2467,10 +2485,12 @@ public class MVPGameManager : MonoBehaviour
                     return false; // 失控中断后续弯道判定
                 }
 
+                AudioService.PlaySfx(AudioEventNames.CornerOver);
                 log += $"{p.name} 在 {cname} 超速 (lane {laneIndex + 1}, 限速 {limit}) 超 {overspeed}！+{heat} 热量。\n";
             }
             else
             {
+                AudioService.PlaySfx(AudioEventNames.CornerSafe);
                 log += $"{p.name} 安全通过 {trackManager.GetCornerName(cornerId)} (lane {laneIndex + 1}, {totalSpeed}<={limit})。\n";
             }
         }
@@ -2719,7 +2739,8 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.PlayCardTransitions(
                 new List<CardData> { card },
                 CardVisualZone.Hand,
-                CardVisualZone.DiscardPile);
+                CardVisualZone.DiscardPile,
+                AudioEventNames.CardPlay);
             cardHandUI.UpdateDeckInfo(p);
         }
         raceLogWriter?.Append(
@@ -2919,7 +2940,10 @@ public class MVPGameManager : MonoBehaviour
             List<CardData> toDiscard = cardHandUI.GetSelectedCards();
             List<CardData> discardedCards = player.deck.DiscardPlayableCardInstancesFromHand(toDiscard);
             cardHandUI.PlayCardTransitions(
-                discardedCards, CardVisualZone.Hand, CardVisualZone.DiscardPile);
+                discardedCards,
+                CardVisualZone.Hand,
+                CardVisualZone.DiscardPile,
+                AudioEventNames.CardDiscard);
             cardHandUI.RemoveCardUIs(discardedCards);
             cardHandUI.UpdateDeckInfo(player);
             raceLogWriter?.Append(
@@ -2941,7 +2965,8 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.PlayCardTransitions(
                 p.playedSpeedCardsThisTurn,
                 CardVisualZone.Hand,
-                CardVisualZone.DiscardPile);
+                CardVisualZone.DiscardPile,
+                AudioEventNames.CardPlay);
         }
         p.deck.DiscardSpeedCards(p.playedSpeedCardsThisTurn);
 
@@ -3042,6 +3067,9 @@ public class MVPGameManager : MonoBehaviour
             allowWeatherRoll);
         p.lap = transition.Lap;
         session.OnNewLap(p);
+        AudioService.PlaySfx(transition.HasFinished
+            ? AudioEventNames.Finish
+            : AudioEventNames.LapCross);
         if (hudUI != null)
             hudUI.AppendLog($"{p.name} 完成第 {p.lap} 圈！");
 
@@ -3380,8 +3408,15 @@ public class MVPGameManager : MonoBehaviour
         if (IsTutorialActionInputBlocked) return;
         if (!phaseState.CanAcceptGear(inputState)) return;
         if (Player != null && TeamGearRules.IsChina(Player.teamId) && gear > ChinaGearShiftRules.GoGear)
+        {
+            AudioService.PlayUi(AudioEventNames.GearFailure);
             return;
-        if (!inputState.SelectGear(gear)) return;
+        }
+        if (!inputState.SelectGear(gear))
+        {
+            AudioService.PlayUi(AudioEventNames.GearFailure);
+            return;
+        }
         // 高亮选中的档位按钮
         hudUI?.SelectGearPresentation(gear);
         if (hudUI != null)

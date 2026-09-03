@@ -52,6 +52,7 @@ public sealed class GameSettingsUI : MonoBehaviour
     {
         if (overlay != null)
             overlay.SetActive(false);
+        AudioService.ApplySettings(GameSettingsRuntime.Current);
     }
 
     private void Build()
@@ -81,18 +82,18 @@ public sealed class GameSettingsUI : MonoBehaviour
         title.fontStyle = FontStyles.Bold;
         title.color = new Color(0.35f, 0.82f, 1f);
 
-        CreateStepper(factory, panel.transform, "主音量（预留）", 270f,
+        CreateStepper(factory, panel.transform, "主音量", 270f,
             out masterValue, () => ChangeVolume(VolumeChannel.Master, -0.1f),
             () => ChangeVolume(VolumeChannel.Master, 0.1f));
-        CreateStepper(factory, panel.transform, "音乐音量（预留）", 205f,
+        CreateStepper(factory, panel.transform, "音乐音量", 205f,
             out musicValue, () => ChangeVolume(VolumeChannel.Music, -0.1f),
             () => ChangeVolume(VolumeChannel.Music, 0.1f));
-        CreateStepper(factory, panel.transform, "音效音量（预留）", 140f,
+        CreateStepper(factory, panel.transform, "音效音量", 140f,
             out sfxValue, () => ChangeVolume(VolumeChannel.Sfx, -0.1f),
             () => ChangeVolume(VolumeChannel.Sfx, 0.1f));
 
         TMP_Text audioNote = factory.CreateText(panel.transform, "AudioNote",
-            "当前项目尚无 AudioMixer/真实音频服务；三路音量会持久化，待音频系统接入后应用。", 14,
+            "音量调整实时试听；UI 声音沿用音效音量，保存后持久化。", 14,
             new Vector2(0f, 96f), new Vector2(800f, 30f));
         audioNote.alignment = TextAlignmentOptions.Center;
         audioNote.color = new Color(0.72f, 0.78f, 0.86f);
@@ -184,6 +185,7 @@ public sealed class GameSettingsUI : MonoBehaviour
                 working.soundEffectsVolume = Mathf.Clamp01(working.soundEffectsVolume + delta);
                 break;
         }
+        AudioService.ApplySettings(working);
         RefreshValues();
     }
 
@@ -233,7 +235,7 @@ public sealed class GameSettingsUI : MonoBehaviour
     {
         GameSettingsRuntime.SaveAndApply(working);
         working = GameSettingsRuntime.Current.Clone();
-        statusValue.text = "设置已保存并应用。音量将在音频系统接入后生效。";
+        statusValue.text = "设置已保存并实时应用。";
         RefreshValues(keepStatus: true);
     }
 
@@ -243,6 +245,7 @@ public sealed class GameSettingsUI : MonoBehaviour
         working = GameSettingsData.CreateDefault(Screen.width, Screen.height);
         working.tutorialCompleted = tutorialCompleted;
         BuildResolutionList();
+        AudioService.ApplySettings(working);
         statusValue.text = "已载入默认值；点击“保存并应用”后持久化。";
         RefreshValues(keepStatus: true);
     }

@@ -74,5 +74,6 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
 
         car.transform.position = targetPosition;
         orientationController.RotateTowards(car, targetPosition, Mathf.Max(0f, deltaTimeProvider()));
+        AudioService.PlaySfx(AudioEventNames.CarHop);
     }
 }

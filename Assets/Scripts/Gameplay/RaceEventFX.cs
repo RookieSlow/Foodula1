@@ -218,6 +218,7 @@ public sealed class RaceEventFX : MonoBehaviour
             yield break;
         }
 
+        AudioService.PlaySfx(AudioEventNames.SlipstreamTrigger);
         string detail = events.Count == 1
             ? $"尾流 +{totalBonus} · 气流牵引"
             : $"尾流 ×{airflowRoots.Count} · 总加成 +{totalBonus}";
@@ -284,6 +285,7 @@ public sealed class RaceEventFX : MonoBehaviour
             yield break;
 
         yield return AcquireEffectSlot();
+        AudioService.PlaySfx(AudioEventNames.SpinOut);
         SetMessage("SPIN OUT!", blown ? "失控后引擎爆缸 · 赛车退赛" : $"失控 · {reason} · 回退并跳过下回合", blown ? BlowupColor : SpinColor);
         Vector3 originalScale = car.localScale;
         Quaternion originalRotation = car.rotation;

@@ -1,0 +1,50 @@
+{
+  "format": {
+    "sample_rate": 48000,
+    "channels": 2,
+    "sample_width_bits": 16,
+    "peak_dbfs_max": -3
+  },
+  "source_bundle": "Sonniss.com-GDC2026-GameAudioBundle4of5",
+  "sources": {
+    "ui": "Epic Stock Media - Board Game - Sound Set Kit for Tabletop and Digital Games\\UIClick_UI Button Analog Vintage Double Click Neutral Dry Press 11_ESM_BG.wav",
+    "card": "Epic Stock Media - Board Game - Sound Set Kit for Tabletop and Digital Games\\PAPRHndl_Game Play Cards Dry Show Flip Toss Disgard Near 12_ESM_BG.wav",
+    "deal": "344 Audio - Casino Cards Vol. 1\\GAMECas_Dealing 3_344 Audio_Casino Cards Vol 1.wav",
+    "pickup": "344 Audio - Casino Cards Vol. 1\\GAMECas_Pick Up Multiple Cards At Once 5_344 Audio_Casino Cards Vol 1.wav",
+    "shuffle": "344 Audio - Casino Cards Vol. 1\\GAMECas_Automatic Shuffler, Shuffling 1_344 Audio_Casino Cards Vol 1.wav",
+    "dial": "344 Audio - Car Foley Vol. 1\\VEHInt_CLIMATE CONTROL SYSTEM, FAN SPEED DIAL, FAST_344 Audio_Car Foley Vol 1.wav",
+    "latch": "Epic Stock Media - HD Lock And Mechanism Sound Design Kit\\MECHLtch_Click Deep Mechanism Latch Button Nearfield Thunk 02_ESM_HDLM.wav",
+    "spray": "344 Audio - Barbershop Vol. 1\\OBJMisc_Spray Bottle, Spray 1_344 Audio_Barbershop Vol 1.wav",
+    "arc": "InMotionAudio - Arc\\ELECArc_ArcPowerUpDesign04_InMotionAudio_Arc.wav",
+    "wind": "344 Audio - Elemental Palette Designed Vol. 1\\WINDDsgn_Wind, Rush, Whoosh, Long x5 01_344 Audio_Elemental Palette Designed Vol 1.wav",
+    "metal_whoosh": "344 Audio - Elemental Palette Designed Vol. 1\\METLMisc_Metal, Slow Whoosh, Rattle, Pass By x4 01_344 Audio_Elemental Palette Designed Vol 1.wav",
+    "wire_car": "TheWorkRoom - Wire Cars\\WIR006.wav",
+    "crowd": "Sonik Sound Library - Spanish Crowds\\CRWDCheer_Small Club, 50 People, Crowd, Spanish, Cheering and Applause-Surround_KSL_KS015.wav"
+  },
+  "outputs": [
+    "car_hop.wav",
+    "card_deselect.wav",
+    "card_discard.wav",
+    "card_draw.wav",
+    "card_play.wav",
+    "card_select.wav",
+    "corner_over.wav",
+    "corner_safe.wav",
+    "deck_shuffle.wav",
+    "final_lap.wav",
+    "finish.wav",
+    "gear_failure.wav",
+    "gear_shift.wav",
+    "heat_cool.wav",
+    "heat_pay.wav",
+    "heat_warning.wav",
+    "lap_cross.wav",
+    "slipstream_move.wav",
+    "slipstream_trigger.wav",
+    "spin_out.wav",
+    "ui_back.wav",
+    "ui_confirm.wav",
+    "ui_error.wav",
+    "ui_hover.wav"
+  ]
+}

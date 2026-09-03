@@ -18,10 +18,25 @@ public sealed class ButtonClickAnimation : MonoBehaviour,
 
     private Vector3 baseScale;
     private Coroutine scaleRoutine;
+    private Button button;
 
     private void Awake()
     {
         baseScale = transform.localScale;
+        button = GetComponent<Button>();
+        if (button != null)
+            button.onClick.AddListener(PlayConfirmSound);
+    }
+
+    private void OnDestroy()
+    {
+        if (button != null)
+            button.onClick.RemoveListener(PlayConfirmSound);
+    }
+
+    private static void PlayConfirmSound()
+    {
+        AudioService.PlayUi(AudioEventNames.UiConfirm);
     }
 
     public void OnPointerDown(PointerEventData eventData)

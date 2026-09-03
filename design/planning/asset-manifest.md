@@ -1,7 +1,7 @@
 # Foodula1 — Demo 资源清单
 
 > **用途**：当前版本的美术、字体、音乐与音效资源事实表。
-> **审计日期**：2026-09-01。
+> **审计日期**：2026-09-03。
 > **状态含义**：✅ 已有并接入；🟨 运行时生成/占位可用；⬜ 尚缺；◻ 可选升级。
 > **事实来源**：`Assets/` 文件、当前 UI/Gameplay 代码和运行时配置；旧版 42 格赛道与未来架构草案不再作为资源缺口。
 
@@ -13,8 +13,9 @@
 - 主菜单正式背景图与透明 Logo 已通过统一 `Resources/Brand` 加载边界接入，资源缺失时保留旧标题回退。
 - 六队原创抽象徽章已接入车手选择、生涯选队、科技树标签和比赛头顶名次徽标；12 位车手仍缺正式头像。
 - 科技树规则、存档和菜单界面已接入，但树状背景、节点图标和节点状态框仍由运行时代码绘制。
-- `Assets/Audio/Music/` 与 `Assets/Audio/SFX/` 已建目录但没有实际音频文件；
-  代码中也没有 `AudioSource`、`AudioClip`、`AudioMixer` 或音频管理器，音乐与音效尚未接入。
+- 用户生成的菜单/比赛音乐与 GDC 2026 派生核心音效已放入 `Assets/Resources/Audio/`，
+  `AudioService` 负责跨场景音乐淡变、Music/SFX/UI 三路播放和事件限频。当前仍未建立
+  `AudioMixer` 资产，UI 音量暂随 SFX，因此 Mixer 独立分组与静音项仍是后续技术缺口。
 - 尾流、失控、卡牌流转、冷却提示、弯道遮罩等已有运行时表现。独立 FX 贴图不是 Demo 阻塞项，除非后续美术替换能保持“极简克制”的视觉规范。
 
 ---
@@ -102,8 +103,8 @@
 
 | 优先级 | 文件 | 时长/格式 | 用途 | 状态 |
 |---|---|---|---|---|
-| P0 | `bgm_menu.ogg` | 90–150 秒，无缝循环 | 主菜单、车队/车手选择、科技树 | ⬜ |
-| P0 | `bgm_race.ogg` | 120–180 秒，无缝循环 | 比赛常态，避免压住规则提示 | ⬜ |
+| P0 | `menu.mp3` | 用户生成，循环播放 | 主菜单、车队/车手选择、科技树 | ✅ 已接入 |
+| P0 | `race.mp3` | 用户生成，循环播放 | 比赛常态，避免压住规则提示 | ✅ 已接入 |
 | P1 | `bgm_final_lap.ogg` | 45–90 秒循环或节奏层 | 最后一圈；也可由比赛 BGM 增强层替代 | ⬜ |
 | P1 | `stinger_finish_win.wav` | 3–6 秒 | 玩家完赛/胜利 | ⬜ |
 | P1 | `stinger_finish_other.wav` | 2–4 秒 | 非冠军完赛 | ⬜ |
@@ -116,24 +117,24 @@
 
 | 事件 | 建议文件 | 听觉目标 | 状态 |
 |---|---|---|---|
-| 按钮悬停/确认/返回 | `ui_hover.wav`、`ui_confirm.wav`、`ui_back.wav` | 短、轻、无刺耳高频 | ⬜ |
-| 无效操作 | `ui_error.wav` | 清楚但不惩罚玩家耳朵 | ⬜ |
-| 选牌/取消 | `card_select.wav`、`card_deselect.wav` | 纸牌轻触与机械卡扣 | ⬜ |
-| 打出/主动弃牌 | `card_play.wav`、`card_discard.wav` | 方向感不同，能区分“使用”和“放弃” | ⬜ |
-| 抽牌/洗牌 | `card_draw.wav`、`deck_shuffle.wav` | 短纸牌声；批量时限频 | ⬜ |
-| 换挡/挡位失败 | `gear_shift.wav`、`gear_failure.wav` | 机械拨档；失败带低沉卡滞 | ⬜ |
-| 支付热量 | `heat_pay.wav` | 温暖、受控的压力释放声，非爆炸 | ⬜ |
-| 冷却热量 | `heat_cool.wav` | 清脆、短促的降温声 | ⬜ |
-| 热量警告 | `heat_warning.wav` | 可识别但不持续轰鸣；设置冷却时间 | ⬜ |
-| 逐格移动 | `car_hop.wav` | 轻量棋子/悬架落点，连续播放需限频 | ⬜ |
-| 尾流阶段 | `slipstream_trigger.wav`、`slipstream_move.wav` | 先确认触发，再用短气流推进；仅在独立尾流阶段播放 | ⬜ |
-| 弯道成功/超速/失控 | `corner_safe.wav`、`corner_over.wav`、`spin_out.wav` | 三种结果清晰可分；失控不使用重撞击爆炸声 | ⬜ |
+| 按钮悬停/确认/返回 | `ui_hover.wav`、`ui_confirm.wav`、`ui_back.wav` | 短、轻、无刺耳高频 | 🟨 成品齐；确认已接入 |
+| 无效操作 | `ui_error.wav` | 清楚但不惩罚玩家耳朵 | 🟨 成品齐；部分挡位失败已接入 |
+| 选牌/取消 | `card_select.wav`、`card_deselect.wav` | 纸牌轻触与机械卡扣 | ✅ 已接入 |
+| 打出/主动弃牌 | `card_play.wav`、`card_discard.wav` | 方向感不同，能区分“使用”和“放弃” | ✅ 已接入 |
+| 抽牌/洗牌 | `card_draw.wav`、`deck_shuffle.wav` | 短纸牌声；批量时限频 | 🟨 抽牌已接入；洗牌待事件点 |
+| 换挡/挡位失败 | `gear_shift.wav`、`gear_failure.wav` | 机械拨档；失败带低沉卡滞 | ✅ 已接入 |
+| 支付热量 | `heat_pay.wav` | 温暖、受控的压力释放声，非爆炸 | ✅ 已接入 |
+| 冷却热量 | `heat_cool.wav` | 清脆、短促的降温声 | ✅ 已接入 |
+| 热量警告 | `heat_warning.wav` | 可识别但不持续轰鸣；设置冷却时间 | 🟨 成品齐；警告阈值事件待接入 |
+| 逐格移动 | `car_hop.wav` | 轻量棋子/悬架落点，连续播放需限频 | ✅ 已接入并限频 |
+| 尾流阶段 | `slipstream_trigger.wav`、`slipstream_move.wav` | 先确认触发，再用短气流推进；仅在独立尾流阶段播放 | ✅ 已接入 |
+| 弯道成功/超速/失控 | `corner_safe.wav`、`corner_over.wav`、`spin_out.wav` | 三种结果清晰可分；失控不使用重撞击爆炸声 | ✅ 已接入 |
 
 ### P1：比赛流程与外围系统
 
 | 事件 | 建议文件 | 状态 |
 |---|---|---|
-| 圈数更新/最后一圈/完赛 | `lap_cross.wav`、`final_lap.wav`、`finish.wav` | ⬜ |
+| 圈数更新/最后一圈/完赛 | `lap_cross.wav`、`final_lap.wav`、`finish.wav` | 🟨 成品齐；过圈/完赛已接入 |
 | 维修区询问/进入/维护/驶出 | `pit_prompt.wav`、`pit_enter.wav`、`pit_service.wav`、`pit_exit.wav` | ⬜ |
 | 科技解锁/激活/无足够 RP | `tech_unlock.wav`、`tech_activate.wav`、`tech_denied.wav` | ⬜ |
 | 选择车队/车手/赛道 | `team_select.wav`、`driver_select.wav`、`track_select.wav` | ⬜ |

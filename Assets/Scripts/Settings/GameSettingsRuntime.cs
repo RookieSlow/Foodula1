@@ -17,8 +17,7 @@ public sealed class UnityDisplaySettingsTarget : IDisplaySettingsTarget
 }
 
 /// <summary>
-/// Shared runtime view of persisted settings. Audio values are deliberately
-/// not applied because the current project has no audio service or mixer.
+/// Shared runtime view of persisted settings and their presentation adapters.
 /// </summary>
 public static class GameSettingsRuntime
 {
@@ -37,6 +36,7 @@ public static class GameSettingsRuntime
     public static void EnsureLoadedAndApplyDisplay()
     {
         EnsureLoaded();
+        AudioService.ApplySettings(current);
         if (Application.isPlaying)
             ApplyDisplay(current, new UnityDisplaySettingsTarget());
     }
@@ -47,6 +47,7 @@ public static class GameSettingsRuntime
         current = data != null ? data.Clone() : CreateRuntimeDefault();
         current.Normalize(Screen.width, Screen.height);
         repository.Save(current);
+        AudioService.ApplySettings(current);
         if (Application.isPlaying)
             ApplyDisplay(current, new UnityDisplaySettingsTarget());
     }

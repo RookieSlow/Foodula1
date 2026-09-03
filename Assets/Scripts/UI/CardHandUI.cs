@@ -357,6 +357,9 @@ public class CardHandUI : MonoBehaviour
         if (isDiscardMode)
         {
             card.SetSelectedWithoutNotify(!card.isSelected);
+            AudioService.PlayUi(card.isSelected
+                ? AudioEventNames.CardSelect
+                : AudioEventNames.CardDeselect);
             UpdateActionButtonLabel();
             return;
         }
@@ -418,6 +421,9 @@ public class CardHandUI : MonoBehaviour
             }
         }
 
+        AudioService.PlayUi(card.isSelected
+            ? AudioEventNames.CardSelect
+            : AudioEventNames.CardDeselect);
         UpdateActionButtonLabel();
         UpdatePendingCardStatus(player, maxCards);
     }
@@ -549,7 +555,8 @@ public class CardHandUI : MonoBehaviour
     public void PlayCardTransitions(
         IReadOnlyList<CardData> cards,
         CardVisualZone source,
-        CardVisualZone destination)
+        CardVisualZone destination,
+        string audioEventName = null)
     {
         EnsureZoneTransition();
         if (zoneTransition == null)
@@ -560,6 +567,8 @@ public class CardHandUI : MonoBehaviour
         if (cards == null || cards.Count == 0 || sourceRect == null || destinationRect == null)
             return;
 
+        if (!string.IsNullOrEmpty(audioEventName))
+            AudioService.PlaySfx(audioEventName);
         zoneTransition.PlayFromCardSources(
             cards,
             ResolveCardSourceRects(cards),

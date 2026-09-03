@@ -115,11 +115,13 @@ The verified scene flow is:
   earlier guide-panel smoke confirmed its first authored step. A 2026-08-28 visual smoke stayed in
   Unity's play-mode transition and was stopped without retrying; the later spotlight smoke did the same,
   so the revised progressive panel, spotlight boundaries and full guided flow still require manual Play Mode acceptance.
-- Main-menu settings now persist master/music/SFX placeholders, fullscreen/window mode,
+- Main-menu settings now persist master/music/SFX volumes, fullscreen/window mode,
   resolution, animation speed, reduced motion and the separate tutorial-completion flag.
-  Display and supported presentation timings are applied at runtime; audio remains explicitly
-  data-only because no AudioMixer/service exists. Settings plus tutorial focused tests passed
-  `22/22`, and the full EditMode suite passed `493/493`.
+  Display and supported presentation timings are applied at runtime. A persistent `AudioService`
+  now loads menu/race music and the core GDC 2026-derived SFX pack from Resources, crossfades
+  scene music, separates Music/SFX/UI sources and throttles repeated board events. An AudioMixer
+  asset and independent UI/mute controls remain open. Audio rules passed `9/9`; the full EditMode
+  suite passed `603/603` on 2026-09-03.
 - Card number and heat icons, Chinese UI, Chinese font support, team car
   sprites, the main-menu flow, and the selected-card scale/lift/shadow feedback
   have been implemented. Draw/discard pile previews now show stacked backs,

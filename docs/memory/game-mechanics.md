@@ -3,8 +3,8 @@
 This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
-> **Implementation snapshot (2026-08-28)**: Unity `2022.3.62f3c1`; the latest
-> successful editor EditMode run passed `521/521`; tutorial guidance/checkpoint tests previously passed `31/31` and
+> **Implementation snapshot (2026-09-03)**: Unity `2022.3.62f3c1`; the latest
+> successful editor EditMode run passed `603/603`; tutorial guidance/checkpoint tests previously passed `31/31` and
 > the encyclopedia catalog checks pass `6/6`.
 > The required
 > `production/session-state/active.md` file is currently absent, so this
@@ -239,9 +239,13 @@ prototype and is no longer the authoritative model.
 
 - `Foodula1.Settings.V1` stores master, music and SFX volume values; fullscreen/window mode;
   resolution; animation speed; reduced motion; and a separate tutorial-completed preference.
-- The project still has no AudioMixer, audio service or playable audio assets. Volume values are
-  persisted and explicitly labelled as placeholders in the UI, but are not falsely applied to
-  nonexistent channels.
+- A persistent runtime `AudioService` loads menu/race music and named gameplay clips from
+  `Resources/Audio`, crossfades on `MainMenu`/`Race` scene changes, and applies master, music and
+  SFX settings immediately. Music, SFX and UI use separate AudioSources; UI currently follows SFX.
+- Core button, card, gear, heat, movement, corner, tailwind, spin, lap and finish events are wired.
+  Repeated movement/card/heat sounds use unscaled-time cooldowns, so tailwind slow motion does not
+  change music pitch or leave later audio slowed. AudioMixer routing, independent UI volume/mute,
+  peripheral P1 events and a full-match listening pass remain open.
 - Display mode and resolution apply through an isolated runtime target. Animation speed scales
   race node pauses, camera lead/trail delays and button feedback; reduced motion skips those
   optional presentation durations without changing race rules, card values or movement results.
