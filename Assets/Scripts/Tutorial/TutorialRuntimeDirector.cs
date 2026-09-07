@@ -95,13 +95,20 @@ public sealed class TutorialRuntimeDirector
 
     public TutorialRunPhase Phase => stateMachine.Phase;
     public TutorialStepDefinition CurrentStep => stateMachine.CurrentStep;
+    public TutorialStepDefinition ActiveStep => stateMachine.ActiveStep;
+    public int CurrentStepIndex => stateMachine.CurrentStepIndex;
+    public bool IsReviewing => stateMachine.IsReviewing;
+    public bool IsCurrentStepComplete => stateMachine.IsCurrentStepComplete;
+    public bool IsActiveStepComplete => stateMachine.IsActiveStepComplete;
+    public bool CanGoPrevious => stateMachine.CanGoPrevious;
+    public bool CanGoNext => stateMachine.CanGoNext;
     public TutorialStepDefinition LastCompletedStep => stateMachine.LastCompletedStep;
     public int CompletedStepCount => stateMachine.CompletedStepCount;
     public int StepCount => scenario.steps.Count;
     public bool BlocksRaceInput =>
         Phase == TutorialRunPhase.Guided &&
         CurrentStep != null &&
-        CurrentStep.allowManualAdvance;
+        (IsReviewing || IsActiveStepComplete || CurrentStep.allowManualAdvance);
 
     public TutorialRuntimeDirector(
         TutorialScenarioDefinition scenario,
@@ -115,8 +122,8 @@ public sealed class TutorialRuntimeDirector
     public bool IsExpecting(TutorialAction action)
     {
         return Phase == TutorialRunPhase.Guided &&
-               CurrentStep != null &&
-               CurrentStep.requiredAction == action;
+               ActiveStep != null && !IsActiveStepComplete &&
+               ActiveStep.requiredAction == action;
     }
 
     public bool TryPerform(TutorialAction action, out string failureReason)
@@ -124,7 +131,19 @@ public sealed class TutorialRuntimeDirector
         if (!stateMachine.TryPerform(action, out failureReason))
             return false;
 
-        pendingCue = BuildCue(CurrentStep != null ? CurrentStep.id : (TutorialStepId?)null);
+        return true;
+    }
+
+    /// <summary>Review navigation never replays checkpoint commands.</summary>
+    public bool TryPrevious() => stateMachine.TryPrevious();
+
+    /// <summary>Queues a checkpoint only when a new live lesson starts.</summary>
+    public bool TryNext(out string failureReason)
+    {
+        TutorialStepDefinition previous = ActiveStep;
+        if (!stateMachine.TryNext(out failureReason)) return false;
+        if (previous != ActiveStep)
+            pendingCue = BuildCue(ActiveStep?.id);
         return true;
     }
 

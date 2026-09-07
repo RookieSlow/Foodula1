@@ -97,7 +97,13 @@ public sealed class CareerTechTreeUI : MonoBehaviour
         teamText.text = $"锁定车队：{CareerMenuPresentation.GetTeamLabel(draft.TeamId)}";
         rpText.text = $"生涯 RP：{draft.RpBalance:N0}";
         for (int i = contentRoot.childCount - 1; i >= 0; i--)
-            Destroy(contentRoot.GetChild(i).gameObject);
+        {
+            GameObject child = contentRoot.GetChild(i).gameObject;
+            if (Application.isPlaying)
+                Destroy(child);
+            else
+                DestroyImmediate(child);
+        }
 
         BuildTier(TechTreeTier.L1, "L1 基础层");
         BuildTier(TechTreeTier.L2, "L2 进阶层");

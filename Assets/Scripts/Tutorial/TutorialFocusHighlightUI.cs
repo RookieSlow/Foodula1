@@ -6,18 +6,23 @@ using UnityEngine.UI;
 public sealed class TutorialFocusDismissState
 {
     private bool hasStep;
-    private TutorialStepId stepId;
+    private string operationKey;
 
     public bool IsVisible { get; private set; }
     public bool IsWaitingForPointerRelease { get; private set; }
 
     public void Show(TutorialStepId nextStepId, bool pointerHeld)
     {
-        if (hasStep && stepId == nextStepId)
+        Show(nextStepId.ToString(), pointerHeld);
+    }
+
+    public void Show(string nextOperation, bool pointerHeld)
+    {
+        if (hasStep && operationKey == nextOperation)
             return;
 
         hasStep = true;
-        stepId = nextStepId;
+        operationKey = nextOperation;
         IsVisible = true;
         IsWaitingForPointerRelease = pointerHeld;
     }
@@ -45,6 +50,29 @@ public sealed class TutorialFocusDismissState
     {
         IsVisible = false;
         IsWaitingForPointerRelease = false;
+    }
+}
+
+public enum TutorialFocusOperation
+{
+    None, Gear, SelectCards, ConfirmPlay, EndCards, Discard, ConfirmDiscard, Pit, Lane
+}
+
+/// <summary>Input gates take precedence over the lesson's explanatory subject.</summary>
+public static class TutorialFocusOperationRules
+{
+    public static TutorialFocusOperation Resolve(string phase, int selectedCount, bool canEndCards)
+    {
+        switch (phase)
+        {
+            case "gear": return TutorialFocusOperation.Gear;
+            case "cards": return selectedCount > 0 ? TutorialFocusOperation.ConfirmPlay :
+                canEndCards ? TutorialFocusOperation.EndCards : TutorialFocusOperation.SelectCards;
+            case "discard": return selectedCount > 0 ? TutorialFocusOperation.ConfirmDiscard : TutorialFocusOperation.Discard;
+            case "pit": return TutorialFocusOperation.Pit;
+            case "lane": return TutorialFocusOperation.Lane;
+            default: return TutorialFocusOperation.None;
+        }
     }
 }
 
@@ -78,6 +106,19 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
     private string cachedCardTrickId;
     private TutorialFocusTarget focusTarget;
     private string focusIntroduction;
+    private TutorialFocusTarget lessonTarget;
+    private string lessonIntroduction;
+    private bool presentationRequested;
+    private TutorialFocusOperation operation;
+    private int operationSequence;
+    private bool operationEncounteredForLesson;
+    private bool hasDisplayedLesson;
+    private TutorialStepId displayedLesson;
+    private readonly TutorialFocusDismissState operationDismissState = new TutorialFocusDismissState();
+    private TutorialFocusDismissState ActiveDismissState =>
+        operation != TutorialFocusOperation.None || operationEncounteredForLesson
+            ? operationDismissState
+            : dismissState;
     private readonly TutorialFocusDismissState dismissState =
         new TutorialFocusDismissState();
 
@@ -89,6 +130,13 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         if (canvas == null || manager == null)
             return null;
 
+        TutorialFocusHighlightUI authored = canvas.GetComponentInChildren<TutorialFocusHighlightUI>(true);
+        if (authored != null)
+        {
+            authored.Bind(canvas, manager);
+            authored.Hide();
+            return authored;
+        }
         Transform existing = canvas.transform.Find("TutorialFocusHighlight");
         GameObject root = existing != null
             ? existing.gameObject
@@ -106,6 +154,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         rect.pivot = new Vector2(0.5f, 0.5f);
 
         CanvasGroup group = root.GetComponent<CanvasGroup>();
+        if (group == null) group = root.AddComponent<CanvasGroup>();
         group.interactable = false;
         group.blocksRaycasts = false;
 
@@ -130,6 +179,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
             canvasGroup = GetComponent<CanvasGroup>();
         if (rootRect == null)
             rootRect = transform as RectTransform;
+        RepairCalloutHierarchy();
         EnsureCalloutMask();
         CacheNamedTargets();
     }
@@ -155,10 +205,20 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         TutorialFocusTarget target,
         string introduction)
     {
-        focusTarget = target;
-        focusIntroduction = introduction ?? string.Empty;
+        if (!hasDisplayedLesson || displayedLesson != stepId)
+        {
+            hasDisplayedLesson = true;
+            displayedLesson = stepId;
+            operation = TutorialFocusOperation.None;
+            operationEncounteredForLesson = false;
+            operationDismissState.Hide();
+        }
+        presentationRequested = true;
+        lessonTarget = target;
+        lessonIntroduction = introduction ?? string.Empty;
         dismissState.Show(stepId, Input.GetMouseButton(0));
-        if (!dismissState.IsVisible)
+        RefreshOperation();
+        if (!ActiveDismissState.IsVisible && operation == TutorialFocusOperation.None && manager == null)
         {
             // Refreshes for the same tutorial step are common while the HUD is
             // rebuilding. A dismissed spotlight must actively clear itself on
@@ -167,7 +227,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
             return;
         }
 
-        if (dismissState.IsVisible)
+        if (presentationRequested)
         {
             SetCanvasVisible(true);
             if (!gameObject.activeSelf)
@@ -178,26 +238,75 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
 
     public void Hide()
     {
+        presentationRequested = false;
         dismissState.Hide();
+        operationDismissState.Hide();
+        operation = TutorialFocusOperation.None;
         DeactivateVisuals();
     }
 
     private void LateUpdate()
     {
-        if (!dismissState.IsVisible)
-        {
-            DeactivateVisuals();
-            return;
-        }
-
-        if (dismissState.Update(
+        if (!presentationRequested) return;
+        RefreshOperation();
+        if (ActiveDismissState.Update(
                 Input.GetMouseButton(0),
                 Input.GetMouseButtonDown(0)))
         {
-            DeactivateVisuals();
-            return;
+            SetCalloutActive(false);
         }
         RefreshFocus();
+    }
+
+    private void RefreshOperation()
+    {
+        string phase = manager != null ? manager.TutorialInputPhase : "none";
+        CardHandUI hand = manager != null ? manager.cardHandUI : null;
+        int selected = hand == null ? 0 : phase == "discard"
+            ? hand.GetSelectedCards().Count : hand.GetSelectedPlayCards().Count;
+        PlayerState player = manager != null ? manager.Player : null;
+        bool canEnd = player != null && player.deck != null &&
+            (player.playedSpeedCardsThisTurn.Count >= manager.GetMaxSpeedCardsThisTurn(player) ||
+             player.deck.CountSpeedInHand() == 0);
+        TutorialFocusOperation next = TutorialFocusOperationRules.Resolve(phase, selected, canEnd);
+        if (operation != next)
+        {
+            operation = next;
+            operationSequence++;
+            if (next != TutorialFocusOperation.None)
+            {
+                operationEncounteredForLesson = true;
+                operationDismissState.Show(operationSequence.ToString(), Input.GetMouseButton(0));
+            }
+        }
+        focusTarget = lessonTarget;
+        focusIntroduction = lessonIntroduction;
+        switch (operation)
+        {
+            case TutorialFocusOperation.Gear:
+                focusTarget = TutorialFocusTarget.GearControls;
+                focusIntroduction = "选择本回合档位，然后点击确认档位。"; break;
+            case TutorialFocusOperation.SelectCards:
+                focusTarget = TutorialFocusTarget.Hand;
+                focusIntroduction = "点击手牌选择速度牌或一张特技牌，再确认出牌。"; break;
+            case TutorialFocusOperation.ConfirmPlay:
+                focusTarget = TutorialFocusTarget.ActionButton;
+                focusIntroduction = "已选好牌，点击确认出牌；也可以先调整选择。"; break;
+            case TutorialFocusOperation.EndCards:
+                focusTarget = TutorialFocusTarget.ActionButton;
+                focusIntroduction = "本次可以结束出牌，点击结束出牌继续。"; break;
+            case TutorialFocusOperation.Discard:
+                focusTarget = TutorialFocusTarget.Hand;
+                focusIntroduction = "选择要弃掉的非热量牌，再点击确认弃牌；不弃牌可直接确认。"; break;
+            case TutorialFocusOperation.ConfirmDiscard:
+                focusTarget = TutorialFocusTarget.ActionButton;
+                focusIntroduction = "点击确认弃牌，完成本次弃牌操作。"; break;
+            case TutorialFocusOperation.Pit:
+                focusTarget = TutorialFocusTarget.PitChoice;
+                focusIntroduction = "选择预定进站或继续比赛。"; break;
+            case TutorialFocusOperation.Lane:
+                focusIntroduction = "选择本次通过终点后的车道。"; break;
+        }
     }
 
     private void Build(TMP_FontAsset font)
@@ -257,7 +366,8 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         if (rootRect == null || !gameObject.activeInHierarchy)
             return;
 
-        RectTransform target = ResolveTarget(focusTarget);
+        RectTransform target = operation == TutorialFocusOperation.Lane
+            ? ResolveNamedTarget("IndianapolisLaneChangePanel") : ResolveTarget(focusTarget);
         if (target == null || !target.gameObject.activeInHierarchy)
         {
             SetVisualsActive(false);
@@ -266,6 +376,12 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
 
         SetVisualsActive(true);
         Rect focus = GetTargetRect(target);
+        if (operation == TutorialFocusOperation.Gear && manager.hudUI != null &&
+            manager.hudUI.confirmGearButton != null)
+            focus = Union(focus, GetTargetRect(manager.hudUI.confirmGearButton.transform as RectTransform));
+        if (operation == TutorialFocusOperation.Discard && manager.cardHandUI != null &&
+            manager.cardHandUI.playCardsButton != null)
+            focus = Union(focus, GetTargetRect(manager.cardHandUI.playCardsButton.transform as RectTransform));
         Rect bounds = rootRect.rect;
         focus.xMin = Mathf.Clamp(focus.xMin - targetPadding, bounds.xMin, bounds.xMax);
         focus.xMax = Mathf.Clamp(focus.xMax + targetPadding, bounds.xMin, bounds.xMax);
@@ -301,7 +417,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         LayoutRect(borders[3].rectTransform,
             new Rect(focus.xMax - borderThickness, focus.yMin, borderThickness, focus.height));
 
-        if (calloutText != null && calloutText.text != focusIntroduction)
+        if (ActiveDismissState.IsVisible && calloutText != null && calloutText.text != focusIntroduction)
             calloutText.text = focusIntroduction;
         float resolvedCalloutWidth = Mathf.Min(
             calloutWidth,
@@ -335,6 +451,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
 
     private RectTransform ResolveTarget(TutorialFocusTarget target)
     {
+        if (manager == null) return null;
         switch (target)
         {
             case TutorialFocusTarget.RaceStatus:
@@ -381,12 +498,15 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
     private RectTransform ResolveNamedTarget(string objectName)
     {
         if (namedTargets.TryGetValue(objectName, out RectTransform cached))
-            return cached != null && cached.gameObject.activeInHierarchy ? cached : null;
+        {
+            if (cached != null && cached.gameObject.activeInHierarchy) return cached;
+            namedTargets.Remove(objectName);
+        }
 
         RectTransform[] candidates = canvas.GetComponentsInChildren<RectTransform>(true);
         for (int i = 0; i < candidates.Length; i++)
         {
-            if (candidates[i].name != objectName)
+            if (candidates[i].name != objectName || !candidates[i].gameObject.activeInHierarchy)
                 continue;
             namedTargets[objectName] = candidates[i];
             return candidates[i].gameObject.activeInHierarchy ? candidates[i] : null;
@@ -462,21 +582,84 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
             if (borders[i] != null)
                 borders[i].gameObject.SetActive(active);
         }
-        if (calloutRect != null)
-            calloutRect.gameObject.SetActive(active);
-        if (calloutText != null)
-        {
-            calloutText.enabled = active;
-            calloutText.gameObject.SetActive(active);
-        }
+        SetCalloutActive(active && ActiveDismissState.IsVisible);
+    }
 
-        if (active)
+    private void SetCalloutActive(bool active)
+    {
+        if (calloutRect == null) return;
+        if (!active)
         {
-            CanvasRenderer[] renderers =
-                GetComponentsInChildren<CanvasRenderer>(includeInactive: true);
-            for (int i = 0; i < renderers.Length; i++)
-                renderers[i].cull = false;
+            foreach (TMP_Text text in calloutRect.GetComponentsInChildren<TMP_Text>(true))
+            {
+                text.text = string.Empty;
+                text.ClearMesh();
+                text.enabled = false;
+                text.gameObject.SetActive(false);
+            }
+            foreach (CanvasRenderer renderer in calloutRect.GetComponentsInChildren<CanvasRenderer>(true))
+            {
+                renderer.Clear();
+                renderer.cull = true;
+            }
         }
+        calloutRect.gameObject.SetActive(active);
+        if (active && calloutText != null)
+        {
+            calloutText.gameObject.SetActive(true);
+            calloutText.enabled = true;
+            calloutText.text = focusIntroduction;
+            calloutText.SetAllDirty();
+        }
+    }
+
+    private void RepairCalloutHierarchy()
+    {
+        if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+        // Keep the authored guide above the spotlight, and the entire overlay
+        // above HUD siblings created later (pit/card panels included).
+        TutorialOverlayAuthoring overlay = GetComponentInParent<TutorialOverlayAuthoring>();
+        if (overlay != null)
+        {
+            overlay.transform.SetAsLastSibling();
+            transform.SetAsFirstSibling();
+        }
+        else transform.SetAsLastSibling();
+        if (calloutRect == null) calloutRect = transform.Find("FocusIntroduction") as RectTransform;
+        if (calloutRect == null) return;
+        calloutRect.SetParent(transform, false);
+        calloutRect.SetAsLastSibling();
+        if (calloutText == null) calloutText = calloutRect.GetComponentInChildren<TMP_Text>(true);
+        if (calloutText != null && calloutText.transform.parent != calloutRect)
+        {
+            calloutText.transform.SetParent(calloutRect, false);
+            RectTransform textRect = calloutText.rectTransform;
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = new Vector2(12f, 7f);
+            textRect.offsetMax = new Vector2(-12f, -7f);
+        }
+        // Only this spotlight owns these named remnants. Never touch guide text.
+        foreach (TMP_Text text in GetComponentsInChildren<TMP_Text>(true))
+        {
+            if (text == calloutText) continue;
+            text.text = string.Empty;
+            text.ClearMesh();
+            text.enabled = false;
+            text.gameObject.SetActive(false);
+        }
+        foreach (Canvas nested in GetComponentsInChildren<Canvas>(true))
+            nested.overrideSorting = false;
+        foreach (Graphic graphic in GetComponentsInChildren<Graphic>(true))
+            graphic.raycastTarget = false;
+    }
+
+    private static Rect Union(Rect a, Rect b)
+    {
+        return Rect.MinMaxRect(Mathf.Min(a.xMin, b.xMin), Mathf.Min(a.yMin, b.yMin),
+            Mathf.Max(a.xMax, b.xMax), Mathf.Max(a.yMax, b.yMax));
     }
 
     private void DeactivateVisuals()

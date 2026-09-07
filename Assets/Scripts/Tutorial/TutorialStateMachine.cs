@@ -32,6 +32,8 @@ public sealed class TutorialStateMachine
     private readonly TutorialScenarioDefinition scenario;
     private readonly List<TutorialEventRecord> events = new List<TutorialEventRecord>();
     private int stepIndex;
+    private int activeStepIndex;
+    private readonly HashSet<int> completedSteps = new HashSet<int>();
     private int eventSequence;
 
     public TutorialRunPhase Phase { get; private set; }
@@ -39,7 +41,16 @@ public sealed class TutorialStateMachine
         Phase == TutorialRunPhase.Guided && stepIndex < scenario.steps.Count
             ? scenario.steps[stepIndex]
             : null;
-    public int CompletedStepCount => stepIndex;
+    public int CompletedStepCount => completedSteps.Count;
+    public int CurrentStepIndex => stepIndex;
+    public TutorialStepDefinition ActiveStep => Phase == TutorialRunPhase.Guided
+        ? scenario.steps[activeStepIndex] : null;
+    public bool IsReviewing => Phase == TutorialRunPhase.Guided && stepIndex < activeStepIndex;
+    public bool IsCurrentStepComplete => completedSteps.Contains(stepIndex);
+    public bool IsActiveStepComplete => completedSteps.Contains(activeStepIndex);
+    public bool CanGoPrevious => Phase == TutorialRunPhase.Guided && stepIndex > 0;
+    public bool CanGoNext => CurrentStep != null &&
+        (IsReviewing || IsCurrentStepComplete || CurrentStep.allowManualAdvance);
     public TutorialStepDefinition LastCompletedStep { get; private set; }
     public IReadOnlyList<TutorialEventRecord> Events => events;
 
@@ -51,6 +62,7 @@ public sealed class TutorialStateMachine
         if (startInPractice)
         {
             stepIndex = scenario.steps.Count;
+            for (int i = 0; i < scenario.steps.Count; i++) completedSteps.Add(i);
             Phase = TutorialRunPhase.Practice;
             AddEvent("practice_started", null, scenario.id);
         }
@@ -86,17 +98,52 @@ public sealed class TutorialStateMachine
             return false;
         }
 
-        if (CurrentStep.requiredAction != action)
+        if (ActiveStep.requiredAction != action)
         {
-            failureReason = $"expected_{CurrentStep.requiredAction}";
+            failureReason = $"expected_{ActiveStep.requiredAction}";
             AddEvent("action_rejected", CurrentStep.id, failureReason);
             return false;
         }
 
-        TutorialStepId completed = CurrentStep.id;
-        LastCompletedStep = CurrentStep;
-        stepIndex++;
+        if (!completedSteps.Add(activeStepIndex))
+        {
+            failureReason = "step_already_complete";
+            return false;
+        }
+        TutorialStepId completed = ActiveStep.id;
+        LastCompletedStep = ActiveStep;
         AddEvent("step_completed", completed, action.ToString());
+        return true;
+    }
+
+    /// <summary>Reviews a visited lesson without changing the live race or action latch.</summary>
+    public bool TryPrevious()
+    {
+        if (!CanGoPrevious) return false;
+        stepIndex--;
+        AddEvent("step_reviewed", CurrentStep.id, CurrentStep.instructionKey);
+        return true;
+    }
+
+    /// <summary>Only explicit navigation starts another lesson or the practice lap.</summary>
+    public bool TryNext(out string failureReason)
+    {
+        failureReason = null;
+        if (!CanGoNext)
+        {
+            failureReason = "step_action_not_complete";
+            return false;
+        }
+        if (IsReviewing)
+        {
+            stepIndex++;
+            AddEvent("step_reviewed", CurrentStep.id, CurrentStep.instructionKey);
+            return true;
+        }
+        if (!IsActiveStepComplete)
+            TryPerform(ActiveStep.requiredAction, out failureReason);
+        stepIndex++;
+        activeStepIndex = stepIndex;
 
         if (stepIndex >= scenario.steps.Count)
         {
@@ -116,6 +163,7 @@ public sealed class TutorialStateMachine
         if (Phase != TutorialRunPhase.Guided) return;
         LastCompletedStep = null;
         stepIndex = scenario.steps.Count;
+        for (int i = 0; i < scenario.steps.Count; i++) completedSteps.Add(i);
         Phase = TutorialRunPhase.Practice;
         AddEvent("guided_skipped", null, scenario.id);
         AddEvent("practice_started", null, scenario.id);
@@ -124,6 +172,8 @@ public sealed class TutorialStateMachine
     public void RestartGuidedSection()
     {
         stepIndex = 0;
+        activeStepIndex = 0;
+        completedSteps.Clear();
         LastCompletedStep = null;
         Phase = TutorialRunPhase.Guided;
         AddEvent("guided_restarted", CurrentStep?.id, scenario.id);

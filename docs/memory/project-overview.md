@@ -37,7 +37,8 @@ the CCGS project framework.
   AI parameters.
 - `Tutorial/` contains the isolated Le Mans/UK scenario definition, explicit
   non-seeded deck order, pure guided-state machine, runtime Director, runtime-built
-  guide panel and session-only launch state. Race events now advance authored steps.
+  guide panel and session-only launch state. Race events complete the active lesson;
+  explicit guide-panel navigation advances or reviews authored steps.
 - `Settings/` contains versioned player settings, an injectable PlayerPrefs adapter and
   runtime display/presentation application; `UI/GameSettingsUI.cs` builds the menu overlay.
 - `Encyclopedia/` contains the versioned catalog loader/validator; the Chinese JSON source under
@@ -108,7 +109,12 @@ The verified scene flow is:
   authored in `Assets/Resources/Prefabs/UI/TutorialOverlay.prefab`: its root exposes all sixteen lesson
   copies, while the panel and spotlight retain manually edited RectTransforms. Runtime reuses an instance
   under `RaceCanvas` before loading the Resources fallback. Final guided Play Mode remains open.
-- The latest full project EditMode run passes `521/521`; the tutorial runtime slice retains its
+  The guide now keeps a completed lesson visible until explicit Next, supports non-destructive Previous review,
+  and preserves Skip/Exit. Its spotlight follows every live player input gate; clicking clears the callout mesh
+  completely while leaving the operation border visible. Main-menu overlays are mutually exclusive so the career
+  entry and summer-break surface cannot leak over driver selection.
+- The latest full project EditMode run passes `622/622`; the tutorial and menu overlay slice passes
+  `64/64` and retains its
   focused regression coverage.
   Play Mode verified the exact seven-card opening and zero-benefit session; a separate
   Monza Quick Race retained the randomized deck, tech state and vehicle bonuses. The

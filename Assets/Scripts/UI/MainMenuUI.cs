@@ -142,7 +142,7 @@ public class MainMenuUI : MonoBehaviour
                 ButtonClickAnimation.Attach(driverSelectionButton);
                 driverSelectionButton.interactable = true;
                 driverSelectionButton.onClick.RemoveAllListeners();
-                driverSelectionButton.onClick.AddListener(driverSelectionUI.Show);
+                driverSelectionButton.onClick.AddListener(OnShowDrivers);
                 UpdateDriverButtonLabel();
             }
         }
@@ -168,8 +168,9 @@ public class MainMenuUI : MonoBehaviour
         if (careerButton == null) return;
         ButtonClickAnimation.Attach(careerButton);
         careerButton.onClick.RemoveAllListeners();
-        careerButton.onClick.AddListener(careerModeUI.Show);
+        careerButton.onClick.AddListener(OnShowCareer);
         SetButtonLabel(careerButton, MainMenuLabels.Career);
+        PlaceButtonInMenuLayer(buttonTransform);
     }
 
     private GameObject CreateRuntimeMenuButton(string name, string text, Color color)
@@ -270,18 +271,18 @@ public class MainMenuUI : MonoBehaviour
         {
             ButtonClickAnimation.Attach(techTreeButton);
             techTreeButton.onClick.RemoveAllListeners();
-            techTreeButton.onClick.AddListener(techTreeUI.Show);
-            PlaceTechTreeButtonInMenuLayer(buttonTransform);
+            techTreeButton.onClick.AddListener(OnShowTechTree);
+            PlaceButtonInMenuLayer(buttonTransform);
         }
     }
 
     /// <summary>
     /// Runtime overlays are appended after the authored menu children. Keep
-    /// the tech-tree entry beside Garage/Quit so TrackSelectionUI and
+    /// runtime entries beside Garage/Quit so TrackSelectionUI and
     /// DriverSelectionUI overlays render above it instead of leaving a
     /// stray button visible over their panels.
     /// </summary>
-    private void PlaceTechTreeButtonInMenuLayer(Transform buttonTransform)
+    private void PlaceButtonInMenuLayer(Transform buttonTransform)
     {
         Transform garage = transform.Find("GarageBtn");
         if (garage == null || buttonTransform == null) return;
@@ -384,7 +385,7 @@ public class MainMenuUI : MonoBehaviour
         if (settingsButton == null) return;
         ButtonClickAnimation.Attach(settingsButton);
         settingsButton.onClick.RemoveAllListeners();
-        settingsButton.onClick.AddListener(gameSettingsUI.Show);
+        settingsButton.onClick.AddListener(OnShowSettings);
 
         Transform quit = transform.Find("QuitBtn");
         if (quit != null)
@@ -404,6 +405,7 @@ public class MainMenuUI : MonoBehaviour
     /// <summary>开始比赛 → 加载 Race 场景。</summary>
     public void OnStartRace()
     {
+        HideMenuSurfaces();
         TutorialLaunchState.Clear();
         CareerRaceLaunchState.Clear();
         trackSelectionUI.Show();
@@ -411,6 +413,7 @@ public class MainMenuUI : MonoBehaviour
 
     private void OnStartCareerRace()
     {
+        HideMenuSurfaces();
         TutorialLaunchState.Clear();
         SceneLoader.LoadRace();
     }
@@ -418,6 +421,7 @@ public class MainMenuUI : MonoBehaviour
     /// <summary>Starts the isolated Le Mans tutorial without changing quick-race selections.</summary>
     public void OnStartTutorial()
     {
+        HideMenuSurfaces();
         CareerRaceLaunchState.Clear();
         TutorialLaunchState.Request(TutorialScenarioDefinition.CreateLeMansUk());
         Debug.Log($"[MainMenuUI] Starting tutorial: {TutorialScenarioDefinition.ScenarioId}");
@@ -430,11 +434,44 @@ public class MainMenuUI : MonoBehaviour
         TutorialLaunchState.Clear();
         CareerRaceLaunchState.Clear();
         Debug.Log($"[MainMenuUI] Starting race on track: {trackId}");
-        if (trackSelectionUI != null)
-            trackSelectionUI.Hide();
-        if (driverSelectionUI != null)
-            driverSelectionUI.Hide();
+        HideMenuSurfaces();
         SceneLoader.LoadRace();
+    }
+
+    private void OnShowDrivers()
+    {
+        HideMenuSurfaces();
+        driverSelectionUI.Show();
+        UpdateDriverButtonLabel();
+    }
+
+    private void OnShowCareer()
+    {
+        HideMenuSurfaces();
+        careerModeUI.Show();
+    }
+
+    private void OnShowTechTree()
+    {
+        HideMenuSurfaces();
+        techTreeUI.Show();
+    }
+
+    private void OnShowSettings()
+    {
+        HideMenuSurfaces();
+        gameSettingsUI.Show();
+    }
+
+    private void HideMenuSurfaces()
+    {
+        if (trackSelectionUI != null) trackSelectionUI.Hide();
+        if (driverSelectionUI != null) driverSelectionUI.Hide();
+        if (techTreeUI != null) techTreeUI.Hide();
+        if (gameSettingsUI != null) gameSettingsUI.Hide();
+        if (careerModeUI != null) careerModeUI.Hide();
+        GameEncyclopediaUI encyclopedia = GetComponent<GameEncyclopediaUI>();
+        if (encyclopedia != null) encyclopedia.Hide();
     }
 
     private void OnDriverSelected(string driverId)

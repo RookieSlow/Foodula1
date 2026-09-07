@@ -106,7 +106,14 @@ public class MVPGameManager : MonoBehaviour
     public bool IsCareerMode => careerRaceLaunch != null;
     public TutorialScenarioDefinition TutorialScenario => tutorialScenario;
     public TutorialRuntimeDirector TutorialDirector => tutorialDirector;
+    /// <summary>Actual open input gate, in modal priority order, for tutorial focus.</summary>
+    public string TutorialInputPhase => inputState.WaitingForPitChoice ? "pit"
+        : inputState.WaitingForLaneChange ? "lane"
+        : inputState.WaitingForDiscard ? "discard"
+        : inputState.WaitingForGear ? "gear"
+        : inputState.WaitingForCards ? "cards" : "none";
     public bool IsTutorialActionInputBlocked =>
+        !pendingTutorialGuideRefreshAtTurnStart &&
         tutorialDirector != null && tutorialDirector.BlocksRaceInput;
     public GamePhase CurrentPhase => phaseState.Current;
     public GameConfigSO Config => config;
@@ -782,10 +789,10 @@ public class MVPGameManager : MonoBehaviour
 
     private bool TryAdvanceTutorialIfExpected(TutorialAction action, string detail)
     {
-        if (tutorialDirector == null || !tutorialDirector.IsExpecting(action))
+        if (pendingTutorialGuideRefreshAtTurnStart ||
+            tutorialDirector == null || !tutorialDirector.IsExpecting(action))
             return false;
 
-        TutorialRunPhase previousPhase = tutorialDirector.Phase;
         bool accepted = tutorialDirector.TryPerform(action, out string failureReason);
         FlushTutorialEvents();
         if (!accepted)
@@ -798,6 +805,12 @@ public class MVPGameManager : MonoBehaviour
 
         raceLogWriter?.Append(
             $"[TUTORIAL_GATE] action={action} accepted=true detail={detail}");
+        tutorialGuideUI?.Refresh();
+        return true;
+    }
+
+    private void PresentNextTutorialLesson()
+    {
         ApplyTutorialPendingCue();
         TutorialStepDefinition nextStep = tutorialDirector.CurrentStep;
         if (nextStep != null &&
@@ -813,20 +826,34 @@ public class MVPGameManager : MonoBehaviour
             raceLogWriter?.Append(
                 $"[TUTORIAL_GUIDE] step={nextStep.id} refresh=deferred " +
                 $"boundary=prepared_input_state earliest_turn={pendingTutorialGuideEarliestTurn}");
+            if (phaseState.Current == GamePhase.WaitingForGear && inputState.WaitingForGear &&
+                raceTurnNumber >= pendingTutorialGuideEarliestTurn)
+            {
+                ApplyPendingTutorialPlayerCheckpoint(force: true);
+                TutorialPlayerCheckpoint checkpoint = FindTutorialPlayerCheckpoint(nextStep.id);
+                if (TutorialGuideTimingRules.BeginsAtCardSelection(checkpoint))
+                {
+                    inputState.ConfirmGear();
+                }
+                else
+                {
+                    pendingTutorialGuideRefreshAtTurnStart = false;
+                    PrepareTutorialTurnPresentation();
+                    tutorialGuideUI?.Refresh();
+                }
+            }
         }
         else
         {
             tutorialGuideUI?.Refresh();
         }
-        if (previousPhase == TutorialRunPhase.Guided &&
-            tutorialDirector.Phase == TutorialRunPhase.Practice)
+        if (tutorialDirector.Phase == TutorialRunPhase.Practice)
         {
             raceLogWriter?.Append(
                 "[TUTORIAL_PRACTICE] event=guided_complete reset=full_lap weather=" +
                 tutorialScenario.practiceWeatherId);
             ResetTutorialRace(true, "guided_complete");
         }
-        return true;
     }
 
     private void FlushTutorialEvents()
@@ -884,7 +911,8 @@ public class MVPGameManager : MonoBehaviour
                 $"cell={cue.Player.playerCell} gear={cue.Player.gear} " +
                 $"normal_hand={cue.Player.normalHandSize} heat_hand={cue.Player.heatInHand} " +
                 $"heat_discard={cue.Player.heatInDiscard}");
-            ApplyPendingTutorialPlayerCheckpoint(force: false);
+            // Navigation may arrive during an unfinished turn. Apply only at
+            // the prepared gear boundary or the next turn, never in the event.
         }
     }
 
@@ -1008,11 +1036,30 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnTutorialContinueClicked()
     {
-        TutorialStepDefinition step = tutorialDirector?.CurrentStep;
-        if (!CanRequestTutorialManualAdvance(step, phaseState.Current))
+        if (tutorialDirector == null || pendingTutorialGuideRefreshAtTurnStart ||
+            phaseState.Current == GamePhase.GameOver)
             return;
+        TutorialStepDefinition previous = tutorialDirector.ActiveStep;
+        if (!tutorialDirector.TryNext(out _)) return;
+        FlushTutorialEvents();
+        if (previous == tutorialDirector.ActiveStep)
+            tutorialGuideUI?.Refresh();
+        else
+            PresentNextTutorialLesson();
+    }
 
-        TryAdvanceTutorialIfExpected(step.requiredAction, "guide_continue");
+    /// <summary>Reviews earlier text without restoring cards, cars, weather or checkpoints.</summary>
+    public void OnTutorialPreviousClicked()
+    {
+        if (pendingTutorialGuideRefreshAtTurnStart || tutorialDirector == null ||
+            !tutorialDirector.TryPrevious()) return;
+        FlushTutorialEvents();
+        tutorialGuideUI?.Refresh();
+    }
+
+    private IEnumerator WaitForTutorialNavigation()
+    {
+        yield return new WaitWhile(() => IsTutorialActionInputBlocked);
     }
 
     /// <summary>
@@ -1361,6 +1408,10 @@ public class MVPGameManager : MonoBehaviour
     {
         while (phaseState.IsRunning)
         {
+            // Reading steps, completed action steps and history review all wait
+            // for an explicit guide-panel navigation click. This includes the
+            // very first lesson before turn one opens the gear controls.
+            yield return WaitForTutorialNavigation();
             // Step transitions often occur during movement/reaction resolution.
             // Apply the authored recovery state only at the next turn boundary.
             ApplyPendingTutorialPlayerCheckpoint(force: true);
@@ -1393,6 +1444,7 @@ public class MVPGameManager : MonoBehaviour
                 if (p.pitStopScheduled)
                 {
                     ExecuteScheduledPitStop(p);
+                    yield return WaitForTutorialNavigation();
                     turnSkipped.Add(p);
                     continue;
                 }
@@ -1457,6 +1509,7 @@ public class MVPGameManager : MonoBehaviour
                     ApplyGearShift(p, inputState.PlayerGearChoice);
                     if (hudUI != null)
                         hudUI.RefreshPlayerResources(p);
+                    yield return WaitForTutorialNavigation();
                 }
             }
 
@@ -1549,6 +1602,7 @@ public class MVPGameManager : MonoBehaviour
                     }
 
                     yield return new WaitWhile(() => inputState.WaitingForCards);
+                    yield return WaitForTutorialNavigation();
                     raceCameraController?.FocusPlayerAfterCardPlay();
                 }
 
@@ -1565,6 +1619,7 @@ public class MVPGameManager : MonoBehaviour
             {
                 if (RaceTurnRules.IsInactive(p, turnSkipped)) continue;
                 yield return StartCoroutine(ResolvePitApproachChoice(p));
+                yield return WaitForTutorialNavigation();
             }
 
             // ====== 计算移动力（科技 + 特技加成） ======
@@ -1594,6 +1649,7 @@ public class MVPGameManager : MonoBehaviour
 
                 ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
                 RegisterPitEntryCrossing(p, oldPos, oldPos + p.totalMovementThisTurn);
+                yield return WaitForTutorialNavigation();
             }
             raceLogWriter?.Append("[MOVE_PHASE] end");
 
@@ -1612,6 +1668,7 @@ public class MVPGameManager : MonoBehaviour
             }
             yield return StartCoroutine(PlaySlipstreamPhase(turnOrder, turnSkipped));
             yield return StartCoroutine(ApplySlipstreamMovement(turnOrder, turnSkipped));
+            yield return WaitForTutorialNavigation();
 
             // ====== 弃牌（可选，仅玩家） ======
             var human = Player;

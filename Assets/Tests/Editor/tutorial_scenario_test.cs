@@ -157,11 +157,60 @@ public class TutorialScenarioTests
         {
             Assert.That(machine.CurrentStep.id, Is.EqualTo(step.id));
             Assert.That(machine.TryPerform(step.requiredAction, out reason), Is.True, reason);
+            Assert.That(machine.CurrentStep.id, Is.EqualTo(step.id), "real events only latch completion");
+            Assert.That(machine.Phase, Is.EqualTo(TutorialRunPhase.Guided));
+            Assert.That(machine.TryNext(out reason), Is.True, reason);
         }
 
         Assert.That(machine.Phase, Is.EqualTo(TutorialRunPhase.Practice));
         Assert.That(machine.CompletedStepCount, Is.EqualTo(scenario.steps.Count));
         Assert.That(machine.Events.Any(entry => entry.ToString().Contains("event=practice_started")), Is.True);
+    }
+
+    [Test]
+    public void GuidedActionCompletionWaitsForNextAndHistoryDoesNotRewindLiveStep()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
+        var machine = new TutorialStateMachine(scenario);
+
+        Assert.That(machine.CanGoNext, Is.True, "the opening reading step uses explicit Next");
+        Assert.That(machine.TryNext(out string reason), Is.True, reason);
+        Assert.That(machine.CurrentStep.id, Is.EqualTo(TutorialStepId.TurnFlow));
+        Assert.That(machine.CanGoNext, Is.False, "an action lesson cannot be skipped");
+
+        Assert.That(machine.TryPerform(TutorialAction.CompleteTurnFlow, out reason), Is.True, reason);
+        Assert.That(machine.CurrentStep.id, Is.EqualTo(TutorialStepId.TurnFlow));
+        Assert.That(machine.CanGoNext, Is.True, "the completed lesson remains visible until Next");
+
+        Assert.That(machine.TryPrevious(), Is.True);
+        Assert.That(machine.IsReviewing, Is.True);
+        Assert.That(machine.CurrentStep.id, Is.EqualTo(TutorialStepId.ObjectiveAndInterface));
+        Assert.That(machine.ActiveStep.id, Is.EqualTo(TutorialStepId.TurnFlow),
+            "review must not rewind cards, cars or the live action latch");
+        Assert.That(machine.TryNext(out reason), Is.True, reason);
+        Assert.That(machine.CurrentStep.id, Is.EqualTo(TutorialStepId.TurnFlow));
+        Assert.That(machine.TryNext(out reason), Is.True, reason);
+        Assert.That(machine.CurrentStep.id, Is.EqualTo(TutorialStepId.GearAndRequiredCards));
+    }
+
+    [TestCase("gear", 0, false, TutorialFocusOperation.Gear)]
+    [TestCase("cards", 0, false, TutorialFocusOperation.SelectCards)]
+    [TestCase("cards", 1, false, TutorialFocusOperation.ConfirmPlay)]
+    [TestCase("cards", 0, true, TutorialFocusOperation.EndCards)]
+    [TestCase("discard", 0, false, TutorialFocusOperation.Discard)]
+    [TestCase("discard", 1, false, TutorialFocusOperation.ConfirmDiscard)]
+    [TestCase("pit", 0, false, TutorialFocusOperation.Pit)]
+    [TestCase("lane", 0, false, TutorialFocusOperation.Lane)]
+    [TestCase("none", 0, false, TutorialFocusOperation.None)]
+    public void TutorialFocusFollowsEveryOpenPlayerInputGate(
+        string phase,
+        int selectedCount,
+        bool canEndCards,
+        TutorialFocusOperation expected)
+    {
+        Assert.That(
+            TutorialFocusOperationRules.Resolve(phase, selectedCount, canEndCards),
+            Is.EqualTo(expected));
     }
 
     [Test]
@@ -802,6 +851,8 @@ public class TutorialScenarioTests
         Assert.That(machine.LastCompletedStep.id, Is.EqualTo(TutorialStepId.ObjectiveAndInterface));
         Assert.That(machine.LastCompletedStep.successSignal,
             Is.EqualTo(scenario.steps[0].successSignal));
+        Assert.That(machine.CurrentStep.id, Is.EqualTo(TutorialStepId.ObjectiveAndInterface));
+        Assert.That(machine.TryNext(out reason), Is.True, reason);
         Assert.That(machine.CurrentStep.id, Is.EqualTo(TutorialStepId.TurnFlow));
 
         Assert.That(machine.TryPerform(TutorialAction.CompleteTurnFlow, out reason),
@@ -830,6 +881,8 @@ public class TutorialScenarioTests
         Assert.That(director.DrainNewEvents().Single().eventId, Is.EqualTo("action_rejected"));
 
         Assert.That(director.TryPerform(TutorialAction.AcknowledgeObjective, out reason), Is.True);
+        Assert.That(director.BlocksRaceInput, Is.True, "completion waits for explicit Next");
+        Assert.That(director.TryNext(out reason), Is.True, reason);
         Assert.That(director.BlocksRaceInput, Is.False);
     }
 
@@ -844,6 +897,8 @@ public class TutorialScenarioTests
             TutorialStepDefinition step = scenario.steps[i];
             Assert.That(director.CurrentStep.id, Is.EqualTo(step.id));
             Assert.That(director.TryPerform(step.requiredAction, out string reason), Is.True, reason);
+            Assert.That(director.TakePendingCue(), Is.Null, "completion must not prepare another lesson");
+            Assert.That(director.TryNext(out reason), Is.True, reason);
 
             TutorialCheckpointCue cue = director.TakePendingCue();
             TutorialStepId? nextStep = i + 1 < scenario.steps.Count

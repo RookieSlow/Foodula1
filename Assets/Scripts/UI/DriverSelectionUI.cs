@@ -37,6 +37,7 @@ public sealed class DriverSelectionUI : MonoBehaviour
         if (!initialized) Initialize(null);
         RefreshVisuals();
         overlay.SetActive(true);
+        overlay.transform.SetAsLastSibling();
     }
 
     public void Hide()

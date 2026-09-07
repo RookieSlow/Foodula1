@@ -89,6 +89,8 @@ public sealed class TutorialGuideUI : MonoBehaviour
     [SerializeField] private TMP_Text progressText;
     [SerializeField] private Button continueButton;
     [SerializeField] private TMP_Text continueLabel;
+    [SerializeField] private Button previousButton;
+    [SerializeField] private TMP_Text previousLabel;
     [SerializeField] private Button modeButton;
     [SerializeField] private TMP_Text modeLabel;
     [SerializeField] private Button exitButton;
@@ -109,6 +111,7 @@ public sealed class TutorialGuideUI : MonoBehaviour
     private RectTransformSnapshot completionSnapshot;
     private RectTransformSnapshot instructionSnapshot;
     private RectTransformSnapshot continueSnapshot;
+    private RectTransformSnapshot previousSnapshot;
     private RectTransformSnapshot modeSnapshot;
     private RectTransformSnapshot exitSnapshot;
     private float authoredTitleFontSize;
@@ -176,6 +179,7 @@ public sealed class TutorialGuideUI : MonoBehaviour
         manager = targetManager;
         authoring = source;
         focusHighlighter = highlight;
+        EnsurePreviousButton();
         CaptureAuthoredLayout();
         BindButtonListeners();
     }
@@ -212,6 +216,7 @@ public sealed class TutorialGuideUI : MonoBehaviour
             string.IsNullOrWhiteSpace(presentation.manualAdvanceLabel)
                 ? "等待本步操作"
                 : presentation.manualAdvanceLabel);
+        SetPreviousState(false);
         SetModeState(true, "跳过引导");
         ApplyLayout();
     }
@@ -233,6 +238,7 @@ public sealed class TutorialGuideUI : MonoBehaviour
         instructionText.text = previewInstruction;
         progressText.text = $"{totalSteps}/{totalSteps}";
         SetContinueState(true, completed ? "再练一圈" : "重新开始");
+        SetPreviousState(false);
         SetModeState(true, "重播引导");
         ApplyLayout();
     }
@@ -281,6 +287,7 @@ public sealed class TutorialGuideUI : MonoBehaviour
             progressText.text = $"{director.CompletedStepCount}/{director.StepCount}";
             primaryRestartsPractice = true;
             SetContinueState(true, completed ? "再练一圈" : "重新开始");
+            SetPreviousState(false);
             SetModeState(true, "重播引导");
             ApplyLayout();
             return;
@@ -313,19 +320,11 @@ public sealed class TutorialGuideUI : MonoBehaviour
         instructionText.text = presentation != null
             ? presentation.BuildGuideText()
             : step.BuildGuideText();
-        progressText.text = $"{(presentation != null ? presentation.sectionLabel : step.sectionLabel)} · 第 {director.CompletedStepCount + 1}/{director.StepCount} 步";
+        progressText.text = $"{(presentation != null ? presentation.sectionLabel : step.sectionLabel)} · 第 {director.CurrentStepIndex + 1}/{director.StepCount} 步";
         SetContinueState(
-            step.allowManualAdvance,
-            step.allowManualAdvance
-                ? (string.IsNullOrWhiteSpace(
-                        presentation != null
-                            ? presentation.manualAdvanceLabel
-                            : step.manualAdvanceLabel)
-                    ? "继续"
-                    : presentation != null
-                        ? presentation.manualAdvanceLabel
-                        : step.manualAdvanceLabel)
-                : "等待本步操作");
+            director.CanGoNext,
+            director.CanGoNext ? "下一步" : "完成操作后下一步");
+        SetPreviousState(director.CanGoPrevious);
         SetModeState(true, "跳过引导");
         ApplyLayout();
     }
@@ -374,8 +373,14 @@ public sealed class TutorialGuideUI : MonoBehaviour
         continueLabel = continueButton.GetComponentInChildren<TMP_Text>(true);
         continueLabel.fontSize = 16f;
 
+        previousButton = factory.CreateActionButton(transform, "TutorialPreviousButton", "上一步",
+            new Vector2(-180f, -174f), new Color(0.22f, 0.36f, 0.54f), OnPrevious);
+        previousButton.GetComponent<RectTransform>().sizeDelta = new Vector2(112f, 42f);
+        previousLabel = previousButton.GetComponentInChildren<TMP_Text>(true);
+        previousLabel.fontSize = 14f;
+
         modeButton = factory.CreateActionButton(transform, "TutorialModeButton", "跳过引导",
-            new Vector2(-170f, -174f), new Color(0.24f, 0.42f, 0.62f), OnModeAction);
+            new Vector2(60f, -174f), new Color(0.24f, 0.42f, 0.62f), OnModeAction);
         modeButton.GetComponent<RectTransform>().sizeDelta = new Vector2(142f, 42f);
         modeLabel = modeButton.GetComponentInChildren<TMP_Text>(true);
         modeLabel.fontSize = 15f;
@@ -465,15 +470,19 @@ public sealed class TutorialGuideUI : MonoBehaviour
             new Vector2(Mathf.Min(300f, layout.Width - 40f), 26f));
         progressText.fontSize = compact ? 12f : 14f;
 
-        float buttonWidth = Mathf.Min(142f, Mathf.Max(86f, (layout.Width - 64f) / 3f));
-        float sideOffset = buttonWidth + 12f;
+        float buttonWidth = Mathf.Min(122f, Mathf.Max(76f, (layout.Width - 76f) / 4f));
+        float buttonGap = 8f;
+        float firstX = -1.5f * (buttonWidth + buttonGap);
         float buttonY = -halfHeight + 46f;
+        SetRect(previousButton.GetComponent<RectTransform>(),
+            new Vector2(firstX, buttonY), new Vector2(buttonWidth, 42f));
         SetRect(continueButton.GetComponent<RectTransform>(),
-            new Vector2(0f, buttonY), new Vector2(buttonWidth, 42f));
+            new Vector2(firstX + buttonWidth + buttonGap, buttonY), new Vector2(buttonWidth, 42f));
         SetRect(modeButton.GetComponent<RectTransform>(),
-            new Vector2(-sideOffset, buttonY), new Vector2(buttonWidth, 42f));
+            new Vector2(firstX + (buttonWidth + buttonGap) * 2f, buttonY), new Vector2(buttonWidth, 42f));
         SetRect(exitButton.GetComponent<RectTransform>(),
-            new Vector2(sideOffset, buttonY), new Vector2(buttonWidth, 42f));
+            new Vector2(firstX + (buttonWidth + buttonGap) * 3f, buttonY), new Vector2(buttonWidth, 42f));
+        previousLabel.fontSize = compact ? 12f : 14f;
         continueLabel.fontSize = compact ? 13f : 16f;
         modeLabel.fontSize = compact ? 12f : 15f;
         exitButton.GetComponentInChildren<TMP_Text>(true).fontSize = compact ? 12f : 15f;
@@ -485,6 +494,8 @@ public sealed class TutorialGuideUI : MonoBehaviour
             active && !string.IsNullOrWhiteSpace(completionText.text));
         instructionText.gameObject.SetActive(active);
         continueButton.gameObject.SetActive(active);
+        if (previousButton != null)
+            previousButton.gameObject.SetActive(active && previousButton.interactable);
         modeButton.gameObject.SetActive(active);
         exitButton.gameObject.SetActive(active);
     }
@@ -506,6 +517,7 @@ public sealed class TutorialGuideUI : MonoBehaviour
     private void BindButtonListeners()
     {
         BindButton(continueButton, OnContinue);
+        BindButton(previousButton, OnPrevious);
         BindButton(modeButton, OnModeAction);
         BindButton(exitButton, OnExit);
         BindButton(collapseButton, OnToggleExpanded);
@@ -534,6 +546,9 @@ public sealed class TutorialGuideUI : MonoBehaviour
         instructionSnapshot = RectTransformSnapshot.Capture(instructionText.rectTransform);
         continueSnapshot = RectTransformSnapshot.Capture(
             continueButton.GetComponent<RectTransform>());
+        if (previousButton != null)
+            previousSnapshot = RectTransformSnapshot.Capture(
+                previousButton.GetComponent<RectTransform>());
         modeSnapshot = RectTransformSnapshot.Capture(modeButton.GetComponent<RectTransform>());
         exitSnapshot = RectTransformSnapshot.Capture(exitButton.GetComponent<RectTransform>());
         authoredTitleFontSize = titleText.fontSize;
@@ -557,6 +572,7 @@ public sealed class TutorialGuideUI : MonoBehaviour
             completionSnapshot.Restore();
             instructionSnapshot.Restore();
             continueSnapshot.Restore();
+            previousSnapshot.Restore();
             modeSnapshot.Restore();
             exitSnapshot.Restore();
 
@@ -572,6 +588,7 @@ public sealed class TutorialGuideUI : MonoBehaviour
             float resolvedHeight = Mathf.Min(desiredHeight, safeHeight);
             float addedHeight = Mathf.Max(0f, resolvedHeight - panelSnapshot.Size.y);
             ApplyAuthoredExpandedHeight(addedHeight);
+            LayoutAuthoredNavigationButtons();
             titleText.fontSize = authoredTitleFontSize;
             progressText.fontSize = authoredProgressFontSize;
             collapseLabel.text = "收起指引";
@@ -642,6 +659,8 @@ public sealed class TutorialGuideUI : MonoBehaviour
         ShiftVertical(collapseButton.GetComponent<RectTransform>(), halfAdded);
         ShiftVertical(progressText.rectTransform, -halfAdded);
         ShiftVertical(continueButton.GetComponent<RectTransform>(), -halfAdded);
+        if (previousButton != null)
+            ShiftVertical(previousButton.GetComponent<RectTransform>(), -halfAdded);
         ShiftVertical(modeButton.GetComponent<RectTransform>(), -halfAdded);
         ShiftVertical(exitButton.GetComponent<RectTransform>(), -halfAdded);
         instructionText.rectTransform.sizeDelta = new Vector2(
@@ -693,6 +712,44 @@ public sealed class TutorialGuideUI : MonoBehaviour
             continueLabel.text = label;
     }
 
+    private void SetPreviousState(bool interactable)
+    {
+        if (previousButton != null)
+        {
+            previousButton.interactable = interactable;
+            previousButton.gameObject.SetActive(isExpanded && interactable);
+        }
+        if (previousLabel != null)
+            previousLabel.text = "上一步";
+    }
+
+    private void EnsurePreviousButton()
+    {
+        if (previousButton != null || modeButton == null)
+            return;
+        Transform existing = transform.Find("TutorialPreviousButton");
+        GameObject buttonObject = existing != null
+            ? existing.gameObject
+            : Instantiate(modeButton.gameObject, transform, false);
+        buttonObject.name = "TutorialPreviousButton";
+        previousButton = buttonObject.GetComponent<Button>();
+        previousLabel = buttonObject.GetComponentInChildren<TMP_Text>(true);
+        if (previousLabel != null) previousLabel.text = "上一步";
+    }
+
+    private void LayoutAuthoredNavigationButtons()
+    {
+        if (previousButton == null) return;
+        float buttonY = continueButton.GetComponent<RectTransform>().anchoredPosition.y;
+        float width = Mathf.Min(112f, Mathf.Max(82f, (panelSnapshot.Size.x - 60f) / 4f));
+        float gap = 8f;
+        float firstX = -1.5f * (width + gap);
+        SetRect(previousButton.GetComponent<RectTransform>(), new Vector2(firstX, buttonY), new Vector2(width, 42f));
+        SetRect(continueButton.GetComponent<RectTransform>(), new Vector2(firstX + width + gap, buttonY), new Vector2(width, 42f));
+        SetRect(modeButton.GetComponent<RectTransform>(), new Vector2(firstX + (width + gap) * 2f, buttonY), new Vector2(width, 42f));
+        SetRect(exitButton.GetComponent<RectTransform>(), new Vector2(firstX + (width + gap) * 3f, buttonY), new Vector2(width, 42f));
+    }
+
     private void SetModeState(bool interactable, string label)
     {
         if (modeButton != null)
@@ -721,6 +778,11 @@ public sealed class TutorialGuideUI : MonoBehaviour
             manager.SkipTutorialGuidedSection();
         else
             manager.RestartTutorialGuidedSection();
+    }
+
+    private void OnPrevious()
+    {
+        manager?.OnTutorialPreviousClicked();
     }
 
     private void OnExit()

@@ -90,7 +90,9 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   to loading the Resources Prefab when no scene instance exists.
   `TutorialFocusHighlightUI` resolves live HUD, track, pit-choice and specific UK-card rectangles,
   dims only the surrounding area without intercepting clicks, and disables border pulsing under
-  reduced-motion settings. Highlighting is presentation-only and never advances tutorial state.
+  reduced-motion settings. During live input it prioritizes gear, card selection/confirmation,
+  discard selection/confirmation, pit and lane gates over the lesson subject. Clicking removes the
+  callout text and mesh while retaining the target border; highlighting never advances tutorial state.
 - Heat cards do not start in the normal deck. Each player's independent engine
   heat pool is the only source of permanent heat cards.
 - When trick cards are enabled, four team cards (two attack and two defense)
@@ -207,9 +209,9 @@ prototype and is no longer the authoritative model.
   exposes one-shot weather/opponent checkpoint cues. The Race adapter applies rain
   or cloudy weather through the existing session weather state.
 - Every guided step carries a section label plus explicit goal, current scripted state, ordered
-  player action, observable success signal and safe recovery hint. Knowledge steps use specific
-  confirmation labels, while operation steps keep the primary button disabled. The state machine
-  exposes the most recently completed lesson so the following panel can retain its success feedback.
+  player action, observable success signal and safe recovery hint. Real actions latch lesson completion
+  without changing the visible step; Next becomes available after completion. Previous reviews reached
+  lessons without rewinding race state or replaying checkpoint cues. Skip and Exit remain available.
 - The guide panel uses a pure safe-area rule for common 16:9 resolutions. Its expanded form scales
   down from 540x440 and switches to compact typography at small sizes; collapse leaves only the
   title, section progress and expand control. Toggling presentation never advances tutorial state.
@@ -217,10 +219,9 @@ prototype and is no longer the authoritative model.
   positions the leader at cell 42/player at cell 40 after base movement, immediately
   before the unchanged end-of-turn slipstream resolver. This preserves the rule that
   only the rear car benefits.
-- A runtime-built guide panel displays authored title/body/progress. Reading steps
-  advance through its button; operation steps advance only from matching real race
-  events for turn completion, exact card requirement, movement, heat, cooling,
-  missing cards, spin, slipstream, pit timing and UK trick cards.
+- A runtime-built guide panel displays authored title/body/progress. Reading steps may advance immediately;
+  operation steps require matching real race events for turn completion, exact card requirement, movement,
+  heat, cooling, missing cards, spin, slipstream, pit timing and UK trick cards, then wait for explicit Next.
 - Completing or skipping the guide rebuilds the Race session directly into `Practice`:
   lap and positions return to zero/start, the exact deck and six-heat pool are recreated,
   the teaching opponent is restored and scripted cloudy weather is applied. Practice uses

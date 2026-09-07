@@ -16,6 +16,7 @@ public sealed class CareerModeUI : MonoBehaviour
     private readonly Dictionary<TeamId, Button> teamButtons = new Dictionary<TeamId, Button>();
     private CareerModeService service;
     private CareerTechTreeUI summerTechUI;
+    private GameObject summerTechOverlay;
     private Action requestRaceLaunch;
     private bool raceLaunchAvailable;
     private GameObject overlay;
@@ -54,6 +55,7 @@ public sealed class CareerModeUI : MonoBehaviour
     {
         if (service == null)
             Initialize(CareerRuntimeRepository.CreateDefault());
+        Hide();
         Refresh();
         overlay.SetActive(true);
         overlay.transform.SetAsLastSibling();
@@ -61,9 +63,13 @@ public sealed class CareerModeUI : MonoBehaviour
 
     public void Hide()
     {
+        // The summer editor is a sibling overlay, not a child of this panel.
+        // Its next Show creates a fresh draft, so leaving never saves edits.
+        if (summerTechOverlay != null) summerTechOverlay.SetActive(false);
         pendingAction = PendingAction.None;
         choosingReplacement = false;
         if (confirmationPanel != null) confirmationPanel.SetActive(false);
+        if (confirmationText != null) confirmationText.text = string.Empty;
         if (overlay != null) overlay.SetActive(false);
     }
 
@@ -328,8 +334,13 @@ public sealed class CareerModeUI : MonoBehaviour
 
         if (CareerModeRules.CanAdjustTechTree(service.CurrentState))
         {
-            if (!summerTechUI.Show(service.CurrentState, ConfirmSummerBreakTech, Refresh))
+            if (!summerTechUI.Show(service.CurrentState, ConfirmSummerBreakTech, Show))
                 careerStatus.text = "无法读取生涯科技快照；夏休仍未消费。";
+            else
+            {
+                summerTechOverlay = transform.Find("CareerTechTreeOverlay").gameObject;
+                overlay.SetActive(false);
+            }
             return;
         }
 
