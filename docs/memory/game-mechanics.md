@@ -3,9 +3,11 @@
 This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
-> **Implementation snapshot (2026-09-03)**: Unity `2022.3.62f3c1`; the latest
-> successful editor EditMode run passed `603/603`; tutorial guidance/checkpoint tests previously passed `31/31` and
-> the encyclopedia catalog checks pass `6/6`.
+> **Implementation snapshot (2026-09-08)**: Unity `2022.3.62f3c1`; the latest
+> recorded successful editor EditMode run passed `622/622` on 2026-09-07. The
+> tutorial/menu focused run passed `64/64`; the encyclopedia catalog checks
+> previously passed `6/6`. These are retained results, not tests rerun during
+> this documentation synchronization.
 > The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.

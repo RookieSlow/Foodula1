@@ -75,12 +75,12 @@ The verified scene flow is:
   the completed overview starts a replacement-confirmed new-season flow, and structured `[CAREER_RESULT]` lines
   capture saved/rejected settlement evidence. Focused career execution passed `46/46`; Play Mode acceptance remains open.
 - Demo framework Phase 1 is complete.
-- Core race presentation is Demo-grade; formal brand/portrait/tech-tree art and
-  the entire audio layer remain as the next asset-completion package.
-- The project is in Production stage. The latest editor audit on 2026-08-28
-  recorded a successful 514/514 EditMode run. The MainMenu-to-Race flow, race
-  card/icon references, and Chinese font support remain the current
-  presentation baseline.
+- Core race presentation is Demo-grade. The formal main-menu background, Foodula1
+  logo and six team emblems are integrated; driver portraits and formal tech-tree
+  artwork remain in the next visual asset package.
+- The project is in Production stage. The latest recorded full Unity EditMode
+  run passed 622/622 on 2026-09-07. This is retained evidence rather than a test
+  rerun performed during the 2026-09-08 documentation synchronization.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
   nodes; `RaceSession` centralizes numeric tech modifiers while the manager
   invokes explicit `TechTreeRules` event hooks at documented race phases.
@@ -180,9 +180,8 @@ The verified scene flow is:
   passes its historical original 16 EditMode tests with no Unity warnings or errors;
   the current full suite is tracked separately below.
 - `Gameplay/TrackRules.cs` now provides pure, tested track traversal rules.
-  Together with the current feature tests, the latest full project run passes
-  471 EditMode
-  tests. `RaceTestLogWriter` can capture a manual race into a timestamped log
+  Together with the feature tests available at that stage, this track-rules slice
+  historically passed 471 EditMode tests. `RaceTestLogWriter` can capture a manual race into a timestamped log
   for later review; a controlled four-car Silverstone Play Mode smoke on
   2026-08-25 produced two `[SLIPSTREAM]` entries and confirmed `RaceEventFX`
   was present, while full manual chain/visual acceptance remains open. The

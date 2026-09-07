@@ -2,10 +2,10 @@
 
 | Field | Value |
 |-------|-------|
-| **Engine Version** | Unity 2022.3.62f2 |
-| **Release Date** | 2022 LTS stream, f2 patch |
-| **Project Pinned** | 2026-07-19 |
-| **Last Docs Verified** | 2026-07-19 |
+| **Engine Version** | Unity 2022.3.62f3c1 |
+| **Release Stream** | Unity 2022 LTS |
+| **Project Pinned** | 2026-09-08 |
+| **Last Docs Verified** | 2026-09-08 |
 | **LLM Knowledge Cutoff** | May 2025 |
 | **Risk Level** | LOW — version is within LLM training data |
 

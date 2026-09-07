@@ -30,7 +30,7 @@ testing and data-driven content authoring.
 
 | Field | Value |
 |-------|-------|
-| **Engine** | Unity 2022.3.62f2 |
+| **Engine** | Unity 2022.3.62f3c1 |
 | **Domain** | Core — Game Architecture |
 | **Knowledge Risk** | LOW — in training data |
 | **References Consulted** | `docs/engine-reference/unity/VERSION.md` |

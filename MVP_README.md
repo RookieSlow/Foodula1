@@ -1,8 +1,12 @@
-# Foodula1 MVP Prototype
+# Foodula1 MVP Prototype（历史原型说明）
 
 **HEAT boardgame digital adaptation — minimum viable prototype**
 
-Built: 2026-07-21 | Unity 2022.3.62f2 | C#
+Built: 2026-07-21 | Current project: Unity 2022.3.62f3c1 | C#
+
+> 本文件记录 2026-07-21 的 42 格单 AI 原型，不是当前项目事实来源。
+> 当前结构、机制与任务状态请以 `docs/memory/`、`design/gdd/` 和
+> `design/planning/roadmap.md` 为准。
 
 ---
 
@@ -71,15 +75,15 @@ MVPGameManager (coroutine-driven turn loop)
 | `Assets/Scripts/CardData.cs` | Card type/value enum |
 | `Assets/Scripts/CardUI.cs` | Per-card MonoBehaviour (selection, visual) |
 | `Assets/Scripts/TrackNode.cs` | Track node data (cornerId, speedLimit, isStartFinish) |
-| `Assets/Scenes/SampleScene.unity` | Main scene |
+| `Assets/Scenes/SampleScene.unity` | Historical prototype scene; retired and no longer present |
 | `design/gdd/game-concept.md` | MVP design document |
 
 ## How to Run
 
-1. Open project in Unity 2022.3.62f2
-2. Open `Assets/Scenes/SampleScene.unity`
-3. Hit Play
-4. UI auto-creates if not configured (no manual setup needed)
+1. Open project in Unity 2022.3.62f3c1.
+2. Open `Assets/Scenes/MainMenu.unity`.
+3. Enter Play Mode and choose Free Race, Tutorial, or Career.
+4. The current race scene is `Assets/Scenes/Race.unity`; UI uses authored Prefabs with legacy runtime fallbacks.
 
 ## Gameplay Quick Reference
 

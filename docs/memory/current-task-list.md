@@ -1,5 +1,13 @@
 # Current Task List
 
+## 2026-09-09 车手主动技能与效果重审
+
+- [ ] 对照 `design/gdd/foodula-1-drivers.md` 审计 12 位车手的被动与主动技能，建立“设计效果—当前代码—实际接线—缺口”清单；不得把仅有数据定义的技能标记为已生效。
+- [ ] 为已解锁的主动技能增加明确的比赛内使用按钮、技能说明、可用/不可用状态与原因反馈；按钮只在规则允许的阶段响应，并遵守次数、冷却、目标和资源条件。
+- [ ] 逐项复核现有技能是否符合当前核心机制、车队科技和教程/生涯隔离要求；对难以触发、与现行流程冲突或数值失衡的效果提出并实现一致的重做方案。
+- [ ] 补充纯规则/EditMode 回归，覆盖解锁等级、使用门控、效果结算、重复使用和模式隔离；完成至少一次带主动技能的安全 Play Mode 走查并记录 Console/日志证据。
+- [ ] 实现完成后同步车手 GDD、系统索引、路线图与本任务清单；未经过实际验证的技能不得标记为完成。
+
 ## 2026-09-03 GDC 2026 核心音频包与运行时接入
 
 - [x] 从用户提供的 Sonniss GDC 2026 Part 9 中筛选并非破坏性派生 24 个短音效；统一为
@@ -173,18 +181,18 @@
 
 ## 下一阶段（2026-08-27 Demo 验收、资源与音频）
 
-- [x] 审计当前 `Assets/`：核心卡牌、六队赛车、八张 4K 赛道图、档位旋钮和中文
-  TMP 已接入；主菜单背景/Logo、六队徽章、12 位车手头像、科技树美术和全部音频缺失。
+- [x] 2026-08-27 当时审计：核心卡牌、六队赛车、八张 4K 赛道图、档位旋钮和中文
+  TMP 已接入；当时缺失的主菜单背景/Logo、六队徽章和核心音频现已接入，仍缺项以顶部任务和资源清单为准。
 - [x] 重写 `design/planning/asset-manifest.md`，把旧 42 格节点图、已被运行时替代的
   FX/Prefab 与真正缺失资源分开；增加美术规格、完整音乐/音效事件表和制作顺序。
 - [x] 新增 `design/gdd/foodula-1-audio-style.md`，定义音乐方向、事件声纹、Mixer
   分组、限频、慢放边界和 Demo 音频验收标准。
 - [x] 同步 `systems-index.md`、`roadmap.md`、`demo-framework.md` 与视觉 GDD：
-  当前阶段改为 Demo 候选，最新全量 EditMode 证据为 `471/471`，粒子火花等冲突需求已移除。
+  当时阶段改为 Demo 候选、全量 EditMode 证据为 `471/471`；当前基线见本文顶部，粒子火花等冲突需求已移除。
 - [ ] P0：用户进行完整比赛与高风险机制验收；读取日志并仅修复明确缺陷。
 - [ ] P0：验收修复完成后重跑定向 + 全量 EditMode，记录 Console/日志/分辨率证据并冻结 Demo 基线。
-- [ ] P1：按资源清单制作并接入主菜单/Logo、车队/车手、科技树和赛道缩略图。
-- [ ] P1：建立 AudioMixer/音频服务，接入菜单/比赛 BGM 与核心玩法音效。
+- [x] P1：主菜单/Logo 与六队徽章已通过统一资源边界接入；车手头像、科技树美术和赛道缩略图仍按顶部当前任务继续。
+- [x] P1：音频服务、菜单/比赛 BGM 与核心玩法音效已接入；AudioMixer、独立 UI/静音、外围音效与听验仍按顶部当前任务继续。
 
 ## 本轮修复（2026-08-27 尾流慢放作用域）
 
@@ -534,8 +542,7 @@
 - [x] Historical baseline: validated changed scripts and Unity console with no errors
   (16 EditMode tests at that stage; current full suite is 403/403).
 - [x] Review the final diff for the approved refactor changes.
-- [ ] Commit only with explicit user instruction; scheduled-task authorization
-  does not include Git commits.
+- [x] 提交边界已明确：仅在用户明确要求时提交；自动化授权本身不包含 Git 提交。
 
 The four Scheme A source files and their `.meta` files were committed in
 `58d1bba`. `RaceRules` and `AIPlanner` are now integrated into the runtime.
@@ -553,23 +560,15 @@ runtime track rather than the legacy config index. Silverstone loads in the
 Race scene with 60 nodes and 3 laps. Unity currently passes 20 EditMode tests
 with 0 failures, warnings, or errors.
 
-## P0 - Protect and Reconcile the Current Worktree
+## Historical P0 - Protect and Reconcile the 2026-08 Worktree
 
-- [ ] Inspect the existing modifications to `MainMenu.unity` and
-  `Race.unity`; preserve legitimate user scene edits.
-- [ ] Verify the untracked `Assets/Data/Tracks/NewTrackData.asset` before
-  deciding whether it belongs to the track-system work.
-- [ ] Keep the Unity MCP package changes in `Packages/manifest.json` and
-  `Packages/packages-lock.json` logically separate from gameplay refactoring.
-- [ ] Avoid bundling unrelated scene, track-data, MCP installation, and
-  refactor changes into one commit.
+- [x] 该时期的场景、临时 TrackData、Unity MCP 与玩法改动边界已经逐批审查并提交；
+  此段仅保留为历史工作区风险记录，不再作为当前待办。
 
 ## P1 - Track System Decision and Completion
 
-- [ ] Choose a reliable authoring workflow: GameObject child nodes, a simpler
-  Editor script, or another explicitly approved approach.
-- [ ] Decide whether AI-generated `track_layout_*.png` images are authoring
-  references, runtime backgrounds, or both.
+- [ ] 为已撤回的 Track Node Editor 选择可靠替代流程；这仍是开放决定，不阻塞 Demo。
+- [x] `track_layout_*.png` 已确定为运行时背景并接入；赛道 JSON 仍是玩法数据权威。
 - [x] Configure `GameConfigSO.trackId` and verify JSON track loading in the
   Race scene (Silverstone, 60 nodes, 3 laps).
 - [x] Validate arbitrary node counts throughout movement and UI; remove
@@ -655,7 +654,8 @@ with 0 failures, warnings, or errors.
   and explicit end-of-card-phase behavior.
 - [x] Implement the driver-selection flow as a catalog, session state, and
   runtime-built main-menu panel; connect the selected driver to race setup.
-- [ ] Add sound effects.
+- [x] 已接入核心 UI、卡牌、档位、热量、移动、尾流、弯道、失控、过圈与完赛音效；
+  维修区、科技树、天气等外围音效及完整听验仍见顶部音频任务。
 - [ ] Complete Play Mode visual acceptance for card-play, linear vehicle movement, and spin-out
   animations; card transitions, per-node interpolation, and the 1-second/360-degree `RaceEventFX` cue
   are implemented, while the final combined visual walkthrough remains open.
@@ -668,8 +668,7 @@ with 0 failures, warnings, or errors.
 - [x] Treat Le Mans as a France expansion track with no home team; it is not one of the six national-team home circuits.
 - [ ] Confirm whether Kanto Oden carry-over slots are mandatory (the current
   runtime behavior) or optional; Hotpot's additional slot is already optional.
-- [ ] Decide the commit boundaries for current scene, data, MCP, and
-  refactor changes.
+- [x] 历史场景、数据、MCP 与重构改动已按用户明确指令分批提交；后续继续逐次审查提交边界。
 
 ## Completed Context
 

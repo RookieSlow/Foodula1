@@ -55,7 +55,7 @@ None — this is the foundational architecture decision.
 
 ## Engine Compatibility
 
-- **Unity 2022.3.62f2**: Confirmed working
+- **Unity 2022.3.62f3c1**: Current pinned project version
 - **Built-in Render Pipeline**: Confirmed (2D project, Sprites/Default shader)
 - **Mono scripting backend**: Confirmed
 

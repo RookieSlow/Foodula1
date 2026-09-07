@@ -5,7 +5,7 @@ Each agent owns a specific domain, enforcing separation of concerns and quality.
 
 ## Technology Stack
 
-- **Engine**: Unity 2022.3.62f2
+- **Engine**: Unity 2022.3.62f3c1
 - **Language**: C# 9.0
 - **Version Control**: Git with trunk-based development
 - **Build System**: Unity Build Pipeline

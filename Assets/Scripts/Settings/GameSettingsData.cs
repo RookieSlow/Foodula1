@@ -2,8 +2,8 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// Serializable player preferences. Audio fields are intentionally data-only
-/// until the project gains an AudioMixer/audio service.
+/// Serializable player preferences. Audio fields drive the current AudioService;
+/// AudioMixer routing and an independent UI volume remain future extensions.
 /// </summary>
 [Serializable]
 public sealed class GameSettingsData

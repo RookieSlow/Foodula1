@@ -37,9 +37,9 @@ Assets/
 └── TmpFont/                   # TMP 字体资产
 ```
 
-`Assets/Audio/Music/` 与 `Assets/Audio/SFX/` 当前只有目录和 `.meta`，
-没有实际音频文件；应在音频工作包开始时按
-`design/gdd/foodula-1-audio-style.md` 接入。
+用户生成的菜单/比赛音乐与 GDC 2026 派生核心音效已接入
+`Assets/Resources/Audio/`。`AudioService` 负责跨场景淡变、事件路由、
+Music/SFX/UI AudioSource 和限频；AudioMixer 与外围事件仍待补齐。
 
 ---
 
@@ -56,16 +56,17 @@ Assets/
 | 科技树 | `TechTree/`、`UI/TechTreeUI.cs` | RP、解锁/激活、持久化和比赛钩子 |
 | 车手 | `Drivers/DriverData.cs`、`UI/DriverSelectionUI.cs` | 12 位车手目录、XP/等级与选择 |
 | 表现 | `Gameplay/RaceEventFX.cs`、`CarMovementAnimator.cs` | 卡牌/车辆/尾流/失控等视觉反馈，不改变规则 |
+| 音频 | `Audio/AudioService.cs`、`Audio/AudioRuntimeRules.cs`、`Resources/Audio/` | 菜单/比赛音乐、核心事件路由、三路 AudioSource、设置应用与限频 |
 | 日志 | `Core/RaceTestLogWriter.cs`、`RaceLogAnalyzer.cs` | 人工对局证据采集与结构分析 |
 | 教程运行时 | `Tutorial/TutorialScenarioDefinition.cs`、`TutorialCheckpointRules.cs`、`TutorialStateMachine.cs`、`TutorialRuntimeDirector.cs`、`TutorialPracticeRules.cs`、`TutorialGuideUI.cs`、`TutorialFocusHighlightUI.cs`、`TutorialOverlayAuthoring.cs`、`Editor/TutorialOverlayAuthoringEditor.cs`、`Resources/Prefabs/UI/TutorialOverlay.prefab` | 勒芒/UK 隔离 Race、精确牌序、16 步可视化编辑/专用 Inspector 非 Play Mode 预览/只读校验与门控、人工修订文案及可选提示段落、13 类机制聚光、8 个安全边界检查点、天气/尾流 cue、虚拟维修规则视图及一圈练习日志 |
-| 玩家设置 | `Settings/GameSettingsData.cs`、`GameSettingsStore.cs`、`GameSettingsRuntime.cs`、`UI/GameSettingsUI.cs` | 版本化持久化显示/分辨率/动画/教程偏好；音量为诚实预留数据，待 AudioMixer 接入 |
+| 玩家设置 | `Settings/GameSettingsData.cs`、`GameSettingsStore.cs`、`GameSettingsRuntime.cs`、`UI/GameSettingsUI.cs` | 版本化持久化显示/分辨率/动画/教程偏好；主/音乐/SFX 音量通过 AudioService 即时应用 |
 | 游戏百科 | `Encyclopedia/EncyclopediaCatalog.cs`、`Resources/Configs/encyclopedia_zh.json`、`UI/GameEncyclopediaUI.cs` | 版本化规则条目、必需主题/重复 ID 校验、运行时目录追踪及设置内滚动阅读 |
 
 ### 尚未实现但明确需要的模块
 
 | 模块 | 优先级 | 边界 |
 |---|---|---|
-| 音频服务 + AudioMixer | P1 | 音乐/音效事件路由、混音、限频、设置持久化 |
+| AudioMixer + 音频验收 | P1 | 核心服务/资源已接入；补独立 UI/静音、外围事件、混音路由和完整听验 |
 | 教程最终验收 | P0T | 引导、渐进式步骤说明、逐机制聚光/检查点、虚拟维修区、一圈练习、设置和百科已实现；完整 Play Mode、聚光边界/面板遮挡与 Quick Race 人工防回归待收口 |
 | 车手签名技能执行层 | P2 | 当前仅有目录、成长与选择；属于 Demo 后功能扩展 |
 | 难度/手柄/比赛中途存档 | P3 | 不属于当前 Demo 验收阻塞项 |
@@ -101,10 +102,10 @@ Assets/
 - 新手教程/重播入口与设置入口；设置覆盖层支持显示、分辨率、动画/减少动态、教程重置，
   并可打开 17 条数据驱动游戏百科的滚动阅读器。
 - 赛道、车队、车手选择与科技树配置的运行时面板。
-- 纯色深色背景和 TMP 文字。
+- 正式 Foodula1 背景/Logo、六队徽章，以及资源缺失时的 TMP/队伍代码回退。
 
-正式主菜单背景、Logo、车手头像、车队徽章和科技树背景尚缺；清单见
-`design/planning/asset-manifest.md`。
+12 位车手头像和科技树正式背景/节点状态仍缺；主菜单背景、Logo 和六队徽章已接入。
+完整清单见 `design/planning/asset-manifest.md`。
 
 ---
 
@@ -122,7 +123,7 @@ Assets/
 
 - 负责快速比赛入口与赛前配置。
 - 不依赖独立 `Garage.unity` 才能完成 Demo 流程。
-- 正式背景图和品牌资源尚未接入。
+- 正式背景图、Foodula1 Logo 与六队徽章已通过统一 Resources 加载边界接入。
 
 ### 4.3 当前数据权威
 
@@ -150,12 +151,11 @@ Assets/
 
 ### 仍缺
 
-- 主菜单背景与 Foodula1 Logo。
-- 六队徽章/国旗、12 位车手头像。
+- 12 位车手头像。
 - 科技树背景、节点三态与层级徽章。
 - 赛道选择缩略图（可从现有 4K 图派生）。
 - 天气/结果/特技牌等 P1 美术。
-- 全部音乐、音效、AudioMixer 和音量设置。
+- AudioMixer、独立 UI/静音、外围系统音效与完整比赛听验；菜单/比赛音乐和核心玩法音效已接入。
 
 完整文件名、规格和优先级只在
 `design/planning/asset-manifest.md` 维护，避免与本框架重复漂移。
@@ -171,20 +171,20 @@ Assets/
 - 1920×1080 / 2560×1440 视觉检查。
 - 定向 + 全量 EditMode 回归，记录 Console 和日志证据。
 
-### Phase B — 视觉身份包
+### Phase B — 视觉身份包（部分完成）
 
-- 主菜单、Logo、车队、车手、科技树和赛道缩略图。
+- 主菜单、Logo 和车队已接入；继续制作车手、科技树和赛道缩略图。
 - 接入后替换运行时占位图形，但不改变规则层。
 
-### Phase C — 核心音频包
+### Phase C — 核心音频包（基础接入完成）
 
-- AudioMixer、音频服务与音量设置。
-- 菜单/比赛音乐和核心玩法音效。
-- 通过实际比赛阶段与日志验证播放时机。
+- 保留现有 AudioService、菜单/比赛音乐、核心玩法音效与主/音乐/SFX 设置。
+- 补 AudioMixer、独立 UI/静音以及维修区、科技树和天气等外围事件。
+- 通过实际比赛阶段与日志完成循环、密度、遮蔽和播放时机听验。
 
 ### Phase D — Demo 后扩展
 
-- 车手签名技能、多 AI 难度、独立车库/生涯、平台适配和更多内容。
+- 车手签名技能、多 AI 难度、独立车库扩展、平台适配和更多内容；现有八站生涯模式已接入，仍待端到端验收。
 
 ---
 
