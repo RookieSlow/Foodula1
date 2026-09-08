@@ -58,14 +58,14 @@ public sealed class GameEncyclopediaUI : MonoBehaviour
         overlayRect.anchorMax = Vector2.one;
         overlayRect.offsetMin = Vector2.zero;
         overlayRect.offsetMax = Vector2.zero;
-        overlay.GetComponent<Image>().color = new Color(0.01f, 0.02f, 0.035f, 0.985f);
+        ModernUIStyle.ApplyOverlay(overlay.GetComponent<Image>());
 
         GameObject panel = new GameObject("EncyclopediaPanel", typeof(RectTransform), typeof(Image));
         panel.transform.SetParent(overlay.transform, false);
         RectTransform panelRect = panel.GetComponent<RectTransform>();
         panelRect.anchorMin = panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.sizeDelta = new Vector2(1120f, 840f);
-        panel.GetComponent<Image>().color = new Color(0.04f, 0.07f, 0.115f, 1f);
+        ModernUIStyle.ApplyPanel(panel, true);
 
         TMP_Text heading = factory.CreateText(panel.transform, "EncyclopediaHeading", "游戏百科", 34,
             new Vector2(0f, 365f), new Vector2(900f, 48f));
@@ -117,7 +117,7 @@ public sealed class GameEncyclopediaUI : MonoBehaviour
         scrollRectTransform.anchorMin = scrollRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         scrollRectTransform.anchoredPosition = new Vector2(0f, -36f);
         scrollRectTransform.sizeDelta = new Vector2(960f, 440f);
-        scrollObject.GetComponent<Image>().color = new Color(0.02f, 0.038f, 0.065f, 0.95f);
+        ModernUIStyle.ApplyPanel(scrollObject);
 
         GameObject viewport = new GameObject("Viewport", typeof(RectTransform), typeof(RectMask2D));
         viewport.transform.SetParent(scrollObject.transform, false);

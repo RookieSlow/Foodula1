@@ -67,14 +67,14 @@ public sealed class GameSettingsUI : MonoBehaviour
         overlayRect.anchorMax = Vector2.one;
         overlayRect.offsetMin = Vector2.zero;
         overlayRect.offsetMax = Vector2.zero;
-        overlay.GetComponent<Image>().color = new Color(0.015f, 0.025f, 0.045f, 0.96f);
+        ModernUIStyle.ApplyOverlay(overlay.GetComponent<Image>());
 
         GameObject panel = new GameObject("SettingsPanel", typeof(RectTransform), typeof(Image));
         panel.transform.SetParent(overlay.transform, false);
         RectTransform panelRect = panel.GetComponent<RectTransform>();
         panelRect.anchorMin = panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.sizeDelta = new Vector2(920f, 820f);
-        panel.GetComponent<Image>().color = new Color(0.045f, 0.075f, 0.12f, 0.98f);
+        ModernUIStyle.ApplyPanel(panel, true);
 
         TMP_Text title = factory.CreateText(panel.transform, "SettingsTitle", "设置", 36,
             new Vector2(0f, 360f), new Vector2(780f, 54f));

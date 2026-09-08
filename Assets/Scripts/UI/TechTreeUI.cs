@@ -11,8 +11,6 @@ using UnityEngine.UI;
 /// </summary>
 public sealed class TechTreeUI : MonoBehaviour
 {
-    private static readonly Color OverlayColor = new Color(0.018f, 0.025f, 0.045f, 0.98f);
-    private static readonly Color PanelColor = new Color(0.065f, 0.085f, 0.12f, 1f);
     private static readonly Color ActiveColor = new Color(0.12f, 0.43f, 0.32f, 1f);
     private static readonly Color UnlockedColor = new Color(0.16f, 0.25f, 0.38f, 1f);
     private static readonly Color AvailableColor = new Color(0.42f, 0.30f, 0.12f, 1f);
@@ -60,14 +58,16 @@ public sealed class TechTreeUI : MonoBehaviour
     {
         overlay = CreateObject("TechTreeOverlay", transform);
         Stretch(overlay.GetComponent<RectTransform>());
-        overlay.AddComponent<Image>().color = OverlayColor;
+        Image overlayImage = overlay.AddComponent<Image>();
+        ModernUIStyle.ApplyOverlay(overlayImage);
 
         GameObject panel = CreateObject("TechTreePanel", overlay.transform);
         RectTransform panelRect = panel.GetComponent<RectTransform>();
         panelRect.anchorMin = panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.sizeDelta = new Vector2(1540f, 950f);
-        panel.AddComponent<Image>().color = PanelColor;
+        panel.AddComponent<Image>();
+        ModernUIStyle.ApplyPanel(panel, true);
 
         CreateText(panel.transform, "Title", "车队科技树", 46f,
             new Vector2(0f, 425f), new Vector2(700f, 58f), FontStyles.Bold);
@@ -265,9 +265,9 @@ public sealed class TechTreeUI : MonoBehaviour
     {
         GameObject buttonObject = CreateObject(objectName, parent);
         Image image = buttonObject.AddComponent<Image>();
-        image.color = color;
         Button button = buttonObject.AddComponent<Button>();
         button.targetGraphic = image;
+        ModernUIStyle.ApplyButton(button, color);
         ButtonClickAnimation.Attach(button);
         TMP_Text text = CreateText(buttonObject.transform, "Label", label, fontSize,
             Vector2.zero, new Vector2(420f, 100f), FontStyles.Bold);

@@ -58,6 +58,7 @@ public class RaceUILayoutController : MonoBehaviour
         if (TryBindAuthoredLayout(root))
         {
             BindAuthoredReferences(hud, cardHand);
+            ApplyAuthoredButtonStyles(hud, cardHand);
             UsesAuthoredLayout = true;
             applied = true;
             return;
@@ -157,6 +158,25 @@ public class RaceUILayoutController : MonoBehaviour
             cardHand.enginePileText = cardHand.deckInfoText;
         if (cardHand.discardPileText == null)
             cardHand.discardPileText = FindComponent<TMP_Text>(cardHand.transform.root, "DiscardPileInfo");
+    }
+
+    private static void ApplyAuthoredButtonStyles(HUDUI hud, CardHandUI cardHand)
+    {
+        if (hud != null)
+        {
+            ModernUIStyle.ApplyButton(hud.gear1Button, ModernUIStyle.AccentBlue);
+            ModernUIStyle.ApplyButton(hud.gear2Button, ModernUIStyle.AccentCyan);
+            ModernUIStyle.ApplyButton(hud.gear3Button, ModernUIStyle.AccentGold);
+            ModernUIStyle.ApplyButton(hud.gear4Button, ModernUIStyle.AccentPurple);
+            ModernUIStyle.ApplyButton(hud.confirmGearButton, ModernUIStyle.AccentBlue, true);
+            ModernUIStyle.ApplyButton(hud.driverSkillButton, ModernUIStyle.AccentPurple);
+            ModernUIStyle.ApplyButton(hud.resetButton, ModernUIStyle.AccentGold);
+            ModernUIStyle.ApplyButton(hud.returnToMenuButton, ModernUIStyle.AccentRed);
+            ModernUIStyle.ApplyButton(hud.backToMenuButton, ModernUIStyle.AccentRed);
+        }
+
+        if (cardHand != null)
+            ModernUIStyle.ApplyButton(cardHand.playCardsButton, ModernUIStyle.AccentGreen, true);
     }
 
     private void BuildOperationPanel(HUDUI hud, CardHandUI cardHand, TMP_FontAsset font)

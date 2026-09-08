@@ -25,6 +25,7 @@
 | 13 | Audio Style | `foodula-1-audio-style.md` | In Review | Menu/race music, core SFX, runtime routing, crossfades, limits and settings are wired; AudioMixer, independent UI/mute, peripheral events and listening acceptance remain |
 | 14 | Tutorial, Settings & Encyclopedia | `foodula-1-tutorial-settings-encyclopedia.md` | In Progress | Isolated tutorial/practice, exact deck, author-refined guidance with optional detail sections, per-mechanic spotlight, safe checkpoints, settings persistence and 17-entry data-driven encyclopedia are wired; final guided Play Mode acceptance remains |
 | 15 | Career Mode | `foodula-1-career-mode.md` | In Review | The full eight-race rules, isolated persistence, menu/Race flow, summer-break editor, final champion feedback, restart confirmation and structured settlement logs are implemented; Play Mode acceptance remains |
+| 16 | Free Race Custom Field | foodula-1-free-race.md | In Review | Pre-race 2–6 team/driver selection plus the 6-team/12-driver Thunderstorm field, player-first ordering, dynamic AI creation and FREE_RACE_SETUP logging are wired; Play Mode and balance acceptance remain |
 
 ## Project Planning
 
@@ -36,13 +37,14 @@
 | `design/planning/roadmap.md` | Demo acceptance, resource/audio completion and post-Demo plan |
 | `docs/reference/熱力狂飆_規則書_完整文本.md` | External HEAT rulebook reference |
 
-## 2026-09-08 Implementation Snapshot
+## 2026-09-09 Implementation Snapshot
 
-- Project stage is `Production`; the latest successful full EditMode run passed `647/647`
-  on 2026-09-08, with 0 failures and 0 skips. Active-skill coverage previously passed `28/28`,
+- Project stage is `Production`; the latest successful full EditMode run passed `663/663`
+  on 2026-09-09, with 0 failures and 0 skips. Free-race roster/menu focused coverage passed `11/11`;
+  active-skill coverage previously passed `28/28`,
   and the passive/related regression passed `21/21`.
 - The latest manual tailwind log confirms scoped slow motion during the independent tailwind presentation/bonus movement and restoration to `time_scale=1.00` afterward.
-- Current runtime scope is 8 selectable official JSON tracks plus `fallback_42`, six teams, twelve selectable drivers and configurable AI opponents.
+- Current runtime scope is 8 selectable official JSON tracks plus `fallback_42`, six teams, twelve selectable drivers, configurable AI opponents, a free-race field editor for 2–6 teams/drivers, and a full 6-team/12-driver Thunderstorm field.
 - Missing presentation assets are tracked in `asset-manifest.md`; formal main-menu/Logo and six-team
   brand assets are integrated, while driver portraits and tech-tree artwork remain. Runtime-generated
   effects and retired 42-node artwork are not missing-file requirements.
@@ -78,6 +80,10 @@
 
 ## Design Dependencies
 
+- Free Race Custom Field is now a first-class demo flow: the roster editor validates 2–6
+  unique teams and drivers before the existing track-selection entry, and exposes a
+  six-team/twelve-driver Thunderstorm experiment for full-field strength checks.
+
 ```
 Demo Candidate
   ├── Core HEAT loop and card/heat ownership
@@ -86,6 +92,7 @@ Demo Candidate
   ├── Eight official JSON tracks + one fallback
   ├── Configurable AI opponents + deterministic planner
   ├── Weather, pit lane, slipstream and complete race result flow
+  ├── Free Race 2–6 team/driver custom field + Thunderstorm 6-team/12-driver field
   ├── Race HUD, card/pile/movement/event presentation
   └── Final acceptance + remaining portraits/tech-tree art + AudioMixer/peripheral audio
 ```

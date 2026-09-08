@@ -14,6 +14,7 @@ public class MainMenuUI : MonoBehaviour
 
     private TrackSelectionUI trackSelectionUI;
     private DriverSelectionUI driverSelectionUI;
+    private FreeRaceRosterUI freeRaceRosterUI;
     private TechTreeUI techTreeUI;
     private GameSettingsUI gameSettingsUI;
     private CareerModeUI careerModeUI;
@@ -22,6 +23,7 @@ public class MainMenuUI : MonoBehaviour
     private Button techTreeButton;
     private Button tutorialButton;
     private Button settingsButton;
+    private bool deferredMenuStylesApplied;
 
     void Awake()
     {
@@ -101,6 +103,11 @@ public class MainMenuUI : MonoBehaviour
         }
         driverSelectionUI.Initialize(OnDriverSelected);
 
+        freeRaceRosterUI = GetComponent<FreeRaceRosterUI>();
+        if (freeRaceRosterUI == null)
+            freeRaceRosterUI = gameObject.AddComponent<FreeRaceRosterUI>();
+        freeRaceRosterUI.Initialize(OnFreeRaceRosterConfirmed);
+
         techTreeUI = GetComponent<TechTreeUI>();
         if (techTreeUI == null)
             techTreeUI = gameObject.AddComponent<TechTreeUI>();
@@ -151,7 +158,49 @@ public class MainMenuUI : MonoBehaviour
         EnsureCareerButton();
         EnsureTutorialButton();
         EnsureSettingsButton();
+        EnsureMenuDock();
+        ApplyMenuButtonStyles();
         ApplyMenuLayout();
+    }
+
+    // Authored buttons can be touched by other UI components during their
+    // Start methods. Re-apply the shared style once after all scene bindings
+    // have completed so legacy TMP material overrides cannot win the frame.
+    void LateUpdate()
+    {
+        if (deferredMenuStylesApplied) return;
+        ApplyMenuButtonStyles();
+        deferredMenuStylesApplied = true;
+    }
+
+    private void EnsureMenuDock()
+    {
+        Transform existing = transform.Find("MenuDock");
+        if (existing != null) return;
+
+        GameObject dock = new GameObject("MenuDock", typeof(RectTransform), typeof(Image));
+        dock.transform.SetParent(transform, false);
+        RectTransform rect = dock.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = new Vector2(0f, -70f);
+        rect.sizeDelta = new Vector2(780f, 520f);
+        ModernUIStyle.ApplyPanel(dock, true);
+        Image image = dock.GetComponent<Image>();
+        image.color = new Color(0.018f, 0.032f, 0.058f, 0.84f);
+        image.raycastTarget = false;
+        dock.transform.SetSiblingIndex(1);
+    }
+
+    private void ApplyMenuButtonStyles()
+    {
+        ModernUIStyle.ApplyMenuButton(startRaceButton, ModernUIStyle.AccentBlue, true);
+        ModernUIStyle.ApplyMenuButton(careerButton, ModernUIStyle.AccentPurple);
+        ModernUIStyle.ApplyMenuButton(techTreeButton, ModernUIStyle.AccentGold);
+        ModernUIStyle.ApplyMenuButton(driverSelectionButton, ModernUIStyle.AccentCyan);
+        ModernUIStyle.ApplyMenuButton(tutorialButton, ModernUIStyle.AccentGreen);
+        ModernUIStyle.ApplyMenuButton(settingsButton, ModernUIStyle.AccentBlue);
+        ModernUIStyle.ApplyMenuButton(quitButton, ModernUIStyle.AccentRed);
     }
 
     private void EnsureCareerButton()
@@ -197,6 +246,7 @@ public class MainMenuUI : MonoBehaviour
         label.color = Color.white;
         TMP_Text sourceFont = GetComponentInChildren<TMP_Text>(true);
         if (sourceFont != null) label.font = sourceFont.font;
+        ModernUIStyle.ApplyMenuButton(buttonObject.GetComponent<Button>(), color);
         return buttonObject;
     }
 
@@ -408,6 +458,15 @@ public class MainMenuUI : MonoBehaviour
         HideMenuSurfaces();
         TutorialLaunchState.Clear();
         CareerRaceLaunchState.Clear();
+        FreeRaceRosterState.InitializeDefault(
+            DriverSelectionState.ResolveDriver(TeamId.CN),
+            new[] { TeamId.UK, TeamId.DE, TeamId.IT });
+        freeRaceRosterUI.Show();
+    }
+
+    private void OnFreeRaceRosterConfirmed()
+    {
+        HideMenuSurfaces();
         trackSelectionUI.Show();
     }
 
@@ -467,6 +526,7 @@ public class MainMenuUI : MonoBehaviour
     {
         if (trackSelectionUI != null) trackSelectionUI.Hide();
         if (driverSelectionUI != null) driverSelectionUI.Hide();
+        if (freeRaceRosterUI != null) freeRaceRosterUI.Hide();
         if (techTreeUI != null) techTreeUI.Hide();
         if (gameSettingsUI != null) gameSettingsUI.Hide();
         if (careerModeUI != null) careerModeUI.Hide();

@@ -9,8 +9,6 @@ using UnityEngine.UI;
 /// </summary>
 public sealed class TrackSelectionUI : MonoBehaviour
 {
-    private static readonly Color OverlayColor = new Color(0.025f, 0.035f, 0.055f, 0.97f);
-    private static readonly Color PanelColor = new Color(0.065f, 0.085f, 0.12f, 1f);
     private static readonly Color[] TrackColors =
     {
         new Color(0.55f, 0.25f, 0.42f),
@@ -72,14 +70,16 @@ public sealed class TrackSelectionUI : MonoBehaviour
     {
         overlay = CreateUIObject("TrackSelectionOverlay", transform);
         StretchToParent(overlay.GetComponent<RectTransform>());
-        overlay.AddComponent<Image>().color = OverlayColor;
+        Image overlayImage = overlay.AddComponent<Image>();
+        ModernUIStyle.ApplyOverlay(overlayImage);
 
         GameObject panel = CreateUIObject("TrackSelectionPanel", overlay.transform);
         RectTransform panelRect = panel.GetComponent<RectTransform>();
         panelRect.anchorMin = panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.sizeDelta = new Vector2(1360f, 820f);
-        panel.AddComponent<Image>().color = PanelColor;
+        panel.AddComponent<Image>();
+        ModernUIStyle.ApplyPanel(panel, true);
 
         CreateText(panel.transform, "Title", MainMenuLabels.QuickRaceTrackTitle, 48f,
             new Vector2(0f, 335f), new Vector2(900f, 70f), FontStyles.Bold);
@@ -255,9 +255,9 @@ public sealed class TrackSelectionUI : MonoBehaviour
         rect.sizeDelta = size;
 
         Image image = buttonObject.AddComponent<Image>();
-        image.color = color;
         Button button = buttonObject.AddComponent<Button>();
         button.targetGraphic = image;
+        ModernUIStyle.ApplyButton(button, color);
         ButtonClickAnimation.Attach(button);
 
         TMP_Text buttonText = CreateText(buttonObject.transform, "Label", label, fontSize,

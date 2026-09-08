@@ -79,7 +79,9 @@ The verified scene flow is:
   logo and six team emblems are integrated; driver portraits and formal tech-tree
   artwork remain in the next visual asset package.
 - The project is in Production stage. The latest full Unity EditMode run passed
-  `647/647` on 2026-09-08 after the driver passive-skill redesign integration.
+  `663/663` on 2026-09-09 after the driver passive-skill redesign integration and
+  free-race roster validation; the Thunderstorm 12-driver mode is now wired and
+  awaits runtime visual acceptance.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
   nodes; `RaceSession` centralizes numeric tech modifiers while the manager
   invokes explicit `TechTreeRules` event hooks at documented race phases.
@@ -114,7 +116,7 @@ The verified scene flow is:
   and preserves Skip/Exit. Its spotlight follows every live player input gate; clicking clears the callout mesh
   completely while leaving the operation border visible. Main-menu overlays are mutually exclusive so the career
   entry and summer-break surface cannot leak over driver selection.
-- The latest full project EditMode run passes `647/647`; the tutorial and menu overlay slice passes
+- The latest full project EditMode run passes `663/663`; the tutorial and menu overlay slice passes
   `64/64` and retains its
   focused regression coverage.
   Play Mode verified the exact seven-card opening and zero-benefit session; a separate

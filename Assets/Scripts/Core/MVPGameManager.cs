@@ -56,6 +56,7 @@ public class MVPGameManager : MonoBehaviour
     private RaceSession session;
     private TutorialScenarioDefinition tutorialScenario;
     private CareerRaceLaunchRequest careerRaceLaunch;
+    private FreeRaceRosterEntry[] freeRaceRoster;
     private bool careerResultRecorded;
     private string careerInitializationFailure;
     private TutorialRuntimeDirector tutorialDirector;
@@ -612,8 +613,16 @@ public class MVPGameManager : MonoBehaviour
             CareerRaceLaunchState.Clear();
         careerResultRecorded = false;
         careerInitializationFailure = string.Empty;
+        freeRaceRoster = null;
         if (careerRaceLaunch != null && !ValidateCareerRaceLaunch(out careerInitializationFailure))
             return;
+        if (tutorialScenario == null && careerRaceLaunch == null &&
+            FreeRaceRosterState.IsConfigured &&
+            !FreeRaceRosterState.TryBuildRoster(out freeRaceRoster, out string rosterError))
+        {
+            Debug.LogWarning($"[MVPGameManager] 自由赛事阵容无效，回退到配置默认阵容：{rosterError}");
+            freeRaceRoster = null;
+        }
         tutorialDirector = tutorialScenario != null
             ? new TutorialRuntimeDirector(tutorialScenario, initializeTutorialInPractice)
             : null;
@@ -642,8 +651,14 @@ public class MVPGameManager : MonoBehaviour
             ? DriverCatalog.GetDefaultForTeam(tutorialScenario.playerTeam)
             : careerRaceLaunch != null
                 ? DriverCatalog.GetDefaultForTeam(careerRaceLaunch.PlayerTeam)
+                : freeRaceRoster != null && DriverCatalog.TryGet(
+                    freeRaceRoster[0].DriverId, out DriverProfile rosterHumanDriver)
+                    ? rosterHumanDriver
                 : DriverSelectionState.ResolveDriver(config.playerDriverId, config.playerTeam);
-        var human = new PlayerState("你", false, startFinishNodeIndex, config.minGear);
+        var humanName = freeRaceRoster != null
+            ? $"你 · {humanDriver.ShortName}"
+            : "你";
+        var human = new PlayerState(humanName, false, startFinishNodeIndex, config.minGear);
         human.driverId = humanDriver.Id;
         human.driverXp = tutorialScenario != null ? 0 : DriverProgressStore.Load(humanDriver.Id);
         SetupPlayerForRace(
@@ -661,16 +676,26 @@ public class MVPGameManager : MonoBehaviour
             ? tutorialScenario.opponentCount
             : careerRaceLaunch != null
                 ? careerRaceLaunch.Competitors.Count - 1
-                : Mathf.Clamp(config.aiOpponentCount, 0, 3);
+                : freeRaceRoster != null
+                    ? freeRaceRoster.Length - 1
+                    : Mathf.Clamp(config.aiOpponentCount, 0, 3);
         for (int i = 0; i < aiCount; i++)
         {
             TeamId team = tutorialScenario != null
                 ? tutorialScenario.opponentTeam
                 : careerRaceLaunch != null
                     ? GetCareerOpponentTeam(i)
+                    : freeRaceRoster != null
+                        ? freeRaceRoster[i + 1].TeamId
                     : (i < config.aiTeams.Length ? config.aiTeams[i] : TeamId.JP);
-            DriverProfile aiDriver = DriverCatalog.GetDefaultForTeam(team);
-            var aiState = new PlayerState($"AI{i + 1}", true, startFinishNodeIndex, config.minGear);
+            DriverProfile aiDriver = freeRaceRoster != null &&
+                DriverCatalog.TryGet(freeRaceRoster[i + 1].DriverId, out DriverProfile rosterAiDriver)
+                ? rosterAiDriver
+                : DriverCatalog.GetDefaultForTeam(team);
+            string aiName = freeRaceRoster != null
+                ? $"{TeamCarPresentationRules.GetBadgeCode(team)} · {aiDriver.ShortName}"
+                : $"AI{i + 1}";
+            var aiState = new PlayerState(aiName, true, startFinishNodeIndex, config.minGear);
             aiState.driverId = aiDriver.Id;
             aiState.driverXp = 0;
             SetupPlayerForRace(aiState, team);
@@ -1194,6 +1219,22 @@ public class MVPGameManager : MonoBehaviour
                 $"race={careerRaceLaunch.RaceIndex + 1}/{CareerModeRules.RaceCount} " +
                 $"track={careerRaceLaunch.TrackId} team={careerRaceLaunch.PlayerTeam} " +
                 $"competitors={careerRaceLaunch.Competitors.Count} tech_snapshot=true");
+        }
+        else if (freeRaceRoster != null)
+        {
+            string rosterText = string.Empty;
+            for (int i = 0; i < freeRaceRoster.Length; i++)
+            {
+                if (i > 0) rosterText += ",";
+                FreeRaceRosterEntry entry = freeRaceRoster[i];
+                DriverCatalog.TryGet(entry.DriverId, out DriverProfile driver);
+                rosterText += $"{entry.TeamId}:{driver?.ShortName ?? entry.DriverId}";
+            }
+
+            raceLogWriter.Append(
+                $"[FREE_RACE_SETUP] field={freeRaceRoster.Length} " +
+                $"player={freeRaceRoster[0].TeamId}:{freeRaceRoster[0].DriverId} " +
+                $"roster=[{rosterText}]");
         }
         if (hudUI != null)
             hudUI.SetLogSink(raceLogWriter.Append);
@@ -3500,10 +3541,47 @@ public class MVPGameManager : MonoBehaviour
         int idx = GetCarIndex(p);
         if (idx < 0 || idx >= carInstances.Count || carInstances[idx] == null) return;
         var car = carInstances[idx];
-        car.transform.position = trackManager.GetNodePosition(position, lane);
+        int displayPosition = position;
+        int displayLane = lane;
+        if (TryGetThunderstormGridSlot(p, out int gridPosition, out int gridLane))
+        {
+            displayPosition = gridPosition;
+            displayLane = gridLane;
+        }
+
+        car.transform.position = trackManager.GetNodePosition(displayPosition, displayLane);
         // 传送后朝向下一节点（失控回退 / 进站出口 / 阴阳茶 +1）
-        int nextIdx = (position + 1) % trackManager.TotalNodes;
-        GetCarOrientationController().FaceImmediately(car, trackManager.GetNodePosition(nextIdx, lane));
+        int nextIdx = (displayPosition + 1) % trackManager.TotalNodes;
+        GetCarOrientationController().FaceImmediately(car, trackManager.GetNodePosition(nextIdx, displayLane));
+    }
+
+    /// <summary>
+    /// Keeps the 12-car thunderstorm readable before turn one: gameplay state
+    /// remains a shared starting cell, while the presentation uses a staggered
+    /// track-grid formation. The real positions take over on turn one.
+    /// </summary>
+    private bool TryGetThunderstormGridSlot(
+        PlayerState player,
+        out int displayPosition,
+        out int displayLane)
+    {
+        displayPosition = 0;
+        displayLane = 0;
+        if (raceTurnNumber != 0 || freeRaceRoster == null ||
+            freeRaceRoster.Length != FreeRaceRosterRules.ThunderstormParticipants ||
+            session == null || trackManager == null || trackManager.TotalNodes <= 0)
+            return false;
+
+        int playerIndex = session.Players.IndexOf(player);
+        if (playerIndex < 0) return false;
+
+        int laneCount = Mathf.Max(1, trackManager.LaneCount);
+        int gridRow = playerIndex / laneCount;
+        displayLane = playerIndex % laneCount;
+        displayPosition = TrackPresentationRules.WrapNodeIndex(
+            trackManager.StartFinishNodeIndex - gridRow,
+            trackManager.TotalNodes);
+        return true;
     }
 
     // ====== 赛车朝向（P2 #17 随赛道方向旋转） ======

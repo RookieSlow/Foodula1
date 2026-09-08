@@ -16,6 +16,7 @@ public static class SceneLoader
         Debug.Log("[SceneLoader] Loading MainMenu...");
         TutorialLaunchState.Clear();
         CareerRaceLaunchState.Clear();
+        FreeRaceRosterState.Clear();
         LoadSceneInternal(MAIN_MENU);
     }
 
@@ -85,6 +86,8 @@ public static class SceneLoader
         return objectName == "MainMenuCanvas"
             || objectName == "TrackSelectionOverlay"
             || objectName == "TrackSelectionPanel"
+            || objectName == "FreeRaceRosterOverlay"
+            || objectName == "FreeRaceRosterPanel"
             || objectName == "DriverSelectionOverlay"
             || objectName == "DriverSelectionPanel";
     }

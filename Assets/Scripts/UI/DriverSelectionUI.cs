@@ -7,8 +7,6 @@ using UnityEngine.UI;
 /// <summary>Runtime-built driver selection overlay for the main menu.</summary>
 public sealed class DriverSelectionUI : MonoBehaviour
 {
-    private static readonly Color OverlayColor = new Color(0.025f, 0.035f, 0.055f, 0.97f);
-    private static readonly Color PanelColor = new Color(0.065f, 0.085f, 0.12f, 1f);
     private static readonly Color[] TeamColors =
     {
         new Color(0.27f, 0.52f, 0.82f), new Color(0.35f, 0.35f, 0.38f),
@@ -49,14 +47,16 @@ public sealed class DriverSelectionUI : MonoBehaviour
     {
         overlay = CreateObject("DriverSelectionOverlay", transform);
         Stretch(overlay.GetComponent<RectTransform>());
-        overlay.AddComponent<Image>().color = OverlayColor;
+        Image overlayImage = overlay.AddComponent<Image>();
+        ModernUIStyle.ApplyOverlay(overlayImage);
 
         GameObject panel = CreateObject("DriverSelectionPanel", overlay.transform);
         RectTransform panelRect = panel.GetComponent<RectTransform>();
         panelRect.anchorMin = panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.sizeDelta = new Vector2(1420f, 930f);
-        panel.AddComponent<Image>().color = PanelColor;
+        panel.AddComponent<Image>();
+        ModernUIStyle.ApplyPanel(panel, true);
 
         CreateText(panel.transform, "Title", "选择车手", 46f, new Vector2(0f, 418f), new Vector2(900f, 66f), FontStyles.Bold);
         CreateText(panel.transform, "Hint", "每位车手拥有独立风格、天赋和一组被动/主动技能", 20f,
@@ -187,9 +187,9 @@ public sealed class DriverSelectionUI : MonoBehaviour
         rect.anchoredPosition = position;
         rect.sizeDelta = dimensions;
         Image image = buttonObject.AddComponent<Image>();
-        image.color = color;
         Button button = buttonObject.AddComponent<Button>();
         button.targetGraphic = image;
+        ModernUIStyle.ApplyButton(button, color);
         ButtonClickAnimation.Attach(button);
         TMP_Text text = CreateText(buttonObject.transform, "Label", label, size, Vector2.zero, dimensions, FontStyles.Bold);
         Stretch(text.rectTransform);

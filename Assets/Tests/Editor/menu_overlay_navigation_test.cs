@@ -36,6 +36,7 @@ public class MenuOverlayNavigationTests
     {
         Object.DestroyImmediate(root);
         DriverSelectionState.Reset();
+        FreeRaceRosterState.Clear();
         if (!string.IsNullOrEmpty(previousDriver)) DriverSelectionState.TrySelect(previousDriver);
     }
 
@@ -53,7 +54,7 @@ public class MenuOverlayNavigationTests
     }
 
     [TestCase("GarageBtn", "DriverSelectionOverlay")]
-    [TestCase("StartRaceBtn", "TrackSelectionOverlay")]
+    [TestCase("StartRaceBtn", "FreeRaceRosterOverlay")]
     [TestCase("SettingsBtn", "SettingsOverlay")]
     public void navigation_closes_career_and_return_does_not_reveal_previous_surface(string button, string target)
     {
@@ -67,7 +68,7 @@ public class MenuOverlayNavigationTests
     }
 
     [TestCase("GarageBtn", "DriverSelectionOverlay")]
-    [TestCase("StartRaceBtn", "TrackSelectionOverlay")]
+    [TestCase("StartRaceBtn", "FreeRaceRosterOverlay")]
     [TestCase("SettingsBtn", "SettingsOverlay")]
     public void navigation_hides_summer_tech_without_consuming_gate(string button, string target)
     {
@@ -113,6 +114,33 @@ public class MenuOverlayNavigationTests
         Click("GarageBtn");
         Assert.That(Find("SelectedDriver").GetComponent<TMP_Text>().text, Does.Contain(other.DisplayName));
         Assert.That(Find("GarageBtn").GetComponentInChildren<TMP_Text>(true).text, Does.Contain(other.ShortName));
+    }
+
+    [Test]
+    public void quick_race_roster_confirmation_opens_track_selection()
+    {
+        Click("StartRaceBtn");
+        AssertOnlySurface("FreeRaceRosterOverlay");
+        ClickWithin("FreeRaceRosterOverlay", "ConfirmButton");
+        AssertOnlySurface("TrackSelectionOverlay");
+    }
+
+    [Test]
+    public void quick_race_thunderstorm_button_toggles_the_full_twelve_car_field()
+    {
+        Click("StartRaceBtn");
+        ClickWithin("FreeRaceRosterOverlay", "ThunderstormButton");
+
+        Assert.That(FreeRaceRosterState.IsThunderstorm, Is.True);
+        Assert.That(FreeRaceRosterState.TryBuildRoster(
+            out FreeRaceRosterEntry[] thunderstorm, out string thunderstormError), Is.True, thunderstormError);
+        Assert.That(thunderstorm.Length, Is.EqualTo(12));
+
+        ClickWithin("FreeRaceRosterOverlay", "ThunderstormButton");
+        Assert.That(FreeRaceRosterState.IsThunderstorm, Is.False);
+        Assert.That(FreeRaceRosterState.TryBuildRoster(
+            out FreeRaceRosterEntry[] compact, out string compactError), Is.True, compactError);
+        Assert.That(compact.Length, Is.EqualTo(4));
     }
 
     private void LoadSummerBreak()

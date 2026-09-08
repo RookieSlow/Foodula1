@@ -81,7 +81,7 @@ public sealed class CareerModeUI : MonoBehaviour
         overlay = new GameObject("CareerModeOverlay", typeof(RectTransform), typeof(Image));
         overlay.transform.SetParent(transform, false);
         Stretch(overlay.GetComponent<RectTransform>());
-        overlay.GetComponent<Image>().color = new Color(0.015f, 0.025f, 0.045f, 0.97f);
+        ModernUIStyle.ApplyOverlay(overlay.GetComponent<Image>());
 
         GameObject shell = CreatePanel(overlay.transform, "CareerModePanel", new Vector2(1500f, 860f));
         TMP_Text title = factory.CreateText(shell.transform, "CareerTitle", MainMenuLabels.Career, 44,
@@ -203,7 +203,7 @@ public sealed class CareerModeUI : MonoBehaviour
     private void BuildConfirmation(RaceUIFactory factory, Transform parent)
     {
         confirmationPanel = CreatePanel(parent, "CareerConfirmation", new Vector2(720f, 310f));
-        confirmationPanel.GetComponent<Image>().color = new Color(0.08f, 0.095f, 0.13f, 1f);
+        ModernUIStyle.ApplyPanel(confirmationPanel, true);
         confirmationText = factory.CreateText(confirmationPanel.transform, "ConfirmationText", string.Empty, 22,
             new Vector2(0f, 55f), new Vector2(620f, 115f));
         Format(confirmationText, TextAlignmentOptions.Center, FontStyles.Bold, Color.white);
@@ -370,7 +370,7 @@ public sealed class CareerModeUI : MonoBehaviour
         RectTransform rect = panel.GetComponent<RectTransform>();
         rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
         rect.sizeDelta = size;
-        panel.GetComponent<Image>().color = new Color(0.045f, 0.075f, 0.12f, 0.99f);
+        ModernUIStyle.ApplyPanel(panel);
         return panel;
     }
 

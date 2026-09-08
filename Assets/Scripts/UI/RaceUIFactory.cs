@@ -164,13 +164,14 @@ public sealed class RaceUIFactory
         rect.sizeDelta = new Vector2(80, 40);
 
         Image image = buttonObject.AddComponent<Image>();
-        image.color = new Color(1, 1, 1, 0.8f);
         Button button = buttonObject.AddComponent<Button>();
+        button.targetGraphic = image;
+        ModernUIStyle.ApplyButton(button, ModernUIStyle.AccentBlue);
         ButtonClickAnimation.Attach(button);
         int capturedGear = gear;
         if (onGearSelected != null)
             button.onClick.AddListener(() => onGearSelected(capturedGear));
-        CreateCenteredLabel(buttonObject.transform, label, 18, Color.black);
+        CreateCenteredLabel(buttonObject.transform, label, 18, ModernUIStyle.TextPrimary);
     }
 
     public Button CreateActionButton(
@@ -189,12 +190,13 @@ public sealed class RaceUIFactory
         rect.sizeDelta = new Vector2(120, 40);
 
         Image image = buttonObject.AddComponent<Image>();
-        image.color = color;
         Button button = buttonObject.AddComponent<Button>();
+        button.targetGraphic = image;
+        ModernUIStyle.ApplyButton(button, color);
         ButtonClickAnimation.Attach(button);
         if (callback != null)
             button.onClick.AddListener(callback);
-        TMP_Text actionLabel = CreateCenteredLabel(buttonObject.transform, label, 20, Color.black);
+        TMP_Text actionLabel = CreateCenteredLabel(buttonObject.transform, label, 20, ModernUIStyle.TextPrimary);
         actionLabel.fontStyle = FontStyles.Bold;
         return button;
     }

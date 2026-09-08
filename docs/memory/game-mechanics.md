@@ -3,10 +3,11 @@
 This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
-> **Implementation snapshot (2026-09-08)**: Unity `2022.3.62f3c1`; the latest
-> full editor EditMode run passed `647/647` on 2026-09-08. The active-skill
+> **Implementation snapshot (2026-09-09)**: Unity `2022.3.62f3c1`; the latest
+> full editor EditMode run passed `663/663` on 2026-09-09. The active-skill
 > focused run previously passed `28/28`, and the passive/related regression run passed `21/21`; the tutorial/menu focused run previously passed `64/64`
-> and the encyclopedia catalog checks previously passed `6/6`.
+> and the encyclopedia catalog checks previously passed `6/6`. The new free-race
+> roster/menu focused coverage passed `8/8`; Play Mode visual acceptance remains open.
 > The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.
@@ -63,6 +64,23 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   Every settlement writes one structured `[CAREER_RESULT]` saved or rejected line before `RACE_END`.
 - The combined career rules, persistence, presentation, Race integration, summer-break editor and completion flow
   passed `46/46` focused source-level NUnit cases on 2026-08-31. Play Mode visual/runtime acceptance remains open.
+
+## Free Race Custom Field
+
+- Before selecting a track, the free-race flow opens a 2–6 car roster editor.
+  Each selected team receives one unique driver from that team; the first selected
+  team is the human car and all remaining cars use the normal AI controller.
+- The same panel provides a Thunderstorm mode that enters all six teams and all
+  twelve catalogued drivers. The selected garage driver is first for the human
+  player and the remaining eleven drivers use the normal AI controller.
+- The default roster remains the garage driver team plus UK/DE/IT, preserving the
+  previous player-plus-three-AI behavior. This session-only roster never writes
+  career persistence or tutorial state.
+- Validated entries are copied into RaceSession.Players in player-first order.
+  The opening manual log includes a structured FREE_RACE_SETUP line with the full
+  team/driver field; Thunderstorm runs record `field=12` so a large-battle strength
+  comparison can be reconstructed. The 12 cars use a staggered presentation grid
+  before turn one while retaining the shared rules start cell.
 
 ## Turn and Card Loop
 
@@ -408,9 +426,14 @@ prototype and is no longer the authoritative model.
 - All twelve active skills use `DriverSkillRules` plus per-race `DriverSkillRuntimeState`. The HUD action
   is available only before gear confirmation and reports unlock, condition, duration and remaining-use state.
   Tutorial initializes the runtime disabled. Active-rule/EditMode coverage previously passed `28/28`,
-  the passive/related regression passes `21/21`, and the full suite passes `647/647`; Play Mode sign-off remains.
+  the passive/related regression passes `21/21`, and the full suite now passes `663/663`; Play Mode sign-off remains.
 - Five redesigned passives (Mansell, Schumacher, Vettel, Zhou and Ma) now resolve in normal races;
   the other seven passive descriptions remain data-only and must not be described as active runtime effects.
+- `DriverBalanceBenchmark` runs 9 available tracks × 12 drivers × levels 3/7 with paired skill-enabled/
+  disabled controls (864 pairs / 1728 total simulations). The 2026-09-08 report shows the largest positive
+  rank deltas for Mansell, high-tier Vettel and high-tier Tony Stewart; Schumacher high tier and Ascari are
+  near neutral, while Hunter Hart's current fixed-policy result is negative. These are directional signals
+  for manual timing/UX verification, not automatic balance decisions.
 - `DriverData.cs` provides the immutable catalog and structured descriptions;
   active execution is isolated in the driver-skill rules/runtime layer.
 

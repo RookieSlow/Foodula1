@@ -54,7 +54,7 @@ public sealed class CareerTechTreeUI : MonoBehaviour
         overlay = new GameObject("CareerTechTreeOverlay", typeof(RectTransform), typeof(Image));
         overlay.transform.SetParent(transform, false);
         Stretch(overlay.GetComponent<RectTransform>());
-        overlay.GetComponent<Image>().color = new Color(0.018f, 0.025f, 0.045f, 0.99f);
+        ModernUIStyle.ApplyOverlay(overlay.GetComponent<Image>());
 
         GameObject panel = CreatePanel(overlay.transform, new Vector2(1540f, 950f));
         TMP_Text title = factory.CreateText(panel.transform, "Title", "夏休 · 生涯科技调整", 42,
@@ -190,7 +190,7 @@ public sealed class CareerTechTreeUI : MonoBehaviour
         RectTransform rect = panel.GetComponent<RectTransform>();
         rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
         rect.sizeDelta = size;
-        panel.GetComponent<Image>().color = new Color(0.065f, 0.085f, 0.12f, 1f);
+        ModernUIStyle.ApplyPanel(panel, true);
         return panel;
     }
 
