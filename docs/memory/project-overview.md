@@ -31,8 +31,8 @@ the CCGS project framework.
   runtime tech-tree views.
 - `Core/TeamGearRules.cs` is the team-aware gear facade; `Core/TeamVehicleRules.cs`
   owns tunable team vehicle profiles without leaking them into UI code.
-- `Drivers/` contains the immutable driver catalog and progression rules;
-  `Core/DriverSelectionState.cs` stores the current menu choice.
+- `Drivers/` contains the immutable catalog, progression and active-skill rules/runtime plus the
+  per-driver XP persistence adapter; `Core/DriverSelectionState.cs` stores the current menu choice.
 - `Config/GameConfigSO.cs` contains tunable race, deck, gear, animation, and
   AI parameters.
 - `Tutorial/` contains the isolated Le Mans/UK scenario definition, explicit
@@ -78,17 +78,18 @@ The verified scene flow is:
 - Core race presentation is Demo-grade. The formal main-menu background, Foodula1
   logo and six team emblems are integrated; driver portraits and formal tech-tree
   artwork remain in the next visual asset package.
-- The project is in Production stage. The latest recorded full Unity EditMode
-  run passed 622/622 on 2026-09-07. This is retained evidence rather than a test
-  rerun performed during the 2026-09-08 documentation synchronization.
+- The project is in Production stage. The latest full Unity EditMode run passed
+  `647/647` on 2026-09-08 after the driver passive-skill redesign integration.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
   nodes; `RaceSession` centralizes numeric tech modifiers while the manager
   invokes explicit `TechTreeRules` event hooks at documented race phases.
 - China uses an independent Go/Recover drivetrain (3-card Go, 1-card Recover,
   consecutive overclock heat and built-in Recover cooling) shared by player UI
   and AI through the same pure rules module.
-- The driver-selection vertical slice is now implemented: 12 catalog entries,
-  XP/tier rules, main-menu selection UI, and race initialization integration.
+- The driver-selection and skill slice is implemented: 12 catalog entries, XP/tier rules,
+  per-driver normal-race XP persistence, main-menu selection, a race HUD action, all 12 active
+  effect hooks and five practical passive effects. Passive Play Mode sign-off remains, and the
+  remaining seven passive descriptions are still configuration-only.
 - `tutorial_le_mans_uk_v1` now has a playable menu-to-Race launch: UK, Le Mans,
   no tech/driver/team-vehicle/reward/progression benefits, a 16-card exact player
   draw order and a deterministic teaching opponent. Its runtime Director maps real
@@ -113,7 +114,7 @@ The verified scene flow is:
   and preserves Skip/Exit. Its spotlight follows every live player input gate; clicking clears the callout mesh
   completely while leaving the operation border visible. Main-menu overlays are mutually exclusive so the career
   entry and summer-break surface cannot leak over driver selection.
-- The latest full project EditMode run passes `622/622`; the tutorial and menu overlay slice passes
+- The latest full project EditMode run passes `647/647`; the tutorial and menu overlay slice passes
   `64/64` and retains its
   focused regression coverage.
   Play Mode verified the exact seven-card opening and zero-benefit session; a separate

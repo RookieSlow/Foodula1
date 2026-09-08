@@ -150,6 +150,37 @@ public class CardDeck
         return true;
     }
 
+    /// <summary>
+    /// Takes the highest-value playable card from the next few draw positions.
+    /// Used by Vettel's passive so the effect improves hand quality without
+    /// opening a blocking reorder dialog during a race.
+    /// </summary>
+    public bool DrawBestOfTopPlayableCardsToHand(int lookahead)
+    {
+        if (lookahead <= 0 || drawPile.Count == 0) return false;
+
+        int limit = System.Math.Min(lookahead, drawPile.Count);
+        int selectedIndex = -1;
+        int selectedValue = int.MinValue;
+        for (int i = 0; i < limit; i++)
+        {
+            CardData card = drawPile[i];
+            if (card == null || card.IsHeat) continue;
+
+            int value = card.IsSpeed ? card.value : 0;
+            if (selectedIndex < 0 || value > selectedValue)
+            {
+                selectedIndex = i;
+                selectedValue = value;
+            }
+        }
+
+        if (selectedIndex < 0) return false;
+        hand.Add(drawPile[selectedIndex]);
+        drawPile.RemoveAt(selectedIndex);
+        return true;
+    }
+
     private static int FindPlayableCardIndex(List<CardData> pile)
     {
         if (pile == null) return -1;

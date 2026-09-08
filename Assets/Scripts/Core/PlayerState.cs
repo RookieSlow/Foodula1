@@ -27,6 +27,9 @@ public class PlayerState
 
     public int DriverLevel => DriverProgression.GetLevel(driverXp);
 
+    /// <summary>Per-race active skill state. Initialized by race setup.</summary>
+    public DriverSkillRuntimeState driverSkill = new DriverSkillRuntimeState();
+
     // --- 持久状态 ---
     public int gear;           // 标准车队 1-4；中国队 1=Recover、2=Go
     /// <summary>Set by the race setup when the electric dual-gear module is active.</summary>
@@ -138,5 +141,6 @@ public class PlayerState
         kantoOdenSkipThisTurn = false;
         slipstreamRangeBonusThisTurn = 0;
         positionAtTurnStart = position;
+        driverSkill?.BeginTurn();
     }
 }

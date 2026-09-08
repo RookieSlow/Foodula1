@@ -125,11 +125,11 @@ public static class DriverCatalog
         new DriverProfile("uk_hunter_hart", "詹姆斯·猎人·哈特", "猎人·哈特", TeamId.UK, DriverStyle.Aggressive, 1.3f,
             "狩猎本能", "落后前车 3 格内时速度牌 +1", "最后的圈速", "最后一圈速度提升，但热量加倍"),
         new DriverProfile("uk_nigel_mansell", "奈杰尔·雄狮·曼塞尔", "雄狮·曼塞尔", TeamId.UK, DriverStyle.Aggressive, 1.2f,
-            "雄狮之心", "被超车后下回合第一张速度牌 +1", "愤怒冲锋", "本回合无视前车阻挡穿过其位置"),
+            "雄狮之心", "成功超车后下回合移动 +1；高阶额外冷却 1", "愤怒冲锋", "本回合获得额外移动，强势完成超车"),
         new DriverProfile("de_michael_schumacher", "米夏尔·教授·舒马赫", "教授·舒马赫", TeamId.DE, DriverStyle.Balanced, 1.5f,
-            "工程师之眼", "每 3 回合查看对手热量", "完美一圈", "本回合不产生弯道热量"),
+            "工程师调校", "每 3 回合下一次热量支付 -1；高阶周期缩短", "完美一圈", "本回合不产生弯道热量"),
         new DriverProfile("de_sebastian_vettel", "塞巴斯蒂安·海绵·维特尔", "海绵·维特尔", TeamId.DE, DriverStyle.Technical, 1.3f,
-            "信息海绵", "定期查看并重排牌组顶部 3 张牌", "完美节奏", "连续使用同一档位时免除连续惩罚"),
+            "信息海绵", "每 4 回合从牌库顶 3 张中优先抽取最高速度牌", "完美节奏", "持续期间跨两挡不产生换挡热量"),
         new DriverProfile("it_alberto_ascari", "阿尔贝托·蓝衣·阿斯卡里", "蓝衣·阿斯卡里", TeamId.IT, DriverStyle.Technical, 1.2f,
             "蓝色幸运", "连续无热量回合后提升下一回合弯道限速", "精密过弯", "本回合弯道超速热量支付 -1"),
         new DriverProfile("it_tazio_nuvolari", "塔齐奥·飞人·诺瓦", "飞人·诺瓦", TeamId.IT, DriverStyle.Aggressive, 1.0f,
@@ -137,15 +137,15 @@ public static class DriverCatalog
         new DriverProfile("us_tony_stewart", "托尼·烟雾·斯图尔特", "烟雾·斯图尔特", TeamId.US, DriverStyle.Aggressive, 1.2f,
             "赛道怒火", "被超车后下回合第一张速度牌 +1", "真实自我", "短时间内直道速度 +2，但每回合产热"),
         new DriverProfile("us_kyle_busch", "凯尔·捣蛋鬼·布什", "捣蛋鬼·布什", TeamId.US, DriverStyle.Aggressive, 1.3f,
-            "反派光环", "超越对手后对其施加热量", "挑衅鞠躬", "后方有多名对手时提升直道速度并阻挡尾流"),
+            "反派光环", "超越对手后对其施加热量", "挑衅鞠躬", "身后 3 格内有 1 名对手即可发动，提升直道速度并阻挡尾流"),
         new DriverProfile("cn_zhou_guanyu", "周·破风者·冠宇", "破风者·冠宇", TeamId.CN, DriverStyle.Balanced, 1.3f,
-            "沉稳之心", "打转后恢复回合的冷却效率翻倍", "中国速度", "短时间免疫对手特技与技能影响"),
+            "沉稳之心", "每回合首次天气弯道惩罚 -1", "中国速度", "短时间免疫天气及对手效果造成的负面修正"),
         new DriverProfile("cn_ma_qinghua", "马·全能者·青骅", "全能者·青骅", TeamId.CN, DriverStyle.Technical, 1.1f,
-            "全面适应", "天气与路况不产生额外惩罚", "极限切换", "切换档位时的惩罚减半"),
+            "全面适应", "每回合首次进入弯道时限速 +1；高阶首次弯道超速热量 -1", "极限切换", "切换档位时的惩罚减半"),
         new DriverProfile("jp_keiichi_tsuchiya", "土屋·漂移之王·圭一", "漂移之王·圭一", TeamId.JP, DriverStyle.Technical, 1.2f,
             "漂移本能", "弯道出弯后下回合第一张速度牌 +1", "烟雾弹", "短时间阻断身后对手的尾流"),
         new DriverProfile("jp_takumi_fujiwara", "藤原·豆腐小子·拓海", "豆腐小子·拓海", TeamId.JP, DriverStyle.Technical, 1.0f,
-            "水杯训练", "连续无热量回合后速度牌提升", "排水沟过弯", "本回合无视指定弯道限速但移动力下降")
+            "水杯训练", "连续无热量回合后速度牌提升", "排水沟过弯", "本回合无视指定弯道限速，不再附带移动惩罚")
     };
 
     private static readonly Dictionary<string, DriverProfile> ById = BuildIndex();

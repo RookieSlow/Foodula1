@@ -17,7 +17,7 @@
 | 5 | Foodula 1 Concept | `foodula-1-concept.md` | In Progress | 6 teams, 12 drivers and 8 selectable official tracks are represented; open decisions remain |
 | 6 | Core Mechanics | `foodula-1-core-mechanics.md` | In Review | Card/heat/gear/corner/pit/weather/slipstream loop is implemented; acceptance remains |
 | 7 | Teams & Cars | `foodula-1-teams-cars.md` | In Review | Six car sprites, profiles, tech hooks and formal team emblems are wired; final balance and Play Mode sign-off remain |
-| 8 | Drivers | `foodula-1-drivers.md` | In Progress | 12-profile catalog, XP/tier rules and selection are wired; portraits and signature race effects remain |
+| 8 | Drivers | `foodula-1-drivers.md` | In Review | 12-profile catalog, XP persistence, active-skill HUD/runtime and 12 active effects are wired; five practical passives are integrated, seven remain, portraits and Play Mode sign-off remain |
 | 9 | Tracks | `foodula-1-tracks.md` | In Review | 8 JSON tracks, 8 layout backgrounds, lanes, corners, pits and weather are wired; final full-race acceptance remains |
 | 10 | AI | `foodula-1-ai.md` | In Progress | Deterministic heat/corner/slipstream planning is wired; configured multi-opponent tuning and difficulty remain |
 | 11 | Visual Style | `foodula-1-visual-style.md` | In Progress | Race visuals plus main-menu background/Logo and six team emblems are integrated; driver portraits and tech-tree identity assets remain |
@@ -38,8 +38,9 @@
 
 ## 2026-09-08 Implementation Snapshot
 
-- Project stage is `Production`; the latest recorded successful full EditMode run passed `622/622`
-  on 2026-09-07, with 0 failures and 0 skips. This snapshot does not claim a 2026-09-08 rerun.
+- Project stage is `Production`; the latest successful full EditMode run passed `647/647`
+  on 2026-09-08, with 0 failures and 0 skips. Active-skill coverage previously passed `28/28`,
+  and the passive/related regression passed `21/21`.
 - The latest manual tailwind log confirms scoped slow motion during the independent tailwind presentation/bonus movement and restoration to `time_scale=1.00` afterward.
 - Current runtime scope is 8 selectable official JSON tracks plus `fallback_42`, six teams, twelve selectable drivers and configurable AI opponents.
 - Missing presentation assets are tracked in `asset-manifest.md`; formal main-menu/Logo and six-team
@@ -81,7 +82,7 @@
 Demo Candidate
   ├── Core HEAT loop and card/heat ownership
   ├── Six team vehicles + Go/Recover + tech-tree hooks
-  ├── Twelve selectable drivers (signature race effects are post-Demo)
+  ├── Twelve selectable drivers + active effects + five integrated passives
   ├── Eight official JSON tracks + one fallback
   ├── Configurable AI opponents + deterministic planner
   ├── Weather, pit lane, slipstream and complete race result flow

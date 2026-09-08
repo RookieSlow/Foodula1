@@ -300,7 +300,7 @@ public class RaceSession
     /// 弯道判定限速 = 基础限速 + 科技弯速加成（GDD 堆叠公式） − 天气惩罚。
     /// baseLimit &gt;= 99 视为无弯道（不修正）。
     /// </summary>
-    public int EffectiveCornerLimit(PlayerState p, int baseLimit)
+    public int EffectiveCornerLimit(PlayerState p, int baseLimit, bool consumeDriverPassive = true)
     {
         if (baseLimit >= 99) return baseLimit;
         // Team handling is a base-car attribute; tech-tree bonuses layer on
@@ -318,8 +318,17 @@ public class RaceSession
                 m.hasSomersaultCloud ? 1 : 0,
                 m.hasBankuruwase && p.techState.bankuruwaseActive ? 1 : 0);
         }
-        int limit = baseLimit + bonus;
-        limit = WeatherRules.ApplyWeatherToCornerLimit(limit, Weather);
+        int limit = baseLimit + bonus + DriverSkillRules.GetCornerLimitBonus(p?.driverSkill);
+        if (!DriverSkillRules.IsWeatherImmune(p?.driverSkill))
+        {
+            int weatherLimit = WeatherRules.ApplyWeatherToCornerLimit(limit, Weather);
+            if (consumeDriverPassive && p?.driverSkill != null &&
+                weatherLimit < limit && p.driverSkill.TryConsumePassiveWeatherProtection())
+                weatherLimit = Math.Min(limit, weatherLimit + 1);
+            limit = weatherLimit;
+        }
+        if (p?.driverSkill != null && consumeDriverPassive)
+            limit += p.driverSkill.ConsumePassiveCornerLimitBonus();
         return System.Math.Max(1, limit);
     }
 
@@ -491,12 +500,14 @@ public class RaceSession
     {
         if (p == null || players == null || totalNodes <= 0 || maxTriggers <= 0)
             return default;
-        if (p.isBlown || p.hasFinished || !WeatherRules.CanSlipstream(Weather))
+        if (p.isBlown || p.hasFinished ||
+            (!DriverSkillRules.IsWeatherImmune(p.driverSkill) && !WeatherRules.CanSlipstream(Weather)))
             return default;
 
         int range = SlipstreamRangeOverride ??
             (1 + GetModifiers(p).slipstreamRangeBonus + p.slipstreamRangeBonusThisTurn);
-        range = WeatherRules.ApplyWeatherToSlipstreamRange(range, Weather);
+        if (!DriverSkillRules.IsWeatherImmune(p.driverSkill))
+            range = WeatherRules.ApplyWeatherToSlipstreamRange(range, Weather);
         if (range <= 0)
             return default;
 
@@ -534,7 +545,8 @@ public class RaceSession
                 break;
 
             // 冰糕阻断身后气流；不能越过最近车辆去吸更远的车。
-            if (TrickCardRules.IsIceJellyActive(leader.trickState))
+            if (TrickCardRules.IsIceJellyActive(leader.trickState) ||
+                DriverSkillRules.BlocksTrailingSlipstream(leader.driverSkill))
                 break;
 
             int bonus = GetSlipstreamMovementBonus(p);
@@ -627,6 +639,7 @@ public class RaceSession
         if (TeamVehicleBonusesEnabled)
             bonus += TeamVehicleRules.GetSlipstreamBonus(p.teamId);
         bonus += TrickCardRules.GetParmigianoBonus(p.trickState);
+        bonus += DriverSkillRules.GetSlipstreamBonus(p.driverSkill);
         // 筋斗云：本回合打过 ATTACK 特技牌 → 每段尾流 +2。
         if (p.techState != null &&
             TechTreeRules.HasSomersaultCloud(p.techState, TechDb) &&
@@ -634,7 +647,9 @@ public class RaceSession
         {
             bonus += TechTreeRules.GetSomersaultCloudSlipstreamBonus();
         }
-        return WeatherRules.ApplyWeatherToSlipstreamBonus(bonus, Weather);
+        return DriverSkillRules.IsWeatherImmune(p.driverSkill)
+            ? System.Math.Max(0, bonus)
+            : WeatherRules.ApplyWeatherToSlipstreamBonus(bonus, Weather);
     }
 
     /// <summary>环形赛道前向距离（a 到 b 沿赛道方向）。</summary>

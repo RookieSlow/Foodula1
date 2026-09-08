@@ -87,6 +87,9 @@ public sealed class RaceUIFactory
         CreateGearButton(canvas, "Gear4Btn", "G4", new Vector2(-110, 220), 4, onGearSelected);
         CreateActionButton(canvas, "ConfirmGearBtn", "确认", new Vector2(10, 220),
             new Color(0.4f, 0.7f, 1f), onConfirmGear);
+        hud.driverSkillButton = CreateActionButton(canvas, "DriverSkillBtn", "车手技能",
+            new Vector2(160, 220), new Color(0.78f, 0.48f, 0.95f), null);
+        hud.driverSkillLabel = hud.driverSkillButton.GetComponentInChildren<TMP_Text>(true);
 
         playButton = CreateActionButton(canvas, "PlayBtn", "出牌",
             new Vector2(-300, -185), Color.green, null);

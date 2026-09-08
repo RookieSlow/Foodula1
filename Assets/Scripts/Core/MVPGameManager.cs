@@ -645,11 +645,16 @@ public class MVPGameManager : MonoBehaviour
                 : DriverSelectionState.ResolveDriver(config.playerDriverId, config.playerTeam);
         var human = new PlayerState("你", false, startFinishNodeIndex, config.minGear);
         human.driverId = humanDriver.Id;
+        human.driverXp = tutorialScenario != null ? 0 : DriverProgressStore.Load(humanDriver.Id);
         SetupPlayerForRace(
             human,
             humanDriver.Team,
             careerRaceLaunch != null ? careerRaceLaunch.TechSnapshot : null);
         session.Players.Add(human);
+        human.driverSkill.Initialize(
+            humanDriver,
+            human.DriverLevel,
+            tutorialScenario == null);
 
         // AI 对手
         int aiCount = tutorialScenario != null
@@ -667,7 +672,9 @@ public class MVPGameManager : MonoBehaviour
             DriverProfile aiDriver = DriverCatalog.GetDefaultForTeam(team);
             var aiState = new PlayerState($"AI{i + 1}", true, startFinishNodeIndex, config.minGear);
             aiState.driverId = aiDriver.Id;
+            aiState.driverXp = 0;
             SetupPlayerForRace(aiState, team);
+            aiState.driverSkill.Initialize(aiDriver, aiState.DriverLevel, false);
             session.Players.Add(aiState);
             var ctrl = gameObject.AddComponent<AIController>();
             ctrl.Initialize(
@@ -1467,6 +1474,7 @@ public class MVPGameManager : MonoBehaviour
                     SetGearControlsInteractable(true);
                     ConfigureGearControls(p);
                     hudUI?.SelectGearPresentation(p.gear);
+                    hudUI?.RefreshDriverSkill(this, p);
                     if (hudUI != null)
                         hudUI.SetStatus($"选择档位 (当前: {TeamGearRules.GetDisplayName(p.teamId, p.gear)})");
                     if (cardHandUI != null) { cardHandUI.SetGearSelectionMode(true); cardHandUI.UpdateDeckInfo(p); }
@@ -1520,6 +1528,13 @@ public class MVPGameManager : MonoBehaviour
 
                 int handSize = session.EffectiveHandSize(p, config.handSize) + p.extraCardSlotsThisTurn;
                 int handCountBeforeDraw = p.deck.HandCount;
+                if (p.driverSkill != null &&
+                    p.driverSkill.TryConsumePassiveDeckLookahead(out int lookahead))
+                {
+                    p.deck.DrawBestOfTopPlayableCardsToHand(lookahead);
+                    if (hudUI != null)
+                        hudUI.AppendLog($"{p.name} 信息海绵：从牌库顶 {lookahead} 张中优先抽取高值牌。");
+                }
                 bool canDraw = p.deck.DrawToHand(handSize);
                 if (!p.isAI && p.deck.HandCount > handCountBeforeDraw)
                     AudioService.PlaySfx(AudioEventNames.CardDraw);
@@ -1815,6 +1830,10 @@ public class MVPGameManager : MonoBehaviour
     {
         if (amount <= 0) return true;
 
+        amount = DriverSkillRules.ApplyHeatMultiplier(p?.driverSkill, amount);
+        if (p?.driverSkill != null)
+            amount = Mathf.Max(0, amount - p.driverSkill.ConsumePassiveHeatDiscount());
+
         // 特技牌：黑面包垫底 — 本次热量支付 -1（最少 1）
         amount = TrickCardRules.ApplySchwarzbrot(p.trickState, amount);
         if (amount <= 0) return true;
@@ -1877,7 +1896,9 @@ public class MVPGameManager : MonoBehaviour
             config.gearOneCooldown,
             config.gearTwoCooldown);
 
-        if (TryPayHeat(p, shift.HeatCost, p.position, "shift 2 gears"))
+        int shiftHeatCost = DriverSkillRules.ApplyGearHeatCost(
+            p.driverSkill, shift.HeatCost, false);
+        if (TryPayHeat(p, shiftHeatCost, p.position, "shift 2 gears"))
         {
             p.gear = shift.TargetGear;
             p.chinaConsecutiveGearCount = shift.IsChina ? shift.ConsecutiveCount : 0;
@@ -1886,8 +1907,10 @@ public class MVPGameManager : MonoBehaviour
 
             // China Go overclock heat is a distinct cost from the standard
             // two-gear shift payment and follows the normal spin-out path.
-            if (shift.AdditionalHeat > 0)
-                TryPayHeat(p, shift.AdditionalHeat, p.position,
+            int additionalHeat = DriverSkillRules.ApplyGearHeatCost(
+                p.driverSkill, shift.AdditionalHeat, true);
+            if (additionalHeat > 0)
+                TryPayHeat(p, additionalHeat, p.position,
                     $"{TeamGearRules.GetDisplayName(p.teamId, p.gear)} overclock");
         }
         else if (!p.isAI)
@@ -1929,8 +1952,15 @@ public class MVPGameManager : MonoBehaviour
             cooldown += TechTreeRules.GetBankuruwaseCooldownPerTurn(p.techState);
         }
 
-        if (session != null)
+        if (p.driverSkill != null)
+            cooldown += p.driverSkill.PassiveCoolingBonusThisTurn;
+
+        if (session != null && !DriverSkillRules.IsWeatherImmune(p.driverSkill))
             cooldown = WeatherRules.ApplyWeatherToCooling(cooldown, session.Weather);
+
+        if (p.driverSkill != null && p.driverSkill.IsActive &&
+            p.driverSkill.Skill == DriverActiveSkillId.TrueSelf)
+            TryPayHeat(p, 1, p.positionAtTurnStart, "driver skill: true self");
 
         if (cooldown > 0)
         {
@@ -2146,7 +2176,8 @@ public class MVPGameManager : MonoBehaviour
                 slipstreamsThisTurn[p] = default;
                 continue;
             }
-            p.cornerTotalThisTurn = RaceRules.SumCardValues(p.playedSpeedCardsThisTurn);
+            p.cornerTotalThisTurn = RaceRules.SumCardValues(p.playedSpeedCardsThisTurn) +
+                DriverSkillRules.GetSpeedPerCardBonus(p.driverSkill) * p.playedSpeedCardsThisTurn.Count;
         }
 
         // 第二轮：加成（需要弯道信息与对手移动）
@@ -2171,6 +2202,10 @@ public class MVPGameManager : MonoBehaviour
             bonus += CardPlayRules.GetHotpotMovementBonus(p);
             // 特技牌即时移动（司康 +2 等）
             bonus += p.trickMoveBonusThisTurn;
+            bonus += DriverSkillRules.GetMovementBonus(p.driverSkill, crossedCorner);
+            bonus -= DriverSkillRules.GetGutterMovementPenalty(p.driverSkill);
+            if (p.driverSkill != null)
+                bonus += p.driverSkill.PassiveMovementBonusThisTurn;
 
             // DE L1 黑啤酒燃料：每圈一次，付 1 热 → +2 移动
             // （自动激活；引擎预留 1 热防失控）。
@@ -2215,10 +2250,24 @@ public class MVPGameManager : MonoBehaviour
             // 先保存不含尾流的基础移动。尾流必须等所有车辆完成这段移动、
             // 反应和弯道判定后，依据实际落位在回合末结算。
             p.totalMovementThisTurn = p.cornerTotalThisTurn + bonus;
+            p.totalMovementThisTurn = Mathf.Max(0, p.totalMovementThisTurn);
             raceLogWriter?.Append(
                 $"[MOVE_PLAN] {p.name} role={(p.isAI ? "AI" : "PLAYER")} position={p.position} " +
                 $"corner_speed={p.cornerTotalThisTurn} non_slipstream_bonus={bonus} " +
                 $"base_total={p.totalMovementThisTurn}");
+        }
+
+
+        // Mansell's upgraded charge rewards a real overtake after every base
+        // movement has been planned, so the result is independent of loop order.
+        foreach (var p in turnOrder)
+        {
+            if (RaceTurnRules.IsInactive(p, turnSkipped)) continue;
+            int projectedOvertakes = RaceMovementRules.CountOvertakes(
+                p, turnOrder, trackManager.TotalNodes, true, RaceTurnRules.ShouldSkip);
+            int driverOvertakeBonus = DriverSkillRules.GetOvertakeBonus(p.driverSkill, projectedOvertakes);
+            if (driverOvertakeBonus > 0)
+                p.totalMovementThisTurn += driverOvertakeBonus;
         }
 
         // Overtake presentation belongs to the base movement pass. Tailwind is
@@ -2484,7 +2533,7 @@ public class MVPGameManager : MonoBehaviour
         int bonus = 0;
         foreach (var cornerId in trackManager.GetUniqueCornersCrossed(p.position, rawEnd))
         {
-            int limit = session.EffectiveCornerLimit(p, trackManager.GetCornerSpeedLimit(cornerId, lane));
+            int limit = session.EffectiveCornerLimit(p, trackManager.GetCornerSpeedLimit(cornerId, lane), false);
             if (p.cornerTotalThisTurn == limit) bonus += 2;
         }
         return bonus;
@@ -2523,6 +2572,11 @@ public class MVPGameManager : MonoBehaviour
 
         foreach (int cornerId in corners)
         {
+            if (p.driverSkill != null && p.driverSkill.TryConsumeCornerIgnore())
+            {
+                log += $"{p.name} 使用 {p.DriverProfile.ActiveName} 无视 {trackManager.GetCornerName(cornerId)} 限速。\n";
+                continue;
+            }
             // 限速 = 基础 + 科技弯速加成 − 天气惩罚
             int limit = session.EffectiveCornerLimit(p, trackManager.GetCornerSpeedLimit(cornerId, laneIndex));
             if (totalSpeed > limit)
@@ -2533,17 +2587,20 @@ public class MVPGameManager : MonoBehaviour
                     overspeed - session.ConsumeHeatReduction(p));
                 if (session.TeamVehicleBonusesEnabled)
                     heat += TeamVehicleRules.GetCornerHeatPenalty(p.teamId);
+                heat = DriverSkillRules.ReduceCornerHeat(p.driverSkill, heat);
                 string cname = trackManager.GetCornerName(cornerId);
 
                 // 尝试支付热量；引擎不足 → 失控
-                if (!TryPayHeat(p, heat, oldPos, $"overspeed at {cname} ({totalSpeed}>{limit})"))
+                if (heat > 0 && !TryPayHeat(p, heat, oldPos, $"overspeed at {cname} ({totalSpeed}>{limit})"))
                 {
                     if (hudUI != null) hudUI.AppendLog(log);
                     return false; // 失控中断后续弯道判定
                 }
 
                 AudioService.PlaySfx(AudioEventNames.CornerOver);
-                log += $"{p.name} 在 {cname} 超速 (lane {laneIndex + 1}, 限速 {limit}) 超 {overspeed}！+{heat} 热量。\n";
+                log += heat > 0
+                    ? $"{p.name} 在 {cname} 超速 (lane {laneIndex + 1}, 限速 {limit}) 超 {overspeed}！+{heat} 热量。\n"
+                    : $"{p.name} 使用 {p.DriverProfile.ActiveName} 零热量通过 {cname}。\n";
             }
             else
             {
@@ -3027,6 +3084,11 @@ public class MVPGameManager : MonoBehaviour
         }
         p.deck.DiscardSpeedCards(p.playedSpeedCardsThisTurn);
 
+        ResolveDriverSkillTurnEnd(p);
+        int passiveOvertakes = 0;
+        overtakesThisTurn.TryGetValue(p, out passiveOvertakes);
+        p.driverSkill?.ResolvePassiveTurnEnd(passiveOvertakes);
+
         // 限时热量牌销毁（薯条）
         int tempRemoved = p.deck.RemoveTempCardsFromHand();
         if (tempRemoved > 0 && hudUI != null)
@@ -3304,6 +3366,8 @@ public class MVPGameManager : MonoBehaviour
                 : DriverProgression.CalculateRaceXp(entry.rank, driver.TalentMultiplier, driver.Team);
             int previousLevel = player.DriverLevel;
             player.driverXp += earned;
+            if (!player.isAI && tutorialScenario == null)
+                DriverProgressStore.Save(driver.Id, player.driverXp);
             lines.Add($"{player.name}（{driver.ShortName}）: +{earned} XP → Lv{player.DriverLevel}");
             if (player.DriverLevel > previousLevel)
                 lines.Add($"  {driver.ShortName} 解锁了新的车手技能层级。");
@@ -3486,6 +3550,96 @@ public class MVPGameManager : MonoBehaviour
         if (!phaseState.CanAcceptGear(inputState)) return;
         if (!inputState.ConfirmGear()) return;
         SetGearControlsInteractable(false);
+        hudUI?.RefreshDriverSkill(this, Player);
+    }
+
+    public void OnDriverSkillButtonClicked()
+    {
+        PlayerState player = Player;
+        if (player == null || player.driverSkill == null) return;
+
+        DriverSkillActivationContext context = BuildDriverSkillActivationContext(player);
+        if (!player.driverSkill.TryActivate(player.DriverProfile, context, out string reason))
+        {
+            hudUI?.SetStatus($"<color=orange>{reason}</color>");
+            hudUI?.RefreshDriverSkill(this, player);
+            return;
+        }
+
+        AudioService.PlayUi(AudioEventNames.UiConfirm);
+        string message = $"{player.DriverProfile.ActiveName} 已发动（剩余 {player.driverSkill.UsesRemaining} 次）";
+        hudUI?.AppendLog($"<color=#D9A7FF>{message}</color>");
+        hudUI?.SetStatus(message + "；请选择并确认档位");
+        hudUI?.RefreshDriverSkill(this, player);
+        raceLogWriter?.Append(
+            $"[DRIVER_SKILL] driver={player.driverId} skill={player.driverSkill.Skill} " +
+            $"tier={player.driverSkill.Tier} duration={player.driverSkill.ActiveTurnsRemaining} " +
+            $"uses_remaining={player.driverSkill.UsesRemaining}");
+    }
+
+    public string GetDriverSkillButtonLabel(PlayerState player, out bool interactable)
+    {
+        interactable = false;
+        if (player == null || player.driverSkill == null) return "车手技能";
+        DriverProfile profile = player.DriverProfile;
+        if (player.driverSkill.IsActive)
+            return $"{profile.ActiveName}  {FormatSkillDuration(player.driverSkill.ActiveTurnsRemaining)}";
+
+        DriverSkillActivationContext context = BuildDriverSkillActivationContext(player);
+        interactable = DriverSkillRules.CanActivate(profile, player.driverSkill, context, out string reason);
+        return interactable
+            ? $"{profile.ActiveName}  ×{player.driverSkill.UsesRemaining}"
+            : $"{profile.ActiveName}  {reason}";
+    }
+
+    private DriverSkillActivationContext BuildDriverSkillActivationContext(PlayerState player)
+    {
+        HeatGaugeState gauge = player?.deck != null ? HeatGaugeRules.Evaluate(player.deck) : default;
+        int remaining = gauge.EngineRemaining;
+        int capacity = gauge.Capacity;
+        return new DriverSkillActivationContext(
+            player == Player && phaseState.CanAcceptGear(inputState),
+            player != null ? player.lap : 0,
+            config != null ? config.totalLaps : 0,
+            remaining,
+            capacity,
+            CountNearbyOpponentsBehind(player, 3));
+    }
+
+    private int CountNearbyOpponentsBehind(PlayerState player, int range)
+    {
+        if (player == null || session == null || trackManager == null || trackManager.TotalNodes <= 0)
+            return 0;
+        int count = 0;
+        foreach (PlayerState opponent in session.Players)
+        {
+            if (opponent == null || opponent == player || opponent.isBlown || opponent.hasFinished ||
+                opponent.lap != player.lap)
+                continue;
+            int distance = RaceSession.ForwardDistance(opponent.position, player.position, trackManager.TotalNodes);
+            if (distance > 0 && distance <= range) count++;
+        }
+        return count;
+    }
+
+    private static string FormatSkillDuration(int turns)
+    {
+        return turns == int.MaxValue ? "本场有效" : $"{turns} 回合";
+    }
+
+    private void ResolveDriverSkillTurnEnd(PlayerState player)
+    {
+        if (player?.driverSkill == null || !player.driverSkill.ActivatedThisTurn ||
+            player.driverSkill.Skill != DriverActiveSkillId.FinalSprint)
+            return;
+
+        int spinMax = session != null ? session.EffectiveSpinMax(player) : 3;
+        player.spinCounter = Mathf.Min(spinMax, player.spinCounter + 1);
+        if (player.spinCounter >= spinMax)
+            player.isBlown = true;
+        else if (player.driverSkill.Tier < 3)
+            player.skipNextTurn = true;
+        hudUI?.AppendLog($"{player.name} 最后冲刺代价：强制打转，失控 {player.spinCounter}/{spinMax}。" );
     }
 
     public void OnPlayCardsButtonClicked()

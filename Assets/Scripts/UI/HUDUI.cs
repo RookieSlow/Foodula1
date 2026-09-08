@@ -32,6 +32,8 @@ public class HUDUI : MonoBehaviour
 
     [Header("操作按钮")]
     public UnityEngine.UI.Button confirmGearButton;
+    public UnityEngine.UI.Button driverSkillButton;
+    public TMP_Text driverSkillLabel;
     public UnityEngine.UI.Button resetButton;
     public UnityEngine.UI.Button returnToMenuButton;
     public UnityEngine.UI.Button backToMenuButton;
@@ -60,6 +62,9 @@ public class HUDUI : MonoBehaviour
         if (confirmGearButton != null)
             confirmGearButton.onClick.AddListener(OnConfirmGearClicked);
 
+        if (driverSkillButton != null)
+            driverSkillButton.onClick.AddListener(OnDriverSkillClicked);
+
         if (resetButton != null)
             resetButton.onClick.AddListener(OnResetClicked);
 
@@ -74,6 +79,7 @@ public class HUDUI : MonoBehaviour
         ButtonClickAnimation.Attach(gear3Button);
         ButtonClickAnimation.Attach(gear4Button);
         ButtonClickAnimation.Attach(confirmGearButton);
+        ButtonClickAnimation.Attach(driverSkillButton);
         ButtonClickAnimation.Attach(resetButton);
         ButtonClickAnimation.Attach(returnToMenuButton);
         ButtonClickAnimation.Attach(backToMenuButton);
@@ -122,6 +128,7 @@ public class HUDUI : MonoBehaviour
         gameManager = gm;
 
         RefreshPlayerResources(player);
+        RefreshDriverSkill(gm, player);
 
         if (lapText != null)
             lapText.text = $"圈数: {player.lap}/{gm.Config.totalLaps}";
@@ -216,6 +223,18 @@ public class HUDUI : MonoBehaviour
         gearDialPresentation?.SetSelectedGear(gear);
     }
 
+    public void RefreshDriverSkill(MVPGameManager gm, PlayerState player)
+    {
+        if (driverSkillButton == null) return;
+        bool interactable = false;
+        string label = gm != null ? gm.GetDriverSkillButtonLabel(player, out interactable) : "车手技能";
+        driverSkillButton.interactable = interactable;
+        TMP_Text target = driverSkillLabel != null
+            ? driverSkillLabel
+            : driverSkillButton.GetComponentInChildren<TMP_Text>(true);
+        if (target != null) target.text = label;
+    }
+
     /// <summary>生成多车排行榜文本（含自己的标记）。</summary>
     private string FormatStandings(System.Collections.Generic.IReadOnlyList<PlayerState> all, PlayerState self)
     {
@@ -280,6 +299,11 @@ public class HUDUI : MonoBehaviour
     private void OnConfirmGearClicked()
     {
         gameManager?.OnConfirmGearClicked();
+    }
+
+    private void OnDriverSkillClicked()
+    {
+        gameManager?.OnDriverSkillButtonClicked();
     }
 
     private void OnResetClicked()

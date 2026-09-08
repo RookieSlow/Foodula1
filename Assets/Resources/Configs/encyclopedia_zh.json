@@ -131,8 +131,8 @@
       "id": "drivers",
       "category": "成长",
       "title": "车手",
-      "summary": "当前有 12 名可选车手和进度数据；技能描述尚未接入比赛执行。",
-      "body": "每支车队有 2 名车手，目录记录姓名、风格、被动技、主动技与 RP/XP 成长参数。主菜单可选择车手，比赛与日志会记录选择。重要现状：当前版本尚未把这些被动技和主动技接入比赛规则结算；教程会固定 UK 车手并关闭车手增益，百科不把配置描述冒充为已生效能力。",
+      "summary": "当前有 12 名可选车手和进度数据；主动技能及 5 个重做后的被动技能已接入正常比赛。",
+      "body": "每支车队有 2 名车手，目录记录姓名、风格、被动技、主动技与 RP/XP 成长参数。主菜单可选择车手，比赛与日志会记录选择。当前版本中，12 个主动技能以及曼塞尔、舒马赫、维特尔、周、马的被动效果已接入比赛规则结算；其余 7 个被动效果仍待后续实现。教程会固定 UK 车手并关闭全部车手技能，百科不会把尚未接入的配置描述冒充为已生效能力。",
       "keywords": ["车手", "技能", "XP", "RP"],
       "relatedRuleIds": ["uk_hunter_hart", "uk_nigel_mansell", "de_michael_schumacher", "de_sebastian_vettel", "it_alberto_ascari", "it_tazio_nuvolari", "us_tony_stewart", "us_kyle_busch", "cn_zhou_guanyu", "cn_ma_qinghua", "jp_keiichi_tsuchiya", "jp_takumi_fujiwara"]
     },

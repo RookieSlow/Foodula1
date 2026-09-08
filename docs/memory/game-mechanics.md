@@ -4,10 +4,9 @@ This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
 > **Implementation snapshot (2026-09-08)**: Unity `2022.3.62f3c1`; the latest
-> recorded successful editor EditMode run passed `622/622` on 2026-09-07. The
-> tutorial/menu focused run passed `64/64`; the encyclopedia catalog checks
-> previously passed `6/6`. These are retained results, not tests rerun during
-> this documentation synchronization.
+> full editor EditMode run passed `647/647` on 2026-09-08. The active-skill
+> focused run previously passed `28/28`, and the passive/related regression run passed `21/21`; the tutorial/menu focused run previously passed `64/64`
+> and the encyclopedia catalog checks previously passed `6/6`.
 > The required
 > `production/session-state/active.md` file is currently absent, so this
 > document is based on source, configuration, and the live editor state.
@@ -265,8 +264,10 @@ prototype and is no longer the authoritative model.
 - Startup validation rejects unsupported versions, duplicate/blank IDs, missing required topics and
   incomplete content. Tests also match the encyclopedia's related IDs against all 12 runtime trick
   definitions, all 12 drivers and all five active weather profiles.
-- The driver entry explicitly states that configured signature skills are not yet applied in race
-  resolution, while the audio-related settings remain labelled as data-only placeholders.
+- The encyclopedia driver entry now records that all twelve active skills plus five redesigned passive
+  effects (Mansell, Schumacher, Vettel, Zhou and Ma) are applied in normal race resolution. The
+  remaining seven passive descriptions are still configuration-only, and tutorial mode disables all
+  driver skills.
 
 ## Track and Race
 
@@ -402,9 +403,16 @@ prototype and is no longer the authoritative model.
   for levels 1 through 7. Passive tiers unlock at levels 2/4/6 and active
   tiers at levels 3/5/7. Level 7 provides two active uses per race; the UK
   team adds one extra active use.
-- `DriverData.cs` currently provides the immutable catalog and structured skill
-  descriptions. Signature-skill runtime effects are intentionally not applied
-  to movement yet; those effects need a separate rules slice and tests.
+- Normal races load and save XP independently per driver through `Foodula1.DriverXp.v1.<driverId>`;
+  tutorial progression remains disabled and career settlement remains isolated.
+- All twelve active skills use `DriverSkillRules` plus per-race `DriverSkillRuntimeState`. The HUD action
+  is available only before gear confirmation and reports unlock, condition, duration and remaining-use state.
+  Tutorial initializes the runtime disabled. Active-rule/EditMode coverage previously passed `28/28`,
+  the passive/related regression passes `21/21`, and the full suite passes `647/647`; Play Mode sign-off remains.
+- Five redesigned passives (Mansell, Schumacher, Vettel, Zhou and Ma) now resolve in normal races;
+  the other seven passive descriptions remain data-only and must not be described as active runtime effects.
+- `DriverData.cs` provides the immutable catalog and structured descriptions;
+  active execution is isolated in the driver-skill rules/runtime layer.
 
 See [project-overview.md](project-overview.md) for architecture context and
 [current-task-list.md](current-task-list.md) for remaining work.

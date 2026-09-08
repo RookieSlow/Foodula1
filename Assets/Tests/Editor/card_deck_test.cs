@@ -65,6 +65,21 @@ public class CardDeckTest
         Assert.AreEqual(3, deck.DrawPileCount); // 7 - 4
     }
 
+    [Test]
+    public void test_passive_lookahead_selects_best_card_without_reordering_the_rest()
+    {
+        var first = new CardData(CardType.Speed, 1);
+        var best = new CardData(CardType.Speed, 4);
+        var middle = new CardData(CardType.Speed, 2);
+        var deck = new CardDeck();
+        deck.InitializeExactOrder(new[] { first, best, middle }, new HeatPool(0));
+
+        Assert.IsTrue(deck.DrawBestOfTopPlayableCardsToHand(3));
+        Assert.AreSame(best, deck.Hand[0]);
+        Assert.AreSame(first, deck.DrawPile[0]);
+        Assert.AreSame(middle, deck.DrawPile[1]);
+    }
+
     // ===== 抽牌与牌库耗尽 =====
 
     [Test]

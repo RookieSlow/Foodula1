@@ -186,6 +186,31 @@ public class RaceSessionTest
     }
 
     [Test]
+    public void test_driver_passives_layer_into_weather_and_corner_resolution()
+    {
+        var session = CreateSession();
+        var zhou = CreatePlayer(session, TeamId.CN);
+        DriverCatalog.TryGet("cn_zhou_guanyu", out DriverProfile zhouDriver);
+        zhou.driverSkill.Initialize(zhouDriver, 2, true);
+        zhou.techState = null;
+        zhou.driverSkill.BeginTurn();
+        session.Weather = WeatherType.Rainy;
+
+        Assert.AreEqual(BASE_LIMIT, session.EffectiveCornerLimit(zhou, BASE_LIMIT));
+        Assert.AreEqual(BASE_LIMIT - 1, session.EffectiveCornerLimit(zhou, BASE_LIMIT),
+            "Zhou's weather protection is consumed only once per turn.");
+
+        var ma = CreatePlayer(session, TeamId.CN);
+        DriverCatalog.TryGet("cn_ma_qinghua", out DriverProfile maDriver);
+        ma.driverSkill.Initialize(maDriver, 4, true);
+        ma.techState = null;
+        ma.driverSkill.BeginTurn();
+        session.Weather = WeatherType.Sunny;
+        Assert.AreEqual(BASE_LIMIT + 1, session.EffectiveCornerLimit(ma, BASE_LIMIT));
+        Assert.AreEqual(0, DriverSkillRules.ReduceCornerHeat(ma.driverSkill, 1));
+    }
+
+    [Test]
     public void test_weather_initialization_from_pool()
     {
         var session = CreateSession();

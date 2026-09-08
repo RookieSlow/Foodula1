@@ -66,4 +66,14 @@ public class DriverRulesTests
         Assert.That(DriverSelectionState.ResolveDriver(TeamId.CN).Id, Is.EqualTo("jp_takumi_fujiwara"));
         Assert.That(DriverSelectionState.ResolveDriver(TeamId.CN).Team, Is.EqualTo(TeamId.JP));
     }
+
+    [Test]
+    public void DriverProgressUsesStableVersionedPerDriverKeys()
+    {
+        string hunter = DriverProgressStore.BuildKey("uk_hunter_hart");
+        string mansell = DriverProgressStore.BuildKey("uk_nigel_mansell");
+        Assert.That(hunter, Does.StartWith("Foodula1.DriverXp.v1."));
+        Assert.That(hunter, Is.Not.EqualTo(mansell));
+        Assert.That(DriverProgressStore.Load("missing"), Is.Zero);
+    }
 }
