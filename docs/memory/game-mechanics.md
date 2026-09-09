@@ -4,7 +4,7 @@ This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
 > **Implementation snapshot (2026-09-09)**: Unity `2022.3.62f3c1`; the latest
-> full editor EditMode run passed `663/663` on 2026-09-09. The active-skill
+> full editor EditMode run passed `674/674` on 2026-09-09. The active-skill
 > focused run previously passed `28/28`, and the passive/related regression run passed `21/21`; the tutorial/menu focused run previously passed `64/64`
 > and the encyclopedia catalog checks previously passed `6/6`. The new free-race
 > roster/menu focused coverage passed `8/8`; Play Mode visual acceptance remains open.
@@ -258,7 +258,9 @@ prototype and is no longer the authoritative model.
 ## Player Settings
 
 - `Foodula1.Settings.V1` stores master, music and SFX volume values; fullscreen/window mode;
-  resolution; animation speed; reduced motion; and a separate tutorial-completed preference.
+  resolution; animation speed; reduced motion; a separate tutorial-completed preference; and
+  schema-v2 `inRaceConfirmationMask` per-action confirmation gates. The V1 key remains for
+  backwards compatibility.
 - A persistent runtime `AudioService` loads menu/race music and named gameplay clips from
   `Resources/Audio`, crossfades on `MainMenu`/`Race` scene changes, and applies master, music and
   SFX settings immediately. Music, SFX and UI use separate AudioSources; UI currently follows SFX.
@@ -327,6 +329,13 @@ prototype and is no longer the authoritative model.
   before overspeed heat. At each start/finish crossing, the player may move one
   lane inward, keep the current lane, or move one lane outward; boundary
   choices are disabled and the AI keeps its lane.
+- Le Mans old Mulsanne uses 142 cells and 2 laps without a pit lane. Cell 60 is the authored
+  `mulsanne_kink` high-speed apex (Lv1, base limit 6), keeping the long-straight visual rhythm
+  while making the bend readable. Its current circular straight distribution is 44/37/21/16.
+- A corner limit number is clickable. It opens a read-only breakdown using the same formula as
+  `RaceSession.GetCornerLimitBreakdown`: base limit + weather + driver skill + team handling +
+  technology, clamped to the real effective limit. The player sees signed contributions, including
+  weather penalty plus driver compensation for weather immunity.
 - Vehicle sprites follow the track tangent: spawning and teleport-style moves
   snap immediately to the next-node direction, while normal movement performs
   a linear interpolation between adjacent nodes (`nodeMoveDuration=0.15s`)
@@ -342,6 +351,12 @@ prototype and is no longer the authoritative model.
   while the car rotates along the track and refreshes after position/ranking
   changes. It is a code/color fallback only; the GDD's authored flag icon and
   driver avatar are still pending visual assets.
+- During the base-movement and end-of-turn slipstream presentation windows, a
+  primary click anywhere requests a presentation skip. Remaining node movement,
+  camera buffers, overtake/tailwind close-ups, tailwind bonus movement, and
+  leftover card flights settle immediately; movement, corner/lap/landmark/pit
+  crossings, tailwind bonuses, required lane/pit/tutorial decisions, and logs
+  remain unchanged. The skip window closes before discard input.
 - Manual race logs can be checked with the pure `RaceLogAnalyzer`: a valid turn
   ends card selection before base movement, ends base movement before the
   optional slipstream phase, and records active discard counts where
@@ -426,7 +441,7 @@ prototype and is no longer the authoritative model.
 - All twelve active skills use `DriverSkillRules` plus per-race `DriverSkillRuntimeState`. The HUD action
   is available only before gear confirmation and reports unlock, condition, duration and remaining-use state.
   Tutorial initializes the runtime disabled. Active-rule/EditMode coverage previously passed `28/28`,
-  the passive/related regression passes `21/21`, and the full suite now passes `663/663`; Play Mode sign-off remains.
+  the passive/related regression passes `21/21`, and the full suite now passes `674/674`; Play Mode sign-off remains.
 - Five redesigned passives (Mansell, Schumacher, Vettel, Zhou and Ma) now resolve in normal races;
   the other seven passive descriptions remain data-only and must not be described as active runtime effects.
 - `DriverBalanceBenchmark` runs 9 available tracks × 12 drivers × levels 3/7 with paired skill-enabled/

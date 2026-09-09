@@ -35,6 +35,26 @@ public sealed class CardZoneTransitionUI : MonoBehaviour
 
     public int ActiveTransitionCount { get; private set; }
 
+    /// <summary>
+    /// Stops all in-flight card flights and removes their temporary views.
+    /// Gameplay ownership has already been resolved before these visuals start.
+    /// </summary>
+    public void SkipAllTransitions()
+    {
+        StopAllCoroutines();
+        ActiveTransitionCount = 0;
+
+        if (overlayRect == null)
+            return;
+
+        for (int i = overlayRect.childCount - 1; i >= 0; i--)
+        {
+            Transform child = overlayRect.GetChild(i);
+            if (child != null && child.name == "CardTransition")
+                Destroy(child.gameObject);
+        }
+    }
+
     public void Configure(
         Canvas ownerCanvas,
         Sprite speedBg,

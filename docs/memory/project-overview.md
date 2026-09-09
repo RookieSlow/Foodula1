@@ -40,7 +40,8 @@ the CCGS project framework.
   guide panel and session-only launch state. Race events complete the active lesson;
   explicit guide-panel navigation advances or reviews authored steps.
 - `Settings/` contains versioned player settings, an injectable PlayerPrefs adapter and
-  runtime display/presentation application; `UI/GameSettingsUI.cs` builds the menu overlay.
+  runtime display/presentation application; `UI/GameSettingsUI.cs` builds the menu overlay,
+  including schema-v2 per-action in-race confirmation preferences.
 - `Encyclopedia/` contains the versioned catalog loader/validator; the Chinese JSON source under
   `Resources/Configs/` drives `UI/GameEncyclopediaUI.cs` without embedding rule prose in UI code.
 - `Career/` contains the pure eight-race season calendar, four-car points and stable standings,
@@ -79,8 +80,9 @@ The verified scene flow is:
   logo and six team emblems are integrated; driver portraits and formal tech-tree
   artwork remain in the next visual asset package.
 - The project is in Production stage. The latest full Unity EditMode run passed
-  `663/663` on 2026-09-09 after the driver passive-skill redesign integration and
-  free-race roster validation; the Thunderstorm 12-driver mode is now wired and
+  `674/674` on 2026-09-09 after the presentation-skip integration and the driver
+  passive-skill redesign integration and free-race roster validation; the Thunderstorm
+  12-driver mode is now wired and
   awaits runtime visual acceptance.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
   nodes; `RaceSession` centralizes numeric tech modifiers while the manager
@@ -116,7 +118,7 @@ The verified scene flow is:
   and preserves Skip/Exit. Its spotlight follows every live player input gate; clicking clears the callout mesh
   completely while leaving the operation border visible. Main-menu overlays are mutually exclusive so the career
   entry and summer-break surface cannot leak over driver selection.
-- The latest full project EditMode run passes `663/663`; the tutorial and menu overlay slice passes
+- The latest full project EditMode run passes `674/674`; the tutorial and menu overlay slice passes
   `64/64` and retains its
   focused regression coverage.
   Play Mode verified the exact seven-card opening and zero-benefit session; a separate
@@ -125,7 +127,9 @@ The verified scene flow is:
   Unity's play-mode transition and was stopped without retrying; the later spotlight smoke did the same,
   so the revised progressive panel, spotlight boundaries and full guided flow still require manual Play Mode acceptance.
 - Main-menu settings now persist master/music/SFX volumes, fullscreen/window mode,
-  resolution, animation speed, reduced motion and the separate tutorial-completion flag.
+  resolution, animation speed, reduced motion, the separate tutorial-completion flag and
+  schema-v2 per-action in-race confirmation gates. The race HUD reuses the live corner formula
+  for clickable limit numbers and a read-only signed modifier breakdown.
   Display and supported presentation timings are applied at runtime. A persistent `AudioService`
   now loads menu/race music and the core GDC 2026-derived SFX pack from Resources, crossfades
   scene music, separates Music/SFX/UI sources and throttles repeated board events. An AudioMixer
@@ -158,6 +162,8 @@ The verified scene flow is:
   authored JSON nodes or gameplay positions. All eight selectable official
   tracks passed a clean Play Mode screenshot/Console spot check on 2026-08-25;
   only the full mechanics-focused manual race walkthrough remains open.
+  Le Mans old Mulsanne now includes the JSON-authored cell-60 `mulsanne_kink` high-speed apex
+  (limit 6); current circular straight runs are 44/37/21/16.
 - Vehicle movement presentation now treats each node as a discrete 0.15-second
   linear interpolation along the track plane, without a vertical hop; race
   positions, lap crossings and corner calculations remain unchanged.

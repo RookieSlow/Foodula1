@@ -47,8 +47,17 @@ public sealed class GameSettingsRepository
         {
             GameSettingsData data = JsonUtility.FromJson<GameSettingsData>(
                 store.GetString(SettingsKey));
-            if (data == null || data.version != GameSettingsData.CurrentVersion)
+            if (data == null)
                 return GameSettingsData.CreateDefault(width, height);
+
+            // V1 predates per-action confirmation preferences. Preserve every
+            // existing setting and add the safe defaults instead of discarding
+            // a player's saved display/audio choices.
+            if (data.version == 1)
+                data.inRaceConfirmationMask = GameSettingsData.DefaultInRaceConfirmationMask;
+            else if (data.version != GameSettingsData.CurrentVersion)
+                return GameSettingsData.CreateDefault(width, height);
+
             data.Normalize(width, height);
             return data;
         }

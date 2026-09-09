@@ -21,12 +21,17 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
     private readonly float arrivalThreshold;
     private readonly CarOrientationController orientationController;
     private readonly Func<float> deltaTimeProvider;
+    private readonly Func<bool> skipRequestedProvider;
 
-    /// <summary>Creates a movement adapter with runtime configuration and an optional clock seam.</summary>
+    /// <summary>
+    /// Creates a movement adapter with runtime configuration, an optional clock
+    /// seam and an optional presentation-skip seam.
+    /// </summary>
     public CarMovementAnimator(
         GameConfigSO config,
         CarOrientationController orientationController,
-        Func<float> deltaTimeProvider = null)
+        Func<float> deltaTimeProvider = null,
+        Func<bool> skipRequestedProvider = null)
     {
         fallbackMoveSpeed = config != null ? Mathf.Max(0f, config.moveAnimSpeed) : 12f;
         float fallbackDuration = fallbackMoveSpeed > 0f ? 1f / fallbackMoveSpeed : 0.15f;
@@ -36,6 +41,7 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
         arrivalThreshold = CarMovementRules.DefaultArrivalThreshold;
         this.orientationController = orientationController ?? new CarOrientationController(config);
         this.deltaTimeProvider = deltaTimeProvider ?? (() => Time.deltaTime);
+        this.skipRequestedProvider = skipRequestedProvider ?? (() => false);
     }
 
     /// <summary>Animates one car to a target node and preserves its tangent-facing rotation.</summary>
@@ -59,10 +65,17 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
             yield break;
         }
 
+        if (skipRequestedProvider())
+        {
+            car.transform.position = targetPosition;
+            orientationController.RotateTowards(car, targetPosition, 0f);
+            yield break;
+        }
+
         // Each node is a discrete board-space step: interpolate along the
         // track plane, then snap to the exact target.
         float elapsed = 0f;
-        while (elapsed < nodeMoveDuration)
+        while (elapsed < nodeMoveDuration && !skipRequestedProvider())
         {
             float deltaTime = Mathf.Max(0f, deltaTimeProvider());
             elapsed += deltaTime;
@@ -70,6 +83,13 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
             car.transform.position = Vector3.LerpUnclamped(startPosition, targetPosition, progress);
             orientationController.RotateTowards(car, targetPosition, deltaTime);
             yield return null;
+        }
+
+        if (skipRequestedProvider())
+        {
+            car.transform.position = targetPosition;
+            orientationController.RotateTowards(car, targetPosition, 0f);
+            yield break;
         }
 
         car.transform.position = targetPosition;

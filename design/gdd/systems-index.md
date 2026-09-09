@@ -2,7 +2,7 @@
 
 > Design order: Foundation → Core → Feature → Presentation → Polish
 > Status: Not Started | In Progress | In Review | Approved | Needs Revision | Retired
-> Snapshot: 2026-09-08
+> Snapshot: 2026-09-09
 
 ## MVP
 
@@ -23,7 +23,7 @@
 | 11 | Visual Style | `foodula-1-visual-style.md` | In Progress | Race visuals plus main-menu background/Logo and six team emblems are integrated; driver portraits and tech-tree identity assets remain |
 | 12 | Tech Tree | `foodula-1-tech-tree.md` | In Review | Rules, persistent profiles, menu UI and race hooks are wired; presentation and playtest sign-off remain |
 | 13 | Audio Style | `foodula-1-audio-style.md` | In Review | Menu/race music, core SFX, runtime routing, crossfades, limits and settings are wired; AudioMixer, independent UI/mute, peripheral events and listening acceptance remain |
-| 14 | Tutorial, Settings & Encyclopedia | `foodula-1-tutorial-settings-encyclopedia.md` | In Progress | Isolated tutorial/practice, exact deck, author-refined guidance with optional detail sections, per-mechanic spotlight, safe checkpoints, settings persistence and 17-entry data-driven encyclopedia are wired; final guided Play Mode acceptance remains |
+| 14 | Tutorial, Settings & Encyclopedia | `foodula-1-tutorial-settings-encyclopedia.md` | In Progress | Isolated tutorial/practice, exact deck, author-refined guidance with optional detail sections, per-mechanic spotlight, safe checkpoints, schema-v2 per-action in-race confirmation settings and 17-entry data-driven encyclopedia are wired; final guided Play Mode acceptance remains |
 | 15 | Career Mode | `foodula-1-career-mode.md` | In Review | The full eight-race rules, isolated persistence, menu/Race flow, summer-break editor, final champion feedback, restart confirmation and structured settlement logs are implemented; Play Mode acceptance remains |
 | 16 | Free Race Custom Field | foodula-1-free-race.md | In Review | Pre-race 2–6 team/driver selection plus the 6-team/12-driver Thunderstorm field, player-first ordering, dynamic AI creation and FREE_RACE_SETUP logging are wired; Play Mode and balance acceptance remain |
 
@@ -39,7 +39,7 @@
 
 ## 2026-09-09 Implementation Snapshot
 
-- Project stage is `Production`; the latest successful full EditMode run passed `663/663`
+- Project stage is `Production`; the latest successful full EditMode run passed `674/674`
   on 2026-09-09, with 0 failures and 0 skips. Free-race roster/menu focused coverage passed `11/11`;
   active-skill coverage previously passed `28/28`,
   and the passive/related regression passed `21/21`.

@@ -16,6 +16,13 @@ public sealed class DriverSkillRuntimeState
     public int PassiveMovementBonusThisTurn { get; private set; }
     public int PassiveCoolingBonusThisTurn { get; private set; }
 
+    /// <summary>
+    /// Read-only presentation hooks. They let the corner-limit explanation
+    /// preview a ready passive without consuming it.
+    /// </summary>
+    public bool IsPassiveWeatherProtectionReady => passiveWeatherProtectionReady;
+    public bool IsPassiveCornerLimitBonusReady => passiveCornerLimitBonusReady;
+
     private bool passiveHeatDiscountReady;
     private bool passiveWeatherProtectionReady;
     private bool passiveCornerLimitBonusReady;

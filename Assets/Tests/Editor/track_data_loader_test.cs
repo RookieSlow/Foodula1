@@ -121,6 +121,26 @@ public class TrackDataLoaderTest
         AssertApexLimit("nurburgring_24h_endurance", "schwedenkreuz", 6);
     }
 
+    [Test]
+    public void test_le_mans_mulsanne_kink_is_a_fast_apex_at_cell_60()
+    {
+        TrackConfig cfg = TrackDataLoader.LoadConfig("le_mans_old_mulsanne");
+
+        Assert.IsNotNull(cfg, "勒芒旧慕尚配置应存在");
+        Assert.AreEqual(142, cfg.cells.Length);
+        CellData kink = System.Array.Find(
+            cfg.cells,
+            cell => cell.cornerId == "mulsanne_kink" && cell.isApex);
+
+        Assert.IsNotNull(kink, "勒芒应包含慕尚高速偏弯弯心");
+        Assert.AreEqual(60, kink.index);
+        Assert.IsTrue(kink.IsCorner);
+        Assert.AreEqual(1, kink.cornerLevel);
+        Assert.AreEqual(6, kink.cornerLimit);
+        Assert.AreEqual(24, System.Array.FindAll(cfg.cells, cell => cell.IsCorner).Length);
+        Assert.AreEqual(9, System.Array.FindAll(cfg.cells, cell => cell.isApex).Length);
+    }
+
     private static int CalculateLongestCircularStraight(CellData[] cells)
     {
         int longest = 0;

@@ -17,6 +17,11 @@ public class GameSettingsTests
         Assert.That(data.animationSpeed, Is.EqualTo(1f));
         Assert.That(data.reduceMotion, Is.False);
         Assert.That(data.tutorialCompleted, Is.False);
+        Assert.That(data.inRaceConfirmationMask,
+            Is.EqualTo(GameSettingsData.DefaultInRaceConfirmationMask));
+        Assert.IsFalse(data.IsInRaceConfirmationEnabled(InRaceConfirmationAction.GearSelection));
+        Assert.IsTrue(data.IsInRaceConfirmationEnabled(InRaceConfirmationAction.CardAction));
+        Assert.IsTrue(data.IsInRaceConfirmationEnabled(InRaceConfirmationAction.ReturnToMenu));
     }
 
     [Test]
@@ -57,7 +62,9 @@ public class GameSettingsTests
             resolutionHeight = 900,
             animationSpeed = 2f,
             reduceMotion = true,
-            tutorialCompleted = true
+            tutorialCompleted = true,
+            inRaceConfirmationMask = (int)(InRaceConfirmationAction.GearSelection |
+                                           InRaceConfirmationAction.ReturnToMenu)
         };
 
         repository.Save(saved);
@@ -73,6 +80,9 @@ public class GameSettingsTests
         Assert.That(loaded.animationSpeed, Is.EqualTo(2f));
         Assert.That(loaded.reduceMotion, Is.True);
         Assert.That(loaded.tutorialCompleted, Is.True);
+        Assert.IsTrue(loaded.IsInRaceConfirmationEnabled(InRaceConfirmationAction.GearSelection));
+        Assert.IsFalse(loaded.IsInRaceConfirmationEnabled(InRaceConfirmationAction.CardAction));
+        Assert.IsTrue(loaded.IsInRaceConfirmationEnabled(InRaceConfirmationAction.ReturnToMenu));
     }
 
     [Test]
@@ -93,6 +103,60 @@ public class GameSettingsTests
         Assert.That(corrupt.resolutionHeight, Is.EqualTo(768));
         Assert.That(unknownVersion.resolutionWidth, Is.EqualTo(1366));
         Assert.That(unknownVersion.resolutionHeight, Is.EqualTo(768));
+    }
+
+    [Test]
+    public void VersionOneSettingsMigrateToSafeConfirmationDefaults()
+    {
+        var store = new MemoryStore();
+        var repository = new GameSettingsRepository(store, () => 1366, () => 768);
+        store.SetString(GameSettingsRepository.SettingsKey,
+            "{\"version\":1,\"resolutionWidth\":1600,\"resolutionHeight\":900}");
+
+        GameSettingsData loaded = repository.Load();
+
+        Assert.That(loaded.version, Is.EqualTo(GameSettingsData.CurrentVersion));
+        Assert.That(loaded.resolutionWidth, Is.EqualTo(1600));
+        Assert.That(loaded.resolutionHeight, Is.EqualTo(900));
+        Assert.That(loaded.inRaceConfirmationMask,
+            Is.EqualTo(GameSettingsData.DefaultInRaceConfirmationMask));
+    }
+
+    [Test]
+    public void ConfirmationMaskNormalizationDropsUnknownBitsAndSupportsCompositeActions()
+    {
+        var data = new GameSettingsData
+        {
+            inRaceConfirmationMask = (int)InRaceConfirmationAction.All | (1 << 12)
+        };
+
+        data.Normalize();
+
+        Assert.That(data.inRaceConfirmationMask,
+            Is.EqualTo((int)InRaceConfirmationAction.All));
+        Assert.IsTrue(InRaceConfirmationRules.IsEnabled(
+            data.inRaceConfirmationMask,
+            InRaceConfirmationAction.GearSelection | InRaceConfirmationAction.LaneChange));
+        Assert.IsFalse(InRaceConfirmationRules.IsEnabled(
+            data.inRaceConfirmationMask,
+            InRaceConfirmationAction.None));
+    }
+
+    [Test]
+    public void ConfirmationButtonsUseActionSpecificWording()
+    {
+        Assert.That(
+            InRaceConfirmationRules.GetCancelButtonLabel(InRaceConfirmationAction.GearCommit),
+            Is.EqualTo("返回修改"));
+        Assert.That(
+            InRaceConfirmationRules.GetConfirmButtonLabel(InRaceConfirmationAction.GearCommit),
+            Is.EqualTo("锁定档位"));
+        Assert.That(
+            InRaceConfirmationRules.GetCancelButtonLabel(InRaceConfirmationAction.ReturnToMenu),
+            Is.EqualTo("留在比赛"));
+        Assert.That(
+            InRaceConfirmationRules.GetConfirmButtonLabel(InRaceConfirmationAction.ReturnToMenu),
+            Is.EqualTo("返回主菜单"));
     }
 
     [Test]

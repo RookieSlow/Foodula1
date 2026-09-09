@@ -297,39 +297,81 @@ public class RaceSession
     }
 
     /// <summary>
-    /// 弯道判定限速 = 基础限速 + 科技弯速加成（GDD 堆叠公式） − 天气惩罚。
+    /// Returns the signed corner-limit formula without consuming a passive
+    /// effect by default. The same result drives the clickable track detail
+    /// panel and the real corner-resolution path.
+    /// </summary>
+    public CornerLimitBreakdown GetCornerLimitBreakdown(
+        PlayerState p,
+        int baseLimit,
+        bool consumeDriverPassive = false)
+    {
+        if (baseLimit >= 99)
+            return CornerLimitBreakdown.FromBase(baseLimit);
+
+        int teamModifier = TeamVehicleBonusesEnabled && p != null
+            ? TeamVehicleRules.GetHandling(p.teamId)
+            : 0;
+        int technologyModifier = 0;
+        if (p?.techState != null)
+        {
+            var modifiers = GetModifiers(p);
+            technologyModifier = TechTreeRules.ComputeEffectiveCornerLimitBonus(
+                modifiers.cornerLimitBonus,
+                0,
+                0,
+                modifiers.hasSomersaultCloud ? 1 : 0,
+                modifiers.hasBankuruwase && p.techState.bankuruwaseActive ? 1 : 0);
+        }
+
+        int driverModifier = DriverSkillRules.GetCornerLimitBonus(p?.driverSkill);
+        int weatherPenalty = WeatherModifiers.FromWeather(Weather).cornerLimitReduction;
+        // The breakdown should always expose the ambient weather effect. A
+        // weather-immune driver receives a matching positive driver modifier
+        // below, so the final value stays unchanged without hiding the cause.
+        int weatherModifier = -weatherPenalty;
+
+        if (DriverSkillRules.IsWeatherImmune(p?.driverSkill))
+        {
+            // Keep the weather row honest while making the driver's immunity
+            // visible as a compensating positive modifier.
+            driverModifier += weatherPenalty;
+        }
+        else
+        {
+            if (weatherPenalty > 0 && p?.driverSkill != null &&
+                p.driverSkill.IsPassiveWeatherProtectionReady)
+            {
+                if (consumeDriverPassive)
+                    p.driverSkill.TryConsumePassiveWeatherProtection();
+                driverModifier += 1;
+            }
+        }
+
+        if (p?.driverSkill != null && p.driverSkill.IsPassiveCornerLimitBonusReady)
+        {
+            driverModifier += DriverSkillRules.GetPassiveCornerLimitBonus(
+                p.driverSkill.PassiveSkill,
+                p.driverSkill.PassiveTier);
+            if (consumeDriverPassive)
+                p.driverSkill.ConsumePassiveCornerLimitBonus();
+        }
+
+        return new CornerLimitBreakdown(
+            baseLimit,
+            weatherModifier,
+            driverModifier,
+            teamModifier,
+            technologyModifier);
+    }
+
+    /// <summary>
+    /// 弯道判定限速 = 基础限速 + 车队操控 + 科技 + 车手修正 − 天气惩罚。
     /// baseLimit &gt;= 99 视为无弯道（不修正）。
     /// </summary>
     public int EffectiveCornerLimit(PlayerState p, int baseLimit, bool consumeDriverPassive = true)
     {
-        if (baseLimit >= 99) return baseLimit;
-        // Team handling is a base-car attribute; tech-tree bonuses layer on
-        // top of it. This keeps the corner formula in one pure entry point.
-        int bonus = TeamVehicleBonusesEnabled && p != null
-            ? TeamVehicleRules.GetHandling(p.teamId)
-            : 0;
-        if (p.techState != null)
-        {
-            var m = GetModifiers(p);
-            bonus = TechTreeRules.ComputeEffectiveCornerLimitBonus(
-                m.cornerLimitBonus,
-                0,
-                0,
-                m.hasSomersaultCloud ? 1 : 0,
-                m.hasBankuruwase && p.techState.bankuruwaseActive ? 1 : 0);
-        }
-        int limit = baseLimit + bonus + DriverSkillRules.GetCornerLimitBonus(p?.driverSkill);
-        if (!DriverSkillRules.IsWeatherImmune(p?.driverSkill))
-        {
-            int weatherLimit = WeatherRules.ApplyWeatherToCornerLimit(limit, Weather);
-            if (consumeDriverPassive && p?.driverSkill != null &&
-                weatherLimit < limit && p.driverSkill.TryConsumePassiveWeatherProtection())
-                weatherLimit = Math.Min(limit, weatherLimit + 1);
-            limit = weatherLimit;
-        }
-        if (p?.driverSkill != null && consumeDriverPassive)
-            limit += p.driverSkill.ConsumePassiveCornerLimitBonus();
-        return System.Math.Max(1, limit);
+        return GetCornerLimitBreakdown(p, baseLimit, consumeDriverPassive).EffectiveLimit;
     }
 
     /// <summary>本圈弯道超速热量减免（科技，每圈 1 次）。返回本次减免量并消耗。</summary>

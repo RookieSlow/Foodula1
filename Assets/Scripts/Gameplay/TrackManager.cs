@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -57,6 +58,7 @@ public class TrackManager : MonoBehaviour
     private List<LineRenderer> cornerMaskRenderers = new List<LineRenderer>();
     private List<GameObject> apexMaskObjects = new List<GameObject>();
     private List<GameObject> speedLimitLabelObjects = new List<GameObject>();
+    private List<CornerSpeedLimitLabel> speedLimitLabels = new List<CornerSpeedLimitLabel>();
     private Vector2[] worldPathCoordinates = new Vector2[0];
     private float[] laneOffsets = new float[0];
     private TrackReadabilityOverlay readabilityOverlay;
@@ -68,6 +70,8 @@ public class TrackManager : MonoBehaviour
 
     /// <summary>弯道 ID → 名称。</summary>
     private Dictionary<int, string> cornerNames = new Dictionary<int, string>();
+    private Func<int, int, CornerLimitBreakdown> cornerLimitBreakdownProvider;
+    private Action<int, int> cornerLimitClickHandler;
 
     /// <summary>当前加载的赛道配置（JSON 模式非 null）。</summary>
     public TrackConfig LoadedTrackConfig { get; private set; }
@@ -293,6 +297,47 @@ public class TrackManager : MonoBehaviour
         if (cornerNames.TryGetValue(cornerId, out string name))
             return name;
         return "Unknown";
+    }
+
+    /// <summary>
+    /// Connects the live race formula and click handler to the world-space
+    /// speed-limit labels. The provider is optional so editor/fallback tracks
+    /// still render their authored base values.
+    /// </summary>
+    public void ConfigureCornerLimitPresentation(
+        Func<int, int, CornerLimitBreakdown> breakdownProvider,
+        Action<int, int> clickHandler)
+    {
+        cornerLimitBreakdownProvider = breakdownProvider;
+        cornerLimitClickHandler = clickHandler;
+        RefreshCornerLimitLabels();
+    }
+
+    /// <summary>Refreshes all visible corner numbers from the current race state.</summary>
+    public void RefreshCornerLimitLabels()
+    {
+        for (int i = 0; i < speedLimitLabels.Count; i++)
+        {
+            CornerSpeedLimitLabel label = speedLimitLabels[i];
+            if (label == null)
+                continue;
+
+            int displayedLimit = label.BaseLimit;
+            if (cornerLimitBreakdownProvider != null)
+            {
+                CornerLimitBreakdown breakdown = cornerLimitBreakdownProvider(
+                    label.CornerId,
+                    label.LaneIndex);
+                displayedLimit = breakdown.EffectiveLimit;
+            }
+            label.SetDisplayedLimit(displayedLimit);
+        }
+    }
+
+    /// <summary>Called by a clicked world-space limit number.</summary>
+    public void HandleCornerLimitLabelClicked(int cornerId, int laneIndex)
+    {
+        cornerLimitClickHandler?.Invoke(cornerId, laneIndex);
     }
 
     public Vector3 GetNodePosition(int index)
@@ -763,7 +808,14 @@ public class TrackManager : MonoBehaviour
         label.outlineWidth = 0.22f;
         label.outlineColor = new Color(0.05f, 0.05f, 0.05f, 0.95f);
         label.sortingOrder = 2;
+
+        CornerSpeedLimitLabel clickTarget = labelObject.AddComponent<CornerSpeedLimitLabel>();
+        clickTarget.Initialize(this, label, cornerId, laneIndex, speedLimit);
+        BoxCollider2D collider = labelObject.AddComponent<BoxCollider2D>();
+        collider.size = new Vector2(1.5f, 1.35f);
+
         speedLimitLabelObjects.Add(labelObject);
+        speedLimitLabels.Add(clickTarget);
     }
 
     private Vector3 GetCornerLabelOffset(int nodeIdx, Vector2[] coords)
@@ -827,6 +879,7 @@ public class TrackManager : MonoBehaviour
             if (label != null)
                 Destroy(label);
         }
+        speedLimitLabels.Clear();
     }
 
 #if UNITY_EDITOR

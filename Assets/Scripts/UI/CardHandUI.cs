@@ -224,11 +224,28 @@ public class CardHandUI : MonoBehaviour
             UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(layoutRect);
     }
 
-    /// <summary>Waits until already-started card flights have visually settled.</summary>
-    public IEnumerator WaitForCardTransitions()
+    /// <summary>
+    /// Waits until already-started card flights have visually settled, or stops
+    /// them when the active race presentation is skipped.
+    /// </summary>
+    public IEnumerator WaitForCardTransitions(System.Func<bool> shouldSkip = null)
     {
         while (zoneTransition != null && zoneTransition.ActiveTransitionCount > 0)
+        {
+            if (shouldSkip != null && shouldSkip())
+            {
+                SkipCardTransitions();
+                yield break;
+            }
             yield return null;
+        }
+    }
+
+    /// <summary>Settles any temporary card-flight views without changing card state.</summary>
+    public void SkipCardTransitions()
+    {
+        if (zoneTransition != null)
+            zoneTransition.SkipAllTransitions();
     }
 
     /// <summary>
@@ -430,7 +447,28 @@ public class CardHandUI : MonoBehaviour
 
     private void OnPlayClicked()
     {
-        gameManager?.OnPlayCardsButtonClicked();
+        if (gameManager == null)
+            return;
+
+        // Playing/confirming a card group is a state-changing in-race action.
+        // Reuse HUDUI's configurable gate so authored and fallback canvases
+        // behave identically.
+        if (gameManager.hudUI != null)
+        {
+            string title = isDiscardMode ? "确认弃牌" : "确认出牌";
+            string message = isDiscardMode
+                ? "确定按当前选择弃掉这些牌吗？"
+                : "确定按当前选择打出这些牌吗？";
+            gameManager.hudUI.RequestInRaceAction(
+                InRaceConfirmationAction.CardAction,
+                title,
+                message,
+                () => gameManager.OnPlayCardsButtonClicked());
+        }
+        else
+        {
+            gameManager.OnPlayCardsButtonClicked();
+        }
     }
 
     /// <summary>Clears all play selections without changing the underlying hand.</summary>

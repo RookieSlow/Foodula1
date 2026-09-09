@@ -211,6 +211,32 @@ public class RaceSessionTest
     }
 
     [Test]
+    public void test_corner_limit_breakdown_exposes_all_live_modifiers()
+    {
+        var session = CreateSession();
+        var cn = CreatePlayer(session, TeamId.CN);
+        session.Weather = WeatherType.Rainy;
+
+        CornerLimitBreakdown cnBreakdown = session.GetCornerLimitBreakdown(cn, BASE_LIMIT, false);
+
+        Assert.AreEqual(BASE_LIMIT, cnBreakdown.BaseLimit);
+        Assert.AreEqual(-1, cnBreakdown.WeatherModifier);
+        Assert.AreEqual(0, cnBreakdown.DriverModifier);
+        Assert.AreEqual(0, cnBreakdown.TeamModifier);
+        Assert.AreEqual(1, cnBreakdown.TechnologyModifier);
+        Assert.AreEqual(BASE_LIMIT, cnBreakdown.EffectiveLimit);
+
+        var italy = CreatePlayer(session, TeamId.IT);
+        italy.techState = null;
+        session.Weather = WeatherType.Sunny;
+        CornerLimitBreakdown italyBreakdown = session.GetCornerLimitBreakdown(italy, BASE_LIMIT, false);
+
+        Assert.AreEqual(0, italyBreakdown.WeatherModifier);
+        Assert.AreEqual(2, italyBreakdown.TeamModifier);
+        Assert.AreEqual(BASE_LIMIT + 2, italyBreakdown.EffectiveLimit);
+    }
+
+    [Test]
     public void test_weather_initialization_from_pool()
     {
         var session = CreateSession();

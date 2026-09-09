@@ -8,6 +8,17 @@ using UnityEngine.UI;
 public sealed class GameSettingsUI : MonoBehaviour
 {
     private static readonly float[] AnimationSpeeds = { 0.5f, 1f, 1.5f, 2f };
+    private static readonly InRaceConfirmationAction[] ConfirmationActions =
+    {
+        InRaceConfirmationAction.GearSelection,
+        InRaceConfirmationAction.GearCommit,
+        InRaceConfirmationAction.CardAction,
+        InRaceConfirmationAction.DriverSkill,
+        InRaceConfirmationAction.ResetRace,
+        InRaceConfirmationAction.ReturnToMenu,
+        InRaceConfirmationAction.PitDecision,
+        InRaceConfirmationAction.LaneChange
+    };
 
     private readonly List<Vector2Int> resolutions = new List<Vector2Int>();
     private Action onTutorialReset;
@@ -24,6 +35,9 @@ public sealed class GameSettingsUI : MonoBehaviour
     private TMP_Text motionValue;
     private TMP_Text tutorialValue;
     private TMP_Text statusValue;
+    private GameObject confirmationPanel;
+    private readonly Dictionary<InRaceConfirmationAction, TMP_Text> confirmationValues =
+        new Dictionary<InRaceConfirmationAction, TMP_Text>();
 
     public void Initialize(Action tutorialResetCallback)
     {
@@ -52,6 +66,8 @@ public sealed class GameSettingsUI : MonoBehaviour
     {
         if (overlay != null)
             overlay.SetActive(false);
+        if (confirmationPanel != null)
+            confirmationPanel.SetActive(false);
         AudioService.ApplySettings(GameSettingsRuntime.Current);
     }
 
@@ -106,8 +122,12 @@ public sealed class GameSettingsUI : MonoBehaviour
         CreateToggleRow(factory, panel.transform, "减少动态效果", -153f, out motionValue, ToggleMotion);
         CreateToggleRow(factory, panel.transform, "教程状态", -218f, out tutorialValue, ResetTutorial);
 
+        Button confirmation = factory.CreateActionButton(panel.transform, "OpenInRaceConfirmations", "局内二次确认",
+            new Vector2(-150f, -268f), new Color(0.62f, 0.34f, 0.72f), ShowConfirmationSettings);
+        confirmation.GetComponent<RectTransform>().sizeDelta = new Vector2(260f, 44f);
+
         Button encyclopedia = factory.CreateActionButton(panel.transform, "OpenEncyclopedia", "游戏百科",
-            new Vector2(0f, -268f), new Color(0.2f, 0.48f, 0.65f), encyclopediaUI.Show);
+            new Vector2(150f, -268f), new Color(0.2f, 0.48f, 0.65f), encyclopediaUI.Show);
         encyclopedia.GetComponent<RectTransform>().sizeDelta = new Vector2(260f, 44f);
 
         Button defaults = factory.CreateActionButton(panel.transform, "SettingsDefaults", "恢复默认",
@@ -124,6 +144,120 @@ public sealed class GameSettingsUI : MonoBehaviour
             new Vector2(0f, -382f), new Vector2(800f, 28f));
         statusValue.alignment = TextAlignmentOptions.Center;
         statusValue.color = new Color(0.45f, 0.92f, 0.68f);
+
+        BuildConfirmationSettingsPanel(factory);
+    }
+
+    private void BuildConfirmationSettingsPanel(RaceUIFactory factory)
+    {
+        confirmationValues.Clear();
+        confirmationPanel = new GameObject(
+            "InRaceConfirmationSettingsPanel",
+            typeof(RectTransform),
+            typeof(Image));
+        confirmationPanel.transform.SetParent(overlay.transform, false);
+        RectTransform overlayRect = confirmationPanel.GetComponent<RectTransform>();
+        overlayRect.anchorMin = Vector2.zero;
+        overlayRect.anchorMax = Vector2.one;
+        overlayRect.offsetMin = Vector2.zero;
+        overlayRect.offsetMax = Vector2.zero;
+        Image overlayImage = confirmationPanel.GetComponent<Image>();
+        overlayImage.color = new Color(0.005f, 0.012f, 0.025f, 0.82f);
+        overlayImage.raycastTarget = true;
+
+        GameObject card = new GameObject("InRaceConfirmationSettingsCard", typeof(RectTransform), typeof(Image));
+        card.transform.SetParent(confirmationPanel.transform, false);
+        RectTransform cardRect = card.GetComponent<RectTransform>();
+        cardRect.anchorMin = cardRect.anchorMax = new Vector2(0.5f, 0.5f);
+        cardRect.anchoredPosition = Vector2.zero;
+        cardRect.sizeDelta = new Vector2(720f, 540f);
+        ModernUIStyle.ApplyPanel(card, true);
+
+        TMP_Text title = factory.CreateText(card.transform, "InRaceConfirmationTitle", "局内二次确认", 30,
+            new Vector2(0f, 224f), new Vector2(620f, 44f));
+        title.alignment = TextAlignmentOptions.Center;
+        title.fontStyle = FontStyles.Bold;
+        title.color = new Color(0.72f, 0.48f, 1f);
+
+        TMP_Text note = factory.CreateText(card.transform, "InRaceConfirmationNote",
+            "玩家可以逐项决定哪些局内操作需要再次确认；关闭后点击会立即执行。",
+            15, new Vector2(0f, 184f), new Vector2(640f, 30f));
+        note.alignment = TextAlignmentOptions.Center;
+        note.color = ModernUIStyle.TextSecondary;
+
+        for (int i = 0; i < ConfirmationActions.Length; i++)
+        {
+            InRaceConfirmationAction action = ConfirmationActions[i];
+            int column = i % 2;
+            int row = i / 2;
+            float x = column == 0 ? -176f : 176f;
+            float y = 126f - row * 58f;
+            string objectSuffix = action.ToString();
+
+            TMP_Text label = factory.CreateText(card.transform,
+                "Confirmation" + objectSuffix + "Label",
+                InRaceConfirmationRules.GetDisplayName(action),
+                17, new Vector2(x - 56f, y), new Vector2(180f, 34f));
+            label.alignment = TextAlignmentOptions.MidlineLeft;
+
+            Button toggle = factory.CreateActionButton(card.transform,
+                "Confirmation" + objectSuffix + "Toggle", "",
+                new Vector2(x + 76f, y), new Color(0.2f, 0.42f, 0.62f),
+                () => ToggleConfirmation(action));
+            toggle.GetComponent<RectTransform>().sizeDelta = new Vector2(108f, 36f);
+            TMP_Text value = toggle.GetComponentInChildren<TMP_Text>(true);
+            if (value != null)
+                value.fontSize = 16f;
+            confirmationValues[action] = value;
+        }
+
+        Button close = factory.CreateActionButton(card.transform, "CloseInRaceConfirmations",
+            "返回设置", new Vector2(0f, -198f), ModernUIStyle.AccentBlue, HideConfirmationSettings);
+        close.GetComponent<RectTransform>().sizeDelta = new Vector2(220f, 44f);
+        confirmationPanel.SetActive(false);
+    }
+
+    private void ShowConfirmationSettings()
+    {
+        if (working == null)
+            working = GameSettingsRuntime.Current.Clone();
+        if (confirmationPanel == null)
+            Build();
+        RefreshConfirmationValues();
+        if (confirmationPanel != null)
+        {
+            confirmationPanel.transform.SetAsLastSibling();
+            confirmationPanel.SetActive(true);
+        }
+    }
+
+    private void HideConfirmationSettings()
+    {
+        if (confirmationPanel != null)
+            confirmationPanel.SetActive(false);
+    }
+
+    private void ToggleConfirmation(InRaceConfirmationAction action)
+    {
+        if (working == null)
+            return;
+        int mask = InRaceConfirmationRules.NormalizeMask(working.inRaceConfirmationMask);
+        int bit = (int)action;
+        working.inRaceConfirmationMask = (mask & bit) != 0
+            ? mask & ~bit
+            : mask | bit;
+        RefreshConfirmationValues();
+    }
+
+    private void RefreshConfirmationValues()
+    {
+        if (working == null)
+            return;
+        foreach (KeyValuePair<InRaceConfirmationAction, TMP_Text> pair in confirmationValues)
+        {
+            if (pair.Value != null)
+                pair.Value.text = working.IsInRaceConfirmationEnabled(pair.Key) ? "开启" : "关闭";
+        }
     }
 
     private static void CreateStepper(
@@ -283,6 +417,7 @@ public sealed class GameSettingsUI : MonoBehaviour
         animationValue.text = $"{working.animationSpeed:0.0}×";
         motionValue.text = working.reduceMotion ? "开启（跳过可选动态）" : "关闭";
         tutorialValue.text = working.tutorialCompleted ? "已完成 · 点击重置" : "可重播 · 点击重置";
+        RefreshConfirmationValues();
         if (!keepStatus && statusValue != null)
             statusValue.text = string.Empty;
     }

@@ -81,7 +81,8 @@ public class MVPGameManager : MonoBehaviour
     private CarOrientationController carOrientationController;
     private ICarMovementAnimator carMovementAnimator;
 
-    private WaitForSeconds nodeWait;
+    private float nodeWaitDuration;
+    private readonly RacePresentationSkipState presentationSkipState = new RacePresentationSkipState();
     private readonly RaceInputState inputState = new RaceInputState();
     private Dictionary<int, Button> gearButtons = new Dictionary<int, Button>();
     private Button confirmGearControl;
@@ -117,6 +118,8 @@ public class MVPGameManager : MonoBehaviour
         !pendingTutorialGuideRefreshAtTurnStart &&
         tutorialDirector != null && tutorialDirector.BlocksRaceInput;
     public GamePhase CurrentPhase => phaseState.Current;
+    public bool IsPresentationSkipActive => presentationSkipState.IsActive;
+    public bool IsPresentationSkipRequested => presentationSkipState.IsSkipRequested;
     public GameConfigSO Config => config;
     public TrackManager Track => trackManager;
     /// <summary>当前天气显示名。</summary>
@@ -128,12 +131,33 @@ public class MVPGameManager : MonoBehaviour
     /// <summary>The currently rendered first AI car, if it has been spawned.</summary>
     public Transform AICarTransform => carInstances.Count > 1 ? carInstances[1].transform : null;
 
+    /// <summary>
+    /// Requests the active movement/tailwind presentation to settle immediately.
+    /// This is also useful for an authored UI skip affordance; normal gameplay
+    /// input remains untouched outside the presentation window.
+    /// </summary>
+    public bool RequestPresentationSkip()
+    {
+        return presentationSkipState.RequestSkip();
+    }
+
+    private bool IsPresentationSkipRequestedNow()
+    {
+        if (!presentationSkipState.IsActive)
+            return false;
+
+        if (Input.GetMouseButtonDown(0))
+            presentationSkipState.RequestSkip();
+        return presentationSkipState.IsSkipRequested;
+    }
+
     void Awake()
     {
     }
 
     void OnDestroy()
     {
+        presentationSkipState.End();
         if (raceLogWriter != null && raceLogWriter.IsActive)
             raceLogWriter.End("scene destroyed");
     }
@@ -148,7 +172,11 @@ public class MVPGameManager : MonoBehaviour
             Debug.LogWarning("MVPGameManager: GameConfigSO not set. Using defaults. Create one via Create > Foodula1 > MVP Game Config for better control.");
         }
         carOrientationController = new CarOrientationController(config);
-        carMovementAnimator = new CarMovementAnimator(config, carOrientationController);
+        carMovementAnimator = new CarMovementAnimator(
+            config,
+            carOrientationController,
+            null,
+            () => IsPresentationSkipRequestedNow());
 
         // 自动创建缺失的引用
         if (trackManager == null)
@@ -180,8 +208,7 @@ public class MVPGameManager : MonoBehaviour
         CreateLaneChangeUI();
         CreatePitChoiceUI();
 
-        nodeWait = new WaitForSeconds(
-            GameSettingsRuntime.ScaleAnimationDuration(config.nodeDelay));
+        nodeWaitDuration = GameSettingsRuntime.ScaleAnimationDuration(config.nodeDelay);
         InitializeGame();
         if (!string.IsNullOrEmpty(careerInitializationFailure))
         {
@@ -523,13 +550,13 @@ public class MVPGameManager : MonoBehaviour
 
         laneInButton = CreateActionButton(panelRect, "LaneInButton", "向内一格",
             new Vector2(-150f, -15f), new Color(0.55f, 0.85f, 1f),
-            () => ChooseIndianapolisLaneChange(1));
+            () => RequestLaneChange(1));
         laneKeepButton = CreateActionButton(panelRect, "LaneKeepButton", "保持车道",
             new Vector2(0f, -15f), new Color(0.8f, 0.8f, 0.8f),
-            () => ChooseIndianapolisLaneChange(0));
+            () => RequestLaneChange(0));
         laneOutButton = CreateActionButton(panelRect, "LaneOutButton", "向外一格",
             new Vector2(150f, -15f), new Color(1f, 0.75f, 0.45f),
-            () => ChooseIndianapolisLaneChange(-1));
+            () => RequestLaneChange(-1));
 
         laneChangePanel.SetActive(false);
     }
@@ -555,12 +582,45 @@ public class MVPGameManager : MonoBehaviour
 
         pitEnterButton = CreateActionButton(panelRect, "PitEnterButton", "预定进站（过入口后停1回合）",
             new Vector2(-160f, -15f), new Color(0.45f, 0.85f, 0.55f),
-            () => ChoosePit(true));
+            () => RequestPitDecision(true));
         pitSkipButton = CreateActionButton(panelRect, "PitSkipButton", "继续比赛",
             new Vector2(160f, -15f), new Color(0.8f, 0.8f, 0.8f),
-            () => ChoosePit(false));
+            () => RequestPitDecision(false));
 
         pitChoicePanel.SetActive(false);
+    }
+
+    private void RequestLaneChange(int direction)
+    {
+        if (hudUI == null)
+        {
+            ChooseIndianapolisLaneChange(direction);
+            return;
+        }
+
+        string choice = direction > 0 ? "向内一格" : direction < 0 ? "向外一格" : "保持车道";
+        hudUI.RequestInRaceAction(
+            InRaceConfirmationAction.LaneChange,
+            "确认起点换道",
+            $"确定选择“{choice}”并完成本次车道决定吗？",
+            () => ChooseIndianapolisLaneChange(direction));
+    }
+
+    private void RequestPitDecision(bool enter)
+    {
+        if (hudUI == null)
+        {
+            ChoosePit(enter);
+            return;
+        }
+
+        hudUI.RequestInRaceAction(
+            InRaceConfirmationAction.PitDecision,
+            enter ? "确认预定进站" : "确认继续比赛",
+            enter
+                ? "车辆将在通过维修区入口后的下一回合停站并获得维修区出口推进。"
+                : "确定放弃本圈进站并继续比赛吗？",
+            () => ChoosePit(enter));
     }
 
     // Auxiliary overlays share the same typography/button construction as the
@@ -594,7 +654,13 @@ public class MVPGameManager : MonoBehaviour
             {
                 int capturedGear = gear;
                 btn.onClick.RemoveAllListeners();
-                btn.onClick.AddListener(() => OnGearButtonClicked(capturedGear));
+                btn.onClick.AddListener(() =>
+                {
+                    if (hudUI != null)
+                        hudUI.RequestGearSelection(capturedGear);
+                    else
+                        OnGearButtonClicked(capturedGear);
+                });
             }
         }
     }
@@ -751,6 +817,11 @@ public class MVPGameManager : MonoBehaviour
             if (hudUI != null)
                 hudUI.AppendLog($"今日天气: {session.WeatherLabel}");
         }
+
+        // Corner speed labels are clickable and show the exact current
+        // player-specific formula. Configure this after weather and player
+        // setup, before the first HUD refresh renders the live numbers.
+        ConfigureCornerLimitPresentation();
 
         phaseState.ResetForRace();
         inputState.Reset();
@@ -1681,8 +1752,11 @@ public class MVPGameManager : MonoBehaviour
             // ====== 计算移动力（科技 + 特技加成） ======
             ComputeMovements(turnOrder, turnSkipped);
             // ====== PHASE B：先完成所有车辆的基础移动结算 ======
+            presentationSkipState.Begin();
             phaseState.BeginAnimation();
             raceLogWriter?.Append("[MOVE_PHASE] begin");
+            if (hudUI != null)
+                hudUI.SetStatus("移动阶段 · 点击任意位置跳过动画");
             foreach (var p in turnOrder)
             {
                 if (RaceTurnRules.IsInactive(p, turnSkipped)) continue;
@@ -1724,6 +1798,7 @@ public class MVPGameManager : MonoBehaviour
             }
             yield return StartCoroutine(PlaySlipstreamPhase(turnOrder, turnSkipped));
             yield return StartCoroutine(ApplySlipstreamMovement(turnOrder, turnSkipped));
+            presentationSkipState.End();
             yield return WaitForTutorialNavigation();
 
             // ====== 弃牌（可选，仅玩家） ======
@@ -2123,7 +2198,7 @@ public class MVPGameManager : MonoBehaviour
             float leadDelay = GameSettingsRuntime.ScaleAnimationDuration(
                 config.movementFocusLeadDelay);
             if (leadDelay > 0f)
-                yield return new WaitForSeconds(leadDelay);
+                yield return WaitForPresentationDelay(leadDelay);
         }
 
         for (int i = p.position + 1; i <= targetPos; i++)
@@ -2141,7 +2216,7 @@ public class MVPGameManager : MonoBehaviour
                     yield return StartCoroutine(WaitForIndianapolisLaneChoice());
             }
 
-            yield return nodeWait;
+            yield return WaitForPresentationDelay(nodeWaitDuration);
         }
 
         p.position = targetPos % totalNodes;
@@ -2154,7 +2229,10 @@ public class MVPGameManager : MonoBehaviour
             // Keep the movement camera on the winner for a dedicated
             // slow-motion close-up before returning to normal race pacing.
             raceCameraController?.BeginVehicleMovement(car.transform);
-            yield return StartCoroutine(raceEventFX.PlayOvertake(car.transform, overtakeCount));
+            yield return StartCoroutine(raceEventFX.PlayOvertake(
+                car.transform,
+                overtakeCount,
+                () => IsPresentationSkipRequestedNow()));
         }
 
         if (totalMove > 0)
@@ -2162,8 +2240,26 @@ public class MVPGameManager : MonoBehaviour
             float trailDelay = GameSettingsRuntime.ScaleAnimationDuration(
                 config.movementFocusTrailDelay);
             if (trailDelay > 0f)
-                yield return new WaitForSeconds(trailDelay);
+                yield return WaitForPresentationDelay(trailDelay);
             raceCameraController?.EndVehicleMovement();
+        }
+    }
+
+    /// <summary>
+    /// Waits for a presentation-only delay while allowing a global click to
+    /// settle the remaining visual work immediately.
+    /// </summary>
+    private IEnumerator WaitForPresentationDelay(float duration)
+    {
+        float elapsed = 0f;
+        float safeDuration = Mathf.Max(0f, duration);
+        while (elapsed < safeDuration)
+        {
+            if (IsPresentationSkipRequestedNow())
+                yield break;
+
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
         }
     }
 
@@ -2409,9 +2505,9 @@ public class MVPGameManager : MonoBehaviour
         raceLogWriter?.Append(
             $"[SLIPSTREAM_MOVE_PHASE] begin time_scale_before={Time.timeScale:F2}");
         if (hudUI != null)
-            hudUI.SetStatus("尾流阶段结束 · 执行额外移动");
+            hudUI.SetStatus("尾流阶段结束 · 执行额外移动（点击任意位置跳过动画）");
 
-        if (raceEventFX != null)
+        if (raceEventFX != null && !IsPresentationSkipRequestedNow())
         {
             raceEventFX.BeginSlipstreamBonusMovementSlowMotion();
             raceLogWriter?.Append(
@@ -2526,17 +2622,18 @@ public class MVPGameManager : MonoBehaviour
         // Card flights are deliberately non-blocking for rule resolution, but the
         // tailwind close-up still waits for them before the end-of-turn reveal.
         if (hudUI != null)
-            hudUI.SetStatus("移动阶段结束 · 正在结算尾流");
+            hudUI.SetStatus("移动阶段结束 · 正在结算尾流（点击任意位置跳过动画）");
         if (cardHandUI != null)
-            yield return StartCoroutine(cardHandUI.WaitForCardTransitions());
-        yield return new WaitForSecondsRealtime(0.12f);
+            yield return StartCoroutine(cardHandUI.WaitForCardTransitions(
+                () => IsPresentationSkipRequestedNow()));
+        yield return WaitForPresentationDelay(0.12f);
 
         raceLogWriter?.Append(
             $"[SLIPSTREAM_PHASE] begin events={events.Count} " +
             $"visuals={(raceEventFX != null ? "enabled" : "disabled")} " +
             $"time_scale_before={Time.timeScale:F2}");
         if (hudUI != null)
-            hudUI.SetStatus($"尾流阶段：{events.Count} 段气流，额外移动即将执行");
+            hudUI.SetStatus($"尾流阶段：{events.Count} 段气流，点击任意位置跳过动画");
 
         if (raceEventFX != null)
         {
@@ -2546,7 +2643,9 @@ public class MVPGameManager : MonoBehaviour
             raceCameraController?.BeginVehicleMovement(focus);
             try
             {
-                yield return StartCoroutine(raceEventFX.PlaySlipstreams(events));
+                yield return StartCoroutine(raceEventFX.PlaySlipstreams(
+                    events,
+                    () => IsPresentationSkipRequestedNow()));
             }
             finally
             {
@@ -2561,7 +2660,7 @@ public class MVPGameManager : MonoBehaviour
             ? Mathf.Max(0f, raceEventFX.slipstreamPostGapDuration)
             : 0.16f;
         if (postGap > 0f)
-            yield return new WaitForSecondsRealtime(postGap);
+            yield return WaitForPresentationDelay(postGap);
         if (hudUI != null)
             hudUI.SetStatus("尾流加成阶段：按奖励推进");
     }
@@ -3602,6 +3701,34 @@ public class MVPGameManager : MonoBehaviour
 
     // ====== UI 回调 ======
 
+    private void ConfigureCornerLimitPresentation()
+    {
+        if (trackManager == null)
+            return;
+        trackManager.ConfigureCornerLimitPresentation(
+            ResolveCornerLimitBreakdown,
+            OnCornerLimitLabelClicked);
+    }
+
+    private CornerLimitBreakdown ResolveCornerLimitBreakdown(int cornerId, int laneIndex)
+    {
+        int baseLimit = trackManager != null
+            ? trackManager.GetCornerSpeedLimit(cornerId, laneIndex)
+            : 99;
+        return session != null
+            ? session.GetCornerLimitBreakdown(Player, baseLimit, false)
+            : CornerLimitBreakdown.FromBase(baseLimit);
+    }
+
+    private void OnCornerLimitLabelClicked(int cornerId, int laneIndex)
+    {
+        if (trackManager == null || hudUI == null)
+            return;
+        hudUI.ShowCornerLimitDetails(
+            trackManager.GetCornerName(cornerId),
+            ResolveCornerLimitBreakdown(cornerId, laneIndex));
+    }
+
     public void OnGearButtonClicked(int gear)
     {
         if (IsTutorialActionInputBlocked) return;
@@ -3649,6 +3776,7 @@ public class MVPGameManager : MonoBehaviour
         hudUI?.AppendLog($"<color=#D9A7FF>{message}</color>");
         hudUI?.SetStatus(message + "；请选择并确认档位");
         hudUI?.RefreshDriverSkill(this, player);
+        trackManager?.RefreshCornerLimitLabels();
         raceLogWriter?.Append(
             $"[DRIVER_SKILL] driver={player.driverId} skill={player.driverSkill.Skill} " +
             $"tier={player.driverSkill.Tier} duration={player.driverSkill.ActiveTurnsRemaining} " +

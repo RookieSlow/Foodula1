@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -150,12 +151,14 @@ public sealed class RaceEventFX : MonoBehaviour
     /// Dedicated overtake close-up. The game is slowed only while this visual
     /// cue is running; rules and card state are unaffected.
     /// </summary>
-    public IEnumerator PlayOvertake(Transform car, int count)
+    public IEnumerator PlayOvertake(Transform car, int count, Func<bool> shouldSkip = null)
     {
         if (!initialized || car == null)
             yield break;
 
-        yield return AcquireEffectSlot();
+        yield return AcquireEffectSlot(shouldSkip);
+        if (ShouldSkip(shouldSkip))
+            yield break;
         SetMessage("OVERTAKE!", count > 1 ? $"超车 ×{count} · 领先车手抓住了机会" : "超车成功 · 领先车手抓住了机会", OvertakeColor);
         Vector3 originalScale = car.localScale;
         Quaternion originalRotation = car.rotation;
@@ -167,6 +170,9 @@ public sealed class RaceEventFX : MonoBehaviour
             const float duration = 0.78f;
             while (elapsed < duration)
             {
+                if (ShouldSkip(shouldSkip))
+                    yield break;
+
                 elapsed += Time.unscaledDeltaTime;
                 float t = Mathf.Clamp01(elapsed / duration);
                 float pulse = 1f + Mathf.Sin(t * Mathf.PI * 2f) * 0.09f * (1f - t * 0.35f);
@@ -190,12 +196,16 @@ public sealed class RaceEventFX : MonoBehaviour
     /// One merged slipstream phase for the turn. Animated UI dashes connect
     /// every follower/leader pair while both cars receive a restrained focus pulse.
     /// </summary>
-    public IEnumerator PlaySlipstreams(IReadOnlyList<SlipstreamVisualEvent> events)
+    public IEnumerator PlaySlipstreams(
+        IReadOnlyList<SlipstreamVisualEvent> events,
+        Func<bool> shouldSkip = null)
     {
         if (!initialized || events == null || events.Count == 0 || canvas == null)
             yield break;
 
-        yield return AcquireEffectSlot();
+        yield return AcquireEffectSlot(shouldSkip);
+        if (ShouldSkip(shouldSkip))
+            yield break;
 
         int totalBonus = 0;
         var originalScales = new Dictionary<Transform, Vector3>();
@@ -223,17 +233,22 @@ public sealed class RaceEventFX : MonoBehaviour
             ? $"尾流 +{totalBonus} · 气流牵引"
             : $"尾流 ×{airflowRoots.Count} · 总加成 +{totalBonus}";
         SetMessage("尾流阶段", "速度牌已锁定 · 正在进入气流", SlipstreamColor);
-        if (slipstreamLeadInDuration > 0f)
-            yield return new WaitForSecondsRealtime(slipstreamLeadInDuration);
-        SetMessage("SLIPSTREAM!", detail, SlipstreamColor);
-
-        BeginSlowMotion(slipstreamTimeScale);
         try
         {
+            if (slipstreamLeadInDuration > 0f)
+                yield return WaitForUnscaledDurationOrSkip(slipstreamLeadInDuration, shouldSkip);
+            if (ShouldSkip(shouldSkip))
+                yield break;
+
+            SetMessage("SLIPSTREAM!", detail, SlipstreamColor);
+            BeginSlowMotion(slipstreamTimeScale);
             float elapsed = 0f;
             float duration = Mathf.Max(0.8f, slipstreamDuration);
             while (elapsed < duration)
             {
+                if (ShouldSkip(shouldSkip))
+                    yield break;
+
                 elapsed += Time.unscaledDeltaTime;
                 float t = Mathf.Clamp01(elapsed / duration);
                 float pulse = 1f + Mathf.Sin(t * Mathf.PI) * 0.11f;
@@ -323,11 +338,40 @@ public sealed class RaceEventFX : MonoBehaviour
         }
     }
 
-    private IEnumerator AcquireEffectSlot()
+    private IEnumerator AcquireEffectSlot(Func<bool> shouldSkip = null)
     {
         while (effectBusy)
+        {
+            if (ShouldSkip(shouldSkip))
+                yield break;
             yield return null;
+        }
+
+        if (ShouldSkip(shouldSkip))
+            yield break;
+
         effectBusy = true;
+    }
+
+    private static bool ShouldSkip(Func<bool> shouldSkip)
+    {
+        return shouldSkip != null && shouldSkip();
+    }
+
+    private static IEnumerator WaitForUnscaledDurationOrSkip(
+        float duration,
+        Func<bool> shouldSkip)
+    {
+        float elapsed = 0f;
+        float safeDuration = Mathf.Max(0f, duration);
+        while (elapsed < safeDuration)
+        {
+            if (ShouldSkip(shouldSkip))
+                yield break;
+
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
     }
 
     private static void RememberScale(Dictionary<Transform, Vector3> scales, Transform target)

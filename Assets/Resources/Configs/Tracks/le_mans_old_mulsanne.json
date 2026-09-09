@@ -718,14 +718,18 @@
     },
     {
       "index": 60,
-      "type": "straight",
-      "name": "赛道直道",
-      "segmentId": "straight",
+      "type": "corner",
+      "name": "慕尚高速偏弯",
+      "segmentId": "mulsanne_kink",
       "distanceMeters": 95,
       "position": {
         "x": 0.935913,
         "y": 0.520437
-      }
+      },
+      "cornerId": "mulsanne_kink",
+      "cornerLevel": 1,
+      "cornerLimit": 6,
+      "isApex": true
     },
     {
       "index": 61,

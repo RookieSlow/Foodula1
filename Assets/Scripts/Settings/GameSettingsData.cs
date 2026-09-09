@@ -8,7 +8,15 @@ using UnityEngine;
 [Serializable]
 public sealed class GameSettingsData
 {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
+    public const int DefaultInRaceConfirmationMask =
+        (int)(InRaceConfirmationAction.GearCommit |
+              InRaceConfirmationAction.CardAction |
+              InRaceConfirmationAction.DriverSkill |
+              InRaceConfirmationAction.ResetRace |
+              InRaceConfirmationAction.ReturnToMenu |
+              InRaceConfirmationAction.PitDecision |
+              InRaceConfirmationAction.LaneChange);
 
     public int version = CurrentVersion;
     public float masterVolume = 1f;
@@ -20,6 +28,12 @@ public sealed class GameSettingsData
     public float animationSpeed = 1f;
     public bool reduceMotion;
     public bool tutorialCompleted;
+    /// <summary>
+    /// Bit mask for in-race confirmation gates. Gear selection itself is off
+    /// by default because the following lock-in button is already gated, but
+    /// every action remains individually configurable in Settings.
+    /// </summary>
+    public int inRaceConfirmationMask = DefaultInRaceConfirmationMask;
 
     public static GameSettingsData CreateDefault(int width = 1920, int height = 1080)
     {
@@ -43,7 +57,8 @@ public sealed class GameSettingsData
             resolutionHeight = resolutionHeight,
             animationSpeed = animationSpeed,
             reduceMotion = reduceMotion,
-            tutorialCompleted = tutorialCompleted
+            tutorialCompleted = tutorialCompleted,
+            inRaceConfirmationMask = inRaceConfirmationMask
         };
     }
 
@@ -60,6 +75,12 @@ public sealed class GameSettingsData
             ? resolutionHeight
             : Mathf.Max(360, fallbackHeight);
         animationSpeed = NormalizeAnimationSpeed(animationSpeed);
+        inRaceConfirmationMask = InRaceConfirmationRules.NormalizeMask(inRaceConfirmationMask);
+    }
+
+    public bool IsInRaceConfirmationEnabled(InRaceConfirmationAction action)
+    {
+        return InRaceConfirmationRules.IsEnabled(inRaceConfirmationMask, action);
     }
 
     public static float NormalizeAnimationSpeed(float value)
