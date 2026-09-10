@@ -94,6 +94,7 @@ public class ChinaGearRulesTests
         Assert.AreEqual(3, firstGo.TotalCardCount);
         Assert.AreEqual(3, firstGoWithHotpot.BaseCardCount);
         Assert.AreEqual(1, firstGoWithHotpot.ExtraCardCount);
+        Assert.AreEqual(3, firstGoWithHotpot.RequiredCardCount);
         Assert.AreEqual(4, firstGoWithHotpot.TotalCardCount);
         Assert.AreEqual(4, secondGo.BaseCardCount);
         Assert.AreEqual(4, secondGo.TotalCardCount);

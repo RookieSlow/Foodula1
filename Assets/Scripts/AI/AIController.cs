@@ -165,8 +165,8 @@ public class AIController : MonoBehaviour
                 randomSource);
         }
 
-        // 引擎故障：速度牌不足时，每缺 1 张 +1 热量到弃牌堆。引擎不足 → 失控
-        int requiredCards = game.GetMaxSpeedCardsThisTurn(ai);
+        // 引擎故障：速度牌不足时，每缺 1 张 +1 热量到手牌。引擎不足 → 失控
+        int requiredCards = game.GetRequiredSpeedCardsThisTurn(ai);
         int missing = RaceRules.GetMissingSpeedCardCount(requiredCards, chosen.Count);
         if (missing > 0)
         {

@@ -2292,6 +2292,12 @@ public class MVPGameManager : MonoBehaviour
         return GetSpeedCardRequirement(p).TotalCardCount;
     }
 
+    /// <summary>Required cards exclude optional slots granted by tricks or technology.</summary>
+    public int GetRequiredSpeedCardsThisTurn(PlayerState p)
+    {
+        return GetSpeedCardRequirement(p).RequiredCardCount;
+    }
+
     /// <summary>Returns the lane currently used to render and judge a racer.</summary>
     public int GetLaneIndexForPlayer(PlayerState p)
     {
@@ -3279,10 +3285,17 @@ public class MVPGameManager : MonoBehaviour
                     "yin yang (yin)",
                     HeatPaymentDestination.Discard))
             {
-                p.position = (p.position + 1) % trackManager.TotalNodes;
+                int rawEnd = p.position + result.extraMovement;
+                int finishCrossings = TrackRules.CountStartFinishCrossings(
+                    trackManager.Nodes,
+                    p.position,
+                    rawEnd);
+                p.position = rawEnd % trackManager.TotalNodes;
+                for (int i = 0; i < finishCrossings && !p.hasFinished; i++)
+                    OnPlayerCrossedStartFinish(p);
                 MoveCarTo(p, p.position);
                 if (hudUI != null)
-                    hudUI.AppendLog($"<color=orange>{p.name} 阴阳茶(阴)：付 1 热 → +1 格。</color>");
+                    hudUI.AppendLog($"<color=orange>{p.name} 阴阳茶(阴)：付 1 热 → +{result.extraMovement} 格。</color>");
             }
         }
         else if (result.isYang)
@@ -3984,7 +3997,7 @@ public class MVPGameManager : MonoBehaviour
         int speedCount = player.playedSpeedCardsThisTurn.Count;
 
         // 引擎故障：速度牌不足时，每缺 1 张 → +1 热量入手牌。引擎不足 → 失控
-        int required = GetMaxSpeedCardsThisTurn(player);
+        int required = GetRequiredSpeedCardsThisTurn(player);
         int missing = RaceRules.GetMissingSpeedCardCount(required, speedCount);
         if (missing > 0)
         {

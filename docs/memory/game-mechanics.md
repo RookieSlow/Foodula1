@@ -3,8 +3,8 @@
 This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
-> **Implementation snapshot (2026-09-09)**: Unity `2022.3.62f3c1`; the latest
-> full editor EditMode run passed `674/674` on 2026-09-09. The active-skill
+> **Implementation snapshot (2026-09-11)**: Unity `2022.3.62f3c1`; the latest
+> full editor EditMode run passed `676/676` on 2026-09-11. The active-skill
 > focused run previously passed `28/28`, and the passive/related regression run passed `21/21`; the tutorial/menu focused run previously passed `64/64`
 > and the encyclopedia catalog checks previously passed `6/6`. The new free-race
 > roster/menu focused coverage passed `8/8`; Play Mode visual acceptance remains open.
@@ -84,6 +84,10 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
 ## Turn and Card Loop
 
+- The drivetrain base card count is mandatory. Extra card slots granted by tricks or technology
+  increase only the maximum selectable count and never create a missing-card engine-failure penalty.
+- Instant bonus movement uses the same start/finish traversal rule as animated movement. In particular,
+  Yin-Yang Tea Go movement can increment the lap and finish the race when it crosses the line.
 - Each player has a draw pile, hand, discard pile, and independent engine
   heat pool.
 - The default hand limit is 7.

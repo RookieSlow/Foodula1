@@ -145,6 +145,20 @@ public class TrackRulesTests
         Assert.That(TrackRules.FindStartFinishNodeIndex(nodes), Is.EqualTo(1));
     }
 
+    [Test]
+    public void CountStartFinishCrossings_DetectsInstantBonusWrap()
+    {
+        var nodes = new List<TrackNode>
+        {
+            new TrackNode(0, 99, isStartFinish: true),
+            Node(1),
+            Node(2)
+        };
+
+        Assert.That(TrackRules.CountStartFinishCrossings(nodes, 2, 3), Is.EqualTo(1));
+        Assert.That(TrackRules.CountStartFinishCrossings(nodes, 1, 2), Is.Zero);
+    }
+
     private static CellData Cell(int index, string type, bool isApex, string cornerId = null)
     {
         return new CellData

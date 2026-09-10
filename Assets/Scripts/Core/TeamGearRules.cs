@@ -15,6 +15,11 @@ public static class TeamGearRules
 
         public int BaseCardCount { get; }
         public int ExtraCardCount { get; }
+        /// <summary>
+        /// Cards that must be played to satisfy the drivetrain requirement.
+        /// Extra slots granted by tricks or technology are optional capacity.
+        /// </summary>
+        public int RequiredCardCount => BaseCardCount;
         public int TotalCardCount => BaseCardCount + ExtraCardCount;
     }
 

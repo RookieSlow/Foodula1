@@ -80,8 +80,8 @@ The verified scene flow is:
   logo and six team emblems are integrated; driver portraits and formal tech-tree
   artwork remain in the next visual asset package.
 - The project is in Production stage. The latest full Unity EditMode run passed
-  `674/674` on 2026-09-09 after the presentation-skip integration and the driver
-  passive-skill redesign integration and free-race roster validation; the Thunderstorm
+  `676/676` on 2026-09-11 after fixing instant Yin-Yang Tea finish-line traversal and
+  separating required gear cards from optional trick/technology slots; the Thunderstorm
   12-driver mode is now wired and
   awaits runtime visual acceptance.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active

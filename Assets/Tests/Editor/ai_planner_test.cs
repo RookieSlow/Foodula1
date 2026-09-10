@@ -402,6 +402,34 @@ public class AIControllerTests
     }
 
     [Test]
+    public void test_optional_extra_slot_does_not_create_missing_card_penalty()
+    {
+        MVPGameManager game = gameObject.AddComponent<MVPGameManager>();
+        game.config = config;
+
+        PlayerState ai = new PlayerState("AI", true, 0, 2)
+        {
+            extraCardSlotsThisTurn = 1
+        };
+        ai.deck.InitializeDeck(config, new HeatPool(0), new SystemRandomSource(1));
+        ai.deck.AddCardsToHand(new List<CardData>
+        {
+            new CardData(CardType.Speed, 2),
+            new CardData(CardType.Speed, 3)
+        });
+
+        AIController controller = gameObject.AddComponent<AIController>();
+        controller.Initialize(game, ai, new StubRandomSource());
+        controller.SelectCards();
+
+        Assert.That(game.GetMaxSpeedCardsThisTurn(ai), Is.EqualTo(3));
+        Assert.That(game.GetRequiredSpeedCardsThisTurn(ai), Is.EqualTo(2));
+        Assert.That(ai.playedSpeedCardsThisTurn.Count, Is.EqualTo(2));
+        Assert.That(ai.spinCounter, Is.Zero);
+        Assert.That(ai.skipNextTurn, Is.False);
+    }
+
+    [Test]
     public void test_engine_failure_payment_uses_schwarzbrot_for_ai()
     {
         MVPGameManager game = gameObject.AddComponent<MVPGameManager>();

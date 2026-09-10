@@ -47,6 +47,28 @@ public static class TrackRules
         return false;
     }
 
+    /// <summary>
+    /// Counts every start/finish node crossed by a forward movement. This is
+    /// used by instant bonus movement that does not traverse visual nodes.
+    /// </summary>
+    public static int CountStartFinishCrossings(
+        IReadOnlyList<TrackNode> nodes,
+        int fromPosition,
+        int toPosition)
+    {
+        if (nodes == null || nodes.Count == 0 || toPosition <= fromPosition)
+            return 0;
+
+        int crossings = 0;
+        for (int position = fromPosition + 1; position <= toPosition; position++)
+        {
+            if (nodes[NormalizeIndex(position, nodes.Count)].isStartFinish)
+                crossings++;
+        }
+
+        return crossings;
+    }
+
     public static int FindStartFinishNodeIndex(IReadOnlyList<TrackNode> nodes)
     {
         if (nodes == null)
