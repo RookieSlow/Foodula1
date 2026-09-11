@@ -39,7 +39,7 @@
 
 ## 2026-09-09 Implementation Snapshot
 
-- Project stage is `Production`; the latest successful full EditMode run passed `674/674`
+- Project stage is `Production`; the Demo V0.1.0 release run passed `676/676`
   on 2026-09-09, with 0 failures and 0 skips. Free-race roster/menu focused coverage passed `11/11`;
   active-skill coverage previously passed `28/28`,
   and the passive/related regression passed `21/21`.
@@ -85,7 +85,7 @@
   six-team/twelve-driver Thunderstorm experiment for full-field strength checks.
 
 ```
-Demo Candidate
+Demo V0.1.0 Baseline
   ├── Core HEAT loop and card/heat ownership
   ├── Six team vehicles + Go/Recover + tech-tree hooks
   ├── Twelve selectable drivers + active effects + five integrated passives

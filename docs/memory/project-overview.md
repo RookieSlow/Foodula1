@@ -118,7 +118,7 @@ The verified scene flow is:
   and preserves Skip/Exit. Its spotlight follows every live player input gate; clicking clears the callout mesh
   completely while leaving the operation border visible. Main-menu overlays are mutually exclusive so the career
   entry and summer-break surface cannot leak over driver selection.
-- The latest full project EditMode run passes `674/674`; the tutorial and menu overlay slice passes
+- The latest full project EditMode run passes `676/676`; the tutorial and menu overlay slice passes
   `64/64` and retains its
   focused regression coverage.
   Play Mode verified the exact seven-card opening and zero-benefit session; a separate
