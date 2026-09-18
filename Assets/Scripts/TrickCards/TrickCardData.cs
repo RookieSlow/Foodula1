@@ -32,7 +32,7 @@ public enum TrickEffectType
     Cola,               // D: Crossed landmark last turn → draw 1 card
 
     // CN
-    HotpotBase,         // A: Go mode → 1 extra speed card as ATTACK (+1 speed, +1 not counted for corner)
+    HotpotBase,         // A: Go mode → next normal speed card becomes ATTACK (+1; full card excluded from corner speed)
     IceJelly,           // D: Recover mode → block slipstream for trailing cars
 
     // JP
@@ -125,7 +125,7 @@ public class TrickCardState
     public bool iceJellyActive;
 
     // ── CN: Hotpot Base ──
-    /// <summary>Extra ATTACK card available this turn.</summary>
+    /// <summary>The next normally played speed card will become an ATTACK card this turn.</summary>
     public bool hotpotBaseActive;
 
     // ── JP: Kanto Oden ──

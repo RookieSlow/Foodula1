@@ -16,26 +16,22 @@ public enum SpeedCardCommitResult
 /// </summary>
 public static class CardPlayRules
 {
+    /// <summary>
+    /// Returns real optional card slots. A pending Hotpot ATTACK deliberately
+    /// does not participate because it empowers a normal slot instead.
+    /// </summary>
+    public static int GetOptionalSpeedCardSlots(PlayerState player)
+    {
+        return player == null ? 0 : System.Math.Max(0, player.extraCardSlotsThisTurn);
+    }
+
     /// <summary>Commits one exact speed card from hand to the current turn's played area.</summary>
     public static SpeedCardCommitResult CommitSpeedCard(
         PlayerState player,
         CardData card,
         int maxSpeedCards)
     {
-        if (player == null || player.deck == null || card == null || !card.IsSpeed)
-            return SpeedCardCommitResult.InvalidCard;
-
-        if (!player.deck.ContainsInHand(card))
-            return SpeedCardCommitResult.CardNotInHand;
-
-        if (player.playedSpeedCardsThisTurn.Count >= maxSpeedCards)
-            return SpeedCardCommitResult.SpeedLimitReached;
-
-        if (player.deck.RemoveFromHand(new System.Collections.Generic.List<CardData> { card }).Count != 1)
-            return SpeedCardCommitResult.CardNotInHand;
-
-        player.playedSpeedCardsThisTurn.Add(card);
-        return SpeedCardCommitResult.Success;
+        return CommitSpeedCards(player, new List<CardData> { card }, maxSpeedCards);
     }
 
     /// <summary>
@@ -73,21 +69,39 @@ public static class CardPlayRules
 
         for (int i = 0; i < cards.Count; i++)
             player.playedSpeedCardsThisTurn.Add(cards[i]);
+
+        // Hotpot does not add a slot. It turns the first speed card in the next
+        // successful commit into ATTACK, so a failed/stale selection never
+        // consumes the effect. Players can confirm one card first when they
+        // want to choose the exact card that receives the marker.
+        if (TrickCardRules.ConsumeHotpotAttack(player.trickState))
+        {
+            player.hotpotAttackAppliedThisTurn = true;
+            player.hotpotAttackCardValueThisTurn = cards[0].value;
+        }
         return SpeedCardCommitResult.Success;
     }
 
     /// <summary>
-    /// Returns the Hotpot movement bonus only when the player actually used its
-    /// additional ATTACK-card slot beyond gear and Kanto Oden slots.
+    /// Returns the part of the ATTACK card that is moved out of corner speed,
+    /// plus Hotpot's +1 movement. Adding this to the reduced corner speed keeps
+    /// total movement equal to the original card total +1.
     /// </summary>
-    public static int GetHotpotMovementBonus(PlayerState player)
+    public static int GetHotpotMovementContribution(PlayerState player, int speedPerCardBonus = 0)
     {
-        if (player == null || !TrickCardRules.HasHotpotAttack(player.trickState))
+        if (player == null || !player.hotpotAttackAppliedThisTurn)
             return 0;
 
-        int normalSlots = player.gear + player.extraCardSlotsThisTurn;
-        return player.playedSpeedCardsThisTurn.Count > normalSlots
-            ? TrickCardRules.GetHotpotSpeedBonus()
-            : 0;
+        return GetHotpotCornerExclusion(player, speedPerCardBonus) +
+            TrickCardRules.GetHotpotSpeedBonus();
+    }
+
+    /// <summary>Returns the full effective ATTACK-card speed excluded from corner checks.</summary>
+    public static int GetHotpotCornerExclusion(PlayerState player, int speedPerCardBonus = 0)
+    {
+        if (player == null || !player.hotpotAttackAppliedThisTurn)
+            return 0;
+
+        return System.Math.Max(0, player.hotpotAttackCardValueThisTurn + speedPerCardBonus);
     }
 }

@@ -78,6 +78,24 @@ public class ReturnToMenuConfirmationTests
         }
     }
 
+    [Test]
+    public void space_adapter_never_confirms_destructive_return_prompt()
+    {
+        GameObject root = CreateRoot(out HUDUI hud, out Button returnButton, out _);
+        try
+        {
+            InvokeStart(hud);
+            returnButton.onClick.Invoke();
+
+            Assert.That(hud.TryConfirmKeyboardAction(), Is.False);
+            Assert.That(hud.IsReturnToMenuConfirmationVisible, Is.True);
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+    }
+
     private static GameObject CreateRoot(out HUDUI hud, out Button returnButton, out Button backToMenuButton)
     {
         GameObject root = new GameObject("ReturnToMenuConfirmationTest", typeof(RectTransform));

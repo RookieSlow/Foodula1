@@ -70,10 +70,16 @@ public class PlayerState
     /// <summary>本回合特技牌附加移动（司康 / 关东慢煮前等）。</summary>
     public int trickMoveBonusThisTurn;
 
-    /// <summary>弯道判定用总速度（火锅底料 ATTACK 牌的 +1 不计入弯道判定）。</summary>
+    /// <summary>弯道判定用总速度（火锅底料强化的整张 ATTACK 速度牌不计入弯道判定）。</summary>
     public int cornerTotalThisTurn;
 
-    /// <summary>额外出牌槽（KantoOden 累加 / 火锅底料 ATTACK 牌）。</summary>
+    /// <summary>火锅底料本回合是否已经强化了一张正常速度牌。</summary>
+    public bool hotpotAttackAppliedThisTurn;
+
+    /// <summary>被火锅底料标记为 ATTACK 的速度牌原始数值；只用于本回合结算。</summary>
+    public int hotpotAttackCardValueThisTurn;
+
+    /// <summary>额外出牌槽（关东慢煮累加或其他科技效果；火锅底料不再增加槽位）。</summary>
     public int extraCardSlotsThisTurn;
 
     /// <summary>关东慢煮：本回合剩余部分跳过（仅本回合，回合开始清除）。</summary>
@@ -137,6 +143,8 @@ public class PlayerState
         selectedGearThisTurn = gear;
         trickMoveBonusThisTurn = 0;
         cornerTotalThisTurn = 0;
+        hotpotAttackAppliedThisTurn = false;
+        hotpotAttackCardValueThisTurn = 0;
         extraCardSlotsThisTurn = 0;
         kantoOdenSkipThisTurn = false;
         slipstreamRangeBonusThisTurn = 0;

@@ -57,7 +57,7 @@ Music/SFX/UI AudioSource 和限频；AudioMixer 与外围事件仍待补齐。
 | 车手 | `Drivers/DriverData.cs`、`UI/DriverSelectionUI.cs` | 12 位车手目录、XP/等级与选择 |
 | 表现 | `Gameplay/RaceEventFX.cs`、`CarMovementAnimator.cs` | 卡牌/车辆/尾流/失控等视觉反馈，不改变规则 |
 | 音频 | `Audio/AudioService.cs`、`Audio/AudioRuntimeRules.cs`、`Resources/Audio/` | 菜单/比赛音乐、核心事件路由、三路 AudioSource、设置应用与限频 |
-| 日志 | `Core/RaceTestLogWriter.cs`、`RaceLogAnalyzer.cs` | 人工对局证据采集与结构分析 |
+| 日志 | `Core/RaceTestLogWriter.cs`、`RaceLogAnalyzer.cs`、`Diagnostics/PlaytestTelemetryService.cs`、`PlaytestLogWriter.cs`、`PlaytestLogExporter.cs` | 原有比赛证据与结构分析；外测版本额外记录匿名本地操作/场景/异常 JSONL，并由设置页手动导出 ZIP，不自动上传 |
 | 教程运行时 | `Tutorial/TutorialScenarioDefinition.cs`、`TutorialCheckpointRules.cs`、`TutorialStateMachine.cs`、`TutorialRuntimeDirector.cs`、`TutorialPracticeRules.cs`、`TutorialGuideUI.cs`、`TutorialFocusHighlightUI.cs`、`TutorialOverlayAuthoring.cs`、`Editor/TutorialOverlayAuthoringEditor.cs`、`Resources/Prefabs/UI/TutorialOverlay.prefab` | 勒芒/UK 隔离 Race、精确牌序、16 步可视化编辑/专用 Inspector 非 Play Mode 预览/只读校验与门控、人工修订文案及可选提示段落、13 类机制聚光、8 个安全边界检查点、天气/尾流 cue、虚拟维修规则视图及一圈练习日志 |
 | 玩家设置 | `Settings/GameSettingsData.cs`、`GameSettingsStore.cs`、`GameSettingsRuntime.cs`、`UI/GameSettingsUI.cs` | 版本化持久化显示/分辨率/动画/教程偏好；主/音乐/SFX 音量通过 AudioService 即时应用 |
 | 游戏百科 | `Encyclopedia/EncyclopediaCatalog.cs`、`Resources/Configs/encyclopedia_zh.json`、`UI/GameEncyclopediaUI.cs` | 版本化规则条目、必需主题/重复 ID 校验、运行时目录追踪及设置内滚动阅读 |
@@ -87,9 +87,13 @@ Music/SFX/UI AudioSource 和限频；AudioMixer 与外围事件仍待补齐。
 当前 HUD 由四个主要区域组成：
 
 - 顶部/赛道信息：圈数、排名、天气、阶段提示和迷你地图。
-- 左侧操作栏：档位/模式、确认/重置、返回主菜单与事件日志。
+- 左侧操作栏：从上到下固定划分为返回主菜单、重置、2×2 档位、车手技能、状态/日志、主确认
+  六个互不重叠区域；高频确认固定在最底部，破坏性操作集中在最上方，两者保持最大空间隔离。
 - 右侧资源栏：引擎热量、牌堆/弃牌堆缩略和精确数量。
 - 底部手牌区：卡牌高亮、打出/弃牌与热量流转动画。
+
+鼠标仍是完整操作基线；键盘辅助提供 `1–4` 选挡、`Space` 确认/结束/跳过演出、`A/D` 或方向键
+循环高亮手牌、`F` 选择或取消高亮牌。快捷键必须复用 UI 的教程门禁和二次确认，不得绕过规则层。
 
 比赛中的赛车上方使用运行时车队代码 + 名次徽标。正式六队徽章和车手头像接入后，
 应替换图形内容但保留当前名次和正向显示规则。

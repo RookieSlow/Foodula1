@@ -179,11 +179,13 @@ public class AIController : MonoBehaviour
             }
         }
 
-        // 支付成功后再提交选牌，避免失控时速度牌从手牌永久丢失。
-        ai.deck.RemoveFromHand(chosen);
-        foreach (var card in chosen)
+        // 支付成功后再通过玩家共用规则提交选牌，确保火锅底料会强化
+        // 下一张正常速度牌，而不是为 AI 静默增加一个额外槽位。
+        SpeedCardCommitResult commit = CardPlayRules.CommitSpeedCards(ai, chosen, maxCards);
+        if (commit != SpeedCardCommitResult.Success)
         {
-            ai.playedSpeedCardsThisTurn.Add(card);
+            Debug.LogError($"AI speed-card commit failed for {ai.name}: {commit}");
+            ai.playedSpeedCardsThisTurn.Clear();
         }
         // 热量牌不可打出 — 始终留在手牌中，等待降档冷却或 G1 散热移除
     }
@@ -335,8 +337,13 @@ public class AIController : MonoBehaviour
         // those low cards. Small, affordable overspeed is controlled by the
         // configured heat tolerance; repeated apex IDs are charged once.
         int estimatedMove = EstimateMinimumMovement(cardCount);
+        // China Go has a mandatory 3/4-card hand and can travel much farther
+        // than the generic AI look-ahead. Inspect every node the lowest legal
+        // hand will actually cross; otherwise a corner beyond the configured
+        // six-node planning window can be missed and Go becomes needlessly
+        // fatal even though Recover was available.
         int lookAhead = Mathf.Min(
-            Mathf.Min(config.aiLookAheadNodes, track.TotalNodes - 1),
+            track.TotalNodes - 1,
             Mathf.Max(1, estimatedMove));
         int projectedHeat = 0;
         var visitedCorners = new HashSet<int>();

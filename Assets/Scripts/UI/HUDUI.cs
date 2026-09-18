@@ -23,7 +23,8 @@ public class HUDUI : MonoBehaviour
 
     [Header("日志")]
     public TMP_Text logText;
-    public int maxLogLines = 6;
+    public ScrollRect logScrollRect;
+    public int maxLogLines = 80;
 
     [Header("档位按钮")]
     public UnityEngine.UI.Button gear1Button;
@@ -59,6 +60,7 @@ public class HUDUI : MonoBehaviour
     private string logBuffer = "";
     private Action<string> logSink;
     private Action pendingConfirmationAction;
+    private InRaceConfirmationAction? pendingConfirmationType;
     private TMP_Text returnToMenuConfirmTitle;
     [SerializeField] private HeatThermometerUI heatThermometer;
     [SerializeField] private GearDialPresentationUI gearDialPresentation;
@@ -318,6 +320,7 @@ public class HUDUI : MonoBehaviour
     public void CancelReturnToMenu()
     {
         pendingConfirmationAction = null;
+        pendingConfirmationType = null;
         if (returnToMenuConfirmPanel != null)
             returnToMenuConfirmPanel.SetActive(false);
     }
@@ -330,6 +333,7 @@ public class HUDUI : MonoBehaviour
 
         Action action = pendingConfirmationAction;
         pendingConfirmationAction = null;
+        pendingConfirmationType = null;
         returnToMenuConfirmPanel.SetActive(false);
         if (action != null)
             action.Invoke();
@@ -366,6 +370,7 @@ public class HUDUI : MonoBehaviour
         }
 
         pendingConfirmationAction = () => callback.Invoke();
+        pendingConfirmationType = action;
         if (returnToMenuConfirmTitle != null)
             returnToMenuConfirmTitle.text = title;
         if (returnToMenuConfirmText != null)
@@ -404,6 +409,31 @@ public class HUDUI : MonoBehaviour
             "确认换挡选择",
             $"确定选择 {gearName} 吗？",
             () => gameManager?.OnGearButtonClicked(gear));
+    }
+
+    /// <summary>Keyboard adapter that preserves the configured gear-confirmation gate.</summary>
+    public void TriggerConfirmGearShortcut()
+    {
+        if (confirmGearButton == null || !confirmGearButton.gameObject.activeInHierarchy ||
+            !confirmGearButton.interactable)
+            return;
+        OnConfirmGearClicked();
+    }
+
+    /// <summary>
+    /// Confirms only normal race actions from the keyboard. Destructive reset/menu
+    /// prompts intentionally remain pointer-only so Space cannot dismiss them by accident.
+    /// </summary>
+    public bool TryConfirmKeyboardAction()
+    {
+        if (!IsReturnToMenuConfirmationVisible || !pendingConfirmationType.HasValue)
+            return false;
+        if (pendingConfirmationType == InRaceConfirmationAction.ReturnToMenu ||
+            pendingConfirmationType == InRaceConfirmationAction.ResetRace)
+            return false;
+
+        ConfirmReturnToMenu();
+        return true;
     }
 
     /// <summary>Shows a live, signed breakdown for one corner limit.</summary>
@@ -680,7 +710,29 @@ public class HUDUI : MonoBehaviour
         }
 
         if (logText != null)
+        {
             logText.text = logBuffer;
+            RefreshLogScrollWindow();
+        }
+    }
+
+    /// <summary>Connects the fixed race-log viewport created by the layout controller.</summary>
+    public void AttachLogScrollRect(ScrollRect scrollRect)
+    {
+        logScrollRect = scrollRect;
+        RefreshLogScrollWindow();
+    }
+
+    private void RefreshLogScrollWindow()
+    {
+        if (logText == null || logScrollRect == null || logScrollRect.viewport == null)
+            return;
+
+        Canvas.ForceUpdateCanvases();
+        RectTransform content = logText.rectTransform;
+        float height = Mathf.Max(logScrollRect.viewport.rect.height, logText.preferredHeight + 8f);
+        content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+        logScrollRect.verticalNormalizedPosition = 1f;
     }
 
     // ====== 游戏结束 ======

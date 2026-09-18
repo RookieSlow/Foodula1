@@ -9,7 +9,7 @@ the CCGS project framework.
 - **Language**: C# 9.0
 - **Rendering**: Built-in Render Pipeline, 2D
 - **UI**: uGUI and TextMesh Pro
-- **Input**: Legacy Input Manager, mouse interaction
+- **Input**: Legacy Input Manager, mouse interaction plus keyboard race shortcuts
 - **Code**: `Assets/Scripts/`
 
 ## Current Runtime Structure
@@ -35,6 +35,8 @@ the CCGS project framework.
   per-driver XP persistence adapter; `Core/DriverSelectionState.cs` stores the current menu choice.
 - `Config/GameConfigSO.cs` contains tunable race, deck, gear, animation, and
   AI parameters.
+- `Diagnostics/` contains the persistent, local-only playtest operation recorder,
+  privacy sanitization, rolling session summaries and tester-controlled ZIP export.
 - `Tutorial/` contains the isolated Le Mans/UK scenario definition, explicit
   non-seeded deck order, pure guided-state machine, runtime Director, runtime-built
   guide panel and session-only launch state. Race events complete the active lesson;
@@ -79,9 +81,10 @@ The verified scene flow is:
 - Core race presentation is Demo-grade. The formal main-menu background, Foodula1
   logo and six team emblems are integrated; driver portraits and formal tech-tree
   artwork remain in the next visual asset package.
-- The project is in Production stage. The latest full Unity EditMode run passed
-  `676/676` on 2026-09-11 after fixing instant Yin-Yang Tea finish-line traversal and
-  separating required gear cards from optional trick/technology slots; the Thunderstorm
+- The project is in Production stage. The V0.1.1 source baseline full Unity EditMode run passed
+  `688/688` on 2026-09-18 after adding external-playtest operation logging, the China
+  long-move corner look-ahead regression, Hotpot ATTACK correction, keyboard controls and
+  the fixed scrolling race log window; the Thunderstorm
   12-driver mode is now wired and
   awaits runtime visual acceptance.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
@@ -118,7 +121,7 @@ The verified scene flow is:
   and preserves Skip/Exit. Its spotlight follows every live player input gate; clicking clears the callout mesh
   completely while leaving the operation border visible. Main-menu overlays are mutually exclusive so the career
   entry and summer-break surface cannot leak over driver selection.
-- The latest full project EditMode run passes `676/676`; the tutorial and menu overlay slice passes
+- The latest full project EditMode run passes `680/680`; the tutorial and menu overlay slice passes
   `64/64` and retains its
   focused regression coverage.
   Play Mode verified the exact seven-card opening and zero-benefit session; a separate

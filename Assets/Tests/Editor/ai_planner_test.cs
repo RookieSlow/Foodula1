@@ -452,6 +452,59 @@ public class AIControllerTests
         Assert.That(ai.deck.CountSpeedInHand(), Is.Zero);
     }
 
+    [Test]
+    public void test_china_ai_recovers_for_corner_beyond_generic_lookahead()
+    {
+        config.speedCardDistribution = new int[0];
+        config.aiHeatWarningThreshold = 0.7f;
+        config.aiChinaAffordableCornerHeat = 1;
+        config.aiLookAheadNodes = 6;
+
+        MVPGameManager game = gameObject.AddComponent<MVPGameManager>();
+        game.config = config;
+
+        trackObject = new GameObject("ChinaAiLongMoveTrack");
+        trackObject.SetActive(false);
+        TrackManager track = trackObject.AddComponent<TrackManager>();
+        var nodes = new List<TrackNode>();
+        for (int i = 0; i < 20; i++)
+            nodes.Add(new TrackNode(i, 99));
+        nodes[8] = new TrackNode(8, 5, "Late Apex", 1, false, true);
+        typeof(TrackManager)
+            .GetField("nodes", BindingFlags.Instance | BindingFlags.NonPublic)
+            .SetValue(track, nodes);
+        typeof(TrackManager)
+            .GetField("cornerSpeedLimits", BindingFlags.Instance | BindingFlags.NonPublic)
+            .SetValue(track, new Dictionary<int, int> { { 1, 5 } });
+        game.trackManager = track;
+
+        var ai = new PlayerState("CN AI", true, 0, ChinaGearShiftRules.GoGear)
+        {
+            teamId = TeamId.CN,
+            usesChinaGearSystem = true,
+            chinaConsecutiveGearCount = 1
+        };
+        ai.deck.InitializeDeck(config, new HeatPool(8), new StubRandomSource());
+        ai.deck.AddCardsToHand(new List<CardData>
+        {
+            new CardData(CardType.Speed, 4),
+            new CardData(CardType.Speed, 3),
+            new CardData(CardType.Speed, 3),
+            new CardData(CardType.Speed, 2)
+        });
+
+        var session = new RaceSession();
+        session.Players.Add(ai);
+        typeof(MVPGameManager)
+            .GetField("session", BindingFlags.Instance | BindingFlags.NonPublic)
+            .SetValue(game, session);
+
+        AIController controller = gameObject.AddComponent<AIController>();
+        controller.Initialize(game, ai, new StubRandomSource());
+
+        Assert.That(controller.DecideGear(), Is.EqualTo(ChinaGearShiftRules.RecoverGear));
+    }
+
     private sealed class StubRandomSource : IRandomSource
     {
         public int NextInt(int minimumInclusive, int maximumExclusive)

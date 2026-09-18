@@ -151,6 +151,63 @@ public class MVPGameManager : MonoBehaviour
         return presentationSkipState.IsSkipRequested;
     }
 
+    void Update()
+    {
+        bool spacePressed = Input.GetKeyDown(KeyCode.Space);
+
+        // Presentation skip has priority over phase actions so one press cannot
+        // both settle an animation and accidentally confirm the following phase.
+        if (spacePressed && presentationSkipState.IsActive)
+        {
+            RequestPresentationSkip();
+            return;
+        }
+
+        if (hudUI != null && hudUI.IsReturnToMenuConfirmationVisible)
+        {
+            if (spacePressed)
+                hudUI.TryConfirmKeyboardAction();
+            return;
+        }
+
+        if (IsTutorialActionInputBlocked)
+            return;
+
+        if (phaseState.CanAcceptGear(inputState))
+        {
+            int gear = ReadGearShortcut();
+            if (gear > 0)
+                hudUI?.RequestGearSelection(gear);
+            if (spacePressed)
+                hudUI?.TriggerConfirmGearShortcut();
+            return;
+        }
+
+        if (phaseState.CanAcceptCards(inputState) || inputState.WaitingForDiscard)
+        {
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow) ||
+                Input.GetKeyDown(KeyCode.UpArrow))
+                cardHandUI?.MoveKeyboardHighlight(-1);
+            else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow) ||
+                     Input.GetKeyDown(KeyCode.DownArrow))
+                cardHandUI?.MoveKeyboardHighlight(1);
+
+            if (Input.GetKeyDown(KeyCode.F))
+                cardHandUI?.ToggleKeyboardHighlightedCard();
+            if (spacePressed)
+                cardHandUI?.TriggerActionShortcut();
+        }
+    }
+
+    private static int ReadGearShortcut()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) return 1;
+        if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)) return 2;
+        if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)) return 3;
+        if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4)) return 4;
+        return 0;
+    }
+
     void Awake()
     {
     }
@@ -1346,7 +1403,8 @@ public class MVPGameManager : MonoBehaviour
         raceLogWriter.Append(
             $"[CARDS] {player.name} source={source} count={player.playedSpeedCardsThisTurn.Count} values=[{values}] " +
             $"gear_limit={requirement.TotalCardCount} base_limit={requirement.BaseCardCount} " +
-            $"extra_slots={requirement.ExtraCardCount}");
+            $"extra_slots={requirement.ExtraCardCount} hotpot_attack={player.hotpotAttackAppliedThisTurn} " +
+            $"hotpot_card_value={player.hotpotAttackCardValueThisTurn}");
     }
 
     /// <summary>
@@ -1588,7 +1646,8 @@ public class MVPGameManager : MonoBehaviour
                     hudUI?.SelectGearPresentation(p.gear);
                     hudUI?.RefreshDriverSkill(this, p);
                     if (hudUI != null)
-                        hudUI.SetStatus($"选择档位 (当前: {TeamGearRules.GetDisplayName(p.teamId, p.gear)})");
+                        hudUI.SetStatus(
+                            $"选择档位 (当前: {TeamGearRules.GetDisplayName(p.teamId, p.gear)}) · 1-4 选择 / 空格确认");
                     if (cardHandUI != null) { cardHandUI.SetGearSelectionMode(true); cardHandUI.UpdateDeckInfo(p); }
 
                     if (pendingTutorialGuideRefreshAtTurnStart &&
@@ -1963,6 +2022,7 @@ public class MVPGameManager : MonoBehaviour
             {
                 TechTreeRules.UseFishAndChips(p.techState);
                 p.deck.RemoveOneHeatFromDeck();
+                RefreshHumanHeatPresentation(p);
                 if (hudUI != null)
                     hudUI.AppendLog($"<color=green>{p.name} 炸鱼薯条！忽略本次热量判定，回收 1 张热量牌至引擎。</color>");
                 return true;
@@ -1984,8 +2044,8 @@ public class MVPGameManager : MonoBehaviour
                 ? CardVisualZone.DiscardPile
                 : CardVisualZone.Hand;
             cardHandUI.PlayHeatTransitions(drawn, CardVisualZone.Engine, target);
-            cardHandUI.UpdateDeckInfo(p);
         }
+        RefreshHumanHeatPresentation(p);
         if (!p.isAI)
         {
             AudioService.PlaySfx(AudioEventNames.HeatPay);
@@ -2107,8 +2167,9 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.PlayHeatTransitions(fromHand, CardVisualZone.Hand, CardVisualZone.Engine);
             cardHandUI.PlayHeatTransitions(fromDraw, CardVisualZone.DrawPile, CardVisualZone.Engine);
             cardHandUI.PlayHeatTransitions(fromDiscard, CardVisualZone.DiscardPile, CardVisualZone.Engine);
-            cardHandUI.UpdateDeckInfo(p);
         }
+        if (cooled > 0)
+            RefreshHumanHeatPresentation(p);
         if (!p.isAI && cooled > 0)
         {
             AudioService.PlaySfx(AudioEventNames.HeatCool);
@@ -2128,8 +2189,9 @@ public class MVPGameManager : MonoBehaviour
         if (!p.isAI && cooled > 0 && cardHandUI != null)
         {
             cardHandUI.PlayHeatTransitions(cooled, CardVisualZone.Hand, CardVisualZone.Engine);
-            cardHandUI.UpdateDeckInfo(p);
         }
+        if (cooled > 0)
+            RefreshHumanHeatPresentation(p);
         if (!p.isAI && cooled > 0)
             AudioService.PlaySfx(AudioEventNames.HeatCool);
         return cooled;
@@ -2150,10 +2212,18 @@ public class MVPGameManager : MonoBehaviour
             cardHandUI.PlayHeatTransitions(handHeat, CardVisualZone.Hand, CardVisualZone.Engine);
             cardHandUI.PlayHeatTransitions(drawHeat, CardVisualZone.DrawPile, CardVisualZone.Engine);
             cardHandUI.PlayHeatTransitions(discardHeat, CardVisualZone.DiscardPile, CardVisualZone.Engine);
-            cardHandUI.UpdateDeckInfo(p);
         }
+        RefreshHumanHeatPresentation(p);
         if (!p.isAI && handHeat + drawHeat + discardHeat > 0)
             AudioService.PlaySfx(AudioEventNames.HeatCool);
+    }
+
+    private void RefreshHumanHeatPresentation(PlayerState player)
+    {
+        if (player == null || player.isAI)
+            return;
+        cardHandUI?.UpdateDeckInfo(player);
+        hudUI?.RefreshPlayerResources(player);
     }
 
     // ====== 移动动画（含圈数检测） ======
@@ -2268,12 +2338,11 @@ public class MVPGameManager : MonoBehaviour
     /// <summary>Returns the base and extra speed-card slots for the current turn.</summary>
     public TeamGearRules.SpeedCardRequirement GetSpeedCardRequirement(PlayerState p)
     {
-        int extraSlots = p.extraCardSlotsThisTurn;
-        if (TrickCardRules.HasHotpotAttack(p.trickState))
-            extraSlots += 1;
-
         return TeamGearRules.GetSpeedCardRequirement(
-            p.teamId, p.gear, p.chinaConsecutiveGearCount, extraSlots);
+            p.teamId,
+            p.gear,
+            p.chinaConsecutiveGearCount,
+            CardPlayRules.GetOptionalSpeedCardSlots(p));
     }
 
     /// <summary>Formats the base-versus-extra slot breakdown for player feedback.</summary>
@@ -2319,8 +2388,11 @@ public class MVPGameManager : MonoBehaviour
                 slipstreamsThisTurn[p] = default;
                 continue;
             }
-            p.cornerTotalThisTurn = RaceRules.SumCardValues(p.playedSpeedCardsThisTurn) +
-                DriverSkillRules.GetSpeedPerCardBonus(p.driverSkill) * p.playedSpeedCardsThisTurn.Count;
+            int speedPerCardBonus = DriverSkillRules.GetSpeedPerCardBonus(p.driverSkill);
+            int rawSpeedTotal = RaceRules.SumCardValues(p.playedSpeedCardsThisTurn) +
+                speedPerCardBonus * p.playedSpeedCardsThisTurn.Count;
+            p.cornerTotalThisTurn = Mathf.Max(0, rawSpeedTotal -
+                CardPlayRules.GetHotpotCornerExclusion(p, speedPerCardBonus));
         }
 
         // 第二轮：加成（需要弯道信息与对手移动）
@@ -2341,8 +2413,9 @@ public class MVPGameManager : MonoBehaviour
             bonus += GetNigiriBonus(p, crossedCorner, rawEnd, lane);
             // JP 特技牌 鱼雷天妇罗：超车 +1
             bonus += GetTorpedoBonus(p, turnOrder);
-            // CN 特技牌 火锅底料：ATTACK 牌 +1（不计入弯道判定）
-            bonus += CardPlayRules.GetHotpotMovementBonus(p);
+            // CN 特技牌 火锅底料：下一张正常速度牌整体移出弯道速度，并获得 +1。
+            int speedPerCardBonus = DriverSkillRules.GetSpeedPerCardBonus(p.driverSkill);
+            bonus += CardPlayRules.GetHotpotMovementContribution(p, speedPerCardBonus);
             // 特技牌即时移动（司康 +2 等）
             bonus += p.trickMoveBonusThisTurn;
             bonus += DriverSkillRules.GetMovementBonus(p.driverSkill, crossedCorner);
@@ -3928,9 +4001,12 @@ public class MVPGameManager : MonoBehaviour
             {
                 var def = session.TrickDb.Get(card.trickId);
                 string trickName = def != null ? def.name : "特技牌";
-                hudUI.SetStatus(player.kantoOdenSkipThisTurn
-                    ? $"已发动 {trickName}，本回合出牌结束"
-                    : $"已发动 {trickName}；选择下一张牌或结束出牌");
+                if (TrickCardRules.HasHotpotAttack(player.trickState))
+                    hudUI.SetStatus("ATTACK 已待命：下一张确认的速度牌 +1，且整张不计弯道限速");
+                else
+                    hudUI.SetStatus(player.kantoOdenSkipThisTurn
+                        ? $"已发动 {trickName}，本回合出牌结束"
+                        : $"已发动 {trickName}；选择下一张牌或结束出牌");
             }
 
             // 关东慢煮在确认后立即结束本回合出牌阶段。
@@ -3957,6 +4033,7 @@ public class MVPGameManager : MonoBehaviour
         if (player == null || cards == null || cards.Count == 0)
             return false;
 
+        bool hotpotWasArmed = TrickCardRules.HasHotpotAttack(player.trickState);
         int maxCards = GetMaxSpeedCardsThisTurn(player);
         SpeedCardCommitResult commit = CardPlayRules.CommitSpeedCards(player, cards, maxCards);
         if (commit != SpeedCardCommitResult.Success)
@@ -3982,6 +4059,11 @@ public class MVPGameManager : MonoBehaviour
             for (int i = 0; i < cards.Count; i++)
                 speedTotal += cards[i].value;
             hudUI.AppendLog($"{player.name} 确认 {cards.Count} 张速度牌（速度总和 {speedTotal}）。");
+            if (hotpotWasArmed && player.hotpotAttackAppliedThisTurn)
+            {
+                hudUI.AppendLog(
+                    $"火锅 ATTACK：速度 {player.hotpotAttackCardValueThisTurn} 的牌获得 +1，整张不计弯道限速。");
+            }
             hudUI.SetStatus(
                 $"已打出 {player.playedSpeedCardsThisTurn.Count}/{maxCards} 张速度牌；可继续多选或结束出牌");
         }

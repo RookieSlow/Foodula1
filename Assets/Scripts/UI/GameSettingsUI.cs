@@ -123,12 +123,16 @@ public sealed class GameSettingsUI : MonoBehaviour
         CreateToggleRow(factory, panel.transform, "教程状态", -218f, out tutorialValue, ResetTutorial);
 
         Button confirmation = factory.CreateActionButton(panel.transform, "OpenInRaceConfirmations", "局内二次确认",
-            new Vector2(-150f, -268f), new Color(0.62f, 0.34f, 0.72f), ShowConfirmationSettings);
-        confirmation.GetComponent<RectTransform>().sizeDelta = new Vector2(260f, 44f);
+            new Vector2(-255f, -268f), new Color(0.62f, 0.34f, 0.72f), ShowConfirmationSettings);
+        confirmation.GetComponent<RectTransform>().sizeDelta = new Vector2(210f, 44f);
+
+        Button exportLogs = factory.CreateActionButton(panel.transform, "ExportPlaytestLogs", "导出测试日志",
+            new Vector2(0f, -268f), new Color(0.18f, 0.58f, 0.5f), ExportPlaytestLogs);
+        exportLogs.GetComponent<RectTransform>().sizeDelta = new Vector2(210f, 44f);
 
         Button encyclopedia = factory.CreateActionButton(panel.transform, "OpenEncyclopedia", "游戏百科",
-            new Vector2(150f, -268f), new Color(0.2f, 0.48f, 0.65f), encyclopediaUI.Show);
-        encyclopedia.GetComponent<RectTransform>().sizeDelta = new Vector2(260f, 44f);
+            new Vector2(255f, -268f), new Color(0.2f, 0.48f, 0.65f), encyclopediaUI.Show);
+        encyclopedia.GetComponent<RectTransform>().sizeDelta = new Vector2(210f, 44f);
 
         Button defaults = factory.CreateActionButton(panel.transform, "SettingsDefaults", "恢复默认",
             new Vector2(-245f, -332f), new Color(0.33f, 0.37f, 0.44f), RestoreDefaults);
@@ -237,6 +241,25 @@ public sealed class GameSettingsUI : MonoBehaviour
             confirmationPanel.SetActive(false);
     }
 
+    private void ExportPlaytestLogs()
+    {
+        try
+        {
+            string path = PlaytestLogExporter.ExportDefaultBundle();
+            long sizeKb = Math.Max(1L, new System.IO.FileInfo(path).Length / 1024L);
+            int sessionCount = System.IO.Directory.Exists(PlaytestTelemetryService.DefaultLogRoot)
+                ? System.IO.Directory.GetDirectories(PlaytestTelemetryService.DefaultLogRoot, "session-*").Length
+                : 0;
+            statusValue.text = $"已导出 {sessionCount} 次会话（{sizeKb} KB）：{System.IO.Path.GetFileName(path)}";
+            PlaytestLogExporter.RevealInFileBrowser(path);
+        }
+        catch (Exception exception)
+        {
+            statusValue.text = "日志导出失败，请稍后重试。";
+            Debug.LogWarning("[PlaytestLog] Export failed: " + exception.Message);
+        }
+    }
+
     private void ToggleConfirmation(InRaceConfirmationAction action)
     {
         if (working == null)
@@ -246,6 +269,11 @@ public sealed class GameSettingsUI : MonoBehaviour
         working.inRaceConfirmationMask = (mask & bit) != 0
             ? mask & ~bit
             : mask | bit;
+        PlaytestTelemetryService.Record(
+            "settings",
+            "confirmation_changed",
+            action.ToString(),
+            "enabled=" + working.IsInRaceConfirmationEnabled(action));
         RefreshConfirmationValues();
     }
 
@@ -319,6 +347,11 @@ public sealed class GameSettingsUI : MonoBehaviour
                 working.soundEffectsVolume = Mathf.Clamp01(working.soundEffectsVolume + delta);
                 break;
         }
+        float value = channel == VolumeChannel.Master ? working.masterVolume
+            : channel == VolumeChannel.Music ? working.musicVolume
+            : working.soundEffectsVolume;
+        PlaytestTelemetryService.Record(
+            "settings", "volume_changed", channel.ToString(), $"value={value:F2}");
         AudioService.ApplySettings(working);
         RefreshValues();
     }
@@ -326,12 +359,16 @@ public sealed class GameSettingsUI : MonoBehaviour
     private void ToggleFullscreen()
     {
         working.fullscreen = !working.fullscreen;
+        PlaytestTelemetryService.Record(
+            "settings", "fullscreen_changed", details: "enabled=" + working.fullscreen);
         RefreshValues();
     }
 
     private void ToggleMotion()
     {
         working.reduceMotion = !working.reduceMotion;
+        PlaytestTelemetryService.Record(
+            "settings", "reduced_motion_changed", details: "enabled=" + working.reduceMotion);
         RefreshValues();
     }
 
@@ -340,6 +377,7 @@ public sealed class GameSettingsUI : MonoBehaviour
         working.tutorialCompleted = false;
         GameSettingsRuntime.ResetTutorialProgress();
         onTutorialReset?.Invoke();
+        PlaytestTelemetryService.Record("settings", "tutorial_progress_reset");
         statusValue.text = "教程完成标记已重置，可从主菜单重新开始。";
         RefreshValues(keepStatus: true);
     }
@@ -351,6 +389,8 @@ public sealed class GameSettingsUI : MonoBehaviour
         Vector2Int selected = resolutions[resolutionIndex];
         working.resolutionWidth = selected.x;
         working.resolutionHeight = selected.y;
+        PlaytestTelemetryService.Record(
+            "settings", "resolution_changed", details: $"value={selected.x}x{selected.y}");
         RefreshValues();
     }
 
@@ -362,6 +402,8 @@ public sealed class GameSettingsUI : MonoBehaviour
             if (Mathf.Approximately(AnimationSpeeds[i], normalized)) currentIndex = i;
         currentIndex = (currentIndex + direction + AnimationSpeeds.Length) % AnimationSpeeds.Length;
         working.animationSpeed = AnimationSpeeds[currentIndex];
+        PlaytestTelemetryService.Record(
+            "settings", "animation_speed_changed", details: $"value={working.animationSpeed:F2}");
         RefreshValues();
     }
 
@@ -369,6 +411,7 @@ public sealed class GameSettingsUI : MonoBehaviour
     {
         GameSettingsRuntime.SaveAndApply(working);
         working = GameSettingsRuntime.Current.Clone();
+        PlaytestTelemetryService.Record("settings", "saved", details: BuildSettingsSnapshot(working));
         statusValue.text = "设置已保存并实时应用。";
         RefreshValues(keepStatus: true);
     }
@@ -380,6 +423,7 @@ public sealed class GameSettingsUI : MonoBehaviour
         working.tutorialCompleted = tutorialCompleted;
         BuildResolutionList();
         AudioService.ApplySettings(working);
+        PlaytestTelemetryService.Record("settings", "defaults_loaded", details: BuildSettingsSnapshot(working));
         statusValue.text = "已载入默认值；点击“保存并应用”后持久化。";
         RefreshValues(keepStatus: true);
     }
@@ -419,6 +463,14 @@ public sealed class GameSettingsUI : MonoBehaviour
         tutorialValue.text = working.tutorialCompleted ? "已完成 · 点击重置" : "可重播 · 点击重置";
         RefreshConfirmationValues();
         if (!keepStatus && statusValue != null)
-            statusValue.text = string.Empty;
+            statusValue.text = "测试日志仅保存在本机；遇到问题按 F8 标记并截图，结束后再导出回传包。";
+    }
+
+    private static string BuildSettingsSnapshot(GameSettingsData value)
+    {
+        return $"master={value.masterVolume:F2};music={value.musicVolume:F2};sfx={value.soundEffectsVolume:F2};"
+            + $"fullscreen={value.fullscreen};resolution={value.resolutionWidth}x{value.resolutionHeight};"
+            + $"animation={value.animationSpeed:F2};reduced_motion={value.reduceMotion};"
+            + $"confirmation_mask={value.inRaceConfirmationMask}";
     }
 }

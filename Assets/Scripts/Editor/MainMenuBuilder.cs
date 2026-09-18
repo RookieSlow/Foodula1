@@ -112,7 +112,7 @@ public static class MainMenuBuilder
             .GetComponent<Button>();
 
         // ── 版本号（底部居中） ──
-        MakeText(canvasGO, "VersionText", "v0.1.0 Demo", 14,
+        MakeText(canvasGO, "VersionText", "v0.1.1 Demo", 14,
             BC(), BC(), new Vector2(0, 40), new Vector2(200, 24),
             TextAlignmentOptions.Center, FontStyles.Normal,
             new Color(0.4f, 0.4f, 0.4f));

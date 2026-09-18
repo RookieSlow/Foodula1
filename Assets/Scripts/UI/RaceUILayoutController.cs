@@ -27,8 +27,20 @@ public class RaceUILayoutController : MonoBehaviour
     public RectTransform OperationPanel => operationPanel;
     public RectTransform TrackFrame => trackFrame;
     public bool UsesAuthoredLayout { get; private set; }
-    public static Vector2 ReturnToMenuAnchorMin => new Vector2(0.08f, 0.405f);
-    public static Vector2 ReturnToMenuAnchorMax => new Vector2(0.92f, 0.475f);
+    public static Vector2 ReturnToMenuAnchorMin => new Vector2(0.08f, 0.82f);
+    public static Vector2 ReturnToMenuAnchorMax => new Vector2(0.92f, 0.89f);
+    public static Vector2 ResetAnchorMin => new Vector2(0.08f, 0.73f);
+    public static Vector2 ResetAnchorMax => new Vector2(0.92f, 0.80f);
+    public static Vector2 GearGridAnchorMin => new Vector2(0.08f, 0.49f);
+    public static Vector2 GearGridAnchorMax => new Vector2(0.92f, 0.69f);
+    public static Vector2 DriverSkillAnchorMin => new Vector2(0.08f, 0.40f);
+    public static Vector2 DriverSkillAnchorMax => new Vector2(0.92f, 0.46f);
+    public static Vector2 PromptPanelAnchorMin => new Vector2(0.04f, 0.16f);
+    public static Vector2 PromptPanelAnchorMax => new Vector2(0.96f, 0.37f);
+    public static Vector2 LogScrollAnchorMin => new Vector2(0.06f, 0.165f);
+    public static Vector2 LogScrollAnchorMax => new Vector2(0.94f, 0.265f);
+    public static Vector2 PrimaryActionAnchorMin => new Vector2(0.08f, 0.04f);
+    public static Vector2 PrimaryActionAnchorMax => new Vector2(0.92f, 0.13f);
 
     /// <summary>Normalized screen rectangle reserved for the main race camera.</summary>
     public Rect TrackViewport
@@ -58,6 +70,7 @@ public class RaceUILayoutController : MonoBehaviour
         if (TryBindAuthoredLayout(root))
         {
             BindAuthoredReferences(hud, cardHand);
+            ArrangeOperationControls(hud, cardHand);
             ApplyAuthoredButtonStyles(hud, cardHand);
             UsesAuthoredLayout = true;
             applied = true;
@@ -189,7 +202,7 @@ public class RaceUILayoutController : MonoBehaviour
             Transform gearButtons = FindDeep(hud.transform, "GearButtons");
             if (gearButtons != null)
             {
-                Dock(gearButtons, operationPanel, new Vector2(0.08f, 0.66f), new Vector2(0.92f, 0.89f));
+                Dock(gearButtons, operationPanel, GearGridAnchorMin, GearGridAnchorMax);
                 LayoutGroup group = gearButtons.GetComponent<LayoutGroup>();
                 if (group != null)
                     group.enabled = false;
@@ -202,25 +215,116 @@ public class RaceUILayoutController : MonoBehaviour
                 DockButton(hud.gear4Button, gearButtons, new Vector2(0.52f, 0.02f), new Vector2(0.98f, 0.48f));
             }
 
-            DockButton(hud.confirmGearButton, operationPanel, new Vector2(0.08f, 0.57f), new Vector2(0.92f, 0.64f));
-            DockButton(hud.resetButton, operationPanel, new Vector2(0.08f, 0.49f), new Vector2(0.92f, 0.56f));
-            // Keep persistent navigation with the other actions, but outside
-            // the prompt/log panel and away from the operation-panel title.
-            DockButton(hud.returnToMenuButton, operationPanel,
-                ReturnToMenuAnchorMin, ReturnToMenuAnchorMax);
-            DockText(hud.statusText, operationPanel, 0.24f, 0.38f, 12);
-            DockText(hud.logText, operationPanel, 0.05f, 0.22f, 10);
+            DockButton(hud.confirmGearButton, operationPanel, PrimaryActionAnchorMin, PrimaryActionAnchorMax);
+            DockButton(hud.driverSkillButton, operationPanel, DriverSkillAnchorMin, DriverSkillAnchorMax);
+            DockButton(hud.resetButton, operationPanel, ResetAnchorMin, ResetAnchorMax);
+            DockButton(hud.returnToMenuButton, operationPanel, ReturnToMenuAnchorMin, ReturnToMenuAnchorMax);
+            DockText(hud.statusText, operationPanel, 0.27f, 0.36f, 12);
+            DockText(hud.logText, operationPanel, 0.17f, 0.26f, 10);
         }
 
         if (cardHand != null)
         {
-            DockButton(cardHand.playCardsButton, operationPanel, new Vector2(0.08f, 0.57f), new Vector2(0.92f, 0.64f));
+            DockButton(cardHand.playCardsButton, operationPanel, PrimaryActionAnchorMin, PrimaryActionAnchorMax);
             if (cardHand.gearSelectionPanel != null)
                 Dock(cardHand.gearSelectionPanel.transform, operationPanel, new Vector2(0.06f, 0.58f), new Vector2(0.94f, 0.65f));
         }
 
         CreatePanel("OperationPromptPanel", operationPanel,
-            new Vector2(0.04f, 0.035f), new Vector2(0.96f, 0.39f), new Color(0.02f, 0.03f, 0.055f, 0.35f));
+            PromptPanelAnchorMin, PromptPanelAnchorMax, new Color(0.02f, 0.03f, 0.055f, 0.35f));
+        EnsureLogScrollView(hud);
+    }
+
+    private void ArrangeOperationControls(HUDUI hud, CardHandUI cardHand)
+    {
+        if (operationPanel == null)
+            return;
+
+        Transform gearButtons = hud != null ? FindDeep(hud.transform, "GearButtons") : null;
+        if (gearButtons != null)
+        {
+            Dock(gearButtons, operationPanel, GearGridAnchorMin, GearGridAnchorMax);
+            LayoutGroup group = gearButtons.GetComponent<LayoutGroup>();
+            if (group != null)
+                group.enabled = false;
+            DockButton(hud.gear1Button, gearButtons, new Vector2(0.02f, 0.52f), new Vector2(0.48f, 0.98f));
+            DockButton(hud.gear2Button, gearButtons, new Vector2(0.52f, 0.52f), new Vector2(0.98f, 0.98f));
+            DockButton(hud.gear3Button, gearButtons, new Vector2(0.02f, 0.02f), new Vector2(0.48f, 0.48f));
+            DockButton(hud.gear4Button, gearButtons, new Vector2(0.52f, 0.02f), new Vector2(0.98f, 0.48f));
+        }
+        if (hud != null)
+        {
+            DockButton(hud.confirmGearButton, operationPanel, PrimaryActionAnchorMin, PrimaryActionAnchorMax);
+            DockButton(hud.driverSkillButton, operationPanel, DriverSkillAnchorMin, DriverSkillAnchorMax);
+            DockButton(hud.resetButton, operationPanel, ResetAnchorMin, ResetAnchorMax);
+            DockButton(hud.returnToMenuButton, operationPanel, ReturnToMenuAnchorMin, ReturnToMenuAnchorMax);
+            DockText(hud.statusText, operationPanel, 0.27f, 0.36f, 12);
+            DockText(hud.logText, operationPanel, 0.17f, 0.26f, 10);
+        }
+        if (cardHand != null)
+            DockButton(cardHand.playCardsButton, operationPanel, PrimaryActionAnchorMin, PrimaryActionAnchorMax);
+
+        RectTransform promptPanel = FindRect(operationPanel, "OperationPromptPanel");
+        if (promptPanel != null)
+        {
+            Dock(promptPanel, operationPanel, PromptPanelAnchorMin, PromptPanelAnchorMax);
+            Image promptImage = promptPanel.GetComponent<Image>();
+            if (promptImage != null)
+                promptImage.raycastTarget = false;
+            promptPanel.SetAsFirstSibling();
+        }
+        EnsureLogScrollView(hud);
+    }
+
+    private void EnsureLogScrollView(HUDUI hud)
+    {
+        if (operationPanel == null || hud == null || hud.logText == null)
+            return;
+
+        Transform existing = FindDeep(operationPanel, "OperationLogScroll");
+        GameObject scrollObject = existing != null
+            ? existing.gameObject
+            : new GameObject("OperationLogScroll", typeof(RectTransform), typeof(Image), typeof(ScrollRect));
+        Dock(scrollObject.transform, operationPanel, LogScrollAnchorMin, LogScrollAnchorMax);
+
+        Image background = scrollObject.GetComponent<Image>();
+        background.color = new Color(0.01f, 0.02f, 0.04f, 0.52f);
+        background.raycastTarget = true;
+
+        Transform viewportTransform = FindDeep(scrollObject.transform, "Viewport");
+        GameObject viewportObject = viewportTransform != null
+            ? viewportTransform.gameObject
+            : new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(RectMask2D));
+        Dock(viewportObject.transform, scrollObject.transform, Vector2.zero, Vector2.one);
+        Image viewportImage = viewportObject.GetComponent<Image>();
+        viewportImage.color = new Color(1f, 1f, 1f, 0.001f);
+        viewportImage.raycastTarget = true;
+        if (viewportObject.GetComponent<RectMask2D>() == null)
+            viewportObject.AddComponent<RectMask2D>();
+
+        RectTransform logRect = hud.logText.rectTransform;
+        logRect.SetParent(viewportObject.transform, false);
+        logRect.anchorMin = new Vector2(0f, 1f);
+        logRect.anchorMax = new Vector2(1f, 1f);
+        logRect.pivot = new Vector2(0.5f, 1f);
+        logRect.anchoredPosition = Vector2.zero;
+        logRect.sizeDelta = Vector2.zero;
+        logRect.localScale = Vector3.one;
+        hud.logText.fontSize = 10f;
+        hud.logText.alignment = TextAlignmentOptions.TopLeft;
+        hud.logText.enableWordWrapping = true;
+        hud.logText.overflowMode = TextOverflowModes.Overflow;
+        hud.logText.raycastTarget = false;
+
+        ScrollRect scroll = scrollObject.GetComponent<ScrollRect>();
+        scroll.viewport = viewportObject.GetComponent<RectTransform>();
+        scroll.content = logRect;
+        scroll.horizontal = false;
+        scroll.vertical = true;
+        scroll.movementType = ScrollRect.MovementType.Clamped;
+        scroll.inertia = true;
+        scroll.scrollSensitivity = 14f;
+        hud.AttachLogScrollRect(scroll);
     }
 
     private void BuildScoreboardPanel(HUDUI hud, TMP_FontAsset font)

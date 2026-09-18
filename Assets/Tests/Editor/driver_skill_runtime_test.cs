@@ -140,10 +140,14 @@ public class DriverSkillRuntimeTests
         var skillRect = (UnityEngine.RectTransform)hud.driverSkillButton.transform;
         var resetRect = (UnityEngine.RectTransform)hud.resetButton.transform;
         var returnRect = (UnityEngine.RectTransform)hud.returnToMenuButton.transform;
-        Assert.That(skillRect.anchorMax.x, Is.LessThanOrEqualTo(resetRect.anchorMin.x),
-            "Driver skill and reset actions must occupy separate columns.");
-        Assert.That(skillRect.anchorMin.y, Is.GreaterThanOrEqualTo(returnRect.anchorMax.y),
-            "Driver skill action must stay above the return-to-menu action.");
+        Assert.That(skillRect.anchorMin.x,
+            Is.EqualTo(RaceUILayoutController.DriverSkillAnchorMin.x).Within(0.001f));
+        Assert.That(skillRect.anchorMax.x,
+            Is.EqualTo(RaceUILayoutController.DriverSkillAnchorMax.x).Within(0.001f));
+        Assert.That(skillRect.anchorMax.y, Is.LessThanOrEqualTo(resetRect.anchorMin.y),
+            "Driver skill action must stay below the destructive top actions.");
+        Assert.That(resetRect.anchorMax.y, Is.LessThanOrEqualTo(returnRect.anchorMin.y),
+            "Reset must stay below return-to-menu in the top action area.");
     }
 
     [Test]

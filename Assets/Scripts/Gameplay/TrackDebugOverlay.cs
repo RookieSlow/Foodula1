@@ -9,7 +9,7 @@ using UnityEngine;
 /// </summary>
 public sealed class TrackDebugOverlay : MonoBehaviour
 {
-    [SerializeField] private KeyCode toggleKey = KeyCode.F8;
+    [SerializeField] private KeyCode toggleKey = KeyCode.F10;
     [SerializeField] private float markerScale = 0.42f;
     [SerializeField] private float labelOffset = 0.3f;
 

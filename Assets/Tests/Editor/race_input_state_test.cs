@@ -74,4 +74,33 @@ public class RaceInputStateTests
         Assert.That(state.PendingGear, Is.EqualTo(0));
         Assert.That(state.PlayerGearChoice, Is.EqualTo(0));
     }
+
+    [Test]
+    public void CardKeyboardNavigationWrapsAndSkipsHeatCards()
+    {
+        bool[] playable = { true, false, true, false };
+
+        Assert.That(CardKeyboardNavigationRules.FindNextIndex(playable, -1, 1), Is.EqualTo(0));
+        Assert.That(CardKeyboardNavigationRules.FindNextIndex(playable, 0, 1), Is.EqualTo(2));
+        Assert.That(CardKeyboardNavigationRules.FindNextIndex(playable, 2, 1), Is.EqualTo(0));
+        Assert.That(CardKeyboardNavigationRules.FindNextIndex(playable, 0, -1), Is.EqualTo(2));
+    }
+
+    [Test]
+    public void CardKeyboardNavigationRejectsHandsWithoutPlayableCards()
+    {
+        Assert.That(CardKeyboardNavigationRules.FindNextIndex(
+            new[] { false, false }, 0, 1), Is.EqualTo(-1));
+    }
+
+    [Test]
+    public void SpaceShortcutPlaysSelectionAndNeverEndsAnEmptyCardPhase()
+    {
+        Assert.That(CardActionShortcutRules.Resolve(false, 0),
+            Is.EqualTo(CardActionShortcutIntent.None));
+        Assert.That(CardActionShortcutRules.Resolve(false, 2),
+            Is.EqualTo(CardActionShortcutIntent.SubmitSelection));
+        Assert.That(CardActionShortcutRules.Resolve(true, 0),
+            Is.EqualTo(CardActionShortcutIntent.ConfirmDiscard));
+    }
 }

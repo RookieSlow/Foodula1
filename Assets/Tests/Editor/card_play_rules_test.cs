@@ -114,39 +114,57 @@ public class CardPlayRulesTest
     }
 
     [Test]
-    public void test_hotpot_bonus_requires_using_the_extra_attack_slot()
+    public void test_hotpot_empowers_next_normal_speed_card_without_extra_slot()
     {
-        var player = CreatePlayerWithHand();
-        player.gear = 3;
+        var first = new CardData(CardType.Speed, 3);
+        var second = new CardData(CardType.Speed, 1);
+        var player = CreatePlayerWithHand(first, second);
         player.trickState.hotpotBaseActive = true;
-        player.playedSpeedCardsThisTurn.AddRange(new[]
-        {
-            new CardData(CardType.Speed, 1),
-            new CardData(CardType.Speed, 2),
-            new CardData(CardType.Speed, 3)
-        });
 
-        Assert.AreEqual(0, CardPlayRules.GetHotpotMovementBonus(player));
+        SpeedCardCommitResult result = CardPlayRules.CommitSpeedCards(
+            player, new List<CardData> { first, second }, 2);
 
-        player.playedSpeedCardsThisTurn.Add(new CardData(CardType.Speed, 4));
-
-        Assert.AreEqual(1, CardPlayRules.GetHotpotMovementBonus(player));
+        Assert.AreEqual(SpeedCardCommitResult.Success, result);
+        Assert.IsTrue(player.hotpotAttackAppliedThisTurn);
+        Assert.AreEqual(3, player.hotpotAttackCardValueThisTurn);
+        Assert.IsFalse(TrickCardRules.HasHotpotAttack(player.trickState));
+        Assert.AreEqual(3, CardPlayRules.GetHotpotCornerExclusion(player));
+        Assert.AreEqual(4, CardPlayRules.GetHotpotMovementContribution(player));
     }
 
     [Test]
-    public void test_hotpot_bonus_starts_after_kanto_slots_are_filled()
+    public void test_hotpot_excludes_full_effective_card_and_preserves_total_plus_one()
     {
         var player = CreatePlayerWithHand();
-        player.gear = 2;
+        player.hotpotAttackAppliedThisTurn = true;
+        player.hotpotAttackCardValueThisTurn = 4;
+
+        Assert.AreEqual(5, CardPlayRules.GetHotpotCornerExclusion(player, 1));
+        Assert.AreEqual(6, CardPlayRules.GetHotpotMovementContribution(player, 1));
+    }
+
+    [Test]
+    public void test_pending_hotpot_does_not_add_optional_speed_card_slot()
+    {
+        var player = CreatePlayerWithHand();
         player.extraCardSlotsThisTurn = 2;
         player.trickState.hotpotBaseActive = true;
-        for (int i = 0; i < 4; i++)
-            player.playedSpeedCardsThisTurn.Add(new CardData(CardType.Speed, 1));
 
-        Assert.AreEqual(0, CardPlayRules.GetHotpotMovementBonus(player));
+        Assert.AreEqual(2, CardPlayRules.GetOptionalSpeedCardSlots(player));
+    }
 
-        player.playedSpeedCardsThisTurn.Add(new CardData(CardType.Speed, 1));
+    [Test]
+    public void test_failed_speed_commit_does_not_consume_pending_hotpot_attack()
+    {
+        var held = new CardData(CardType.Speed, 2);
+        var stale = new CardData(CardType.Speed, 4);
+        var player = CreatePlayerWithHand(held);
+        player.trickState.hotpotBaseActive = true;
 
-        Assert.AreEqual(1, CardPlayRules.GetHotpotMovementBonus(player));
+        SpeedCardCommitResult result = CardPlayRules.CommitSpeedCard(player, stale, 1);
+
+        Assert.AreEqual(SpeedCardCommitResult.CardNotInHand, result);
+        Assert.IsTrue(TrickCardRules.HasHotpotAttack(player.trickState));
+        Assert.IsFalse(player.hotpotAttackAppliedThisTurn);
     }
 }

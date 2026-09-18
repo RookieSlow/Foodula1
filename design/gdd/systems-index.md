@@ -2,7 +2,7 @@
 
 > Design order: Foundation → Core → Feature → Presentation → Polish
 > Status: Not Started | In Progress | In Review | Approved | Needs Revision | Retired
-> Snapshot: 2026-09-09
+> Snapshot: 2026-09-18
 
 ## MVP
 
@@ -37,10 +37,11 @@
 | `design/planning/roadmap.md` | Demo acceptance, resource/audio completion and post-Demo plan |
 | `docs/reference/熱力狂飆_規則書_完整文本.md` | External HEAT rulebook reference |
 
-## 2026-09-09 Implementation Snapshot
+## 2026-09-18 Implementation Snapshot
 
-- Project stage is `Production`; the Demo V0.1.0 release run passed `676/676`
-  on 2026-09-09, with 0 failures and 0 skips. Free-race roster/menu focused coverage passed `11/11`;
+- Project stage is `Production`; the Demo V0.1.1 source baseline run passed `688/688`
+  on 2026-09-18, with 0 failures and 0 skips. The V0.1.0 Windows release evidence remains
+  archived separately. Free-race roster/menu focused coverage passed `11/11`;
   active-skill coverage previously passed `28/28`,
   and the passive/related regression passed `21/21`.
 - The latest manual tailwind log confirms scoped slow motion during the independent tailwind presentation/bonus movement and restoration to `time_scale=1.00` afterward.
@@ -85,7 +86,7 @@
   six-team/twelve-driver Thunderstorm experiment for full-field strength checks.
 
 ```
-Demo V0.1.0 Baseline
+Demo V0.1.1 Source Baseline
   ├── Core HEAT loop and card/heat ownership
   ├── Six team vehicles + Go/Recover + tech-tree hooks
   ├── Twelve selectable drivers + active effects + five integrated passives

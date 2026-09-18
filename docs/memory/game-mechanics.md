@@ -3,8 +3,8 @@
 This document records the mechanics represented by the current code. Values
 may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 
-> **Implementation snapshot (2026-09-11)**: Unity `2022.3.62f3c1`; the latest
-> full editor EditMode run passed `676/676` on 2026-09-11. The active-skill
+> **Implementation snapshot (2026-09-17)**: Unity `2022.3.62f3c1`; the latest
+> full editor EditMode run passed `680/680` on 2026-09-17. The active-skill
 > focused run previously passed `28/28`, and the passive/related regression run passed `21/21`; the tutorial/menu focused run previously passed `64/64`
 > and the encyclopedia catalog checks previously passed `6/6`. The new free-race
 > roster/menu focused coverage passed `8/8`; Play Mode visual acceptance remains open.
@@ -88,6 +88,18 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   increase only the maximum selectable count and never create a missing-card engine-failure penalty.
 - Instant bonus movement uses the same start/finish traversal rule as animated movement. In particular,
   Yin-Yang Tea Go movement can increment the lap and finish the race when it crosses the line.
+- Human heat mutations refresh both the card-zone counters and HUD thermometer immediately. Corner
+  overspeed payments, gear/skill payments, normal cooling, hand-only recovery, full spin recovery and
+  Fish-and-Chips recovery do not wait for the next phase-level HUD refresh.
+- Keyboard assistance mirrors the pointer flow: `1–4` select a gear; after a card is selected, one `Space` press
+  immediately plays/discards that selection without opening the pointer confirmation dialog; `Space` also skips
+  an active presentation; `A/D` and arrow keys move card
+  focus, and `F` toggles the focused card. During normal card play, an empty selection makes `Space` a no-op;
+  ending the card phase requires the explicit pointer button so a repeated key press cannot submit and end the
+  turn together. Pointer actions retain their configurable confirmation gates. Space cannot confirm
+  reset-race or return-to-menu prompts.
+- The operation log uses a fixed masked scroll viewport above the primary action button. It keeps up to 80 recent
+  lines, places newest events at the top, supports wheel review, and cannot grow across or intercept the confirm area.
 - Each player has a draw pile, hand, discard pile, and independent engine
   heat pool.
 - The default hand limit is 7.
@@ -161,12 +173,13 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   current runtime counts those carry-over slots as required for missing-card
   engine failure; whether they should instead be optional remains a design
   decision.
-- Hotpot grants its +1 movement only when an ATTACK trick actually occupies the
-  optional Hotpot slot beyond the gear and Kanto Oden card slots.
-- For China Go, the base requirement remains 3 speed cards on the first
-  consecutive Go. When Hotpot's optional ATTACK slot is active, the effective
-  turn limit is base 3 + 1 extra card, so the HUD/log may correctly show a
-  4-card limit even when the consecutive-Go counter has just reset.
+- Hotpot in China Go arms the next normally committed speed card instead of
+  adding an optional card slot. That ATTACK card receives +1 total movement and
+  its full effective speed is excluded from corner-limit speed. If a group is
+  confirmed, the first card in that committed group receives the marker.
+- China Go therefore keeps its ordinary 3-card first-use requirement/limit (or
+  4 cards on the consecutive overclocked Go). Hotpot never raises those limits
+  to 4/5 and cannot create a missing-card or hand-pressure downside by itself.
 
 ## Gear and Cooling Rules
 

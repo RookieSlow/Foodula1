@@ -48,6 +48,7 @@ public class CardUI : MonoBehaviour
     private Vector3 baseScale = Vector3.one;
     private bool hasBaseTransform;
     private Coroutine selectionRoutine;
+    private bool isKeyboardHighlighted;
 
     // 颜色常量（精灵图缺失时的回退方案）
     private static readonly Color COLOR_DEFAULT = new Color(1f, 1f, 1f, 1f);
@@ -131,6 +132,7 @@ public class CardUI : MonoBehaviour
         cardData = data;
         onClickCallback = callback;
         isSelected = false;
+        isKeyboardHighlighted = false;
         hasBaseTransform = false;
 
         // 设置背景精灵图
@@ -232,7 +234,9 @@ public class CardUI : MonoBehaviour
         {
             overlayImage.color = isSelected
                 ? new Color(1, 1, 1, 0.35f)
-                : new Color(1, 1, 1, 0);
+                : isKeyboardHighlighted
+                    ? new Color(1f, 0.78f, 0.25f, 0.2f)
+                    : new Color(1, 1, 1, 0);
         }
 
         // 精灵图模式下不需要改色；纯色回退模式下改变背景色
@@ -246,9 +250,22 @@ public class CardUI : MonoBehaviour
 
         if (selectionShadow != null)
         {
-            selectionShadow.effectColor = isSelected ? selectedShadowColor : Color.clear;
-            selectionShadow.effectDistance = isSelected ? selectedShadowDistance : Vector2.zero;
+            selectionShadow.effectColor = isSelected
+                ? selectedShadowColor
+                : isKeyboardHighlighted
+                    ? new Color(1f, 0.72f, 0.18f, 0.95f)
+                    : Color.clear;
+            selectionShadow.effectDistance = isSelected || isKeyboardHighlighted
+                ? selectedShadowDistance
+                : Vector2.zero;
         }
+    }
+
+    /// <summary>Shows keyboard focus without changing gameplay selection.</summary>
+    public void SetKeyboardHighlighted(bool highlighted)
+    {
+        isKeyboardHighlighted = highlighted;
+        UpdateVisual();
     }
 
     /// <summary>程序化设置选中状态（不触发回调）。</summary>

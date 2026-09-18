@@ -91,6 +91,12 @@ public class HeatGaugeRulesTests
         Assert.AreEqual(3, thermometer.CurrentState.EngineRemaining);
         Assert.AreEqual(HeatWarningLevel.Critical, thermometer.CurrentState.WarningLevel);
 
+        player.deck.CoolHeat(4);
+        hud.RefreshPlayerResources(player);
+        Assert.AreEqual(30, thermometer.CurrentState.Percent,
+            "The authored gauge must reflect a heat-zone mutation on the same refresh call.");
+        Assert.AreEqual(7, thermometer.CurrentState.EngineRemaining);
+
         Object.DestroyImmediate(hudObject);
     }
 

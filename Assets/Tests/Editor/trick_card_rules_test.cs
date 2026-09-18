@@ -361,7 +361,7 @@ public class TrickCardRulesTests
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // CN: Hotpot Base (Attack) — extra ATTACK card
+    // CN: Hotpot Base (Attack) — empower the next normal speed card
     // ═══════════════════════════════════════════════════════════════════
 
     [Test]
@@ -375,6 +375,10 @@ public class TrickCardRulesTests
         Assert.That(result.success, Is.True);
         Assert.That(TrickCardRules.HasHotpotAttack(state), Is.True);
         Assert.That(TrickCardRules.GetHotpotSpeedBonus(), Is.EqualTo(1));
+
+        Assert.That(TrickCardRules.ConsumeHotpotAttack(state), Is.True);
+        Assert.That(TrickCardRules.HasHotpotAttack(state), Is.False);
+        Assert.That(TrickCardRules.ConsumeHotpotAttack(state), Is.False);
     }
 
     // ═══════════════════════════════════════════════════════════════════

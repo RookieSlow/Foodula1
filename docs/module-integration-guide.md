@@ -128,8 +128,8 @@ BrothSelection 开局选择 UI、SmokedBBQ 热量当速度用。
    注意：
    - **跳过回合**：永远用 `ShouldSkipTurn(p)` / 回合级 `turnSkipped` 集合，
      不要在多个相位重复判断同一标志的"是否已清除"状态。
-   - **弯道判定用 `p.cornerTotalThisTurn`，实际移动用 `p.totalMovementThisTurn`**
-     （火锅底料的 +1 不计入弯道判定）。
+    - **弯道判定用 `p.cornerTotalThisTurn`，实际移动用 `p.totalMovementThisTurn`**。
+      火锅底料会把下一张正常速度牌的完整有效速度移出前者，并连同 +1 放入后者；它不增加出牌槽。
    - **热量支付必须走 `TryPayHeat()`**（黑面包垫底/炸鱼薯条/烤肉拼盘都在这里挂钩）。
 5. **UI 接线**：HUD 文本字段为 nullable（Prefab 模式未赋值则跳过显示）；
    新 UI 元素在 `AutoCreateUI()` 里创建，Prefab 用户自己拖。
@@ -167,7 +167,9 @@ session.GetGrillSpezialCooldown(p) / ActivateGrillSpezial(p) / TrackHeatPaid(p, 
 p.techState                 // TechTreeState（enableTechTree=false 时为 null）
 p.trickState                // TrickCardState（每回合 ResetPerTurn）
 p.trickMoveBonusThisTurn    // 特技牌即时移动（司康 +2）
-p.cornerTotalThisTurn       // 弯道判定用速度（不含火锅底料 +1）
+p.cornerTotalThisTurn       // 弯道判定用速度（不含火锅 ATTACK 整张牌）
+p.hotpotAttackAppliedThisTurn // 本回合是否已强化下一张正常速度牌
+p.hotpotAttackCardValueThisTurn // 被强化牌的原始速度值
 p.extraCardSlotsThisTurn    // 额外出牌槽（关东慢煮累积）
 p.kantoOdenSkipThisTurn     // 关东慢煮：本回合跳过（回合开始清除）
 p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
@@ -247,8 +249,8 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
    `kantoOdenSkipThisTurn`（本回合剩余，回合开始清除）、
    回合级 `turnSkipped` 集合（A1 已结算跳过的玩家，后续相位不要再判断
    `skipNextTurn` —— 它已被清除）。
-2. **`cornerTotalThisTurn` ≠ `totalMovementThisTurn`**：火锅底料的 ATTACK +1
-   只进移动、不进弯道判定。
+2. **`cornerTotalThisTurn` ≠ `totalMovementThisTurn`**：火锅底料把下一张正常
+   速度牌的完整有效速度与额外 +1 都作为移动结算，但整张 ATTACK 牌不进入弯道限速速度。
 3. **热量支付别绕路**：直接 `DrawHeatFromPool` 会跳过黑面包/炸鱼薯条/烤肉拼盘。
 4. **特技牌每回合限 1**：由 `trickState.trickPlayedThisTurn` 保证，`PlayTrick`
    还会校验传入的同一张运行时卡牌确实在手牌中。成功后必须通过 `CardDeck`
@@ -279,7 +281,8 @@ p.positionAtTurnStart       // 失控回退 / 阴阳茶结算基准
   the played area; trick cards remain single-card immediate actions and enter
   the discard pile. With no selection, the action button ends card play.
 - AI card selection uses the effective per-turn card-slot limit, including
-  temporary slots and Hotpot effects.
+  temporary Kanto/technology slots. Hotpot uses the same shared commit path as
+  the player to empower the first normal speed card without adding a slot.
 - AI corner-risk checks use lane-specific limits plus active tech/weather
   modifiers through `RaceSession.EffectiveCornerLimit`.
 - Track weather names (`cloudy`, `hot`, `light_rain`, `heavy_rain`) resolve to

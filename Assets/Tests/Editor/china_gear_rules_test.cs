@@ -85,17 +85,17 @@ public class ChinaGearRulesTests
     {
         TeamGearRules.SpeedCardRequirement firstGo = TeamGearRules.GetSpeedCardRequirement(
             TeamId.CN, ChinaGearShiftRules.GoGear, 1, 0);
-        TeamGearRules.SpeedCardRequirement firstGoWithHotpot = TeamGearRules.GetSpeedCardRequirement(
+        TeamGearRules.SpeedCardRequirement firstGoWithExtraSlot = TeamGearRules.GetSpeedCardRequirement(
             TeamId.CN, ChinaGearShiftRules.GoGear, 1, 1);
         TeamGearRules.SpeedCardRequirement secondGo = TeamGearRules.GetSpeedCardRequirement(
             TeamId.CN, ChinaGearShiftRules.GoGear, 2, 0);
 
         Assert.AreEqual(3, firstGo.BaseCardCount);
         Assert.AreEqual(3, firstGo.TotalCardCount);
-        Assert.AreEqual(3, firstGoWithHotpot.BaseCardCount);
-        Assert.AreEqual(1, firstGoWithHotpot.ExtraCardCount);
-        Assert.AreEqual(3, firstGoWithHotpot.RequiredCardCount);
-        Assert.AreEqual(4, firstGoWithHotpot.TotalCardCount);
+        Assert.AreEqual(3, firstGoWithExtraSlot.BaseCardCount);
+        Assert.AreEqual(1, firstGoWithExtraSlot.ExtraCardCount);
+        Assert.AreEqual(3, firstGoWithExtraSlot.RequiredCardCount);
+        Assert.AreEqual(4, firstGoWithExtraSlot.TotalCardCount);
         Assert.AreEqual(4, secondGo.BaseCardCount);
         Assert.AreEqual(4, secondGo.TotalCardCount);
     }

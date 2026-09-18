@@ -1,5 +1,56 @@
 # Current Task List
 
+## 2026-09-18 Demo V0.1.1 源码封存
+
+- [x] 将包版本与主菜单版本统一更新为 `0.1.1` / `v0.1.1 Demo`，以当前修复集建立 `demo-v0.1.1` 源码标签。
+- [x] V0.1.1 纳入匿名试玩日志导出、热量计即时刷新、局内动作区重排、键盘辅助、固定滚动日志窗、中国队火锅 ATTACK 规则修正与 AI 长移动弯道预判。
+- [x] 封存前全量 Unity EditMode `688/688` 通过，0 失败、0 跳过；Runtime/Editor MSBuild 0 编译错误，仅保留既有 Unity/MCP 程序集版本警告。
+- [ ] V0.1.2 百科跟进：逐条复核 17 个百科主题与当前快捷键、确认设置、日志导出、火锅 ATTACK、实时热量显示及 UI 术语一致，并补目录/正文可读性走查。
+- [ ] V0.1.2 教程跟进：同步单次 `Space` 出牌、当前确认语义与局内布局；完整走通 16 步引导和一圈自由练习，核对聚光框、前后翻页、天气、尾流、弯道与维修区提示。
+- [ ] V0.1.2 验收：在 16:9 Windows 构建中联合验收百科与教程，记录 Console、操作日志和问题标记导出包证据。
+
+## 2026-09-18 试玩日志、空格出牌与滚动日志窗
+
+- [x] 分析最新 Editor 试玩会话 `session-20260918-034353-3fc28cc2147b4d63a3dee39ee97035f8`：324 个事件，0 warning、0 error；会话包含一次重开和一段 12 车勒芒试玩。
+- [x] 日志复现空格误结束：第一次比赛选中特技牌后按 `Space`，没有合法速度牌选择却直接结束出牌并触发“缺 3 张速度牌”惩罚；修正为选中牌后按一次空格立即打出/弃置所选牌，不再打开鼠标二次确认框；空选择结束出牌仅允许点击按钮，按钮也不再错误显示空格提示。
+- [x] 操作日志改为固定高度的遮罩滚动窗：保留最多 80 行，鼠标滚轮可回看，新增消息仍定位到顶部；窗口与底部主确认区域使用互不重叠的锚点。
+- [x] 最新重开日志同时确认火锅 ATTACK 首个 Go 仍为 3 张，速度 4 目标牌获得强化，弯道速度只计其余 `2+2=4`；12 车移动/尾流阶段均正常结束且时间倍率恢复为 1.00。
+- [x] 新增空格意图与固定滚动窗回归；隔离 Unity EditMode `688/688` 通过，0 失败、0 跳过；MSBuild 0 错误，仅保留既有 Unity/MCP 程序集版本警告。
+- [ ] 人工确认 16:9 下日志滚轮、遮罩裁切和确认按钮无遮挡，并补测中国队连续 Go 的 4 张上限。
+
+## 2026-09-18 中国队火锅 ATTACK 规则修正
+
+- [x] 确认旧实现与最新设计意图不符：火锅底料原先增加一个可选速度牌槽，只有填入第 4/第 5 张牌才获得 +1，导致高挡位下手牌压力增大并可能产生负收益。
+- [x] 火锅底料改为 Go 模式下武装下一张按正常挡位要求打出的速度牌：该牌实际移动 +1，整张牌（含逐牌速度加成）不进入弯道限速速度；不增加出牌上限，也不影响缺牌惩罚。
+- [x] 玩家与 AI 统一通过 `CardPlayRules` 提交并消耗 ATTACK 标记；失败提交不消耗，操作提示、比赛日志、百科、GDD 与集成说明已同步。
+- [x] 新增/更新下一张牌强化、整张限速豁免、总移动守恒、失败不消耗及不增加槽位的 EditMode 回归；Runtime/Editor MSBuild 编译通过，0 错误（保留既有 Unity/MCP 程序集版本警告）。
+- [x] 隔离 Unity Test Runner 已真实执行全量 EditMode：首次 `685/686` 时定位到 `RaceCanvas` 已改为上下动作分区、旧车手技能“双列”断言过时；同步断言后复跑 `686/686` 通过，0 失败、0 跳过。火锅下一张牌强化、整张限速豁免、总移动守恒、失败不消耗和不增加槽位回归全部通过。
+- [ ] 人工走查剩余连续 Go：最新试玩已确认首个 Go 上限为 3、火锅目标牌移动 +1 且整张牌不计弯道限速；仍需确认连续 Go 上限为 4。多选一次确认时由所选列表第一张获得 ATTACK，若要精确指定可先单独确认目标牌。
+
+## 2026-09-18 局内操作品质修复
+
+- [x] 所有玩家热量支付、弯道超速、冷却、全量回收及炸鱼薯条免单路径统一即时刷新牌堆和 HUD 热量计，不再等待下一阶段刷新。
+- [x] 比赛操作栏重排为六个互不重叠的纵向区域：返回、重开、2×2 档位、车手技能、状态日志、主确认；高频确认固定在最底部，返回/重开放在最上方，与确认保持最大距离。Prefab 与运行时回退布局使用同一组锚点。
+- [x] 新增键盘辅助：数字键与小键盘 `1–4` 选挡，选中牌后 `Space` 立即出牌/弃牌并可跳过当前演出，`A/D` 与方向键循环高亮可用牌，`F` 选择/取消当前高亮牌；空选择结束出牌保留为鼠标操作，避免连续空格误结束回合。鼠标点击状态变更按钮仍按设置使用二次确认。
+- [x] 键盘入口复用既有教程门禁、按钮可用态和可配置二次确认；`Space` 不会确认重开或返回主菜单等破坏性弹窗。
+- [x] 操作日志纳入新增按键；问题标记继续使用 `F8`，赛道调试覆盖层改用 `F10`，消除快捷键冲突。
+- [x] 新增/扩展牌组导航、主按钮布局及热量计二次刷新回归；MSBuild Runtime/Editor 编译通过，0 错误（保留既有 Unity/MCP 程序集版本警告）。
+- [ ] 在干净 Race 场景执行 Unity 定向 EditMode，并人工走查一次“弯道付热实时变化 + 全套快捷键 + 16:9 按钮间距”。
+
+## 2026-09-17 外部玩家测试日志
+
+- [x] 新增启动即生效的匿名本地测试会话：JSONL 记录应用/场景生命周期、鼠标按下与释放、命中对象层级、有限控制键、分辨率、全屏状态和时间倍率。
+- [x] 捕获警告、错误、断言与异常，并把用户目录和游戏数据目录替换为中性标记；不记录输入文字、剪贴板、玩家身份、设备 ID 或账号，也不自动上传。
+- [x] 保留原有可读比赛日志，并将其结构化事件镜像到会话日志，方便把菜单操作、比赛阶段和故障按同一时间线分析。
+- [x] 设置页新增“导出测试日志”：手动生成包含最多 30 次会话、现有比赛日志和隐私说明的 ZIP，并打开导出目录供玩家主动回传。
+- [x] 增加 F8 问题标记：立即写入时间点、当前场景/分辨率/时间倍率并截取游戏画面，屏幕显示 3 秒确认提示；截图仍只在玩家主动导出后进入回传包。
+- [x] 每 15 秒记录平均 FPS、最差帧耗时、慢帧数与已分配内存；会话元数据补充系统、CPU/GPU 名称和内存容量等非唯一兼容性信息。
+- [x] 输入框命中时强制省略文本内容，异常路径同时清洗用户目录、游戏数据目录和安装根目录；导出包补充 `manifest.json`、文件计数、毫秒级文件名以及截图/硬件信息说明。
+- [x] 设置页在导出后显示会话数量、ZIP 大小和文件名，默认提示玩家遇到问题时按 F8 标记。
+- [x] 新增写入/清洗/保留/ZIP 回归；定向 Unity EditMode `3/3`、全量 `680/680` 通过，0 失败、0 跳过；MSBuild 0 编译错误。
+- [x] 2026-09-18 日志体验增强后重新运行 Unity 定向 EditMode `3/3`，0 失败、0 跳过；Runtime/Editor MSBuild 均为 0 编译错误。全量 `680/680` 为增强前最近基线，尚未在本轮重复执行。
+- [ ] 发布给外部玩家前执行一次 Windows 构建烟测：主菜单点击、完整比赛、异常退出后重启、设置页导出 ZIP，并人工检查 ZIP 不含个人信息。
+
 ## 2026-09-11 Demo V0.1.0 封版
 
 - [x] 将核心比赛、教程、自由赛事、雷霆大混战与当前生涯实现纳入 Demo V0.1.0 功能基线；当前没有必须重做玩法的封版阻断项。
@@ -14,9 +65,9 @@
 
 - [x] 分析 12 车勒芒完整日志，定位青骅第 55 回合由阴阳茶从 141→0 时未计圈、导致额外多跑一圈的问题。
 - [x] 阴阳茶 Go 奖励移动现会检测起终点穿越、增加圈数并触发正常完赛；新增瞬时奖励跨线回归。
-- [x] 挡位缺牌惩罚只比较基础必出张数；火锅底料及科技提供的额外槽保持可选，不再因未填满而错误支付热量。
+- [x] 挡位缺牌惩罚只比较基础必出张数；科技提供的额外槽保持可选，不再因未填满而错误支付热量。火锅底料已在 2026-09-18 改为强化下一张正常速度牌，不再提供额外槽。
 - [x] 新增 AI 零热量池回归，证明满足基础张数但未填可选槽时不会失控；定向 EditMode `3/3`、全量 `676/676` 通过，0 失败、0 跳过。
-- [ ] 下一次中国队试玩重点核对：阴阳茶跨线即时计圈，以及未填火锅额外槽时不出现引擎故障。
+- [ ] 下一次中国队试玩重点核对：阴阳茶跨线即时计圈，以及火锅底料不改变 Go 的 3/4 张出牌上限、ATTACK 整张牌不计入弯道限速。
 
 ## 2026-09-09 局内确认偏好、弯道解释与慕尚高速偏弯
 
@@ -411,8 +462,8 @@
   本次是受控单段命中冒烟，不等同于两段链式人工验收；完整人工对局仍需确认气流连线、
   特写遮罩、后续回合推进，以及修正后的美国直道 `+1` 与中国 Go/Recover 节奏。
 
-- [x] 分析 2026-08-25 11:34 的中国队印第安纳波利斯日志：第 1 回合 Go 的有效上限为
-  4 张，是基础 Go 3 张加火锅底料的 1 个 ATTACK 额外槽；第 2 回合连续 Go 的基础上限
+- [x] 分析 2026-08-25 11:34 的中国队印第安纳波利斯日志（旧规则证据，已由
+  2026-09-18 ATTACK 改版取代）：第 1 回合 Go 的有效上限为 4 张，是基础 Go 3 张加火锅底料的 1 个 ATTACK 额外槽；第 2 回合连续 Go 的基础上限
   才是 4 张。第 3 回合失控进入 Recover 后计数清零，第 4 回合重新 Go 的基础上限已重置
   为 3 张，但当回合再次打出火锅底料后有效上限仍为 4 张。定向 EditMode 133/133、全量
   EditMode 436/436 通过；当前日志未出现尾流事件。
@@ -731,7 +782,8 @@ with 0 failures, warnings, or errors.
 - [ ] Select the replacement for the reverted Track Node Editor.
 - [x] Treat Le Mans as a France expansion track with no home team; it is not one of the six national-team home circuits.
 - [ ] Confirm whether Kanto Oden carry-over slots are mandatory (the current
-  runtime behavior) or optional; Hotpot's additional slot is already optional.
+  runtime behavior) or optional. Hotpot no longer owns an additional slot under
+  the 2026-09-18 ATTACK-mode rule and is unrelated to this open decision.
 - [x] 历史场景、数据、MCP 与重构改动已按用户明确指令分批提交；后续继续逐次审查提交边界。
 
 ## Completed Context
@@ -795,9 +847,10 @@ maintained source for current work.
   heat can no longer inflate the permanent engine pool, and AI heat payments
   use the same canonical path as human payments.
 - [x] Fixed turn-start and movement edge cases: Kanto Oden carry-over is
-  consumed even when the tech tree is disabled, Hotpot grants movement only
-  when its optional ATTACK slot is actually used, and teleports immediately
-  restore the car's track-tangent facing.
+  consumed even when the tech tree is disabled, the historical Hotpot extra-slot
+  implementation only granted movement when filled (superseded by the
+  2026-09-18 next-card ATTACK rule), and teleports immediately restore the car's
+  track-tangent facing.
 - [x] Hardened card UI state: reset clears every interaction mode, heat cards
   are non-interactable, resource displays refresh after card/heat changes, and
   a short action-button debounce prevents a physical double-click from both

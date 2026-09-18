@@ -32,7 +32,7 @@ public static class RaceCanvasBuilder
         GameObject hudGO = NewGO("HUD", root, typeof(HUDUI));
         hudGO.GetComponent<RectTransform>().StretchFull();
         var hud = hudGO.GetComponent<HUDUI>();
-        hud.maxLogLines = 12;
+        hud.maxLogLines = 80;
 
         BuildHUD(hudGO, hud);
 

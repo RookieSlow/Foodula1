@@ -3,6 +3,49 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+/// <summary>Pure wrapping navigation for the playable cards in a rendered hand.</summary>
+public static class CardKeyboardNavigationRules
+{
+    public static int FindNextIndex(IReadOnlyList<bool> playable, int currentIndex, int direction)
+    {
+        if (playable == null || playable.Count == 0 || direction == 0)
+            return -1;
+
+        int step = direction < 0 ? -1 : 1;
+        int index = currentIndex;
+        for (int i = 0; i < playable.Count; i++)
+        {
+            index = (index + step + playable.Count) % playable.Count;
+            if (playable[index])
+                return index;
+        }
+        return -1;
+    }
+}
+
+public enum CardActionShortcutIntent
+{
+    None,
+    SubmitSelection,
+    ConfirmDiscard
+}
+
+/// <summary>
+/// Maps Space to an immediate selected-card action while keeping it separate
+/// from the empty-selection "end card phase" action.
+/// </summary>
+public static class CardActionShortcutRules
+{
+    public static CardActionShortcutIntent Resolve(bool isDiscardMode, int selectedCardCount)
+    {
+        if (isDiscardMode)
+            return CardActionShortcutIntent.ConfirmDiscard;
+        return selectedCardCount > 0
+            ? CardActionShortcutIntent.SubmitSelection
+            : CardActionShortcutIntent.None;
+    }
+}
+
 /// <summary>
 /// 手牌 UI 管理器 — 在手牌区域生成/刷新卡牌 GameObject，
 /// 处理卡牌选择交互，提供档位选择模式切换。
@@ -45,6 +88,7 @@ public class CardHandUI : MonoBehaviour
     private CardPilePreviewUI drawPilePreview;
     private CardPilePreviewUI discardPilePreview;
     private CardZoneTransitionUI zoneTransition;
+    private int keyboardHighlightIndex = -1;
 
     /// <summary>Compatibility accessor for callers that expect a single selection.</summary>
     public CardData PendingPlayCard
@@ -175,6 +219,7 @@ public class CardHandUI : MonoBehaviour
     public void ClearHand()
     {
         pendingPlayCard = null;
+        keyboardHighlightIndex = -1;
         for (int i = cardUIs.Count - 1; i >= 0; i--)
         {
             if (cardUIs[i] != null) Destroy(cardUIs[i].gameObject);
@@ -280,7 +325,7 @@ public class CardHandUI : MonoBehaviour
         if (gearPromptText != null)
         {
             gearPromptText.text = isGearMode
-                ? "Select gear (+1 free, +2 costs 1 Heat)"
+                ? "1-4 选择挡位 · 空格确认"
                 : "";
         }
         UpdateActionButtonLabel();
@@ -471,6 +516,69 @@ public class CardHandUI : MonoBehaviour
         }
     }
 
+    /// <summary>Moves keyboard focus across playable cards, wrapping at both ends.</summary>
+    public bool MoveKeyboardHighlight(int direction)
+    {
+        if (gameManager == null || gameManager.IsTutorialActionInputBlocked || isGearSelectionMode ||
+            cardUIs.Count == 0)
+            return false;
+
+        var playable = new List<bool>(cardUIs.Count);
+        for (int i = 0; i < cardUIs.Count; i++)
+        {
+            CardUI ui = cardUIs[i];
+            playable.Add(ui != null && ui.gameObject.activeInHierarchy && ui.cardData != null &&
+                !ui.cardData.IsHeat);
+            ui?.SetKeyboardHighlighted(false);
+        }
+
+        keyboardHighlightIndex = CardKeyboardNavigationRules.FindNextIndex(
+            playable, keyboardHighlightIndex, direction);
+        if (keyboardHighlightIndex < 0)
+            return false;
+
+        cardUIs[keyboardHighlightIndex].SetKeyboardHighlighted(true);
+        return true;
+    }
+
+    /// <summary>F-key adapter: toggles the focused card through the normal click rules.</summary>
+    public bool ToggleKeyboardHighlightedCard()
+    {
+        if (keyboardHighlightIndex < 0 || keyboardHighlightIndex >= cardUIs.Count)
+        {
+            if (!MoveKeyboardHighlight(1))
+                return false;
+        }
+
+        CardUI card = cardUIs[keyboardHighlightIndex];
+        if (card == null || card.cardData == null || card.cardData.IsHeat)
+            return false;
+        OnCardClicked(card);
+        return true;
+    }
+
+    /// <summary>Space-key adapter that immediately plays/discards the current selection.</summary>
+    public bool TriggerActionShortcut()
+    {
+        if (playCardsButton == null || !playCardsButton.gameObject.activeInHierarchy ||
+            !playCardsButton.interactable)
+            return false;
+
+        CardActionShortcutIntent intent = CardActionShortcutRules.Resolve(
+            isDiscardMode, GetSelectedPlayCards().Count);
+        if (intent == CardActionShortcutIntent.None)
+        {
+            gameManager?.hudUI?.SetStatus("请先选中牌再按空格出牌；结束出牌请点击下方按钮");
+            return false;
+        }
+
+        // Keyboard play is already an explicit two-step gesture: select a card,
+        // then press Space. Execute it immediately instead of opening the
+        // pointer-oriented confirmation dialog and requiring a second Space.
+        gameManager.OnPlayCardsButtonClicked();
+        return true;
+    }
+
     /// <summary>Clears all play selections without changing the underlying hand.</summary>
     public void ClearPendingPlaySelection()
     {
@@ -546,7 +654,7 @@ public class CardHandUI : MonoBehaviour
 
         string label;
         if (isDiscardMode)
-            label = "确认弃牌";
+            label = "弃置所选牌";
         else
         {
             List<CardData> selected = GetSelectedPlayCards();
@@ -558,21 +666,23 @@ public class CardHandUI : MonoBehaviour
                     : "结束出牌";
             }
             else if (selected[0].IsTrick)
-                label = "确认特技牌";
+                label = "打出特技牌";
             else
-                label = selected.Count == 1 ? "确认速度牌" : $"确认速度牌 ({selected.Count})";
+                label = selected.Count == 1 ? "打出速度牌" : $"打出速度牌 ({selected.Count})";
         }
 
+        bool hasSpaceShortcut = isDiscardMode || GetSelectedPlayCards().Count > 0;
+        string shortcutSuffix = hasSpaceShortcut ? "  [空格]" : "";
         TMP_Text tmp = playCardsButton.GetComponentInChildren<TMP_Text>(true);
         if (tmp != null)
         {
-            tmp.text = label;
+            tmp.text = label + shortcutSuffix;
             return;
         }
 
         UnityEngine.UI.Text legacy = playCardsButton.GetComponentInChildren<UnityEngine.UI.Text>(true);
         if (legacy != null)
-            legacy.text = label;
+            legacy.text = label + shortcutSuffix;
     }
 
     private GearRequirementFeedback GetCurrentRequirementFeedback()

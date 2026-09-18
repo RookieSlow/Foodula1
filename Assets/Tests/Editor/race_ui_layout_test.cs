@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,10 +34,8 @@ public class RaceUILayoutTests
             Assert.That(buttonRect.anchorMax, Is.EqualTo(RaceUILayoutController.ReturnToMenuAnchorMax));
             Assert.That(buttonRect.offsetMin, Is.EqualTo(Vector2.zero));
             Assert.That(buttonRect.offsetMax, Is.EqualTo(Vector2.zero));
-            Assert.That(buttonRect.anchorMin.y, Is.GreaterThan(0.39f),
-                "Button must stay above the operation prompt/log panel.");
-            Assert.That(buttonRect.anchorMax.y, Is.LessThan(0.49f),
-                "Button must stay below the reset action.");
+            Assert.That(buttonRect.anchorMin.y, Is.GreaterThan(RaceUILayoutController.ResetAnchorMax.y),
+                "Return must remain the top-most action below the panel title.");
         }
         finally
         {
@@ -73,6 +72,56 @@ public class RaceUILayoutTests
             Assert.That(operation.anchorMax, Is.EqualTo(new Vector2(0.19f, 0.97f)));
             Assert.That(cardHand.cardSizeOverride, Is.EqualTo(new Vector2(126f, 196f)),
                 "Authored card sizing must not be overwritten during runtime binding.");
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+    }
+
+    [Test]
+    public void operation_controls_follow_safe_top_to_bottom_order()
+    {
+        Assert.That(RaceUILayoutController.ReturnToMenuAnchorMin.y,
+            Is.GreaterThan(RaceUILayoutController.ResetAnchorMax.y));
+        Assert.That(RaceUILayoutController.ResetAnchorMin.y,
+            Is.GreaterThan(RaceUILayoutController.GearGridAnchorMax.y));
+        Assert.That(RaceUILayoutController.GearGridAnchorMin.y,
+            Is.GreaterThan(RaceUILayoutController.DriverSkillAnchorMax.y));
+        Assert.That(RaceUILayoutController.DriverSkillAnchorMin.y,
+            Is.GreaterThan(RaceUILayoutController.PromptPanelAnchorMax.y));
+        Assert.That(RaceUILayoutController.PromptPanelAnchorMin.y,
+            Is.GreaterThan(RaceUILayoutController.PrimaryActionAnchorMax.y));
+        Assert.That(RaceUILayoutController.LogScrollAnchorMin.y,
+            Is.GreaterThan(RaceUILayoutController.PrimaryActionAnchorMax.y));
+    }
+
+    [Test]
+    public void fallback_layout_wraps_log_text_in_a_fixed_scroll_view()
+    {
+        GameObject root = new GameObject(
+            "ScrollableRaceLogTest",
+            typeof(RectTransform),
+            typeof(HUDUI),
+            typeof(RaceUILayoutController));
+        try
+        {
+            HUDUI hud = root.GetComponent<HUDUI>();
+            GameObject logObject = new GameObject("LogText", typeof(RectTransform), typeof(TextMeshProUGUI));
+            logObject.transform.SetParent(root.transform, false);
+            hud.logText = logObject.GetComponent<TMP_Text>();
+
+            RaceUILayoutController layout = root.GetComponent<RaceUILayoutController>();
+            layout.ApplyLayout(hud, null);
+
+            Assert.That(hud.logScrollRect, Is.Not.Null);
+            Assert.That(hud.logScrollRect.viewport, Is.Not.Null);
+            Assert.That(hud.logScrollRect.content, Is.SameAs(hud.logText.rectTransform));
+            Assert.That(hud.logText.GetComponentInParent<RectMask2D>(), Is.Not.Null);
+            Assert.That(hud.logScrollRect.GetComponent<RectTransform>().anchorMin,
+                Is.EqualTo(RaceUILayoutController.LogScrollAnchorMin));
+            Assert.That(hud.logScrollRect.GetComponent<RectTransform>().anchorMax,
+                Is.EqualTo(RaceUILayoutController.LogScrollAnchorMax));
         }
         finally
         {

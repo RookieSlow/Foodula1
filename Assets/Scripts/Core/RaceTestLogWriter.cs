@@ -64,6 +64,11 @@ public sealed class RaceTestLogWriter : IDisposable
             writer.WriteLine($"player_team={playerTeam}");
             writer.WriteLine($"opponents={opponentCount}");
             writer.WriteLine();
+            PlaytestTelemetryService.Record(
+                "race",
+                "race_log_started",
+                safeTrack,
+                $"team={playerTeam};opponents={opponentCount};file={Path.GetFileName(FilePath)}");
         }
         catch (Exception exception)
         {
@@ -88,6 +93,7 @@ public sealed class RaceTestLogWriter : IDisposable
                     continue;
 
                 writer.WriteLine($"{DateTime.UtcNow:O}\t{lines[i]}");
+                PlaytestTelemetryService.Record("race", "event", details: lines[i]);
             }
         }
         catch (Exception exception)
@@ -104,6 +110,7 @@ public sealed class RaceTestLogWriter : IDisposable
             return;
 
         Append("[RACE_END] " + result);
+        PlaytestTelemetryService.Record("race", "race_log_finished", details: result);
         Close();
     }
 

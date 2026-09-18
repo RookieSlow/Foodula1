@@ -60,7 +60,7 @@ public static class TrickCardDatabaseFactory
         db.Add(new TrickCardDef(
             "cn-hotpot-base", "火锅底料", "Hotpot Base", TeamId.CN, TrickCardType.Attack,
             TrickEffectType.HotpotBase,
-            "Go模式→再出1张速度牌标记为ATTACK牌：该牌速度+1，且+1不计入弯道限速判定", "攻"));
+            "Go模式→下一张正常打出的速度牌标记为ATTACK牌：该牌速度+1，且整张牌不计入弯道限速判定", "攻"));
 
         db.Add(new TrickCardDef(
             "cn-ice-jelly", "冰糕", "Ice Jelly", TeamId.CN, TrickCardType.Defense,
@@ -338,18 +338,28 @@ public static class TrickCardRules
         };
     }
 
-    // ── CN Attack: Hotpot Base — Go mode → 1 extra speed card as ATTACK ──
+    // ── CN Attack: Hotpot Base — Go mode → empower the next normal speed card ──
     private static TrickPlayResult ResolveHotpotBase(TrickCardState state)
     {
         // Mode check is done in CanPlaySpecificTrick before calling ResolvePlay
         state.hotpotBaseActive = true;
-        return TrickPlayResult.Ok("火锅底料: 可再出1张ATTACK牌 (速度+1, 不计入弯道判定)");
+        return TrickPlayResult.Ok("火锅底料: 下一张速度牌成为ATTACK (速度+1, 整张不计弯道限速)");
     }
 
-    /// <summary>Check if HotpotBase extra ATTACK card is available.</summary>
+    /// <summary>Check if HotpotBase is waiting to empower the next speed card.</summary>
     public static bool HasHotpotAttack(TrickCardState state) => state.hotpotBaseActive;
 
-    /// <summary>Get the speed bonus for a Hotpot-generated ATTACK card.</summary>
+    /// <summary>Consumes the pending Hotpot ATTACK marker after a speed card is committed.</summary>
+    public static bool ConsumeHotpotAttack(TrickCardState state)
+    {
+        if (state == null || !state.hotpotBaseActive)
+            return false;
+
+        state.hotpotBaseActive = false;
+        return true;
+    }
+
+    /// <summary>Get the speed bonus for a Hotpot-empowered ATTACK card.</summary>
     public static int GetHotpotSpeedBonus() => 1;
 
     // ── CN Defense: Ice Jelly — Recover mode → block slipstream ──
