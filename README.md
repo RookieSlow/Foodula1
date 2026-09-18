@@ -1,312 +1,132 @@
 <p align="center">
-  <h1 align="center">Claude Code Game Studios</h1>
-  <p align="center">
-    Turn a single Claude Code session into a full game development studio.
-    <br />
-    49 agents. 73 skills. One coordinated AI team.
-  </p>
+  <img src="Assets/Resources/Brand/foodula1_logo.png" width="520" alt="Foodula1 Logo">
+</p>
+
+<h1 align="center">Foodula1</h1>
+
+<p align="center">
+  一款把卡牌管理、热量控制和赛车策略结合起来的 2D 美食赛车游戏。
 </p>
 
 <p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
-  <a href=".claude/agents"><img src="https://img.shields.io/badge/agents-49-blueviolet" alt="49 Agents"></a>
-  <a href=".claude/skills"><img src="https://img.shields.io/badge/skills-73-green" alt="73 Skills"></a>
-  <a href=".claude/hooks"><img src="https://img.shields.io/badge/hooks-12-orange" alt="12 Hooks"></a>
-  <a href=".claude/rules"><img src="https://img.shields.io/badge/rules-11-red" alt="11 Rules"></a>
-  <a href="https://docs.anthropic.com/en/docs/claude-code"><img src="https://img.shields.io/badge/built%20for-Claude%20Code-f5f5f5?logo=anthropic" alt="Built for Claude Code"></a>
-  <a href="https://www.buymeacoffee.com/donchitos3"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Support%20this%20project-FFDD00?logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
-  <a href="https://github.com/sponsors/Donchitos"><img src="https://img.shields.io/badge/GitHub%20Sponsors-Support%20this%20project-ea4aaa?logo=githubsponsors&logoColor=white" alt="GitHub Sponsors"></a>
+  <a href="https://github.com/RookieSlow/Foodula1/releases/tag/demo-v0.1.1"><img src="https://img.shields.io/badge/Demo-v0.1.1-orange" alt="Demo v0.1.1"></a>
+  <img src="https://img.shields.io/badge/Unity-2022.3.62f3c1-black?logo=unity" alt="Unity 2022.3.62f3c1">
+  <img src="https://img.shields.io/badge/Platform-Windows%2064--bit-0078D6?logo=windows" alt="Windows 64-bit">
+  <img src="https://img.shields.io/badge/Language-简体中文-red" alt="简体中文">
 </p>
 
----
+> 当前版本是面向玩家测试的 Demo，并非最终成品。欢迎试玩并反馈规则、平衡、界面、性能和教程问题。
 
-## Why This Exists
+## 下载试玩
 
-Building a game solo with AI is powerful — but a single chat session has no structure. No one stops you from hardcoding magic numbers, skipping design docs, or writing spaghetti code. There's no QA pass, no design review, no one asking "does this actually fit the game's vision?"
+**[下载 Foodula1 Demo v0.1.1（Windows 64 位，73.20 MiB）](https://github.com/RookieSlow/Foodula1/releases/download/demo-v0.1.1/Foodula1-Demo-v0.1.1-Windows.zip)**
 
-**Claude Code Game Studios** solves this by giving your AI session the structure of a real studio. Instead of one general-purpose assistant, you get 49 specialized agents organized into a studio hierarchy — directors who guard the vision, department leads who own their domains, and specialists who do the hands-on work. Each agent has defined responsibilities, escalation paths, and quality gates.
+1. 下载并完整解压 ZIP。
+2. 运行 `Foodula1.exe`，无需安装。
+3. 推荐使用 1920×1080 或更高的 16:9 分辨率。
 
-The result: you still make every decision, but now you have a team that asks the right questions, catches mistakes early, and keeps your project organized from first brainstorm to launch.
+SHA-256：
 
----
-
-## Table of Contents
-
-- [What's Included](#whats-included)
-- [Studio Hierarchy](#studio-hierarchy)
-- [Slash Commands](#slash-commands)
-- [Getting Started](#getting-started)
-- [Upgrading](#upgrading)
-- [Project Structure](#project-structure)
-- [How It Works](#how-it-works)
-- [Design Philosophy](#design-philosophy)
-- [Customization](#customization)
-- [Platform Support](#platform-support)
-- [Community](#community)
-- [Supporting This Project](#supporting-this-project)
-- [License](#license)
-
----
-
-## What's Included
-
-| Category | Count | Description |
-|----------|-------|-------------|
-| **Agents** | 49 | Specialized subagents across design, programming, art, audio, narrative, QA, and production |
-| **Skills** | 73 | Slash commands for every workflow phase (`/start`, `/design-system`, `/create-epics`, `/create-stories`, `/dev-story`, `/story-done`, etc.) |
-| **Hooks** | 12 | Automated validation on commits, pushes, asset changes, session lifecycle, agent audit trail, and gap detection |
-| **Rules** | 11 | Path-scoped coding standards enforced when editing gameplay, engine, AI, UI, network code, and more |
-| **Templates** | 41 | Document templates for GDDs, UX specs, ADRs, sprint plans, HUD design, accessibility, and more |
-
-## Studio Hierarchy
-
-Agents are organized into three tiers, matching how real studios operate:
-
-```
-Tier 1 — Directors (Opus)
-  creative-director    technical-director    producer
-
-Tier 2 — Department Leads (Sonnet)
-  game-designer        lead-programmer       art-director
-  audio-director       narrative-director    qa-lead
-  release-manager      localization-lead
-
-Tier 3 — Specialists (Sonnet/Haiku)
-  gameplay-programmer  engine-programmer     ai-programmer
-  network-programmer   tools-programmer      ui-programmer
-  systems-designer     level-designer        economy-designer
-  technical-artist     sound-designer        writer
-  world-builder        ux-designer           prototyper
-  performance-analyst  devops-engineer       analytics-engineer
-  security-engineer    qa-tester             accessibility-specialist
-  live-ops-designer    community-manager
+```text
+59BB7C732A0EE2F70D8AA7522CDB437E0FEB4CF7E1E1984B98EC4338C0A42BD7
 ```
 
-### Engine Specialists
+当前构建没有进行 Windows 代码签名，系统可能显示“未知发布者”提示。请只从本仓库的
+[正式 Release](https://github.com/RookieSlow/Foodula1/releases/tag/demo-v0.1.1) 下载，并在需要时核对上述哈希值。
 
-The template includes agent sets for all three major engines. Use the set that matches your project:
+## 游戏内容
 
-| Engine | Lead Agent | Sub-Specialists |
-|--------|-----------|-----------------|
-| **Godot 4** | `godot-specialist` | GDScript, Shaders, GDExtension |
-| **Unity** | `unity-specialist` | DOTS/ECS, Shaders/VFX, Addressables, UI Toolkit |
-| **Unreal Engine 5** | `unreal-specialist` | GAS, Blueprints, Replication, UMG/CommonUI |
+Foodula1 以卡牌驱动车辆。玩家需要选择挡位、打出规定数量的速度牌，在前进速度、弯道限速、
+引擎热量和手牌循环之间作出取舍。
 
-## Slash Commands
+当前 Demo 包含：
 
-Type `/` in Claude Code to access all 73 skills:
+- 六支风格不同的美食车队、十二名车手和八条正式赛道。
+- 自由赛事、自定义阵容、12 车“雷霆大混战”。
+- 八站生涯赛季、车队科技树和车手主动技能。
+- 固定牌序的新手教程，以及教程结束后的一圈练习赛。
+- 挡位、热量、弯道、天气、尾流、维修区、失控和特技牌等完整比赛机制。
+- 游戏百科、可配置二次确认、音乐/SFX 与本地试玩日志导出。
 
-**Onboarding & Navigation**
-`/start` `/help` `/project-stage-detect` `/setup-engine` `/adopt`
+这是一个独立游戏 Demo，与任何现实赛车赛事、车队、车手或赛道运营方不存在隶属或官方合作关系。
 
-**Game Design**
-`/brainstorm` `/map-systems` `/design-system` `/quick-design` `/review-all-gdds` `/propagate-design-change`
+## 基础操作
 
-**Art & Assets**
-`/art-bible` `/asset-spec` `/asset-audit`
+鼠标可以完成全部操作；键盘快捷键用于提高比赛操作效率。
 
-**UX & Interface Design**
-`/ux-design` `/ux-review`
+| 操作 | 按键 |
+|---|---|
+| 选择挡位 | `1`–`4`（含小键盘） |
+| 在可用卡牌间移动高亮 | `A` / `D` 或方向键 |
+| 选择或取消当前高亮牌 | `F` |
+| 打出或弃置已经选中的牌 | `Space` |
+| 跳过车辆移动、尾流等当前演出 | 演出期间按 `Space` 或单击 |
+| 标记试玩问题并保存截图 | `F8` |
 
-**Architecture**
-`/create-architecture` `/architecture-decision` `/architecture-review` `/create-control-manifest`
+正常出牌阶段没有选中牌时，`Space` 不会直接结束阶段；请点击界面中的明确确认按钮结束出牌或回合。
+返回主菜单、重开比赛及其他关键操作的二次确认可以在设置中分别调整。
 
-**Stories & Sprints**
-`/create-epics` `/create-stories` `/dev-story` `/sprint-plan` `/sprint-status` `/story-readiness` `/story-done` `/estimate`
+## 反馈与试玩日志
 
-**Reviews & Analysis**
-`/design-review` `/code-review` `/balance-check` `/content-audit` `/scope-check` `/perf-profile` `/tech-debt` `/gate-check` `/consistency-check` `/security-audit`
+请通过 [GitHub Issues](https://github.com/RookieSlow/Foodula1/issues) 提交问题。建议包含：
 
-**QA & Testing**
-`/qa-plan` `/smoke-check` `/soak-test` `/regression-suite` `/test-setup` `/test-helpers` `/test-evidence-review` `/test-flakiness` `/skill-test` `/skill-improve`
+- 游戏版本、比赛模式、车队/车手和赛道。
+- 问题发生前后的操作步骤，以及预期结果和实际结果。
+- 截图或录像；问题发生时可以先按 `F8` 添加时间标记。
+- 如愿意，可在主菜单“设置”中选择“导出测试日志”，再将导出的 ZIP 附到反馈中。
 
-**Production**
-`/milestone-review` `/retrospective` `/bug-report` `/bug-triage` `/reverse-document` `/playtest-report`
+试玩记录只保存在本地，**不会自动上传**。日志不会记录输入文字、剪贴板、玩家姓名、账号或设备 ID；
+导出包可能包含玩家主动生成的问题截图、基础硬件信息、操作时间线和比赛日志，请在上传前自行检查。
 
-**Release**
-`/release-checklist` `/launch-checklist` `/changelog` `/patch-notes` `/hotfix` `/day-one-patch`
+## 当前验证状态
 
-**Creative & Content**
-`/prototype` `/onboard` `/localize`
+- Unity EditMode：`688/688` 通过，0 失败、0 跳过。
+- Windows 64 位包由 Unity 2022.3.62f3c1 从 `demo-v0.1.1` 标签生成。
+- Direct3D 11 / NVIDIA GeForce RTX 4070 启动冒烟 15 秒，无匹配到的异常或崩溃。
+- 详细构建证据见 [V0.1.1 发布记录](production/releases/demo-v0.1.1.md)。
 
-**Team Orchestration** (coordinate multiple agents on a single feature)
-`/team-combat` `/team-narrative` `/team-ui` `/team-release` `/team-polish` `/team-audio` `/team-level` `/team-live-ops` `/team-qa`
+尚未建立正式最低配置矩阵，也未完成手柄、超宽屏和所有硬件组合测试。V0.1.2 将重点跟进百科内容一致性、
+完整教程流程和剩余分辨率验收。
 
-## Getting Started
+## 从源码运行
 
-### Prerequisites
+开发环境：
 
-- [Git](https://git-scm.com/)
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
-- **Recommended**: [jq](https://jqlang.github.io/jq/) (for hook validation) and Python 3 (for JSON validation)
+- Unity `2022.3.62f3c1`
+- Windows 10/11 64 位
+- Git + Git LFS
 
-All hooks fail gracefully if optional tools are missing — nothing breaks, you just lose validation.
-
-### Setup
-
-1. **Clone or use as template**:
-   ```bash
-   git clone https://github.com/Donchitos/Claude-Code-Game-Studios.git my-game
-   cd my-game
-   ```
-
-2. **Open Claude Code** and start a session:
-   ```bash
-   claude
-   ```
-
-3. **Run `/start`** — the system asks where you are (no idea, vague concept,
-   clear design, existing work) and guides you to the right workflow. No assumptions.
-
-   Or jump directly to a specific skill if you already know what you need:
-   - `/brainstorm` — explore game ideas from scratch
-   - `/setup-engine godot 4.6` — configure your engine if you already know
-   - `/project-stage-detect` — analyze an existing project
-
-## Upgrading
-
-Already using an older version of this template? See [UPGRADING.md](UPGRADING.md)
-for step-by-step migration instructions, a breakdown of what changed between
-versions, and which files are safe to overwrite vs. which need a manual merge.
-
-## Project Structure
-
-```
-CLAUDE.md                           # Master configuration
-.claude/
-  settings.json                     # Hooks, permissions, safety rules
-  agents/                           # 49 agent definitions (markdown + YAML frontmatter)
-  skills/                           # 73 slash commands (subdirectory per skill)
-  hooks/                            # 12 hook scripts (bash, cross-platform)
-  rules/                            # 11 path-scoped coding standards
-  statusline.sh                     # Status line script (context%, model, stage, epic breadcrumb)
-  docs/
-    workflow-catalog.yaml           # 7-phase pipeline definition (read by /help)
-    templates/                      # 41 document templates
-src/                                # Game source code
-assets/                             # Art, audio, VFX, shaders, data files
-design/                             # GDDs, narrative docs, level designs
-docs/                               # Technical documentation and ADRs
-tests/                              # Test suites (unit, integration, performance, playtest)
-tools/                              # Build and pipeline tools
-prototypes/                         # Throwaway prototypes (isolated from src/)
-production/                         # Sprint plans, milestones, release tracking
+```powershell
+git lfs install
+git clone https://github.com/RookieSlow/Foodula1.git
+cd Foodula1
+git checkout demo-v0.1.1
 ```
 
-## How It Works
+使用对应版本 Unity 打开项目。主要场景为：
 
-### Agent Coordination
+- `Assets/Scenes/MainMenu.unity`
+- `Assets/Scenes/Race.unity`
 
-Agents follow a structured delegation model:
+可复现 Windows 构建入口位于 `Assets/Scripts/Editor/DemoBuild.cs`，方法为
+`DemoBuild.BuildWindowsDemo`。
 
-1. **Vertical delegation** — directors delegate to leads, leads delegate to specialists
-2. **Horizontal consultation** — same-tier agents can consult each other but can't make binding cross-domain decisions
-3. **Conflict resolution** — disagreements escalate up to the shared parent (`creative-director` for design, `technical-director` for technical)
-4. **Change propagation** — cross-department changes are coordinated by `producer`
-5. **Domain boundaries** — agents don't modify files outside their domain without explicit delegation
+## 项目文档
 
-### Collaborative, Not Autonomous
+- [核心机制 GDD](design/gdd/foodula-1-core-mechanics.md)
+- [系统索引](design/gdd/systems-index.md)
+- [开发路线图](design/planning/roadmap.md)
+- [资源清单](design/planning/asset-manifest.md)
+- [V0.1.1 发布记录](production/releases/demo-v0.1.1.md)
 
-This is **not** an auto-pilot system. Every agent follows a strict collaboration protocol:
+## 资源与许可
 
-1. **Ask** — agents ask questions before proposing solutions
-2. **Present options** — agents show 2-4 options with pros/cons
-3. **You decide** — the user always makes the call
-4. **Draft** — agents show work before finalizing
-5. **Approve** — nothing gets written without your sign-off
+仓库包含项目代码、开发框架、字体、第三方 UI 资源、参考资料以及用户生成/项目生成的美术和音频。
+不同资源可能适用不同许可；仓库公开不代表所有资源均可在仓库之外自由再分发或商用。
 
-You stay in control. The agents provide structure and expertise, not autonomy.
+- Kenney UI 资源采用 CC0，许可文本保存在 `Assets/Resources/UiTheme/Kenney/`。
+- 赛道布局参考来源与许可记录在
+  [`design/references/track-layouts/ATTRIBUTION.md`](design/references/track-layouts/ATTRIBUTION.md)。
+- TextMesh Pro、字体及其他第三方内容请以其随附许可与来源条款为准。
 
-### Automated Safety
-
-**Hooks** run automatically on every session:
-
-| Hook | Trigger | What It Does |
-|------|---------|--------------|
-| `validate-commit.sh` | PreToolUse (Bash) | Checks for hardcoded values, TODO format, JSON validity, design doc sections — exits early if the command is not `git commit` |
-| `validate-push.sh` | PreToolUse (Bash) | Warns on pushes to protected branches — exits early if the command is not `git push` |
-| `validate-assets.sh` | PostToolUse (Write/Edit) | Validates naming conventions and JSON structure — exits early if the file is not in `assets/` |
-| `session-start.sh` | Session open | Shows current branch and recent commits for orientation |
-| `detect-gaps.sh` | Session open | Detects fresh projects (suggests `/start`) and missing design docs when code or prototypes exist |
-| `pre-compact.sh` | Before compaction | Preserves session progress notes |
-| `post-compact.sh` | After compaction | Reminds Claude to restore session state from `active.md` |
-| `notify.sh` | Notification event | Shows Windows toast notification via PowerShell |
-| `session-stop.sh` | Session close | Archives `active.md` to session log and records git activity |
-| `log-agent.sh` | Agent spawned | Audit trail start — logs subagent invocation |
-| `log-agent-stop.sh` | Agent stops | Audit trail stop — completes subagent record |
-| `validate-skill-change.sh` | PostToolUse (Write/Edit) | Advises running `/skill-test` after any `.claude/skills/` change |
-
-> **Note**: `validate-commit.sh`, `validate-assets.sh`, and `validate-skill-change.sh` fire on every Bash/Write tool call and exit immediately (exit 0) when the command or file path is not relevant. This is normal hook behavior — not a performance concern.
-
-**Permission rules** in `settings.json` auto-allow safe operations (git status, test runs) and block dangerous ones (force push, `rm -rf`, reading `.env` files).
-
-### Path-Scoped Rules
-
-Coding standards are automatically enforced based on file location:
-
-| Path | Enforces |
-|------|----------|
-| `src/gameplay/**` | Data-driven values, delta time usage, no UI references |
-| `src/core/**` | Zero allocations in hot paths, thread safety, API stability |
-| `src/ai/**` | Performance budgets, debuggability, data-driven parameters |
-| `src/networking/**` | Server-authoritative, versioned messages, security |
-| `src/ui/**` | No game state ownership, localization-ready, accessibility |
-| `design/gdd/**` | Required 8 sections, formula format, edge cases |
-| `tests/**` | Test naming, coverage requirements, fixture patterns |
-| `prototypes/**` | Relaxed standards, README required, hypothesis documented |
-
-## Design Philosophy
-
-This template is grounded in professional game development practices:
-
-- **MDA Framework** — Mechanics, Dynamics, Aesthetics analysis for game design
-- **Self-Determination Theory** — Autonomy, Competence, Relatedness for player motivation
-- **Flow State Design** — Challenge-skill balance for player engagement
-- **Bartle Player Types** — Audience targeting and validation
-- **Verification-Driven Development** — Tests first, then implementation
-
-## Customization
-
-This is a **template**, not a locked framework. Everything is meant to be customized:
-
-- **Add/remove agents** — delete agent files you don't need, add new ones for your domains
-- **Edit agent prompts** — tune agent behavior, add project-specific knowledge
-- **Modify skills** — adjust workflows to match your team's process
-- **Add rules** — create new path-scoped rules for your project's directory structure
-- **Tune hooks** — adjust validation strictness, add new checks
-- **Pick your engine** — use the Godot, Unity, or Unreal agent set (or none)
-- **Set review intensity** — `full` (all director gates), `lean` (phase gates only), or `solo` (none). Set during `/start` or edit `production/review-mode.txt`. Override per-run with `--review solo` on any skill.
-
-## Platform Support
-
-Primary development and testing on **Windows 10** with Git Bash. All hooks use POSIX-compatible patterns (`grep -E`, not `grep -P`) and include fallbacks for missing tools, so they should run on macOS and Linux. The `notify.sh` hook uses PowerShell for Windows toast notifications and is a no-op elsewhere — desktop notifications on macOS/Linux are not yet wired. Cross-platform testing is ongoing; please file issues for any platform-specific breakage.
-
-## Community
-
-- **Discussions** — [GitHub Discussions](https://github.com/Donchitos/Claude-Code-Game-Studios/discussions) for questions, ideas, and showcasing what you've built
-- **Issues** — [Bug reports and feature requests](https://github.com/Donchitos/Claude-Code-Game-Studios/issues)
-
----
-
-## Supporting This Project
-
-Claude Code Game Studios is free and open source. If it saves you time or helps you ship your game, consider supporting continued development:
-
-<p>
-  <a href="https://www.buymeacoffee.com/donchitos3"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee"></a>
-  &nbsp;
-  <a href="https://github.com/sponsors/Donchitos"><img src="https://img.shields.io/badge/GitHub%20Sponsors-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="GitHub Sponsors"></a>
-</p>
-
-- **[Buy Me a Coffee](https://www.buymeacoffee.com/donchitos3)** — one-time support
-- **[GitHub Sponsors](https://github.com/sponsors/Donchitos)** — recurring support through GitHub
-
-Sponsorships help fund time spent maintaining skills, adding new agents, keeping up with Claude Code and engine API changes, and responding to community issues.
-
----
-
-*Built for Claude Code. Maintained and extended — contributions welcome via [GitHub Discussions](https://github.com/Donchitos/Claude-Code-Game-Studios/discussions).*
-
-## License
-
-MIT License. See [LICENSE](LICENSE) for details.
+在复制或再分发源码和资源前，请分别核对根目录 `LICENSE`、各资源随附许可及资源清单中的来源记录。
