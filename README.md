@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/RookieSlow/Foodula1/releases/tag/demo-v0.1.1"><img src="https://img.shields.io/badge/Demo-v0.1.1-orange" alt="Demo v0.1.1"></a>
+  <a href="https://github.com/RookieSlow/Foodula1/releases/tag/demo-v0.1.2"><img src="https://img.shields.io/badge/Demo-v0.1.2-orange" alt="Demo v0.1.2"></a>
   <img src="https://img.shields.io/badge/Unity-2022.3.62f3c1-black?logo=unity" alt="Unity 2022.3.62f3c1">
   <img src="https://img.shields.io/badge/Platform-Windows%2064--bit-0078D6?logo=windows" alt="Windows 64-bit">
   <img src="https://img.shields.io/badge/Language-简体中文-red" alt="简体中文">
@@ -19,7 +19,7 @@
 
 ## 下载试玩
 
-**[下载 Foodula1 Demo v0.1.1（Windows 64 位，73.20 MiB）](https://github.com/RookieSlow/Foodula1/releases/download/demo-v0.1.1/Foodula1-Demo-v0.1.1-Windows.zip)**
+**[下载 Foodula1 Demo v0.1.2（Windows 64 位，74.39 MiB）](https://github.com/RookieSlow/Foodula1/releases/download/demo-v0.1.2/Foodula1-Demo-v0.1.2-Windows.zip)**
 
 1. 下载并完整解压 ZIP。
 2. 运行 `Foodula1.exe`，无需安装。
@@ -28,11 +28,11 @@
 SHA-256：
 
 ```text
-59BB7C732A0EE2F70D8AA7522CDB437E0FEB4CF7E1E1984B98EC4338C0A42BD7
+E4CD16E9E76119FCBD58007EECB02FD89CC76EA280F87462E62DFB0CDFE8E9C1
 ```
 
 当前构建没有进行 Windows 代码签名，系统可能显示“未知发布者”提示。请只从本仓库的
-[正式 Release](https://github.com/RookieSlow/Foodula1/releases/tag/demo-v0.1.1) 下载，并在需要时核对上述哈希值。
+[正式 Release](https://github.com/RookieSlow/Foodula1/releases/tag/demo-v0.1.2) 下载，并在需要时核对上述哈希值。
 
 ## 游戏内容
 
@@ -80,13 +80,13 @@ Foodula1 以卡牌驱动车辆。玩家需要选择挡位、打出规定数量�
 
 ## 当前验证状态
 
-- Unity EditMode：`688/688` 通过，0 失败、0 跳过。
-- Windows 64 位包由 Unity 2022.3.62f3c1 从 `demo-v0.1.1` 标签生成。
+- Unity EditMode：`706/706` 通过，0 失败、0 跳过。
+- Windows 64 位包由 Unity 2022.3.62f3c1 从 `demo-v0.1.2` 标签生成。
 - Direct3D 11 / NVIDIA GeForce RTX 4070 启动冒烟 15 秒，无匹配到的异常或崩溃。
-- 详细构建证据见 [V0.1.1 发布记录](production/releases/demo-v0.1.1.md)。
+- 详细构建证据见 [V0.1.2 发布记录](production/releases/demo-v0.1.2.md)。
 
-尚未建立正式最低配置矩阵，也未完成手柄、超宽屏和所有硬件组合测试。V0.1.2 将重点跟进百科内容一致性、
-完整教程流程和剩余分辨率验收。
+尚未建立正式最低配置矩阵，也未完成手柄、超宽屏和所有硬件组合测试。后续补丁将继续跟进完整教程跑通、
+12 车结算滚动面板和剩余分辨率的真人视觉验收。
 
 ## 从源码运行
 
@@ -100,7 +100,7 @@ Foodula1 以卡牌驱动车辆。玩家需要选择挡位、打出规定数量�
 git lfs install
 git clone https://github.com/RookieSlow/Foodula1.git
 cd Foodula1
-git checkout demo-v0.1.1
+git checkout demo-v0.1.2
 ```
 
 使用对应版本 Unity 打开项目。主要场景为：
@@ -117,7 +117,7 @@ git checkout demo-v0.1.1
 - [系统索引](design/gdd/systems-index.md)
 - [开发路线图](design/planning/roadmap.md)
 - [资源清单](design/planning/asset-manifest.md)
-- [V0.1.1 发布记录](production/releases/demo-v0.1.1.md)
+- [V0.1.2 发布记录](production/releases/demo-v0.1.2.md)
 
 ## 资源与许可
 
