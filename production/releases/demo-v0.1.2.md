@@ -35,6 +35,8 @@
 - Built player GPU smoke: Direct3D 11 / NVIDIA GeForce RTX 4070, 15 seconds, responsive process and
   no matched error, exception, fatal or crash lines. The process was intentionally stopped afterward.
 - `git diff --check`: passed for the release source commit before submission.
+- Public download verification: the unauthenticated release asset URL returned HTTP 200 with the
+  expected content length of 78,004,120 bytes; GitHub reports the asset state as `uploaded`.
 
 ## Known acceptance debt and next patch
 
