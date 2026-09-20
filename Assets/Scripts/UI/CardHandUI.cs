@@ -46,6 +46,20 @@ public static class CardActionShortcutRules
     }
 }
 
+/// <summary>Builds the compact, shared card-effect copy shown above the hand.</summary>
+public static class CardSelectionEffectRules
+{
+    public static string Format(CardData card, TrickCardDatabase database)
+    {
+        if (card == null)
+            return string.Empty;
+
+        string title = CardPileInspectorRules.GetCardTitle(card, database);
+        string effect = CardPileInspectorRules.GetCardEffect(card, database);
+        return $"<color=#FFD27A><b>{title}</b></color>　{effect}";
+    }
+}
+
 /// <summary>
 /// 手牌 UI 管理器 — 在手牌区域生成/刷新卡牌 GameObject，
 /// 处理卡牌选择交互，提供档位选择模式切换。
@@ -77,6 +91,11 @@ public class CardHandUI : MonoBehaviour
     [Header("出牌按钮")]
     public UnityEngine.UI.Button playCardsButton;
 
+    [Header("选中卡牌效果")]
+    [Tooltip("选中或键盘高亮卡牌时显示的紧凑效果说明面板。缺失时由布局控制器自动创建。")]
+    public GameObject selectedCardEffectPanel;
+    public TMP_Text selectedCardEffectText;
+
     private MVPGameManager gameManager;
     private List<CardUI> cardUIs = new List<CardUI>();
     private bool isGearSelectionMode;
@@ -89,6 +108,10 @@ public class CardHandUI : MonoBehaviour
     private CardPilePreviewUI discardPilePreview;
     private CardZoneTransitionUI zoneTransition;
     private int keyboardHighlightIndex = -1;
+    private CardUI displayedEffectCard;
+
+    public bool IsSelectedCardEffectVisible =>
+        selectedCardEffectPanel != null && selectedCardEffectPanel.activeSelf;
 
     /// <summary>Compatibility accessor for callers that expect a single selection.</summary>
     public CardData PendingPlayCard
@@ -220,6 +243,8 @@ public class CardHandUI : MonoBehaviour
     {
         pendingPlayCard = null;
         keyboardHighlightIndex = -1;
+        displayedEffectCard = null;
+        HideSelectedCardEffect();
         for (int i = cardUIs.Count - 1; i >= 0; i--)
         {
             if (cardUIs[i] != null) Destroy(cardUIs[i].gameObject);
@@ -239,12 +264,15 @@ public class CardHandUI : MonoBehaviour
             {
                 if (pendingPlayCard == cardUIs[i])
                     pendingPlayCard = null;
+                bool removedDisplayedCard = displayedEffectCard == cardUIs[i];
                 GameObject cardObject = cardUIs[i].gameObject;
                 cardUIs.RemoveAt(i);
                 // Deactivate before Destroy so the LayoutGroup removes only this
                 // card immediately; the remaining hand cards stay visible.
                 cardObject.SetActive(false);
                 Destroy(cardObject);
+                if (removedDisplayedCard)
+                    RefreshSelectedCardEffect();
                 break; // 只移除第一个匹配的（同一 CardData 引用不会重复出现）
             }
         }
@@ -424,6 +452,7 @@ public class CardHandUI : MonoBehaviour
                 ? AudioEventNames.CardSelect
                 : AudioEventNames.CardDeselect);
             UpdateActionButtonLabel();
+            RefreshSelectedCardEffect(card.isSelected ? card : null);
             return;
         }
 
@@ -489,6 +518,7 @@ public class CardHandUI : MonoBehaviour
             : AudioEventNames.CardDeselect);
         UpdateActionButtonLabel();
         UpdatePendingCardStatus(player, maxCards);
+        RefreshSelectedCardEffect(card.isSelected ? card : null);
     }
 
     private void OnPlayClicked()
@@ -540,6 +570,7 @@ public class CardHandUI : MonoBehaviour
             return false;
 
         cardUIs[keyboardHighlightIndex].SetKeyboardHighlighted(true);
+        ShowSelectedCardEffect(cardUIs[keyboardHighlightIndex]);
         return true;
     }
 
@@ -587,11 +618,160 @@ public class CardHandUI : MonoBehaviour
         foreach (CardUI ui in cardUIs)
         {
             if (ui != null)
+            {
                 ui.SetSelectedWithoutNotify(false);
+                ui.SetKeyboardHighlighted(false);
+            }
         }
         pendingPlayCard = null;
+        keyboardHighlightIndex = -1;
+        displayedEffectCard = null;
+        HideSelectedCardEffect();
         UpdateActionButtonLabel();
         RefreshRequirementFeedback();
+    }
+
+    /// <summary>
+    /// Creates or binds the compact card-effect strip above the hand. Runtime
+    /// creation keeps older canvases and the authored RaceCanvas in sync.
+    /// </summary>
+    public void EnsureSelectedCardEffectUI(RectTransform deckTablePanel = null, TMP_FontAsset font = null)
+    {
+        if (selectedCardEffectPanel != null && selectedCardEffectText != null)
+            return;
+
+        if (deckTablePanel == null)
+        {
+            Transform existingDeck = FindDeep(transform.root, "DeckTablePanel");
+            deckTablePanel = existingDeck as RectTransform;
+        }
+        if (deckTablePanel == null)
+            return;
+
+        Transform existing = FindDeep(deckTablePanel, "SelectedCardEffectPanel");
+        GameObject panelObject = existing != null
+            ? existing.gameObject
+            : new GameObject("SelectedCardEffectPanel", typeof(RectTransform));
+        panelObject.transform.SetParent(deckTablePanel, false);
+
+        RectTransform panelRect = panelObject.GetComponent<RectTransform>();
+        panelRect.anchorMin = new Vector2(0.33f, 0.925f);
+        panelRect.anchorMax = new Vector2(0.825f, 0.995f);
+        panelRect.offsetMin = Vector2.zero;
+        panelRect.offsetMax = Vector2.zero;
+        panelRect.localScale = Vector3.one;
+
+        UnityEngine.UI.Image background = panelObject.GetComponent<UnityEngine.UI.Image>();
+        if (background == null)
+            background = panelObject.AddComponent<UnityEngine.UI.Image>();
+        background.color = new Color(0.025f, 0.04f, 0.07f, 0.94f);
+        background.raycastTarget = false;
+
+        UnityEngine.UI.Outline outline = panelObject.GetComponent<UnityEngine.UI.Outline>();
+        if (outline == null)
+            outline = panelObject.AddComponent<UnityEngine.UI.Outline>();
+        outline.effectColor = new Color(0.25f, 0.72f, 1f, 0.9f);
+        outline.effectDistance = new Vector2(1f, -1f);
+
+        Transform textTransform = FindDeep(panelObject.transform, "SelectedCardEffectText");
+        GameObject textObject = textTransform != null
+            ? textTransform.gameObject
+            : new GameObject("SelectedCardEffectText", typeof(RectTransform));
+        textObject.transform.SetParent(panelObject.transform, false);
+        RectTransform textRect = textObject.GetComponent<RectTransform>();
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = new Vector2(10f, 1f);
+        textRect.offsetMax = new Vector2(-10f, -1f);
+
+        selectedCardEffectText = textObject.GetComponent<TMP_Text>();
+        if (selectedCardEffectText == null)
+            selectedCardEffectText = textObject.AddComponent<TextMeshProUGUI>();
+        selectedCardEffectText.font = font != null
+            ? font
+            : deckInfoText != null ? deckInfoText.font : selectedCardEffectText.font;
+        selectedCardEffectText.fontSize = 13f;
+        selectedCardEffectText.alignment = TextAlignmentOptions.Center;
+        selectedCardEffectText.enableWordWrapping = false;
+        selectedCardEffectText.overflowMode = TextOverflowModes.Ellipsis;
+        selectedCardEffectText.raycastTarget = false;
+        selectedCardEffectText.text = string.Empty;
+
+        selectedCardEffectPanel = panelObject;
+        selectedCardEffectPanel.SetActive(false);
+    }
+
+    private void ShowSelectedCardEffect(CardUI card)
+    {
+        if (card == null || card.cardData == null)
+        {
+            HideSelectedCardEffect();
+            return;
+        }
+
+        EnsureSelectedCardEffectUI();
+        if (selectedCardEffectPanel == null || selectedCardEffectText == null)
+            return;
+
+        TrickCardDatabase database = gameManager != null && gameManager.Session != null
+            ? gameManager.Session.TrickDb
+            : null;
+        selectedCardEffectText.text = CardSelectionEffectRules.Format(card.cardData, database);
+        displayedEffectCard = card;
+        selectedCardEffectPanel.SetActive(true);
+        selectedCardEffectPanel.transform.SetAsLastSibling();
+    }
+
+    private void RefreshSelectedCardEffect(CardUI preferred = null)
+    {
+        if (preferred != null && preferred.isSelected)
+        {
+            ShowSelectedCardEffect(preferred);
+            return;
+        }
+
+        for (int i = cardUIs.Count - 1; i >= 0; i--)
+        {
+            CardUI candidate = cardUIs[i];
+            if (candidate != null && candidate.isSelected)
+            {
+                ShowSelectedCardEffect(candidate);
+                return;
+            }
+        }
+
+        if (keyboardHighlightIndex >= 0 && keyboardHighlightIndex < cardUIs.Count &&
+            cardUIs[keyboardHighlightIndex] != null)
+        {
+            ShowSelectedCardEffect(cardUIs[keyboardHighlightIndex]);
+            return;
+        }
+
+        displayedEffectCard = null;
+        HideSelectedCardEffect();
+    }
+
+    private void HideSelectedCardEffect()
+    {
+        if (selectedCardEffectText != null)
+            selectedCardEffectText.text = string.Empty;
+        if (selectedCardEffectPanel != null)
+            selectedCardEffectPanel.SetActive(false);
+    }
+
+    private static Transform FindDeep(Transform root, string objectName)
+    {
+        if (root == null)
+            return null;
+        if (root.name == objectName)
+            return root;
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform found = FindDeep(root.GetChild(i), objectName);
+            if (found != null)
+                return found;
+        }
+        return null;
     }
 
     /// <summary>

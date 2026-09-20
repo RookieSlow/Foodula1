@@ -72,6 +72,7 @@ public class RaceUILayoutController : MonoBehaviour
             BindAuthoredReferences(hud, cardHand);
             ArrangeOperationControls(hud, cardHand);
             ApplyAuthoredButtonStyles(hud, cardHand);
+            cardHand?.EnsureSelectedCardEffectUI(deckPanel, FindFont(root));
             UsesAuthoredLayout = true;
             applied = true;
             return;
@@ -399,6 +400,7 @@ public class RaceUILayoutController : MonoBehaviour
             TextAlignmentOptions.Center, new Vector2(0.08f, 0.18f), new Vector2(0.92f, 0.64f), Color.white);
         cardHand.discardPileText = CreateText("DiscardPileInfo", discardPanel, "弃牌堆\n-- 张", font, 17,
             TextAlignmentOptions.Center, new Vector2(0.08f, 0.18f), new Vector2(0.92f, 0.64f), Color.white);
+        cardHand.EnsureSelectedCardEffectUI(deckPanel, font);
     }
 
     private static RectTransform CreatePanel(string name, Transform parent, Vector2 min, Vector2 max, Color color)

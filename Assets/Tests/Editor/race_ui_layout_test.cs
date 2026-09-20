@@ -72,6 +72,10 @@ public class RaceUILayoutTests
             Assert.That(operation.anchorMax, Is.EqualTo(new Vector2(0.19f, 0.97f)));
             Assert.That(cardHand.cardSizeOverride, Is.EqualTo(new Vector2(126f, 196f)),
                 "Authored card sizing must not be overwritten during runtime binding.");
+            Assert.That(cardHand.selectedCardEffectPanel, Is.Not.Null);
+            Assert.That(cardHand.selectedCardEffectText, Is.Not.Null);
+            Assert.That(cardHand.selectedCardEffectPanel.activeSelf, Is.False,
+                "The effect strip must remain hidden until a card is focused or selected.");
         }
         finally
         {

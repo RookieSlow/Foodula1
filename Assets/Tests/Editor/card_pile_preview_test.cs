@@ -130,6 +130,22 @@ public class CardPilePreviewTests
     }
 
     [Test]
+    public void SelectedCardEffectReusesConcretePileInspectorCopy()
+    {
+        TrickCardDatabase database = TrickCardDatabaseFactory.CreateDefault();
+
+        string speed = CardSelectionEffectRules.Format(
+            new CardData(CardType.Speed, 4), database);
+        string trick = CardSelectionEffectRules.Format(
+            CardData.CreateTrick("uk-scone"), database);
+
+        Assert.That(speed, Does.Contain("速度牌 4"));
+        Assert.That(speed, Does.Contain("4 点基础移动"));
+        Assert.That(trick, Does.Contain("司康"));
+        Assert.That(trick, Does.Contain("前进+2格"));
+    }
+
+    [Test]
     public void ClickingRuntimePileCreatesScrollableVisualInspector()
     {
         GameObject canvasObject = new GameObject(

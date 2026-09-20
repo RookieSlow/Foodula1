@@ -37,10 +37,10 @@
 | `design/planning/roadmap.md` | Demo acceptance, resource/audio completion and post-Demo plan |
 | `docs/reference/熱力狂飆_規則書_完整文本.md` | External HEAT rulebook reference |
 
-## 2026-09-18 Implementation Snapshot
+## 2026-09-20 Implementation Snapshot
 
-- Project stage is `Production`; the Demo V0.1.1 source baseline run passed `688/688`
-  on 2026-09-18, with 0 failures and 0 skips. The V0.1.0 Windows release evidence remains
+- Project stage is `Production`; the Demo V0.1.2 release-candidate run passed `706/706`
+  on 2026-09-20, with 0 failures and 0 skips. The V0.1.0 Windows release evidence remains
   archived separately. Free-race roster/menu focused coverage passed `11/11`;
   active-skill coverage previously passed `28/28`,
   and the passive/related regression passed `21/21`.

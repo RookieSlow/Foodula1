@@ -3,6 +3,73 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+/// <summary>Pure rich-text formatting for the fixed, scrollable race result panel.</summary>
+public static class RaceResultPresentationRules
+{
+    public static string FormatForRichText(string result)
+    {
+        if (string.IsNullOrEmpty(result))
+            return string.Empty;
+
+        string[] lines = result.Replace("\r\n", "\n").Split('\n');
+        bool insideStandings = false;
+        bool sawRank = false;
+        var formatted = new System.Text.StringBuilder(result.Length + 128);
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            string line = lines[i];
+            if (line.Contains("=== 比赛结果 ==="))
+            {
+                insideStandings = true;
+                continue;
+            }
+
+            if (insideStandings && TryReadRank(line, out int rank))
+            {
+                sawRank = true;
+                line = FormatRankLine(rank, line);
+            }
+            else if (insideStandings && sawRank && string.IsNullOrWhiteSpace(line))
+            {
+                insideStandings = false;
+            }
+
+            if (formatted.Length > 0)
+                formatted.Append('\n');
+            formatted.Append(line);
+        }
+
+        return formatted.ToString().TrimStart('\n');
+    }
+
+    private static bool TryReadRank(string line, out int rank)
+    {
+        rank = 0;
+        if (string.IsNullOrWhiteSpace(line))
+            return false;
+
+        int separator = line.IndexOf('.');
+        return separator > 0 && separator <= 2 &&
+            int.TryParse(line.Substring(0, separator), out rank) && rank > 0;
+    }
+
+    private static string FormatRankLine(int rank, string line)
+    {
+        switch (rank)
+        {
+            case 1:
+                return $"<color=#FFD75A><b>【冠军】 {line}</b></color>";
+            case 2:
+                return $"<color=#DDE7F2><b>【亚军】 {line}</b></color>";
+            case 3:
+                return $"<color=#E7A56A><b>【季军】 {line}</b></color>";
+            default:
+                return $"<color=#C2CDDD>{line}</color>";
+        }
+    }
+}
+
 /// <summary>
 /// HUD UI 管理器 — 显示比赛状态（档位、热量池、圈数、位置），
 /// 提供档位按钮、出牌按钮、重置按钮，以及状态文本和日志输出。
@@ -55,6 +122,8 @@ public class HUDUI : MonoBehaviour
     [Header("游戏结束面板")]
     public GameObject gameOverPanel;
     public TMP_Text gameOverText;
+    public TMP_Text gameOverTitle;
+    public ScrollRect gameOverScrollRect;
 
     private MVPGameManager gameManager;
     private string logBuffer = "";
@@ -138,6 +207,7 @@ public class HUDUI : MonoBehaviour
         ButtonClickAnimation.Attach(confirmReturnToMenuButton);
         ButtonClickAnimation.Attach(cancelReturnToMenuButton);
 
+        EnsureGameOverPresentation();
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
 
@@ -740,11 +810,174 @@ public class HUDUI : MonoBehaviour
 
     public void ShowGameOver(string result)
     {
+        EnsureGameOverPresentation();
         if (gameOverPanel != null)
+        {
             gameOverPanel.SetActive(true);
+            gameOverPanel.transform.SetAsLastSibling();
+        }
 
         if (gameOverText != null)
-            gameOverText.text = result;
+            gameOverText.text = RaceResultPresentationRules.FormatForRichText(result);
+
+        RefreshGameOverScrollWindow();
+    }
+
+    /// <summary>
+    /// Upgrades authored and fallback result panels to the same fixed-size,
+    /// masked scroll presentation without changing race-result data.
+    /// </summary>
+    public void EnsureGameOverPresentation()
+    {
+        if (gameOverPanel == null || gameOverText == null)
+            return;
+
+        RectTransform panelRect = gameOverPanel.GetComponent<RectTransform>();
+        if (panelRect == null)
+            return;
+
+        Image panelImage = gameOverPanel.GetComponent<Image>();
+        if (panelImage == null)
+            panelImage = gameOverPanel.AddComponent<Image>();
+        ModernUIStyle.ApplyPanel(gameOverPanel, true);
+        panelImage.raycastTarget = true;
+
+        TMP_FontAsset font = gameOverText.font != null
+            ? gameOverText.font
+            : FindReferenceFont(gameOverPanel.transform);
+
+        if (gameOverTitle == null)
+            gameOverTitle = FindComponentByName<TMP_Text>(gameOverPanel.transform, "GameOverTitle");
+        if (gameOverTitle == null)
+        {
+            gameOverTitle = CreateConfirmationText(gameOverPanel.transform, "GameOverTitle",
+                "赛事结算", font, 30, TextAlignmentOptions.Center,
+                new Vector2(0.08f, 0.85f), new Vector2(0.92f, 0.97f),
+                new Color(1f, 0.78f, 0.34f, 1f));
+            gameOverTitle.fontStyle = FontStyles.Bold;
+        }
+
+        if (gameOverScrollRect == null)
+            gameOverScrollRect = FindComponentByName<ScrollRect>(gameOverPanel.transform,
+                "GameOverScrollView");
+        if (gameOverScrollRect == null)
+            BuildGameOverScrollView(font);
+
+        if (backToMenuButton != null)
+        {
+            RectTransform buttonRect = backToMenuButton.GetComponent<RectTransform>();
+            if (buttonRect != null)
+            {
+                buttonRect.SetParent(gameOverPanel.transform, false);
+                buttonRect.anchorMin = new Vector2(0.36f, 0.035f);
+                buttonRect.anchorMax = new Vector2(0.64f, 0.15f);
+                buttonRect.offsetMin = Vector2.zero;
+                buttonRect.offsetMax = Vector2.zero;
+            }
+            ModernUIStyle.ApplyButton(backToMenuButton, ModernUIStyle.AccentBlue, true);
+        }
+    }
+
+    private void BuildGameOverScrollView(TMP_FontAsset font)
+    {
+        GameObject scrollObject = new GameObject("GameOverScrollView", typeof(RectTransform), typeof(ScrollRect));
+        scrollObject.transform.SetParent(gameOverPanel.transform, false);
+        RectTransform scrollRectTransform = scrollObject.GetComponent<RectTransform>();
+        scrollRectTransform.anchorMin = new Vector2(0.07f, 0.19f);
+        scrollRectTransform.anchorMax = new Vector2(0.93f, 0.83f);
+        scrollRectTransform.offsetMin = Vector2.zero;
+        scrollRectTransform.offsetMax = Vector2.zero;
+
+        GameObject viewportObject = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(RectMask2D));
+        viewportObject.transform.SetParent(scrollObject.transform, false);
+        RectTransform viewportRect = viewportObject.GetComponent<RectTransform>();
+        viewportRect.anchorMin = Vector2.zero;
+        viewportRect.anchorMax = new Vector2(0.965f, 1f);
+        viewportRect.offsetMin = Vector2.zero;
+        viewportRect.offsetMax = Vector2.zero;
+        Image viewportImage = viewportObject.GetComponent<Image>();
+        viewportImage.color = new Color(0.018f, 0.028f, 0.05f, 0.76f);
+        viewportImage.raycastTarget = true;
+
+        RectTransform content = gameOverText.rectTransform;
+        content.SetParent(viewportRect, false);
+        content.anchorMin = new Vector2(0f, 1f);
+        content.anchorMax = new Vector2(1f, 1f);
+        content.pivot = new Vector2(0.5f, 1f);
+        content.anchoredPosition = Vector2.zero;
+        content.offsetMin = new Vector2(18f, content.offsetMin.y);
+        content.offsetMax = new Vector2(-18f, content.offsetMax.y);
+        gameOverText.font = font;
+        gameOverText.fontSize = 20f;
+        gameOverText.fontStyle = FontStyles.Normal;
+        gameOverText.alignment = TextAlignmentOptions.TopLeft;
+        gameOverText.enableWordWrapping = true;
+        gameOverText.overflowMode = TextOverflowModes.Overflow;
+        gameOverText.raycastTarget = false;
+        gameOverText.color = ModernUIStyle.TextPrimary;
+
+        Scrollbar scrollbar = BuildGameOverScrollbar(scrollObject.transform);
+        gameOverScrollRect = scrollObject.GetComponent<ScrollRect>();
+        gameOverScrollRect.content = content;
+        gameOverScrollRect.viewport = viewportRect;
+        gameOverScrollRect.horizontal = false;
+        gameOverScrollRect.vertical = true;
+        gameOverScrollRect.movementType = ScrollRect.MovementType.Clamped;
+        gameOverScrollRect.scrollSensitivity = 28f;
+        gameOverScrollRect.verticalScrollbar = scrollbar;
+        gameOverScrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
+        gameOverScrollRect.verticalNormalizedPosition = 1f;
+    }
+
+    private static Scrollbar BuildGameOverScrollbar(Transform parent)
+    {
+        GameObject barObject = new GameObject("Scrollbar Vertical", typeof(RectTransform), typeof(Image), typeof(Scrollbar));
+        barObject.transform.SetParent(parent, false);
+        RectTransform barRect = barObject.GetComponent<RectTransform>();
+        barRect.anchorMin = new Vector2(0.975f, 0f);
+        barRect.anchorMax = Vector2.one;
+        barRect.offsetMin = Vector2.zero;
+        barRect.offsetMax = Vector2.zero;
+        Image barImage = barObject.GetComponent<Image>();
+        barImage.color = new Color(0.16f, 0.22f, 0.32f, 0.65f);
+
+        GameObject slidingObject = new GameObject("Sliding Area", typeof(RectTransform));
+        slidingObject.transform.SetParent(barObject.transform, false);
+        RectTransform slidingRect = slidingObject.GetComponent<RectTransform>();
+        slidingRect.anchorMin = Vector2.zero;
+        slidingRect.anchorMax = Vector2.one;
+        slidingRect.offsetMin = new Vector2(2f, 2f);
+        slidingRect.offsetMax = new Vector2(-2f, -2f);
+
+        GameObject handleObject = new GameObject("Handle", typeof(RectTransform), typeof(Image));
+        handleObject.transform.SetParent(slidingObject.transform, false);
+        RectTransform handleRect = handleObject.GetComponent<RectTransform>();
+        handleRect.anchorMin = Vector2.zero;
+        handleRect.anchorMax = Vector2.one;
+        handleRect.offsetMin = Vector2.zero;
+        handleRect.offsetMax = Vector2.zero;
+        Image handleImage = handleObject.GetComponent<Image>();
+        handleImage.color = new Color(0.25f, 0.72f, 1f, 0.92f);
+
+        Scrollbar scrollbar = barObject.GetComponent<Scrollbar>();
+        scrollbar.handleRect = handleRect;
+        scrollbar.targetGraphic = handleImage;
+        scrollbar.direction = Scrollbar.Direction.BottomToTop;
+        return scrollbar;
+    }
+
+    private void RefreshGameOverScrollWindow()
+    {
+        if (gameOverText == null || gameOverScrollRect == null || gameOverScrollRect.viewport == null)
+            return;
+
+        Canvas.ForceUpdateCanvases();
+        RectTransform content = gameOverText.rectTransform;
+        float viewportHeight = gameOverScrollRect.viewport.rect.height;
+        float contentHeight = Mathf.Max(viewportHeight, gameOverText.preferredHeight + 28f);
+        content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, contentHeight);
+        Canvas.ForceUpdateCanvases();
+        gameOverScrollRect.verticalNormalizedPosition = 1f;
     }
 
     // ====== 按钮回调 ======
