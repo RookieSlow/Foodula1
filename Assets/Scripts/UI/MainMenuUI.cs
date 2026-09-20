@@ -18,6 +18,7 @@ public class MainMenuUI : MonoBehaviour
     private TechTreeUI techTreeUI;
     private GameSettingsUI gameSettingsUI;
     private CareerModeUI careerModeUI;
+    private TutorialSelectionUI tutorialSelectionUI;
     private Button driverSelectionButton;
     private Button careerButton;
     private Button techTreeButton;
@@ -122,6 +123,11 @@ public class MainMenuUI : MonoBehaviour
         if (careerModeUI == null)
             careerModeUI = gameObject.AddComponent<CareerModeUI>();
         careerModeUI.Initialize(CareerRuntimeRepository.CreateDefault(), true, OnStartCareerRace);
+
+        tutorialSelectionUI = GetComponent<TutorialSelectionUI>();
+        if (tutorialSelectionUI == null)
+            tutorialSelectionUI = gameObject.AddComponent<TutorialSelectionUI>();
+        tutorialSelectionUI.Initialize(StartFoundationTutorial);
 
         if (startRaceButton != null)
         {
@@ -447,9 +453,7 @@ public class MainMenuUI : MonoBehaviour
         if (tutorialButton == null) return;
         TMP_Text label = tutorialButton.GetComponentInChildren<TMP_Text>(true);
         if (label != null)
-            label.text = GameSettingsRuntime.Current.tutorialCompleted
-                ? "重播新手教程"
-                : "新手教程";
+            label.text = "新手教程";
     }
 
     /// <summary>开始比赛 → 加载 Race 场景。</summary>
@@ -477,8 +481,15 @@ public class MainMenuUI : MonoBehaviour
         SceneLoader.LoadRace();
     }
 
-    /// <summary>Starts the isolated Le Mans tutorial without changing quick-race selections.</summary>
+    /// <summary>Opens the second-level tutorial hub.</summary>
     public void OnStartTutorial()
+    {
+        HideMenuSurfaces();
+        tutorialSelectionUI.Show();
+    }
+
+    /// <summary>Starts the isolated Le Mans tutorial without changing quick-race selections.</summary>
+    private void StartFoundationTutorial()
     {
         HideMenuSurfaces();
         CareerRaceLaunchState.Clear();
@@ -530,6 +541,7 @@ public class MainMenuUI : MonoBehaviour
         if (techTreeUI != null) techTreeUI.Hide();
         if (gameSettingsUI != null) gameSettingsUI.Hide();
         if (careerModeUI != null) careerModeUI.Hide();
+        if (tutorialSelectionUI != null) tutorialSelectionUI.Hide();
         GameEncyclopediaUI encyclopedia = GetComponent<GameEncyclopediaUI>();
         if (encyclopedia != null) encyclopedia.Hide();
     }
