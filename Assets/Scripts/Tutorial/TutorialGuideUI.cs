@@ -193,7 +193,30 @@ public sealed class TutorialGuideUI : MonoBehaviour
     public void SuspendPresentation()
     {
         focusHighlighter?.Hide();
-        gameObject.SetActive(false);
+        gameObject.SetActive(true);
+        // Do not leave the completed lesson's copy in the guide while the next
+        // prepared input state is being built. Step 3 is the first deferred
+        // transition and made this stale text especially visible.
+        ReplaceTextAndGeometry(titleText, "准备下一步");
+        SetOptionalText(completionText, string.Empty);
+        ReplaceTextAndGeometry(
+            instructionText,
+            "正在结算当前操作并准备新的教学步骤，请稍候。");
+        ReplaceTextAndGeometry(progressText, string.Empty);
+        SetContinueState(false, "正在准备下一步…");
+        SetPreviousState(false);
+        SetModeState(true, "跳过引导");
+        ApplyLayout();
+    }
+
+    public void DismissOperationCallout(TutorialFocusOperation completedOperation)
+    {
+        focusHighlighter?.DismissOperationCallout(completedOperation);
+    }
+
+    public void DismissCurrentCallout()
+    {
+        focusHighlighter?.DismissCurrentCallout();
     }
 
     public void PreviewAuthoredStep(
@@ -333,9 +356,29 @@ public sealed class TutorialGuideUI : MonoBehaviour
     {
         if (target == null)
             return;
+        ReplaceTextAndGeometry(target, value);
+    }
+
+    private static void ReplaceTextAndGeometry(TMP_Text target, string value)
+    {
+        if (target == null)
+            return;
+
+        target.text = string.Empty;
+        CanvasRenderer renderer = target.canvasRenderer;
+        if (renderer != null)
+        {
+            renderer.Clear();
+        }
+
         bool visible = !string.IsNullOrWhiteSpace(value);
         target.gameObject.SetActive(visible);
-        target.text = visible ? value.Trim() : string.Empty;
+        target.enabled = visible;
+        if (!visible)
+            return;
+
+        target.text = value.Trim();
+        target.SetAllDirty();
     }
 
     private void Build(TMP_FontAsset font)

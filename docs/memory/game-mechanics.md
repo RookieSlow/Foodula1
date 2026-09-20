@@ -251,10 +251,10 @@ prototype and is no longer the authoritative model.
 - The guide panel uses a pure safe-area rule for common 16:9 resolutions. Its expanded form scales
   down from 540x440 and switches to compact typography at small sizes; collapse leaves only the
   title, section progress and expand control. Toggling presentation never advances tutorial state.
-- The tutorial leader checkpoint is queued on entering the slipstream step and only
-  positions the leader at cell 42/player at cell 40 after base movement, immediately
-  before the unchanged end-of-turn slipstream resolver. This preserves the rule that
-  only the rear car benefits.
+- The slipstream lesson starts at a fresh turn boundary with the leader at cell 42 and
+  the player at cell 40. The teaching leader's base movement is held at zero for that
+  single turn; the player uses a real G1 speed-1 card to settle at cell 41 before the
+  unchanged end-of-turn resolver grants only the rear car its bonus.
 - A runtime-built guide panel displays authored title/body/progress. Reading steps may advance immediately;
   operation steps require matching real race events for turn completion, exact card requirement, movement,
   heat, cooling, missing cards, spin, slipstream, pit timing and UK trick cards, then wait for explicit Next.
@@ -264,7 +264,7 @@ prototype and is no longer the authoritative model.
   a one-lap override without changing `GameConfigSO` or track JSON; completion ends the
   tutorial immediately and never enters RP/XP/progression settlement. Restart, guide replay
   and exit are available from the guide panel and emit tutorial log events.
-- Eight risky guided steps now enter authored safe states at a gear-input gate or the next turn
+- Nine risky guided steps now enter authored safe states at a gear-input gate or the next turn
   boundary. Exact normal/heat zones guarantee heat payment/cooling, a one-card G2 shortage,
   a zero-engine Dunlop spin after G2 cooling, and valid Scone/Tea targets; reset also clears spin,
   skip-turn and pit flags so the following lesson cannot inherit a soft lock.

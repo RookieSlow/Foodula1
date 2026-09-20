@@ -61,8 +61,15 @@ public enum TutorialFocusOperation
 /// <summary>Input gates take precedence over the lesson's explanatory subject.</summary>
 public static class TutorialFocusOperationRules
 {
-    public static TutorialFocusOperation Resolve(string phase, int selectedCount, bool canEndCards)
+    public static TutorialFocusOperation Resolve(
+        string phase,
+        int selectedCount,
+        bool canEndCards,
+        bool inputBlocked = false)
     {
+        if (inputBlocked)
+            return TutorialFocusOperation.None;
+
         switch (phase)
         {
             case "gear": return TutorialFocusOperation.Gear;
@@ -78,8 +85,10 @@ public static class TutorialFocusOperationRules
 
 /// <summary>
 /// Non-interactive spotlight for one authored tutorial concept. Four dimming
-/// panels leave a clear hole around the live target, while a border and short
-/// callout explain that region without taking ownership of gameplay input.
+/// panels leave a clear hole around the live target, while the persistent
+/// tutorial guide panel explains the current lesson. The former floating
+/// callout is retained only as a disabled prefab compatibility node because
+/// TMP fallback renderers could survive its lifetime and leave clipped text.
 /// </summary>
 public sealed class TutorialFocusHighlightUI : MonoBehaviour
 {
@@ -89,10 +98,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
     [Header("手动高光布局")]
     [SerializeField, Min(0f)] private float targetPadding = 10f;
     [SerializeField, Min(1f)] private float borderThickness = 4f;
-    [SerializeField] private Vector2 calloutOffset = Vector2.zero;
-    [SerializeField, Min(180f)] private float calloutWidth = 360f;
-    [SerializeField, Min(40f)] private float calloutHeight = 58f;
-    [SerializeField, Range(0f, 0.8f)] private float outsideDimAlpha = 0.38f;
+    [SerializeField, Range(0f, 0.8f)] private float outsideDimAlpha = 0.24f;
 
     [Header("Prefab 引用")]
     [SerializeField] private RectTransform rootRect;
@@ -102,6 +108,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         new Dictionary<string, RectTransform>();
     [SerializeField] private RectTransform calloutRect;
     [SerializeField] private TMP_Text calloutText;
+    private CanvasGroup calloutCanvasGroup;
     private RectTransform cachedCardTarget;
     private string cachedCardTrickId;
     private TutorialFocusTarget focusTarget;
@@ -110,15 +117,8 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
     private string lessonIntroduction;
     private bool presentationRequested;
     private TutorialFocusOperation operation;
-    private int operationSequence;
-    private bool operationEncounteredForLesson;
     private bool hasDisplayedLesson;
     private TutorialStepId displayedLesson;
-    private readonly TutorialFocusDismissState operationDismissState = new TutorialFocusDismissState();
-    private TutorialFocusDismissState ActiveDismissState =>
-        operation != TutorialFocusOperation.None || operationEncounteredForLesson
-            ? operationDismissState
-            : dismissState;
     private readonly TutorialFocusDismissState dismissState =
         new TutorialFocusDismissState();
 
@@ -181,6 +181,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
             rootRect = transform as RectTransform;
         RepairCalloutHierarchy();
         EnsureCalloutMask();
+        DisableFloatingCallout();
         CacheNamedTargets();
     }
 
@@ -205,28 +206,30 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         TutorialFocusTarget target,
         string introduction)
     {
+        EnsureTutorialOverlayOnTop();
         if (!hasDisplayedLesson || displayedLesson != stepId)
         {
+            // Clear only the outgoing callout. Clearing the whole spotlight here
+            // would cull the four border renderers while their objects remain
+            // active, leaving no visible highlight in the next lesson.
+            ClearCalloutGeometry();
             hasDisplayedLesson = true;
             displayedLesson = stepId;
             operation = TutorialFocusOperation.None;
-            operationEncounteredForLesson = false;
-            operationDismissState.Hide();
         }
         presentationRequested = true;
         lessonTarget = target;
         lessonIntroduction = introduction ?? string.Empty;
         dismissState.Show(stepId, Input.GetMouseButton(0));
         RefreshOperation();
-        if (!ActiveDismissState.IsVisible && operation == TutorialFocusOperation.None && manager == null)
+        if (!dismissState.IsVisible &&
+            operation == TutorialFocusOperation.None &&
+            manager == null)
         {
-            // Refreshes for the same tutorial step are common while the HUD is
-            // rebuilding. A dismissed spotlight must actively clear itself on
-            // every such refresh, otherwise TMP may submit its callout again.
+            // Preview/test refreshes have no live target to keep highlighted.
             DeactivateVisuals();
             return;
         }
-
         if (presentationRequested)
         {
             SetCanvasVisible(true);
@@ -240,16 +243,38 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
     {
         presentationRequested = false;
         dismissState.Hide();
-        operationDismissState.Hide();
         operation = TutorialFocusOperation.None;
         DeactivateVisuals();
+    }
+
+    public void DismissOperationCallout(TutorialFocusOperation completedOperation)
+    {
+        if (!presentationRequested || operation != completedOperation)
+            return;
+
+        DismissCurrentCallout();
+    }
+
+    /// <summary>
+    /// Hides this lesson's explanatory callout without disabling its live border.
+    /// Gameplay UI calls this directly so dismissal does not depend on legacy
+    /// Input polling or on which confirmation popup completes the operation.
+    /// </summary>
+    public void DismissCurrentCallout()
+    {
+        if (!presentationRequested)
+            return;
+
+        dismissState.Hide();
+        SetCalloutActive(false);
     }
 
     private void LateUpdate()
     {
         if (!presentationRequested) return;
+        EnsureTutorialOverlayOnTop();
         RefreshOperation();
-        if (ActiveDismissState.Update(
+        if (dismissState.Update(
                 Input.GetMouseButton(0),
                 Input.GetMouseButtonDown(0)))
         {
@@ -268,16 +293,14 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         bool canEnd = player != null && player.deck != null &&
             (player.playedSpeedCardsThisTurn.Count >= manager.GetMaxSpeedCardsThisTurn(player) ||
              player.deck.CountSpeedInHand() == 0);
-        TutorialFocusOperation next = TutorialFocusOperationRules.Resolve(phase, selected, canEnd);
+        TutorialFocusOperation next = TutorialFocusOperationRules.Resolve(
+            phase,
+            selected,
+            canEnd,
+            manager != null && manager.IsTutorialFocusInputBlocked);
         if (operation != next)
         {
             operation = next;
-            operationSequence++;
-            if (next != TutorialFocusOperation.None)
-            {
-                operationEncounteredForLesson = true;
-                operationDismissState.Show(operationSequence.ToString(), Input.GetMouseButton(0));
-            }
         }
         focusTarget = lessonTarget;
         focusIntroduction = lessonIntroduction;
@@ -317,7 +340,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         for (int i = 0; i < dimmers.Length; i++)
             dimmers[i] = CreateImage($"FocusDimmer{i}", new Color(0.01f, 0.02f, 0.04f, outsideDimAlpha));
         for (int i = 0; i < borders.Length; i++)
-            borders[i] = CreateImage($"FocusBorder{i}", new Color(1f, 0.76f, 0.25f, 0.95f));
+            borders[i] = CreateImage($"FocusBorder{i}", new Color(1f, 0.9f, 0.38f, 1f));
 
         GameObject callout = new GameObject(
             "FocusIntroduction",
@@ -349,6 +372,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         calloutText.color = new Color(1f, 0.87f, 0.56f);
         calloutText.raycastTarget = false;
         EnsureCalloutMask();
+        DisableFloatingCallout();
     }
 
     private Image CreateImage(string name, Color color)
@@ -365,6 +389,8 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
     {
         if (rootRect == null || !gameObject.activeInHierarchy)
             return;
+
+        SetCanvasVisible(true);
 
         RectTransform target = operation == TutorialFocusOperation.Lane
             ? ResolveNamedTarget("IndianapolisLaneChangePanel") : ResolveTarget(focusTarget);
@@ -403,8 +429,8 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
 
         float pulse = GameSettingsRuntime.Current.reduceMotion
             ? 1f
-            : 0.82f + Mathf.Sin(Time.unscaledTime * 4f) * 0.18f;
-        Color borderColor = new Color(1f, 0.76f, 0.25f, pulse);
+            : 0.92f + Mathf.Sin(Time.unscaledTime * 4f) * 0.08f;
+        Color borderColor = new Color(1f, 0.9f, 0.38f, pulse);
         for (int i = 0; i < borders.Length; i++)
             borders[i].color = borderColor;
 
@@ -417,36 +443,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         LayoutRect(borders[3].rectTransform,
             new Rect(focus.xMax - borderThickness, focus.yMin, borderThickness, focus.height));
 
-        if (ActiveDismissState.IsVisible && calloutText != null && calloutText.text != focusIntroduction)
-            calloutText.text = focusIntroduction;
-        float resolvedCalloutWidth = Mathf.Min(
-            calloutWidth,
-            Mathf.Max(250f, bounds.width - 32f));
-        float preferredTextHeight = calloutText != null
-            ? calloutText.GetPreferredValues(
-                focusIntroduction,
-                Mathf.Max(1f, resolvedCalloutWidth - 24f),
-                0f).y + 14f
-            : calloutHeight;
-        float resolvedCalloutHeight = Mathf.Clamp(
-            Mathf.Max(calloutHeight, preferredTextHeight),
-            calloutHeight,
-            Mathf.Max(calloutHeight, bounds.height - 16f));
-        float calloutX = Mathf.Clamp(
-            focus.center.x + calloutOffset.x,
-            bounds.xMin + resolvedCalloutWidth * 0.5f + 8f,
-            bounds.xMax - resolvedCalloutWidth * 0.5f - 8f);
-        bool placeBelow = focus.yMin - resolvedCalloutHeight - 12f >= bounds.yMin;
-        float calloutY = placeBelow
-            ? focus.yMin - resolvedCalloutHeight * 0.5f - 8f
-            : focus.yMax + resolvedCalloutHeight * 0.5f + 8f;
-        calloutY += calloutOffset.y;
-        calloutY = Mathf.Clamp(
-            calloutY,
-            bounds.yMin + resolvedCalloutHeight * 0.5f + 8f,
-            bounds.yMax - resolvedCalloutHeight * 0.5f - 8f);
-        calloutRect.anchoredPosition = new Vector2(calloutX, calloutY);
-        calloutRect.sizeDelta = new Vector2(resolvedCalloutWidth, resolvedCalloutHeight);
+        DisableFloatingCallout();
     }
 
     private RectTransform ResolveTarget(TutorialFocusTarget target)
@@ -574,43 +571,52 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
     {
         for (int i = 0; i < dimmers.Length; i++)
         {
-            if (dimmers[i] != null)
-                dimmers[i].gameObject.SetActive(active);
+            SetSpotlightImageActive(dimmers[i], active);
         }
         for (int i = 0; i < borders.Length; i++)
         {
-            if (borders[i] != null)
-                borders[i].gameObject.SetActive(active);
+            SetSpotlightImageActive(borders[i], active);
         }
-        SetCalloutActive(active && ActiveDismissState.IsVisible);
+        DisableFloatingCallout();
+    }
+
+    private static void SetSpotlightImageActive(Image image, bool active)
+    {
+        if (image == null)
+            return;
+
+        image.gameObject.SetActive(active);
+        image.enabled = active;
+        if (!active)
+            return;
+
+        // A previous implementation cleared every CanvasRenderer while hiding
+        // a lesson. Re-enabling only the GameObject does not reset that cull
+        // flag, so highlights disappeared from later tutorial steps.
+        if (image.canvasRenderer != null)
+            image.canvasRenderer.cull = false;
+        image.SetVerticesDirty();
+        image.SetMaterialDirty();
     }
 
     private void SetCalloutActive(bool active)
     {
-        if (calloutRect == null) return;
-        if (!active)
-        {
-            foreach (TMP_Text text in calloutRect.GetComponentsInChildren<TMP_Text>(true))
-            {
-                text.text = string.Empty;
-                text.ClearMesh();
-                text.enabled = false;
-                text.gameObject.SetActive(false);
-            }
-            foreach (CanvasRenderer renderer in calloutRect.GetComponentsInChildren<CanvasRenderer>(true))
-            {
-                renderer.Clear();
-                renderer.cull = true;
-            }
-        }
-        calloutRect.gameObject.SetActive(active);
-        if (active && calloutText != null)
-        {
-            calloutText.gameObject.SetActive(true);
-            calloutText.enabled = true;
-            calloutText.text = focusIntroduction;
-            calloutText.SetAllDirty();
-        }
+        // Deliberately ignore requests to reactivate the obsolete floating
+        // copy. All lesson text now lives in TutorialGuideUI; only the border
+        // and dimmers belong to this component.
+        DisableFloatingCallout();
+    }
+
+    private void DisableFloatingCallout()
+    {
+        if (calloutRect == null)
+            return;
+
+        EnsureCalloutCanvasGroup();
+        if (calloutCanvasGroup != null)
+            calloutCanvasGroup.alpha = 0f;
+        ClearCalloutGeometry();
+        calloutRect.gameObject.SetActive(false);
     }
 
     private void RepairCalloutHierarchy()
@@ -654,6 +660,20 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
             nested.overrideSorting = false;
         foreach (Graphic graphic in GetComponentsInChildren<Graphic>(true))
             graphic.raycastTarget = false;
+        DisableFloatingCallout();
+    }
+
+    private void EnsureTutorialOverlayOnTop()
+    {
+        TutorialOverlayAuthoring overlay = GetComponentInParent<TutorialOverlayAuthoring>();
+        if (overlay == null || overlay.transform.parent == null)
+            return;
+
+        // RaceEventFX and RaceEventOverlay are created after the tutorial UI.
+        // Without restoring sibling order they cover the spotlight and clip the
+        // callout, leaving only thin text fragments visible at panel edges.
+        overlay.transform.SetAsLastSibling();
+        transform.SetAsFirstSibling();
     }
 
     private static Rect Union(Rect a, Rect b)
@@ -664,13 +684,9 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
 
     private void DeactivateVisuals()
     {
-        // Hide the parent group first, then explicitly clear every generated
-        // mesh. TextMesh Pro fallback glyphs can own separate CanvasRenderers;
-        // merely disabling their GameObjects may leave the last submitted mesh
-        // visible for a frame in a standalone player.
-        SetCanvasVisible(false);
-        ClearRenderedGeometry();
-        SetVisualsActive(false);
+        // Only the obsolete TMP callout needs explicit mesh clearing. Border
+        // and dimmer renderers must retain rebuildable geometry for later steps.
+        SuppressPresentationVisuals();
         cachedCardTarget = null;
         cachedCardTrickId = null;
         if (gameObject.activeSelf)
@@ -678,20 +694,45 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         Canvas.ForceUpdateCanvases();
     }
 
-    private void ClearRenderedGeometry()
+    private void SuppressPresentationVisuals()
     {
-        if (calloutText != null)
+        SetCanvasVisible(false);
+        ClearCalloutGeometry();
+        SetVisualsActive(false);
+        Canvas.ForceUpdateCanvases();
+    }
+
+    private void ClearCalloutGeometry()
+    {
+        if (calloutRect != null)
+            ClearGeometryUnder(calloutRect);
+    }
+
+    private static void ClearGeometryUnder(Transform scope)
+    {
+        if (scope == null)
+            return;
+
+        // Clear every TMP owned by the spotlight, not only the serialized main
+        // label. Chinese fallback fonts may generate extra TMP renderers that
+        // otherwise retain the previous lesson's mesh after the label hides.
+        TMP_Text[] texts = scope.GetComponentsInChildren<TMP_Text>(includeInactive: true);
+        for (int i = 0; i < texts.Length; i++)
         {
-            calloutText.text = string.Empty;
-            calloutText.ForceMeshUpdate(
-                ignoreActiveState: true,
-                forceTextReparsing: true);
-            calloutText.ClearMesh();
-            calloutText.enabled = false;
+            TMP_Text text = texts[i];
+            text.text = string.Empty;
+            text.enabled = false;
+            CanvasRenderer textRenderer = text.canvasRenderer;
+            if (textRenderer != null)
+            {
+                textRenderer.cull = true;
+                textRenderer.Clear();
+            }
+            text.gameObject.SetActive(false);
         }
 
         CanvasRenderer[] renderers =
-            GetComponentsInChildren<CanvasRenderer>(includeInactive: true);
+            scope.GetComponentsInChildren<CanvasRenderer>(includeInactive: true);
         for (int i = 0; i < renderers.Length; i++)
         {
             renderers[i].cull = true;
@@ -703,8 +744,21 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
     {
         if (calloutRect != null && calloutRect.GetComponent<RectMask2D>() == null)
             calloutRect.gameObject.AddComponent<RectMask2D>();
+        EnsureCalloutCanvasGroup();
         if (calloutText != null)
             calloutText.overflowMode = TextOverflowModes.Ellipsis;
+    }
+
+    private void EnsureCalloutCanvasGroup()
+    {
+        if (calloutRect == null)
+            return;
+        if (calloutCanvasGroup == null)
+            calloutCanvasGroup = calloutRect.GetComponent<CanvasGroup>();
+        if (calloutCanvasGroup == null)
+            calloutCanvasGroup = calloutRect.gameObject.AddComponent<CanvasGroup>();
+        calloutCanvasGroup.interactable = false;
+        calloutCanvasGroup.blocksRaycasts = false;
     }
 
     private void SetCanvasVisible(bool visible)

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
 
 public class CardPilePreviewTests
@@ -80,5 +82,93 @@ public class CardPilePreviewTests
     {
         Assert.That(CardPilePreviewRules.GetStackLayerCount(pileCount, 7, 3),
             Is.EqualTo(expectedLayers));
+    }
+
+    [Test]
+    public void DrawPileInspectorGroupsCompositionWithoutRevealingOrder()
+    {
+        var database = TrickCardDatabaseFactory.CreateDefault();
+        var pile = new List<CardData>
+        {
+            new CardData(CardType.Speed, 3),
+            CardData.CreateTrick("cn-hotpot-base"),
+            new CardData(CardType.Speed, 1),
+            new CardData(CardType.Speed, 3)
+        };
+
+        List<CardPileEntry> entries = CardPileInspectorRules.BuildEntries(
+            pile, newestCardIsAtEnd: false, concealOrder: true, database);
+
+        Assert.That(entries.Count, Is.EqualTo(3));
+        Assert.That(entries[0].Title, Is.EqualTo("速度牌 1"));
+        Assert.That(entries[1].Title, Is.EqualTo("速度牌 3"));
+        Assert.That(entries[1].Count, Is.EqualTo(2));
+        Assert.That(entries[2].Effect, Does.Contain("下一张正常打出的速度牌"));
+    }
+
+    [Test]
+    public void DiscardInspectorShowsNewestCardFirstWithConcreteEffects()
+    {
+        var database = TrickCardDatabaseFactory.CreateDefault();
+        var pile = new List<CardData>
+        {
+            new CardData(CardType.Speed, 2),
+            new CardData(CardType.Heat, 0),
+            CardData.CreateTrick("uk-scone")
+        };
+
+        List<CardPileEntry> entries = CardPileInspectorRules.BuildEntries(
+            pile, newestCardIsAtEnd: true, concealOrder: false, database);
+
+        Assert.That(entries.Select(entry => entry.Title), Is.EqualTo(new[]
+        {
+            "司康 · 进攻", "热量牌", "速度牌 2"
+        }));
+        Assert.That(entries[0].Effect, Does.Contain("前进+2格"));
+        Assert.That(entries[1].Effect, Does.Contain("冷却返回引擎"));
+        Assert.That(entries[2].Effect, Does.Contain("2 点基础移动"));
+    }
+
+    [Test]
+    public void ClickingRuntimePileCreatesScrollableVisualInspector()
+    {
+        GameObject canvasObject = new GameObject(
+            "PileInspectorTestCanvas", typeof(Canvas));
+        GameObject pileObject = new GameObject(
+            "DrawPilePanel", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+        pileObject.transform.SetParent(canvasObject.transform, false);
+        try
+        {
+            CardPilePreviewUI preview = pileObject.AddComponent<CardPilePreviewUI>();
+            preview.Configure(null, null, null, null, null, false);
+            preview.ConfigureInspection(
+                TrickCardDatabaseFactory.CreateDefault(), "抽牌堆", concealOrder: true);
+            preview.Refresh(new List<CardData>
+            {
+                new CardData(CardType.Speed, 1),
+                new CardData(CardType.Speed, 2),
+                CardData.CreateTrick("uk-scone")
+            }, 3);
+
+            pileObject.GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
+
+            Transform overlay = canvasObject.transform.Find("CardPileInspectorOverlay");
+            Assert.That(overlay, Is.Not.Null);
+            Assert.That(
+                overlay.GetComponentInChildren<UnityEngine.UI.ScrollRect>(true),
+                Is.Not.Null);
+            Assert.That(
+                overlay.GetComponentsInChildren<TMP_Text>(true)
+                    .Any(text => text.text.Contains("抽牌堆 · 3 张")),
+                Is.True);
+            Assert.That(
+                overlay.GetComponentsInChildren<TMP_Text>(true)
+                    .Any(text => text.text.Contains("前进+2格")),
+                Is.True);
+        }
+        finally
+        {
+            Object.DestroyImmediate(canvasObject);
+        }
     }
 }

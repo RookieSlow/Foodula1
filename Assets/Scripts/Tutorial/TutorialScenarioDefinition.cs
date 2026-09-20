@@ -232,6 +232,26 @@ public sealed class TutorialOpponentCue
     }
 }
 
+public static class TutorialOpponentCueRules
+{
+    /// <summary>
+    /// The authored slipstream leader is a stationary reference for its single
+    /// teaching turn. Normal racers and every non-tutorial turn keep their
+    /// planned movement unchanged.
+    /// </summary>
+    public static int ResolveLeaderMovement(
+        TutorialOpponentCue activeCue,
+        bool isTeachingLeader,
+        int plannedMovement)
+    {
+        return activeCue != null &&
+               activeCue.step == TutorialStepId.Slipstream &&
+               isTeachingLeader
+            ? 0
+            : plannedMovement;
+    }
+}
+
 [Serializable]
 public sealed class TutorialPitLaneDefinition
 {
@@ -488,7 +508,7 @@ public sealed class TutorialScenarioDefinition
             Step(TutorialStepId.Slipstream, TutorialAction.ResolveSlipstream,
                 "赛道互动", "学会借前车的风",
                 "尾流会在所有赛车完成基础移动后判定，而且只帮助距离合适的后车。跟住前车，往往能多争取一点距离。",
-                "训练领航车会在结算前停到你前方 2 格，给你一个稳定的练习机会。",
+                "新回合开始时，训练领航车已经停在你前方 2 格，并会保持位置供你练习。",
                 "跑一个普通 G1 回合：选择 1 张速度牌确认，然后观察高光里的两辆赛车。",
                 "回合末只有后方的 UK 获得额外移动，前方 JP 不会被反向推动。漂亮，这就是尾流。",
                 "",
@@ -572,6 +592,8 @@ public sealed class TutorialScenarioDefinition
                 Speed(3), Speed(2), Speed(1), Speed(1), Speed(2),
                 Trick("uk-scone"), Trick("uk-english-breakfast-tea")),
             Checkpoint(TutorialStepId.Weather, 36, 1, 7, 0, 0, false,
+                Speed(1), Speed(2), Speed(2), Speed(3), Speed(4), Speed(1), Trick("uk-scone")),
+            Checkpoint(TutorialStepId.Slipstream, 40, 1, 7, 0, 0, false,
                 Speed(1), Speed(2), Speed(2), Speed(3), Speed(4), Speed(1), Trick("uk-scone")),
             Checkpoint(TutorialStepId.PitSelection, 130, 2, 7, 0, 0, true,
                 Speed(1), Speed(1), Speed(2), Speed(2), Speed(3),

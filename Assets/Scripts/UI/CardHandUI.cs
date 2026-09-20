@@ -411,6 +411,7 @@ public class CardHandUI : MonoBehaviour
         if (gameManager == null) return;
         if (gameManager.IsTutorialActionInputBlocked) return;
         if (isGearSelectionMode) return;
+        gameManager.DismissTutorialInteractionCallout();
 
         // 热量牌不可打出/不可弃掉 — 忽略点击
         if (card.cardData.IsHeat) return;
@@ -494,6 +495,7 @@ public class CardHandUI : MonoBehaviour
     {
         if (gameManager == null)
             return;
+        gameManager.DismissTutorialInteractionCallout();
 
         // Playing/confirming a card group is a state-changing in-race action.
         // Reuse HUDUI's configurable gate so authored and fallback canvases
@@ -894,6 +896,12 @@ public class CardHandUI : MonoBehaviour
             heatIconSprite,
             pileText.font,
             newestCardAtEnd);
+        preview.ConfigureInspection(
+            gameManager != null && gameManager.Session != null
+                ? gameManager.Session.TrickDb
+                : TrickCardDatabaseFactory.CreateDefault(),
+            newestCardAtEnd ? "弃牌堆" : "抽牌堆",
+            concealOrder: !newestCardAtEnd);
         pileText.gameObject.SetActive(false);
         return preview;
     }

@@ -12,7 +12,8 @@ public static class TutorialGuideTimingRules
     {
         return stepId == TutorialStepId.GearAndRequiredCards ||
                stepId == TutorialStepId.DeckHandDiscardAndRecycle ||
-               stepId == TutorialStepId.HeatCardsAndCooling;
+               stepId == TutorialStepId.HeatCardsAndCooling ||
+               stepId == TutorialStepId.Slipstream;
     }
 
     public static bool RequiresFullHandPresentation(TutorialStepId stepId)

@@ -214,6 +214,25 @@ public class TutorialScenarioTests
     }
 
     [Test]
+    public void TutorialFocusDoesNotReplaceLessonCopyWhileRaceInputIsBlocked()
+    {
+        Assert.That(
+            TutorialFocusOperationRules.Resolve(
+                "gear",
+                selectedCount: 0,
+                canEndCards: false,
+                inputBlocked: true),
+            Is.EqualTo(TutorialFocusOperation.None));
+        Assert.That(
+            TutorialFocusOperationRules.Resolve(
+                "cards",
+                selectedCount: 1,
+                canEndCards: false,
+                inputBlocked: true),
+            Is.EqualTo(TutorialFocusOperation.None));
+    }
+
+    [Test]
     public void SkipRestartCompleteAndExitHaveExplicitRecoverableStates()
     {
         var machine = new TutorialStateMachine(TutorialScenarioDefinition.CreateLeMansUk());
@@ -404,6 +423,63 @@ public class TutorialScenarioTests
     }
 
     [Test]
+    public void SuspendedTutorialPresentationKeepsGuideVisibleWhileNextStepIsPrepared()
+    {
+        GameObject instance = new GameObject(
+            "TutorialGuideSuspendTest",
+            typeof(RectTransform),
+            typeof(TutorialGuideUI));
+        try
+        {
+            TutorialGuideUI guide = instance.GetComponent<TutorialGuideUI>();
+            instance.SetActive(true);
+            guide.SuspendPresentation();
+
+            Assert.That(guide.gameObject.activeSelf, Is.True,
+                "the completed lesson must remain visible during turn cleanup");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void ThirdStepTransitionClearsCompletedLessonCopyBeforePreparingNextStep()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        GameObject instance = Object.Instantiate(prefab);
+        try
+        {
+            TutorialOverlayAuthoring authoring = instance.GetComponent<TutorialOverlayAuthoring>();
+            TutorialGuideUI guide = authoring.Guide;
+            Transform panel = instance.transform.Find("TutorialGuidePanel");
+            TMP_Text title = panel.Find("TutorialTitle").GetComponent<TMP_Text>();
+            TMP_Text completion = panel.Find("TutorialCompletion").GetComponent<TMP_Text>();
+            TMP_Text instruction = panel.Find("TutorialInstruction").GetComponent<TMP_Text>();
+            TMP_Text progress = panel.Find("TutorialProgress").GetComponent<TMP_Text>();
+
+            title.text = "第三步旧标题";
+            completion.text = "第三步旧完成反馈";
+            instruction.text = "第三步旧指引正文";
+            progress.text = "第 3 步";
+
+            guide.SuspendPresentation();
+
+            Assert.That(title.text, Is.EqualTo("准备下一步"));
+            Assert.That(completion.text, Is.Empty);
+            Assert.That(completion.gameObject.activeSelf, Is.False);
+            Assert.That(instruction.text, Does.Not.Contain("第三步旧指引正文"));
+            Assert.That(progress.text, Is.Empty);
+            Assert.That(progress.gameObject.activeSelf, Is.False);
+        }
+        finally
+        {
+            Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
     public void TutorialOverlayAuthoringValidationAcceptsCompletePrefabCopy()
     {
         GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
@@ -565,6 +641,24 @@ public class TutorialScenarioTests
     }
 
     [Test]
+    public void TutorialFocusOperationChangesDoNotRearmDismissedLessonCallout()
+    {
+        var state = new TutorialFocusDismissState();
+
+        state.Show(TutorialStepId.GearAndRequiredCards, pointerHeld: false);
+        Assert.That(state.Update(pointerHeld: true, pointerPressedThisFrame: true), Is.True);
+        Assert.That(state.IsVisible, Is.False);
+
+        // Gear -> confirm gear -> select cards changes the highlighted target,
+        // but every operation still belongs to the same authored lesson.
+        state.Show(TutorialStepId.GearAndRequiredCards, pointerHeld: true);
+        state.Show(TutorialStepId.GearAndRequiredCards, pointerHeld: false);
+
+        Assert.That(state.IsVisible, Is.False,
+            "operation transitions inside one lesson must not recreate the dismissed callout");
+    }
+
+    [Test]
     public void TutorialFocusIgnoresClickThatOpenedStepUntilPointerIsReleased()
     {
         var state = new TutorialFocusDismissState();
@@ -609,6 +703,11 @@ public class TutorialScenarioTests
             "dismissal must clear TMP content as well as deactivate its object");
         Assert.That(focusText.enabled, Is.False,
             "dismissal must disable the TMP component so it cannot rebuild a stale mesh");
+        Assert.That(
+            highlight.GetComponentsInChildren<TMP_Text>(true)
+                .All(text => string.IsNullOrEmpty(text.text) && !text.enabled),
+            Is.True,
+            "every TMP label owned by the spotlight must release stale lesson text");
         Assert.That(focusText.transform.parent.GetComponent<RectMask2D>(), Is.Not.Null,
             "the callout must clip text that exceeds its fitted background");
         Assert.That(
@@ -617,6 +716,254 @@ public class TutorialScenarioTests
             "all dimmers, borders and the callout must be disabled explicitly");
 
         Object.DestroyImmediate(canvasObject);
+    }
+
+    [Test]
+    public void DismissedOperationHidesCalloutButKeepsTheSpotlightVisible()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        GameObject instance = Object.Instantiate(prefab);
+        GameObject canvasObject = new GameObject(
+            "TutorialFocusLifecycleCanvas",
+            typeof(Canvas));
+        try
+        {
+            instance.transform.SetParent(canvasObject.transform, false);
+            TutorialFocusHighlightUI highlight =
+                instance.GetComponent<TutorialOverlayAuthoring>().FocusHighlight;
+            highlight.Bind(canvasObject.GetComponent<Canvas>(), null);
+            highlight.gameObject.SetActive(true);
+
+            Graphic[] visuals = highlight.GetComponentsInChildren<Graphic>(true);
+            for (int i = 0; i < visuals.Length; i++)
+                visuals[i].gameObject.SetActive(true);
+            TMP_Text focusText = highlight.GetComponentInChildren<TMP_Text>(true);
+            focusText.gameObject.SetActive(true);
+            focusText.enabled = true;
+            focusText.text = "点击手牌选择速度牌或一张特技牌，再确认出牌。";
+
+            typeof(TutorialFocusHighlightUI)
+                .GetMethod(
+                    "SetCalloutActive",
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.NonPublic)
+                .Invoke(highlight, new object[] { false });
+
+            Assert.That(highlight.gameObject.activeSelf, Is.True,
+                "the lifecycle host must keep observing later operation changes");
+            Assert.That(highlight.GetComponent<CanvasGroup>().alpha, Is.EqualTo(1f),
+                "dismissing explanatory text must not hide the spotlight border");
+            Assert.That(focusText.text, Is.Empty);
+            Assert.That(focusText.enabled, Is.False);
+            Assert.That(focusText.gameObject.activeSelf, Is.False);
+            Assert.That(
+                highlight.GetComponentsInChildren<Graphic>(true)
+                    .Where(graphic => graphic != focusText)
+                    .Any(graphic => graphic.gameObject.activeSelf),
+                Is.True,
+                "dimmers and borders must remain active after the callout closes");
+            Assert.That(
+                highlight.GetComponentsInChildren<Image>(true)
+                    .Where(image => image.name.StartsWith("FocusBorder"))
+                    .All(image => !image.canvasRenderer.cull),
+                Is.True,
+                "closing callout text must never cull the border renderers");
+            Assert.That(
+                focusText.transform.parent.GetComponent<CanvasGroup>().alpha,
+                Is.Zero,
+                "the callout owns a separate zero-alpha lifecycle guard");
+        }
+        finally
+        {
+            Object.DestroyImmediate(canvasObject);
+        }
+    }
+
+    [Test]
+    public void SuccessfulGearSelectionExplicitlyDismissesOnlyTheGearCallout()
+    {
+        GameObject canvasObject = new GameObject(
+            "TutorialGearDismissCanvas",
+            typeof(Canvas));
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        GameObject instance = Object.Instantiate(prefab, canvasObject.transform, false);
+        try
+        {
+            TutorialFocusHighlightUI highlight =
+                instance.GetComponent<TutorialOverlayAuthoring>().FocusHighlight;
+            highlight.Bind(canvasObject.GetComponent<Canvas>(), null);
+            highlight.gameObject.SetActive(true);
+
+            typeof(TutorialFocusHighlightUI)
+                .GetField(
+                    "presentationRequested",
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.NonPublic)
+                .SetValue(highlight, true);
+            typeof(TutorialFocusHighlightUI)
+                .GetField(
+                    "operation",
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.NonPublic)
+                .SetValue(highlight, TutorialFocusOperation.Gear);
+
+            TMP_Text focusText = highlight.GetComponentInChildren<TMP_Text>(true);
+            focusText.gameObject.SetActive(true);
+            focusText.enabled = true;
+            focusText.text = "选择本回合档位，然后点击确认档位。";
+
+            highlight.DismissOperationCallout(TutorialFocusOperation.Gear);
+
+            Assert.That(focusText.text, Is.Empty);
+            Assert.That(focusText.gameObject.activeSelf, Is.False);
+            Assert.That(
+                highlight.GetComponentsInChildren<Image>(true)
+                    .Where(image => image.name.StartsWith("FocusBorder"))
+                    .All(image => !image.canvasRenderer.cull),
+                Is.True);
+        }
+        finally
+        {
+            Object.DestroyImmediate(canvasObject);
+        }
+    }
+
+    [Test]
+    public void FloatingCalloutCannotBeReactivatedByLaterTutorialSteps()
+    {
+        GameObject canvasObject = new GameObject(
+            "TutorialInteractionDismissCanvas",
+            typeof(Canvas));
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        GameObject instance = Object.Instantiate(prefab, canvasObject.transform, false);
+        try
+        {
+            TutorialFocusHighlightUI highlight =
+                instance.GetComponent<TutorialOverlayAuthoring>().FocusHighlight;
+            highlight.Bind(canvasObject.GetComponent<Canvas>(), null);
+            highlight.gameObject.SetActive(true);
+            typeof(TutorialFocusHighlightUI)
+                .GetField(
+                    "presentationRequested",
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.NonPublic)
+                .SetValue(highlight, true);
+            typeof(TutorialFocusHighlightUI)
+                .GetField(
+                    "focusIntroduction",
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.NonPublic)
+                .SetValue(highlight, "选择本回合档位，然后点击确认档位。");
+            typeof(TutorialFocusHighlightUI)
+                .GetMethod(
+                    "SetCalloutActive",
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.NonPublic)
+                .Invoke(highlight, new object[] { true });
+
+            TMP_Text focusText = highlight.GetComponentInChildren<TMP_Text>(true);
+            Assert.That(focusText.text, Is.Empty);
+            Assert.That(focusText.enabled, Is.False);
+            Assert.That(focusText.gameObject.activeSelf, Is.False,
+                "lesson text belongs only to the guide panel; the legacy floating label must stay disabled");
+            Assert.That(
+                focusText.transform.parent.gameObject.activeSelf,
+                Is.False,
+                "the floating callout background must never render above the play area");
+
+            highlight.DismissCurrentCallout();
+
+            Assert.That(focusText.text, Is.Empty);
+            Assert.That(focusText.enabled, Is.False);
+            Assert.That(focusText.gameObject.activeSelf, Is.False);
+            Assert.That(highlight.gameObject.activeSelf, Is.True,
+                "the highlighter must remain alive so the border can follow later operations");
+        }
+        finally
+        {
+            Object.DestroyImmediate(canvasObject);
+        }
+    }
+
+    [Test]
+    public void SpotlightBordersRecoverAfterAHiddenTutorialTransition()
+    {
+        GameObject canvasObject = new GameObject(
+            "TutorialHighlightTransitionCanvas",
+            typeof(Canvas));
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        GameObject instance = Object.Instantiate(prefab, canvasObject.transform, false);
+        try
+        {
+            TutorialFocusHighlightUI highlight =
+                instance.GetComponent<TutorialOverlayAuthoring>().FocusHighlight;
+            highlight.Bind(canvasObject.GetComponent<Canvas>(), null);
+            highlight.gameObject.SetActive(true);
+            var setVisuals = typeof(TutorialFocusHighlightUI).GetMethod(
+                "SetVisualsActive",
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic);
+
+            setVisuals.Invoke(highlight, new object[] { false });
+            setVisuals.Invoke(highlight, new object[] { true });
+
+            Image[] borders = highlight.GetComponentsInChildren<Image>(true)
+                .Where(image => image.name.StartsWith("FocusBorder"))
+                .ToArray();
+            Assert.That(borders.Length, Is.EqualTo(4));
+            Assert.That(borders.All(border => border.gameObject.activeSelf), Is.True);
+            Assert.That(borders.All(border => border.enabled), Is.True);
+            Assert.That(borders.All(border => !border.canvasRenderer.cull), Is.True,
+                "step transitions must explicitly restore renderers cleared by an earlier lesson");
+
+            TMP_Text focusText = highlight.GetComponentInChildren<TMP_Text>(true);
+            Assert.That(focusText.gameObject.activeSelf, Is.False,
+                "restoring borders must not restore the removed floating lesson text");
+        }
+        finally
+        {
+            Object.DestroyImmediate(canvasObject);
+        }
+    }
+
+    [Test]
+    public void TutorialOverlayReturnsAbovePanelsCreatedAfterIt()
+    {
+        GameObject canvasObject = new GameObject(
+            "TutorialOverlaySortingCanvas",
+            typeof(Canvas));
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        GameObject instance = Object.Instantiate(prefab, canvasObject.transform, false);
+        try
+        {
+            TutorialFocusHighlightUI highlight =
+                instance.GetComponent<TutorialOverlayAuthoring>().FocusHighlight;
+            highlight.Bind(canvasObject.GetComponent<Canvas>(), null);
+            GameObject lateOverlay = new GameObject(
+                "LateRaceEventOverlay",
+                typeof(RectTransform));
+            lateOverlay.transform.SetParent(canvasObject.transform, false);
+
+            Assert.That(instance.transform.GetSiblingIndex(),
+                Is.LessThan(lateOverlay.transform.GetSiblingIndex()));
+
+            typeof(TutorialFocusHighlightUI)
+                .GetMethod(
+                    "EnsureTutorialOverlayOnTop",
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.NonPublic)
+                .Invoke(highlight, null);
+
+            Assert.That(instance.transform.GetSiblingIndex(),
+                Is.EqualTo(canvasObject.transform.childCount - 1),
+                "late-created race overlays must not cover tutorial highlights");
+            Assert.That(highlight.transform.GetSiblingIndex(), Is.Zero,
+                "the guide panel must remain above the non-interactive spotlight");
+        }
+        finally
+        {
+            Object.DestroyImmediate(canvasObject);
+        }
     }
 
     [Test]
@@ -693,6 +1040,11 @@ public class TutorialScenarioTests
                 TutorialStepId.DeckHandDiscardAndRecycle),
             Is.True,
             "card-zone lesson must wait until cleanup and a visible hand refill complete");
+        Assert.That(
+            TutorialGuideTimingRules.StartsAtNextTurn(
+                TutorialStepId.Slipstream),
+            Is.True,
+            "the stationary teaching leader must be staged before its turn begins");
         Assert.That(
             TutorialGuideTimingRules.RequiresFullHandPresentation(
                 TutorialStepId.DeckHandDiscardAndRecycle),
@@ -1043,6 +1395,32 @@ public class TutorialScenarioTests
         Assert.That(playerChain.Triggered, Is.True);
         Assert.That(playerChain.TotalBonus, Is.EqualTo(2));
         Assert.That(leaderChain.Triggered, Is.False);
+    }
+
+    [Test]
+    public void TutorialSlipstreamLeaderStaysStillForTheAuthoredTurn()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
+        TutorialOpponentCue cue = scenario.opponentScript.Single(
+            item => item.step == TutorialStepId.Slipstream);
+        TutorialPlayerCheckpoint checkpoint = scenario.playerCheckpoints.Single(
+            item => item.step == TutorialStepId.Slipstream);
+
+        Assert.That(checkpoint.playerCell, Is.EqualTo(40));
+        Assert.That(checkpoint.gear, Is.EqualTo(1));
+        Assert.That(checkpoint.exactDrawOrder[0].value, Is.EqualTo(1));
+        Assert.That(
+            TutorialOpponentCueRules.ResolveLeaderMovement(cue, true, 4),
+            Is.Zero,
+            "the teaching leader must not animate forward and then snap back");
+        Assert.That(
+            TutorialOpponentCueRules.ResolveLeaderMovement(cue, false, 4),
+            Is.EqualTo(4),
+            "the player keeps normal card movement");
+        Assert.That(
+            TutorialOpponentCueRules.ResolveLeaderMovement(null, true, 4),
+            Is.EqualTo(4),
+            "normal races must not freeze AI movement");
     }
 
     [Test]

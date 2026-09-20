@@ -101,10 +101,11 @@ The verified scene flow is:
   no tech/driver/team-vehicle/reward/progression benefits, a 16-card exact player
   draw order and a deterministic teaching opponent. Its runtime Director maps real
   turn/card/heat/corner/slipstream/pit/trick events to 16 ordered steps, applies
-  scripted weather, and defers the 42/40 opponent checkpoint until normal end-of-turn
-  slipstream resolution. Completing or skipping the guide now rebuilds a fresh one-lap
+  scripted weather, and stages the 42/40 opponent checkpoint at a fresh turn boundary;
+  the teaching leader stays still for that one turn before normal slipstream resolution.
+  Completing or skipping the guide now rebuilds a fresh one-lap
   practice session with the exact deck, six heat, teaching opponent, start positions and
-  cloudy weather. Eight safe-boundary checkpoints now rebuild exact card/heat zones for the
+  cloudy weather. Nine safe-boundary checkpoints now rebuild exact card/heat zones for the
   risky guided mechanics. Because official Le Mans has no pit, a tutorial-only 132/4 rule view
   reuses normal pit rules without mutating official nodes. Each lesson now presents an explicit
   mechanism purpose, current scripted state, one next action, success signal and recovery hint in a

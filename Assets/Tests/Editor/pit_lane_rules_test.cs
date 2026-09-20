@@ -207,4 +207,25 @@ public class PitLaneRulesTests
         Assert.That(PitLaneRules.CanChinaSkipPit(TeamId.UK), Is.False);
         Assert.That(PitLaneRules.CanChinaSkipPit(TeamId.DE), Is.False);
     }
+
+    [Test]
+    public void pit_choice_prompt_explains_distance_and_delayed_stop()
+    {
+        string prompt = PitChoicePresentationRules.BuildPrompt(3);
+
+        Assert.That(prompt, Does.Contain("距入口 3 格"));
+        Assert.That(prompt, Does.Contain("下一回合"));
+        Assert.That(prompt, Does.Contain("冷却"));
+    }
+
+    [Test]
+    public void pit_skip_confirmation_is_unambiguous()
+    {
+        Assert.That(
+            PitChoicePresentationRules.GetConfirmationTitle(enter: false),
+            Is.EqualTo("确认本圈不进站"));
+        Assert.That(
+            PitChoicePresentationRules.GetConfirmationMessage(enter: false),
+            Does.Contain("不进入维修区"));
+    }
 }

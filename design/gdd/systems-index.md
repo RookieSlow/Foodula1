@@ -51,7 +51,7 @@
   effects and retired 42-node artwork are not missing-file requirements.
 - `production/session-state/active.md` remains missing and has not been created automatically.
 - The tutorial defines UK + Le Mans isolation, exact non-seeded card order, scripted weather/opponent
-  cues, eight checkpoints and 16 guided steps. Real operations latch completion; the guide panel now
+  cues, nine checkpoints and 16 guided steps. Real operations latch completion; the guide panel now
   advances explicitly with Previous/Next, and the live spotlight follows every player input gate.
   Guide completion/skip rebuilds a deterministic one-lap practice with restart, replay, exit and zero
   normal rewards. Tutorial/menu focused EditMode passed `64/64`; complete guided Play Mode acceptance remains open.
@@ -65,7 +65,7 @@
 - The settings overlay now opens a scrollable encyclopedia backed by a versioned 17-entry JSON catalog.
   Catalog validation and runtime trace checks for 12 trick cards, 12 drivers and five weather profiles pass `6/6`;
   the resulting full EditMode suite passes `499/499`.
-- Eight guided player-state checkpoints now rebuild exact card/heat zones at safe turn boundaries. Each of the
+- Nine guided player-state checkpoints now rebuild exact card/heat zones at safe turn boundaries. Each of the
   16 lessons now exposes goal/current state/action/success/recovery text plus previous-step success feedback.
   A tutorial-only 132/4 virtual pit view reuses normal pit rules because the official Le Mans JSON has no pit;
   official nodes remain unchanged. The author-refined copy and optional-section rendering historically brought that slice's full EditMode run to `516/516`.

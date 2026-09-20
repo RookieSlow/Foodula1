@@ -401,6 +401,7 @@ public class HUDUI : MonoBehaviour
     /// <summary>Public adapter used by procedural/fallback gear buttons.</summary>
     public void RequestGearSelection(int gear)
     {
+        gameManager?.DismissTutorialInteractionCallout();
         string gearName = $"档位 {gear}";
         if (gameManager != null && gameManager.Player != null)
             gearName = TeamGearRules.GetDisplayName(gameManager.Player.teamId, gear);
@@ -755,6 +756,7 @@ public class HUDUI : MonoBehaviour
 
     private void OnConfirmGearClicked()
     {
+        gameManager?.DismissTutorialInteractionCallout();
         RequestInRaceAction(
             InRaceConfirmationAction.GearCommit,
             "确认锁定档位",

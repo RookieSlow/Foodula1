@@ -62,6 +62,7 @@ public class MVPGameManager : MonoBehaviour
     private TutorialRuntimeDirector tutorialDirector;
     private TutorialGuideUI tutorialGuideUI;
     private TutorialOpponentCue pendingTutorialOpponentCue;
+    private TutorialOpponentCue activeTutorialOpponentCue;
     private TutorialPlayerCheckpoint pendingTutorialPlayerCheckpoint;
     private bool pendingTutorialGuideRefreshAtTurnStart;
     private int pendingTutorialGuideEarliestTurn;
@@ -95,6 +96,7 @@ public class MVPGameManager : MonoBehaviour
 
     // 维修区
     private GameObject pitChoicePanel;
+    private TMP_Text pitPromptText;
     private Button pitEnterButton;
     private Button pitSkipButton;
     private PlayerState pitWaitingPlayer;
@@ -117,6 +119,13 @@ public class MVPGameManager : MonoBehaviour
     public bool IsTutorialActionInputBlocked =>
         !pendingTutorialGuideRefreshAtTurnStart &&
         tutorialDirector != null && tutorialDirector.BlocksRaceInput;
+    public bool IsTutorialFocusInputBlocked =>
+        tutorialDirector != null &&
+        (pendingTutorialGuideRefreshAtTurnStart || tutorialDirector.BlocksRaceInput);
+    public void DismissTutorialInteractionCallout()
+    {
+        tutorialGuideUI?.DismissCurrentCallout();
+    }
     public GamePhase CurrentPhase => phaseState.Current;
     public bool IsPresentationSkipActive => presentationSkipState.IsActive;
     public bool IsPresentationSkipRequested => presentationSkipState.IsSkipRequested;
@@ -153,6 +162,13 @@ public class MVPGameManager : MonoBehaviour
 
     void Update()
     {
+        // Dismiss tutorial explanatory copy at the authoritative input boundary.
+        // This runs before uGUI click callbacks, so a click closes the current
+        // lesson's callout while a Next-button callback may still open the next
+        // lesson's fresh callout later in the same frame.
+        if (Input.GetMouseButtonDown(0))
+            DismissTutorialInteractionCallout();
+
         bool spacePressed = Input.GetKeyDown(KeyCode.Space);
 
         // Presentation skip has priority over phase actions so one press cannot
@@ -626,29 +642,53 @@ public class MVPGameManager : MonoBehaviour
         if (canvas == null)
             return;
 
-        pitChoicePanel = new GameObject("PitChoicePanel", typeof(RectTransform));
+        pitChoicePanel = new GameObject(
+            "PitChoicePanel",
+            typeof(RectTransform),
+            typeof(Image),
+            typeof(Outline));
         pitChoicePanel.transform.SetParent(canvas.transform, false);
         RectTransform panelRect = pitChoicePanel.GetComponent<RectTransform>();
-        panelRect.anchorMin = panelRect.anchorMax = new Vector2(0.5f, 0.5f);
-        panelRect.anchoredPosition = new Vector2(0f, 175f);
-        panelRect.sizeDelta = new Vector2(620f, 105f);
+        panelRect.anchorMin = panelRect.anchorMax = new Vector2(0.5f, 1f);
+        panelRect.pivot = new Vector2(0.5f, 1f);
+        panelRect.anchoredPosition = new Vector2(0f, -112f);
+        panelRect.sizeDelta = new Vector2(720f, 170f);
 
-        CreateTMPText(panelRect, "PitPrompt", "距维修区入口 10 格内：是否预定进站？", 18,
-            new Vector2(0f, 32f), new Vector2(580f, 28f),
-            FindObjectOfType<TMP_Text>()?.font);
+        Image background = pitChoicePanel.GetComponent<Image>();
+        background.color = new Color(0.035f, 0.055f, 0.09f, 0.97f);
+        background.raycastTarget = true;
+        Outline outline = pitChoicePanel.GetComponent<Outline>();
+        outline.effectColor = new Color(0.95f, 0.67f, 0.2f, 0.9f);
+        outline.effectDistance = new Vector2(2f, -2f);
 
-        pitEnterButton = CreateActionButton(panelRect, "PitEnterButton", "预定进站（过入口后停1回合）",
-            new Vector2(-160f, -15f), new Color(0.45f, 0.85f, 0.55f),
+        TMP_FontAsset font = FindObjectOfType<TMP_Text>()?.font;
+        TMP_Text header = CreateTMPText(panelRect, "PitChoiceTitle", "维修区策略", 22,
+            new Vector2(0f, 56f), new Vector2(660f, 30f), font);
+        header.alignment = TextAlignmentOptions.Center;
+        header.fontStyle = FontStyles.Bold;
+        header.color = new Color(1f, 0.78f, 0.32f);
+
+        pitPromptText = CreateTMPText(panelRect, "PitPrompt",
+            PitChoicePresentationRules.BuildPrompt(PitLaneRules.DEFAULT_APPROACH_WINDOW), 17,
+            new Vector2(0f, 18f), new Vector2(660f, 42f), font);
+        pitPromptText.alignment = TextAlignmentOptions.Center;
+        pitPromptText.color = new Color(0.84f, 0.9f, 0.97f);
+
+        pitEnterButton = CreateActionButton(panelRect, "PitEnterButton", "预定进站",
+            new Vector2(-145f, -45f), new Color(0.18f, 0.62f, 0.38f),
             () => RequestPitDecision(true));
-        pitSkipButton = CreateActionButton(panelRect, "PitSkipButton", "继续比赛",
-            new Vector2(160f, -15f), new Color(0.8f, 0.8f, 0.8f),
+        pitEnterButton.GetComponent<RectTransform>().sizeDelta = new Vector2(230f, 48f);
+        pitSkipButton = CreateActionButton(panelRect, "PitSkipButton", "本圈不进站",
+            new Vector2(145f, -45f), new Color(0.25f, 0.34f, 0.46f),
             () => RequestPitDecision(false));
+        pitSkipButton.GetComponent<RectTransform>().sizeDelta = new Vector2(230f, 48f);
 
         pitChoicePanel.SetActive(false);
     }
 
     private void RequestLaneChange(int direction)
     {
+        DismissTutorialInteractionCallout();
         if (hudUI == null)
         {
             ChooseIndianapolisLaneChange(direction);
@@ -665,6 +705,7 @@ public class MVPGameManager : MonoBehaviour
 
     private void RequestPitDecision(bool enter)
     {
+        DismissTutorialInteractionCallout();
         if (hudUI == null)
         {
             ChoosePit(enter);
@@ -673,10 +714,8 @@ public class MVPGameManager : MonoBehaviour
 
         hudUI.RequestInRaceAction(
             InRaceConfirmationAction.PitDecision,
-            enter ? "确认预定进站" : "确认继续比赛",
-            enter
-                ? "车辆将在通过维修区入口后的下一回合停站并获得维修区出口推进。"
-                : "确定放弃本圈进站并继续比赛吗？",
+            PitChoicePresentationRules.GetConfirmationTitle(enter),
+            PitChoicePresentationRules.GetConfirmationMessage(enter),
             () => ChoosePit(enter));
     }
 
@@ -751,6 +790,7 @@ public class MVPGameManager : MonoBehaviour
             : null;
         initializeTutorialInPractice = false;
         pendingTutorialOpponentCue = null;
+        activeTutorialOpponentCue = null;
         pendingTutorialPlayerCheckpoint = null;
         pendingTutorialGuideRefreshAtTurnStart = false;
         pendingTutorialGuideEarliestTurn = 0;
@@ -1178,6 +1218,7 @@ public class MVPGameManager : MonoBehaviour
             return;
 
         pendingTutorialOpponentCue = null;
+        activeTutorialOpponentCue = cue;
         Player.position = Mathf.Clamp(cue.playerCell, 0, trackManager.TotalNodes - 1);
         AI.position = Mathf.Clamp(cue.leaderCell, 0, trackManager.TotalNodes - 1);
         Player.lap = AI.lap;
@@ -1592,6 +1633,7 @@ public class MVPGameManager : MonoBehaviour
             // Step transitions often occur during movement/reaction resolution.
             // Apply the authored recovery state only at the next turn boundary.
             ApplyPendingTutorialPlayerCheckpoint(force: true);
+            ApplyPendingTutorialOpponentCue();
             raceTurnNumber++;
             raceLogWriter?.Append($"[TURN_START] turn={raceTurnNumber} weather={WeatherLabel}");
             LogPlayerSnapshots();
@@ -1845,7 +1887,6 @@ public class MVPGameManager : MonoBehaviour
             // ====== PHASE C：回合结束时按实际落位结算尾流 ======
             // 尾流不能在回合开始或基础移动前触发；此处所有车辆都已完成
             // 移动、反应和弯道判定，规则层读取的是本回合结束时的实际位置。
-            ApplyPendingTutorialOpponentCue();
             ResolveSlipstreamsAtTurnEnd(turnOrder, turnSkipped);
             if (Player != null &&
                 slipstreamsThisTurn.TryGetValue(Player, out SlipstreamChainResult tutorialSlipstream) &&
@@ -1857,6 +1898,7 @@ public class MVPGameManager : MonoBehaviour
             }
             yield return StartCoroutine(PlaySlipstreamPhase(turnOrder, turnSkipped));
             yield return StartCoroutine(ApplySlipstreamMovement(turnOrder, turnSkipped));
+            activeTutorialOpponentCue = null;
             presentationSkipState.End();
             yield return WaitForTutorialNavigation();
 
@@ -2467,6 +2509,12 @@ public class MVPGameManager : MonoBehaviour
             // 反应和弯道判定后，依据实际落位在回合末结算。
             p.totalMovementThisTurn = p.cornerTotalThisTurn + bonus;
             p.totalMovementThisTurn = Mathf.Max(0, p.totalMovementThisTurn);
+            p.totalMovementThisTurn = TutorialOpponentCueRules.ResolveLeaderMovement(
+                activeTutorialOpponentCue,
+                p == AI,
+                p.totalMovementThisTurn);
+            if (activeTutorialOpponentCue != null && p == AI)
+                p.cornerTotalThisTurn = 0;
             raceLogWriter?.Append(
                 $"[MOVE_PLAN] {p.name} role={(p.isAI ? "AI" : "PLAYER")} position={p.position} " +
                 $"corner_speed={p.cornerTotalThisTurn} non_slipstream_bonus={bonus} " +
@@ -2874,6 +2922,9 @@ public class MVPGameManager : MonoBehaviour
         }
 
         inputState.BeginPitChoice();
+        if (pitPromptText != null)
+            pitPromptText.text = PitChoicePresentationRules.BuildPrompt(distance);
+        pitChoicePanel.transform.SetAsLastSibling();
         pitChoicePanel.SetActive(true);
         if (hudUI != null)
             hudUI.SetStatus(
@@ -3831,6 +3882,7 @@ public class MVPGameManager : MonoBehaviour
         }
         // 高亮选中的档位按钮
         hudUI?.SelectGearPresentation(gear);
+        tutorialGuideUI?.DismissOperationCallout(TutorialFocusOperation.Gear);
         if (hudUI != null)
             hudUI.SetStatus($"已选 {TeamGearRules.GetDisplayName(Player.teamId, gear)} 档 - 点击确认锁定");
     }
@@ -4168,5 +4220,27 @@ public class MVPGameManager : MonoBehaviour
         InitializeGame();
         InitializeTutorialGuideUI();
         StartCoroutine(GameLoop());
+    }
+}
+
+/// <summary>Pure presentation copy for the pit decision UI.</summary>
+public static class PitChoicePresentationRules
+{
+    public static string BuildPrompt(int distance)
+    {
+        int safeDistance = distance < 0 ? 0 : distance;
+        return $"距入口 {safeDistance} 格 · 预定后将在越过入口的下一回合停站、冷却并从出口前移";
+    }
+
+    public static string GetConfirmationTitle(bool enter)
+    {
+        return enter ? "确认预定进站" : "确认本圈不进站";
+    }
+
+    public static string GetConfirmationMessage(bool enter)
+    {
+        return enter
+            ? "车辆将在通过维修区入口后的下一回合停站、冷却，并获得维修区出口推进。"
+            : "本圈将不进入维修区，赛车会按正常流程继续结算。确定吗？";
     }
 }

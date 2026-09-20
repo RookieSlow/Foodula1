@@ -356,10 +356,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetPadding: 10
   borderThickness: 4
-  calloutOffset: {x: 0, y: 0}
-  calloutWidth: 360
-  calloutHeight: 58
-  outsideDimAlpha: 0.38
+  outsideDimAlpha: 0.24
   rootRect: {fileID: 4308079711171667261}
   dimmers:
   - {fileID: 5454788809302947698}
@@ -1553,7 +1550,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &531693779935001875
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2056,8 +2053,8 @@ MonoBehaviour:
     sectionLabel: "\u8D5B\u9053\u4E92\u52A8"
     title: "\u5B66\u4F1A\u501F\u524D\u8F66\u7684\u98CE"
     goal: "\u5C3E\u6D41\u4F1A\u5728\u6240\u6709\u8D5B\u8F66\u5B8C\u6210\u57FA\u7840\u79FB\u52A8\u540E\u5224\u5B9A\uFF0C\u800C\u4E14\u53EA\u5E2E\u52A9\u8DDD\u79BB\u5408\u9002\u7684\u540E\u8F66\u3002\u8DDF\u4F4F\u524D\u8F66\uFF0C\u5F80\u5F80\u80FD\u591A\u4E89\u53D6\u4E00\u70B9\u8DDD\u79BB\u3002"
-    currentState: "\u8BAD\u7EC3\u9886\u822A\u8F66\u4F1A\u5728\u7ED3\u7B97\u524D\u505C\u5230\u4F60\u524D\u65B9
-      2 \u683C\uFF0C\u7ED9\u4F60\u4E00\u4E2A\u7A33\u5B9A\u7684\u7EC3\u4E60\u673A\u4F1A\u3002"
+    currentState: "\u65B0\u56DE\u5408\u5F00\u59CB\u65F6\uFF0C\u8BAD\u7EC3\u9886\u822A\u8F66\u5DF2\u7ECF\u505C\u5728\u4F60\u524D\u65B9
+      2 \u683C\uFF0C\u5E76\u4F1A\u4FDD\u6301\u4F4D\u7F6E\u4F9B\u4F60\u7EC3\u4E60\u3002"
     actionPrompt: "\u8DD1\u4E00\u4E2A\u666E\u901A G1 \u56DE\u5408\uFF1A\u9009\u62E9
       1 \u5F20\u901F\u5EA6\u724C\u786E\u8BA4\uFF0C\u7136\u540E\u89C2\u5BDF\u9AD8\u5149\u91CC\u7684\u4E24\u8F86\u8D5B\u8F66\u3002"
     successSignal: "\u56DE\u5408\u672B\u53EA\u6709\u540E\u65B9\u7684 UK \u83B7\u5F97\u989D\u5916\u79FB\u52A8\uFF0C\u524D\u65B9
@@ -2689,7 +2686,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6480146687741978649
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2724,7 +2721,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8309698815562329069}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
