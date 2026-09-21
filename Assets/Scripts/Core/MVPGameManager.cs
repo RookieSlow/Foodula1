@@ -802,7 +802,8 @@ public class MVPGameManager : MonoBehaviour
         session = tutorialScenario != null
             ? new RaceSession(new SystemRandomSource(TutorialScenarioDefinition.RuntimeSeed))
             : new RaceSession();
-        session.TeamVehicleBonusesEnabled = tutorialScenario == null;
+        session.TeamVehicleBonusesEnabled = tutorialScenario == null ||
+            tutorialScenario.teamVehicleBonusesEnabled;
         if (tutorialScenario != null && tutorialScenario.opponentScript.Count > 0)
             session.SlipstreamRangeOverride = tutorialScenario.opponentScript[0].expectedSlipstreamDistance;
         aiControllers.Clear();
@@ -880,7 +881,7 @@ public class MVPGameManager : MonoBehaviour
         if (hudUI != null)
         {
             hudUI.AppendLog(tutorialScenario != null
-                ? $"教程车辆: UK / {humanDriver.DisplayName}（车手增益关闭）"
+                ? $"教程车辆: {tutorialScenario.playerTeam} / {humanDriver.DisplayName}（车手增益关闭）"
                 : careerRaceLaunch != null
                     ? $"生涯第 {careerRaceLaunch.RaceIndex + 1}/8 站：锁定 {careerRaceLaunch.PlayerTeam} 车队"
                     : $"车手: {humanDriver.DisplayName}（{humanDriver.Style}，XP {humanDriver.TalentMultiplier:0.0}x）");
@@ -1009,10 +1010,29 @@ public class MVPGameManager : MonoBehaviour
         return true;
     }
 
-    private void PresentNextTutorialLesson()
+    private void PresentNextTutorialLesson(TutorialStepDefinition completedStep)
     {
         ApplyTutorialPendingCue();
         TutorialStepDefinition nextStep = tutorialDirector.CurrentStep;
+        if (nextStep != null && pendingTutorialPlayerCheckpoint != null &&
+            completedStep != null &&
+            (completedStep.requiredAction == TutorialAction.PlayChinaHotpot ||
+             completedStep.requiredAction == TutorialAction.PlayChinaIceJelly ||
+             completedStep.requiredAction == TutorialAction.PlayUsFries ||
+             completedStep.requiredAction == TutorialAction.PlayUsCola ||
+             completedStep.requiredAction == TutorialAction.PlayUkScone ||
+             completedStep.requiredAction == TutorialAction.PlayUkEnglishBreakfastTea) &&
+            inputState.WaitingForCards)
+        {
+            // The next lesson rebuilds every card/heat zone at a safe turn boundary.
+            // Finish the demonstration card phase without an artificial missing-card
+            // penalty; otherwise a completed trick can strand the guide behind its
+            // own pending-presentation input gate.
+            cardHandUI?.ClearPendingPlaySelection();
+            inputState.EndCardSelection();
+            cardHandUI?.HideAll();
+            raceLogWriter?.Append("[TUTORIAL_GUIDE] card_phase=closed_for_next_checkpoint");
+        }
         if (nextStep != null &&
             (TutorialGuideTimingRules.StartsAtNextTurn(nextStep.id) ||
              pendingTutorialPlayerCheckpoint != null))
@@ -1246,7 +1266,7 @@ public class MVPGameManager : MonoBehaviour
         if (previous == tutorialDirector.ActiveStep)
             tutorialGuideUI?.Refresh();
         else
-            PresentNextTutorialLesson();
+            PresentNextTutorialLesson(previous);
     }
 
     /// <summary>Reviews earlier text without restoring cards, cars, weather or checkpoints.</summary>
@@ -1868,6 +1888,7 @@ public class MVPGameManager : MonoBehaviour
                 // 移动 → 反应(冷却) → 弯道判定
                 yield return StartCoroutine(AnimateMovement(p, GetCarIndex(p)));
                 ReactStep(p);
+                int engineBeforeCorners = p.deck.heatPool.remaining;
                 bool completedCorner = ResolveCorners(p, oldPos, rawEnd);
                 session.ArmItalyCornerExitBonus(p, completedCorner);
 
@@ -1876,6 +1897,16 @@ public class MVPGameManager : MonoBehaviour
                     TryAdvanceTutorialIfExpected(
                         TutorialAction.ResolveSpeedMovement,
                         $"from:{oldPos},to:{p.position},movement:{p.totalMovementThisTurn}");
+                    if (p.teamId == TeamId.US)
+                    {
+                        if (p.totalMovementThisTurn > p.cornerTotalThisTurn &&
+                            !completedCorner)
+                            TryAdvanceTutorialIfExpected(TutorialAction.ResolveUsStraight,
+                                $"base:{p.cornerTotalThisTurn},movement:{p.totalMovementThisTurn}");
+                        if (completedCorner && p.deck.heatPool.remaining < engineBeforeCorners)
+                            TryAdvanceTutorialIfExpected(TutorialAction.ResolveUsCorner,
+                                $"corner_speed:{p.cornerTotalThisTurn},heat_paid:{engineBeforeCorners - p.deck.heatPool.remaining}");
+                    }
                 }
 
                 ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
@@ -1895,6 +1926,9 @@ public class MVPGameManager : MonoBehaviour
                 TryAdvanceTutorialIfExpected(
                     TutorialAction.ResolveSlipstream,
                     $"leader:{tutorialSlipstream.Steps[0].Leader.position},bonus:{tutorialSlipstream.TotalBonus}");
+                if (Player.teamId == TeamId.US)
+                    TryAdvanceTutorialIfExpected(TutorialAction.ResolveUsSlipstream,
+                        $"bonus:{tutorialSlipstream.TotalBonus}");
             }
             yield return StartCoroutine(PlaySlipstreamPhase(turnOrder, turnSkipped));
             yield return StartCoroutine(ApplySlipstreamMovement(turnOrder, turnSkipped));
@@ -2218,6 +2252,9 @@ public class MVPGameManager : MonoBehaviour
             TryAdvanceTutorialIfExpected(
                 TutorialAction.CoolHeatCard,
                 $"cooled:{cooled},requested:{amount}");
+            if (p.teamId == TeamId.CN && p.gear == ChinaGearShiftRules.RecoverGear)
+                TryAdvanceTutorialIfExpected(TutorialAction.CompleteChinaRecover,
+                    $"cooled:{cooled},consecutive:{p.chinaConsecutiveGearCount}");
         }
         return cooled;
     }
@@ -2572,6 +2609,21 @@ public class MVPGameManager : MonoBehaviour
             if (RaceTurnRules.IsInactive(follower, turnSkipped))
             {
                 slipstreamsThisTurn[follower] = default;
+                continue;
+            }
+
+            // A scripted tutorial cue demonstrates one specific relationship:
+            // the human player follows the stationary teaching leader. Do not
+            // let the AI win the same-cell tie-break after an incorrect card
+            // selection; that would teach the reverse rule in the tutorial.
+            if (!TutorialOpponentCueRules.ShouldResolveSlipstreamForFollower(
+                    activeTutorialOpponentCue,
+                    follower == Player))
+            {
+                slipstreamsThisTurn[follower] = default;
+                raceLogWriter?.Append(
+                    $"[TUTORIAL_CUE] type=opponent step={activeTutorialOpponentCue.step} " +
+                    $"follower={follower.name} tailwind=blocked reason=player_only");
                 continue;
             }
 
@@ -3149,6 +3201,12 @@ public class MVPGameManager : MonoBehaviour
                     TutorialAction.PlayUkEnglishBreakfastTea,
                     $"trick:{card.trickId}");
             }
+            else if (card.trickId == "cn-ice-jelly")
+                TryAdvanceTutorialIfExpected(TutorialAction.PlayChinaIceJelly, card.trickId);
+            else if (card.trickId == "us-fries")
+                TryAdvanceTutorialIfExpected(TutorialAction.PlayUsFries, card.trickId);
+            else if (card.trickId == "us-cola")
+                TryAdvanceTutorialIfExpected(TutorialAction.PlayUsCola, card.trickId);
         }
 
         // CN L2 连击追踪：特技
@@ -4085,6 +4143,9 @@ public class MVPGameManager : MonoBehaviour
         if (player == null || cards == null || cards.Count == 0)
             return false;
 
+        if (!ValidateTutorialSpecialtySpeedSelection(player, cards))
+            return false;
+
         bool hotpotWasArmed = TrickCardRules.HasHotpotAttack(player.trickState);
         int maxCards = GetMaxSpeedCardsThisTurn(player);
         SpeedCardCommitResult commit = CardPlayRules.CommitSpeedCards(player, cards, maxCards);
@@ -4104,6 +4165,9 @@ public class MVPGameManager : MonoBehaviour
 
         if (player.techState != null)
             TechTreeRules.TrackDimSumCombo(player.techState, false, true, false);
+        if (hotpotWasArmed && player.hotpotAttackAppliedThisTurn)
+            TryAdvanceTutorialIfExpected(TutorialAction.PlayChinaHotpot,
+                $"attack_card:{player.hotpotAttackCardValueThisTurn},played:{cards.Count}");
 
         if (hudUI != null)
         {
@@ -4128,6 +4192,9 @@ public class MVPGameManager : MonoBehaviour
     /// <summary>Ends human card play and applies the existing missing-card engine-failure rule.</summary>
     private void FinishPlayerCardPhase(PlayerState player)
     {
+        if (!ValidateTutorialSpecialtySpeedCompletion(player))
+            return;
+
         int speedCount = player.playedSpeedCardsThisTurn.Count;
 
         // 引擎故障：速度牌不足时，每缺 1 张 → +1 热量入手牌。引擎不足 → 失控
@@ -4159,6 +4226,15 @@ public class MVPGameManager : MonoBehaviour
             TryAdvanceTutorialIfExpected(
                 TutorialAction.SelectRequiredGearAndCards,
                 $"gear:{player.gear},required:{required},played:{speedCount}");
+            if (player.teamId == TeamId.CN &&
+                player.gear == ChinaGearShiftRules.GoGear)
+            {
+                TutorialAction goAction = player.chinaConsecutiveGearCount == 1
+                    ? TutorialAction.CompleteChinaFirstGo
+                    : TutorialAction.CompleteChinaConsecutiveGo;
+                TryAdvanceTutorialIfExpected(goAction,
+                    $"consecutive:{player.chinaConsecutiveGearCount},required:{required},played:{speedCount}");
+            }
         }
 
         if (hudUI != null)
@@ -4166,6 +4242,48 @@ public class MVPGameManager : MonoBehaviour
         cardHandUI.ClearPendingPlaySelection();
         inputState.EndCardSelection();
         cardHandUI.HideAll();
+    }
+
+    private bool ValidateTutorialSpecialtySpeedSelection(
+        PlayerState player,
+        IReadOnlyList<CardData> selected)
+    {
+        if (tutorialScenario == null || tutorialScenario.id != "tutorial_team_us_v1" ||
+            tutorialDirector == null || tutorialDirector.CurrentStep == null)
+            return true;
+
+        TutorialStepId step = tutorialDirector.CurrentStep.id;
+        if (TutorialSpecialtyCardRules.ValidateUsSpeedSelection(
+                step,
+                player != null ? player.playedSpeedCardsThisTurn : null,
+                selected,
+                out string reason))
+            return true;
+
+        cardHandUI?.ClearPendingPlaySelection();
+        hudUI?.SetStatus($"<color=orange>教程提示：{reason}</color>");
+        raceLogWriter?.Append(
+            $"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={reason}");
+        return false;
+    }
+
+    private bool ValidateTutorialSpecialtySpeedCompletion(PlayerState player)
+    {
+        if (tutorialScenario == null || tutorialScenario.id != "tutorial_team_us_v1" ||
+            tutorialDirector == null || tutorialDirector.CurrentStep == null)
+            return true;
+
+        TutorialStepId step = tutorialDirector.CurrentStep.id;
+        if (TutorialSpecialtyCardRules.ValidateUsSpeedPhaseCompletion(
+                step,
+                player != null ? player.playedSpeedCardsThisTurn : null,
+                out string reason))
+            return true;
+
+        hudUI?.SetStatus($"<color=orange>教程提示：{reason}</color>");
+        raceLogWriter?.Append(
+            $"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={reason}");
+        return false;
     }
 
     private void RefreshHumanHand(PlayerState player)

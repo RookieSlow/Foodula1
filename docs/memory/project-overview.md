@@ -41,6 +41,9 @@ the CCGS project framework.
   non-seeded deck order, pure guided-state machine, runtime Director, runtime-built
   guide panel and session-only launch state. Race events complete the active lesson;
   explicit guide-panel navigation advances or reviews authored steps.
+  The tutorial center also launches CN/Shanghai and US/Indianapolis specialty
+  scenarios with exact decks, team-specific checkpoints and a one-lap practice;
+  the other four specialty entries remain non-playable course previews.
 - `Settings/` contains versioned player settings, an injectable PlayerPrefs adapter and
   runtime display/presentation application; `UI/GameSettingsUI.cs` builds the menu overlay,
   including schema-v2 per-action in-race confirmation preferences.

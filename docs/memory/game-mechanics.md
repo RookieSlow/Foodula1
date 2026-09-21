@@ -109,12 +109,13 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   top-first sequence. That path never shuffles or consumes a random seed, and
   recycles playable discards in discard chronology. Normal races still use
   the randomized `InitializeDeck` path.
-- `TutorialLaunchState` is session-only: it resolves Le Mans for a requested tutorial
+- `TutorialLaunchState` is session-only: it resolves the authored track for a requested tutorial
   without changing `TrackSelectionState`. Returning to the main menu or starting a
   normal Quick Race clears the tutorial override.
-- The tutorial runtime fixes the player to UK with six engine heat, exact opening/future
+- The foundation tutorial fixes the player to UK with six engine heat, exact opening/future
   draws, no tech state and no intrinsic team-vehicle handling/cooling/pace/slipstream
-  bonuses. UK special cards remain because they are explicit teaching content.
+  bonuses. CN and US specialty tutorials instead use their own base durability (7/8)
+  and intrinsic team vehicle bonuses, still with fixed draws and no tech or driver skills.
 - Each guided step owns a semantic focus target and a short standalone mechanism introduction.
 - Tutorial copy always presents the next action. Current-state, success and recovery sections are optional;
   blank optional fields render no label, spacer or generic previous-step feedback.
@@ -234,6 +235,13 @@ The earlier "Cold Storage below zero" description belongs to the original
 prototype and is no longer the authoritative model.
 
 ## Tutorial Mode Foundation
+
+- The new-player tutorial center offers the playable UK foundation course plus
+  CN/Shanghai and US/Indianapolis specialty courses. The other four teams remain
+  non-playable previews. CN demonstrates first/consecutive Go, Recover, Hotpot and
+  Ice Jelly; US demonstrates straight bonus, corner heat, tailwind, Fries and Cola.
+  Both specialty courses use team-aware safe checkpoints, real event gates and a
+  reset one-lap practice, without RP/XP/progression writes.
 
 - `tutorial_le_mans_uk_v1` fixes the player to UK on
   `le_mans_old_mulsanne`, with tech-tree modifiers, driver skills, normal

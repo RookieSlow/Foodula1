@@ -133,6 +133,47 @@ public class RaceUILayoutTests
         }
     }
 
+    [Test]
+    public void race_hud_uses_readable_runtime_font_sizes()
+    {
+        GameObject root = new GameObject(
+            "ReadableRaceHudTest",
+            typeof(RectTransform),
+            typeof(HUDUI),
+            typeof(CardHandUI),
+            typeof(RaceUILayoutController));
+        try
+        {
+            HUDUI hud = root.GetComponent<HUDUI>();
+            hud.logText = CreateText(root.transform, "LogText");
+            hud.statusText = CreateText(root.transform, "StatusText");
+            hud.gearText = CreateText(root.transform, "GearText");
+
+            CardHandUI cardHand = root.GetComponent<CardHandUI>();
+            cardHand.deckInfoText = CreateText(root.transform, "DeckInfoText");
+
+            root.GetComponent<RaceUILayoutController>().ApplyLayout(hud, cardHand);
+
+            Assert.That(hud.logText.fontSize, Is.EqualTo(12f));
+            Assert.That(hud.statusText.fontSize, Is.EqualTo(14f));
+            Assert.That(hud.gearText.fontSize, Is.EqualTo(18f));
+            Assert.That(cardHand.deckInfoText.fontSize, Is.EqualTo(14f));
+            Assert.That(cardHand.selectedCardEffectText, Is.Not.Null);
+            Assert.That(cardHand.selectedCardEffectText.fontSize, Is.EqualTo(15f));
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+    }
+
+    private static TMP_Text CreateText(Transform parent, string name)
+    {
+        GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
+        textObject.transform.SetParent(parent, false);
+        return textObject.GetComponent<TMP_Text>();
+    }
+
     private static RectTransform CreatePanel(
         Transform parent,
         string name,

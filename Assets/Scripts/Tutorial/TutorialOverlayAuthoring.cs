@@ -81,8 +81,9 @@ public static class TutorialOverlayValidation
             ValidateText(step.id, "高光说明", step.focusIntroduction, issues);
         }
 
-        foreach (TutorialStepId id in Enum.GetValues(typeof(TutorialStepId)))
+        foreach (TutorialStepDefinition foundationStep in TutorialScenarioDefinition.CreateLeMansUk().steps)
         {
+            TutorialStepId id = foundationStep.id;
             if (!seen.Contains(id))
                 issues.Add($"缺少步骤 ID：{id}。");
         }

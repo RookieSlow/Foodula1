@@ -259,7 +259,7 @@ public class TutorialScenarioTests
         TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
         TutorialStepId[] ids = scenario.steps.Select(step => step.id).ToArray();
 
-        Assert.That(ids, Is.EqualTo((TutorialStepId[])System.Enum.GetValues(typeof(TutorialStepId))));
+        Assert.That(ids, Is.EqualTo(((TutorialStepId[])System.Enum.GetValues(typeof(TutorialStepId))).Take(16)));
         Assert.That(ids.Distinct().Count(), Is.EqualTo(ids.Length));
         Assert.That(scenario.weatherScript.Any(cue => cue.step == TutorialStepId.Weather), Is.True);
         Assert.That(scenario.opponentScript.Any(cue => cue.step == TutorialStepId.Slipstream), Is.True);
@@ -341,7 +341,7 @@ public class TutorialScenarioTests
     {
         TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
         TutorialFocusTarget[] requiredTargets =
-            (TutorialFocusTarget[])System.Enum.GetValues(typeof(TutorialFocusTarget));
+            ((TutorialFocusTarget[])System.Enum.GetValues(typeof(TutorialFocusTarget))).Take(13).ToArray();
 
         Assert.That(scenario.steps.Select(step => step.focusTarget).Distinct(),
             Is.EquivalentTo(requiredTargets));
@@ -472,6 +472,46 @@ public class TutorialScenarioTests
             Assert.That(instruction.text, Does.Not.Contain("第三步旧指引正文"));
             Assert.That(progress.text, Is.Empty);
             Assert.That(progress.gameObject.activeSelf, Is.False);
+        }
+        finally
+        {
+            Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void TutorialGuideReactivatesTextComponentsAfterSuspendedPresentation()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        GameObject instance = Object.Instantiate(prefab);
+        try
+        {
+            TutorialOverlayAuthoring authoring = instance.GetComponent<TutorialOverlayAuthoring>();
+            TutorialGuideUI guide = authoring.Guide;
+            Transform panel = instance.transform.Find("TutorialGuidePanel");
+            TMP_Text title = panel.Find("TutorialTitle").GetComponent<TMP_Text>();
+            TMP_Text completion = panel.Find("TutorialCompletion").GetComponent<TMP_Text>();
+            TMP_Text instruction = panel.Find("TutorialInstruction").GetComponent<TMP_Text>();
+            TMP_Text progress = panel.Find("TutorialProgress").GetComponent<TMP_Text>();
+
+            guide.SuspendPresentation();
+
+            Assert.That(progress.enabled, Is.False,
+                "suspending a step should hide its transient progress text");
+            Assert.That(progress.canvasRenderer.cull, Is.True);
+
+            Assert.That(authoring.PreviewStep(TutorialStepId.UkScone), Is.True);
+            Assert.That(title.enabled, Is.True);
+            Assert.That(instruction.enabled, Is.True);
+            Assert.That(progress.enabled, Is.True,
+                "a later step must re-enable text disabled by the previous transition");
+            Assert.That(progress.canvasRenderer.cull, Is.False);
+
+            Assert.That(authoring.PreviewPractice(completed: true), Is.True);
+            Assert.That(completion.enabled, Is.True,
+                "optional completion text must be able to reappear after being cleared");
+            Assert.That(completion.gameObject.activeSelf, Is.True);
+            Assert.That(completion.canvasRenderer.cull, Is.False);
         }
         finally
         {

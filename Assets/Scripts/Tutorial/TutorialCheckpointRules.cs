@@ -44,7 +44,7 @@ public static class TutorialCheckpointRules
 
         player.position = checkpoint.playerCell;
         player.gear = checkpoint.gear;
-        player.chinaConsecutiveGearCount = 0;
+        player.chinaConsecutiveGearCount = checkpoint.chinaConsecutiveGearCount;
         player.hasFinished = false;
         player.isBlown = false;
         player.finishOrder = 0;
@@ -54,6 +54,7 @@ public static class TutorialCheckpointRules
         player.pitStopScheduled = false;
         player.pitChoiceResolvedThisLap = false;
         player.trickState.ResetPerRace();
+        player.trickState.crossedLandmarkLastTurn = checkpoint.crossedLandmarkLastTurn;
         player.ClearTurnState();
 
         return new TutorialCheckpointApplyResult

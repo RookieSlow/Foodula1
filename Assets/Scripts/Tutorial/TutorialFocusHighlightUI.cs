@@ -311,7 +311,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
                 focusIntroduction = "选择本回合档位，然后点击确认档位。"; break;
             case TutorialFocusOperation.SelectCards:
                 focusTarget = TutorialFocusTarget.Hand;
-                focusIntroduction = "点击手牌选择速度牌或一张特技牌，再确认出牌。"; break;
+                focusIntroduction = ResolveSpecialtyCardIntroduction(); break;
             case TutorialFocusOperation.ConfirmPlay:
                 focusTarget = TutorialFocusTarget.ActionButton;
                 focusIntroduction = "已选好牌，点击确认出牌；也可以先调整选择。"; break;
@@ -329,6 +329,25 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
                 focusIntroduction = "选择预定进站或继续比赛。"; break;
             case TutorialFocusOperation.Lane:
                 focusIntroduction = "选择本次通过终点后的车道。"; break;
+        }
+    }
+
+    private string ResolveSpecialtyCardIntroduction()
+    {
+        TutorialStepId? step = manager?.TutorialDirector?.CurrentStep?.id;
+        if (manager?.TutorialScenario?.id != "tutorial_team_us_v1" || !step.HasValue)
+            return "点击手牌选择速度牌或一张特技牌，再确认出牌。";
+
+        switch (step.Value)
+        {
+            case TutorialStepId.UsStraight:
+                return "只点击 1 张标有“1”的速度牌（不要点 2/3），再点击确认出牌。";
+            case TutorialStepId.UsCorner:
+                return "同时点击标有“3”和“2”的两张速度牌，再点击确认出牌；不要点“1”。";
+            case TutorialStepId.UsSlipstream:
+                return "只点击 1 张标有“1”的速度牌，再点击确认出牌；尾流会在移动结束后结算。";
+            default:
+                return "点击手牌选择速度牌或一张特技牌，再确认出牌。";
         }
     }
 
@@ -394,6 +413,24 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
 
         RectTransform target = operation == TutorialFocusOperation.Lane
             ? ResolveNamedTarget("IndianapolisLaneChangePanel") : ResolveTarget(focusTarget);
+        RectTransform secondaryTarget = null;
+        if (operation == TutorialFocusOperation.SelectCards &&
+            manager?.TutorialScenario?.id == "tutorial_team_us_v1")
+        {
+            TutorialStepId? step = manager.TutorialDirector?.CurrentStep?.id;
+            if (step == TutorialStepId.UsStraight || step == TutorialStepId.UsSlipstream)
+            {
+                target = ResolveSpeedCard(1) ?? target;
+            }
+            else if (step == TutorialStepId.UsCorner)
+            {
+                RectTransform speedThree = ResolveSpeedCard(3);
+                secondaryTarget = ResolveSpeedCard(2);
+                target = speedThree ?? secondaryTarget ?? target;
+                if (speedThree == null)
+                    secondaryTarget = null;
+            }
+        }
         if (target == null || !target.gameObject.activeInHierarchy)
         {
             SetVisualsActive(false);
@@ -402,6 +439,8 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
 
         SetVisualsActive(true);
         Rect focus = GetTargetRect(target);
+        if (secondaryTarget != null && secondaryTarget.gameObject.activeInHierarchy)
+            focus = Union(focus, GetTargetRect(secondaryTarget));
         if (operation == TutorialFocusOperation.Gear && manager.hudUI != null &&
             manager.hudUI.confirmGearButton != null)
             focus = Union(focus, GetTargetRect(manager.hudUI.confirmGearButton.transform as RectTransform));
@@ -485,6 +524,12 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
                 return ResolveCard("uk-scone") ?? ResolveNamedTarget("HandPanel");
             case TutorialFocusTarget.UkTeaCard:
                 return ResolveCard("uk-english-breakfast-tea") ?? ResolveNamedTarget("HandPanel");
+            case TutorialFocusTarget.TeamTrickCard:
+                TutorialStepId? step = manager.TutorialDirector?.CurrentStep?.id;
+                string trickId = step == TutorialStepId.ChinaHotpot ? "cn-hotpot-base" :
+                    step == TutorialStepId.ChinaIceJelly ? "cn-ice-jelly" :
+                    step == TutorialStepId.UsFries ? "us-fries" : "us-cola";
+                return ResolveCard(trickId) ?? ResolveNamedTarget("HandPanel");
             case TutorialFocusTarget.Review:
                 return ResolveNamedTarget("TrackFrame") ?? ResolveNamedTarget("ScoreboardPanel");
             default:
@@ -530,6 +575,22 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
                 cachedCardTarget = cards[i].transform as RectTransform;
                 return cachedCardTarget;
             }
+        }
+        return null;
+    }
+
+    private RectTransform ResolveSpeedCard(int value)
+    {
+        if (manager?.cardHandUI == null)
+            return null;
+
+        CardUI[] cards = manager.cardHandUI.GetComponentsInChildren<CardUI>(true);
+        for (int i = 0; i < cards.Length; i++)
+        {
+            CardData card = cards[i].cardData;
+            if (card != null && card.IsSpeed && card.value == value &&
+                cards[i].gameObject.activeInHierarchy)
+                return cards[i].transform as RectTransform;
         }
         return null;
     }

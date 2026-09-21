@@ -139,7 +139,7 @@ public static class TeamTutorialCatalog
         return new TeamTutorialCourseDefinition(
             "tutorial-team-us-v1", TutorialCourseKind.TeamSpecialty, TeamId.US, true,
             "US · 直线咆哮", "进阶", "掌握直道固定 +1、尾流 +1 与弯道额外热量之间的风险交换。",
-            "indianapolis_burger", false,
+            "indianapolis_burger", true,
             Lesson("直道爆发", "直道回合打出速度牌后，移动总值固定 +1", "分别用低档和高档验证", "加成每回合只出现一次"),
             Lesson("弯道代价", "弯道超速额外支付 1 热量", "打开限速明细并选择安全落点", "能提前预判额外热量"),
             Lesson("强化尾流", "车队尾流奖励比标准车队多 1", "留在前车尾流距离结束回合", "尾流阶段显示车队修正"),
@@ -151,7 +151,7 @@ public static class TeamTutorialCatalog
         return new TeamTutorialCourseDefinition(
             "tutorial-team-cn-v1", TutorialCourseKind.TeamSpecialty, TeamId.CN, true,
             "CN · 电动双档", "专家", "用 Go/Recover 管理连续档位计数、热量、阴阳特技和维修区节奏。",
-            "shanghai_dim_sum", false,
+            "shanghai_dim_sum", true,
             Lesson("Go 节奏", "首次 Go 打 3 张；连续第二次起打 4 张并递增产热", "连续执行两次 Go 并观察计数", "能解释第四张牌与产热来源"),
             Lesson("Recover 回收", "只打 1 张，连续冷却效率按 3、2、1、0 递减", "切换 Recover 冷却手牌热量", "Go 连续计数被重置"),
             Lesson("火锅底料", "Go 下强化下一张正常速度牌：+1 且整张不计入弯道限速", "在弯前使用并选择目标速度牌", "移动增加但弯道计速排除该牌"),

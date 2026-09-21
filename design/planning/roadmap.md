@@ -4,6 +4,8 @@
 > 当前判断：Demo V0.1.2 已进入发布候选；本补丁收口教程引导、卡牌效果提示和多人结算界面，玩法、内容、资源或存档结构的大改进入 V0.2。
 > 2026-09-21：V0.2 教程扩展已启动。主菜单教程入口升级为二级教程中心，六支车队专项课程
 > 大纲已经数据化；后续按 DE → IT → US → UK → JP → CN 逐队接入确定性对局。
+> 同日按最新开发要求调整：CN 与 US 专项先接入，后续依次完成 DE、IT、UK、JP；
+> 所有专项仍需实机逐步验收后才能视为教学体验完成。
 > 关联：`design/planning/asset-manifest.md`、`design/gdd/foodula-1-audio-style.md`、`docs/memory/current-task-list.md`
 
 ---

@@ -18,7 +18,9 @@ public enum TutorialStepId
     PitDelayedResolution,
     UkScone,
     UkEnglishBreakfastTea,
-    Review
+    Review,
+    ChinaFirstGo, ChinaConsecutiveGo, ChinaRecover, ChinaHotpot, ChinaIceJelly,
+    UsStraight, UsCorner, UsSlipstream, UsFries, UsCola
 }
 
 public enum TutorialAction
@@ -39,7 +41,10 @@ public enum TutorialAction
     PlayUkScone,
     PlayUkEnglishBreakfastTea,
     CompleteReview,
-    CompletePracticeLap
+    CompletePracticeLap,
+    CompleteChinaFirstGo, CompleteChinaConsecutiveGo, CompleteChinaRecover,
+    PlayChinaHotpot, PlayChinaIceJelly, ResolveUsStraight, ResolveUsCorner,
+    ResolveUsSlipstream, PlayUsFries, PlayUsCola
 }
 
 public enum TutorialRunPhase
@@ -68,7 +73,8 @@ public enum TutorialFocusTarget
     PitChoice,
     UkSconeCard,
     UkTeaCard,
-    Review
+    Review,
+    TeamTrickCard
 }
 
 [Serializable]
@@ -234,6 +240,25 @@ public sealed class TutorialOpponentCue
 
 public static class TutorialOpponentCueRules
 {
+    public static bool IsSlipstreamCue(TutorialStepId step)
+    {
+        return step == TutorialStepId.Slipstream ||
+               step == TutorialStepId.UsSlipstream;
+    }
+
+    /// <summary>
+    /// An authored tutorial cue has one teaching leader and one intended
+    /// follower: the human player.  A wrong card selection must not let the
+    /// AI become the visible beneficiary and teach the opposite rule.
+    /// Normal races pass a null cue and keep the standard resolver unchanged.
+    /// </summary>
+    public static bool ShouldResolveSlipstreamForFollower(
+        TutorialOpponentCue activeCue,
+        bool isPlayer)
+    {
+        return activeCue == null || !IsSlipstreamCue(activeCue.step) || isPlayer;
+    }
+
     /// <summary>
     /// The authored slipstream leader is a stationary reference for its single
     /// teaching turn. Normal racers and every non-tutorial turn keep their
@@ -245,10 +270,139 @@ public static class TutorialOpponentCueRules
         int plannedMovement)
     {
         return activeCue != null &&
-               activeCue.step == TutorialStepId.Slipstream &&
+               IsSlipstreamCue(activeCue.step) &&
                isTeachingLeader
             ? 0
             : plannedMovement;
+    }
+}
+
+/// <summary>
+/// Deterministic card contract for the US specialty tutorial.  The normal
+/// race rules remain permissive; only the authored lessons reject an input
+/// that would make the next demonstration ambiguous or impossible to reach.
+/// </summary>
+public static class TutorialSpecialtyCardRules
+{
+    public static bool ValidateUsSpeedSelection(
+        TutorialStepId step,
+        IReadOnlyList<CardData> alreadyPlayed,
+        IReadOnlyList<CardData> selected,
+        out string reason)
+    {
+        reason = string.Empty;
+        if (step != TutorialStepId.UsStraight &&
+            step != TutorialStepId.UsCorner &&
+            step != TutorialStepId.UsSlipstream)
+            return true;
+
+        var combined = new List<CardData>();
+        AddCards(combined, alreadyPlayed);
+        AddCards(combined, selected);
+        for (int i = 0; i < combined.Count; i++)
+        {
+            CardData card = combined[i];
+            if (card == null || !card.IsSpeed)
+            {
+                reason = "本步只需要速度牌；特技牌请留到对应的特技步骤。";
+                return false;
+            }
+        }
+
+        if (step == TutorialStepId.UsStraight || step == TutorialStepId.UsSlipstream)
+        {
+            if (combined.Count > 1 || (combined.Count == 1 && combined[0].value != 1))
+            {
+                reason = step == TutorialStepId.UsStraight
+                    ? "直道示范只出 1 张速度 1。请取消当前选择，再选任意一张速度 1。"
+                    : "尾流示范只出 1 张速度 1。请取消当前选择，再选任意一张速度 1。";
+                return false;
+            }
+            return true;
+        }
+
+        if (combined.Count > 2)
+        {
+            reason = "弯道示范只需要两张牌：速度 3 + 速度 2。";
+            return false;
+        }
+
+        int threes = 0;
+        int twos = 0;
+        for (int i = 0; i < combined.Count; i++)
+        {
+            if (combined[i].value == 3) threes++;
+            else if (combined[i].value == 2) twos++;
+            else
+            {
+                reason = "弯道示范只需要速度 3 + 速度 2，不要选速度 1。";
+                return false;
+            }
+        }
+
+        if (threes > 1 || twos > 1)
+        {
+            reason = "弯道示范需要一张速度 3 和一张速度 2，各一张即可。";
+            return false;
+        }
+        return true;
+    }
+
+    public static bool ValidateUsSpeedPhaseCompletion(
+        TutorialStepId step,
+        IReadOnlyList<CardData> played,
+        out string reason)
+    {
+        reason = string.Empty;
+        if (step == TutorialStepId.UsStraight || step == TutorialStepId.UsSlipstream)
+        {
+            if (played == null || played.Count != 1 || played[0] == null ||
+                !played[0].IsSpeed || played[0].value != 1)
+            {
+                reason = step == TutorialStepId.UsStraight
+                    ? "本步还没完成：请出 1 张速度 1。"
+                    : "本步还没完成：请出 1 张速度 1，才能触发尾流。";
+                return false;
+            }
+            return true;
+        }
+
+        if (step == TutorialStepId.UsCorner)
+        {
+            bool valid = played != null && played.Count == 2;
+            int threes = 0;
+            int twos = 0;
+            if (valid)
+            {
+                for (int i = 0; i < played.Count; i++)
+                {
+                    if (played[i] == null || !played[i].IsSpeed)
+                    {
+                        valid = false;
+                        break;
+                    }
+                    if (played[i].value == 3) threes++;
+                    if (played[i].value == 2) twos++;
+                }
+                valid = valid && threes == 1 && twos == 1;
+            }
+
+            if (!valid)
+            {
+                reason = "本步还没完成：请出一张速度 3 和一张速度 2，再结束出牌。";
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static void AddCards(List<CardData> target, IReadOnlyList<CardData> source)
+    {
+        if (source == null)
+            return;
+        for (int i = 0; i < source.Count; i++)
+            if (source[i] != null)
+                target.Add(source[i]);
     }
 }
 
@@ -279,6 +433,8 @@ public sealed class TutorialPlayerCheckpoint
     public int heatInHand;
     public int heatInDiscard;
     public bool beginAtCardSelection;
+    public int chinaConsecutiveGearCount;
+    public bool crossedLandmarkLastTurn;
     public IReadOnlyList<TutorialCardSpec> exactDrawOrder;
 
     public TutorialPlayerCheckpoint(
@@ -289,7 +445,9 @@ public sealed class TutorialPlayerCheckpoint
         int heatInHand,
         int heatInDiscard,
         IReadOnlyList<TutorialCardSpec> exactDrawOrder,
-        bool beginAtCardSelection = false)
+        bool beginAtCardSelection = false,
+        int chinaConsecutiveGearCount = 0,
+        bool crossedLandmarkLastTurn = false)
     {
         this.step = step;
         this.playerCell = playerCell;
@@ -299,6 +457,8 @@ public sealed class TutorialPlayerCheckpoint
         this.heatInDiscard = heatInDiscard;
         this.exactDrawOrder = exactDrawOrder;
         this.beginAtCardSelection = beginAtCardSelection;
+        this.chinaConsecutiveGearCount = chinaConsecutiveGearCount;
+        this.crossedLandmarkLastTurn = crossedLandmarkLastTurn;
     }
 
     public List<CardData> CreateExactDeck()
@@ -334,6 +494,7 @@ public sealed class TutorialScenarioDefinition
     public bool driverSkillsEnabled { get; }
     public bool normalRewardsEnabled { get; }
     public bool normalProgressionWritesEnabled { get; }
+    public bool teamVehicleBonusesEnabled { get; }
     public IReadOnlyList<TutorialCardSpec> exactDrawOrder { get; }
     public IReadOnlyList<TutorialStepDefinition> steps { get; }
     public IReadOnlyList<TutorialWeatherCue> weatherScript { get; }
@@ -347,21 +508,29 @@ public sealed class TutorialScenarioDefinition
         IReadOnlyList<TutorialWeatherCue> weatherScript,
         IReadOnlyList<TutorialOpponentCue> opponentScript,
         IReadOnlyList<TutorialPlayerCheckpoint> playerCheckpoints,
-        TutorialPitLaneDefinition tutorialPitLane)
+        TutorialPitLaneDefinition tutorialPitLane,
+        string scenarioId = ScenarioId,
+        string scenarioTrackId = TrackId,
+        TeamId scenarioTeam = TeamId.UK,
+        bool enableTeamVehicleBonuses = false,
+        TeamId scenarioOpponentTeam = TeamId.JP)
     {
-        id = ScenarioId;
-        trackId = TrackId;
-        playerTeam = TeamId.UK;
+        id = scenarioId;
+        trackId = scenarioTrackId;
+        playerTeam = scenarioTeam;
         openingHandSize = 7;
-        engineHeatCapacity = 6;
+        engineHeatCapacity = enableTeamVehicleBonuses
+            ? TeamVehicleRules.GetBaseHeatPoolSize(scenarioTeam, 6)
+            : 6;
         opponentCount = 1;
-        opponentTeam = TeamId.JP;
+        opponentTeam = scenarioOpponentTeam;
         guidedStartWeatherId = "sunny";
         practiceWeatherId = "cloudy";
         techTreeEnabled = false;
         driverSkillsEnabled = false;
         normalRewardsEnabled = false;
         normalProgressionWritesEnabled = false;
+        teamVehicleBonusesEnabled = enableTeamVehicleBonuses;
         this.exactDrawOrder = exactDrawOrder;
         this.steps = steps;
         this.weatherScript = weatherScript;
@@ -576,6 +745,145 @@ public sealed class TutorialScenarioDefinition
             },
             CreatePlayerCheckpoints(),
             new TutorialPitLaneDefinition(entryCell: 132, exitCell: 4));
+    }
+
+    public static TutorialScenarioDefinition CreateTeamSpecialty(TeamId team)
+    {
+        if (team != TeamId.CN && team != TeamId.US)
+            throw new ArgumentOutOfRangeException(nameof(team), "Only CN and US specialty races are authored.");
+
+        bool china = team == TeamId.CN;
+        string firstTrick = china ? "cn-hotpot-base" : "us-fries";
+        string secondTrick = china ? "cn-ice-jelly" : "us-cola";
+        var deck = new List<TutorialCardSpec>
+        {
+            Speed(1), Speed(2), Speed(2), Speed(3), Speed(1),
+            Trick(firstTrick), Trick(secondTrick),
+            Speed(2), Speed(1), Speed(3), Speed(2), Speed(1),
+            Trick(firstTrick), Speed(2), Trick(secondTrick), Speed(3)
+        };
+        var steps = new List<TutorialStepDefinition>
+        {
+            Step(TutorialStepId.ObjectiveAndInterface, TutorialAction.AcknowledgeObjective,
+                "专项训练", china ? "CN 电动双档" : "US 直线咆哮",
+                china ? "这堂课练 Go/Recover 的牌数与热量，以及两张专属特技牌。" :
+                    "这堂课练直道加速、弯道代价、尾流与地标特技牌。",
+                "科技和车手技能关闭，车队固有特性保留；所有示范使用固定牌序。",
+                "阅读后点击下一步。每个操作都在真实对局中完成。",
+                "现在开始专项驾驶。", "随时可回看上一步。",
+                TutorialFocusTarget.RaceStatus, "先确认你的车队和训练目标。", "开始训练", true)
+        };
+        var checkpoints = new List<TutorialPlayerCheckpoint>();
+        var opponents = new List<TutorialOpponentCue>();
+        if (china)
+        {
+            steps.Add(Step(TutorialStepId.ChinaFirstGo, TutorialAction.CompleteChinaFirstGo,
+                "双档动力", "第一次 Go：三张牌", "Go 首次需要 3 张速度牌。",
+                "当前是 Recover，手牌已准备。", "选择 Go，打出 3 张速度牌并结束出牌。",
+                "需求显示 3/3。", "热量牌不能充当速度牌。",
+                TutorialFocusTarget.GearControls, "Go 第一次需要三张速度牌。"));
+            steps.Add(Step(TutorialStepId.ChinaConsecutiveGo, TutorialAction.CompleteChinaConsecutiveGo,
+                "双档动力", "连续 Go：四张牌", "第二次连续 Go 需要 4 张速度牌，并支付 1 热量。",
+                "已准备一次 Go 后的安全状态。", "再次选择 Go，打满 4 张速度牌。",
+                "确认 4/4，并观察引擎支付的热量。", "换成 Recover 会重置 Go 计数。",
+                TutorialFocusTarget.Hand, "看清需求从 3 张变为 4 张。"));
+            steps.Add(Step(TutorialStepId.ChinaRecover, TutorialAction.CompleteChinaRecover,
+                "双档动力", "Recover 冷却", "Recover 只需 1 张牌，首次可冷却 3 张热量。",
+                "手牌有热量，上一回合处于连续 Go。", "选择 Recover，打 1 张速度牌并完成回合。",
+                "热量回到引擎，连续 Go 计数重置。", "等待移动后的反应阶段。",
+                TutorialFocusTarget.GearControls, "Recover 是重置过热节奏的方式。"));
+            steps.Add(Step(TutorialStepId.ChinaHotpot, TutorialAction.PlayChinaHotpot,
+                "车队特技", "火锅底料 ATTACK", "Go 下让下一张速度牌 +1，并将整张牌从过弯计速中排除。",
+                "Go 和火锅底料已准备好。", "打出火锅底料，再打下一张速度牌。",
+                "只有目标速度牌获得 ATTACK 标记，不会凭空增加一张牌。", "特技牌本身不占速度牌数。",
+                TutorialFocusTarget.TeamTrickCard, "先打特技，再选受强化的速度牌。"));
+            steps.Add(Step(TutorialStepId.ChinaIceJelly, TutorialAction.PlayChinaIceJelly,
+                "车队特技", "冰糕防守", "Recover 下打出冰糕，可阻止身后赛车享受你的尾流。",
+                "赛车已切换到 Recover。", "打出冰糕，再按普通流程完成回合。",
+                "后车不能借你的尾流。", "冰糕只有在 Recover 下生效。",
+                TutorialFocusTarget.TeamTrickCard, "在 Recover 中打出冰糕。"));
+            checkpoints.Add(TeamCheckpoint(TutorialStepId.ChinaFirstGo, 42, 1, 0, 0, false,
+                Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick(firstTrick), Trick(secondTrick)));
+            checkpoints.Add(TeamCheckpoint(TutorialStepId.ChinaConsecutiveGo, 43, 2, 1, 0, false,
+                Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick(firstTrick), Trick(secondTrick)));
+            checkpoints.Add(TeamCheckpoint(TutorialStepId.ChinaRecover, 44, 2, 2, 3, false,
+                Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick(firstTrick), Trick(secondTrick)));
+            checkpoints.Add(TeamCheckpoint(TutorialStepId.ChinaHotpot, 45, 2, 1, 0, true,
+                Trick(firstTrick), Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick(secondTrick)));
+            checkpoints.Add(TeamCheckpoint(TutorialStepId.ChinaIceJelly, 46, 1, 1, 0, true,
+                Trick(secondTrick), Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick(firstTrick)));
+        }
+        else
+        {
+            steps.Add(Step(TutorialStepId.UsStraight, TutorialAction.ResolveUsStraight,
+                "直线性能", "每回合直道 +1", "在直道打出速度牌后，总移动额外 +1，每回合只加一次。",
+                "已置于直道，手牌中有多张速度 1。", "选择 G1，只打出 1 张速度 1，然后点击“确认出牌”。其他牌不要选。",
+                "基础 1 加车队 1，共前进 2 格。", "不论打几张牌，加成仍只有一次。",
+                TutorialFocusTarget.Hand, "美国队的直道加速是回合固定值。"));
+            steps.Add(Step(TutorialStepId.UsCorner, TutorialAction.ResolveUsCorner,
+                "风险交换", "弯道额外热量", "超速过弯除了差额热量，还要多支付 1 热量。",
+                "训练状态位于弯道前，手牌左侧依次有速度 3 和速度 2。", "选择 G2，只打出速度 3 + 速度 2 两张牌，然后点击“确认出牌”。不要选速度 1。",
+                "区分基础超速差额与车队额外热量。", "引擎热量不足可能导致失控。",
+                TutorialFocusTarget.Track, "过弯前检查限速明细。"));
+            steps.Add(Step(TutorialStepId.UsSlipstream, TutorialAction.ResolveUsSlipstream,
+                "位置博弈", "强化尾流", "美国队在正常尾流奖励上再加 1。",
+                "前车位置由训练检查点固定，手牌中有速度 1。", "选择 G1，只打出 1 张速度 1，然后点击“确认出牌”。不要选速度 3。",
+                "只有后车获得额外移动。", "尾流不是出牌时立刻触发。",
+                TutorialFocusTarget.Track, "尾流在所有赛车基础移动后单独结算。"));
+            steps.Add(Step(TutorialStepId.UsFries, TutorialAction.PlayUsFries,
+                "地标特技", "薯条", "上回合经过地标后，薯条提供本回合限时热量。",
+                "训练状态保留了上回合地标标记，薯条已在手牌左侧。", "只点击薯条特技牌，再点击“确认出牌”；本步不需要速度牌。",
+                "限时热量只在本回合有效。", "没经过地标时不能发动。",
+                TutorialFocusTarget.TeamTrickCard, "先确认地标条件，再打薯条。"));
+            steps.Add(Step(TutorialStepId.UsCola, TutorialAction.PlayUsCola,
+                "地标特技", "可乐", "上回合经过地标后，可乐额外抽 1 张牌。",
+                "训练状态保留了上回合地标标记，可乐已在手牌左侧。", "只点击可乐特技牌，再点击“确认出牌”；本步不需要速度牌。",
+                "抽到的牌立即进入手牌。", "没有地标标记时不能发动。",
+                TutorialFocusTarget.TeamTrickCard, "可乐是在地标之后补牌。"));
+            checkpoints.Add(TeamCheckpoint(TutorialStepId.UsStraight, 15, 1, 0, 0, false,
+                Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick(firstTrick), Trick(secondTrick)));
+            // The US straight bonus is deliberately excluded from corner-speed
+            // resolution.  Starting at cell 1 would therefore make 3+2 end
+            // at the first corner's entry cell (6) and skip its apex (7).
+            // Cell 2 keeps the authored lesson immediately before the corner
+            // while guaranteeing that the base speed 5 crosses the apex.
+            checkpoints.Add(TeamCheckpoint(TutorialStepId.UsCorner, 2, 2, 0, 0, true,
+                Speed(3), Speed(2), Speed(1), Speed(1), Speed(2), Trick(firstTrick), Trick(secondTrick)));
+            checkpoints.Add(TeamCheckpoint(TutorialStepId.UsSlipstream, 15, 1, 0, 0, false,
+                Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick(firstTrick), Trick(secondTrick)));
+            checkpoints.Add(TeamCheckpoint(TutorialStepId.UsFries, 25, 1, 0, 0, true,
+                Trick(firstTrick), Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick(secondTrick), true));
+            checkpoints.Add(TeamCheckpoint(TutorialStepId.UsCola, 28, 1, 0, 0, true,
+                Trick(secondTrick), Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick(firstTrick), true));
+            opponents.Add(new TutorialOpponentCue(TutorialStepId.UsSlipstream, 22, 18, 2));
+        }
+
+        steps.Add(Step(TutorialStepId.Review, TutorialAction.CompleteReview,
+            "自由练习", "独立跑完一圈", "引导结束后重建固定牌组与热量，独立跑一圈。",
+            "练习不会写入奖励、科技或车手经验。", "点击下一步，按自己的判断驾驶。",
+            "完成一圈后可重练或返回菜单。", "教练一直在这里。",
+            TutorialFocusTarget.Review, "把刚才学到的车队节奏串起来。", "开始练习", true));
+
+        return new TutorialScenarioDefinition(deck, steps,
+            new List<TutorialWeatherCue>(), opponents, checkpoints, null,
+            china ? "tutorial_team_cn_v1" : "tutorial_team_us_v1",
+            china ? "shanghai_dim_sum" : "indianapolis_burger",
+            team, true, china ? TeamId.US : TeamId.CN);
+    }
+
+    private static TutorialPlayerCheckpoint TeamCheckpoint(
+        TutorialStepId step, int cell, int gear, int consecutive, int heatHand,
+        bool cardSelection, TutorialCardSpec first, TutorialCardSpec second,
+        TutorialCardSpec third, TutorialCardSpec fourth, TutorialCardSpec fifth,
+        TutorialCardSpec sixth, TutorialCardSpec seventh, bool landmark = false)
+    {
+        var cards = new List<TutorialCardSpec>
+        {
+            first, second, third, fourth, fifth, sixth, seventh,
+            Speed(2), Speed(1), Speed(3), Speed(2), Speed(1), Speed(3), Speed(2), Speed(1), Speed(2)
+        };
+        return new TutorialPlayerCheckpoint(step, cell, gear, 7 - heatHand,
+            heatHand, 0, cards, cardSelection, consecutive, landmark);
     }
 
     private static List<TutorialPlayerCheckpoint> CreatePlayerCheckpoints()

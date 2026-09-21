@@ -229,11 +229,12 @@ public sealed class TutorialGuideUI : MonoBehaviour
 
         gameObject.SetActive(true);
         isExpanded = true;
-        titleText.text = presentation.title;
+        ReplaceTextAndGeometry(titleText, presentation.title);
         SetOptionalText(completionText, string.Empty);
-        instructionText.text = presentation.BuildGuideText();
-        progressText.text =
-            $"{presentation.sectionLabel} · 第 {oneBasedIndex}/{totalSteps} 步";
+        ReplaceTextAndGeometry(instructionText, presentation.BuildGuideText());
+        ReplaceTextAndGeometry(
+            progressText,
+            $"{presentation.sectionLabel} · 第 {oneBasedIndex}/{totalSteps} 步");
         SetContinueState(
             !string.IsNullOrWhiteSpace(presentation.manualAdvanceLabel),
             string.IsNullOrWhiteSpace(presentation.manualAdvanceLabel)
@@ -256,10 +257,10 @@ public sealed class TutorialGuideUI : MonoBehaviour
 
         gameObject.SetActive(true);
         isExpanded = true;
-        titleText.text = previewTitle;
+        ReplaceTextAndGeometry(titleText, previewTitle);
         SetOptionalText(completionText, previewCompletion);
-        instructionText.text = previewInstruction;
-        progressText.text = $"{totalSteps}/{totalSteps}";
+        ReplaceTextAndGeometry(instructionText, previewInstruction);
+        ReplaceTextAndGeometry(progressText, $"{totalSteps}/{totalSteps}");
         SetContinueState(true, completed ? "再练一圈" : "重新开始");
         SetPreviousState(false);
         SetModeState(true, "重播引导");
@@ -294,20 +295,22 @@ public sealed class TutorialGuideUI : MonoBehaviour
         {
             focusHighlighter?.Hide();
             bool completed = director.Phase == TutorialRunPhase.Completed;
-            titleText.text = authoring != null
+            bool foundation = manager?.TutorialScenario?.id == TutorialScenarioDefinition.ScenarioId;
+            string teamName = manager?.TutorialScenario?.playerTeam.ToString() ?? "车队";
+            ReplaceTextAndGeometry(titleText, foundation && authoring != null
                 ? authoring.GetPracticeTitle(completed)
-                : completed ? "训练圈完成" : "勒芒自由练习";
-            SetOptionalText(completionText, authoring != null
+                : completed ? "训练圈完成" : $"{teamName} 自由练习");
+            SetOptionalText(completionText, foundation && authoring != null
                 ? authoring.GetPracticeCompletion(completed)
                 : completed
                     ? "✓ 做得漂亮，你完成了整圈训练"
                     : "✓ 赛车和牌组都已重新准备好");
-            instructionText.text = authoring != null
+            ReplaceTextAndGeometry(instructionText, foundation && authoring != null
                 ? authoring.GetPracticeInstruction(completed)
                 : completed
-                    ? "很好，新车手。你已经独立完成一整圈勒芒训练。这里不会发放 RP、车手 XP 或解锁；想再练一圈、重温引导或回到主菜单都可以。"
-                    : "接下来由你自己做决定。用准备好的 UK 赛车和教程牌组跑完一圈；这只是训练，不会影响正常奖励或赛事进度。";
-            progressText.text = $"{director.CompletedStepCount}/{director.StepCount}";
+                    ? "很好，你已完成一整圈专项训练。不会发放 RP、车手 XP 或解锁。"
+                    : $"接下来独立驾驶 {teamName} 赛车跑完一圈。训练不会影响正常奖励或进度。");
+            ReplaceTextAndGeometry(progressText, $"{director.CompletedStepCount}/{director.StepCount}");
             primaryRestartsPractice = true;
             SetContinueState(true, completed ? "再练一圈" : "重新开始");
             SetPreviousState(false);
@@ -317,17 +320,18 @@ public sealed class TutorialGuideUI : MonoBehaviour
         }
 
         primaryRestartsPractice = false;
-        TutorialStepPresentation presentation = authoring != null
+        bool useFoundationCopy = manager?.TutorialScenario?.id == TutorialScenarioDefinition.ScenarioId;
+        TutorialStepPresentation presentation = useFoundationCopy && authoring != null
             ? authoring.Find(step.id)
             : null;
         focusHighlighter?.Show(
             step.id,
             step.focusTarget,
             presentation != null ? presentation.focusIntroduction : step.focusIntroduction);
-        titleText.text = presentation != null ? presentation.title : step.title;
+        ReplaceTextAndGeometry(titleText, presentation != null ? presentation.title : step.title);
         TutorialStepDefinition completedStep = director.LastCompletedStep;
         TutorialStepPresentation completedPresentation =
-            completedStep != null && authoring != null
+            completedStep != null && useFoundationCopy && authoring != null
                 ? authoring.Find(completedStep.id)
                 : null;
         string completedMessage = completedPresentation != null
@@ -340,10 +344,11 @@ public sealed class TutorialGuideUI : MonoBehaviour
             string.IsNullOrWhiteSpace(completedMessage)
                 ? string.Empty
                 : $"✓ {completedMessage}");
-        instructionText.text = presentation != null
+        ReplaceTextAndGeometry(instructionText, presentation != null
             ? presentation.BuildGuideText()
-            : step.BuildGuideText();
-        progressText.text = $"{(presentation != null ? presentation.sectionLabel : step.sectionLabel)} · 第 {director.CurrentStepIndex + 1}/{director.StepCount} 步";
+            : step.BuildGuideText());
+        ReplaceTextAndGeometry(progressText,
+            $"{(presentation != null ? presentation.sectionLabel : step.sectionLabel)} · 第 {director.CurrentStepIndex + 1}/{director.StepCount} 步");
         SetContinueState(
             director.CanGoNext,
             director.CanGoNext ? "下一步" : "完成操作后下一步");
@@ -368,6 +373,7 @@ public sealed class TutorialGuideUI : MonoBehaviour
         CanvasRenderer renderer = target.canvasRenderer;
         if (renderer != null)
         {
+            renderer.cull = true;
             renderer.Clear();
         }
 
@@ -378,6 +384,8 @@ public sealed class TutorialGuideUI : MonoBehaviour
             return;
 
         target.text = value.Trim();
+        if (renderer != null)
+            renderer.cull = false;
         target.SetAllDirty();
     }
 
@@ -533,14 +541,30 @@ public sealed class TutorialGuideUI : MonoBehaviour
 
     private void SetExpandedContentActive(bool active)
     {
-        completionText.gameObject.SetActive(
-            active && !string.IsNullOrWhiteSpace(completionText.text));
-        instructionText.gameObject.SetActive(active);
+        SetTextVisibility(completionText, active);
+        SetTextVisibility(instructionText, active);
+        // The collapsed panel intentionally keeps the progress line visible,
+        // but it still needs to recover if a previous transition disabled its
+        // TMP component while clearing the old step.
+        SetTextVisibility(progressText, true);
         continueButton.gameObject.SetActive(active);
         if (previousButton != null)
             previousButton.gameObject.SetActive(active && previousButton.interactable);
         modeButton.gameObject.SetActive(active);
         exitButton.gameObject.SetActive(active);
+    }
+
+    private static void SetTextVisibility(TMP_Text target, bool active)
+    {
+        if (target == null)
+            return;
+
+        bool visible = active && !string.IsNullOrWhiteSpace(target.text);
+        target.gameObject.SetActive(visible);
+        target.enabled = visible;
+        CanvasRenderer renderer = target.canvasRenderer;
+        if (renderer != null)
+            renderer.cull = !visible;
     }
 
     private static void SetRect(RectTransform rect, Vector2 position, Vector2 size)

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 主菜单 UI 控制器 — 挂载在 MainMenuCanvas 上。
@@ -8,6 +9,27 @@ using TMPro;
 /// </summary>
 public class MainMenuUI : MonoBehaviour
 {
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void RestoreMainMenuCanvasAfterSceneLoad()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        if (!scene.IsValid() || scene.name != "MainMenu")
+            return;
+
+        foreach (GameObject root in scene.GetRootGameObjects())
+        {
+            if (root != null && root.name == "MainMenuCanvas" && !root.activeSelf)
+            {
+                // Race startup deliberately hides stale menu objects. A stopped
+                // editor play session can retain that runtime flag on the next
+                // MainMenu launch, so restore the menu before its Awake/Start.
+                root.SetActive(true);
+                Debug.Log("[MainMenuUI] Restored MainMenuCanvas after scene load.");
+                break;
+            }
+        }
+    }
+
     [Header("菜单按钮")]
     public Button startRaceButton;
     public Button quitButton;
@@ -127,7 +149,7 @@ public class MainMenuUI : MonoBehaviour
         tutorialSelectionUI = GetComponent<TutorialSelectionUI>();
         if (tutorialSelectionUI == null)
             tutorialSelectionUI = gameObject.AddComponent<TutorialSelectionUI>();
-        tutorialSelectionUI.Initialize(StartFoundationTutorial);
+        tutorialSelectionUI.Initialize(StartFoundationTutorial, StartTeamTutorial);
 
         if (startRaceButton != null)
         {
@@ -485,6 +507,13 @@ public class MainMenuUI : MonoBehaviour
     public void OnStartTutorial()
     {
         HideMenuSurfaces();
+        if (tutorialSelectionUI == null)
+            tutorialSelectionUI = GetComponent<TutorialSelectionUI>();
+        if (tutorialSelectionUI == null)
+            tutorialSelectionUI = gameObject.AddComponent<TutorialSelectionUI>();
+        // Keep this entry safe when a UI event is invoked during the first
+        // frame, before Start() has initialized the menu sub-panels.
+        tutorialSelectionUI.Initialize(StartFoundationTutorial, StartTeamTutorial);
         tutorialSelectionUI.Show();
     }
 
@@ -495,6 +524,16 @@ public class MainMenuUI : MonoBehaviour
         CareerRaceLaunchState.Clear();
         TutorialLaunchState.Request(TutorialScenarioDefinition.CreateLeMansUk());
         Debug.Log($"[MainMenuUI] Starting tutorial: {TutorialScenarioDefinition.ScenarioId}");
+        SceneLoader.LoadRace();
+    }
+
+    private void StartTeamTutorial(TeamId team)
+    {
+        HideMenuSurfaces();
+        CareerRaceLaunchState.Clear();
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateTeamSpecialty(team);
+        TutorialLaunchState.Request(scenario);
+        Debug.Log($"[MainMenuUI] Starting tutorial: {scenario.id}");
         SceneLoader.LoadRace();
     }
 

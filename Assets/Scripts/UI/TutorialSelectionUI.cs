@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public sealed class TutorialSelectionUI : MonoBehaviour
 {
     private Action startFoundationTutorial;
+    private Action<TeamId> startTeamTutorial;
     private GameObject panelRoot;
     private TMP_Text courseTitle;
     private TMP_Text courseMeta;
@@ -17,9 +18,10 @@ public sealed class TutorialSelectionUI : MonoBehaviour
     private TMP_Text primaryLabel;
     private TeamTutorialCourseDefinition selectedCourse;
 
-    public void Initialize(Action onStartFoundationTutorial)
+    public void Initialize(Action onStartFoundationTutorial, Action<TeamId> onStartTeamTutorial)
     {
         startFoundationTutorial = onStartFoundationTutorial;
+        startTeamTutorial = onStartTeamTutorial;
         EnsurePanel();
         Hide();
     }
@@ -139,14 +141,18 @@ public sealed class TutorialSelectionUI : MonoBehaviour
         courseBodyRect.anchoredPosition = Vector2.zero;
         courseScroll.verticalNormalizedPosition = 1f;
         primaryButton.interactable = course.IsPlayable;
-        primaryLabel.text = course.IsPlayable ? "开始基础教程" : "专项训练开发中";
+        primaryLabel.text = !course.IsPlayable ? "专项训练开发中" :
+            course.Kind == TutorialCourseKind.Foundation ? "开始基础教程" : "开始车队训练";
     }
 
     private void OnPrimaryClicked()
     {
         if (selectedCourse == null || !selectedCourse.IsPlayable) return;
         Hide();
-        startFoundationTutorial?.Invoke();
+        if (selectedCourse.Kind == TutorialCourseKind.Foundation)
+            startFoundationTutorial?.Invoke();
+        else
+            startTeamTutorial?.Invoke(selectedCourse.Team);
     }
 
     private static string BuildCourseBody(TeamTutorialCourseDefinition course)

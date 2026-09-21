@@ -73,6 +73,7 @@ public class RaceUILayoutController : MonoBehaviour
             ArrangeOperationControls(hud, cardHand);
             ApplyAuthoredButtonStyles(hud, cardHand);
             cardHand?.EnsureSelectedCardEffectUI(deckPanel, FindFont(root));
+            ApplyReadableTypography(hud, cardHand);
             UsesAuthoredLayout = true;
             applied = true;
             return;
@@ -133,6 +134,7 @@ public class RaceUILayoutController : MonoBehaviour
         BuildOperationPanel(hud, cardHand, font);
         BuildScoreboardPanel(hud, font);
         BuildDeckPanel(cardHand, font);
+        ApplyReadableTypography(hud, cardHand);
 
         if (hud != null && hud.gameOverPanel != null)
             Dock(hud.gameOverPanel.transform, trackFrame, new Vector2(0.2f, 0.2f), new Vector2(0.8f, 0.8f));
@@ -401,6 +403,75 @@ public class RaceUILayoutController : MonoBehaviour
         cardHand.discardPileText = CreateText("DiscardPileInfo", discardPanel, "弃牌堆\n-- 张", font, 17,
             TextAlignmentOptions.Center, new Vector2(0.08f, 0.18f), new Vector2(0.92f, 0.64f), Color.white);
         cardHand.EnsureSelectedCardEffectUI(deckPanel, font);
+    }
+
+    /// <summary>
+    /// Keeps the authored RaceCanvas and the legacy runtime fallback readable
+    /// at the same display scale. These are deliberately modest increases:
+    /// the race HUD is dense, so readability must improve without changing
+    /// panel anchors or causing the operation controls to overlap.
+    /// </summary>
+    private void ApplyReadableTypography(HUDUI hud, CardHandUI cardHand)
+    {
+        SetFontSize(FindComponent<TMP_Text>(operationPanel, "OperationTitle"), 20f);
+        SetFontSize(FindComponent<TMP_Text>(scoreboardPanel, "ScoreboardTitle"), 20f);
+        SetFontSize(FindComponent<TMP_Text>(deckPanel, "DeckTableTitle"), 19f);
+        SetFontSize(FindComponent<TMP_Text>(deckPanel, "DrawPileTitle"), 17f);
+        SetFontSize(FindComponent<TMP_Text>(deckPanel, "EnginePileTitle"), 17f);
+        SetFontSize(FindComponent<TMP_Text>(deckPanel, "HandTitle"), 17f);
+        SetFontSize(FindComponent<TMP_Text>(deckPanel, "DiscardPileTitle"), 17f);
+
+        if (hud != null)
+        {
+            SetFontSize(hud.statusText, 14f);
+            SetFontSize(hud.logText, 12f);
+            SetFontSize(hud.gearText, 18f);
+            SetFontSize(hud.heatText, 16f);
+            SetFontSize(hud.lapText, 17f);
+            SetFontSize(hud.positionText, 16f);
+            SetFontSize(hud.aiStatusText, 15f);
+            SetFontSize(hud.weatherText, 15f);
+            SetFontSize(hud.standingsText, 14f);
+            SetFontSize(hud.driverSkillLabel, 18f);
+            SetFontSize(hud.gameOverTitle, 24f);
+            SetFontSize(hud.gameOverText, 18f);
+
+            SetButtonLabelSize(hud.gear1Button, 20f);
+            SetButtonLabelSize(hud.gear2Button, 20f);
+            SetButtonLabelSize(hud.gear3Button, 20f);
+            SetButtonLabelSize(hud.gear4Button, 20f);
+            SetButtonLabelSize(hud.confirmGearButton, 20f);
+            SetButtonLabelSize(hud.driverSkillButton, 20f);
+            SetButtonLabelSize(hud.resetButton, 20f);
+            SetButtonLabelSize(hud.returnToMenuButton, 20f);
+            SetButtonLabelSize(hud.backToMenuButton, 20f);
+        }
+
+        if (cardHand != null)
+        {
+            SetFontSize(cardHand.deckInfoText, 14f);
+            SetFontSize(cardHand.enginePileText, 14f);
+            SetFontSize(cardHand.drawPileText, 18f);
+            SetFontSize(cardHand.discardPileText, 18f);
+            SetFontSize(cardHand.selectedCardEffectText, 15f);
+            SetButtonLabelSize(cardHand.playCardsButton, 20f);
+        }
+    }
+
+    private static void SetFontSize(TMP_Text text, float fontSize)
+    {
+        if (text != null)
+            text.fontSize = fontSize;
+    }
+
+    private static void SetButtonLabelSize(Button button, float fontSize)
+    {
+        if (button == null)
+            return;
+
+        TMP_Text[] labels = button.GetComponentsInChildren<TMP_Text>(true);
+        for (int i = 0; i < labels.Length; i++)
+            SetFontSize(labels[i], fontSize);
     }
 
     private static RectTransform CreatePanel(string name, Transform parent, Vector2 min, Vector2 max, Color color)

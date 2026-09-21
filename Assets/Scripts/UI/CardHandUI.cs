@@ -690,7 +690,7 @@ public class CardHandUI : MonoBehaviour
         selectedCardEffectText.font = font != null
             ? font
             : deckInfoText != null ? deckInfoText.font : selectedCardEffectText.font;
-        selectedCardEffectText.fontSize = 13f;
+        selectedCardEffectText.fontSize = 15f;
         selectedCardEffectText.alignment = TextAlignmentOptions.Center;
         selectedCardEffectText.enableWordWrapping = false;
         selectedCardEffectText.overflowMode = TextOverflowModes.Ellipsis;
