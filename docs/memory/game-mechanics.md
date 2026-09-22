@@ -129,6 +129,8 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
   reduced-motion settings. During live input it prioritizes gear, card selection/confirmation,
   discard selection/confirmation, pit and lane gates over the lesson subject. Clicking removes the
   callout text and mesh while retaining the target border; highlighting never advances tutorial state.
+  Disabling the guide panel clears its four lesson text meshes and hides the
+  spotlight; replay or preview repopulates them from the selected step.
 - Heat cards do not start in the normal deck. Each player's independent engine
   heat pool is the only source of permanent heat cards.
 - When trick cards are enabled, four team cards (two attack and two defense)
@@ -237,11 +239,11 @@ prototype and is no longer the authoritative model.
 ## Tutorial Mode Foundation
 
 - The new-player tutorial center offers the playable UK foundation course plus
-  CN/Shanghai and US/Indianapolis specialty courses. The other four teams remain
-  non-playable previews. CN demonstrates first/consecutive Go, Recover, Hotpot and
-  Ice Jelly; US demonstrates straight bonus, corner heat, tailwind, Fries and Cola.
-  Both specialty courses use team-aware safe checkpoints, real event gates and a
-  reset one-lap practice, without RP/XP/progression writes.
+  all six team specialty courses: CN/Shanghai, US/Indianapolis, DE/Nürburgring,
+  IT/Monza, UK/Silverstone and JP/Suzuka. They use exact card orders, team-aware
+  safe checkpoints, real event gates and a reset one-lap practice without
+  RP/XP/progression writes. JP teaches the implemented Kanto carry and Torpedo
+  self-overtake bonus, not the unimplemented reverse bonus.
 
 - `tutorial_le_mans_uk_v1` fixes the player to UK on
   `le_mans_old_mulsanne`, with tech-tree modifiers, driver skills, normal

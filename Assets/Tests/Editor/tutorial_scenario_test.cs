@@ -41,6 +41,26 @@ public class TutorialScenarioTests
     }
 
     [Test]
+    public void FoundationGuideExplainsOnePressCardShortcutAndSeparateEndAction()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
+        TutorialStepDefinition flow = scenario.steps.Single(step => step.id == TutorialStepId.TurnFlow);
+        TutorialStepDefinition gear = scenario.steps.Single(step => step.id == TutorialStepId.GearAndRequiredCards);
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+
+        Assert.That(flow.actionPrompt, Does.Contain("按一次空格直接打出").And.Contain("结束出牌"));
+        Assert.That(gear.actionPrompt, Does.Contain("按一次空格直接打出"));
+        Assert.That(prefab, Is.Not.Null);
+
+        TutorialOverlayAuthoring authoring = prefab.GetComponent<TutorialOverlayAuthoring>();
+        Assert.That(authoring, Is.Not.Null);
+        Assert.That(authoring.Find(TutorialStepId.TurnFlow).actionPrompt,
+            Does.Contain("按一次空格直接打出").And.Contain("结束出牌"));
+        Assert.That(authoring.Find(TutorialStepId.GearAndRequiredCards).actionPrompt,
+            Does.Contain("按一次空格直接打出"));
+    }
+
+    [Test]
     public void TutorialLaunchOverridesTrackWithoutMutatingQuickRaceSelection()
     {
         const string quickRaceTrack = "monza_pasta";
@@ -423,6 +443,57 @@ public class TutorialScenarioTests
     }
 
     [Test]
+    public void DisablingGuideClearsLessonCopyAndReplayingRestoresIt()
+    {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/TutorialOverlay");
+        GameObject instance = Object.Instantiate(prefab);
+        try
+        {
+            TutorialOverlayAuthoring authoring = instance.GetComponent<TutorialOverlayAuthoring>();
+            TutorialGuideUI guide = authoring.Guide;
+            Transform panel = instance.transform.Find("TutorialGuidePanel");
+            Assert.That(authoring.PreviewStep(TutorialStepId.UkScone), Is.True);
+
+            TMP_Text[] lessonTexts = new[]
+            {
+                panel.Find("TutorialTitle").GetComponent<TMP_Text>(),
+                panel.Find("TutorialCompletion").GetComponent<TMP_Text>(),
+                panel.Find("TutorialInstruction").GetComponent<TMP_Text>(),
+                panel.Find("TutorialProgress").GetComponent<TMP_Text>()
+            };
+            Assert.That(lessonTexts[0].text, Is.Not.Empty);
+            Assert.That(lessonTexts[2].text, Is.Not.Empty);
+
+            guide.gameObject.SetActive(false);
+            // EditMode does not dispatch MonoBehaviour lifetime callbacks for
+            // this non-ExecuteAlways prefab. Exercise the runtime callback's
+            // cleanup directly, then verify preview can rebuild the same UI.
+            typeof(TutorialGuideUI).GetMethod(
+                "OnDisable",
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic)
+                .Invoke(guide, null);
+            foreach (TMP_Text text in lessonTexts)
+            {
+                Assert.That(text.text, Is.Empty);
+                Assert.That(text.enabled, Is.False);
+                Assert.That(text.canvasRenderer.cull, Is.True);
+            }
+            Assert.That(authoring.FocusHighlight.gameObject.activeSelf, Is.False);
+
+            Assert.That(authoring.PreviewStep(TutorialStepId.UkEnglishBreakfastTea), Is.True);
+            Assert.That(lessonTexts[0].text,
+                Is.EqualTo(authoring.Find(TutorialStepId.UkEnglishBreakfastTea).title));
+            Assert.That(lessonTexts[0].enabled, Is.True);
+            Assert.That(lessonTexts[2].text, Does.Contain("早餐茶"));
+        }
+        finally
+        {
+            Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
     public void SuspendedTutorialPresentationKeepsGuideVisibleWhileNextStepIsPrepared()
     {
         GameObject instance = new GameObject(
@@ -678,6 +749,35 @@ public class TutorialScenarioTests
 
         state.Show(TutorialStepId.TurnFlow, pointerHeld: false);
         Assert.That(state.IsVisible, Is.True, "a new step should receive its own focus");
+    }
+
+    [Test]
+    public void TutorialFocusRearmsSameStepAfterGuideIsHiddenForReplay()
+    {
+        var state = new TutorialFocusDismissState();
+        state.Show(TutorialStepId.ObjectiveAndInterface, pointerHeld: false);
+        Assert.That(state.Update(pointerHeld: true, pointerPressedThisFrame: true), Is.True);
+        state.Show(TutorialStepId.ObjectiveAndInterface, pointerHeld: false);
+        Assert.That(state.IsVisible, Is.False, "refresh must keep dismissal latched");
+
+        state.Hide();
+        state.Show(TutorialStepId.ObjectiveAndInterface, pointerHeld: true);
+        Assert.That(state.IsVisible, Is.True, "replay must start a new presentation");
+        Assert.That(state.IsWaitingForPointerRelease, Is.True);
+    }
+
+    [Test]
+    public void ReviewingEarlierLessonDoesNotShowLaterLessonSuccess()
+    {
+        var director = new TutorialRuntimeDirector(
+            TutorialScenarioDefinition.CreateLeMansUk());
+        Assert.That(director.TryNext(out string reason), Is.True, reason);
+        Assert.That(TutorialGuideFeedbackRules.VisibleCompletion(director), Is.Not.Null);
+
+        Assert.That(director.TryPrevious(), Is.True);
+        Assert.That(TutorialGuideFeedbackRules.VisibleCompletion(director), Is.Null);
+        Assert.That(director.TryNext(out reason), Is.True, reason);
+        Assert.That(TutorialGuideFeedbackRules.VisibleCompletion(director), Is.Not.Null);
     }
 
     [Test]
@@ -1060,6 +1160,25 @@ public class TutorialScenarioTests
                 fifthStep,
                 GamePhase.GameOver),
             Is.False);
+    }
+
+    [Test]
+    public void ScriptedWeatherWaitsForItsPlayerCheckpointBeforeChangingTheTrack()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateLeMansUk();
+        TutorialWeatherCue rain = scenario.weatherScript.Single(
+            cue => cue.step == TutorialStepId.Weather);
+        TutorialPlayerCheckpoint weatherCheckpoint = scenario.playerCheckpoints.Single(
+            checkpoint => checkpoint.step == TutorialStepId.Weather);
+        var weatherCue = new TutorialCheckpointCue(rain, null, weatherCheckpoint);
+        Assert.That(TutorialGuideTimingRules.DefersWeatherUntilCheckpoint(weatherCue), Is.True,
+            "rain must not alter the prior turn before the scripted car/hand state is visible");
+
+        TutorialWeatherCue review = scenario.weatherScript.Single(
+            cue => cue.step == TutorialStepId.Review);
+        Assert.That(TutorialGuideTimingRules.DefersWeatherUntilCheckpoint(
+            new TutorialCheckpointCue(review, null, null)), Is.False,
+            "the review cue has no pending player checkpoint");
     }
 
     [Test]

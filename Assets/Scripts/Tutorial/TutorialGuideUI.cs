@@ -74,6 +74,15 @@ public static class TutorialGuideLayoutRules
     }
 }
 
+public static class TutorialGuideFeedbackRules
+{
+    public static TutorialStepDefinition VisibleCompletion(TutorialRuntimeDirector director)
+    {
+        return director != null && !director.IsReviewing
+            ? director.LastCompletedStep : null;
+    }
+}
+
 /// <summary>
 /// Runtime-built tutorial guide panel. It presents authored scenario text and
 /// delegates every state change to MVPGameManager/TutorialRuntimeDirector.
@@ -182,6 +191,18 @@ public sealed class TutorialGuideUI : MonoBehaviour
         EnsurePreviousButton();
         CaptureAuthoredLayout();
         BindButtonListeners();
+    }
+
+    private void OnDisable()
+    {
+        // Scene exits and overlay replacements can disable the panel without
+        // going through Refresh(). Clear its rendered lesson copy immediately
+        // so a later overlay/scene frame cannot retain stale TMP geometry.
+        focusHighlighter?.Hide();
+        ReplaceTextAndGeometry(titleText, string.Empty);
+        ReplaceTextAndGeometry(completionText, string.Empty);
+        ReplaceTextAndGeometry(instructionText, string.Empty);
+        ReplaceTextAndGeometry(progressText, string.Empty);
     }
 
     public void ConfigureAsAuthoredLayout(bool enabled)
@@ -329,7 +350,10 @@ public sealed class TutorialGuideUI : MonoBehaviour
             step.focusTarget,
             presentation != null ? presentation.focusIntroduction : step.focusIntroduction);
         ReplaceTextAndGeometry(titleText, presentation != null ? presentation.title : step.title);
-        TutorialStepDefinition completedStep = director.LastCompletedStep;
+        // Reviewing an earlier lesson does not roll back the race. Its panel
+        // must not display a completion message from a later live lesson.
+        TutorialStepDefinition completedStep =
+            TutorialGuideFeedbackRules.VisibleCompletion(director);
         TutorialStepPresentation completedPresentation =
             completedStep != null && useFoundationCopy && authoring != null
                 ? authoring.Find(completedStep.id)

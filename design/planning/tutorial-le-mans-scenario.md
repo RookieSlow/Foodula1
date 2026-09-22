@@ -1,5 +1,9 @@
 # 勒芒新手教程脚本配置
 
+> 2026-09-22 操作提示对齐：首个完整回合明确引导玩家锁定 G1、提交 1 张速度牌，再点底部
+> “结束出牌”；已选牌可按一次空格直接提交，但空选择的空格不会替代结束按钮。第二次 G2 练习
+> 同样说明单次空格提交。两处文案在 `TutorialOverlay.prefab` 和场景定义回退文本保持一致。
+
 > 配置 ID：`tutorial_le_mans_uk_v1`  
 > 实现入口：`Assets/Scripts/Tutorial/TutorialScenarioDefinition.cs`
 
@@ -33,7 +37,7 @@
 
 | 教学步骤 | 脚本状态 | 验收 |
 |---|---|---|
-| Weather | `rain` | 记录天气 cue，并通过现有天气规则显示实际影响 |
+| Weather | `rain` | 先排队；玩家位置/手牌检查点成功落位时才切换并记录天气 cue，避免上一回合提前受雨天影响 |
 | Slipstream | 领航车 42、玩家 40、期望距离 2 | 回合结束只移动后车；领航车不受益 |
 | Review | `cloudy` | 总结后回到练习圈基准天气 |
 
@@ -124,8 +128,9 @@ GameLoop 自动确认脚本挡位，`CardHandUI.ShowHand` 完成后才恢复面�
 尾流领航车是教程专用确定性参与者。它只提供位置与计划输入，不替换或改写
 `RaceSession` 的正常尾流解析。
 
-当前 `TutorialRuntimeDirector` 在步骤进入时发出一次性 cue。天气立即进入现有
-`RaceSession.Weather`；Slipstream cue 先排队，在所有车辆完成基础移动后、正常尾流解析前
+当前 `TutorialRuntimeDirector` 在步骤进入时发出一次性 cue。带玩家检查点的天气 cue
+等检查点成功落位后才进入现有 `RaceSession.Weather`；无需检查点的总结天气 cue 即时应用。
+Slipstream cue 先排队，在所有车辆完成基础移动后、正常尾流解析前
 执行 `leader=42/player=40`，随后仍由 `RaceSession.ComputeSlipstreamChain` 判定。完整引导
 Play Mode 尚未走到该步骤，因此代码接线与纯层测试不能冒充最终画面验收。
 

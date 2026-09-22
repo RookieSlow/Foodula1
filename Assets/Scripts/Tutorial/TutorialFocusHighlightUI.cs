@@ -50,6 +50,10 @@ public sealed class TutorialFocusDismissState
     {
         IsVisible = false;
         IsWaitingForPointerRelease = false;
+        // A hidden spotlight ends this lesson's presentation. Replaying the
+        // same lesson must be able to show its introduction again.
+        hasStep = false;
+        operationKey = null;
     }
 }
 
@@ -79,6 +83,97 @@ public static class TutorialFocusOperationRules
             case "pit": return TutorialFocusOperation.Pit;
             case "lane": return TutorialFocusOperation.Lane;
             default: return TutorialFocusOperation.None;
+        }
+    }
+}
+
+public static class TutorialSpecialtyFocusRules
+{
+    public static bool CanHighlightEndCards(
+        TutorialStepId? step, bool stepComplete, bool canEndCards,
+        bool deEffectReady = false)
+    {
+        return canEndCards && (stepComplete || !RequiresLessonCard(step) ||
+            (deEffectReady && (step == TutorialStepId.DeSauerkraut ||
+                               step == TutorialStepId.DeSchwarzbrot ||
+                               step == TutorialStepId.ItParmigiano ||
+                               step == TutorialStepId.JpTorpedo)));
+    }
+
+    public static bool RequiresLessonCard(TutorialStepId? step)
+    {
+        return step == TutorialStepId.ChinaHotpot ||
+               step == TutorialStepId.ChinaIceJelly ||
+               step == TutorialStepId.UsFries ||
+               step == TutorialStepId.UsCola ||
+               step == TutorialStepId.DeSauerkraut ||
+               step == TutorialStepId.DeSchwarzbrot ||
+               step == TutorialStepId.ItParmigiano ||
+               step == TutorialStepId.ItChianti ||
+               step == TutorialStepId.UkSpecialtyScone ||
+               step == TutorialStepId.UkSpecialtyTea ||
+               step == TutorialStepId.JpKantoSkip ||
+               step == TutorialStepId.JpTorpedo;
+    }
+
+    public static TutorialFocusTarget SelectionTarget(TutorialStepId? step, bool trickArmed)
+    {
+        if (step == TutorialStepId.UkSpecialtyScone)
+            return TutorialFocusTarget.UkSconeCard;
+        if (step == TutorialStepId.UkSpecialtyTea)
+            return TutorialFocusTarget.UkTeaCard;
+        return RequiresLessonCard(step) &&
+               !((step == TutorialStepId.ChinaHotpot ||
+                  step == TutorialStepId.DeSauerkraut ||
+                  step == TutorialStepId.DeSchwarzbrot ||
+                  step == TutorialStepId.ItParmigiano ||
+                  step == TutorialStepId.JpTorpedo) && trickArmed)
+            ? TutorialFocusTarget.TeamTrickCard
+            : TutorialFocusTarget.Hand;
+    }
+
+    public static string SelectionPrompt(TutorialStepId? step, bool trickArmed)
+    {
+        switch (step)
+        {
+            case TutorialStepId.ChinaHotpot:
+                return trickArmed
+                    ? "火锅 ATTACK 已待命：只选 1 张速度牌并确认，观察它的强化标记。"
+                    : "先点击手牌中的火锅底料并确认；随后再单独打一张速度牌。";
+            case TutorialStepId.ChinaIceJelly:
+                return "点击手牌中的冰糕并确认；Recover 下它会阻止后车借你的尾流。";
+            case TutorialStepId.UsFries:
+                return "点击手牌中的薯条并确认；地标条件已由训练检查点准备好。";
+            case TutorialStepId.UsCola:
+                return "点击手牌中的可乐并确认；观察额外抽到的那张牌。";
+            case TutorialStepId.DeSauerkraut:
+                return trickArmed
+                    ? "酸菜已待命：只选 1 张速度 1，结束出牌后观察过弯移动。"
+                    : "先单独点击酸菜发酵并确认；随后再打一张速度 1。";
+            case TutorialStepId.DeSchwarzbrot:
+                return trickArmed
+                    ? "黑面包已待命：只选 1 张速度 1，再结束出牌观察缺牌付热。"
+                    : "先单独点击黑面包垫底并确认；随后再打一张速度 1。";
+            case TutorialStepId.ItParmigiano:
+                return trickArmed
+                    ? "干酪已待命：只选 1 张速度 1，结束出牌后等回合末尾流。"
+                    : "先单独打帕尔马干酪，再打一张速度 1。";
+            case TutorialStepId.ItChianti:
+                return "只打基安蒂红酒，观察一张速度牌弃置及一张热量回到引擎。";
+            case TutorialStepId.UkSpecialtyScone:
+                return "只打司康，观察引擎支付 1 热与本回合 +2 移动。";
+            case TutorialStepId.UkSpecialtyTea:
+                return "只打英式红茶，观察手牌热量回到引擎。";
+            case TutorialStepId.JpKantoSkip:
+                return "只打关东慢煮，本回合不出速度牌；留意下一回合的额外牌槽。";
+            case TutorialStepId.JpTorpedo:
+                return trickArmed
+                    ? "鱼雷已待命：只出 1 张速度 3，结束出牌后观察超车。"
+                    : "先单独打鱼雷天妇罗，再出 1 张速度 3。";
+            case TutorialStepId.JpKantoRelease:
+                return "G1 已备好：确认 3 张速度牌，用掉上回合留下的 2 个牌槽。";
+            default:
+                return string.Empty;
         }
     }
 }
@@ -222,9 +317,7 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         lessonIntroduction = introduction ?? string.Empty;
         dismissState.Show(stepId, Input.GetMouseButton(0));
         RefreshOperation();
-        if (!dismissState.IsVisible &&
-            operation == TutorialFocusOperation.None &&
-            manager == null)
+        if (operation == TutorialFocusOperation.None && manager == null)
         {
             // Preview/test refreshes have no live target to keep highlighted.
             DeactivateVisuals();
@@ -290,9 +383,30 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
         int selected = hand == null ? 0 : phase == "discard"
             ? hand.GetSelectedCards().Count : hand.GetSelectedPlayCards().Count;
         PlayerState player = manager != null ? manager.Player : null;
+        TutorialStepId? step = manager?.TutorialDirector?.CurrentStep?.id;
+        bool hotpotArmed = player != null && TrickCardRules.HasHotpotAttack(player.trickState);
+        bool deTrickArmed = player != null && player.trickState != null &&
+            ((step == TutorialStepId.DeSauerkraut && player.trickState.sauerkrautPlayed) ||
+             (step == TutorialStepId.DeSchwarzbrot && player.trickState.schwarzbrotActive));
+        bool itTrickArmed = player != null && player.trickState != null &&
+            step == TutorialStepId.ItParmigiano && player.trickState.parmigianoActive;
+        bool jpTrickArmed = player != null && player.trickState != null &&
+            step == TutorialStepId.JpTorpedo && player.trickState.torpedoTempuraActive;
+        bool deEffectReady = (deTrickArmed || itTrickArmed) && player.playedSpeedCardsThisTurn != null &&
+            player.playedSpeedCardsThisTurn.Count == 1 &&
+            player.playedSpeedCardsThisTurn[0] != null &&
+            player.playedSpeedCardsThisTurn[0].value == 1;
+        deEffectReady |= jpTrickArmed && player.playedSpeedCardsThisTurn != null &&
+            player.playedSpeedCardsThisTurn.Count == 1 &&
+            player.playedSpeedCardsThisTurn[0] != null &&
+            player.playedSpeedCardsThisTurn[0].value == 3;
         bool canEnd = player != null && player.deck != null &&
             (player.playedSpeedCardsThisTurn.Count >= manager.GetMaxSpeedCardsThisTurn(player) ||
              player.deck.CountSpeedInHand() == 0);
+        canEnd |= deEffectReady;
+        canEnd = TutorialSpecialtyFocusRules.CanHighlightEndCards(
+            step, manager?.TutorialDirector?.IsActiveStepComplete ?? false, canEnd,
+            deEffectReady);
         TutorialFocusOperation next = TutorialFocusOperationRules.Resolve(
             phase,
             selected,
@@ -310,7 +424,8 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
                 focusTarget = TutorialFocusTarget.GearControls;
                 focusIntroduction = "选择本回合档位，然后点击确认档位。"; break;
             case TutorialFocusOperation.SelectCards:
-                focusTarget = TutorialFocusTarget.Hand;
+                focusTarget = TutorialSpecialtyFocusRules.SelectionTarget(step,
+                    hotpotArmed || deTrickArmed || itTrickArmed || jpTrickArmed);
                 focusIntroduction = ResolveSpecialtyCardIntroduction(); break;
             case TutorialFocusOperation.ConfirmPlay:
                 focusTarget = TutorialFocusTarget.ActionButton;
@@ -335,6 +450,23 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
     private string ResolveSpecialtyCardIntroduction()
     {
         TutorialStepId? step = manager?.TutorialDirector?.CurrentStep?.id;
+        bool trickArmed = manager?.Player != null &&
+            (TrickCardRules.HasHotpotAttack(manager.Player.trickState) ||
+             (step == TutorialStepId.DeSauerkraut && manager.Player.trickState.sauerkrautPlayed) ||
+             (step == TutorialStepId.DeSchwarzbrot && manager.Player.trickState.schwarzbrotActive) ||
+             (step == TutorialStepId.ItParmigiano && manager.Player.trickState.parmigianoActive) ||
+             (step == TutorialStepId.JpTorpedo && manager.Player.trickState.torpedoTempuraActive));
+        string trickPrompt = TutorialSpecialtyFocusRules.SelectionPrompt(step, trickArmed);
+        if (!string.IsNullOrEmpty(trickPrompt))
+            return trickPrompt;
+        if (manager?.TutorialScenario?.id == "tutorial_team_it_v1" &&
+            (step == TutorialStepId.ItCorner || step == TutorialStepId.ItCornerExit))
+            return step == TutorialStepId.ItCorner
+                ? "只打 1 张速度 1，等待过弯；弯速修正写在赛道限速明细里。"
+                : "只打 1 张速度 1，结束出牌后看赛车前进 2 格。";
+        if (manager?.TutorialScenario?.id == "tutorial_team_de_v1" &&
+            step == TutorialStepId.DeStraight)
+            return "只点击 1 张速度 1 并确认；直道移动后再看德国车的两项加成。";
         if (manager?.TutorialScenario?.id != "tutorial_team_us_v1" || !step.HasValue)
             return "点击手牌选择速度牌或一张特技牌，再确认出牌。";
 
@@ -430,6 +562,31 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
                 if (speedThree == null)
                     secondaryTarget = null;
             }
+        }
+        else if (operation == TutorialFocusOperation.SelectCards &&
+                 manager?.TutorialScenario?.id == "tutorial_team_de_v1" &&
+                 (manager.TutorialDirector?.CurrentStep?.id == TutorialStepId.DeStraight ||
+                  (manager.TutorialDirector?.CurrentStep?.id == TutorialStepId.DeSauerkraut &&
+                   manager.Player?.trickState?.sauerkrautPlayed == true) ||
+                  (manager.TutorialDirector?.CurrentStep?.id == TutorialStepId.DeSchwarzbrot &&
+                   manager.Player?.trickState?.schwarzbrotActive == true)))
+        {
+            target = ResolveSpeedCard(1) ?? target;
+        }
+        else if (operation == TutorialFocusOperation.SelectCards &&
+                 manager?.TutorialScenario?.id == "tutorial_team_it_v1" &&
+                 manager.TutorialDirector?.CurrentStep?.id == TutorialStepId.ItParmigiano &&
+                 manager.Player?.trickState?.parmigianoActive == true)
+        {
+            target = ResolveSpeedCard(1) ?? target;
+        }
+        else if (operation == TutorialFocusOperation.SelectCards &&
+                 manager?.TutorialScenario?.id == "tutorial_team_cn_v1" &&
+                 manager.TutorialDirector?.CurrentStep?.id == TutorialStepId.ChinaHotpot &&
+                 manager.Player != null &&
+                 TrickCardRules.HasHotpotAttack(manager.Player.trickState))
+        {
+            target = ResolveSpeedCard(1) ?? target;
         }
         if (target == null || !target.gameObject.activeInHierarchy)
         {
@@ -529,6 +686,12 @@ public sealed class TutorialFocusHighlightUI : MonoBehaviour
                 string trickId = step == TutorialStepId.ChinaHotpot ? "cn-hotpot-base" :
                     step == TutorialStepId.ChinaIceJelly ? "cn-ice-jelly" :
                     step == TutorialStepId.UsFries ? "us-fries" : "us-cola";
+                if (step == TutorialStepId.DeSauerkraut) trickId = "de-sauerkraut";
+                if (step == TutorialStepId.DeSchwarzbrot) trickId = "de-schwarzbrot";
+                if (step == TutorialStepId.ItParmigiano) trickId = "it-parmigiano";
+                if (step == TutorialStepId.JpKantoSkip) trickId = "jp-kanto-oden";
+                if (step == TutorialStepId.JpTorpedo) trickId = "jp-torpedo-tempura";
+                if (step == TutorialStepId.ItChianti) trickId = "it-chianti";
                 return ResolveCard(trickId) ?? ResolveNamedTarget("HandPanel");
             case TutorialFocusTarget.Review:
                 return ResolveNamedTarget("TrackFrame") ?? ResolveNamedTarget("ScoreboardPanel");

@@ -57,10 +57,15 @@ public class TeamTutorialCatalogTests
         StringAssert.Contains("鱼雷天妇罗", japanText);
         StringAssert.Contains("关东慢煮", japanText);
         StringAssert.DoesNotContain("随机秘方牌池", japanText);
+        StringAssert.DoesNotContain("被超车时对方 +1", japanText);
     }
 
+    [TestCase(TeamId.UK, "silverstone_afternoon_tea", 7)]
+    [TestCase(TeamId.JP, "suzuka_sushi", 6)]
     [TestCase(TeamId.CN, "shanghai_dim_sum", 7)]
     [TestCase(TeamId.US, "indianapolis_burger", 8)]
+    [TestCase(TeamId.DE, "nurburgring_bier", 8)]
+    [TestCase(TeamId.IT, "monza_pasta", 6)]
     public void SpecialtyScenarioUsesRealTeamRulesWithoutProgression(
         TeamId team, string track, int heatCapacity)
     {
@@ -78,7 +83,275 @@ public class TeamTutorialCatalogTests
         Assert.That(scenario.steps.Last().id, Is.EqualTo(TutorialStepId.Review));
         Assert.That(scenario.steps.Select(step => step.id).Distinct().Count(),
             Is.EqualTo(scenario.steps.Count));
-        Assert.That(scenario.playerCheckpoints.Count, Is.EqualTo(5));
+        Assert.That(scenario.playerCheckpoints.Count,
+            Is.EqualTo(team == TeamId.UK ? 2 : team == TeamId.JP ? 3 :
+                team == TeamId.DE ? 3 : team == TeamId.IT ? 4 : 5));
+    }
+
+    [Test]
+    public void JapanCourseScriptsKantoCarryAndStationaryOvertakeTarget()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.JP);
+        Assert.That(scenario.steps.Select(s => s.id), Is.EqualTo(new[]
+        {
+            TutorialStepId.ObjectiveAndInterface, TutorialStepId.JpKantoSkip,
+            TutorialStepId.JpKantoRelease, TutorialStepId.JpTorpedo, TutorialStepId.Review
+        }));
+        var player = new PlayerState("player", false, 0, 1) { teamId = TeamId.JP };
+        TutorialPlayerCheckpoint skip = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.JpKantoSkip);
+        Assert.That(TutorialCheckpointRules.ApplyPlayerCheckpoint(scenario, skip, player).success, Is.True);
+        Assert.That(player.gear, Is.EqualTo(2));
+        Assert.That(player.deck.Hand.First().trickId, Is.EqualTo("jp-kanto-oden"));
+        Assert.That(player.deck.CountHeatInHand(), Is.EqualTo(1));
+        Assert.That(TutorialSpecialtyCardRules.JpKantoResolved(
+            true, 2, 2, 1, 0, 5, 6), Is.True);
+        Assert.That(TutorialSpecialtyCardRules.JpKantoResolved(
+            true, 2, 2, 1, 1, 5, 6), Is.False);
+
+        TutorialPlayerCheckpoint release = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.JpKantoRelease);
+        Assert.That(TutorialCheckpointRules.ApplyPlayerCheckpoint(scenario, release, player).success, Is.True);
+        Assert.That(player.trickState.kantoOdenActive, Is.True);
+        Assert.That(player.trickState.kantoOdenAccumulatedCards, Is.EqualTo(2));
+        var session = new RaceSession();
+        session.BeginTurn(player);
+        Assert.That(player.extraCardSlotsThisTurn, Is.EqualTo(2));
+        Assert.That(player.trickState.kantoOdenActive, Is.False);
+        Assert.That(TeamGearRules.GetSpeedCardCount(TeamId.JP, 1, 0,
+            player.extraCardSlotsThisTurn), Is.EqualTo(3));
+        Assert.That(TutorialSpecialtyCardRules.ValidateJpSpeedCompletion(
+            TutorialStepId.JpKantoRelease, false, 2,
+            new[] { new CardData(CardType.Speed, 1), new CardData(CardType.Speed, 2),
+                new CardData(CardType.Speed, 2) }, out _), Is.True);
+        Assert.That(TutorialSpecialtyCardRules.ValidateJpSpeedCompletion(
+            TutorialStepId.JpKantoRelease, false, 1, null, out _), Is.False);
+
+        TutorialPlayerCheckpoint torpedo = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.JpTorpedo);
+        Assert.That(TutorialCheckpointRules.ApplyPlayerCheckpoint(scenario, torpedo, player).success, Is.True);
+        Assert.That(player.trickState.kantoOdenActive, Is.False);
+        Assert.That(player.deck.Hand.First().trickId, Is.EqualTo("jp-torpedo-tempura"));
+        TutorialOpponentCue cue = scenario.opponentScript.Single();
+        Assert.That(cue.step, Is.EqualTo(TutorialStepId.JpTorpedo));
+        Assert.That(cue.leaderCell - cue.playerCell, Is.EqualTo(2));
+        Assert.That(TutorialOpponentCueRules.ResolveLeaderMovement(cue, true, 3), Is.Zero);
+        Assert.That(TutorialOpponentCueRules.ShouldResolveSlipstreamForFollower(cue, false), Is.False);
+        player.position = cue.playerCell;
+        player.cornerTotalThisTurn = 3;
+        var leader = new PlayerState("leader", true, cue.leaderCell, 1);
+        Assert.That(RaceMovementRules.CountOvertakes(player, new[] { player, leader },
+            60, false, null), Is.EqualTo(1));
+        Assert.That(TutorialSpecialtyCardRules.ValidateJpSpeedSelection(
+            TutorialStepId.JpTorpedo, false, null,
+            new[] { new CardData(CardType.Speed, 3) }, out _), Is.False);
+        Assert.That(TutorialSpecialtyCardRules.ValidateJpSpeedCompletion(
+            TutorialStepId.JpTorpedo, true, 0,
+            new[] { new CardData(CardType.Speed, 3) }, out _), Is.True);
+        Assert.That(TutorialSpecialtyCardRules.ValidateJpTrickSelection(
+            TutorialStepId.JpTorpedo, "jp-kanto-oden", out _), Is.False);
+        Assert.That(TutorialSpecialtyCardRules.ValidateJpTrickSelection(
+            TutorialStepId.JpTorpedo, "jp-torpedo-tempura", out _), Is.True);
+        Assert.That(TutorialSpecialtyFocusRules.SelectionTarget(TutorialStepId.JpTorpedo, false),
+            Is.EqualTo(TutorialFocusTarget.TeamTrickCard));
+        Assert.That(TutorialSpecialtyFocusRules.SelectionTarget(TutorialStepId.JpTorpedo, true),
+            Is.EqualTo(TutorialFocusTarget.Hand));
+        Assert.That(TutorialSpecialtyFocusRules.CanHighlightEndCards(
+            TutorialStepId.JpTorpedo, false, true, deEffectReady: false), Is.False);
+        Assert.That(TutorialSpecialtyFocusRules.CanHighlightEndCards(
+            TutorialStepId.JpTorpedo, false, true, deEffectReady: true), Is.True);
+    }
+
+    [Test]
+    public void UnitedKingdomCourseUsesExactTrickAndHeatCheckpoints()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.UK);
+        Assert.That(scenario.id, Is.EqualTo("tutorial_team_uk_v1"));
+        Assert.That(scenario.steps.Select(s => s.id), Is.EqualTo(new[]
+        {
+            TutorialStepId.ObjectiveAndInterface, TutorialStepId.UkSpecialtyScone,
+            TutorialStepId.UkSpecialtyTea, TutorialStepId.Review
+        }));
+        var player = new PlayerState("tutorial", false, 0, 1) { teamId = TeamId.UK };
+        TutorialPlayerCheckpoint scone = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.UkSpecialtyScone);
+        Assert.That(TutorialCheckpointRules.ApplyPlayerCheckpoint(scenario, scone, player).success, Is.True);
+        Assert.That(player.deck.Hand.First().trickId, Is.EqualTo("uk-scone"));
+        Assert.That(player.deck.heatPool.remaining, Is.EqualTo(7));
+        TutorialPlayerCheckpoint tea = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.UkSpecialtyTea);
+        Assert.That(TutorialCheckpointRules.ApplyPlayerCheckpoint(scenario, tea, player).success, Is.True);
+        Assert.That(player.deck.Hand.First().trickId, Is.EqualTo("uk-english-breakfast-tea"));
+        Assert.That(player.deck.CountHeatInHand(), Is.EqualTo(1));
+        Assert.That(player.deck.heatPool.remaining, Is.EqualTo(6));
+        Assert.That(TutorialSpecialtyCardRules.ValidateUkTrickSelection(
+            TutorialStepId.UkSpecialtyTea, "uk-scone", out string reason), Is.False);
+        StringAssert.Contains("红茶", reason);
+        Assert.That(TutorialSpecialtyCardRules.ValidateUkTrickSelection(
+            TutorialStepId.UkSpecialtyTea, "uk-english-breakfast-tea", out _), Is.True);
+        Assert.That(TutorialSpecialtyCardRules.ValidateTrickLessonSpeedSelection(
+            TutorialStepId.UkSpecialtyScone, false,
+            new[] { new CardData(CardType.Speed, 1) }, out _), Is.False);
+        Assert.That(TutorialSpecialtyCardRules.UkSconeResolved(6, 5, 0, 2), Is.True);
+        Assert.That(TutorialSpecialtyCardRules.UkSconeResolved(6, 6, 0, 2), Is.False);
+        Assert.That(TutorialSpecialtyCardRules.UkTeaResolved(1, 0, 5, 6), Is.True);
+        Assert.That(TutorialSpecialtyCardRules.UkTeaResolved(1, 0, 5, 5), Is.False);
+        Assert.That(TutorialSpecialtyFocusRules.SelectionTarget(TutorialStepId.UkSpecialtyScone, false),
+            Is.EqualTo(TutorialFocusTarget.UkSconeCard));
+        Assert.That(TutorialSpecialtyFocusRules.SelectionTarget(TutorialStepId.UkSpecialtyTea, false),
+            Is.EqualTo(TutorialFocusTarget.UkTeaCard));
+    }
+
+    [Test]
+    public void ItalyCourseScriptsRealCornerFollowerAndHeatRecovery()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.IT);
+        TutorialPlayerCheckpoint corner = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.ItCorner);
+        TrackConfig track = TrackDataLoader.LoadConfig(scenario.trackId);
+        List<TrackNode> nodes = TrackDataLoader.ConfigToNodes(track);
+        Assert.That(TrackRules.GetUniqueApexCornersCrossed(nodes,
+            corner.playerCell, corner.playerCell + 1).Count, Is.EqualTo(1));
+        Assert.That(TeamVehicleRules.GetHandling(TeamId.IT), Is.EqualTo(2));
+
+        TutorialPlayerCheckpoint exit = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.ItCornerExit);
+        Assert.That(exit.italyCornerExitBoostReady, Is.True);
+        Assert.That(exit.beginAtCardSelection, Is.True);
+        Assert.That(exit.exactDrawOrder[0].value, Is.EqualTo(1));
+        Assert.That(TrackRules.GetUniqueApexCornersCrossed(nodes,
+            exit.playerCell, exit.playerCell + 2).Count, Is.Zero);
+        Assert.That(scenario.steps.Single(s => s.id == TutorialStepId.ItCornerExit).requiredAction,
+            Is.EqualTo(TutorialAction.ResolveItCornerExit));
+
+        TutorialPlayerCheckpoint tailwind = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.ItParmigiano);
+        Assert.That(tailwind.exactDrawOrder[0].trickId, Is.EqualTo("it-parmigiano"));
+        TutorialOpponentCue cue = scenario.opponentScript.Single();
+        Assert.That(cue.step, Is.EqualTo(TutorialStepId.ItParmigiano));
+        Assert.That(RaceSession.ForwardDistance(cue.playerCell + 1, cue.leaderCell,
+            track.gameCellCount), Is.EqualTo(1));
+        Assert.That(TutorialOpponentCueRules.ShouldResolveSlipstreamForFollower(cue, true), Is.True);
+        Assert.That(TutorialOpponentCueRules.ShouldResolveSlipstreamForFollower(cue, false), Is.False);
+        Assert.That(TutorialOpponentCueRules.ResolveLeaderMovement(cue, true, 4), Is.Zero);
+
+        TutorialPlayerCheckpoint wine = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.ItChianti);
+        Assert.That(wine.heatInHand, Is.EqualTo(1));
+        Assert.That(wine.exactDrawOrder[0].trickId, Is.EqualTo("it-chianti"));
+        Assert.That(wine.beginAtCardSelection, Is.True);
+    }
+
+    [Test]
+    public void ItalyCardGateRequiresNamedTrickThenSingleSpeedOneForTailwind()
+    {
+        var one = new[] { new CardData(CardType.Speed, 1) };
+        var two = new[] { new CardData(CardType.Speed, 2) };
+        Assert.That(TutorialSpecialtyCardRules.ValidateItCornerSpeedSelection(
+            TutorialStepId.ItCorner, null, two, out _), Is.False);
+        Assert.That(TutorialSpecialtyCardRules.ValidateItCornerSpeedCompletion(
+            TutorialStepId.ItCorner, one, out _), Is.True);
+        Assert.That(TutorialSpecialtyCardRules.ValidateItCornerSpeedSelection(
+            TutorialStepId.ItCornerExit, null, two, out _), Is.False);
+        Assert.That(TutorialSpecialtyCardRules.ValidateItCornerSpeedCompletion(
+            TutorialStepId.ItCornerExit, one, out _), Is.True);
+        Assert.That(TutorialSpecialtyCardRules.ValidateItCornerSpeedCompletion(
+            TutorialStepId.ItCornerExit, null, out _), Is.False);
+        Assert.That(TutorialSpecialtyCardRules.ValidateItSlipstreamSpeedSelection(
+            TutorialStepId.ItParmigiano, false, null, one, out _), Is.False);
+        Assert.That(TutorialSpecialtyCardRules.ValidateItSlipstreamSpeedSelection(
+            TutorialStepId.ItParmigiano, true, null, one, out _), Is.True);
+        Assert.That(TutorialSpecialtyCardRules.ValidateItSlipstreamSpeedSelection(
+            TutorialStepId.ItParmigiano, true, null, two, out _), Is.False);
+        Assert.That(TutorialSpecialtyCardRules.ValidateItSlipstreamSpeedCompletion(
+            TutorialStepId.ItParmigiano, true, one, out _), Is.True);
+        Assert.That(TutorialSpecialtyCardRules.ValidateItSlipstreamSpeedCompletion(
+            TutorialStepId.ItParmigiano, true, null, out _), Is.False);
+        Assert.That(TutorialSpecialtyCardRules.ValidateTrickLessonSpeedSelection(
+            TutorialStepId.ItChianti, false, one, out _), Is.False);
+        Assert.That(TutorialSpecialtyCardRules.ValidateTrickLessonCompletion(
+            TutorialStepId.ItChianti, false, out _), Is.False);
+        Assert.That(TutorialSpecialtyFocusRules.SelectionTarget(TutorialStepId.ItParmigiano, true),
+            Is.EqualTo(TutorialFocusTarget.Hand));
+        Assert.That(TutorialSpecialtyFocusRules.CanHighlightEndCards(
+            TutorialStepId.ItParmigiano, false, true, deEffectReady: true), Is.True);
+    }
+
+    [Test]
+    public void GermanyCourseFixesStraightHandAndBothTrickCheckpoints()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.DE);
+        TutorialPlayerCheckpoint straight = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.DeStraight);
+        Assert.That(straight.playerCell, Is.EqualTo(28));
+        Assert.That(straight.exactDrawOrder[0].value, Is.EqualTo(1));
+        Assert.That(TeamVehicleRules.GetStraightMovementBonus(TeamId.DE) +
+            TeamVehicleRules.GetStraightCardBonus(TeamId.DE, 1) + 1, Is.EqualTo(3));
+        Assert.That(scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.DeSauerkraut)
+            .exactDrawOrder[0].trickId, Is.EqualTo("de-sauerkraut"));
+        TutorialPlayerCheckpoint bread = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.DeSchwarzbrot);
+        Assert.That(bread.exactDrawOrder[0].trickId, Is.EqualTo("de-schwarzbrot"));
+        Assert.That(bread.gear, Is.EqualTo(3));
+        Assert.That(RaceRules.GetMissingSpeedCardCount(3, 1), Is.EqualTo(2));
+        TrackConfig track = TrackDataLoader.LoadConfig(scenario.trackId);
+        List<TrackNode> nodes = TrackDataLoader.ConfigToNodes(track);
+        TutorialPlayerCheckpoint cabbage = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.DeSauerkraut);
+        Assert.That(TrackRules.GetUniqueApexCornersCrossed(nodes,
+            cabbage.playerCell, cabbage.playerCell + 1).Count, Is.EqualTo(1));
+        Assert.That(TrackRules.GetUniqueApexCornersCrossed(nodes,
+            straight.playerCell, straight.playerCell + 1).Count, Is.Zero);
+        CollectionAssert.AreEqual(
+            scenario.CreateExactDeck().Select(c => c.ToString()).ToArray(),
+            TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.DE)
+                .CreateExactDeck().Select(c => c.ToString()).ToArray());
+    }
+
+    [Test]
+    public void GermanyStraightSelectionAndTrickActionsCannotAdvanceEarly()
+    {
+        var one = new List<CardData> { new CardData(CardType.Speed, 1) };
+        var two = new List<CardData> { new CardData(CardType.Speed, 2) };
+        Assert.That(TutorialSpecialtyCardRules.ValidateDeStraightSpeedSelection(
+            TutorialStepId.DeStraight, null, one, out _), Is.True);
+        Assert.That(TutorialSpecialtyCardRules.ValidateDeStraightSpeedSelection(
+            TutorialStepId.DeStraight, null, two, out _), Is.False);
+        Assert.That(TutorialSpecialtyCardRules.ValidateDeStraightSpeedCompletion(
+            TutorialStepId.DeStraight, one, out _), Is.True);
+        Assert.That(TutorialSpecialtyCardRules.ValidateDeStraightSpeedCompletion(
+            TutorialStepId.DeStraight, null, out _), Is.False);
+        foreach (TutorialStepId step in new[] { TutorialStepId.DeSauerkraut, TutorialStepId.DeSchwarzbrot })
+        {
+            Assert.That(TutorialSpecialtyCardRules.ValidateDeEffectSpeedSelection(
+                step, false, null, one, out _), Is.False);
+            Assert.That(TutorialSpecialtyCardRules.ValidateDeEffectSpeedSelection(
+                step, true, null, one, out _), Is.True);
+            Assert.That(TutorialSpecialtyCardRules.ValidateDeEffectSpeedSelection(
+                step, true, null, two, out _), Is.False);
+            Assert.That(TutorialSpecialtyCardRules.ValidateDeEffectSpeedCompletion(
+                step, true, null, out _), Is.False);
+            Assert.That(TutorialSpecialtyCardRules.ValidateDeEffectSpeedCompletion(
+                step, true, one, out _), Is.True);
+            Assert.That(TutorialSpecialtyFocusRules.RequiresLessonCard(step), Is.True);
+            Assert.That(TutorialSpecialtyFocusRules.SelectionTarget(step, true),
+                Is.EqualTo(TutorialFocusTarget.Hand));
+            Assert.That(TutorialSpecialtyFocusRules.CanHighlightEndCards(
+                step, false, true, deEffectReady: true), Is.True);
+        }
+        var cabbageState = new TrickCardState { sauerkrautPlayed = true };
+        Assert.That(TrickCardRules.GetSauerkrautBonus(cabbageState, true), Is.EqualTo(2));
+        Assert.That(TrickCardRules.GetSauerkrautBonus(cabbageState, false), Is.EqualTo(1));
+        var breadState = new TrickCardState { schwarzbrotActive = true, schwarzbrotRemaining = 1 };
+        Assert.That(TrickCardRules.ApplySchwarzbrot(breadState, 2), Is.EqualTo(1));
+        Assert.That(breadState.schwarzbrotActive, Is.False);
+        Assert.That(TrickCardRules.ApplySchwarzbrot(breadState, 2), Is.EqualTo(2));
+    }
+
+    [Test]
+    public void GermanyGuideWaitsForResolvedEffectRatherThanTrickPlay()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.DE);
+        var guide = new TutorialRuntimeDirector(scenario);
+        Assert.That(guide.TryPerform(TutorialAction.AcknowledgeObjective, out _), Is.True);
+        Assert.That(guide.TryNext(out _), Is.True);
+        Assert.That(guide.TryPerform(TutorialAction.ResolveDeStraight, out _), Is.True);
+        Assert.That(guide.TryNext(out _), Is.True);
+        Assert.That(guide.CurrentStep.id, Is.EqualTo(TutorialStepId.DeSauerkraut));
+        Assert.That(guide.TryPerform(TutorialAction.ResolveDeSchwarzbrot, out _), Is.False);
+        Assert.That(guide.IsActiveStepComplete, Is.False);
+        Assert.That(guide.TryPerform(TutorialAction.ResolveDeSauerkraut, out _), Is.True);
+        Assert.That(guide.TryNext(out _), Is.True);
+        Assert.That(guide.CurrentStep.id, Is.EqualTo(TutorialStepId.DeSchwarzbrot));
+        Assert.That(guide.IsActiveStepComplete, Is.False);
     }
 
     [Test]
@@ -117,8 +390,46 @@ public class TeamTutorialCatalogTests
             "After speed 1 and the US straight bonus, the player is exactly in tailwind range.");
         Assert.That(TutorialOpponentCueRules.ShouldResolveSlipstreamForFollower(cue, true), Is.True);
         Assert.That(TutorialOpponentCueRules.ShouldResolveSlipstreamForFollower(cue, false), Is.False);
-        Assert.Throws<System.ArgumentOutOfRangeException>(() =>
-            TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.JP));
+        Assert.That(TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.JP).trackId,
+            Is.EqualTo("suzuka_sushi"));
+    }
+
+    [Test]
+    public void TeachingLeadersPairWithPreparedPlayerCheckpointBeforeGuide()
+    {
+        TutorialScenarioDefinition foundation = TutorialScenarioDefinition.CreateLeMansUk();
+        TutorialOpponentCue foundationLeader = foundation.opponentScript.Single();
+        TutorialPlayerCheckpoint foundationCheckpoint = foundation.playerCheckpoints
+            .Single(c => c.step == foundationLeader.step);
+        Assert.That(TutorialOpponentCueRules.AppliesWithPlayerCheckpoint(
+            foundationLeader, foundationCheckpoint), Is.True);
+        Assert.That(foundationCheckpoint.playerCell,
+            Is.EqualTo(foundationLeader.playerCell));
+
+        foreach (TeamId team in new[] { TeamId.US, TeamId.IT, TeamId.JP })
+        {
+            TutorialScenarioDefinition scenario =
+                TutorialScenarioDefinition.CreateTeamSpecialty(team);
+            foreach (TutorialOpponentCue leader in scenario.opponentScript)
+            {
+                TutorialPlayerCheckpoint checkpoint = scenario.playerCheckpoints
+                    .Single(c => c.step == leader.step);
+                Assert.That(TutorialOpponentCueRules.AppliesWithPlayerCheckpoint(
+                    leader, checkpoint), Is.True, team.ToString());
+                Assert.That(checkpoint.playerCell, Is.EqualTo(leader.playerCell),
+                    $"{team} guide must not display a different player cell");
+            }
+        }
+
+        TutorialOpponentCue jpLeader = TutorialScenarioDefinition
+            .CreateTeamSpecialty(TeamId.JP).opponentScript.Single();
+        TutorialPlayerCheckpoint otherStep = TutorialScenarioDefinition
+            .CreateTeamSpecialty(TeamId.JP).playerCheckpoints
+            .Single(c => c.step == TutorialStepId.JpKantoSkip);
+        Assert.That(TutorialOpponentCueRules.AppliesWithPlayerCheckpoint(
+            jpLeader, otherStep), Is.False);
+        Assert.That(TutorialOpponentCueRules.AppliesWithPlayerCheckpoint(null, otherStep),
+            Is.False);
     }
 
     [Test]
@@ -192,8 +503,100 @@ public class TeamTutorialCatalogTests
             out reason), Is.False);
     }
 
+    [Test]
+    public void HotpotLessonRequiresTrickThenOneCommittedSpeedCard()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.CN);
+        TutorialStepDefinition hotpot = scenario.steps.Single(step => step.id == TutorialStepId.ChinaHotpot);
+        TutorialStepDefinition jelly = scenario.steps.Single(step => step.id == TutorialStepId.ChinaIceJelly);
+        StringAssert.Contains("单独选中 1 张速度牌", hotpot.actionPrompt);
+        StringAssert.Contains("冰糕特技牌", jelly.actionPrompt);
+        var oneSpeed = new[] { new CardData(CardType.Speed, 1) };
+        var twoSpeeds = new[]
+        {
+            new CardData(CardType.Speed, 1), new CardData(CardType.Speed, 2)
+        };
+        Assert.That(TutorialSpecialtyCardRules.ValidateTrickLessonSpeedSelection(
+            TutorialStepId.ChinaHotpot, false, oneSpeed, out string reason), Is.False);
+        StringAssert.Contains("火锅底料", reason);
+        Assert.That(TutorialSpecialtyCardRules.ValidateTrickLessonSpeedSelection(
+            TutorialStepId.ChinaHotpot, true, twoSpeeds, out reason), Is.False);
+        StringAssert.Contains("1 张速度牌", reason);
+        Assert.That(TutorialSpecialtyCardRules.ValidateTrickLessonSpeedSelection(
+            TutorialStepId.ChinaHotpot, true, oneSpeed, out reason), Is.True, reason);
+        Assert.That(TutorialSpecialtyCardRules.ValidateTrickLessonCompletion(
+            TutorialStepId.ChinaHotpot, false, out reason), Is.False);
+        StringAssert.Contains("ATTACK", reason);
+        Assert.That(TutorialSpecialtyCardRules.ValidateTrickLessonCompletion(
+            TutorialStepId.ChinaHotpot, true, out reason), Is.True, reason);
+    }
+
+    [TestCase(TutorialStepId.ChinaIceJelly, "冰糕")]
+    [TestCase(TutorialStepId.UsFries, "薯条")]
+    [TestCase(TutorialStepId.UsCola, "可乐")]
+    [TestCase(TutorialStepId.ItChianti, "基安蒂红酒")]
+    public void SpecialtyTrickLessonCannotEndBeforeItsCardIsPlayed(
+        TutorialStepId step, string cardName)
+    {
+        Assert.That(TutorialSpecialtyCardRules.ValidateTrickLessonSpeedSelection(
+            step, false, new[] { new CardData(CardType.Speed, 1) },
+            out string reason), Is.False);
+        StringAssert.Contains(cardName, reason);
+        Assert.That(TutorialSpecialtyCardRules.ValidateTrickLessonCompletion(
+            step, false, out reason), Is.False);
+        StringAssert.Contains(cardName, reason);
+        Assert.That(TutorialSpecialtyCardRules.ValidateTrickLessonCompletion(
+            step, true, out reason), Is.True, reason);
+    }
+
+    [TestCase(TutorialStepId.ChinaIceJelly, "冰糕")]
+    [TestCase(TutorialStepId.UsFries, "薯条")]
+    [TestCase(TutorialStepId.UsCola, "可乐")]
+    [TestCase(TutorialStepId.DeSauerkraut, "酸菜发酵")]
+    [TestCase(TutorialStepId.DeSchwarzbrot, "黑面包垫底")]
+    [TestCase(TutorialStepId.ItParmigiano, "帕尔马干酪")]
+    [TestCase(TutorialStepId.ItChianti, "基安蒂红酒")]
+    public void SpecialtyFocusNamesAndTargetsTheRequiredTrickCard(
+        TutorialStepId step, string cardName)
+    {
+        Assert.That(TutorialSpecialtyFocusRules.RequiresLessonCard(step), Is.True);
+        Assert.That(TutorialSpecialtyFocusRules.SelectionTarget(step, false),
+            Is.EqualTo(TutorialFocusTarget.TeamTrickCard));
+        StringAssert.Contains(cardName,
+            TutorialSpecialtyFocusRules.SelectionPrompt(step, false));
+        Assert.That(TutorialSpecialtyFocusRules.CanHighlightEndCards(
+            step, stepComplete: false, canEndCards: true), Is.False,
+            "the spotlight must not suggest End Cards while the required trick is unplayed");
+        Assert.That(TutorialFocusOperationRules.Resolve(
+            "cards", 0, canEndCards: false),
+            Is.EqualTo(TutorialFocusOperation.SelectCards));
+        Assert.That(TutorialSpecialtyFocusRules.CanHighlightEndCards(
+            step, stepComplete: true, canEndCards: true), Is.True);
+    }
+
+    [Test]
+    public void HotpotFocusMovesFromTrickToOneSpeedAfterAttackIsArmed()
+    {
+        Assert.That(TutorialSpecialtyFocusRules.SelectionTarget(
+            TutorialStepId.ChinaHotpot, false),
+            Is.EqualTo(TutorialFocusTarget.TeamTrickCard));
+        Assert.That(TutorialSpecialtyFocusRules.SelectionTarget(
+            TutorialStepId.ChinaHotpot, true),
+            Is.EqualTo(TutorialFocusTarget.Hand));
+        StringAssert.Contains("火锅底料", TutorialSpecialtyFocusRules.SelectionPrompt(
+            TutorialStepId.ChinaHotpot, false));
+        StringAssert.Contains("1 张速度牌", TutorialSpecialtyFocusRules.SelectionPrompt(
+            TutorialStepId.ChinaHotpot, true));
+        Assert.That(TutorialSpecialtyFocusRules.RequiresLessonCard(TutorialStepId.UsCorner),
+            Is.False, "non-trick lessons retain their established speed-card focus");
+    }
+
     [TestCase(TeamId.CN, TutorialStepId.ChinaConsecutiveGo)]
     [TestCase(TeamId.US, TutorialStepId.UsFries)]
+    [TestCase(TeamId.DE, TutorialStepId.DeSauerkraut)]
+    [TestCase(TeamId.IT, TutorialStepId.ItChianti)]
+    [TestCase(TeamId.UK, TutorialStepId.UkSpecialtyTea)]
+    [TestCase(TeamId.JP, TutorialStepId.JpKantoRelease)]
     public void SpecialtyCheckpointRestoresExactZonesAndTeamSpecificCondition(
         TeamId team, TutorialStepId step)
     {
@@ -212,10 +615,35 @@ public class TeamTutorialCatalogTests
         Assert.That(player.chinaConsecutiveGearCount, Is.EqualTo(checkpoint.chinaConsecutiveGearCount));
         Assert.That(player.trickState.crossedLandmarkLastTurn,
             Is.EqualTo(checkpoint.crossedLandmarkLastTurn));
+        Assert.That(player.italyCornerExitBoostReady,
+            Is.EqualTo(checkpoint.italyCornerExitBoostReady));
+        Assert.That(player.trickState.kantoOdenAccumulatedCards,
+            Is.EqualTo(checkpoint.kantoCarryCards));
+    }
+
+    [Test]
+    public void ItalyExitCheckpointArmsOnlyItsLessonAndClearsOnNextCheckpoint()
+    {
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.IT);
+        var player = new PlayerState("tutorial", false, 0, 1) { teamId = TeamId.IT };
+        TutorialPlayerCheckpoint exit = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.ItCornerExit);
+        TutorialPlayerCheckpoint next = scenario.playerCheckpoints.Single(c => c.step == TutorialStepId.ItParmigiano);
+        Assert.That(TutorialCheckpointRules.ApplyPlayerCheckpoint(scenario, exit, player).success, Is.True);
+        Assert.That(player.italyCornerExitBoostReady, Is.True);
+        player.ClearTurnState();
+        Assert.That(player.italyCornerExitBoostReady, Is.True, "bonus survives per-turn cleanup");
+        player.italyCornerExitBonusAppliedThisTurn = true;
+        Assert.That(TutorialCheckpointRules.ApplyPlayerCheckpoint(scenario, next, player).success, Is.True);
+        Assert.That(player.italyCornerExitBoostReady, Is.False);
+        Assert.That(player.italyCornerExitBonusAppliedThisTurn, Is.False);
     }
 
     [TestCase(TeamId.CN)]
     [TestCase(TeamId.US)]
+    [TestCase(TeamId.DE)]
+    [TestCase(TeamId.IT)]
+    [TestCase(TeamId.UK)]
+    [TestCase(TeamId.JP)]
     public void SpecialtyGuideAdvancesOnlyAfterEachAuthoredAction(TeamId team)
     {
         TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateTeamSpecialty(team);

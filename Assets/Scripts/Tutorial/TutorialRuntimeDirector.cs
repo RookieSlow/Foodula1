@@ -8,6 +8,11 @@ using System.Collections.Generic;
 /// </summary>
 public static class TutorialGuideTimingRules
 {
+    public static bool DefersWeatherUntilCheckpoint(TutorialCheckpointCue cue)
+    {
+        return cue != null && cue.Weather != null && cue.Player != null;
+    }
+
     public static bool StartsAtNextTurn(TutorialStepId stepId)
     {
         return stepId == TutorialStepId.GearAndRequiredCards ||

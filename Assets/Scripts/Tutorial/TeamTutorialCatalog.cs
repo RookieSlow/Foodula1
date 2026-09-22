@@ -102,12 +102,11 @@ public static class TeamTutorialCatalog
     {
         return new TeamTutorialCourseDefinition(
             "tutorial-team-uk-v1", TutorialCourseKind.TeamSpecialty, TeamId.UK, true,
-            "UK · 皇家工程", "进阶", "学习科技与车手增幅，以及司康和英式红茶的热量交换节奏。",
-            "silverstone_afternoon_tea", false,
-            Lesson("增幅型车队", "科技效果获得 25% 增幅，车手主动技能多 1 次", "比较基础值与实际生效值", "能解释增幅来自哪里"),
-            Lesson("司康冲刺", "从引擎支付 1 热量，立即额外前进 2 格", "在安全热量下使用司康", "移动和引擎数量同时正确变化"),
-            Lesson("英式红茶", "从手牌冷却 1 张热量回引擎", "先制造手牌热量再使用红茶", "热量完成手牌到引擎的转移"),
-            Lesson("成长路线", "基础性能平稳，优势依赖科技与车手构筑", "选择适合赛道的增幅", "能区分基础值和成长收益"));
+            "UK · 热量换节奏", "入门", "在银石练习司康冲刺与英式红茶控热；科技和车手增幅不在隔离教程中生效。",
+            "silverstone_afternoon_tea", true,
+            Lesson("司康冲刺", "从引擎支付 1 热量，本回合获得 2 格移动加成", "单独打出司康", "引擎 -1 热且移动加成 +2"),
+            Lesson("英式红茶", "手牌中的 1 张热量回到引擎", "在预置热量手牌时单独打出红茶", "手牌热量 -1 且引擎 +1"),
+            Lesson("完整练习", "科技和车手技能关闭，只保留真实特技效果", "独立跑完银石一圈", "不写入普通比赛奖励或成长"));
     }
 
     private static TeamTutorialCourseDefinition Germany()
@@ -115,7 +114,7 @@ public static class TeamTutorialCatalog
         return new TeamTutorialCourseDefinition(
             "tutorial-team-de-v1", TutorialCourseKind.TeamSpecialty, TeamId.DE, true,
             "DE · 精密巡航", "入门", "用直道低值牌保底、高耐久和较轻失控惩罚建立稳定节奏。",
-            "nurburgring_bier", false,
+            "nurburgring_bier", true,
             Lesson("直道保底", "直道上的速度 1 按 2 计算，弯道仍按原值", "在直道打出速度 1", "移动值显示保底加成"),
             Lesson("高耐久巡航", "8 热量容量和冷却 +1 提供更高容错", "连续完成升挡与冷却", "不因热量堵手而中断节奏"),
             Lesson("酸菜发酵", "经过弯道后 +2 移动，否则仅 +1", "在会跨弯的落点前使用", "看到条件差异而非固定奖励"),
@@ -127,7 +126,7 @@ public static class TeamTutorialCatalog
         return new TeamTutorialCourseDefinition(
             "tutorial-team-it-v1", TutorialCourseKind.TeamSpecialty, TeamId.IT, true,
             "IT · 弯道节奏", "进阶", "利用操控 +2 和一次性出弯加速，在弯道密集赛道保持速度。",
-            "monza_pasta", false,
+            "monza_pasta", true,
             Lesson("操控优势", "弯道限速获得 +2 修正", "比较基础限速和最终限速", "能看懂限速明细中的车队修正"),
             Lesson("出弯加速", "完成过弯后，下一回合第一张速度牌 +1", "保留低值牌承接出弯", "加成只作用一次"),
             Lesson("帕尔马干酪", "本回合尾流额外 +2，总尾流达到 +4", "在尾流距离内使用并结束回合", "尾流阶段单独显示增强移动"),
@@ -163,10 +162,10 @@ public static class TeamTutorialCatalog
         return new TeamTutorialCourseDefinition(
             "tutorial-team-jp-v1", TutorialCourseKind.TeamSpecialty, TeamId.JP, true,
             "JP · 时机博弈", "专家", "围绕鱼雷天妇罗的超车判断与关东慢煮的跨回合牌数累积制造爆发。",
-            "suzuka_sushi", false,
-            Lesson("轻量操控", "操控 +1、耐久 6，适合精确过弯但不宜硬吃热量", "查看限速修正并保留冷却空间", "能维持低热量手牌"),
-            Lesson("鱼雷天妇罗", "本回合超车时自己 +1；被超车时对方 +1", "在可确定超车的回合使用", "奖励归属与超车方向一致"),
-            Lesson("关东慢煮", "跳过当前回合，并把本回合挡位牌数累加到下一回合", "先选合适挡位再使用", "下一回合需求增加且牌数守恒"),
-            Lesson("爆发窗口", "两张特技都依赖位置或下一回合资源，不能无条件打出", "根据对手距离选择进攻或蓄力", "避免把条件牌当固定加成"));
+            "suzuka_sushi", true,
+            Lesson("关东慢煮", "G2 跳过当前回合，冷却一张手牌热量并留下 2 个牌槽", "先单独打出关东慢煮", "回合跳过且热量回引擎"),
+            Lesson("蓄力释放", "下一回合 G1 可打出 3 张速度牌", "确认三张速度牌并结束出牌", "额外牌槽被本回合使用"),
+            Lesson("鱼雷天妇罗", "本回合自己超车时移动 +1", "先打鱼雷，再用速度 3 超过领航车", "实际超车并前进 4 格"),
+            Lesson("完整练习", "两张特技分别依赖跨回合牌槽与真实超车", "独立跑完铃鹿一圈", "不写入普通比赛奖励或成长"));
     }
 }

@@ -42,12 +42,18 @@ the CCGS project framework.
   guide panel and session-only launch state. Race events complete the active lesson;
   explicit guide-panel navigation advances or reviews authored steps.
   The tutorial center also launches CN/Shanghai and US/Indianapolis specialty
-  scenarios with exact decks, team-specific checkpoints and a one-lap practice;
-  the other four specialty entries remain non-playable course previews.
+  scenarios with exact decks, team-specific checkpoints and a one-lap practice.
+  DE/Nürburgring has a deterministic straight-card lesson and resolved trick checks;
+  IT/Monza adds a corner checkpoint, stationary teaching leader for Parmigiano
+  slipstream and a heat-in-hand Chianti checkpoint. UK/Silverstone now teaches
+  actual Scone heat-for-movement and Tea hand-to-engine cooling with isolated
+  exact-card checkpoints. JP/Suzuka now stages a G2 Kanto Oden skip with a
+  two-slot carry into G1, then an authored stationary leader for the real
+  Torpedo overtake bonus; its unimplemented reverse bonus is not taught.
 - `Settings/` contains versioned player settings, an injectable PlayerPrefs adapter and
   runtime display/presentation application; `UI/GameSettingsUI.cs` builds the menu overlay,
   including schema-v2 per-action in-race confirmation preferences.
-- `Encyclopedia/` contains the versioned catalog loader/validator; the Chinese JSON source under
+- `Encyclopedia/` contains the versioned catalog loader/validator; the 19-entry Chinese JSON source under
   `Resources/Configs/` drives `UI/GameEncyclopediaUI.cs` without embedding rule prose in UI code.
 - `Career/` contains the pure eight-race season calendar, four-car points and stable standings,
   locked-team state, idempotent result advancement, the race-four summer-break technology gate,

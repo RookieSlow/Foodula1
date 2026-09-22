@@ -46,7 +46,9 @@ public static class EncyclopediaCatalog
         "special-cards",
         "drivers",
         "tech-tree",
-        "ui-terms"
+        "ui-terms",
+        "input-controls",
+        "confirmation-diagnostics"
     };
 
     public static EncyclopediaCatalogData LoadDefault()

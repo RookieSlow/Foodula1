@@ -20,7 +20,11 @@ public enum TutorialStepId
     UkEnglishBreakfastTea,
     Review,
     ChinaFirstGo, ChinaConsecutiveGo, ChinaRecover, ChinaHotpot, ChinaIceJelly,
-    UsStraight, UsCorner, UsSlipstream, UsFries, UsCola
+    UsStraight, UsCorner, UsSlipstream, UsFries, UsCola,
+    DeStraight, DeSauerkraut, DeSchwarzbrot,
+    ItCorner, ItCornerExit, ItParmigiano, ItChianti,
+    UkSpecialtyScone, UkSpecialtyTea,
+    JpKantoSkip, JpKantoRelease, JpTorpedo
 }
 
 public enum TutorialAction
@@ -44,7 +48,11 @@ public enum TutorialAction
     CompletePracticeLap,
     CompleteChinaFirstGo, CompleteChinaConsecutiveGo, CompleteChinaRecover,
     PlayChinaHotpot, PlayChinaIceJelly, ResolveUsStraight, ResolveUsCorner,
-    ResolveUsSlipstream, PlayUsFries, PlayUsCola
+    ResolveUsSlipstream, PlayUsFries, PlayUsCola,
+    ResolveDeStraight, ResolveDeSauerkraut, ResolveDeSchwarzbrot,
+    ResolveItCorner, ResolveItCornerExit, ResolveItParmigiano, ResolveItChianti,
+    ResolveUkSpecialtyScone, ResolveUkSpecialtyTea,
+    ResolveJpKantoSkip, ResolveJpKantoRelease, ResolveJpTorpedo
 }
 
 public enum TutorialRunPhase
@@ -240,10 +248,19 @@ public sealed class TutorialOpponentCue
 
 public static class TutorialOpponentCueRules
 {
+    public static bool AppliesWithPlayerCheckpoint(
+        TutorialOpponentCue opponentCue,
+        TutorialPlayerCheckpoint playerCheckpoint)
+    {
+        return opponentCue != null && playerCheckpoint != null &&
+               opponentCue.step == playerCheckpoint.step;
+    }
+
     public static bool IsSlipstreamCue(TutorialStepId step)
     {
         return step == TutorialStepId.Slipstream ||
-               step == TutorialStepId.UsSlipstream;
+               step == TutorialStepId.UsSlipstream ||
+               step == TutorialStepId.ItParmigiano;
     }
 
     /// <summary>
@@ -256,12 +273,14 @@ public static class TutorialOpponentCueRules
         TutorialOpponentCue activeCue,
         bool isPlayer)
     {
-        return activeCue == null || !IsSlipstreamCue(activeCue.step) || isPlayer;
+        return activeCue == null ||
+               (!IsSlipstreamCue(activeCue.step) &&
+                activeCue.step != TutorialStepId.JpTorpedo) || isPlayer;
     }
 
     /// <summary>
-    /// The authored slipstream leader is a stationary reference for its single
-    /// teaching turn. Normal racers and every non-tutorial turn keep their
+    /// The authored teaching leader is a stationary reference for its single
+    /// slipstream or overtake turn. Normal racers and every non-tutorial turn keep their
     /// planned movement unchanged.
     /// </summary>
     public static int ResolveLeaderMovement(
@@ -270,7 +289,8 @@ public static class TutorialOpponentCueRules
         int plannedMovement)
     {
         return activeCue != null &&
-               IsSlipstreamCue(activeCue.step) &&
+               (IsSlipstreamCue(activeCue.step) ||
+                activeCue.step == TutorialStepId.JpTorpedo) &&
                isTeachingLeader
             ? 0
             : plannedMovement;
@@ -284,6 +304,326 @@ public static class TutorialOpponentCueRules
 /// </summary>
 public static class TutorialSpecialtyCardRules
 {
+    public static bool JpKantoResolved(bool skipTurn, int gear,
+        int carriedCards, int handHeatBefore, int handHeatAfter,
+        int engineHeatBefore, int engineHeatAfter)
+    {
+        return skipTurn && gear == 2 && carriedCards == 2 &&
+               handHeatBefore - handHeatAfter == 1 &&
+               engineHeatAfter - engineHeatBefore == 1;
+    }
+
+    public static bool ValidateJpTrickSelection(TutorialStepId step, string trickId,
+        out string reason)
+    {
+        reason = string.Empty;
+        string expected = step == TutorialStepId.JpKantoSkip ? "jp-kanto-oden" :
+            step == TutorialStepId.JpTorpedo ? "jp-torpedo-tempura" : null;
+        if (expected == null || trickId == expected)
+            return true;
+        reason = step == TutorialStepId.JpKantoSkip
+            ? "这一步只打关东慢煮，观察跳过回合与牌槽累积。"
+            : "这一步先打鱼雷天妇罗，再出速度 3 超过前车。";
+        return false;
+    }
+
+    public static bool ValidateJpSpeedSelection(TutorialStepId step,
+        bool torpedoArmed, IReadOnlyList<CardData> played,
+        IReadOnlyList<CardData> selected, out string reason)
+    {
+        reason = string.Empty;
+        if (step == TutorialStepId.JpKantoSkip)
+        {
+            reason = "先打关东慢煮，本回合不出速度牌。";
+            return false;
+        }
+        if (step != TutorialStepId.JpKantoRelease && step != TutorialStepId.JpTorpedo)
+            return true;
+        if (step == TutorialStepId.JpTorpedo && !torpedoArmed)
+        {
+            reason = "先打鱼雷天妇罗，再确认速度 3。";
+            return false;
+        }
+        var cards = new List<CardData>();
+        AddCards(cards, played);
+        AddCards(cards, selected);
+        if (step == TutorialStepId.JpKantoRelease && cards.Count <= 3 &&
+            cards.TrueForAll(card => card.IsSpeed))
+            return true;
+        if (step == TutorialStepId.JpTorpedo && cards.Count <= 1 &&
+            (cards.Count == 0 || (cards[0].IsSpeed && cards[0].value == 3)))
+            return true;
+        reason = step == TutorialStepId.JpKantoRelease
+            ? "蓄力回合请确认 3 张速度牌，不要多选。"
+            : "鱼雷示范只需 1 张速度 3。";
+        return false;
+    }
+
+    public static bool ValidateJpSpeedCompletion(TutorialStepId step,
+        bool torpedoArmed, int carrySlots, IReadOnlyList<CardData> played,
+        out string reason)
+    {
+        reason = string.Empty;
+        if (step == TutorialStepId.JpKantoRelease &&
+            (carrySlots != 2 || played == null || played.Count != 3))
+        {
+            reason = "本回合 G1 加上关东慢煮留下的 2 个牌槽，请打满 3 张速度牌。";
+            return false;
+        }
+        if (step == TutorialStepId.JpTorpedo &&
+            (!torpedoArmed || played == null || played.Count != 1 ||
+             played[0] == null || !played[0].IsSpeed || played[0].value != 3))
+        {
+            reason = "先打鱼雷天妇罗，再打 1 张速度 3，结束出牌等待超车。";
+            return false;
+        }
+        return true;
+    }
+
+    public static bool ValidateUkTrickSelection(TutorialStepId step, string trickId,
+        out string reason)
+    {
+        reason = string.Empty;
+        string expected = step == TutorialStepId.UkSpecialtyScone ? "uk-scone" :
+            step == TutorialStepId.UkSpecialtyTea ? "uk-english-breakfast-tea" : null;
+        if (expected == null || trickId == expected)
+            return true;
+        reason = step == TutorialStepId.UkSpecialtyScone
+            ? "这一步先单独打司康，观察引擎热量和移动加成。"
+            : "这一步先单独打英式红茶，观察手牌热量回到引擎。";
+        return false;
+    }
+
+    public static bool UkSconeResolved(int engineBefore, int engineAfter,
+        int moveBonusBefore, int moveBonusAfter)
+    {
+        return engineBefore - engineAfter == 1 && moveBonusAfter - moveBonusBefore == 2;
+    }
+
+    public static bool UkTeaResolved(int heatInHandBefore, int heatInHandAfter,
+        int engineBefore, int engineAfter)
+    {
+        return heatInHandBefore - heatInHandAfter == 1 &&
+               engineAfter - engineBefore == 1;
+    }
+
+    public static bool ValidateItCornerSpeedSelection(
+        TutorialStepId step, IReadOnlyList<CardData> played,
+        IReadOnlyList<CardData> selected, out string reason)
+    {
+        reason = string.Empty;
+        if (step != TutorialStepId.ItCorner && step != TutorialStepId.ItCornerExit)
+            return true;
+        var cards = new List<CardData>();
+        AddCards(cards, played);
+        AddCards(cards, selected);
+        if (cards.Count <= 1 &&
+            (cards.Count == 0 || (cards[0].IsSpeed && cards[0].value == 1)))
+            return true;
+        reason = "本步只出 1 张速度 1，方便看清移动加成。";
+        return false;
+    }
+
+    public static bool ValidateItCornerSpeedCompletion(
+        TutorialStepId step, IReadOnlyList<CardData> played, out string reason)
+    {
+        reason = string.Empty;
+        if ((step != TutorialStepId.ItCorner && step != TutorialStepId.ItCornerExit) ||
+            (played != null && played.Count == 1 && played[0] != null &&
+             played[0].IsSpeed && played[0].value == 1))
+            return true;
+        reason = "先确认 1 张速度 1，再结束出牌观察弯道。";
+        return false;
+    }
+
+    public static bool ValidateItSlipstreamSpeedSelection(
+        TutorialStepId step, bool trickArmed,
+        IReadOnlyList<CardData> alreadyPlayed, IReadOnlyList<CardData> selected,
+        out string reason)
+    {
+        reason = string.Empty;
+        if (step != TutorialStepId.ItParmigiano)
+            return true;
+        if (!trickArmed)
+        {
+            reason = "先打帕尔马干酪，再确认 1 张速度 1。";
+            return false;
+        }
+        var cards = new List<CardData>();
+        AddCards(cards, alreadyPlayed);
+        AddCards(cards, selected);
+        if (cards.Count <= 1 &&
+            (cards.Count == 0 || (cards[0].IsSpeed && cards[0].value == 1)))
+            return true;
+        reason = "跟车示范只出 1 张速度 1，别从领航车旁冲过去。";
+        return false;
+    }
+
+    public static bool ValidateItSlipstreamSpeedCompletion(
+        TutorialStepId step, bool trickArmed,
+        IReadOnlyList<CardData> played, out string reason)
+    {
+        reason = string.Empty;
+        if (step != TutorialStepId.ItParmigiano ||
+            (trickArmed && played != null && played.Count == 1 &&
+             played[0] != null && played[0].IsSpeed && played[0].value == 1))
+            return true;
+        reason = trickArmed
+            ? "还要确认 1 张速度 1，才能结束出牌等回合末尾流。"
+            : "先打帕尔马干酪，再打速度 1。";
+        return false;
+    }
+
+    public static bool ValidateDeStraightSpeedSelection(
+        TutorialStepId step, IReadOnlyList<CardData> alreadyPlayed,
+        IReadOnlyList<CardData> selected, out string reason)
+    {
+        reason = string.Empty;
+        if (step != TutorialStepId.DeStraight)
+            return true;
+        var cards = new List<CardData>();
+        AddCards(cards, alreadyPlayed);
+        AddCards(cards, selected);
+        if (cards.Count <= 1 &&
+            (cards.Count == 0 || (cards[0].IsSpeed && cards[0].value == 1)))
+            return true;
+        reason = "德国直道示范只需要 1 张速度 1。取消多余选择后再确认。";
+        return false;
+    }
+
+    public static bool ValidateDeStraightSpeedCompletion(
+        TutorialStepId step, IReadOnlyList<CardData> played, out string reason)
+    {
+        reason = string.Empty;
+        if (step != TutorialStepId.DeStraight ||
+            (played != null && played.Count == 1 && played[0] != null &&
+             played[0].IsSpeed && played[0].value == 1))
+            return true;
+        reason = "先打出 1 张速度 1，才能结束直道示范。";
+        return false;
+    }
+
+    public static bool ValidateDeEffectSpeedSelection(
+        TutorialStepId step, bool trickArmed,
+        IReadOnlyList<CardData> alreadyPlayed, IReadOnlyList<CardData> selected,
+        out string reason)
+    {
+        reason = string.Empty;
+        if (step != TutorialStepId.DeSauerkraut && step != TutorialStepId.DeSchwarzbrot)
+            return true;
+        if (!trickArmed)
+        {
+            reason = step == TutorialStepId.DeSauerkraut
+                ? "先单独打出酸菜发酵，再选 1 张速度 1。"
+                : "先单独打出黑面包垫底，再选 1 张速度 1。";
+            return false;
+        }
+        var cards = new List<CardData>();
+        AddCards(cards, alreadyPlayed);
+        AddCards(cards, selected);
+        if (cards.Count <= 1 &&
+            (cards.Count == 0 || (cards[0].IsSpeed && cards[0].value == 1)))
+            return true;
+        reason = "这一步只出 1 张速度 1；取消多余选择再确认。";
+        return false;
+    }
+
+    public static bool ValidateDeEffectSpeedCompletion(
+        TutorialStepId step, bool trickArmed,
+        IReadOnlyList<CardData> played, out string reason)
+    {
+        reason = string.Empty;
+        if (step != TutorialStepId.DeSauerkraut && step != TutorialStepId.DeSchwarzbrot)
+            return true;
+        if (trickArmed && played != null && played.Count == 1 &&
+            played[0] != null && played[0].IsSpeed && played[0].value == 1)
+            return true;
+        reason = trickArmed
+            ? "还需要确认 1 张速度 1，再结束出牌。"
+            : step == TutorialStepId.DeSauerkraut
+                ? "先打酸菜发酵，再打速度 1。"
+                : "先打黑面包垫底，再打速度 1。";
+        return false;
+    }
+
+    public static bool ValidateTrickLessonSpeedSelection(
+        TutorialStepId step,
+        bool hotpotArmed,
+        IReadOnlyList<CardData> selected,
+        out string reason)
+    {
+        reason = string.Empty;
+        if (step == TutorialStepId.ChinaHotpot)
+        {
+            if (!hotpotArmed)
+            {
+                reason = "先打出火锅底料，再单独确认 1 张速度牌，让它获得 ATTACK。";
+                return false;
+            }
+            if (selected == null || selected.Count != 1 ||
+                selected[0] == null || !selected[0].IsSpeed)
+            {
+                reason = "火锅底料已待命：本次只确认 1 张速度牌，才能看清 ATTACK 给了哪张牌。";
+                return false;
+            }
+        }
+        else if (step == TutorialStepId.ChinaIceJelly ||
+                 step == TutorialStepId.UsFries ||
+                 step == TutorialStepId.UsCola ||
+                 step == TutorialStepId.ItChianti ||
+                 step == TutorialStepId.UkSpecialtyScone ||
+                 step == TutorialStepId.UkSpecialtyTea)
+        {
+            reason = step == TutorialStepId.ChinaIceJelly
+                ? "这一步先打冰糕；速度牌留到下一步。"
+                : step == TutorialStepId.UsFries
+                    ? "这一步先打薯条；速度牌留到下一步。"
+                    : step == TutorialStepId.UsCola
+                        ? "这一步先打可乐；速度牌留到下一步。"
+                        : step == TutorialStepId.ItChianti
+                            ? "这一步先打基安蒂红酒；速度牌留到下一步。"
+                            : step == TutorialStepId.UkSpecialtyScone
+                                ? "这一步只打司康；速度牌留到练习圈。"
+                                : "这一步只打英式红茶；速度牌留到练习圈。";
+            return false;
+        }
+        return true;
+    }
+
+    public static bool ValidateTrickLessonCompletion(
+        TutorialStepId step, bool stepComplete, out string reason)
+    {
+        reason = string.Empty;
+        if (stepComplete)
+            return true;
+        switch (step)
+        {
+            case TutorialStepId.ChinaHotpot:
+                reason = "先打火锅底料，再单独确认 1 张速度牌，看到 ATTACK 后才能继续。";
+                return false;
+            case TutorialStepId.ChinaIceJelly:
+                reason = "先在 Recover 挡打出冰糕，再结束本步。";
+                return false;
+            case TutorialStepId.UsFries:
+                reason = "先打出薯条特技牌，再结束本步。";
+                return false;
+            case TutorialStepId.UsCola:
+                reason = "先打出可乐特技牌，再结束本步。";
+                return false;
+            case TutorialStepId.ItChianti:
+                reason = "先打出基安蒂红酒，让速度牌进入弃牌堆并冷却一张热量。";
+                return false;
+            case TutorialStepId.UkSpecialtyScone:
+                reason = "先打出司康，让引擎支付 1 热并获得 +2 移动。";
+                return false;
+            case TutorialStepId.UkSpecialtyTea:
+                reason = "先打出英式红茶，让手牌热量回到引擎。";
+                return false;
+            default:
+                return true;
+        }
+    }
+
     public static bool ValidateUsSpeedSelection(
         TutorialStepId step,
         IReadOnlyList<CardData> alreadyPlayed,
@@ -435,6 +775,8 @@ public sealed class TutorialPlayerCheckpoint
     public bool beginAtCardSelection;
     public int chinaConsecutiveGearCount;
     public bool crossedLandmarkLastTurn;
+    public bool italyCornerExitBoostReady;
+    public int kantoCarryCards;
     public IReadOnlyList<TutorialCardSpec> exactDrawOrder;
 
     public TutorialPlayerCheckpoint(
@@ -447,7 +789,9 @@ public sealed class TutorialPlayerCheckpoint
         IReadOnlyList<TutorialCardSpec> exactDrawOrder,
         bool beginAtCardSelection = false,
         int chinaConsecutiveGearCount = 0,
-        bool crossedLandmarkLastTurn = false)
+        bool crossedLandmarkLastTurn = false,
+        bool italyCornerExitBoostReady = false,
+        int kantoCarryCards = 0)
     {
         this.step = step;
         this.playerCell = playerCell;
@@ -459,6 +803,8 @@ public sealed class TutorialPlayerCheckpoint
         this.beginAtCardSelection = beginAtCardSelection;
         this.chinaConsecutiveGearCount = chinaConsecutiveGearCount;
         this.crossedLandmarkLastTurn = crossedLandmarkLastTurn;
+        this.italyCornerExitBoostReady = italyCornerExitBoostReady;
+        this.kantoCarryCards = kantoCarryCards;
     }
 
     public List<CardData> CreateExactDeck()
@@ -595,7 +941,7 @@ public sealed class TutorialScenarioDefinition
                 "基础驾驶", "先跑一个完整回合",
                 "先记住最基本的节奏：选挡、出牌，然后看赛车移动和赛道结算。回合最后才会处理弃牌与补牌。",
                 "现在轮到你起步，G1 是最稳妥的选择。",
-                "选择 G1，再挑 1 张速度牌确认。慢慢来，先把完整流程走一遍。",
+                "选择 G1 并锁定，再挑 1 张速度牌确认；也可以选中后按一次空格直接打出。牌打完，点击底部“结束出牌”，我们一起看完这个回合。",
                 "做得好。赛车会完成移动、赛道结算和回合清理，然后回到新的回合。",
                 "按钮暂时不能点时，通常只是动画还在播放，等回合提示更新即可。",
                 TutorialFocusTarget.TurnPrompt,
@@ -604,7 +950,7 @@ public sealed class TutorialScenarioDefinition
                 "基础驾驶", "试着升到 G2",
                 "挡位决定本回合需要打出的速度牌张数：G2 就要打 2 张。挡位越高，选择越大胆，也越需要确保手牌跟得上。",
                 "新回合已经准备好，我们来练一次稳稳的升挡。",
-                "选择 G2，再从手牌中挑 2 张速度牌确认。",
+                "选择 G2 并锁定，再从手牌中挑 2 张速度牌确认；也可以选中后按一次空格直接打出。",
                 "看到 2/2 就说明配合正确。接下来一起看看它们怎样推动赛车。",
                 "如果不小心多选了，再点一次那张牌就能取消。留下正好 2 张即可。",
                 TutorialFocusTarget.GearControls,
@@ -749,8 +1095,16 @@ public sealed class TutorialScenarioDefinition
 
     public static TutorialScenarioDefinition CreateTeamSpecialty(TeamId team)
     {
+        if (team == TeamId.JP)
+            return CreateJapanSpecialty();
+        if (team == TeamId.UK)
+            return CreateUnitedKingdomSpecialty();
+        if (team == TeamId.DE)
+            return CreateGermanySpecialty();
+        if (team == TeamId.IT)
+            return CreateItalySpecialty();
         if (team != TeamId.CN && team != TeamId.US)
-            throw new ArgumentOutOfRangeException(nameof(team), "Only CN and US specialty races are authored.");
+            throw new ArgumentOutOfRangeException(nameof(team), "Unknown specialty team.");
 
         bool china = team == TeamId.CN;
         string firstTrick = china ? "cn-hotpot-base" : "us-fries";
@@ -794,12 +1148,12 @@ public sealed class TutorialScenarioDefinition
                 TutorialFocusTarget.GearControls, "Recover 是重置过热节奏的方式。"));
             steps.Add(Step(TutorialStepId.ChinaHotpot, TutorialAction.PlayChinaHotpot,
                 "车队特技", "火锅底料 ATTACK", "Go 下让下一张速度牌 +1，并将整张牌从过弯计速中排除。",
-                "Go 和火锅底料已准备好。", "打出火锅底料，再打下一张速度牌。",
+                "Go 和火锅底料已准备好。", "先只打火锅底料，再单独选中 1 张速度牌并确认，观察 ATTACK 标记。不要一次提交多张。",
                 "只有目标速度牌获得 ATTACK 标记，不会凭空增加一张牌。", "特技牌本身不占速度牌数。",
                 TutorialFocusTarget.TeamTrickCard, "先打特技，再选受强化的速度牌。"));
             steps.Add(Step(TutorialStepId.ChinaIceJelly, TutorialAction.PlayChinaIceJelly,
                 "车队特技", "冰糕防守", "Recover 下打出冰糕，可阻止身后赛车享受你的尾流。",
-                "赛车已切换到 Recover。", "打出冰糕，再按普通流程完成回合。",
+                "赛车已切换到 Recover，冰糕就在手牌中。", "先只打冰糕特技牌；看到防尾流反馈后再继续，不要提前结束出牌。",
                 "后车不能借你的尾流。", "冰糕只有在 Recover 下生效。",
                 TutorialFocusTarget.TeamTrickCard, "在 Recover 中打出冰糕。"));
             checkpoints.Add(TeamCheckpoint(TutorialStepId.ChinaFirstGo, 42, 1, 0, 0, false,
@@ -849,7 +1203,7 @@ public sealed class TutorialScenarioDefinition
             // while guaranteeing that the base speed 5 crosses the apex.
             checkpoints.Add(TeamCheckpoint(TutorialStepId.UsCorner, 2, 2, 0, 0, true,
                 Speed(3), Speed(2), Speed(1), Speed(1), Speed(2), Trick(firstTrick), Trick(secondTrick)));
-            checkpoints.Add(TeamCheckpoint(TutorialStepId.UsSlipstream, 15, 1, 0, 0, false,
+            checkpoints.Add(TeamCheckpoint(TutorialStepId.UsSlipstream, 18, 1, 0, 0, false,
                 Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick(firstTrick), Trick(secondTrick)));
             checkpoints.Add(TeamCheckpoint(TutorialStepId.UsFries, 25, 1, 0, 0, true,
                 Trick(firstTrick), Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick(secondTrick), true));
@@ -871,11 +1225,247 @@ public sealed class TutorialScenarioDefinition
             team, true, china ? TeamId.US : TeamId.CN);
     }
 
+    private static TutorialScenarioDefinition CreateJapanSpecialty()
+    {
+        var deck = new List<TutorialCardSpec>
+        {
+            Speed(1), Speed(2), Speed(2), Speed(3), Speed(1),
+            Trick("jp-kanto-oden"), Trick("jp-torpedo-tempura"),
+            Speed(2), Speed(1), Speed(3), Speed(2), Speed(1),
+            Trick("jp-kanto-oden"), Speed(2), Trick("jp-torpedo-tempura"), Speed(3)
+        };
+        var steps = new List<TutorialStepDefinition>
+        {
+            Step(TutorialStepId.ObjectiveAndInterface, TutorialAction.AcknowledgeObjective,
+                "专项训练", "JP 蓄力与超车", "今天练关东慢煮的跨回合牌槽，以及鱼雷天妇罗的超车奖励。",
+                "赛道是铃鹿；科技和车手技能关闭，只有当前实装的专属特技生效。",
+                "看清赛车与手牌后点击开始。", "先牺牲一个回合，为下一回合蓄力。",
+                "需要时可回看上一步。", TutorialFocusTarget.RaceStatus,
+                "先确认这堂课的两种进攻时机。", "开始训练", true),
+            Step(TutorialStepId.JpKantoSkip, TutorialAction.ResolveJpKantoSkip,
+                "专属特技", "关东慢煮：先蓄力", "G2 打出关东慢煮会跳过本回合，留下 2 个额外出牌槽给下回合。",
+                "G2 已选好；关东慢煮与一张热量在手牌中，打出时还会冷却这张热量。",
+                "只确认关东慢煮，不出速度牌；观察跳过回合和牌槽记录。",
+                "本回合不移动，下回合有 2 个额外牌槽。", "请在任何速度牌之前打出关东慢煮。",
+                TutorialFocusTarget.TeamTrickCard, "先单独确认关东慢煮。"),
+            Step(TutorialStepId.JpKantoRelease, TutorialAction.ResolveJpKantoRelease,
+                "跨回合牌槽", "把蓄力打出去", "上回合 G2 留下 2 个牌槽；本回合 G1 可确认 3 张速度牌。",
+                "已经进入下一回合，G1 与三张速度牌已准备好。",
+                "确认三张速度牌，再结束出牌，观察牌槽用尽。",
+                "本次确认 3 张，额外牌槽仅在本回合有效。", "少出牌不会展示完整蓄力效果。",
+                TutorialFocusTarget.Hand, "本回合请打满 3 张速度牌。"),
+            Step(TutorialStepId.JpTorpedo, TutorialAction.ResolveJpTorpedo,
+                "专属特技", "鱼雷天妇罗：瞄准超车", "当前版本中，鱼雷天妇罗在自己实际超车时给本车 +1 移动。",
+                "领航车固定在前方两格的直道，鱼雷与速度 3 已在手牌中。",
+                "先单独打鱼雷天妇罗，再打速度 3 并结束出牌，等车辆实际超车。",
+                "赛车超过领航车，获得鱼雷额外 1 格。", "单纯打出鱼雷但没有超车不算完成。",
+                TutorialFocusTarget.TeamTrickCard, "先找鱼雷，再用速度 3 越过前车。"),
+            Step(TutorialStepId.Review, TutorialAction.CompleteReview,
+                "自由练习", "独立跑完一圈", "用蓄力与超车选择自己的铃鹿节奏。",
+                "练习不写入普通赛事奖励、科技或车手经验。", "点击下一步开始；可重练或退出。",
+                "完成一圈后会显示反馈。", "别把条件触发牌当成固定加速。",
+                TutorialFocusTarget.Review, "按你的判断完成这一圈。", "开始练习", true)
+        };
+        var checkpoints = new List<TutorialPlayerCheckpoint>
+        {
+            TeamCheckpoint(TutorialStepId.JpKantoSkip, 37, 2, 0, 1, true,
+                Trick("jp-kanto-oden"), Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick("jp-torpedo-tempura")),
+            TeamCheckpoint(TutorialStepId.JpKantoRelease, 37, 1, 0, 0, true,
+                Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick("jp-torpedo-tempura"), Trick("jp-kanto-oden"),
+                kantoCarry: 2),
+            TeamCheckpoint(TutorialStepId.JpTorpedo, 37, 1, 0, 0, true,
+                Trick("jp-torpedo-tempura"), Speed(3), Speed(1), Speed(2), Speed(2), Speed(1), Trick("jp-kanto-oden"))
+        };
+        var opponents = new List<TutorialOpponentCue>
+        {
+            new TutorialOpponentCue(TutorialStepId.JpTorpedo, 39, 37, 2)
+        };
+        return new TutorialScenarioDefinition(deck, steps,
+            new List<TutorialWeatherCue>(), opponents, checkpoints, null,
+            "tutorial_team_jp_v1", "suzuka_sushi", TeamId.JP, true, TeamId.DE);
+    }
+
+    private static TutorialScenarioDefinition CreateUnitedKingdomSpecialty()
+    {
+        var deck = new List<TutorialCardSpec>
+        {
+            Speed(1), Speed(2), Speed(2), Speed(3), Speed(1),
+            Trick("uk-scone"), Trick("uk-english-breakfast-tea"),
+            Speed(2), Speed(1), Speed(3), Speed(2), Speed(1),
+            Trick("uk-scone"), Speed(2), Trick("uk-english-breakfast-tea"), Speed(3)
+        };
+        var steps = new List<TutorialStepDefinition>
+        {
+            Step(TutorialStepId.ObjectiveAndInterface, TutorialAction.AcknowledgeObjective,
+                "专项训练", "UK 热量换节奏", "今天只练英国队两张已实现的专属特技牌：司康与英式红茶。",
+                "赛道是银石；科技和车手技能关闭，因此这堂课不演示成长增幅。",
+                "看清引擎和手牌，然后点击开始训练。", "先用司康把一张引擎热量换成移动。",
+                "随时可以回看上一步。", TutorialFocusTarget.RaceStatus,
+                "先认识这次训练要交换的两种资源。", "开始训练", true),
+            Step(TutorialStepId.UkSpecialtyScone, TutorialAction.ResolveUkSpecialtyScone,
+                "专属特技", "司康冲刺", "司康从引擎支付 1 张热量，给本回合 +2 移动。",
+                "G1 已选好，手牌左侧是司康；引擎里有足够的热量。",
+                "只确认司康，观察引擎热量减少 1、本回合移动加成增加 2。",
+                "两项变化都发生后才能继续。", "司康不能在引擎没有可支付热量时使用。",
+                TutorialFocusTarget.UkSconeCard, "先找到司康，单独确认它。"),
+            Step(TutorialStepId.UkSpecialtyTea, TutorialAction.ResolveUkSpecialtyTea,
+                "专属特技", "英式红茶", "英式红茶把手牌中 1 张热量冷却回引擎。",
+                "G1 已选好，红茶和一张热量已在手牌中。",
+                "只确认英式红茶，观察手牌热量减少 1、引擎热量恢复 1。",
+                "热量完成手牌到引擎的转移后才能继续。", "没有手牌热量时，红茶不能冷却。",
+                TutorialFocusTarget.UkTeaCard, "先确认手牌里有热量，再打英式红茶。"),
+            Step(TutorialStepId.Review, TutorialAction.CompleteReview,
+                "自由练习", "独立跑完一圈", "把司康冲刺与红茶控热串成自己的银石节奏。",
+                "练习不会写入奖励、科技或车手经验。", "点击下一步开始练习；可重练或退出。",
+                "跑完一圈后会显示反馈。", "科技增幅要到普通比赛另行体验。",
+                TutorialFocusTarget.Review, "现在按自己的判断完成这一圈。", "开始练习", true)
+        };
+        var checkpoints = new List<TutorialPlayerCheckpoint>
+        {
+            TeamCheckpoint(TutorialStepId.UkSpecialtyScone, 16, 1, 0, 0, true,
+                Trick("uk-scone"), Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick("uk-english-breakfast-tea")),
+            TeamCheckpoint(TutorialStepId.UkSpecialtyTea, 20, 1, 0, 1, true,
+                Trick("uk-english-breakfast-tea"), Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick("uk-scone"))
+        };
+        return new TutorialScenarioDefinition(deck, steps,
+            new List<TutorialWeatherCue>(), new List<TutorialOpponentCue>(), checkpoints, null,
+            "tutorial_team_uk_v1", "silverstone_afternoon_tea", TeamId.UK, true, TeamId.DE);
+    }
+
+    private static TutorialScenarioDefinition CreateGermanySpecialty()
+    {
+        var deck = new List<TutorialCardSpec>
+        {
+            Speed(1), Speed(2), Speed(2), Speed(3), Speed(1),
+            Trick("de-sauerkraut"), Trick("de-schwarzbrot"),
+            Speed(2), Speed(1), Speed(3), Speed(2), Speed(1),
+            Trick("de-sauerkraut"), Speed(2), Trick("de-schwarzbrot"), Speed(3)
+        };
+        var steps = new List<TutorialStepDefinition>
+        {
+            Step(TutorialStepId.ObjectiveAndInterface, TutorialAction.AcknowledgeObjective,
+                "专项训练", "DE 精密巡航", "今天练德国车的直道保底和两张专属特技。",
+                "引擎容量为 8；科技与车手增益关闭，车队固有性能保留。",
+                "看清赛道和手牌后，点击开始训练。", "先用一张低值牌试试直道巡航。",
+                "需要时可以回看上一步。", TutorialFocusTarget.RaceStatus,
+                "先确认车队与训练目标。", "开始训练", true),
+            Step(TutorialStepId.DeStraight, TutorialAction.ResolveDeStraight,
+                "直道巡航", "低值牌也能跑稳", "直道上的速度 1 按 2 计算，另有车队直道 +1；弯道不享受这两项。",
+                "车辆已停在纽博格林直道，手牌有速度 1。",
+                "选择 G1，只打出 1 张速度 1，再结束出牌，等车辆移动结算。",
+                "这张速度 1 的直道移动合计为 3。", "请不要同时选择其他速度牌。",
+                TutorialFocusTarget.Hand, "先找到手牌里的速度 1。"),
+            Step(TutorialStepId.DeSauerkraut, TutorialAction.ResolveDeSauerkraut,
+                "专属特技", "酸菜发酵", "酸菜在本回合移动结算时生效：经过弯道 +2，否则 +1。",
+                "车辆已在舒马赫 S 弯顶点前，手牌左侧是酸菜发酵。",
+                "先单独打出酸菜发酵，再确认 1 张速度 1，结束出牌并等待车辆过弯。",
+                "跨过弯顶点后移动 3 格：速度 1 加酸菜 2。", "酸菜出牌时只待命，过弯后才有移动反馈。",
+                TutorialFocusTarget.TeamTrickCard, "先找到酸菜；再用速度 1 跨过前方弯顶点。"),
+            Step(TutorialStepId.DeSchwarzbrot, TutorialAction.ResolveDeSchwarzbrot,
+                "专属特技", "黑面包垫底", "黑面包让本回合下一次引擎热量支付少 1，但至少仍付 1。",
+                "G3 已锁定，需要 3 张速度牌；手牌左侧是黑面包垫底。",
+                "先单独打出黑面包，再确认 1 张速度 1，点击结束出牌。少 2 张通常需支付 2 热。",
+                "本次实付 1 热，减免只触发一次。", "特技出牌本身不支付热量；要结束出牌才看得到。",
+                TutorialFocusTarget.TeamTrickCard, "先打黑面包，再故意少出两张牌观察付热。"),
+            Step(TutorialStepId.Review, TutorialAction.CompleteReview,
+                "自由练习", "独立跑完一圈", "现在把直道节奏和两张特技串起来，跑完纽博格林一圈。",
+                "练习不会写入奖励、科技或车手经验。", "点击下一步开始练习；可重练或退出。",
+                "完成后会显示练习反馈。", "留意弯道，直道保底不等于弯道免罚。",
+                TutorialFocusTarget.Review, "用你自己的节奏把这一圈跑完。", "开始练习", true)
+        };
+        var checkpoints = new List<TutorialPlayerCheckpoint>
+        {
+            TeamCheckpoint(TutorialStepId.DeStraight, 28, 1, 0, 0, false,
+                Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick("de-sauerkraut"), Trick("de-schwarzbrot")),
+            TeamCheckpoint(TutorialStepId.DeSauerkraut, 26, 1, 0, 0, true,
+                Trick("de-sauerkraut"), Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick("de-schwarzbrot")),
+            TeamCheckpoint(TutorialStepId.DeSchwarzbrot, 28, 3, 0, 0, true,
+                Trick("de-schwarzbrot"), Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick("de-sauerkraut"))
+        };
+        return new TutorialScenarioDefinition(deck, steps,
+            new List<TutorialWeatherCue>(), new List<TutorialOpponentCue>(), checkpoints, null,
+            "tutorial_team_de_v1", "nurburgring_bier", TeamId.DE, true, TeamId.UK);
+    }
+
+    private static TutorialScenarioDefinition CreateItalySpecialty()
+    {
+        var deck = new List<TutorialCardSpec>
+        {
+            Speed(1), Speed(2), Speed(2), Speed(3), Speed(1),
+            Trick("it-parmigiano"), Trick("it-chianti"),
+            Speed(2), Speed(1), Speed(3), Speed(2), Speed(1),
+            Trick("it-parmigiano"), Speed(2), Trick("it-chianti"), Speed(3)
+        };
+        var steps = new List<TutorialStepDefinition>
+        {
+            Step(TutorialStepId.ObjectiveAndInterface, TutorialAction.AcknowledgeObjective,
+                "专项训练", "IT 弯道节奏", "今天练意大利车的过弯操控、放大尾流和热量回收。",
+                "科技和车手增益关闭，车队固有操控 +2、耐久 6 保留。",
+                "看清赛车位置和手牌，点击开始。", "先平稳通过一处弯顶点。",
+                "每一步都有固定的训练起点。", TutorialFocusTarget.RaceStatus,
+                "先认识意大利队的弯道优势。", "开始训练", true),
+            Step(TutorialStepId.ItCorner, TutorialAction.ResolveItCorner,
+                "操控", "从容过弯", "意大利固有操控让最终弯道限速获得 +2，不能把它当成额外移动。",
+                "赛车已停在蒙扎第一个弯顶点前。",
+                "选择 G1，打一张速度 1，结束出牌并观察过弯结算。",
+                "车辆安全越过弯顶点；留意限速明细里的车队修正。",
+                "如果面板挡住限速，可先收起指引。", TutorialFocusTarget.Track,
+                "操控修正作用于限速，不改变牌面速度。"),
+            Step(TutorialStepId.ItCornerExit, TutorialAction.ResolveItCornerExit,
+                "出弯加速", "把过弯势头带出去", "刚才安全过弯，意大利赛车已为下一次出牌存好 +1 移动。",
+                "训练起点已经放到直道；这份加速只在下一次实际打出速度牌时使用一次。",
+                "只打 1 张速度 1，结束出牌，观察赛车实际前进 2 格。",
+                "速度牌给 1 格，出弯势头再给 1 格；用过就消失。",
+                "空过一回合不会消耗这份加速。", TutorialFocusTarget.Hand,
+                "看好速度 1：这回合它会带你前进 2 格。"),
+            Step(TutorialStepId.ItParmigiano, TutorialAction.ResolveItParmigiano,
+                "专属特技", "帕尔马干酪", "帕尔马让本回合尾流额外 +2；标准尾流 +2，因此成功跟车时合计 +4。",
+                "领航车由训练脚本固定在前方，帕尔马干酪和速度 1 已在手牌中。",
+                "先单独打帕尔马干酪，再确认 1 张速度 1，结束出牌，等回合末尾流。",
+                "只有后车在基础移动后获得 +4 尾流；前车不会被向前推。",
+                "若选错牌可取消选择，保持一张速度 1。", TutorialFocusTarget.TeamTrickCard,
+                "先找干酪牌；尾流要到回合末才判定。"),
+            Step(TutorialStepId.ItChianti, TutorialAction.ResolveItChianti,
+                "专属特技", "基安蒂红酒", "打出红酒会弃掉一张手牌速度牌；若手牌有热量，同时冷却 1 张。",
+                "手牌左侧是红酒，另有热量和可弃速度牌。",
+                "只打出基安蒂红酒并确认，观察弃牌堆与引擎热量。",
+                "一张速度牌进弃牌堆，一张热量回引擎。",
+                "红酒不能凭空冷却：手牌没有热量时只弃速度牌。",
+                TutorialFocusTarget.TeamTrickCard, "先确认手牌有速度牌和热量，再使用红酒。"),
+            Step(TutorialStepId.Review, TutorialAction.CompleteReview,
+                "自由练习", "独立跑完一圈", "把操控、跟车和热量回收串成自己的蒙扎节奏。",
+                "练习不写入普通赛事奖励、科技或车手经验。",
+                "点击下一步开始一圈练习；可重练或退出。",
+                "跑完一圈后会显示反馈。", "尾流只属于符合距离的后车。",
+                TutorialFocusTarget.Review, "按自己的判断完成这一圈。", "开始练习", true)
+        };
+        var checkpoints = new List<TutorialPlayerCheckpoint>
+        {
+            TeamCheckpoint(TutorialStepId.ItCorner, 8, 1, 0, 0, false,
+                Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick("it-parmigiano"), Trick("it-chianti")),
+            TeamCheckpoint(TutorialStepId.ItCornerExit, 18, 1, 0, 0, true,
+                Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick("it-parmigiano"), Trick("it-chianti"),
+                italyCornerExitReady: true),
+            TeamCheckpoint(TutorialStepId.ItParmigiano, 20, 1, 0, 0, true,
+                Trick("it-parmigiano"), Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick("it-chianti")),
+            TeamCheckpoint(TutorialStepId.ItChianti, 24, 1, 0, 1, true,
+                Trick("it-chianti"), Speed(1), Speed(2), Speed(2), Speed(3), Speed(1), Trick("it-parmigiano"))
+        };
+        var opponents = new List<TutorialOpponentCue>
+        {
+            new TutorialOpponentCue(TutorialStepId.ItParmigiano, 22, 20, 1)
+        };
+        return new TutorialScenarioDefinition(deck, steps,
+            new List<TutorialWeatherCue>(), opponents, checkpoints, null,
+            "tutorial_team_it_v1", "monza_pasta", TeamId.IT, true, TeamId.DE);
+    }
+
     private static TutorialPlayerCheckpoint TeamCheckpoint(
         TutorialStepId step, int cell, int gear, int consecutive, int heatHand,
         bool cardSelection, TutorialCardSpec first, TutorialCardSpec second,
         TutorialCardSpec third, TutorialCardSpec fourth, TutorialCardSpec fifth,
-        TutorialCardSpec sixth, TutorialCardSpec seventh, bool landmark = false)
+        TutorialCardSpec sixth, TutorialCardSpec seventh, bool landmark = false,
+        bool italyCornerExitReady = false, int kantoCarry = 0)
     {
         var cards = new List<TutorialCardSpec>
         {
@@ -883,7 +1473,8 @@ public sealed class TutorialScenarioDefinition
             Speed(2), Speed(1), Speed(3), Speed(2), Speed(1), Speed(3), Speed(2), Speed(1), Speed(2)
         };
         return new TutorialPlayerCheckpoint(step, cell, gear, 7 - heatHand,
-            heatHand, 0, cards, cardSelection, consecutive, landmark);
+            heatHand, 0, cards, cardSelection, consecutive, landmark, italyCornerExitReady,
+            kantoCarry);
     }
 
     private static List<TutorialPlayerCheckpoint> CreatePlayerCheckpoints()

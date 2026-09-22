@@ -95,6 +95,9 @@ public class PlayerState
     /// </summary>
     public bool italyCornerExitBoostReady;
 
+    /// <summary>Transient evidence that the exit bonus was consumed this turn.</summary>
+    public bool italyCornerExitBonusAppliedThisTurn;
+
     /// <summary>回合开始时的位置（失控回退 / 阴阳茶结算用）。</summary>
     public int positionAtTurnStart;
 
@@ -148,6 +151,7 @@ public class PlayerState
         extraCardSlotsThisTurn = 0;
         kantoOdenSkipThisTurn = false;
         slipstreamRangeBonusThisTurn = 0;
+        italyCornerExitBonusAppliedThisTurn = false;
         positionAtTurnStart = position;
         driverSkill?.BeginTurn();
     }

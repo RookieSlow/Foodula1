@@ -55,7 +55,10 @@ public static class TutorialCheckpointRules
         player.pitChoiceResolvedThisLap = false;
         player.trickState.ResetPerRace();
         player.trickState.crossedLandmarkLastTurn = checkpoint.crossedLandmarkLastTurn;
+        player.trickState.kantoOdenActive = checkpoint.kantoCarryCards > 0;
+        player.trickState.kantoOdenAccumulatedCards = checkpoint.kantoCarryCards;
         player.ClearTurnState();
+        player.italyCornerExitBoostReady = checkpoint.italyCornerExitBoostReady;
 
         return new TutorialCheckpointApplyResult
         {

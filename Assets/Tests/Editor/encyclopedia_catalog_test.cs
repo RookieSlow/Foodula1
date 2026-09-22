@@ -69,6 +69,36 @@ public class EncyclopediaCatalogTests
     }
 
     [Test]
+    public void InputEntryExplainsActualKeyboardPhaseBehavior()
+    {
+        EncyclopediaEntry entry = EncyclopediaCatalog.FindById(
+            EncyclopediaCatalog.LoadDefault(), "input-controls");
+
+        Assert.That(entry, Is.Not.Null);
+        Assert.That(entry.body, Does.Contain("1–4").And.Contain("A/D").And.Contain("F 选中"));
+        Assert.That(entry.body, Does.Contain("按一次空格立即提交").And.Contain("空格不会结束出牌"));
+        Assert.That(entry.body, Does.Contain("优先跳过演出"));
+    }
+
+    [Test]
+    public void ConfirmationEntryTracesEveryCurrentGateAndManualLogExport()
+    {
+        EncyclopediaEntry entry = EncyclopediaCatalog.FindById(
+            EncyclopediaCatalog.LoadDefault(), "confirmation-diagnostics");
+        var actionNames = new List<string>();
+        foreach (InRaceConfirmationAction action in System.Enum.GetValues(typeof(InRaceConfirmationAction)))
+        {
+            if (action != InRaceConfirmationAction.None && action != InRaceConfirmationAction.All)
+                actionNames.Add(action.ToString());
+        }
+
+        Assert.That(entry, Is.Not.Null);
+        Assert.That(entry.relatedRuleIds, Is.EquivalentTo(actionNames));
+        Assert.That(entry.body, Does.Contain("F8").And.Contain("F10"));
+        Assert.That(entry.body, Does.Contain("导出测试日志").And.Contain("不会自动上传"));
+    }
+
+    [Test]
     public void ValidationRejectsDuplicateAndMissingRequiredTopics()
     {
         EncyclopediaCatalogData malformed = EncyclopediaCatalog.FromJson(

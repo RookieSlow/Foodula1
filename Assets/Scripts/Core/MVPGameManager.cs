@@ -62,6 +62,7 @@ public class MVPGameManager : MonoBehaviour
     private TutorialRuntimeDirector tutorialDirector;
     private TutorialGuideUI tutorialGuideUI;
     private TutorialOpponentCue pendingTutorialOpponentCue;
+    private TutorialWeatherCue pendingTutorialWeatherCue;
     private TutorialOpponentCue activeTutorialOpponentCue;
     private TutorialPlayerCheckpoint pendingTutorialPlayerCheckpoint;
     private bool pendingTutorialGuideRefreshAtTurnStart;
@@ -790,6 +791,7 @@ public class MVPGameManager : MonoBehaviour
             : null;
         initializeTutorialInPractice = false;
         pendingTutorialOpponentCue = null;
+        pendingTutorialWeatherCue = null;
         activeTutorialOpponentCue = null;
         pendingTutorialPlayerCheckpoint = null;
         pendingTutorialGuideRefreshAtTurnStart = false;
@@ -1020,8 +1022,13 @@ public class MVPGameManager : MonoBehaviour
              completedStep.requiredAction == TutorialAction.PlayChinaIceJelly ||
              completedStep.requiredAction == TutorialAction.PlayUsFries ||
              completedStep.requiredAction == TutorialAction.PlayUsCola ||
+             completedStep.requiredAction == TutorialAction.ResolveDeSauerkraut ||
+             completedStep.requiredAction == TutorialAction.ResolveDeSchwarzbrot ||
              completedStep.requiredAction == TutorialAction.PlayUkScone ||
-             completedStep.requiredAction == TutorialAction.PlayUkEnglishBreakfastTea) &&
+             completedStep.requiredAction == TutorialAction.PlayUkEnglishBreakfastTea ||
+             completedStep.requiredAction == TutorialAction.ResolveUkSpecialtyScone ||
+             completedStep.requiredAction == TutorialAction.ResolveUkSpecialtyTea ||
+             completedStep.requiredAction == TutorialAction.ResolveJpKantoSkip) &&
             inputState.WaitingForCards)
         {
             // The next lesson rebuilds every card/heat zone at a safe turn boundary.
@@ -1092,24 +1099,16 @@ public class MVPGameManager : MonoBehaviour
         if (cue == null)
             return;
 
-        if (cue.Weather != null && session != null)
+        if (TutorialGuideTimingRules.DefersWeatherUntilCheckpoint(cue))
         {
-            WeatherType? scriptedWeather = WeatherRules.ParseWeather(cue.Weather.weatherId);
-            if (scriptedWeather.HasValue)
-            {
-                session.Weather = scriptedWeather.Value;
-                raceLogWriter?.Append(
-                    $"[TUTORIAL_CUE] type=weather step={cue.Weather.step} " +
-                    $"weather={cue.Weather.weatherId} applied=true");
-                hudUI?.AppendLog($"<color=cyan>教程脚本天气：{session.WeatherLabel}</color>");
-                hudUI?.Refresh(this, Player, AI, session.Players);
-            }
-            else
-            {
-                raceLogWriter?.Append(
-                    $"[TUTORIAL_CUE] type=weather step={cue.Weather.step} " +
-                    $"weather={cue.Weather.weatherId} applied=false reason=unknown_weather");
-            }
+            pendingTutorialWeatherCue = cue.Weather;
+            raceLogWriter?.Append(
+                $"[TUTORIAL_CUE] type=weather step={cue.Weather.step} " +
+                $"weather={cue.Weather.weatherId} queued=checkpoint");
+        }
+        else if (cue.Weather != null)
+        {
+            ApplyTutorialWeather(cue.Weather);
         }
 
         if (cue.Opponent != null)
@@ -1136,6 +1135,29 @@ public class MVPGameManager : MonoBehaviour
         }
     }
 
+    private void ApplyTutorialWeather(TutorialWeatherCue weather)
+    {
+        if (weather != null && session != null)
+        {
+            WeatherType? scriptedWeather = WeatherRules.ParseWeather(weather.weatherId);
+            if (scriptedWeather.HasValue)
+            {
+                session.Weather = scriptedWeather.Value;
+                raceLogWriter?.Append(
+                    $"[TUTORIAL_CUE] type=weather step={weather.step} " +
+                    $"weather={weather.weatherId} applied=true");
+                hudUI?.AppendLog($"<color=cyan>教程脚本天气：{session.WeatherLabel}</color>");
+                hudUI?.Refresh(this, Player, AI, session.Players);
+            }
+            else
+            {
+                raceLogWriter?.Append(
+                    $"[TUTORIAL_CUE] type=weather step={weather.step} " +
+                    $"weather={weather.weatherId} applied=false reason=unknown_weather");
+            }
+        }
+    }
+
     private void ApplyPendingTutorialPlayerCheckpoint(bool force)
     {
         TutorialPlayerCheckpoint checkpoint = pendingTutorialPlayerCheckpoint;
@@ -1158,6 +1180,20 @@ public class MVPGameManager : MonoBehaviour
             pendingTutorialPlayerCheckpoint = checkpoint;
             return;
         }
+
+        if (pendingTutorialWeatherCue != null &&
+            pendingTutorialWeatherCue.step == checkpoint.step)
+        {
+            ApplyTutorialWeather(pendingTutorialWeatherCue);
+            pendingTutorialWeatherCue = null;
+        }
+
+        // A paired leader must already be in place when the lesson is shown.
+        // The normal turn-boundary path also calls this, but an immediate
+        // prepared-gear transition can present the guide before that path.
+        if (TutorialOpponentCueRules.AppliesWithPlayerCheckpoint(
+                pendingTutorialOpponentCue, checkpoint))
+            ApplyPendingTutorialOpponentCue();
 
         MoveCarTo(Player, Player.position);
         RefreshVisualCarLanes();
@@ -1907,6 +1943,46 @@ public class MVPGameManager : MonoBehaviour
                             TryAdvanceTutorialIfExpected(TutorialAction.ResolveUsCorner,
                                 $"corner_speed:{p.cornerTotalThisTurn},heat_paid:{engineBeforeCorners - p.deck.heatPool.remaining}");
                     }
+                    else if (p.teamId == TeamId.DE && !completedCorner &&
+                             p.playedSpeedCardsThisTurn != null &&
+                             p.playedSpeedCardsThisTurn.Count == 1 &&
+                             p.playedSpeedCardsThisTurn[0].value == 1 &&
+                             p.totalMovementThisTurn == 3)
+                    {
+                        TryAdvanceTutorialIfExpected(TutorialAction.ResolveDeStraight,
+                            $"base:1,straight_card:1,chassis:1,movement:{p.totalMovementThisTurn}");
+                    }
+                    if (p.teamId == TeamId.DE && completedCorner &&
+                        p.trickState.sauerkrautPlayed &&
+                        p.cornerTotalThisTurn == 1 && p.totalMovementThisTurn == 3)
+                    {
+                        TryAdvanceTutorialIfExpected(TutorialAction.ResolveDeSauerkraut,
+                            $"base:1,sauerkraut:2,movement:{p.totalMovementThisTurn}");
+                    }
+                    if (p.teamId == TeamId.IT && completedCorner &&
+                        p.cornerTotalThisTurn == 1 &&
+                        TeamVehicleRules.GetHandling(TeamId.IT) == 2)
+                    {
+                        TryAdvanceTutorialIfExpected(TutorialAction.ResolveItCorner,
+                            $"corner_speed:1,handling:2,from:{oldPos},to:{p.position}");
+                    }
+                    if (p.teamId == TeamId.IT && p.italyCornerExitBonusAppliedThisTurn &&
+                        !completedCorner && p.cornerTotalThisTurn == 1 &&
+                        p.position == oldPos + 2)
+                    {
+                        TryAdvanceTutorialIfExpected(TutorialAction.ResolveItCornerExit,
+                            $"base:1,corner_exit:1,from:{oldPos},to:{p.position}");
+                    }
+                    if (p.teamId == TeamId.JP &&
+                        tutorialDirector?.CurrentStep?.id == TutorialStepId.JpTorpedo &&
+                        p.trickState.torpedoTempuraActive &&
+                        overtakesThisTurn.TryGetValue(p, out int jpOvertakes) &&
+                        jpOvertakes == 1 && p.cornerTotalThisTurn == 3 &&
+                        p.totalMovementThisTurn == 4 && p.position == oldPos + 4)
+                    {
+                        TryAdvanceTutorialIfExpected(TutorialAction.ResolveJpTorpedo,
+                            $"overtakes:1,card_speed:3,torpedo_bonus:1,from:{oldPos},to:{p.position}");
+                    }
                 }
 
                 ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
@@ -1929,6 +2005,10 @@ public class MVPGameManager : MonoBehaviour
                 if (Player.teamId == TeamId.US)
                     TryAdvanceTutorialIfExpected(TutorialAction.ResolveUsSlipstream,
                         $"bonus:{tutorialSlipstream.TotalBonus}");
+                if (Player.teamId == TeamId.IT && Player.trickState.parmigianoActive &&
+                    tutorialSlipstream.TotalBonus == 4)
+                    TryAdvanceTutorialIfExpected(TutorialAction.ResolveItParmigiano,
+                        $"bonus:4,leader:{tutorialSlipstream.Steps[0].Leader.position}");
             }
             yield return StartCoroutine(PlaySlipstreamPhase(turnOrder, turnSkipped));
             yield return StartCoroutine(ApplySlipstreamMovement(turnOrder, turnSkipped));
@@ -2085,6 +2165,8 @@ public class MVPGameManager : MonoBehaviour
         if (p?.driverSkill != null)
             amount = Mathf.Max(0, amount - p.driverSkill.ConsumePassiveHeatDiscount());
 
+        int heatBeforeBread = amount;
+        bool breadArmed = p.trickState.schwarzbrotActive;
         // 特技牌：黑面包垫底 — 本次热量支付 -1（最少 1）
         amount = TrickCardRules.ApplySchwarzbrot(p.trickState, amount);
         if (amount <= 0) return true;
@@ -2125,6 +2207,10 @@ public class MVPGameManager : MonoBehaviour
         if (!p.isAI)
         {
             AudioService.PlaySfx(AudioEventNames.HeatPay);
+            if (p.teamId == TeamId.DE && breadArmed &&
+                reason == "engine failure" && heatBeforeBread == 2 && drawn == 1)
+                TryAdvanceTutorialIfExpected(TutorialAction.ResolveDeSchwarzbrot,
+                    $"requested:{heatBeforeBread},paid:{drawn},discount:1");
             TryAdvanceTutorialIfExpected(
                 TutorialAction.PayHeat,
                 $"amount:{drawn},destination:{destination},reason:{reason}");
@@ -2472,6 +2558,9 @@ public class MVPGameManager : MonoBehaviour
                 speedPerCardBonus * p.playedSpeedCardsThisTurn.Count;
             p.cornerTotalThisTurn = Mathf.Max(0, rawSpeedTotal -
                 CardPlayRules.GetHotpotCornerExclusion(p, speedPerCardBonus));
+            if (activeTutorialOpponentCue != null &&
+                activeTutorialOpponentCue.step == TutorialStepId.JpTorpedo && p == AI)
+                p.cornerTotalThisTurn = 0;
         }
 
         // 第二轮：加成（需要弯道信息与对手移动）
@@ -2484,7 +2573,9 @@ public class MVPGameManager : MonoBehaviour
             bool crossedCorner = trackManager.GetUniqueCornersCrossed(p.position, rawEnd).Count > 0;
 
             int bonus = session.ComputeMovementBonus(p, crossedCorner);
-            bonus += session.ConsumeItalyCornerExitBonus(p);
+            int italyCornerExitBonus = session.ConsumeItalyCornerExitBonus(p);
+            p.italyCornerExitBonusAppliedThisTurn = italyCornerExitBonus > 0;
+            bonus += italyCornerExitBonus;
             // DE L2 猪肘悬挂：过弯 → 出弯后 +1 移动（弯道判定在 ResolveCorners 跳过）
             if (p.techState != null && TechTreeRules.ShouldTriggerWurstplatte(p.techState, session.TechDb, crossedCorner))
                 bonus += 1;
@@ -3157,6 +3248,30 @@ public class MVPGameManager : MonoBehaviour
             return false;
         }
 
+        if (!p.isAI && tutorialScenario != null &&
+            tutorialScenario.id == "tutorial_team_uk_v1" &&
+            tutorialDirector?.CurrentStep != null &&
+            !TutorialSpecialtyCardRules.ValidateUkTrickSelection(
+                tutorialDirector.CurrentStep.id, card.trickId, out string ukGuideReason))
+        {
+            hudUI?.SetStatus($"<color=orange>教程提示：{ukGuideReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false reason={ukGuideReason}");
+            return false;
+        }
+        if (!p.isAI && tutorialScenario != null &&
+            tutorialScenario.id == "tutorial_team_jp_v1" &&
+            tutorialDirector?.CurrentStep != null &&
+            !TutorialSpecialtyCardRules.ValidateJpTrickSelection(
+                tutorialDirector.CurrentStep.id, card.trickId, out string jpGuideReason))
+        {
+            hudUI?.SetStatus($"<color=orange>教程提示：{jpGuideReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false reason={jpGuideReason}");
+            return false;
+        }
+
+        int engineBeforeTrick = p.deck.heatPool.remaining;
+        int moveBonusBeforeTrick = p.trickMoveBonusThisTurn;
+
         var result = session.PlayTrick(p, card);
         if (!result.success)
         {
@@ -3185,28 +3300,56 @@ public class MVPGameManager : MonoBehaviour
         if (hudUI != null)
             hudUI.AppendLog($"{p.name} 打出特技牌: {result.message}");
 
+        int heatBeforeTrick = p.deck.CountHeatInHand();
+        int speedBeforeTrick = p.deck.CountSpeedInHand();
         ApplyTrickEffects(p, card, result);
 
         if (!p.isAI)
         {
             if (card.trickId == "uk-scone")
             {
-                TryAdvanceTutorialIfExpected(
-                    TutorialAction.PlayUkScone,
-                    $"trick:{card.trickId}");
+                bool resolved = TutorialSpecialtyCardRules.UkSconeResolved(
+                    engineBeforeTrick, p.deck.heatPool.remaining,
+                    moveBonusBeforeTrick, p.trickMoveBonusThisTurn);
+                if (resolved)
+                {
+                    TryAdvanceTutorialIfExpected(TutorialAction.PlayUkScone, $"trick:{card.trickId}");
+                    TryAdvanceTutorialIfExpected(TutorialAction.ResolveUkSpecialtyScone,
+                        "heat_paid:1,movement_bonus:2");
+                }
             }
             else if (card.trickId == "uk-english-breakfast-tea")
             {
-                TryAdvanceTutorialIfExpected(
-                    TutorialAction.PlayUkEnglishBreakfastTea,
-                    $"trick:{card.trickId}");
+                bool resolved = TutorialSpecialtyCardRules.UkTeaResolved(
+                    heatBeforeTrick, p.deck.CountHeatInHand(),
+                    engineBeforeTrick, p.deck.heatPool.remaining);
+                if (resolved)
+                {
+                    TryAdvanceTutorialIfExpected(TutorialAction.PlayUkEnglishBreakfastTea,
+                        $"trick:{card.trickId}");
+                    TryAdvanceTutorialIfExpected(TutorialAction.ResolveUkSpecialtyTea,
+                        "heat_cooled:1,engine_restored:1");
+                }
             }
+            else if (card.trickId == "jp-kanto-oden" &&
+                     TutorialSpecialtyCardRules.JpKantoResolved(
+                         p.kantoOdenSkipThisTurn, p.gear,
+                         p.trickState.kantoOdenAccumulatedCards,
+                         heatBeforeTrick, p.deck.CountHeatInHand(),
+                         engineBeforeTrick, p.deck.heatPool.remaining))
+                TryAdvanceTutorialIfExpected(TutorialAction.ResolveJpKantoSkip,
+                    $"skip:true,carry:{p.trickState.kantoOdenAccumulatedCards},cooled:1");
             else if (card.trickId == "cn-ice-jelly")
                 TryAdvanceTutorialIfExpected(TutorialAction.PlayChinaIceJelly, card.trickId);
             else if (card.trickId == "us-fries")
                 TryAdvanceTutorialIfExpected(TutorialAction.PlayUsFries, card.trickId);
             else if (card.trickId == "us-cola")
                 TryAdvanceTutorialIfExpected(TutorialAction.PlayUsCola, card.trickId);
+            else if (card.trickId == "it-chianti" &&
+                     heatBeforeTrick - p.deck.CountHeatInHand() == 1 &&
+                     speedBeforeTrick - p.deck.CountSpeedInHand() == 1)
+                TryAdvanceTutorialIfExpected(TutorialAction.ResolveItChianti,
+                    "cooled:1,discarded_speed:1");
         }
 
         // CN L2 连击追踪：特技
@@ -4242,17 +4385,91 @@ public class MVPGameManager : MonoBehaviour
         cardHandUI.ClearPendingPlaySelection();
         inputState.EndCardSelection();
         cardHandUI.HideAll();
+        if (player.teamId == TeamId.JP && player.gear == 1 &&
+            player.extraCardSlotsThisTurn == 2 && speedCount == 3)
+            TryAdvanceTutorialIfExpected(TutorialAction.ResolveJpKantoRelease,
+                "gear:1,carry_slots:2,played:3");
     }
 
     private bool ValidateTutorialSpecialtySpeedSelection(
         PlayerState player,
         IReadOnlyList<CardData> selected)
     {
-        if (tutorialScenario == null || tutorialScenario.id != "tutorial_team_us_v1" ||
-            tutorialDirector == null || tutorialDirector.CurrentStep == null)
+        if (tutorialScenario == null || tutorialDirector == null ||
+            tutorialDirector.CurrentStep == null || tutorialDirector.IsActiveStepComplete)
             return true;
 
         TutorialStepId step = tutorialDirector.CurrentStep.id;
+        if (!TutorialSpecialtyCardRules.ValidateTrickLessonSpeedSelection(
+                step, player != null && TrickCardRules.HasHotpotAttack(player.trickState),
+                selected, out string trickReason))
+        {
+            cardHandUI?.ClearPendingPlaySelection();
+            hudUI?.SetStatus($"<color=orange>教程提示：{trickReason}</color>");
+            raceLogWriter?.Append(
+                $"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={trickReason}");
+            return false;
+        }
+        if (tutorialScenario.id == "tutorial_team_de_v1" &&
+            !TutorialSpecialtyCardRules.ValidateDeStraightSpeedSelection(
+                step, player != null ? player.playedSpeedCardsThisTurn : null,
+                selected, out string deReason))
+        {
+            cardHandUI?.ClearPendingPlaySelection();
+            hudUI?.SetStatus($"<color=orange>教程提示：{deReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={deReason}");
+            return false;
+        }
+        if (tutorialScenario.id == "tutorial_team_it_v1" &&
+            !TutorialSpecialtyCardRules.ValidateItCornerSpeedSelection(
+                step, player != null ? player.playedSpeedCardsThisTurn : null,
+                selected, out string itCornerReason))
+        {
+            cardHandUI?.ClearPendingPlaySelection();
+            hudUI?.SetStatus($"<color=orange>教程提示：{itCornerReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={itCornerReason}");
+            return false;
+        }
+        if (tutorialScenario.id == "tutorial_team_jp_v1" &&
+            !TutorialSpecialtyCardRules.ValidateJpSpeedSelection(
+                step, player != null && player.trickState != null &&
+                player.trickState.torpedoTempuraActive,
+                player != null ? player.playedSpeedCardsThisTurn : null,
+                selected, out string jpReason))
+        {
+            cardHandUI?.ClearPendingPlaySelection();
+            hudUI?.SetStatus($"<color=orange>教程提示：{jpReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={jpReason}");
+            return false;
+        }
+        if (tutorialScenario.id == "tutorial_team_it_v1" &&
+            !TutorialSpecialtyCardRules.ValidateItSlipstreamSpeedSelection(
+                step, player != null && player.trickState != null &&
+                player.trickState.parmigianoActive,
+                player != null ? player.playedSpeedCardsThisTurn : null,
+                selected, out string itReason))
+        {
+            cardHandUI?.ClearPendingPlaySelection();
+            hudUI?.SetStatus($"<color=orange>教程提示：{itReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={itReason}");
+            return false;
+        }
+        if (tutorialScenario.id == "tutorial_team_de_v1" &&
+            !TutorialSpecialtyCardRules.ValidateDeEffectSpeedSelection(
+                step, player != null && player.trickState != null &&
+                (step == TutorialStepId.DeSauerkraut
+                    ? player.trickState.sauerkrautPlayed
+                    : player.trickState.schwarzbrotActive),
+                player != null ? player.playedSpeedCardsThisTurn : null,
+                selected, out string deEffectReason))
+        {
+            cardHandUI?.ClearPendingPlaySelection();
+            hudUI?.SetStatus($"<color=orange>教程提示：{deEffectReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={deEffectReason}");
+            return false;
+        }
+        if (tutorialScenario.id != "tutorial_team_us_v1")
+            return true;
         if (TutorialSpecialtyCardRules.ValidateUsSpeedSelection(
                 step,
                 player != null ? player.playedSpeedCardsThisTurn : null,
@@ -4269,11 +4486,75 @@ public class MVPGameManager : MonoBehaviour
 
     private bool ValidateTutorialSpecialtySpeedCompletion(PlayerState player)
     {
-        if (tutorialScenario == null || tutorialScenario.id != "tutorial_team_us_v1" ||
-            tutorialDirector == null || tutorialDirector.CurrentStep == null)
+        if (tutorialScenario == null || tutorialDirector == null ||
+            tutorialDirector.CurrentStep == null)
             return true;
 
         TutorialStepId step = tutorialDirector.CurrentStep.id;
+        if (!TutorialSpecialtyCardRules.ValidateTrickLessonCompletion(
+                step, tutorialDirector.IsActiveStepComplete, out string trickReason))
+        {
+            hudUI?.SetStatus($"<color=orange>教程提示：{trickReason}</color>");
+            raceLogWriter?.Append(
+                $"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={trickReason}");
+            return false;
+        }
+        if (tutorialScenario.id == "tutorial_team_de_v1" &&
+            !TutorialSpecialtyCardRules.ValidateDeStraightSpeedCompletion(
+                step, player != null ? player.playedSpeedCardsThisTurn : null,
+                out string deReason))
+        {
+            hudUI?.SetStatus($"<color=orange>教程提示：{deReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={deReason}");
+            return false;
+        }
+        if (tutorialScenario.id == "tutorial_team_de_v1" &&
+            !TutorialSpecialtyCardRules.ValidateDeEffectSpeedCompletion(
+                step, player != null && player.trickState != null &&
+                (step == TutorialStepId.DeSauerkraut
+                    ? player.trickState.sauerkrautPlayed
+                    : player.trickState.schwarzbrotActive),
+                player != null ? player.playedSpeedCardsThisTurn : null,
+                out string deEffectReason))
+        {
+            hudUI?.SetStatus($"<color=orange>教程提示：{deEffectReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={deEffectReason}");
+            return false;
+        }
+        if (tutorialScenario.id == "tutorial_team_it_v1" &&
+            !TutorialSpecialtyCardRules.ValidateItCornerSpeedCompletion(
+                step, player != null ? player.playedSpeedCardsThisTurn : null,
+                out string itCornerReason))
+        {
+            hudUI?.SetStatus($"<color=orange>教程提示：{itCornerReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={itCornerReason}");
+            return false;
+        }
+        if (tutorialScenario.id == "tutorial_team_jp_v1" &&
+            !TutorialSpecialtyCardRules.ValidateJpSpeedCompletion(
+                step, player != null && player.trickState != null &&
+                player.trickState.torpedoTempuraActive,
+                player != null ? player.extraCardSlotsThisTurn : 0,
+                player != null ? player.playedSpeedCardsThisTurn : null,
+                out string jpReason))
+        {
+            hudUI?.SetStatus($"<color=orange>教程提示：{jpReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={jpReason}");
+            return false;
+        }
+        if (tutorialScenario.id == "tutorial_team_it_v1" &&
+            !TutorialSpecialtyCardRules.ValidateItSlipstreamSpeedCompletion(
+                step, player != null && player.trickState != null &&
+                player.trickState.parmigianoActive,
+                player != null ? player.playedSpeedCardsThisTurn : null,
+                out string itReason))
+        {
+            hudUI?.SetStatus($"<color=orange>教程提示：{itReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={itReason}");
+            return false;
+        }
+        if (tutorialScenario.id != "tutorial_team_us_v1")
+            return true;
         if (TutorialSpecialtyCardRules.ValidateUsSpeedPhaseCompletion(
                 step,
                 player != null ? player.playedSpeedCardsThisTurn : null,
