@@ -95,20 +95,22 @@ public class CardDeck
         if (topFirstDrawOrder == null)
             throw new System.ArgumentNullException(nameof(topFirstDrawOrder));
 
+        var validatedOrder = new List<CardData>(topFirstDrawOrder.Count);
+        foreach (CardData card in topFirstDrawOrder)
+        {
+            if (!IsPlayableCard(card))
+                throw new System.ArgumentException(
+                    "Exact draw order may contain only non-null speed or trick cards.",
+                    nameof(topFirstDrawOrder));
+            validatedOrder.Add(card);
+        }
+
         heatPool = enginePool;
         usesExactOrder = true;
         drawPile.Clear();
         hand.Clear();
         discardPile.Clear();
-
-        foreach (CardData card in topFirstDrawOrder)
-        {
-            if (card == null || card.IsHeat)
-                throw new System.ArgumentException(
-                    "Exact draw order may contain only non-null speed or trick cards.",
-                    nameof(topFirstDrawOrder));
-            drawPile.Add(card);
-        }
+        drawPile.AddRange(validatedOrder);
     }
 
     /// <summary>
@@ -165,7 +167,7 @@ public class CardDeck
         for (int i = 0; i < limit; i++)
         {
             CardData card = drawPile[i];
-            if (card == null || card.IsHeat) continue;
+            if (!IsPlayableCard(card)) continue;
 
             int value = card.IsSpeed ? card.value : 0;
             if (selectedIndex < 0 || value > selectedValue)
@@ -186,18 +188,19 @@ public class CardDeck
         if (pile == null) return -1;
         for (int i = 0; i < pile.Count; i++)
         {
-            CardData card = pile[i];
-            if (card != null && !card.IsHeat) return i;
+            if (IsPlayableCard(pile[i])) return i;
         }
         return -1;
     }
+
+    private static bool IsPlayableCard(CardData card) => card != null && !card.IsHeat;
 
     private static int CountPlayableCards(List<CardData> pile)
     {
         if (pile == null) return 0;
         int count = 0;
         foreach (CardData card in pile)
-            if (card != null && !card.IsHeat) count++;
+            if (IsPlayableCard(card)) count++;
         return count;
     }
 
@@ -209,7 +212,7 @@ public class CardDeck
             for (int i = 0; i < discardPile.Count;)
             {
                 CardData card = discardPile[i];
-                if (card == null || card.IsHeat)
+                if (!IsPlayableCard(card))
                 {
                     i++;
                     continue;
@@ -225,7 +228,7 @@ public class CardDeck
             for (int i = discardPile.Count - 1; i >= 0; i--)
             {
                 CardData card = discardPile[i];
-                if (card == null || card.IsHeat) continue;
+                if (!IsPlayableCard(card)) continue;
 
                 drawPile.Add(card);
                 discardPile.RemoveAt(i);
@@ -279,7 +282,7 @@ public class CardDeck
 
         foreach (CardData card in cards)
         {
-            if (card == null || card.IsHeat) continue;
+            if (!IsPlayableCard(card)) continue;
             if (hand.Remove(card))
             {
                 discardPile.Add(card);

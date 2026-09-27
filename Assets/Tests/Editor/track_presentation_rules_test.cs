@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Framework;
+using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 public class TrackPresentationRulesTests
@@ -252,6 +255,109 @@ public class TrackPresentationRulesTests
                         $"Infinite sample: {trackId}, corner {corner.Key}");
                 }
             }
+        }
+    }
+
+    [Test]
+    public void test_us_landmark_visibility_requires_a_us_racer_in_the_field()
+    {
+        Assert.That(TeamLandmarkPresentationRules.HasUnitedStatesTeam(null), Is.False);
+        Assert.That(TeamLandmarkPresentationRules.HasUnitedStatesTeam(new PlayerState[0]), Is.False);
+        Assert.That(TeamLandmarkPresentationRules.HasUnitedStatesTeam(new[]
+        {
+            new PlayerState("UK", false, 0, 1) { teamId = TeamId.UK },
+            new PlayerState("CN", true, 0, 1) { teamId = TeamId.CN }
+        }), Is.False);
+        Assert.That(TeamLandmarkPresentationRules.HasUnitedStatesTeam(new[]
+        {
+            new PlayerState("UK", false, 0, 1) { teamId = TeamId.UK },
+            new PlayerState("US", true, 0, 1) { teamId = TeamId.US },
+            new PlayerState("JP", true, 0, 1) { teamId = TeamId.JP }
+        }), Is.True);
+    }
+
+    [Test]
+    public void test_us_landmark_positions_follow_shared_rules_on_every_selectable_map()
+    {
+        string[] trackIds =
+        {
+            "silverstone_afternoon_tea",
+            "nurburgring_bier",
+            "monza_pasta",
+            "indianapolis_burger",
+            "shanghai_dim_sum",
+            "suzuka_sushi",
+            "nurburgring_24h_endurance",
+            "le_mans_old_mulsanne",
+            TrackManager.FallbackTrackId
+        };
+
+        foreach (string trackId in trackIds)
+        {
+            TrackConfig config = TrackDataLoader.LoadConfig(trackId);
+            Assert.That(config, Is.Not.Null, $"Track config missing: {trackId}");
+            Assert.That(config.cells.Length, Is.EqualTo(config.gameCellCount), trackId);
+
+            var landmarks = TeamLandmarkPresentationRules.GetUnitedStatesLandmarkNodeIndices(config.gameCellCount);
+            Assert.That(landmarks.startFinish, Is.EqualTo(0), trackId);
+            Assert.That(landmarks.midpoint, Is.EqualTo(config.gameCellCount / 2), trackId);
+            Assert.That(config.cells[landmarks.startFinish].IsStartFinish, Is.True, trackId);
+
+            Vector2[] runtimePositions = TrackDataLoader.ConfigToWorldPositions(config, 30f, 18f);
+            Assert.That(runtimePositions.Length, Is.EqualTo(config.gameCellCount), trackId);
+            Assert.That(float.IsNaN(runtimePositions[landmarks.startFinish].x), Is.False, trackId);
+            Assert.That(float.IsNaN(runtimePositions[landmarks.midpoint].y), Is.False, trackId);
+            Assert.That(Vector2.Distance(
+                runtimePositions[landmarks.startFinish],
+                runtimePositions[landmarks.midpoint]), Is.GreaterThan(0.5f), trackId);
+        }
+    }
+
+    [Test]
+    public void test_us_landmark_marker_labels_name_the_two_shared_positions()
+    {
+        Assert.That(TeamLandmarkPresentationRules.GetUnitedStatesLandmarkLabel(0), Is.EqualTo("US · 起点"));
+        Assert.That(TeamLandmarkPresentationRules.GetUnitedStatesLandmarkLabel(1), Is.EqualTo("US · 中点"));
+    }
+
+    [Test]
+    public void test_us_landmark_marker_creates_line_renderers_on_separate_objects()
+    {
+        var trackObject = new GameObject("InactiveTrackManagerTest");
+        trackObject.SetActive(false);
+        var overlayObject = new GameObject("TrackReadabilityOverlayTest");
+        try
+        {
+            TrackManager manager = trackObject.AddComponent<TrackManager>();
+            TrackReadabilityOverlay overlay = overlayObject.AddComponent<TrackReadabilityOverlay>();
+            TMP_FontAsset testFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(
+                "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset");
+            Assert.That(testFont, Is.Not.Null, "Landmark label test font is missing.");
+            typeof(TrackReadabilityOverlay)
+                .GetField("trackManager", BindingFlags.Instance | BindingFlags.NonPublic)
+                .SetValue(overlay, manager);
+            typeof(TrackReadabilityOverlay)
+                .GetField("fontAsset", BindingFlags.Instance | BindingFlags.NonPublic)
+                .SetValue(overlay, testFont);
+
+            MethodInfo createMarker = typeof(TrackReadabilityOverlay).GetMethod(
+                "CreateTeamLandmarkMarker",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(createMarker, Is.Not.Null);
+            createMarker.Invoke(overlay, new object[] { 0 });
+
+            Transform markerRoot = overlayObject.transform.Find("USLandmark_1");
+            Assert.That(markerRoot, Is.Not.Null);
+            LineRenderer[] lineRenderers = markerRoot.GetComponentsInChildren<LineRenderer>(true);
+            Assert.That(lineRenderers, Has.Length.EqualTo(2));
+            Assert.That(lineRenderers[0], Is.Not.Null);
+            Assert.That(lineRenderers[1], Is.Not.Null);
+            Assert.That(lineRenderers[0].gameObject, Is.Not.SameAs(lineRenderers[1].gameObject));
+        }
+        finally
+        {
+            Object.DestroyImmediate(overlayObject);
+            Object.DestroyImmediate(trackObject);
         }
     }
 }

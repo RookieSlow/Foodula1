@@ -267,8 +267,8 @@ public static class CareerModeRules
     private static readonly ReadOnlyCollection<string> Schedule = BuildSchedule();
 
     /// <summary>
-    /// The career calendar reuses the explicit main-menu track catalog order,
-    /// keeping one authoritative list of the eight official tracks.
+    /// The career calendar reuses the shared immutable official track catalog,
+    /// without depending on the session's currently selected track.
     /// </summary>
     public static IReadOnlyList<string> TrackSchedule => Schedule;
 
@@ -452,7 +452,7 @@ public static class CareerModeRules
 
     private static ReadOnlyCollection<string> BuildSchedule()
     {
-        IReadOnlyList<TrackSelectionOption> tracks = TrackSelectionState.AvailableTracks;
+        IReadOnlyList<TrackSelectionOption> tracks = OfficialTrackCatalog.Tracks;
         if (tracks.Count != RaceCount)
             throw new InvalidOperationException($"Career requires exactly {RaceCount} official tracks.");
 

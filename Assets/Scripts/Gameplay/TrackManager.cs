@@ -430,6 +430,11 @@ public class TrackManager : MonoBehaviour
 
     public void BindPlayerReadability(Transform playerCar)
     {
+        BindPlayerReadability(playerCar, false);
+    }
+
+    public void BindPlayerReadability(Transform playerCar, bool unitedStatesTeamPresent)
+    {
         if (readabilityOverlay == null)
         {
             readabilityOverlay = GetComponent<TrackReadabilityOverlay>();
@@ -437,6 +442,7 @@ public class TrackManager : MonoBehaviour
                 readabilityOverlay = gameObject.AddComponent<TrackReadabilityOverlay>();
             readabilityOverlay.Configure(this, FindObjectOfType<TMP_Text>()?.font);
         }
+        readabilityOverlay.SetUnitedStatesLandmarksVisible(unitedStatesTeamPresent);
         readabilityOverlay.BindPlayer(playerCar);
     }
 

@@ -19,15 +19,10 @@ public sealed class RaceWeatherState
     /// </summary>
     public bool TryBeginLapRoll(int lap, bool weatherEnabled)
     {
-        RaceLapWeatherTransition transition = RaceLapWeatherRules.Advance(
-            lap - 1,
-            int.MaxValue,
-            LastRolledLap,
-            weatherEnabled);
-        if (!transition.ShouldRollWeather)
+        if (!RaceLapWeatherRules.ShouldRollWeatherForLap(lap, LastRolledLap, weatherEnabled))
             return false;
 
-        MarkLapRolled(transition.Lap);
+        MarkLapRolled(lap);
         return true;
     }
 

@@ -20,10 +20,10 @@ public static class RaceLogAnalysisMenu
             return;
         }
 
-        string[] paths;
+        string latestPath;
         try
         {
-            paths = Directory.GetFiles(directory, "*.log");
+            latestPath = RaceLogFileAnalyzer.FindLatestLogPath(directory);
         }
         catch (Exception exception)
         {
@@ -31,22 +31,10 @@ public static class RaceLogAnalysisMenu
             return;
         }
 
-        if (paths.Length == 0)
+        if (latestPath == null)
         {
             Debug.LogWarning("[RaceLogAnalyzer] No .log files found in " + directory);
             return;
-        }
-
-        string latestPath = paths[0];
-        DateTime latestWrite = File.GetLastWriteTimeUtc(latestPath);
-        for (int i = 1; i < paths.Length; i++)
-        {
-            DateTime candidateWrite = File.GetLastWriteTimeUtc(paths[i]);
-            if (candidateWrite > latestWrite)
-            {
-                latestPath = paths[i];
-                latestWrite = candidateWrite;
-            }
         }
 
         AnalyzePath(latestPath);

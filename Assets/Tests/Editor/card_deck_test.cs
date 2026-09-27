@@ -80,6 +80,35 @@ public class CardDeckTest
         Assert.AreSame(middle, deck.DrawPile[1]);
     }
 
+    [Test]
+    public void test_invalid_exact_order_leaves_existing_card_and_heat_zones_unchanged()
+    {
+        var first = new CardData(CardType.Speed, 1);
+        var second = new CardData(CardType.Speed, 2);
+        var engine = new HeatPool(3);
+        var deck = new CardDeck();
+        deck.InitializeExactOrder(new[] { first, second }, engine);
+        Assert.IsTrue(deck.DrawToHand(1));
+        Assert.AreEqual(1, deck.DrawHeatFromPool(1));
+        CardData paidHeat = deck.DiscardPile[0];
+
+        Assert.Throws<System.ArgumentException>(() => deck.InitializeExactOrder(
+            new[] { new CardData(CardType.Speed, 4), new CardData(CardType.Heat, 0) },
+            new HeatPool(9)));
+
+        Assert.IsTrue(deck.UsesExactOrder);
+        Assert.AreSame(engine, deck.heatPool);
+        Assert.AreEqual(2, engine.remaining);
+        Assert.AreEqual(1, deck.HandCount);
+        Assert.AreSame(first, deck.Hand[0]);
+        Assert.AreEqual(1, deck.DrawPileCount);
+        Assert.AreSame(second, deck.DrawPile[0]);
+        Assert.AreEqual(1, deck.DiscardPileCount);
+        Assert.AreSame(paidHeat, deck.DiscardPile[0]);
+        Assert.IsTrue(deck.DrawToHand(2));
+        Assert.AreSame(second, deck.Hand[1]);
+    }
+
     // ===== 抽牌与牌库耗尽 =====
 
     [Test]

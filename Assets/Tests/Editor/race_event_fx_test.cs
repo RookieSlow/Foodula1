@@ -40,6 +40,30 @@ public class RaceEventFXTests
     }
 
     [Test]
+    public void FadeEnvelopePreservesOvertakeAndSlipstreamTiming()
+    {
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(0f, 0.12f, 0.78f), Is.EqualTo(0f));
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(0.06f, 0.12f, 0.78f), Is.EqualTo(0.5f).Within(0.001f));
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(0.12f, 0.12f, 0.78f), Is.EqualTo(1f));
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(0.5f, 0.12f, 0.78f), Is.EqualTo(1f));
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(0.78f, 0.12f, 0.78f), Is.EqualTo(1f));
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(0.89f, 0.12f, 0.78f), Is.EqualTo(0.5f).Within(0.001f));
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(1f, 0.12f, 0.78f), Is.EqualTo(0f));
+
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(0.05f, 0.1f, 0.82f), Is.EqualTo(0.5f).Within(0.001f));
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(0.91f, 0.15f, 0.72f), Is.EqualTo(0.32142857f).Within(0.001f));
+    }
+
+    [Test]
+    public void FadeEnvelopeClampsProgressAndInvalidTimingWindow()
+    {
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(-1f, 0.2f, 0.8f), Is.EqualTo(0f));
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(2f, 0.2f, 0.8f), Is.EqualTo(0f));
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(0.5f, -1f, 2f), Is.EqualTo(1f));
+        Assert.That(RaceEventPresentationRules.GetEnvelopeAlpha(0.9f, 0.8f, 0.2f), Is.EqualTo(0.5f).Within(0.001f));
+    }
+
+    [Test]
     public void SlowMotionScopeRestoresNormalGameplaySpeed()
     {
         GameObject host = new GameObject("RaceEventFXTimeScaleTest");

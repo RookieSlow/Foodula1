@@ -43,6 +43,65 @@ public class TeamTutorialCatalogTests
     }
 
     [Test]
+    public void SpecialtyCoursesCanLaunchOnlyWhenTheirMenusCoverEveryScenarioStep()
+    {
+        foreach (TeamId team in new[]
+        {
+            TeamId.UK, TeamId.DE, TeamId.IT, TeamId.US, TeamId.CN, TeamId.JP
+        })
+        {
+            TeamTutorialCourseDefinition course = TeamTutorialCatalog.GetForTeam(team);
+            TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateTeamSpecialty(team);
+            TutorialStepId[] expected = scenario.steps
+                .Where(step => step.id != TutorialStepId.ObjectiveAndInterface)
+                .Select(step => step.id)
+                .ToArray();
+            TutorialStepId[] mapped = course.Lessons
+                .SelectMany(lesson => lesson.ScenarioStepIds)
+                .ToArray();
+
+            Assert.That(TeamTutorialCatalog.IsScenarioAligned(course), Is.True, team.ToString());
+            Assert.That(course.IsPlayable, Is.True, team.ToString());
+            CollectionAssert.AreEquivalent(expected, mapped, team.ToString());
+            Assert.That(mapped.Distinct().Count(), Is.EqualTo(mapped.Length),
+                $"{team} scenario steps must not be owned by multiple menu lessons");
+        }
+    }
+
+    [Test]
+    public void SpecialtyCourseWithAnUnmappedScenarioStepIsNotPlayable()
+    {
+        var incomplete = new TeamTutorialCourseDefinition(
+            "tutorial-team-us-incomplete-test", TutorialCourseKind.TeamSpecialty,
+            TeamId.US, true, "US test", "test", "test", "indianapolis_burger", true,
+            new TeamTutorialLessonDefinition(
+                "直道爆发", "直道 +1", "打速度 1", "前进 2 格", TutorialStepId.UsStraight));
+        var duplicated = new TeamTutorialCourseDefinition(
+            "tutorial-team-us-duplicate-test", TutorialCourseKind.TeamSpecialty,
+            TeamId.US, true, "US test", "test", "test", "indianapolis_burger", true,
+            new TeamTutorialLessonDefinition(
+                "直道爆发 A", "直道 +1", "打速度 1", "前进 2 格", TutorialStepId.UsStraight),
+            new TeamTutorialLessonDefinition(
+                "直道爆发 B", "直道 +1", "打速度 1", "前进 2 格", TutorialStepId.UsStraight));
+        var foreignStep = new TeamTutorialCourseDefinition(
+            "tutorial-team-us-foreign-test", TutorialCourseKind.TeamSpecialty,
+            TeamId.US, true, "US test", "test", "test", "indianapolis_burger", true,
+            new TeamTutorialLessonDefinition(
+                "意大利弯道", "操控 +2", "观察弯道", "看见限速修正", TutorialStepId.ItCorner));
+
+        Assert.That(TeamTutorialCatalog.IsScenarioAligned(incomplete), Is.False);
+        Assert.That(incomplete.IsPlayable, Is.False,
+            "an incomplete menu must not launch a scripted course with inaccessible lessons");
+        Assert.That(TeamTutorialCatalog.IsScenarioAligned(duplicated), Is.False,
+            "one scripted step cannot be represented by multiple lesson rows");
+        Assert.That(TeamTutorialCatalog.IsScenarioAligned(foreignStep), Is.False,
+            "a course cannot map to another team's scenario step");
+        Assert.That(TeamTutorialCatalog.IsScenarioAligned(
+            TeamTutorialCatalog.All[0]), Is.False,
+            "the foundation course is not a team-specialty scenario");
+    }
+
+    [Test]
     public void ChinaAndJapanCoursesDescribeCurrentRuntimeMechanicsOnly()
     {
         TeamTutorialCourseDefinition china = TeamTutorialCatalog.GetForTeam(TeamId.CN);
@@ -58,6 +117,79 @@ public class TeamTutorialCatalogTests
         StringAssert.Contains("关东慢煮", japanText);
         StringAssert.DoesNotContain("随机秘方牌池", japanText);
         StringAssert.DoesNotContain("被超车时对方 +1", japanText);
+    }
+
+    [Test]
+    public void GermanyMenuListsOnlyItsScriptedLessons()
+    {
+        TeamTutorialCourseDefinition germany = TeamTutorialCatalog.GetForTeam(TeamId.DE);
+
+        CollectionAssert.AreEqual(new[]
+        {
+            "直道保底", "酸菜发酵", "黑面包垫底", "完整练习"
+        }, germany.Lessons.Select(lesson => lesson.Title));
+        StringAssert.DoesNotContain("高耐久巡航",
+            string.Join(" ", germany.Lessons.Select(lesson => lesson.Title)));
+    }
+
+    [Test]
+    public void UnitedStatesMenuMirrorsExactScriptedActions()
+    {
+        TeamTutorialCourseDefinition unitedStates = TeamTutorialCatalog.GetForTeam(TeamId.US);
+
+        CollectionAssert.AreEqual(new[]
+        {
+            "直道爆发", "弯道代价", "强化尾流", "薯条", "可乐", "完整练习"
+        }, unitedStates.Lessons.Select(lesson => lesson.Title));
+        Assert.That(unitedStates.Lessons[0].PlayerAction, Does.Contain("G1").And.Contain("速度 1"));
+        Assert.That(unitedStates.Lessons[1].PlayerAction, Does.Contain("G2").And.Contain("速度 3 + 速度 2"));
+        Assert.That(unitedStates.Lessons[2].SuccessSignal, Does.Contain("后车"));
+        Assert.That(unitedStates.Lessons[3].PlayerAction, Is.EqualTo("只打薯条特技牌"));
+        Assert.That(unitedStates.Lessons[4].PlayerAction, Is.EqualTo("只打可乐特技牌"));
+    }
+
+    [Test]
+    public void ChinaMenuMatchesGoRecoverAndTrickStepsWithoutPitClaims()
+    {
+        TeamTutorialCourseDefinition china = TeamTutorialCatalog.GetForTeam(TeamId.CN);
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.CN);
+
+        CollectionAssert.AreEqual(new[]
+        {
+            "Go 节奏", "Recover 回收", "火锅底料", "冰糕防守", "完整练习"
+        }, china.Lessons.Select(lesson => lesson.Title));
+        Assert.That(string.Join(" ", china.Lessons.Select(lesson => lesson.Mechanic)),
+            Does.Not.Contain("维修区"));
+        CollectionAssert.AreEqual(new[]
+        {
+            TutorialStepId.ObjectiveAndInterface, TutorialStepId.ChinaFirstGo,
+            TutorialStepId.ChinaConsecutiveGo, TutorialStepId.ChinaRecover,
+            TutorialStepId.ChinaHotpot, TutorialStepId.ChinaIceJelly, TutorialStepId.Review
+        }, scenario.steps.Select(step => step.id));
+        Assert.That(china.Lessons[2].PlayerAction, Does.Contain("火锅底料").And.Contain("1 张速度牌"));
+        Assert.That(china.Lessons[3].PlayerAction, Does.Contain("Recover").And.Contain("冰糕"));
+    }
+
+    [Test]
+    public void ItalyMenuNamesEachScriptedMechanicAndPractice()
+    {
+        TeamTutorialCourseDefinition italy = TeamTutorialCatalog.GetForTeam(TeamId.IT);
+        TutorialScenarioDefinition scenario = TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.IT);
+
+        CollectionAssert.AreEqual(new[]
+        {
+            "操控优势", "出弯加速", "帕尔马干酪", "基安蒂红酒", "完整练习"
+        }, italy.Lessons.Select(lesson => lesson.Title));
+        CollectionAssert.AreEqual(new[]
+        {
+            TutorialStepId.ObjectiveAndInterface, TutorialStepId.ItCorner,
+            TutorialStepId.ItCornerExit, TutorialStepId.ItParmigiano,
+            TutorialStepId.ItChianti, TutorialStepId.Review
+        }, scenario.steps.Select(step => step.id));
+        Assert.That(italy.Lessons[0].PlayerAction, Does.Contain("G1").And.Contain("速度 1"));
+        Assert.That(italy.Lessons[1].SuccessSignal, Does.Contain("2 格"));
+        Assert.That(italy.Lessons[2].SuccessSignal, Does.Contain("后车").And.Contain("+4"));
+        Assert.That(italy.Lessons[3].PlayerAction, Does.Contain("基安蒂红酒"));
     }
 
     [TestCase(TeamId.UK, "silverstone_afternoon_tea", 7)]

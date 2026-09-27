@@ -13,15 +13,16 @@ public class CareerModeRulesTests
     public void TrackSchedule_ReusesEightUniqueOfficialTracksInCatalogOrder()
     {
         Assert.That(CareerModeRules.TrackSchedule.Count, Is.EqualTo(8));
+        Assert.That(CareerModeRules.TrackSchedule.Count, Is.EqualTo(OfficialTrackCatalog.Tracks.Count));
         Assert.That(
             new HashSet<string>(CareerModeRules.TrackSchedule).Count,
             Is.EqualTo(8));
 
-        for (int i = 0; i < TrackSelectionState.AvailableTracks.Count; i++)
+        for (int i = 0; i < OfficialTrackCatalog.Tracks.Count; i++)
         {
             Assert.That(
                 CareerModeRules.TrackSchedule[i],
-                Is.EqualTo(TrackSelectionState.AvailableTracks[i].TrackId));
+                Is.EqualTo(OfficialTrackCatalog.Tracks[i].TrackId));
         }
     }
 

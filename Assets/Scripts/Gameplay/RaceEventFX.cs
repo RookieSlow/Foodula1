@@ -178,7 +178,7 @@ public sealed class RaceEventFX : MonoBehaviour
                 float pulse = 1f + Mathf.Sin(t * Mathf.PI * 2f) * 0.09f * (1f - t * 0.35f);
                 car.localScale = originalScale * pulse;
                 car.rotation = originalRotation * Quaternion.Euler(0f, 0f, Mathf.Sin(t * Mathf.PI * 2f) * 4f);
-                canvasGroup.alpha = t < 0.12f ? t / 0.12f : (t > 0.78f ? (1f - t) / 0.22f : 1f);
+                canvasGroup.alpha = RaceEventPresentationRules.GetEnvelopeAlpha(t, 0.12f, 0.78f);
                 yield return null;
             }
         }
@@ -268,7 +268,7 @@ public sealed class RaceEventFX : MonoBehaviour
                     airflowIndex++;
                 }
 
-                canvasGroup.alpha = t < 0.12f ? t / 0.12f : (t > 0.78f ? (1f - t) / 0.22f : 1f);
+                canvasGroup.alpha = RaceEventPresentationRules.GetEnvelopeAlpha(t, 0.12f, 0.78f);
                 yield return null;
             }
         }
@@ -319,7 +319,7 @@ public sealed class RaceEventFX : MonoBehaviour
                     0f,
                     0f,
                     RaceEventPresentationRules.GetSpinRotation(t, rotationDegrees));
-                canvasGroup.alpha = t < 0.1f ? t / 0.1f : (t > 0.82f ? (1f - t) / 0.18f : 1f);
+                canvasGroup.alpha = RaceEventPresentationRules.GetEnvelopeAlpha(t, 0.1f, 0.82f);
                 yield return null;
             }
 
@@ -486,7 +486,7 @@ public sealed class RaceEventFX : MonoBehaviour
             float pulse = 1f + Mathf.Sin(t * Mathf.PI * 3f) * 0.2f * (1f - t);
             car.localScale = originalScale * pulse;
             car.rotation = originalRotation * Quaternion.Euler(0f, 0f, Mathf.Sin(t * Mathf.PI * 14f) * 5f * (1f - t));
-            canvasGroup.alpha = t < 0.15f ? t / 0.15f : (t > 0.72f ? (1f - t) / 0.28f : 1f);
+            canvasGroup.alpha = RaceEventPresentationRules.GetEnvelopeAlpha(t, 0.15f, 0.72f);
             yield return null;
         }
         car.localScale = originalScale;
@@ -562,6 +562,26 @@ public sealed class RaceEventFX : MonoBehaviour
 /// <summary>Pure timing and easing rules for race-event presentation.</summary>
 public static class RaceEventPresentationRules
 {
+    /// <summary>
+    /// Calculates the shared fade-in/hold/fade-out alpha envelope for a
+    /// normalized presentation effect. Values outside the timing window are
+    /// clamped, and the plateau includes both configured transition edges.
+    /// </summary>
+    public static float GetEnvelopeAlpha(float progress, float fadeInEnd, float fadeOutStart)
+    {
+        float t = Mathf.Clamp01(progress);
+        float fadeIn = Mathf.Clamp01(fadeInEnd);
+        float fadeOut = Mathf.Clamp(fadeOutStart, fadeIn, 1f);
+
+        if (fadeIn > 0f && t < fadeIn)
+            return Mathf.Clamp01(t / fadeIn);
+
+        if (fadeOut < 1f && t > fadeOut)
+            return Mathf.Clamp01((1f - t) / (1f - fadeOut));
+
+        return 1f;
+    }
+
     /// <summary>Normalizes elapsed time to the requested effect duration.</summary>
     public static float GetSpinProgress(float elapsed, float duration)
     {

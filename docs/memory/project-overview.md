@@ -14,9 +14,18 @@ the CCGS project framework.
 
 ## Current Runtime Structure
 
+- Career persistence has explicit source-file boundaries: CareerPersistence.cs owns DTO/schema conversion, CareerRepository.cs owns the career-key storage adapter, and CareerModeService.cs coordinates validated state changes with persistence. Storage exceptions during load produce an invalid-load result; existence checks fail closed, while save/abandon failures do not advance or clear live career state.
+- Technology effect-to-modifier mapping, including upgrade-max and additive aggregation policies, is owned by `TechTreeRules`; `RaceSession` composes UK Sun Never Sets target effects through that shared rule entry point.
 - `Core/MVPGameManager.cs` coordinates the current race loop.
+- `Core/RacePhaseState.cs` owns the pure race-phase/input-acceptance contract; the manager still owns coroutine side effects and UI orchestration. Its regression matrix covers each phase against closed/gear/card input gates, null input, stale gates, and the gear-to-cards-to-animation-to-game-over sequence.
+- `Core/RaceInputState.cs` represents the mutually exclusive gear/card/discard/lane/pit input gates with one active state while retaining the existing public gate queries. Stale end callbacks leave a newer gate open; phase and input tests passed `30/30` within full EditMode `856/856`.
 - `Core/CardDeck.cs`, `CardData.cs`, and `PlayerState.cs` implement race state
   and card lifecycle.
+- `Core/RaceLapWeatherRules` owns lap-transition and once-per-lap weather decisions;
+  `Core/RaceWeatherState` commits the runtime lap gate without synthesizing a lap transition.
+- `Core/RaceParticipantPlanBuilder` resolves the ordered tutorial/career/free-race
+  roster before scene objects are created; `Core/NormalRaceRewardSettlement`
+  isolates ordinary-race RP/XP settlement behind injected persistence callbacks.
 - `Gameplay/TrackManager.cs` supports the eight selectable JSON tracks and the
   `fallback_42` 42-node fallback track.
 - `Gameplay/TrackDataLoader.cs` converts track JSON into runtime nodes and
@@ -29,6 +38,9 @@ the CCGS project framework.
   `TechTreeProfileStore` persistence adapter.
 - `UI/` contains the card hand, HUD, card, main-menu, driver-selection, and
   runtime tech-tree views.
+- `UI/CardHandInteractionRules` and `UI/RaceResultPresentationRules` hold pure
+  card-input/result-copy rules outside their MonoBehaviour view adapters;
+  `RaceUILayoutController` remains the race HUD layout boundary.
 - `Core/TeamGearRules.cs` is the team-aware gear facade; `Core/TeamVehicleRules.cs`
   owns tunable team vehicle profiles without leaking them into UI code.
 - `Drivers/` contains the immutable catalog, progression and active-skill rules/runtime plus the
@@ -50,6 +62,18 @@ the CCGS project framework.
   exact-card checkpoints. JP/Suzuka now stages a G2 Kanto Oden skip with a
   two-slot carry into G1, then an authored stationary leader for the real
   Torpedo overtake bonus; its unimplemented reverse bonus is not taught.
+  DE and US menu lesson rows now mirror their actual scripted checkpoints:
+  no menu-only durability lesson, separate Fries/Cola steps, exact gear/card
+  actions and an explicit one-lap practice row.
+  CN and IT course rows likewise mirror their authored checkpoints, omit the
+  unscripted CN pit lesson, and list each actual mechanic plus practice.
+  Each menu lesson now owns explicit `TutorialStepId` references; specialty
+  course launchability is derived from exact one-to-one coverage of its scripted
+  steps (except the objective/briefing page), so future script/menu drift disables
+  launch instead of silently hiding a lesson. The user confirmed Play Mode
+  acceptance for all six team-specialty courses on 2026-09-27; detailed per-course
+  environment and Console evidence was not supplied. Generic foundation-course
+  and 16:9 tutorial-center acceptance remain separate.
 - `Settings/` contains versioned player settings, an injectable PlayerPrefs adapter and
   runtime display/presentation application; `UI/GameSettingsUI.cs` builds the menu overlay,
   including schema-v2 per-action in-race confirmation preferences.
@@ -97,8 +121,8 @@ The verified scene flow is:
   12-driver mode is now wired and
   awaits runtime visual acceptance.
 - The main-menu tech-tree entry now persists per-team RP, unlocks, and active
-  nodes; `RaceSession` centralizes numeric tech modifiers while the manager
-  invokes explicit `TechTreeRules` event hooks at documented race phases.
+  nodes; `TechTreeRules` centralizes numeric modifier aggregation while the
+  manager invokes explicit rule hooks at documented race phases.
 - China uses an independent Go/Recover drivetrain (3-card Go, 1-card Recover,
   consecutive overclock heat and built-in Recover cooling) shared by player UI
   and AI through the same pure rules module.
@@ -177,6 +201,12 @@ The verified scene flow is:
   only the full mechanics-focused manual race walkthrough remains open.
   Le Mans old Mulsanne now includes the JSON-authored cell-60 `mulsanne_kink` high-speed apex
   (limit 6); current circular straight runs are 44/37/21/16.
+- When the active roster contains a US racer, `TrackReadabilityOverlay` adds
+  US-emblem landmark signs beside the runtime start/finish and midpoint nodes.
+  Placement is derived from the selected track's node positions, normals and
+  road width, using the shared gameplay landmark rule; without a US racer the
+  signs remain hidden. EditMode covers all eight selectable maps plus fallback;
+  the new signs still need a visual Play Mode check.
 - Vehicle movement presentation now treats each node as a discrete 0.15-second
   linear interpolation along the track plane, without a vertical hop; race
   positions, lap crossings and corner calculations remain unchanged.
@@ -191,7 +221,8 @@ The verified scene flow is:
   remain owned by `MVPGameManager`.
 - `Core/RaceLogAnalyzer.cs` provides pure checks for turn phase ordering,
   active-discard count integrity, and complete-vs-partial manual logs so new
-  Play Mode evidence can be reviewed repeatably.
+  Play Mode evidence can be reviewed repeatably. Malformed or overflowing
+  discard counters return validation errors without throwing during analysis.
 - `Core/RaceLogFileAnalyzer.cs` and the `Foodula1 > Tools > Analyze Latest Race Log`
   editor entry load saved manual logs without changing race state, making the
   phase/order checks repeatable against real playtest files.

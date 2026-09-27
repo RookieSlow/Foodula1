@@ -8,6 +8,33 @@ using System.IO;
 /// </summary>
 public static class RaceLogFileAnalyzer
 {
+    /// <summary>
+    /// Finds the newest saved log. Equal timestamps are resolved by ordinal
+    /// path order so the editor menu selects the same file on every run.
+    /// Returns null when the directory contains no race logs.
+    /// </summary>
+    public static string FindLatestLogPath(string directory)
+    {
+        string[] paths = Directory.GetFiles(directory, "*.log");
+        if (paths.Length == 0)
+            return null;
+
+        Array.Sort(paths, StringComparer.Ordinal);
+        string latestPath = paths[0];
+        DateTime latestWrite = File.GetLastWriteTimeUtc(latestPath);
+        for (int i = 1; i < paths.Length; i++)
+        {
+            DateTime candidateWrite = File.GetLastWriteTimeUtc(paths[i]);
+            if (candidateWrite > latestWrite)
+            {
+                latestPath = paths[i];
+                latestWrite = candidateWrite;
+            }
+        }
+
+        return latestPath;
+    }
+
     /// <summary>Analyzes one saved race log without throwing to the caller.</summary>
     public static RaceLogAnalysisResult AnalyzeFile(string path)
     {

@@ -16,7 +16,7 @@
 |---|---|---|---|---|
 | 5 | Foodula 1 Concept | `foodula-1-concept.md` | In Progress | 6 teams, 12 drivers and 8 selectable official tracks are represented; open decisions remain |
 | 6 | Core Mechanics | `foodula-1-core-mechanics.md` | In Review | Card/heat/gear/corner/pit/weather/slipstream loop is implemented; acceptance remains |
-| 7 | Teams & Cars | `foodula-1-teams-cars.md` | In Review | Six car sprites, profiles, tech hooks and formal team emblems are wired; final balance and Play Mode sign-off remain |
+| 7 | Teams & Cars | `foodula-1-teams-cars.md` | In Review | Six car sprites, profiles, tech hooks and formal team emblems are wired; US landmark signs now use the active track geometry and US roster gate; new-sign visual Play Mode sign-off and final balance remain |
 | 8 | Drivers | `foodula-1-drivers.md` | In Review | 12-profile catalog, XP persistence, active-skill HUD/runtime and 12 active effects are wired; five practical passives are integrated, seven remain, portraits and Play Mode sign-off remain |
 | 9 | Tracks | `foodula-1-tracks.md` | In Review | 8 JSON tracks, 8 layout backgrounds, lanes, corners, pits and weather are wired; final full-race acceptance remains |
 | 10 | AI | `foodula-1-ai.md` | In Progress | Deterministic heat/corner/slipstream planning is wired; configured multi-opponent tuning and difficulty remain |
@@ -58,6 +58,9 @@
 - Tutorial presentation is now authored in `Resources/Prefabs/UI/TutorialOverlay.prefab`. Its root exposes all
   sixteen step copies, while the guide panel and spotlight retain manually authored RectTransforms. Runtime reuses
   an instance under `RaceCanvas` before loading the Resources fallback, so manual scene placement does not duplicate it.
+- The user confirmed Play Mode acceptance for all six team-specialty courses on 2026-09-27; detailed
+  per-course environment/Console evidence was not supplied. Foundation-course and tutorial-center 16:9
+  acceptance remain open.
 - The main menu settings overlay persists master/music/SFX volume, display mode, resolution,
   animation speed, reduced motion and the tutorial-completion preference. Display and presentation
   timings apply at runtime; `AudioService` applies the three current volume values without claiming

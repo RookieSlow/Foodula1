@@ -296,3 +296,38 @@ public static class TrackPresentationRules
         return Mathf.Clamp(multiplier, Mathf.Clamp01(minimumMultiplier), 1f);
     }
 }
+
+/// <summary>
+/// Presentation rules for the US team's two gameplay landmarks. These indices
+/// intentionally come from the shared gameplay rule so map art cannot drift
+/// from the positions used by landmark cards and team effects.
+/// </summary>
+public static class TeamLandmarkPresentationRules
+{
+    public static bool HasUnitedStatesTeam(IEnumerable<PlayerState> participants)
+    {
+        if (participants == null)
+            return false;
+
+        foreach (PlayerState participant in participants)
+        {
+            if (participant != null && participant.teamId == TeamId.US)
+                return true;
+        }
+
+        return false;
+    }
+
+    public static (int startFinish, int midpoint) GetUnitedStatesLandmarkNodeIndices(int totalNodes)
+    {
+        if (totalNodes <= 0)
+            return (-1, -1);
+
+        return TechTreeRules.GetLandmarkPositions(totalNodes);
+    }
+
+    public static string GetUnitedStatesLandmarkLabel(int landmarkOrdinal)
+    {
+        return landmarkOrdinal == 0 ? "US · 起点" : "US · 中点";
+    }
+}

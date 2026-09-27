@@ -16,8 +16,20 @@ public static class RaceLapWeatherRules
         bool weatherEnabled)
     {
         LapProgressResult progress = RaceLapRules.Advance(currentLap, totalLaps);
-        bool shouldRollWeather = weatherEnabled && progress.Lap != lastWeatherRolledLap;
+        bool shouldRollWeather = ShouldRollWeatherForLap(
+            progress.Lap,
+            lastWeatherRolledLap,
+            weatherEnabled);
         return new RaceLapWeatherTransition(progress.Lap, progress.HasFinished, shouldRollWeather);
+    }
+
+    /// <summary>
+    /// Returns whether the requested lap may consume the once-per-lap weather gate.
+    /// Kept separate from lap progression for state adapters that already receive a lap number.
+    /// </summary>
+    public static bool ShouldRollWeatherForLap(int lap, int lastWeatherRolledLap, bool weatherEnabled)
+    {
+        return weatherEnabled && lap != lastWeatherRolledLap;
     }
 }
 

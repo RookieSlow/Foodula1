@@ -127,6 +127,32 @@ public class CareerPersistenceTests
     }
 
     [Test]
+    public void Repository_KeyLookupExceptionReturnsInvalidState()
+    {
+        var store = new MemoryStore { ThrowOnHasKey = true };
+        var repository = new CareerRepository(store, new MemorySerializer());
+
+        CareerLoadResult result = repository.Load();
+
+        Assert.That(result.Status, Is.EqualTo(CareerLoadStatus.Invalid));
+        Assert.That(result.State.Phase, Is.EqualTo(CareerPhase.NotStarted));
+    }
+
+    [Test]
+    public void Service_KeyLookupFailureRequiresConfirmationBeforeReplacement()
+    {
+        var store = new MemoryStore { ThrowOnHasKey = true };
+        store.Values[CareerRepository.SaveKey] = "unreadable-existing-save";
+        var service = new CareerModeService(
+            new CareerRepository(store, new MemorySerializer()));
+
+        Assert.That(service.LoadStatus, Is.EqualTo(CareerLoadStatus.Invalid));
+        Assert.That(service.HasStoredCareer, Is.True);
+        Assert.That(service.TryCreateNew(TeamId.UK, Field, CreateTech("node-a"), false), Is.False);
+        Assert.That(store.Values[CareerRepository.SaveKey], Is.EqualTo("unreadable-existing-save"));
+    }
+
+    [Test]
     public void Repository_SaveThenLoadRebuildsValidatedSeason()
     {
         var store = new MemoryStore();
@@ -142,6 +168,17 @@ public class CareerPersistenceTests
         Assert.That(loaded.State.NextTrackIndex, Is.EqualTo(1));
         Assert.That(loaded.State.RaceResults[0].ResultId, Is.EqualTo("race-1"));
         Assert.That(CareerModeRules.GetStandings(loaded.State)[0].Points, Is.EqualTo(10));
+    }
+
+    [Test]
+    public void Repository_SerializationFailurePreservesExistingStoredSave()
+    {
+        var store = new MemoryStore();
+        store.Values[CareerRepository.SaveKey] = "previous-save";
+        var repository = new CareerRepository(store, new ThrowingSerializer());
+
+        Assert.That(repository.Save(StartSeason(CreateTech("node-a"))), Is.False);
+        Assert.That(store.GetString(CareerRepository.SaveKey), Is.EqualTo("previous-save"));
     }
 
     [Test]
@@ -177,6 +214,39 @@ public class CareerPersistenceTests
         Assert.That(service.CurrentState.NextTrackIndex, Is.Zero);
         Assert.That(service.CurrentState.RaceResults, Is.Empty);
         Assert.That(store.GetString(CareerRepository.SaveKey), Is.EqualTo(persistedBefore));
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void Repository_AbandonStorageExceptionsReturnFailureAndPreserveSave(bool throwFromHasKey)
+    {
+        var store = new MemoryStore();
+        store.Values[CareerRepository.SaveKey] = "existing-save";
+        store.ThrowOnHasKey = throwFromHasKey;
+        store.ThrowOnDelete = !throwFromHasKey;
+        var repository = new CareerRepository(store, new MemorySerializer());
+
+        Assert.That(repository.Abandon(), Is.False);
+        Assert.That(store.Values[CareerRepository.SaveKey], Is.EqualTo("existing-save"));
+    }
+
+    [Test]
+    public void Service_AbandonStorageExceptionDoesNotClearCurrentCareer()
+    {
+        var store = new MemoryStore();
+        var service = new CareerModeService(
+            new CareerRepository(store, new MemorySerializer()));
+        Assert.That(service.TryCreateNew(TeamId.UK, Field, CreateTech("node-a"), false), Is.True);
+        Assert.That(service.TryRecordRace(BuildResult(service.CurrentState, 0)), Is.True);
+
+        CareerSeasonState stateBefore = service.CurrentState;
+        string persistedBefore = store.Values[CareerRepository.SaveKey];
+        store.ThrowOnDelete = true;
+
+        Assert.That(service.TryAbandon(true), Is.False);
+        Assert.That(service.CurrentState, Is.SameAs(stateBefore));
+        Assert.That(service.CurrentState.NextTrackIndex, Is.EqualTo(1));
+        Assert.That(store.Values[CareerRepository.SaveKey], Is.EqualTo(persistedBefore));
     }
 
     [Test]
@@ -240,8 +310,15 @@ public class CareerPersistenceTests
     {
         public readonly Dictionary<string, string> Values = new Dictionary<string, string>();
         public bool FailWrites { get; set; }
+        public bool ThrowOnHasKey { get; set; }
+        public bool ThrowOnDelete { get; set; }
 
-        public bool HasKey(string key) => Values.ContainsKey(key);
+        public bool HasKey(string key)
+        {
+            if (ThrowOnHasKey)
+                throw new InvalidOperationException("Key lookup failed.");
+            return Values.ContainsKey(key);
+        }
         public string GetString(string key) => Values.TryGetValue(key, out string value) ? value : string.Empty;
 
         public bool TrySetAndSave(string key, string value)
@@ -253,6 +330,8 @@ public class CareerPersistenceTests
 
         public bool TryDeleteAndSave(string key)
         {
+            if (ThrowOnDelete)
+                throw new InvalidOperationException("Delete failed.");
             if (FailWrites) return false;
             Values.Remove(key);
             return true;
@@ -277,6 +356,19 @@ public class CareerPersistenceTests
             if (!values.TryGetValue(serialized, out CareerSaveData data))
                 throw new FormatException("Malformed save token.");
             return data;
+        }
+    }
+
+    private sealed class ThrowingSerializer : ICareerSerializer
+    {
+        public string Serialize(CareerSaveData data)
+        {
+            throw new InvalidOperationException("Serialization failed.");
+        }
+
+        public CareerSaveData Deserialize(string serialized)
+        {
+            throw new InvalidOperationException("Deserialization failed.");
         }
     }
 }

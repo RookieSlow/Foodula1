@@ -49,6 +49,50 @@ public class RaceInputStateTests
     }
 
     [Test]
+    public void EverySelectionTransitionLeavesExactlyOneOpenGate()
+    {
+        var state = new RaceInputState();
+
+        state.BeginGearSelection(2);
+        AssertGates(state, gear: true);
+        state.BeginCardSelection();
+        AssertGates(state, cards: true);
+        state.BeginDiscardSelection();
+        AssertGates(state, discard: true);
+        state.BeginLaneChangeSelection();
+        AssertGates(state, lane: true);
+        state.BeginPitChoice();
+        AssertGates(state, pit: true);
+
+        state.Reset();
+        AssertGates(state);
+    }
+
+    [Test]
+    public void StaleCloseCallsDoNotCancelTheCurrentSelection()
+    {
+        var state = new RaceInputState();
+        state.BeginCardSelection();
+        state.BeginPitChoice();
+        state.EndCardSelection();
+        AssertGates(state, pit: true);
+
+        state.BeginLaneChangeSelection();
+        state.EndPitChoice();
+        AssertGates(state, lane: true);
+
+        state.BeginDiscardSelection();
+        state.EndLaneChangeSelection();
+        AssertGates(state, discard: true);
+
+        state.BeginGearSelection(3);
+        state.EndDiscardSelection();
+        AssertGates(state, gear: true);
+        Assert.That(state.ConfirmGear(), Is.True);
+        AssertGates(state);
+    }
+
+    [Test]
     public void ResetClosesTrackChoiceGates()
     {
         var state = new RaceInputState();
@@ -102,5 +146,20 @@ public class RaceInputStateTests
             Is.EqualTo(CardActionShortcutIntent.SubmitSelection));
         Assert.That(CardActionShortcutRules.Resolve(true, 0),
             Is.EqualTo(CardActionShortcutIntent.ConfirmDiscard));
+    }
+
+    private static void AssertGates(
+        RaceInputState state,
+        bool gear = false,
+        bool cards = false,
+        bool discard = false,
+        bool lane = false,
+        bool pit = false)
+    {
+        Assert.That(state.WaitingForGear, Is.EqualTo(gear));
+        Assert.That(state.WaitingForCards, Is.EqualTo(cards));
+        Assert.That(state.WaitingForDiscard, Is.EqualTo(discard));
+        Assert.That(state.WaitingForLaneChange, Is.EqualTo(lane));
+        Assert.That(state.WaitingForPitChoice, Is.EqualTo(pit));
     }
 }

@@ -17,6 +17,78 @@ public class TechTreeRulesTests
         state = new TechTreeState(TeamId.UK, TechTreeRules.DEMO_BUDGET);
     }
 
+    [TestCase(TechEffectType.LightweightDoubler, "hasPizzaSottile")]
+    [TestCase(TechEffectType.FishAndChips, "hasFishAndChips")]
+    [TestCase(TechEffectType.FullEnglish, "hasFullEnglish")]
+    [TestCase(TechEffectType.SunNeverSets, "hasSunNeverSets")]
+    [TestCase(TechEffectType.SchwarzbierFuel, "hasSchwarzbierFuel")]
+    [TestCase(TechEffectType.WurstplatteSuspension, "hasWurstplatteSuspension")]
+    [TestCase(TechEffectType.GrillSpezial, "hasGrillSpezial")]
+    [TestCase(TechEffectType.CavallinoRampante, "hasCavallinoRampante")]
+    [TestCase(TechEffectType.DriveThru, "hasDriveThru")]
+    [TestCase(TechEffectType.SmokedBBQ, "hasSmokedBBQ")]
+    [TestCase(TechEffectType.MotherRoad, "hasMotherRoad")]
+    [TestCase(TechEffectType.YinYangTea, "hasYinYangTea")]
+    [TestCase(TechEffectType.DimSumCombo, "hasDimSumCombo")]
+    [TestCase(TechEffectType.SomersaultCloud, "hasSomersaultCloud")]
+    [TestCase(TechEffectType.Nigiri, "hasNigiri")]
+    [TestCase(TechEffectType.BrothSelection, "hasBrothSelection")]
+    [TestCase(TechEffectType.Bankuruwase, "hasBankuruwase")]
+    public void test_boolean_effect_maps_to_its_modifier_flag(TechEffectType effectType, string fieldName)
+    {
+        TechModifiers modifiers = TechModifiers.Default;
+
+        Assert.That(TechTreeRules.TryApplyBooleanModifier(ref modifiers, effectType), Is.True);
+        var field = typeof(TechModifiers).GetField(fieldName);
+        Assert.That(field, Is.Not.Null, "Expected TechModifiers field " + fieldName);
+        Assert.That(field.GetValue(modifiers), Is.EqualTo(true));
+    }
+
+    [TestCase(TechEffectType.HeatReductionPerLap)]
+    [TestCase(TechEffectType.EngineCapacityBonus)]
+    public void test_boolean_effect_mapper_leaves_numeric_effects_for_numeric_aggregation(TechEffectType effectType)
+    {
+        TechModifiers modifiers = TechModifiers.Default;
+
+        Assert.That(TechTreeRules.TryApplyBooleanModifier(ref modifiers, effectType), Is.False);
+        Assert.That(modifiers, Is.EqualTo(TechModifiers.Default));
+    }
+
+    [TestCase(TechEffectType.HeatReductionPerLap, "heatReductionPerLap", false)]
+    [TestCase(TechEffectType.SpeedBonusStraight, "speedBonusStraight", false)]
+    [TestCase(TechEffectType.CornerLimitBonus, "cornerLimitBonus", false)]
+    [TestCase(TechEffectType.DurabilityBonus, "durabilityBonus", false)]
+    [TestCase(TechEffectType.SlipstreamRangeBonus, "slipstreamRangeBonus", false)]
+    [TestCase(TechEffectType.PitExitMoveBonus, "pitExitMoveBonus", false)]
+    [TestCase(TechEffectType.EngineCapacityBonus, "engineCapacityBonus", true)]
+    [TestCase(TechEffectType.HandSizeBonus, "handSizeBonus", true)]
+    [TestCase(TechEffectType.SpinCounterMaxBonus, "spinCounterMaxBonus", true)]
+    public void test_numeric_effect_mapper_preserves_max_or_additive_policy(
+        TechEffectType effectType,
+        string fieldName,
+        bool stacks)
+    {
+        TechModifiers modifiers = TechModifiers.Default;
+
+        Assert.That(TechTreeRules.TryApplyModifierEffect(ref modifiers, new TechEffect(effectType, 2)), Is.True);
+        Assert.That(TechTreeRules.TryApplyModifierEffect(ref modifiers, new TechEffect(effectType, 1)), Is.True);
+
+        var field = typeof(TechModifiers).GetField(fieldName);
+        Assert.That(field, Is.Not.Null, "Expected TechModifiers field " + fieldName);
+        Assert.That(field.GetValue(modifiers), Is.EqualTo(stacks ? 3 : 2));
+    }
+
+    [Test]
+    public void test_modifier_effect_mapper_ignores_unknown_effect_type()
+    {
+        TechModifiers modifiers = TechModifiers.Default;
+
+        Assert.That(
+            TechTreeRules.TryApplyModifierEffect(ref modifiers, new TechEffect((TechEffectType)(-1), 99)),
+            Is.False);
+        Assert.That(modifiers, Is.EqualTo(TechModifiers.Default));
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // Test helpers — satisfy tier gates for unique tech tests
     // ═══════════════════════════════════════════════════════════════════

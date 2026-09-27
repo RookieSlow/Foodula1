@@ -15,15 +15,6 @@ public static class TechTreeProfileStore
     private static readonly Dictionary<TeamId, TechTreeState> Cache =
         new Dictionary<TeamId, TechTreeState>();
 
-    [Serializable]
-    private sealed class SaveData
-    {
-        public TeamId teamId;
-        public int rpBalance;
-        public List<string> unlocked = new List<string>();
-        public List<string> active = new List<string>();
-    }
-
     public static TechTreeState GetOrCreate(TeamId teamId, TechTreeDatabase db)
     {
         if (Cache.TryGetValue(teamId, out TechTreeState cached))
@@ -39,15 +30,7 @@ public static class TechTreeProfileStore
         {
             try
             {
-                SaveData save = JsonUtility.FromJson<SaveData>(PlayerPrefs.GetString(savedKey));
-                if (save != null && save.unlocked != null && save.active != null)
-                {
-                    state = new TechTreeState(teamId, save.rpBalance);
-                    foreach (string id in save.unlocked)
-                        if (db.Get(id) != null) state.unlockedNodeIds.Add(id);
-                    foreach (string id in save.active)
-                        if (state.unlockedNodeIds.Contains(id)) state.activeNodeIds.Add(id);
-                }
+                state = TechTreeProfileCodec.Decode(PlayerPrefs.GetString(savedKey), teamId, db);
             }
             catch (Exception ex)
             {
@@ -91,14 +74,7 @@ public static class TechTreeProfileStore
     {
         if (state == null) return;
         Cache[state.teamId] = state;
-        SaveData save = new SaveData
-        {
-            teamId = state.teamId,
-            rpBalance = state.rpBalance,
-            unlocked = new List<string>(state.unlockedNodeIds),
-            active = new List<string>(state.activeNodeIds)
-        };
-        PlayerPrefs.SetString(KeyPrefix + state.teamId, JsonUtility.ToJson(save));
+        PlayerPrefs.SetString(KeyPrefix + state.teamId, TechTreeProfileCodec.Encode(state));
         PlayerPrefs.Save();
     }
 

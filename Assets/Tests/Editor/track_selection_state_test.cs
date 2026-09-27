@@ -31,6 +31,7 @@ public class TrackSelectionStateTests
 
         Assert.That(tracks.Count, Is.EqualTo(8));
         Assert.That(ids.Count, Is.EqualTo(tracks.Count));
+        Assert.That(tracks, Is.SameAs(OfficialTrackCatalog.Tracks));
     }
 
     [Test]

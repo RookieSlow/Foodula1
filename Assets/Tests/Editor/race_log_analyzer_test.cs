@@ -63,6 +63,32 @@ public class RaceLogAnalyzerTests
         Assert.That(result.IsComplete, Is.False);
     }
 
+    [TestCase("selected=2147483648 discarded=0")]
+    [TestCase("selected=1 discarded=2147483648")]
+    public void OverflowingDiscardCountsAreReportedAsAnalysisErrors(string counts)
+    {
+        string log = ValidLog.Replace("selected=2 discarded=2", counts);
+
+        RaceLogAnalysisResult result = RaceLogAnalyzer.Analyze(log);
+
+        Assert.That(result.IsValid, Is.False);
+        Assert.That(result.IsComplete, Is.True);
+        Assert.That(result.Errors, Has.Some.Contains("invalid selected/discarded counts"));
+    }
+
+    [Test]
+    public void MaximumIntDiscardCountsRemainValid()
+    {
+        const string counts = "selected=2147483647 discarded=2147483647";
+        string log = ValidLog.Replace("selected=2 discarded=2", counts);
+
+        RaceLogAnalysisResult result = RaceLogAnalyzer.Analyze(log);
+
+        Assert.That(result.IsValid, Is.True, string.Join("; ", result.Errors));
+        Assert.That(result.IsComplete, Is.True);
+        Assert.That(result.DiscardEventCount, Is.EqualTo(1));
+    }
+
     [Test]
     public void IncompleteManualLogIsDistinguishedFromPhaseOrderError()
     {

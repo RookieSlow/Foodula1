@@ -786,6 +786,16 @@ public class MVPGameManager : MonoBehaviour
             Debug.LogWarning($"[MVPGameManager] 自由赛事阵容无效，回退到配置默认阵容：{rosterError}");
             freeRaceRoster = null;
         }
+        DriverProfile quickRaceDriver = DriverSelectionState.ResolveDriver(
+            config.playerDriverId, config.playerTeam);
+        List<RaceParticipantPlan> participantPlans = RaceParticipantPlanBuilder.Build(
+            tutorialScenario,
+            careerRaceLaunch,
+            freeRaceRoster,
+            quickRaceDriver,
+            config.aiTeams,
+            config.aiOpponentCount,
+            DriverProgressStore.Load);
         tutorialDirector = tutorialScenario != null
             ? new TutorialRuntimeDirector(tutorialScenario, initializeTutorialInPractice)
             : null;
@@ -813,24 +823,16 @@ public class MVPGameManager : MonoBehaviour
         raceTurnNumber = 0;
 
         // 人类玩家（Players[0]）
-        DriverProfile humanDriver = tutorialScenario != null
-            ? DriverCatalog.GetDefaultForTeam(tutorialScenario.playerTeam)
-            : careerRaceLaunch != null
-                ? DriverCatalog.GetDefaultForTeam(careerRaceLaunch.PlayerTeam)
-                : freeRaceRoster != null && DriverCatalog.TryGet(
-                    freeRaceRoster[0].DriverId, out DriverProfile rosterHumanDriver)
-                    ? rosterHumanDriver
-                : DriverSelectionState.ResolveDriver(config.playerDriverId, config.playerTeam);
-        var humanName = freeRaceRoster != null
-            ? $"你 · {humanDriver.ShortName}"
-            : "你";
-        var human = new PlayerState(humanName, false, startFinishNodeIndex, config.minGear);
+        RaceParticipantPlan humanPlan = participantPlans[0];
+        DriverProfile humanDriver = humanPlan.Driver;
+        var human = new PlayerState(
+            humanPlan.Name, false, startFinishNodeIndex, config.minGear);
         human.driverId = humanDriver.Id;
-        human.driverXp = tutorialScenario != null ? 0 : DriverProgressStore.Load(humanDriver.Id);
+        human.driverXp = humanPlan.InitialXp;
         SetupPlayerForRace(
             human,
-            humanDriver.Team,
-            careerRaceLaunch != null ? careerRaceLaunch.TechSnapshot : null);
+            humanPlan.Team,
+            humanPlan.CareerTechSnapshot);
         session.Players.Add(human);
         human.driverSkill.Initialize(
             humanDriver,
@@ -838,34 +840,15 @@ public class MVPGameManager : MonoBehaviour
             tutorialScenario == null);
 
         // AI 对手
-        int aiCount = tutorialScenario != null
-            ? tutorialScenario.opponentCount
-            : careerRaceLaunch != null
-                ? careerRaceLaunch.Competitors.Count - 1
-                : freeRaceRoster != null
-                    ? freeRaceRoster.Length - 1
-                    : Mathf.Clamp(config.aiOpponentCount, 0, 3);
-        for (int i = 0; i < aiCount; i++)
+        for (int i = 0; i < participantPlans.Count - 1; i++)
         {
-            TeamId team = tutorialScenario != null
-                ? tutorialScenario.opponentTeam
-                : careerRaceLaunch != null
-                    ? GetCareerOpponentTeam(i)
-                    : freeRaceRoster != null
-                        ? freeRaceRoster[i + 1].TeamId
-                    : (i < config.aiTeams.Length ? config.aiTeams[i] : TeamId.JP);
-            DriverProfile aiDriver = freeRaceRoster != null &&
-                DriverCatalog.TryGet(freeRaceRoster[i + 1].DriverId, out DriverProfile rosterAiDriver)
-                ? rosterAiDriver
-                : DriverCatalog.GetDefaultForTeam(team);
-            string aiName = freeRaceRoster != null
-                ? $"{TeamCarPresentationRules.GetBadgeCode(team)} · {aiDriver.ShortName}"
-                : $"AI{i + 1}";
-            var aiState = new PlayerState(aiName, true, startFinishNodeIndex, config.minGear);
-            aiState.driverId = aiDriver.Id;
-            aiState.driverXp = 0;
-            SetupPlayerForRace(aiState, team);
-            aiState.driverSkill.Initialize(aiDriver, aiState.DriverLevel, false);
+            RaceParticipantPlan aiPlan = participantPlans[i + 1];
+            var aiState = new PlayerState(
+                aiPlan.Name, true, startFinishNodeIndex, config.minGear);
+            aiState.driverId = aiPlan.Driver.Id;
+            aiState.driverXp = aiPlan.InitialXp;
+            SetupPlayerForRace(aiState, aiPlan.Team);
+            aiState.driverSkill.Initialize(aiPlan.Driver, aiState.DriverLevel, false);
             session.Players.Add(aiState);
             var ctrl = gameObject.AddComponent<AIController>();
             ctrl.Initialize(
@@ -1585,20 +1568,6 @@ public class MVPGameManager : MonoBehaviour
         }
     }
 
-    private TeamId GetCareerOpponentTeam(int opponentIndex)
-    {
-        int current = 0;
-        for (int i = 0; i < careerRaceLaunch.Competitors.Count; i++)
-        {
-            TeamId team = careerRaceLaunch.Competitors[i];
-            if (team == careerRaceLaunch.PlayerTeam)
-                continue;
-            if (current++ == opponentIndex)
-                return team;
-        }
-        return TeamId.JP;
-    }
-
     private bool ValidateCareerRaceLaunch(out string failureReason)
     {
         failureReason = string.Empty;
@@ -1673,7 +1642,8 @@ public class MVPGameManager : MonoBehaviour
         }
 
         RefreshVisualCarLanes();
-        trackManager.BindPlayerReadability(PlayerCarTransform);
+        bool unitedStatesTeamPresent = TeamLandmarkPresentationRules.HasUnitedStatesTeam(session?.Players);
+        trackManager.BindPlayerReadability(PlayerCarTransform, unitedStatesTeamPresent);
     }
 
     // ====== 主游戏循环 ======
@@ -3779,8 +3749,12 @@ public class MVPGameManager : MonoBehaviour
         }
         else
         {
-            result += "\n\n" + BuildRPReport();
-            result += "\n\n" + BuildDriverXpReport();
+            string trackCountry = trackManager != null && trackManager.LoadedTrackConfig != null
+                ? trackManager.LoadedTrackConfig.country
+                : string.Empty;
+            result += "\n\n" + NormalRaceRewardSettlement.Settle(
+                session, trackCountry, tutorialScenario != null, careerRaceLaunch != null,
+                TechTreeProfileStore.Save, DriverProgressStore.Save);
         }
 
         if (hudUI != null) hudUI.ShowGameOver(result);
@@ -3803,55 +3777,6 @@ public class MVPGameManager : MonoBehaviour
 
         foreach (var p in RaceRanking.SortByPosition(unfinished))
             session.AssignFinish(p);
-    }
-
-    /// <summary>按最终名次发放 RP（含 IT L3 骏马图腾加成），记入各队科技树。</summary>
-    private string BuildRPReport()
-    {
-        var lines = new List<string> { "RP 奖励:" };
-        var rankings = session.GetRankings();
-        foreach (var e in rankings)
-        {
-            var p = e.player;
-            int rp = TechTreeRules.CalculateRaceRP(e.rank);
-            if (p.techState != null)
-            {
-                if (TechTreeRules.ShouldApplyCavallino(p.techState, session.TechDb, e.rank))
-                {
-                    string country = trackManager.LoadedTrackConfig != null
-                        ? trackManager.LoadedTrackConfig.country
-                        : "";
-                    rp = TechTreeRules.ApplyCavallinoRampante(rp, e.rank, TechTreeRules.IsCavallinoHomeRace(country));
-                }
-                p.techState.rpBalance += rp;
-                if (!p.isAI)
-                    TechTreeProfileStore.Save(p.techState);
-            }
-            lines.Add($"{e.rank}. {p.name}: +{rp} RP{(p.techState != null ? $" (余额 {p.techState.rpBalance})" : "")}");
-        }
-        return string.Join("\n", lines);
-    }
-
-    private string BuildDriverXpReport()
-    {
-        var lines = new List<string> { "车手 XP:" };
-        foreach (RaceRanking.RankEntry entry in session.GetRankings())
-        {
-            PlayerState player = entry.player;
-            DriverProfile driver = player.DriverProfile;
-            int earned = player.isBlown
-                ? 0
-                : DriverProgression.CalculateRaceXp(entry.rank, driver.TalentMultiplier, driver.Team);
-            int previousLevel = player.DriverLevel;
-            player.driverXp += earned;
-            if (!player.isAI && tutorialScenario == null)
-                DriverProgressStore.Save(driver.Id, player.driverXp);
-            lines.Add($"{player.name}（{driver.ShortName}）: +{earned} XP → Lv{player.DriverLevel}");
-            if (player.DriverLevel > previousLevel)
-                lines.Add($"  {driver.ShortName} 解锁了新的车手技能层级。");
-        }
-
-        return string.Join("\n", lines);
     }
 
     // ====== 万骨涌（JP L3） ======

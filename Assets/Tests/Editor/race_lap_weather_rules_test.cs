@@ -55,4 +55,22 @@ public class RaceLapWeatherRulesTests
 
         Assert.That(result.ShouldRollWeather, Is.True);
     }
+
+    [Test]
+    public void test_weather_gate_rejects_the_lap_that_was_already_rolled()
+    {
+        Assert.That(RaceLapWeatherRules.ShouldRollWeatherForLap(4, 4, true), Is.False);
+    }
+
+    [Test]
+    public void test_weather_gate_accepts_a_new_lap_when_weather_is_enabled()
+    {
+        Assert.That(RaceLapWeatherRules.ShouldRollWeatherForLap(5, 4, true), Is.True);
+    }
+
+    [Test]
+    public void test_weather_gate_does_not_consume_a_lap_when_weather_is_disabled()
+    {
+        Assert.That(RaceLapWeatherRules.ShouldRollWeatherForLap(5, 4, false), Is.False);
+    }
 }

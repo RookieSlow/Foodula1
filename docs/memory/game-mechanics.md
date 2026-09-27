@@ -27,6 +27,12 @@ may be overridden by the active `GameConfigSO` asset or by loaded track JSON.
 > all passed with no skips. Console retained only the existing
 > LogAssert-expected missing-track error from its regression test.
 
+## Team-Specialty Tutorial Catalog
+
+- Each team-specific menu lesson stores the exact `TutorialStepId` values that it represents. A lesson may own a short consecutive sequence (CN's combined first/second Go lesson); the tutorial objective/briefing page is intentionally not a menu action lesson.
+- `TeamTutorialCourseDefinition.IsPlayable` is derived from the authored team scenario: every non-objective step, including the review/practice handoff, must be mapped exactly once. Missing, duplicate, or foreign step IDs make the course unavailable from the selection menu. The general UK/Le Mans foundation course remains outside this team-specialty validation.
+- The regression methods for six-team full coverage and incomplete-course rejection passed via a local Mono reflection harness after MSBuild compiled the Editor assembly; this is not a Unity Test Runner or Play Mode result.
+
 ## Career Season
 
 - A career season uses the eight entries in `TrackSelectionState.AvailableTracks` in their explicit
@@ -244,6 +250,13 @@ prototype and is no longer the authoritative model.
   safe checkpoints, real event gates and a reset one-lap practice without
   RP/XP/progression writes. JP teaches the implemented Kanto carry and Torpedo
   self-overtake bonus, not the unimplemented reverse bonus.
+- Menu lesson rows describe the actual scripted checkpoints. CN's Shanghai
+  specialty course does not claim a pit lesson; IT's Monza course lists its
+  corner, corner-exit, Parmigiano, Chianti and practice steps separately.
+- The user confirmed Play Mode acceptance for all six team-specialty courses on
+  2026-09-27. Detailed per-course runtime environment, resolution and Console
+  evidence were not supplied; the generic foundation-course walkthrough remains
+  a separate acceptance item.
 
 - `tutorial_le_mans_uk_v1` fixes the player to UK on
   `le_mans_old_mulsanne`, with tech-tree modifiers, driver skills, normal
@@ -350,6 +363,13 @@ prototype and is no longer the authoritative model.
   corner checks, lap counts, camera framing, and minimap tracking are unchanged.
   Indianapolis keeps explicit per-car lane choices, and the player's start/finish
   lane selection immediately repositions the player car.
+- The race readability overlay adds US landmark signs at the actual start/finish
+  and midpoint nodes when any active participant is on team US. The shared
+  gameplay landmark-position rule supplies the node indices; the selected
+  track's runtime positions/normals and road width determine sign placement.
+  Other rosters hide these signs. Rule and track-data coverage includes all
+  eight selectable maps plus the fallback; the new sign appearance still needs
+  a visual Play Mode check.
 - On `indianapolis_burger`, corner limits are lane-specific from inner to outer:
   `4/5/6/7`; in the Unity path data lane 0 is the inside lane and lane 3 is
   the outside lane, so the outer lane accommodates a speed total well above 4
@@ -432,6 +452,9 @@ prototype and is no longer the authoritative model.
   and movement gained per team.
 - Weather rolls once per newly crossed lap; the `RaceWeatherState` gate prevents
   multiple cars crossing the same start/finish node from rerolling the lap.
+  `RaceLapWeatherRules.ShouldRollWeatherForLap` owns the shared enabled/duplicate-lap
+  predicate; `Advance` composes it with lap progression, while the state adapter records
+  an already-known lap directly.
 
 ## Opponents and Win Condition
 

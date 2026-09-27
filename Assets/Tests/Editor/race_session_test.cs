@@ -35,6 +35,23 @@ public class RaceSessionTest
     // ===== Demo 科技状态 =====
 
     [Test]
+    public void test_sun_never_sets_applies_target_team_flags_through_shared_mapper()
+    {
+        var session = CreateSession();
+        var player = CreatePlayer(session, TeamId.UK);
+        player.techState.activeNodeIds.Clear();
+        player.techState.activeNodeIds.Add("uk-l3-sun-never-sets");
+        player.techState.sunNeverSetsTarget = TeamId.US;
+
+        TechModifiers modifiers = session.GetModifiers(player);
+
+        Assert.IsTrue(modifiers.hasSunNeverSets);
+        Assert.IsTrue(modifiers.hasSmokedBBQ);
+        Assert.IsTrue(modifiers.hasMotherRoad);
+        Assert.AreEqual(2, modifiers.EffectiveEngineCapacityBonus);
+    }
+
+    [Test]
     public void test_begin_turn_consumes_kanto_oden_without_tech_tree()
     {
         var session = CreateSession();

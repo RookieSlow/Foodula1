@@ -4,20 +4,32 @@
 /// </summary>
 public sealed class RaceInputState
 {
+    private enum InputGate
+    {
+        None,
+        Gear,
+        Cards,
+        Discard,
+        LaneChange,
+        PitChoice
+    }
+
+    private InputGate activeGate;
+
     /// <summary>Whether the gear confirmation gate is currently open.</summary>
-    public bool WaitingForGear { get; private set; }
+    public bool WaitingForGear => activeGate == InputGate.Gear;
 
     /// <summary>Whether the speed/trick card gate is currently open.</summary>
-    public bool WaitingForCards { get; private set; }
+    public bool WaitingForCards => activeGate == InputGate.Cards;
 
     /// <summary>Whether the discard confirmation gate is currently open.</summary>
-    public bool WaitingForDiscard { get; private set; }
+    public bool WaitingForDiscard => activeGate == InputGate.Discard;
 
     /// <summary>Whether the Indianapolis lane-choice gate is currently open.</summary>
-    public bool WaitingForLaneChange { get; private set; }
+    public bool WaitingForLaneChange => activeGate == InputGate.LaneChange;
 
     /// <summary>Whether the pit-entry choice gate is currently open.</summary>
-    public bool WaitingForPitChoice { get; private set; }
+    public bool WaitingForPitChoice => activeGate == InputGate.PitChoice;
 
     /// <summary>Gear currently highlighted by the player.</summary>
     public int PendingGear { get; private set; }
@@ -35,18 +47,20 @@ public sealed class RaceInputState
 
     private void CloseAllGates()
     {
-        WaitingForGear = false;
-        WaitingForCards = false;
-        WaitingForDiscard = false;
-        WaitingForLaneChange = false;
-        WaitingForPitChoice = false;
+        activeGate = InputGate.None;
+    }
+
+    private void CloseGate(InputGate gate)
+    {
+        if (activeGate == gate)
+            activeGate = InputGate.None;
     }
 
     /// <summary>Opens gear selection and uses the current gear as the default choice.</summary>
     public void BeginGearSelection(int currentGear)
     {
         CloseAllGates();
-        WaitingForGear = true;
+        activeGate = InputGate.Gear;
         PendingGear = currentGear;
         PlayerGearChoice = currentGear;
     }
@@ -68,7 +82,7 @@ public sealed class RaceInputState
             return false;
 
         PlayerGearChoice = PendingGear;
-        WaitingForGear = false;
+        CloseGate(InputGate.Gear);
         return true;
     }
 
@@ -76,51 +90,51 @@ public sealed class RaceInputState
     public void BeginCardSelection()
     {
         CloseAllGates();
-        WaitingForCards = true;
+        activeGate = InputGate.Cards;
     }
 
     /// <summary>Closes the card-play gate.</summary>
     public void EndCardSelection()
     {
-        WaitingForCards = false;
+        CloseGate(InputGate.Cards);
     }
 
     /// <summary>Opens the discard gate and closes unrelated input gates.</summary>
     public void BeginDiscardSelection()
     {
         CloseAllGates();
-        WaitingForDiscard = true;
+        activeGate = InputGate.Discard;
     }
 
     /// <summary>Closes the discard gate.</summary>
     public void EndDiscardSelection()
     {
-        WaitingForDiscard = false;
+        CloseGate(InputGate.Discard);
     }
 
     /// <summary>Opens the Indianapolis lane-choice gate.</summary>
     public void BeginLaneChangeSelection()
     {
         CloseAllGates();
-        WaitingForLaneChange = true;
+        activeGate = InputGate.LaneChange;
     }
 
     /// <summary>Closes the Indianapolis lane-choice gate.</summary>
     public void EndLaneChangeSelection()
     {
-        WaitingForLaneChange = false;
+        CloseGate(InputGate.LaneChange);
     }
 
     /// <summary>Opens the pit-entry choice gate.</summary>
     public void BeginPitChoice()
     {
         CloseAllGates();
-        WaitingForPitChoice = true;
+        activeGate = InputGate.PitChoice;
     }
 
     /// <summary>Closes the pit-entry choice gate.</summary>
     public void EndPitChoice()
     {
-        WaitingForPitChoice = false;
+        CloseGate(InputGate.PitChoice);
     }
 }

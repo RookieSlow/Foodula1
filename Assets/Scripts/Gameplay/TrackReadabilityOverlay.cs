@@ -28,7 +28,19 @@ public sealed class TrackReadabilityOverlay : MonoBehaviour
         public TextMeshPro label;
     }
 
+    private sealed class TeamLandmarkMarker
+    {
+        public GameObject root;
+        public LineRenderer connector;
+        public LineRenderer shield;
+        public SpriteRenderer backing;
+        public SpriteRenderer emblem;
+        public TextMeshPro label;
+        public int nodeIndex;
+    }
+
     private readonly List<CellMarker> markers = new List<CellMarker>();
+    private readonly List<TeamLandmarkMarker> teamLandmarkMarkers = new List<TeamLandmarkMarker>();
     private TrackManager trackManager;
     private Transform playerCar;
     private Vector2[] trackPositions = new Vector2[0];
@@ -37,9 +49,16 @@ public sealed class TrackReadabilityOverlay : MonoBehaviour
     private TMP_FontAsset fontAsset;
     private Material lineMaterial;
     private int currentNodeIndex = -1;
+    private bool unitedStatesTeamPresent;
+
+    private static readonly Color UsNavy = new Color(0.035f, 0.07f, 0.16f, 0.98f);
+    private static readonly Color UsRed = new Color(0.86f, 0.13f, 0.18f, 1f);
+    private static readonly Color UsGold = new Color(1f, 0.76f, 0.20f, 1f);
 
     public int CurrentNodeIndex => currentNodeIndex;
     public int VisibleMarkerCount => markers.Count;
+    public bool UnitedStatesLandmarksVisible => unitedStatesTeamPresent && teamLandmarkMarkers.Count > 0;
+    public int UnitedStatesLandmarkMarkerCount => teamLandmarkMarkers.Count;
 
     public void Configure(TrackManager manager, TMP_FontAsset preferredFont = null)
     {
@@ -47,6 +66,9 @@ public sealed class TrackReadabilityOverlay : MonoBehaviour
         fontAsset = preferredFont != null ? preferredFont : TMP_Settings.defaultFontAsset;
         CacheTrackPositions();
         EnsureVisuals();
+        EnsureTeamLandmarkVisuals();
+        RefreshTeamLandmarks();
+        SetTeamLandmarksActive(unitedStatesTeamPresent);
     }
 
     public void BindPlayer(Transform playerTransform)
@@ -55,6 +77,14 @@ public sealed class TrackReadabilityOverlay : MonoBehaviour
         currentNodeIndex = -1;
         SetVisible(playerCar != null && trackManager != null && trackManager.TotalNodes > 0);
         RefreshNearestNode(true);
+    }
+
+    public void SetUnitedStatesLandmarksVisible(bool visible)
+    {
+        unitedStatesTeamPresent = visible;
+        EnsureTeamLandmarkVisuals();
+        RefreshTeamLandmarks();
+        SetTeamLandmarksActive(visible);
     }
 
     private void LateUpdate()
@@ -95,7 +125,7 @@ public sealed class TrackReadabilityOverlay : MonoBehaviour
             halo.startWidth = 0.075f;
             halo.endWidth = 0.075f;
             halo.numCornerVertices = 6;
-            halo.material = lineMaterial;
+            halo.sharedMaterial = lineMaterial;
             halo.sortingOrder = 12;
         }
 
@@ -132,7 +162,7 @@ public sealed class TrackReadabilityOverlay : MonoBehaviour
         tick.positionCount = 2;
         tick.startWidth = 0.035f;
         tick.endWidth = 0.035f;
-        tick.material = lineMaterial;
+        tick.sharedMaterial = lineMaterial;
         tick.sortingOrder = 4;
 
         GameObject badgeObject = new GameObject("CellBadge");
@@ -156,6 +186,180 @@ public sealed class TrackReadabilityOverlay : MonoBehaviour
             label.font = fontAsset;
 
         return new CellMarker { root = root, tick = tick, badge = badge, label = label };
+    }
+
+    private void EnsureTeamLandmarkVisuals()
+    {
+        if (trackManager == null || trackManager.TotalNodes <= 0)
+            return;
+
+        var indices = TeamLandmarkPresentationRules.GetUnitedStatesLandmarkNodeIndices(trackManager.TotalNodes);
+        int[] landmarkNodes = { indices.startFinish, indices.midpoint };
+        for (int i = 0; i < landmarkNodes.Length; i++)
+        {
+            if (landmarkNodes[i] < 0 || landmarkNodes[i] >= trackManager.TotalNodes)
+                continue;
+
+            TeamLandmarkMarker marker;
+            if (i >= teamLandmarkMarkers.Count)
+            {
+                marker = CreateTeamLandmarkMarker(i);
+                teamLandmarkMarkers.Add(marker);
+            }
+            else
+            {
+                marker = teamLandmarkMarkers[i];
+            }
+
+            marker.nodeIndex = landmarkNodes[i];
+            marker.label.text = TeamLandmarkPresentationRules.GetUnitedStatesLandmarkLabel(i);
+        }
+
+        while (teamLandmarkMarkers.Count > landmarkNodes.Length)
+        {
+            TeamLandmarkMarker obsolete = teamLandmarkMarkers[teamLandmarkMarkers.Count - 1];
+            teamLandmarkMarkers.RemoveAt(teamLandmarkMarkers.Count - 1);
+            if (obsolete.root != null)
+                Destroy(obsolete.root);
+        }
+    }
+
+    private TeamLandmarkMarker CreateTeamLandmarkMarker(int index)
+    {
+        GameObject root = new GameObject($"USLandmark_{index + 1}");
+        root.transform.SetParent(transform, false);
+        root.SetActive(false);
+
+        LineRenderer connector = CreateLandmarkLineRenderer(root.transform, "USLandmarkConnector");
+        connector.useWorldSpace = true;
+        connector.positionCount = 2;
+        connector.startWidth = 0.07f;
+        connector.endWidth = 0.035f;
+        connector.sharedMaterial = lineMaterial;
+        connector.startColor = UsGold;
+        connector.endColor = UsRed;
+        connector.sortingOrder = 14;
+
+        LineRenderer shield = CreateLandmarkLineRenderer(root.transform, "USLandmarkShield");
+        shield.useWorldSpace = true;
+        shield.loop = true;
+        shield.positionCount = 6;
+        shield.startWidth = 0.085f;
+        shield.endWidth = 0.085f;
+        shield.sharedMaterial = lineMaterial;
+        shield.startColor = shield.endColor = UsGold;
+        shield.sortingOrder = 19;
+
+        GameObject backingObject = new GameObject("USLandmarkBacking");
+        backingObject.transform.SetParent(root.transform, false);
+        SpriteRenderer backing = backingObject.AddComponent<SpriteRenderer>();
+        backing.sprite = trackManager.NodeVisualSprite;
+        backing.color = UsNavy;
+        backing.sortingOrder = 17;
+
+        GameObject emblemObject = new GameObject("USLandmarkEmblem");
+        emblemObject.transform.SetParent(root.transform, false);
+        SpriteRenderer emblem = emblemObject.AddComponent<SpriteRenderer>();
+        emblem.sprite = BrandArtResources.LoadTeamLogo(TeamId.US);
+        emblem.color = Color.white;
+        emblem.sortingOrder = 18;
+
+        GameObject labelObject = new GameObject("USLandmarkLabel");
+        labelObject.transform.SetParent(root.transform, false);
+        TextMeshPro label = labelObject.AddComponent<TextMeshPro>();
+        label.alignment = TextAlignmentOptions.Center;
+        label.fontSize = 2.2f;
+        label.fontStyle = FontStyles.Bold;
+        label.color = Color.white;
+        label.sortingOrder = 20;
+        label.rectTransform.sizeDelta = new Vector2(4.2f, 0.72f);
+        if (fontAsset != null)
+            label.font = fontAsset;
+
+        return new TeamLandmarkMarker
+        {
+            root = root,
+            connector = connector,
+            shield = shield,
+            backing = backing,
+            emblem = emblem,
+            label = label
+        };
+    }
+
+    private static LineRenderer CreateLandmarkLineRenderer(Transform parent, string objectName)
+    {
+        GameObject lineObject = new GameObject(objectName);
+        lineObject.transform.SetParent(parent, false);
+        return lineObject.AddComponent<LineRenderer>();
+    }
+
+    private void RefreshTeamLandmarks()
+    {
+        if (trackManager == null || trackPositions.Length == 0)
+            return;
+
+        float diameter = Mathf.Clamp(trackManager.MedianNodeSpacing * 1.25f, 0.78f, 1.18f);
+        float roadHalfWidth = trackManager.RoadVisualWidth * 0.5f;
+        float outwardOffset = roadHalfWidth + Mathf.Max(labelRoadClearance, diameter * 0.72f);
+
+        for (int i = 0; i < teamLandmarkMarkers.Count; i++)
+        {
+            TeamLandmarkMarker marker = teamLandmarkMarkers[i];
+            if (marker == null || marker.root == null || marker.nodeIndex < 0 || marker.nodeIndex >= trackPositions.Length)
+                continue;
+
+            Vector3 trackPoint = trackManager.GetNodePosition(marker.nodeIndex);
+            Vector2 normal = trackManager.GetNodeNormal(marker.nodeIndex);
+            if (normal.sqrMagnitude <= Mathf.Epsilon)
+                normal = Vector2.up;
+            normal.Normalize();
+
+            Vector3 outward = new Vector3(normal.x, normal.y, 0f);
+            Vector3 center = trackPoint + outward * (outwardOffset + diameter * 0.56f);
+            marker.root.transform.position = center;
+
+            marker.connector.SetPosition(0, trackPoint + outward * roadHalfWidth);
+            marker.connector.SetPosition(1, center - outward * (diameter * 0.48f));
+
+            Vector3[] shieldPoints =
+            {
+                center + Vector3.up * (diameter * 0.72f),
+                center + new Vector3(diameter * 0.62f, diameter * 0.28f, 0f),
+                center + new Vector3(diameter * 0.48f, -diameter * 0.34f, 0f),
+                center + Vector3.down * (diameter * 0.72f),
+                center + new Vector3(-diameter * 0.48f, -diameter * 0.34f, 0f),
+                center + new Vector3(-diameter * 0.62f, diameter * 0.28f, 0f)
+            };
+            marker.shield.SetPositions(shieldPoints);
+
+            SetSpriteDiameter(marker.backing, diameter * 0.88f);
+            SetSpriteDiameter(marker.emblem, diameter * 0.58f);
+            marker.label.transform.position = center - Vector3.up * (diameter * 1.04f);
+            marker.label.transform.rotation = Quaternion.identity;
+            marker.label.fontSize = Mathf.Clamp(diameter * 2.35f, 1.8f, 2.8f);
+        }
+    }
+
+    private static void SetSpriteDiameter(SpriteRenderer renderer, float diameter)
+    {
+        if (renderer == null || renderer.sprite == null)
+            return;
+
+        Vector2 size = renderer.sprite.bounds.size;
+        float currentDiameter = Mathf.Max(size.x, size.y);
+        if (currentDiameter > Mathf.Epsilon)
+            renderer.transform.localScale = Vector3.one * (diameter / currentDiameter);
+    }
+
+    private void SetTeamLandmarksActive(bool active)
+    {
+        bool canShow = active && trackManager != null && trackManager.TotalNodes > 0;
+        for (int i = 0; i < teamLandmarkMarkers.Count; i++)
+        {
+            if (teamLandmarkMarkers[i].root != null)
+                teamLandmarkMarkers[i].root.SetActive(canShow);
+        }
     }
 
     private void RefreshNearestNode(bool force)

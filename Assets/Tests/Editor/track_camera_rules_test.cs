@@ -119,3 +119,44 @@ public class TrackCameraRulesTests
         Assert.IsFalse(state.ManualOverrideThisTurn);
     }
 }
+
+public class RaceCameraPointerDragStateTests
+{
+    [Test]
+    public void test_drag_delta_requires_armed_held_pointer_and_threshold()
+    {
+        var state = new RaceCameraPointerDragState();
+        Assert.IsFalse(state.TryGetDragDelta(Vector2.one, true, out _));
+
+        state.BeginDrag(Vector2.zero);
+        Assert.IsTrue(state.TryGetDragDelta(new Vector2(0.5f, 0f), true, out Vector2 boundaryDelta));
+        Assert.That(boundaryDelta.x, Is.EqualTo(0.5f).Within(0.001f));
+        Assert.IsFalse(state.TryGetDragDelta(new Vector2(0.9f, 0f), true, out _));
+        Assert.IsFalse(state.TryGetDragDelta(new Vector2(1.3f, 0f), true, out _));
+        Assert.IsTrue(state.TryGetDragDelta(new Vector2(1.9f, 0f), true, out Vector2 delta));
+        Assert.That(delta.x, Is.EqualTo(0.6f).Within(0.001f));
+        Assert.That(delta.y, Is.EqualTo(0f));
+    }
+
+    [Test]
+    public void test_unheld_pointer_does_not_move_drag_origin()
+    {
+        var state = new RaceCameraPointerDragState();
+        state.BeginDrag(new Vector2(1f, 2f));
+
+        Assert.IsFalse(state.TryGetDragDelta(new Vector2(50f, 60f), false, out _));
+        Assert.IsTrue(state.TryGetDragDelta(new Vector2(2f, 3f), true, out Vector2 delta));
+        Assert.That(delta, Is.EqualTo(Vector2.one));
+    }
+
+    [Test]
+    public void test_end_drag_clears_armed_gesture()
+    {
+        var state = new RaceCameraPointerDragState();
+        state.BeginDrag(new Vector2(5f, 7f));
+        state.EndDrag();
+
+        Assert.IsFalse(state.IsArmed);
+        Assert.IsFalse(state.TryGetDragDelta(Vector2.one, true, out _));
+    }
+}

@@ -215,64 +215,10 @@ public class RaceSession
             foreach (var node in targetTechs)
             {
                 foreach (var effect in node.effects)
-                    ApplyEffectFlag(ref m, effect);
+                    TechTreeRules.TryApplyModifierEffect(ref m, effect);
             }
         }
         return m;
-    }
-
-    /// <summary>将单个效果写入 TechModifiers（日不落合并用）。</summary>
-    private static void ApplyEffectFlag(ref TechModifiers m, TechEffect effect)
-    {
-        switch (effect.type)
-        {
-            case TechEffectType.FishAndChips: m.hasFishAndChips = true; break;
-            case TechEffectType.FullEnglish: m.hasFullEnglish = true; break;
-            case TechEffectType.SunNeverSets: m.hasSunNeverSets = true; break;
-            case TechEffectType.SchwarzbierFuel: m.hasSchwarzbierFuel = true; break;
-            case TechEffectType.WurstplatteSuspension: m.hasWurstplatteSuspension = true; break;
-            case TechEffectType.GrillSpezial: m.hasGrillSpezial = true; break;
-            case TechEffectType.CavallinoRampante: m.hasCavallinoRampante = true; break;
-            case TechEffectType.DriveThru: m.hasDriveThru = true; break;
-            case TechEffectType.SmokedBBQ: m.hasSmokedBBQ = true; break;
-            case TechEffectType.MotherRoad: m.hasMotherRoad = true; break;
-            case TechEffectType.YinYangTea: m.hasYinYangTea = true; break;
-            case TechEffectType.DimSumCombo: m.hasDimSumCombo = true; break;
-            case TechEffectType.SomersaultCloud: m.hasSomersaultCloud = true; break;
-            case TechEffectType.Nigiri: m.hasNigiri = true; break;
-            case TechEffectType.BrothSelection: m.hasBrothSelection = true; break;
-            case TechEffectType.Bankuruwase: m.hasBankuruwase = true; break;
-            case TechEffectType.HeatReductionPerLap:
-                m.heatReductionPerLap = System.Math.Max(m.heatReductionPerLap, (int)effect.value);
-                break;
-            case TechEffectType.CornerLimitBonus:
-                m.cornerLimitBonus = System.Math.Max(m.cornerLimitBonus, (int)effect.value);
-                break;
-            case TechEffectType.SpeedBonusStraight:
-                m.speedBonusStraight = System.Math.Max(m.speedBonusStraight, (int)effect.value);
-                break;
-            case TechEffectType.DurabilityBonus:
-                m.durabilityBonus = System.Math.Max(m.durabilityBonus, (int)effect.value);
-                break;
-            case TechEffectType.SlipstreamRangeBonus:
-                m.slipstreamRangeBonus = System.Math.Max(m.slipstreamRangeBonus, (int)effect.value);
-                break;
-            case TechEffectType.PitExitMoveBonus:
-                m.pitExitMoveBonus = System.Math.Max(m.pitExitMoveBonus, (int)effect.value);
-                break;
-            case TechEffectType.EngineCapacityBonus:
-                m.engineCapacityBonus += (int)effect.value;
-                break;
-            case TechEffectType.HandSizeBonus:
-                m.handSizeBonus += (int)effect.value;
-                break;
-            case TechEffectType.SpinCounterMaxBonus:
-                m.spinCounterMaxBonus += (int)effect.value;
-                break;
-            case TechEffectType.LightweightDoubler:
-                m.hasPizzaSottile = true;
-                break;
-        }
     }
 
     /// <summary>有效手牌上限 = 基础 + 科技加成。</summary>

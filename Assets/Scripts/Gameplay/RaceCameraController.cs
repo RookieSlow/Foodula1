@@ -26,8 +26,8 @@ public sealed class RaceCameraController : MonoBehaviour
     private Vector3 positionVelocity;
     private float zoomVelocity;
     private Transform automaticFocusTarget;
-    private bool dragArmed;
-    private Vector3 lastPointerPosition;
+    private readonly RaceCameraPointerDragState pointerDragState =
+        new RaceCameraPointerDragState();
     private float maximumManualOrthographicSize;
     private bool initialized;
 
@@ -99,7 +99,7 @@ public sealed class RaceCameraController : MonoBehaviour
     public void BeginTurn()
     {
         focusState.BeginTurn();
-        dragArmed = false;
+        pointerDragState.EndDrag();
         SetAutomaticFocus(gameManager != null ? gameManager.PlayerCarTransform : null);
     }
 
@@ -113,7 +113,7 @@ public sealed class RaceCameraController : MonoBehaviour
             return;
 
         focusState.BeginTurn();
-        dragArmed = false;
+        pointerDragState.EndDrag();
         SetAutomaticFocus(gameManager != null ? gameManager.PlayerCarTransform : null);
         UpdateMainCamera(snap: true);
         UpdateMinimapMarkers();
@@ -222,32 +222,29 @@ public sealed class RaceCameraController : MonoBehaviour
         if (mainCamera == null)
             return;
 
-        Vector3 pointerPosition = Input.mousePosition;
+        Vector2 pointerPosition = Input.mousePosition;
         bool pointerInsideViewport = mainCamera.pixelRect.Contains(pointerPosition);
 
         if ((Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(2)) && pointerInsideViewport)
         {
-            dragArmed = true;
-            lastPointerPosition = pointerPosition;
+            pointerDragState.BeginDrag(pointerPosition);
         }
 
-        if (dragArmed && (Input.GetMouseButton(0) || Input.GetMouseButton(2)))
+        if (pointerDragState.TryGetDragDelta(
+                pointerPosition,
+                Input.GetMouseButton(0) || Input.GetMouseButton(2),
+                out Vector2 delta))
         {
-            Vector2 delta = pointerPosition - lastPointerPosition;
-            lastPointerPosition = pointerPosition;
-            if (delta.sqrMagnitude >= 0.25f)
-            {
-                TakeManualControl();
-                mainCamera.transform.position += RaceCameraRules.CalculateDragWorldOffset(
-                    delta,
-                    mainCamera.orthographicSize,
-                    mainCamera.pixelHeight,
-                    config.cameraDragSensitivity);
-            }
+            TakeManualControl();
+            mainCamera.transform.position += RaceCameraRules.CalculateDragWorldOffset(
+                delta,
+                mainCamera.orthographicSize,
+                mainCamera.pixelHeight,
+                config.cameraDragSensitivity);
         }
 
         if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(2))
-            dragArmed = false;
+            pointerDragState.EndDrag();
 
         float scrollDelta = Input.mouseScrollDelta.y;
         if (pointerInsideViewport && Mathf.Abs(scrollDelta) > 0.001f)

@@ -27,7 +27,7 @@
 
 ## 固定八站赛历
 
-生涯直接复用 `TrackSelectionState.AvailableTracks` 的显式目录顺序，避免维护第二份赛道 ID 清单，也不依赖 Resources 枚举或字典顺序：
+生涯直接复用不可变的 `OfficialTrackCatalog.Tracks` 显式目录顺序，避免维护第二份赛道 ID 清单，也不依赖 Resources 枚举或字典顺序。`TrackSelectionState` 仅保存当前会话的选择，并向菜单兼容暴露同一目录：
 
 1. 银石：`silverstone_afternoon_tea`
 2. 纽博格林大奖赛道：`nurburgring_bier`

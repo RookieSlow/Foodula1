@@ -201,6 +201,81 @@ public static class TechTreeRules
     // ═══════════════════════════════════════════════════════════════════
 
     /// <summary>
+    /// Applies a boolean/category effect to its matching modifier flag.
+    /// Returns false for numeric effects so callers can retain their own
+    /// aggregation policy for those values.
+    /// </summary>
+    public static bool TryApplyBooleanModifier(ref TechModifiers modifiers, TechEffectType effectType)
+    {
+        switch (effectType)
+        {
+            case TechEffectType.LightweightDoubler: modifiers.hasPizzaSottile = true; return true;
+            case TechEffectType.FishAndChips: modifiers.hasFishAndChips = true; return true;
+            case TechEffectType.FullEnglish: modifiers.hasFullEnglish = true; return true;
+            case TechEffectType.SunNeverSets: modifiers.hasSunNeverSets = true; return true;
+            case TechEffectType.SchwarzbierFuel: modifiers.hasSchwarzbierFuel = true; return true;
+            case TechEffectType.WurstplatteSuspension: modifiers.hasWurstplatteSuspension = true; return true;
+            case TechEffectType.GrillSpezial: modifiers.hasGrillSpezial = true; return true;
+            case TechEffectType.CavallinoRampante: modifiers.hasCavallinoRampante = true; return true;
+            case TechEffectType.DriveThru: modifiers.hasDriveThru = true; return true;
+            case TechEffectType.SmokedBBQ: modifiers.hasSmokedBBQ = true; return true;
+            case TechEffectType.MotherRoad: modifiers.hasMotherRoad = true; return true;
+            case TechEffectType.YinYangTea: modifiers.hasYinYangTea = true; return true;
+            case TechEffectType.DimSumCombo: modifiers.hasDimSumCombo = true; return true;
+            case TechEffectType.SomersaultCloud: modifiers.hasSomersaultCloud = true; return true;
+            case TechEffectType.Nigiri: modifiers.hasNigiri = true; return true;
+            case TechEffectType.BrothSelection: modifiers.hasBrothSelection = true; return true;
+            case TechEffectType.Bankuruwase: modifiers.hasBankuruwase = true; return true;
+            default: return false;
+        }
+    }
+
+    /// <summary>
+    /// Applies one technology effect to the modifier aggregate. Upgrade-style
+    /// values take the maximum; capacity/size/threshold additions stack.
+    /// Unknown effect types are ignored and return false.
+    /// </summary>
+    public static bool TryApplyModifierEffect(ref TechModifiers modifiers, TechEffect effect)
+    {
+        if (TryApplyBooleanModifier(ref modifiers, effect.type))
+            return true;
+
+        int value = (int)effect.value;
+        switch (effect.type)
+        {
+            case TechEffectType.HeatReductionPerLap:
+                modifiers.heatReductionPerLap = Math.Max(modifiers.heatReductionPerLap, value);
+                return true;
+            case TechEffectType.SpeedBonusStraight:
+                modifiers.speedBonusStraight = Math.Max(modifiers.speedBonusStraight, value);
+                return true;
+            case TechEffectType.CornerLimitBonus:
+                modifiers.cornerLimitBonus = Math.Max(modifiers.cornerLimitBonus, value);
+                return true;
+            case TechEffectType.DurabilityBonus:
+                modifiers.durabilityBonus = Math.Max(modifiers.durabilityBonus, value);
+                return true;
+            case TechEffectType.SlipstreamRangeBonus:
+                modifiers.slipstreamRangeBonus = Math.Max(modifiers.slipstreamRangeBonus, value);
+                return true;
+            case TechEffectType.PitExitMoveBonus:
+                modifiers.pitExitMoveBonus = Math.Max(modifiers.pitExitMoveBonus, value);
+                return true;
+            case TechEffectType.EngineCapacityBonus:
+                modifiers.engineCapacityBonus += value;
+                return true;
+            case TechEffectType.HandSizeBonus:
+                modifiers.handSizeBonus += value;
+                return true;
+            case TechEffectType.SpinCounterMaxBonus:
+                modifiers.spinCounterMaxBonus += value;
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /// <summary>
     /// Compute all active modifiers from the player's selected tech nodes.
     /// Handles L1→L2 upgrade chains (L2 value supersedes L1 value for the same effect).
     /// </summary>
@@ -211,93 +286,14 @@ public static class TechTreeRules
         var m = TechModifiers.Default;
 
         // Collect all effects from active nodes.
-        // For numeric effects of the same type across an upgrade chain (L1→L2),
-        // we take the max value (L2 naturally has higher value).
-        var effectMaxValues = new Dictionary<TechEffectType, float>();
-
         foreach (var nodeId in state.activeNodeIds)
         {
             var node = db.Get(nodeId);
             if (node == null) continue;
 
             foreach (var effect in node.effects)
-            {
-                switch (effect.type)
-                {
-                    case TechEffectType.HeatReductionPerLap:
-                        effectMaxValues[effect.type] = Math.Max(
-                            effectMaxValues.GetValueOrDefault(effect.type, 0), effect.value);
-                        break;
-
-                    case TechEffectType.SpeedBonusStraight:
-                        effectMaxValues[effect.type] = Math.Max(
-                            effectMaxValues.GetValueOrDefault(effect.type, 0), effect.value);
-                        break;
-
-                    case TechEffectType.CornerLimitBonus:
-                        effectMaxValues[effect.type] = Math.Max(
-                            effectMaxValues.GetValueOrDefault(effect.type, 0), effect.value);
-                        break;
-
-                    case TechEffectType.DurabilityBonus:
-                        effectMaxValues[effect.type] = Math.Max(
-                            effectMaxValues.GetValueOrDefault(effect.type, 0), effect.value);
-                        break;
-
-                    case TechEffectType.SlipstreamRangeBonus:
-                        effectMaxValues[effect.type] = Math.Max(
-                            effectMaxValues.GetValueOrDefault(effect.type, 0), effect.value);
-                        break;
-
-                    case TechEffectType.PitExitMoveBonus:
-                        effectMaxValues[effect.type] = Math.Max(
-                            effectMaxValues.GetValueOrDefault(effect.type, 0), effect.value);
-                        break;
-
-                    case TechEffectType.EngineCapacityBonus:
-                        m.engineCapacityBonus += (int)effect.value;
-                        break;
-
-                    case TechEffectType.HandSizeBonus:
-                        m.handSizeBonus += (int)effect.value;
-                        break;
-
-                    case TechEffectType.SpinCounterMaxBonus:
-                        m.spinCounterMaxBonus += (int)effect.value;
-                        break;
-
-                    case TechEffectType.LightweightDoubler:
-                        m.hasPizzaSottile = true;
-                        break;
-
-                    // ── Unique Tech Flags ──
-                    case TechEffectType.FishAndChips:       m.hasFishAndChips = true; break;
-                    case TechEffectType.FullEnglish:        m.hasFullEnglish = true; break;
-                    case TechEffectType.SunNeverSets:       m.hasSunNeverSets = true; break;
-                    case TechEffectType.SchwarzbierFuel:    m.hasSchwarzbierFuel = true; break;
-                    case TechEffectType.WurstplatteSuspension: m.hasWurstplatteSuspension = true; break;
-                    case TechEffectType.GrillSpezial:       m.hasGrillSpezial = true; break;
-                    case TechEffectType.CavallinoRampante:  m.hasCavallinoRampante = true; break;
-                    case TechEffectType.DriveThru:          m.hasDriveThru = true; break;
-                    case TechEffectType.SmokedBBQ:          m.hasSmokedBBQ = true; break;
-                    case TechEffectType.MotherRoad:         m.hasMotherRoad = true; break;
-                    case TechEffectType.YinYangTea:         m.hasYinYangTea = true; break;
-                    case TechEffectType.DimSumCombo:        m.hasDimSumCombo = true; break;
-                    case TechEffectType.SomersaultCloud:    m.hasSomersaultCloud = true; break;
-                    case TechEffectType.Nigiri:             m.hasNigiri = true; break;
-                    case TechEffectType.BrothSelection:     m.hasBrothSelection = true; break;
-                    case TechEffectType.Bankuruwase:        m.hasBankuruwase = true; break;
-                }
-            }
+                TryApplyModifierEffect(ref m, effect);
         }
-
-        // Apply max values
-        m.heatReductionPerLap = (int)effectMaxValues.GetValueOrDefault(TechEffectType.HeatReductionPerLap, 0);
-        m.speedBonusStraight = (int)effectMaxValues.GetValueOrDefault(TechEffectType.SpeedBonusStraight, 0);
-        m.cornerLimitBonus = (int)effectMaxValues.GetValueOrDefault(TechEffectType.CornerLimitBonus, 0);
-        m.durabilityBonus = (int)effectMaxValues.GetValueOrDefault(TechEffectType.DurabilityBonus, 0);
-        m.slipstreamRangeBonus = (int)effectMaxValues.GetValueOrDefault(TechEffectType.SlipstreamRangeBonus, 0);
-        m.pitExitMoveBonus = (int)effectMaxValues.GetValueOrDefault(TechEffectType.PitExitMoveBonus, 0);
 
         // JP L2 Broth: add broth passive values to modifiers
         if (m.hasBrothSelection && state.brothSelection != BrothType.None)

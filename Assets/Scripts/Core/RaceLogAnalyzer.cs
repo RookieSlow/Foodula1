@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 /// <summary>
@@ -138,8 +139,14 @@ public static class RaceLogAnalyzer
             return;
         }
 
-        int selected = int.Parse(match.Groups[1].Value);
-        int discarded = int.Parse(match.Groups[2].Value);
+        if (!int.TryParse(match.Groups[1].Value, NumberStyles.None, CultureInfo.InvariantCulture, out int selected) ||
+            !int.TryParse(match.Groups[2].Value, NumberStyles.None, CultureInfo.InvariantCulture, out int discarded))
+        {
+            result.AddError(
+                $"Turn {turn.Number}: [DISCARD] contains invalid selected/discarded counts.");
+            return;
+        }
+
         if (discarded > selected)
         {
             result.AddError(
