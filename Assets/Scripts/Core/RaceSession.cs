@@ -106,6 +106,7 @@ public class RaceSession
     {
         if (player == null) return;
 
+        player.heatPaidCardsThisTurn.Clear();
         player.ClearTurnState();
         player.trickState?.ResetPerTurn();
         if (player.techState != null)
@@ -694,7 +695,8 @@ public class RaceSession
         if (RaceTurnRules.IsTerminal(p) || p.techState == null)
             return 0;
         return TechTreeRules.CanUseGrillSpezial(p.techState, TechDb)
-            ? TechTreeRules.GetGrillSpezialCooldown(p.techState)
+            ? Math.Min(TechTreeRules.GetGrillSpezialCooldown(p.techState),
+                p.deck.CountRecordedHeat(p.heatPaidCardsThisTurn))
             : 0;
     }
 

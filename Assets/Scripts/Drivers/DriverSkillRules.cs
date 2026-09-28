@@ -59,12 +59,40 @@ public readonly struct DriverSkillActivationContext
     public int NearbyOpponentsBehind { get; }
 }
 
+/// <summary>Commands produced by the Final Sprint turn-end cost; existing flags are not cleared.</summary>
+public readonly struct FinalSprintTurnEndCost
+{
+    public FinalSprintTurnEndCost(int spinCounter, bool blowsEngine, bool requiresRecovery)
+    {
+        SpinCounter = spinCounter;
+        BlowsEngine = blowsEngine;
+        RequiresRecovery = requiresRecovery;
+    }
+
+    public int SpinCounter { get; }
+    public bool BlowsEngine { get; }
+    public bool RequiresRecovery { get; }
+}
+
 /// <summary>
 /// Pure driver-active rules. Runtime orchestration stays in MVPGameManager,
 /// while tests can validate every tier without entering Play Mode.
 /// </summary>
 public static class DriverSkillRules
 {
+    public static bool ShouldResolveFinalSprintCost(DriverSkillRuntimeState state)
+    {
+        return state != null && state.ActivatedThisTurn && state.Skill == DriverActiveSkillId.FinalSprint;
+    }
+
+    /// <summary>Preserves the existing effective spin cap and tier-three recovery exemption.</summary>
+    public static FinalSprintTurnEndCost EvaluateFinalSprintCost(int spinCounter, int spinMax, int tier)
+    {
+        int next = Math.Min(spinMax, spinCounter + 1);
+        bool blown = next >= spinMax;
+        return new FinalSprintTurnEndCost(next, blown, !blown && tier < 3);
+    }
+
     private static readonly Dictionary<string, DriverActiveSkillId> SkillByDriver =
         new Dictionary<string, DriverActiveSkillId>(StringComparer.Ordinal)
         {

@@ -484,7 +484,7 @@ public static class TechTreeRules
     /// <summary>DE L3: Get heat to auto-cool at end of turn.</summary>
     public static int GetGrillSpezialCooldown(TechTreeState state)
     {
-        return state.grillSpezialUsed ? state.grillSpezialHeatPaidThisTurn : 0;
+        return state == null || state.grillSpezialUsed ? 0 : Math.Max(0, state.grillSpezialHeatPaidThisTurn);
     }
 
     // ═══════════════════════════════════════════════════════════════════

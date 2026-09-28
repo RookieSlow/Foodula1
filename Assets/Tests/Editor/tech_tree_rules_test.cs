@@ -478,11 +478,12 @@ public class TechTreeRulesTests
         TechTreeRules.UnlockNode(deState, "de-l3-grill-spezial", db);
         TechTreeRules.SelectActiveNodes(deState, new[] { "de-l3-grill-spezial" }, db);
 
-        TechTreeRules.ActivateGrillSpezial(deState);
         TechTreeRules.TrackGrillSpezialHeat(deState, 3);
         TechTreeRules.TrackGrillSpezialHeat(deState, 2);
 
         Assert.That(TechTreeRules.GetGrillSpezialCooldown(deState), Is.EqualTo(5));
+        TechTreeRules.ActivateGrillSpezial(deState);
+        Assert.That(TechTreeRules.GetGrillSpezialCooldown(deState), Is.Zero);
     }
 
     [Test]

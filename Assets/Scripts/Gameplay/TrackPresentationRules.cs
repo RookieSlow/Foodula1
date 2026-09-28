@@ -8,6 +8,25 @@ public static class TrackPresentationRules
 {
     public const string IndianapolisTrackId = "indianapolis_burger";
 
+    /// <summary>Pre-turn thunderstorm display grid only; never changes gameplay positions.</summary>
+    public static bool TryGetThunderstormGridSlot(
+        int turnNumber, int rosterCount, int playerIndex,
+        int startFinishIndex, int totalNodes, int laneCount,
+        out int displayPosition, out int displayLane)
+    {
+        displayPosition = 0;
+        displayLane = 0;
+        if (turnNumber != 0 || rosterCount != FreeRaceRosterRules.ThunderstormParticipants ||
+            totalNodes <= 0 || playerIndex < 0)
+            return false;
+
+        int safeLaneCount = Mathf.Max(1, laneCount);
+        int gridRow = playerIndex / safeLaneCount;
+        displayLane = playerIndex % safeLaneCount;
+        displayPosition = WrapNodeIndex(startFinishIndex - gridRow, totalNodes);
+        return true;
+    }
+
     public static int WrapNodeIndex(int index, int totalNodes)
     {
         if (totalNodes <= 0)

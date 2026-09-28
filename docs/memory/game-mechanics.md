@@ -343,6 +343,8 @@ prototype and is no longer the authoritative model.
   the next turn is consumed by the pit stop. The car then exits one cell beyond
   authored `pit_exit` by default. `GameConfigSO.pitExitMoveBonus` controls the
   base value; China's Fast Charge tech adds another cell.
+- The read-only offer gate and the two reservation writes are shared by human and AI adapters through `PitLaneRules`; resolving a choice suppresses another offer until the entry is passed without a reservation or a stop is executed. A duplicate/late human click cannot reverse a submitted choice; there is no separate cancel-reservation command. AI retains its 60% hand-heat threshold. Thirty new regressions passed within Unity EditMode `1150/1150` on 2026-09-28; this is not full Play Mode acceptance.
+- Tutorial reservation/exit feedback only latches the expected presented human lesson; crossing alone does not complete the exit lesson or navigate. Twelve real-manager/Director regressions passed within EditMode `1162/1162` on 2026-09-28; GameLoop, UI and file-log acceptance remain separate.
 - Corner-speed resolution triggers only when movement crosses an `isApex`
   cell. Repeated apex cells for the same corner are deduplicated per move.
 - Player initialization and lap crossing use the runtime node marked
@@ -363,6 +365,45 @@ prototype and is no longer the authoritative model.
   corner checks, lap counts, camera framing, and minimap tracking are unchanged.
   Indianapolis keeps explicit per-car lane choices, and the player's start/finish
   lane selection immediately repositions the player car.
+- The shared `RaceLaneRules` adjacent-lane contract keeps positive direction as
+  inward and negative as outward, moving at most one lane. An edge rejection
+  leaves human lane selection waiting; keeping the lane accepts and closes it.
+  Twenty-six added rules/adapter regressions passed within Unity EditMode
+  `1188/1188` on 2026-09-28; this does not verify live car/UI presentation.
+  `LaneChoicePresentationRules` now shares button/confirmation direction copy
+  and logs the actual lane delta: decreasing indices mean inward, increasing
+  indices mean outward. The prior reversed completion labels were corrected
+  on 2026-09-28. Twenty-two new copy/callback/panel regressions passed within
+  Unity EditMode `1210/1210`; synchronous panel lifecycle is not live click or
+  visual Play Mode acceptance, and gameplay lane rules are unchanged.
+  Start/finish registration settles lap and finish state before offering a
+  human lane choice: only the unfinished player on Indianapolis waits; AI,
+  other tracks and the final crossing do not. Repeated unfinished crossings
+  can reopen the choice. Fourteen added adapter regressions passed focused
+  Unity EditMode `75/75`, full `1224/1224` on 2026-09-28; manually advancing the
+  wait coroutine does not verify movement animation scheduling or Play Mode.
+  The ordered node traversal now re-reads the chosen Indianapolis lane after
+  that wait, so remaining node targets follow the new lane instead of the
+  pre-choice cache. This corrects presentation coordinates without changing
+  movement amount, lap settlement or ordinary-track lane policy. Ten added
+  recording-animator traversal regressions passed within full Unity EditMode
+  `1234/1234` on 2026-09-28; live interpolation/camera acceptance is separate.
+  Fourteen further traversal cases verify repeated crossings at a non-zero
+  start/finish node for all six teams, final-lap suppression of lane choice,
+  all four fixture crossing indices, rejected edge input followed by keep,
+  and empty traversal preserving the existing gear gate. Focused Unity
+  EditMode `86/86`, full `1248/1248` passed on 2026-09-28 (zero failures/skips).
+  No runtime rules changed; these manually advanced iterators still exclude
+  live scheduling, interpolation, camera and full GameLoop/Play Mode.
+  The existing outer movement adapter exits without state changes for a null
+  participant, absent track or zero nodes. With an unavailable car slot it
+  clamps negative movement to zero and wraps only the supplied participant's
+  position; it does not settle lap, finish or lane-crossing events. This is
+  an existing presentation-unavailable fallback, not full headless gameplay
+  or an alternative to normal crossing rules. Twenty-three added real-adapter
+  regressions passed focused Unity EditMode `109/109`, full `1271/1271` on
+  2026-09-29 (zero failures/skips); runtime behavior is unchanged. The normal
+  animated outer completion/camera path and Play Mode remain unverified.
 - The race readability overlay adds US landmark signs at the actual start/finish
   and midpoint nodes when any active participant is on team US. The shared
   gameplay landmark-position rule supplies the node indices; the selected
@@ -458,6 +499,7 @@ prototype and is no longer the authoritative model.
 
 ## Opponents and Win Condition
 
+- DE Grill Spezial settles automatically at the first eligible turn end with remaining actual engine-payment heat, once per race. The coordinator records paid card instances (including actual partial payments); only owned permanent receipts still outside the engine pass through discard back to the engine. Ordinary payment destinations and generic cooling priority are unchanged. Old heat, temporary heat and already-cooled receipts cannot substitute; a turn reset clears receipts/payment count but not the used flag. Terminal racers remain excluded. This correction passed full Unity EditMode `994/994` on 2026-09-28; Play Mode presentation is unverified.
 - The default demo includes the player and one AI-controlled opponent;
   `aiOpponentCount` supports a larger configured opponent count, while the
   broader multi-opponent balance/playtest remains open.

@@ -9,6 +9,8 @@ public class PlayerState
 {
     public string name;
     public bool isAI;
+    /// <summary>Actual engine-payment instances for this turn; never persisted or carried into the next turn.</summary>
+    public readonly List<CardData> heatPaidCardsThisTurn = new List<CardData>();
     public TeamId teamId;
     /// <summary>Selected driver catalog ID; empty means use the team default.</summary>
     public string driverId;

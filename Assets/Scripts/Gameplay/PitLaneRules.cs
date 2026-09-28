@@ -18,6 +18,29 @@ public static class PitLaneRules
     /// <summary>Heat cooled during a standard pit stop.</summary>
     public const int PIT_HEAT_COOLDOWN = 999; // All heat returned to engine
 
+    /// <summary>Reads the existing pre-entry offer gate without consuming a choice.</summary>
+    public static bool TryGetApproachChoiceDistance(PlayerState player,
+        IReadOnlyList<TrackNode> nodes, bool enabled, out int distance)
+    {
+        distance = -1;
+        if (player == null || !enabled || !HasPitLane(nodes)) return false;
+        if (player.isBlown || player.hasFinished || player.pitChoiceResolvedThisLap ||
+            player.pitStopRequested || player.pitStopScheduled) return false;
+        distance = GetDistanceToPitEntry(player.position, nodes);
+        return distance > 0 && distance <= DEFAULT_APPROACH_WINDOW;
+    }
+
+    /// <summary>
+    /// Records a reservation, not a stop. Input eligibility belongs to the caller;
+    /// movement, heat and scheduling remain unchanged until crossing the entry.
+    /// </summary>
+    public static void RecordApproachChoice(PlayerState player, bool enter)
+    {
+        if (player == null) return;
+        player.pitChoiceResolvedThisLap = true;
+        player.pitStopRequested = enter;
+    }
+
     /// <summary>
     /// Check if a track has a functional pit lane (both entry and exit nodes).
     /// </summary>

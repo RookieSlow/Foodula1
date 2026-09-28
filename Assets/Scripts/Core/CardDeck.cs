@@ -337,6 +337,12 @@ public class CardDeck
     /// </summary>
     public int DrawHeatFromPool(int count, HeatPaymentDestination destination)
     {
+        return DrawHeatFromPool(count, destination, null);
+    }
+
+    /// <summary>Optionally records the actual paid instances, including a partial engine payment.</summary>
+    public int DrawHeatFromPool(int count, HeatPaymentDestination destination, ICollection<CardData> paidCards)
+    {
         if (heatPool == null || count <= 0) return 0;
 
         int drawn = 0;
@@ -346,7 +352,9 @@ public class CardDeck
             List<CardData> target = destination == HeatPaymentDestination.Hand
                 ? hand
                 : discardPile;
-            target.Add(new CardData(CardType.Heat, 0));
+            var card = new CardData(CardType.Heat, 0);
+            target.Add(card);
+            paidCards?.Add(card);
             heatPool.remaining--;
             drawn++;
         }
@@ -371,20 +379,68 @@ public class CardDeck
         return RemoveHeatFromPile(hand, count);
     }
 
+    /// <summary>Counts unique permanent payment instances still owned by this deck, not already cooled.</summary>
+    public int CountRecordedHeat(IReadOnlyList<CardData> payments)
+    {
+        var seen = new HashSet<CardData>();
+        if (payments != null)
+            foreach (var card in payments)
+                if (card != null && card.IsHeat && !card.isTemp &&
+                    (hand.Contains(card) || drawPile.Contains(card) || discardPile.Contains(card)))
+                    seen.Add(card);
+        return seen.Count;
+    }
+
+    /// <summary>Grill-specific: only recorded permanent payments pass through discard back to their engine.</summary>
+    public int CoolRecordedHeatThroughDiscard(IReadOnlyList<CardData> payments, int count)
+    {
+        return CoolRecordedHeatWithSources(payments, count).Total;
+    }
+
+    /// <summary>Grill-specific cooling with exact original source counts for presentation.</summary>
+    public HeatCoolingResult CoolRecordedHeatWithSources(IReadOnlyList<CardData> payments, int count)
+    {
+        if (payments == null || count <= 0 || heatPool == null) return default;
+        int fromHand = 0, fromDraw = 0, fromDiscard = 0;
+        foreach (var card in payments)
+        {
+            if (fromHand + fromDraw + fromDiscard >= count) break;
+            if (card == null || !card.IsHeat || card.isTemp) continue;
+            if (hand.Remove(card))
+            {
+                fromHand++;
+                discardPile.Add(card);
+            }
+            else if (drawPile.Remove(card))
+            {
+                fromDraw++;
+                discardPile.Add(card);
+            }
+            else if (discardPile.Contains(card)) fromDiscard++;
+            else continue;
+            discardPile.Remove(card);
+            heatPool.remaining++;
+        }
+        return new HeatCoolingResult(fromHand, fromDraw, fromDiscard);
+    }
+
     /// <summary>
     /// 通用冷却：严格按“手牌 → 抽牌堆 → 弃牌堆”顺序移除热量牌。
     /// 永久热量牌归还引擎，限时热量牌直接销毁；不会因为冷却而洗牌。
     /// </summary>
     public int CoolHeat(int count)
     {
-        if (count <= 0) return 0;
+        return CoolHeatWithSources(count).Total;
+    }
 
-        int removed = RemoveHeatFromPile(hand, count);
-        if (removed < count)
-            removed += RemoveHeatFromPile(drawPile, count - removed);
-        if (removed < count)
-            removed += RemoveHeatFromPile(discardPile, count - removed);
-        return removed;
+    /// <summary>Same hand/draw/discard priority as CoolHeat, returning actual source counts.</summary>
+    public HeatCoolingResult CoolHeatWithSources(int count)
+    {
+        if (count <= 0) return default;
+        int fromHand = RemoveHeatFromPile(hand, count);
+        int fromDraw = RemoveHeatFromPile(drawPile, count - fromHand);
+        int fromDiscard = RemoveHeatFromPile(discardPile, count - fromHand - fromDraw);
+        return new HeatCoolingResult(fromHand, fromDraw, fromDiscard);
     }
 
     private int RemoveHeatFromPile(List<CardData> pile, int count)
@@ -523,36 +579,32 @@ public class CardDeck
     /// </summary>
     public void RecoverAllHeatToPool()
     {
-        // 手牌
-        for (int i = hand.Count - 1; i >= 0; i--)
+        RecoverAllHeatWithSources();
+    }
+
+    /// <summary>Full recovery with actual removals per zone, including destroyed temporary heat.</summary>
+    public HeatCoolingResult RecoverAllHeatWithSources()
+    {
+        int fromHand = RecoverHeatFromPile(hand);
+        int fromDraw = RecoverHeatFromPile(drawPile);
+        int fromDiscard = RecoverHeatFromPile(discardPile);
+        return new HeatCoolingResult(fromHand, fromDraw, fromDiscard);
+    }
+
+    private int RecoverHeatFromPile(List<CardData> pile)
+    {
+        int removed = 0;
+        for (int i = pile.Count - 1; i >= 0; i--)
         {
-            if (hand[i].IsHeat)
+            if (pile[i].IsHeat)
             {
-                if (!hand[i].isTemp)
+                if (!pile[i].isTemp)
                     heatPool.remaining++;
-                hand.RemoveAt(i);
+                pile.RemoveAt(i);
+                removed++;
             }
         }
-        // 牌组
-        for (int i = drawPile.Count - 1; i >= 0; i--)
-        {
-            if (drawPile[i].IsHeat)
-            {
-                if (!drawPile[i].isTemp)
-                    heatPool.remaining++;
-                drawPile.RemoveAt(i);
-            }
-        }
-        // 弃牌堆
-        for (int i = discardPile.Count - 1; i >= 0; i--)
-        {
-            if (discardPile[i].IsHeat)
-            {
-                if (!discardPile[i].isTemp)
-                    heatPool.remaining++;
-                discardPile.RemoveAt(i);
-            }
-        }
+        return removed;
     }
 
     /// <summary>

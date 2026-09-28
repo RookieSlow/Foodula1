@@ -16,6 +16,14 @@ public enum SpeedCardCommitResult
 /// </summary>
 public static class CardPlayRules
 {
+    /// <summary>Read-only current-turn requirement; optional capacity never raises mandatory cards.</summary>
+    public static TeamGearRules.SpeedCardRequirement GetSpeedCardRequirement(PlayerState player)
+    {
+        return TeamGearRules.GetSpeedCardRequirement(
+            player.teamId, player.gear, player.chinaConsecutiveGearCount,
+            GetOptionalSpeedCardSlots(player));
+    }
+
     /// <summary>
     /// Returns real optional card slots. A pending Hotpot ATTACK deliberately
     /// does not participate because it empowers a normal slot instead.

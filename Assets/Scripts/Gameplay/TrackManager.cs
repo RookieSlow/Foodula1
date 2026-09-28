@@ -458,14 +458,12 @@ public class TrackManager : MonoBehaviour
 
     public int GetLaneTowardsInside(int laneIndex)
     {
-        if (LaneCount <= 1) return 0;
-        return Mathf.Max(0, laneIndex - 1);
+        return RaceLaneRules.GetAdjacentLane(laneIndex, LaneCount, 1);
     }
 
     public int GetLaneTowardsOutside(int laneIndex)
     {
-        if (LaneCount <= 1) return 0;
-        return Mathf.Min(LaneCount - 1, laneIndex + 1);
+        return RaceLaneRules.GetAdjacentLane(laneIndex, LaneCount, -1);
     }
 
     public TrackNode GetNode(int index)

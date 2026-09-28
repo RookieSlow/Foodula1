@@ -38,6 +38,16 @@ public readonly struct GearRequirementFeedback
 
 public static class GearRequirementFeedbackRules
 {
+    /// <summary>Formats the existing gear/extra-capacity label without reading scene state.</summary>
+    public static string FormatRequirementLabel(
+        TeamId team, int gear, TeamGearRules.SpeedCardRequirement requirement)
+    {
+        string gearName = TeamGearRules.GetDisplayName(team, gear);
+        return requirement.ExtraCardCount > 0
+            ? $"{gearName} 档（基础 {requirement.BaseCardCount} + 额外 {requirement.ExtraCardCount}）"
+            : $"{gearName} 档";
+    }
+
     public static GearRequirementFeedback Evaluate(
         int requiredCards,
         int confirmedCards,
