@@ -20,17 +20,30 @@ public static class TechTreeProfileStore
         if (Cache.TryGetValue(teamId, out TechTreeState cached))
             return cached;
 
+        TechTreeState state = RestoreOrCreate(teamId, db,
+            PlayerPrefs.HasKey, key => PlayerPrefs.GetString(key), Save);
+        Cache[teamId] = state;
+        return state;
+    }
+
+    private static TechTreeState RestoreOrCreate(
+        TeamId teamId,
+        TechTreeDatabase db,
+        Func<string, bool> hasKey,
+        Func<string, string> read,
+        Action<TechTreeState> save)
+    {
         string key = KeyPrefix + teamId;
         string legacyKey = LegacyKeyPrefix + teamId;
-        string savedKey = PlayerPrefs.HasKey(key)
+        string savedKey = hasKey(key)
             ? key
-            : (PlayerPrefs.HasKey(legacyKey) ? legacyKey : null);
+            : (hasKey(legacyKey) ? legacyKey : null);
         TechTreeState state = null;
         if (savedKey != null)
         {
             try
             {
-                state = TechTreeProfileCodec.Decode(PlayerPrefs.GetString(savedKey), teamId, db);
+                state = TechTreeProfileCodec.Decode(read(savedKey), teamId, db);
             }
             catch (Exception ex)
             {
@@ -41,15 +54,14 @@ public static class TechTreeProfileStore
         if (state == null)
         {
             state = CreateDemoProfile(teamId, db);
-            Save(state);
+            save(state);
         }
         else if (savedKey == legacyKey)
         {
             // Migrate the legacy spelling without invalidating existing player progress.
-            Save(state);
+            save(state);
         }
 
-        Cache[teamId] = state;
         return state;
     }
 
@@ -80,8 +92,18 @@ public static class TechTreeProfileStore
 
     public static void SaveAll()
     {
-        foreach (TechTreeState state in Cache.Values)
-            Save(state);
+        SaveAllFrom(Cache, Save);
+    }
+
+    private static void SaveAllFrom(
+        Dictionary<TeamId, TechTreeState> profiles,
+        Action<TechTreeState> save)
+    {
+        // Save updates Cache, which invalidates Dictionary.Values enumeration
+        // on Unity's runtime even when the existing key is assigned again.
+        var snapshot = new List<TechTreeState>(profiles.Values);
+        foreach (TechTreeState state in snapshot)
+            save(state);
     }
 
     /// <summary>Development helper used by tests and reset controls.</summary>
@@ -95,30 +117,6 @@ public static class TechTreeProfileStore
 
     private static TechTreeState CreateDemoProfile(TeamId teamId, TechTreeDatabase db)
     {
-        TechTreeState state = TechTreeRules.CreateDemoState(teamId);
-        string[] standard =
-        {
-            "common-l1-heat-coating",
-            "common-l1-lightweight-chassis",
-            "common-l1-track-memory",
-            "common-l1-expanded-tank"
-        };
-        string[] ev =
-        {
-            "cn-ev-l1-heat-pump",
-            "cn-ev-l1-pmsm",
-            "cn-ev-l1-torque-vector",
-            "cn-ev-l1-solid-state"
-        };
-        string[] common = teamId == TeamId.CN ? ev : standard;
-        foreach (string id in common)
-            TechTreeRules.UnlockNode(state, id, db);
-
-        List<TechNodeDef> uniques = db.GetUniqueInTier(teamId, TechTreeTier.L1);
-        if (uniques.Count > 0)
-            TechTreeRules.UnlockNode(state, uniques[0].id, db);
-
-        TechTreeRules.ActivateAllUnlocked(state);
-        return state;
+        return TechTreeRules.CreateDemoProfile(teamId, db);
     }
 }

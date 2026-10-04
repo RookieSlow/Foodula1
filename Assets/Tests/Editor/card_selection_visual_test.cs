@@ -4,6 +4,39 @@ using UnityEngine.UI;
 
 public class CardSelectionVisualTests
 {
+    [TestCase(false)] [TestCase(true)]
+    public void BBQHeatButtonAndLabelRestoreOnAvailabilityChange(bool temporary)
+    {
+        GameObject hand = CreateHand();
+        try
+        {
+            CardUI card = CreateCard(hand.transform, "BBQ Heat");
+            card.gameObject.AddComponent<Button>();
+            var textObject = new GameObject("Value", typeof(RectTransform), typeof(TMPro.TextMeshProUGUI));
+            textObject.transform.SetParent(card.transform, false);
+            card.valueText = textObject.GetComponent<TMPro.TextMeshProUGUI>();
+            var heat = temporary ? CardData.CreateTempHeat() : new CardData(CardType.Heat, 0);
+            card.SetupCard(heat, null);
+            var button = card.GetComponent<Button>();
+            Assert.IsFalse(button.interactable);
+            card.SetHeatPlayable(true);
+            Assert.IsTrue(button.interactable);
+            Assert.AreEqual("BBQ 2", card.valueText.text);
+            card.SetSelectedWithoutNotify(true);
+            card.SetHeatPlayable(false);
+            Assert.IsFalse(button.interactable);
+            Assert.IsFalse(card.isSelected);
+            Assert.AreEqual(string.Empty, card.valueText.text);
+            card.SetHeatPlayable(true);
+            Assert.IsTrue(button.interactable);
+            card.SetupCard(heat, null); // replay/rebinding must not retain eligibility
+            Assert.IsFalse(button.interactable);
+            Assert.IsFalse(card.isSelected);
+            Assert.AreEqual(0, heat.value);
+        }
+        finally { Object.DestroyImmediate(hand); }
+    }
+
     [Test]
     public void SelectedCardScalesAndLiftsWithoutChangingLayoutSlot()
     {

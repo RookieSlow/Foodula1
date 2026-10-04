@@ -48,7 +48,7 @@ public static class HeatGaugeRules
     public const float ElevatedThreshold = 0.5f;
     public const float CriticalThreshold = 0.7f;
 
-    public static HeatGaugeState Evaluate(CardDeck deck)
+    public static HeatGaugeState Evaluate(CardDeck deck, System.Collections.Generic.IReadOnlyList<CardData> committedCards = null)
     {
         if (deck == null)
             return new HeatGaugeState(0, 0, 0, 0, 0f, HeatWarningLevel.Cool);
@@ -56,7 +56,18 @@ public static class HeatGaugeRules
         int engineRemaining = deck.heatPool != null ? Mathf.Max(0, deck.heatPool.remaining) : 0;
         int permanentHeat = deck.CountPermanentHeatOutsideEngine();
         int temporaryHeat = deck.CountTemporaryHeatOutsideEngine();
-        int capacity = engineRemaining + permanentHeat;
+        if (committedCards != null)
+        {
+            var counted = new System.Collections.Generic.HashSet<CardData>();
+            foreach (CardData card in committedCards)
+                if (card != null && card.IsHeat && counted.Add(card) &&
+                    !deck.ContainsCardOutsideEngine(card))
+                {
+                    if (card.isTemp) temporaryHeat++;
+                    else permanentHeat++;
+                }
+        }
+        int capacity = Mathf.Max(0, engineRemaining + permanentHeat - deck.RegionalHeatPendingRetirement);
         int denominator = Mathf.Max(1, capacity);
         float fill = Mathf.Clamp01((permanentHeat + temporaryHeat) / (float)denominator);
 

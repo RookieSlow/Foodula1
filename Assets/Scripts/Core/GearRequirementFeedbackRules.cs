@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// Pure presentation data for the current speed-card requirement.
@@ -88,5 +89,42 @@ public static class GearRequirementFeedbackRules
         if (feedback.MayTriggerSpin)
             return $"结束出牌 · 缺{feedback.MissingCards}，可能失控";
         return $"结束出牌 · 缺{feedback.MissingCards}→+{feedback.MissingCards}热";
+    }
+
+    /// <summary>Formats the pending speed-card selection without reading UI or scene state.</summary>
+    public static string FormatPendingSpeedStatus(string requirementStatus, IReadOnlyList<CardData> selected)
+    {
+        return $"{requirementStatus}\n待确认：{selected.Count} 张速度牌（速度总和 {CardPlayRules.SumCommittedSpeedCardValues(selected)}）";
+    }
+
+    public static string FormatSpeedCommitFailure(SpeedCardCommitResult result, int maxCards)
+        => result == SpeedCardCommitResult.SpeedLimitReached
+            ? $"速度牌已达上限：{maxCards} 张（本次选择未提交）"
+            : "出牌失败：手牌状态已变化";
+
+    public static string FormatCommittedSpeedLog(string playerName, IReadOnlyList<CardData> cards)
+        => $"{playerName} 确认 {cards.Count} 张速度牌（速度总和 {CardPlayRules.SumCommittedSpeedCardValues(cards)}）。";
+
+    public static string FormatCommittedSpeedStatus(int committedCards, int maxCards)
+        => $"已打出 {committedCards}/{maxCards} 张速度牌；可继续多选或结束出牌";
+
+    public static string FormatPendingTrickStatus(string requirementStatus, string trickName)
+        => $"{requirementStatus}\n待确认：{trickName}（确认后立即发动）";
+
+    /// <summary>Preserves the action label and space shortcut for discard, end, trick and speed selection.</summary>
+    public static string FormatActionButtonLabel(
+        bool discardMode, int selectedCount, bool selectedTrick, GearRequirementFeedback feedback)
+    {
+        string label;
+        if (discardMode)
+            label = "弃置所选牌";
+        else if (selectedCount == 0)
+            label = feedback.RequiredCards > 0 ? FormatEndButtonLabel(feedback) : "结束出牌";
+        else if (selectedTrick)
+            label = "打出特技牌";
+        else
+            label = selectedCount == 1 ? "打出速度牌" : $"打出速度牌 ({selectedCount})";
+
+        return label + (discardMode || selectedCount > 0 ? "  [空格]" : "");
     }
 }

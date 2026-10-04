@@ -5,6 +5,30 @@ using UnityEngine;
 
 public class AIPlannerTests
 {
+    [TestCase(false)] [TestCase(true)]
+    public void BBQCandidatesUseHeatAsTwoWithoutMutatingHand(bool temporary)
+    {
+        var deck = new CardDeck();
+        deck.heatPool = new HeatPool(1);
+        if (!temporary) deck.DrawHeatFromPoolToHand(1);
+        var heat = temporary ? CardData.CreateTempHeat() : deck.Hand[0];
+        var speed = new CardData(CardType.Speed, 3);
+        deck.AddCardsToHand(new[] { speed });
+        if (temporary) deck.AddCardsToHand(new[] { heat });
+        CollectionAssert.AreEqual(new[] { speed }, AIPlanner.GetSpeedCards(deck, 2, false, false));
+        CollectionAssert.AreEqual(new[] { speed, heat }, AIPlanner.GetSpeedCards(deck, 2, false, true));
+        CollectionAssert.AreEqual(new[] { heat }, AIPlanner.GetSpeedCards(deck, 1, true, true));
+        List<CardData> exact;
+        Assert.IsFalse(AIPlanner.TryFindExactSpeedCards(deck, 1, 2, out exact));
+        Assert.IsTrue(AIPlanner.TryFindExactSpeedCards(deck, 1, 2, out exact, true));
+        Assert.AreSame(heat, exact[0]);
+        Assert.IsTrue(AIPlanner.TryFindExactSpeedCards(deck, 2, 5, out exact, true));
+        CollectionAssert.AreEqual(new[] { speed, heat }, exact);
+        Assert.AreEqual(2, deck.Hand.Count);
+        Assert.AreEqual(0, heat.value);
+        Assert.IsTrue(heat.IsHeat);
+    }
+
     private GameConfigSO config;
 
     [SetUp]

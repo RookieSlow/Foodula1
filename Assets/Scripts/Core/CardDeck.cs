@@ -42,6 +42,48 @@ public class CardDeck
     private List<CardData> discardPile = new List<CardData>();
     private IRandomSource randomSource = new UnityRandomSource();
     private bool usesExactOrder;
+    private int regionalCapacityBonus;
+    private int regionalHeatPendingRetirement;
+
+    public int RegionalCapacityBonus => regionalCapacityBonus;
+    public int RegionalHeatPendingRetirement => regionalHeatPendingRetirement;
+
+    /// <summary>
+    /// Grants temporary engine heat in a regional capacity zone. Paid heat
+    /// outstanding at exit is retired on later cooling, or reactivated on entry.
+    /// </summary>
+    public void SetRegionalCapacityBonus(int bonus)
+    {
+        if (heatPool == null) return;
+        bonus = System.Math.Max(0, bonus);
+        if (bonus == regionalCapacityBonus) return;
+        if (bonus > regionalCapacityBonus)
+        {
+            int added = bonus - regionalCapacityBonus;
+            int reactivated = System.Math.Min(added, regionalHeatPendingRetirement);
+            regionalHeatPendingRetirement -= reactivated;
+            heatPool.remaining += added - reactivated;
+        }
+        else
+        {
+            int removed = regionalCapacityBonus - bonus;
+            int fromEngine = System.Math.Min(removed, System.Math.Max(0, heatPool.remaining));
+            heatPool.remaining -= fromEngine;
+            regionalHeatPendingRetirement += removed - fromEngine;
+        }
+        regionalCapacityBonus = bonus;
+    }
+
+    private bool ReturnPermanentHeatToEngine()
+    {
+        if (regionalHeatPendingRetirement > 0)
+        {
+            regionalHeatPendingRetirement--;
+            return false;
+        }
+        heatPool.remaining++;
+        return true;
+    }
 
     /// <summary>该玩家的引擎牌库 — 每玩家独立的 HeatPool 实例，支付热量时从此扣除。</summary>
     public HeatPool heatPool;
@@ -61,6 +103,9 @@ public class CardDeck
     /// <summary>Returns whether this exact runtime card is currently in hand.</summary>
     public bool ContainsInHand(CardData card) => card != null && hand.Contains(card);
 
+    internal bool ContainsCardOutsideEngine(CardData card) => card != null &&
+        (hand.Contains(card) || drawPile.Contains(card) || discardPile.Contains(card));
+
     /// <summary>
     /// 用配置初始化牌组。
     /// 速度牌 → 普通抽牌堆，然后洗牌。
@@ -69,6 +114,8 @@ public class CardDeck
     public void InitializeDeck(GameConfigSO config, HeatPool enginePool, IRandomSource source = null)
     {
         heatPool = enginePool;
+        regionalCapacityBonus = 0;
+        regionalHeatPendingRetirement = 0;
         randomSource = source ?? new UnityRandomSource();
         usesExactOrder = false;
         drawPile.Clear();
@@ -106,6 +153,8 @@ public class CardDeck
         }
 
         heatPool = enginePool;
+        regionalCapacityBonus = 0;
+        regionalHeatPendingRetirement = 0;
         usesExactOrder = true;
         drawPile.Clear();
         hand.Clear();
@@ -271,6 +320,26 @@ public class CardDeck
     }
 
     /// <summary>
+    /// Retires the committed speed area, including BBQ heat. Permanent heat
+    /// enters discard (not the engine); temporary heat is destroyed and counted
+    /// for turn-end feedback. Ordinary speed-only discard semantics stay intact.
+    /// Heat references still remain in the played area until effects finish.
+    /// </summary>
+    public int DiscardPlayedSpeedCards(List<CardData> cards)
+    {
+        DiscardSpeedCards(cards);
+        int temporaryHeat = 0;
+        var seen = new HashSet<CardData>();
+        foreach (CardData card in cards)
+        {
+            if (card == null || !card.IsHeat || !seen.Add(card)) continue;
+            if (card.isTemp) temporaryHeat++;
+            else if (!discardPile.Contains(card)) discardPile.Add(card);
+        }
+        return temporaryHeat;
+    }
+
+    /// <summary>
     /// Removes playable cards from hand and puts them directly into the discard pile,
     /// returning the exact runtime card instances that moved. Heat cards are deliberately
     /// ignored because they can only leave hand through cooling.
@@ -303,9 +372,9 @@ public class CardDeck
     }
 
     /// <summary>
-    /// 消耗指定的手牌热量牌；永久热量归还引擎，限时热量直接销毁。
+    /// 消耗指定的手牌热量牌；永久热量归还引擎或清偿区域借用，限时热量直接销毁。
     /// 只有当前确实位于手牌中的同一张运行时卡牌才会被消耗，避免重复请求凭空增加热量。
-    /// 返回实际消耗数量。
+    /// 返回实际进入引擎的数量，不包含销毁/清偿区域借用的牌。
     /// </summary>
     public int ReturnHeatCardsToPool(IReadOnlyList<CardData> cards)
     {
@@ -315,11 +384,17 @@ public class CardDeck
         foreach (CardData card in cards)
         {
             if (card == null || !card.IsHeat || !hand.Remove(card)) continue;
-            if (!card.isTemp)
-                heatPool.remaining++;
-            returned++;
+            if (!card.isTemp && ReturnPermanentHeatToEngine()) returned++;
         }
         return returned;
+    }
+
+    /// <summary>How many current hand heat cards can actually return to the engine.</summary>
+    public int CountHandHeatRestorableToEngine()
+    {
+        if (heatPool == null) return 0;
+        return System.Math.Max(0,
+            CountHeatCards(hand, includeTemporary: false) - regionalHeatPendingRetirement);
     }
 
     /// <summary>
@@ -419,7 +494,7 @@ public class CardDeck
             else if (discardPile.Contains(card)) fromDiscard++;
             else continue;
             discardPile.Remove(card);
-            heatPool.remaining++;
+            ReturnPermanentHeatToEngine();
         }
         return new HeatCoolingResult(fromHand, fromDraw, fromDiscard);
     }
@@ -455,7 +530,7 @@ public class CardDeck
 
             pile.RemoveAt(i);
             if (!card.isTemp && heatPool != null)
-                heatPool.remaining++;
+                ReturnPermanentHeatToEngine();
             removed++;
         }
         return removed;
@@ -599,7 +674,7 @@ public class CardDeck
             if (pile[i].IsHeat)
             {
                 if (!pile[i].isTemp)
-                    heatPool.remaining++;
+                    ReturnPermanentHeatToEngine();
                 pile.RemoveAt(i);
                 removed++;
             }
@@ -621,7 +696,7 @@ public class CardDeck
                 bool isTemp = drawPile[i].isTemp;
                 drawPile.RemoveAt(i);
                 if (!isTemp)
-                    heatPool.remaining++;
+                    ReturnPermanentHeatToEngine();
                 return true;
             }
         }
@@ -633,7 +708,7 @@ public class CardDeck
                 bool isTemp = discardPile[i].isTemp;
                 discardPile.RemoveAt(i);
                 if (!isTemp)
-                    heatPool.remaining++;
+                    ReturnPermanentHeatToEngine();
                 return true;
             }
         }

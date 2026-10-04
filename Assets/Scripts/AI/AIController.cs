@@ -59,7 +59,7 @@ public class AIController : MonoBehaviour
         }
 
         int currentGear = ai.gear;
-        int speedInHand = ai.deck.CountSpeedInHand();
+        int speedInHand = game.CountPlayableSpeedCardsInHand(ai);
         float heatRatio = ai.HeatRatio;
 
         // ── P1: 生存检查 ──
@@ -162,7 +162,7 @@ public class AIController : MonoBehaviour
                 config.aiHeatWarningThreshold,
                 config.aiCautiousHeatThreshold,
                 config.aiCardVariationChance,
-                randomSource);
+                randomSource, game.CanUseBBQHeatCards(ai));
         }
 
         // 引擎故障：速度牌不足时，每缺 1 张 +1 热量到手牌。引擎不足 → 失控
@@ -181,13 +181,14 @@ public class AIController : MonoBehaviour
 
         // 支付成功后再通过玩家共用规则提交选牌，确保火锅底料会强化
         // 下一张正常速度牌，而不是为 AI 静默增加一个额外槽位。
-        SpeedCardCommitResult commit = CardPlayRules.CommitSpeedCards(ai, chosen, maxCards);
+        SpeedCardCommitResult commit = CardPlayRules.CommitSpeedCards(ai, chosen, maxCards,
+            config.enableTechTree ? game.Session : null, track != null ? track.TotalNodes : 0);
         if (commit != SpeedCardCommitResult.Success)
         {
             Debug.LogError($"AI speed-card commit failed for {ai.name}: {commit}");
             ai.playedSpeedCardsThisTurn.Clear();
         }
-        // 热量牌不可打出 — 始终留在手牌中，等待降档冷却或 G1 散热移除
+        // Only a current BBQ region admits heat, using the same commit gate as the human.
     }
 
     // ====== 辅助方法 ======
@@ -232,7 +233,7 @@ public class AIController : MonoBehaviour
                 ai.deck,
                 cardLimit,
                 targetMovement,
-                out List<CardData> cards))
+                out List<CardData> cards, game.CanUseBBQHeatCards(ai)))
             {
                 bestTargetMovement = targetMovement;
                 bestCards = cards;
@@ -254,13 +255,14 @@ public class AIController : MonoBehaviour
         if (opponent.playedSpeedCardsThisTurn != null &&
             opponent.playedSpeedCardsThisTurn.Count > 0)
         {
-            return RaceRules.SumCardValues(opponent.playedSpeedCardsThisTurn);
+            return CardPlayRules.SumCommittedSpeedCardValues(opponent.playedSpeedCardsThisTurn);
         }
 
         int cardLimit = game != null
             ? game.GetMaxSpeedCardsThisTurn(opponent)
             : opponent.gear;
-        return RaceRules.SumCardValues(opponent.deck.GetTopNSpeedCards(Mathf.Max(0, cardLimit)));
+        return CardPlayRules.SumCommittedSpeedCardValues(AIPlanner.GetSpeedCards(opponent.deck,
+            cardLimit, false, game != null && game.CanUseBBQHeatCards(opponent)));
     }
 
     /// <summary>
@@ -268,9 +270,9 @@ public class AIController : MonoBehaviour
     /// </summary>
     private int EstimateMovement(int cardLimit)
     {
-        List<CardData> topN = ai.deck.GetTopNSpeedCards(cardLimit);
+        List<CardData> topN = AIPlanner.GetSpeedCards(ai.deck, cardLimit, false, game.CanUseBBQHeatCards(ai));
         int sum = 0;
-        foreach (var c in topN) sum += c.value;
+        foreach (var c in topN) sum += CardPlayRules.GetCommittedSpeedCardValue(c);
         return sum;
     }
 
@@ -281,9 +283,9 @@ public class AIController : MonoBehaviour
     /// </summary>
     private int EstimateMinimumMovement(int cardLimit)
     {
-        List<CardData> bottomN = ai.deck.GetBottomNSpeedCards(cardLimit);
+        List<CardData> bottomN = AIPlanner.GetSpeedCards(ai.deck, cardLimit, true, game.CanUseBBQHeatCards(ai));
         int sum = 0;
-        foreach (var c in bottomN) sum += c.value;
+        foreach (var c in bottomN) sum += CardPlayRules.GetCommittedSpeedCardValue(c);
         return sum;
     }
 

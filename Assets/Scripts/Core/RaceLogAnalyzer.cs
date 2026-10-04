@@ -19,6 +19,8 @@ public static class RaceLogAnalyzer
     {
         var result = new RaceLogAnalysisResult();
         TurnState currentTurn = null;
+        bool sawTermination = false;
+        bool sawHeader = false;
 
         if (string.IsNullOrWhiteSpace(contents))
         {
@@ -30,38 +32,91 @@ public static class RaceLogAnalyzer
         for (int i = 0; i < lines.Length; i++)
         {
             string line = lines[i].Trim();
+            if (line == "# Foodula1 Race Test Log")
+            {
+                if (sawHeader || result.TurnCount > 0 || result.SawRaceEnd)
+                    result.AddError("Multiple race logs must be analyzed separately.");
+                sawHeader = true;
+            }
             if (line.Length == 0 || line.StartsWith("#", StringComparison.Ordinal))
                 continue;
 
-            if (line.Contains("[TURN_START]"))
+            // Writer timestamps precede the event with a tab. Metadata and
+            // result prose containing marker names must not become events.
+            int timestampSeparator = line.IndexOf('\t');
+            if (timestampSeparator >= 0)
+                line = line.Substring(timestampSeparator + 1).TrimStart();
+            if (!line.StartsWith("[", StringComparison.Ordinal))
+                continue;
+            if (result.SawRaceEnd)
+            {
+                result.AddError("Event appeared after [RACE_END]; analyze restarted races separately.");
+                continue;
+            }
+            if (HasMarker(line, "[TUTORIAL_SETUP]") ||
+                HasMarker(line, "[CAREER_SETUP]") ||
+                HasMarker(line, "[FREE_RACE_SETUP]"))
+            {
+                RaceLogMode mode = HasMarker(line, "[TUTORIAL_SETUP]") ? RaceLogMode.Tutorial :
+                    HasMarker(line, "[CAREER_SETUP]") ? RaceLogMode.Career : RaceLogMode.FreeRace;
+                if (result.TurnCount > 0 || sawTermination)
+                    result.AddError("Race setup appeared after the first turn or termination.");
+                else if (result.Mode != RaceLogMode.Unknown && result.Mode != mode)
+                    result.AddError("Conflicting race setup modes.");
+                else
+                    result.Mode = mode;
+                continue;
+            }
+            if (HasMarker(line, "[RACE_TERMINATION]"))
+            {
+                const string prefix = "[RACE_TERMINATION] outcome=";
+                string value = line.StartsWith(prefix, StringComparison.Ordinal)
+                    ? line.Substring(prefix.Length) : string.Empty;
+                if (sawTermination)
+                    result.AddError("Duplicate [RACE_TERMINATION].");
+                sawTermination = true;
+                if (!Enum.TryParse(value, out RaceLogTermination termination) ||
+                    Enum.GetName(typeof(RaceLogTermination), termination) != value)
+                    result.AddError("Invalid [RACE_TERMINATION] outcome.");
+                else
+                    result.Termination = termination;
+                continue;
+            }
+            if (sawTermination && !HasMarker(line, "[RACE_END]"))
+            {
+                result.AddError("Event appeared between [RACE_TERMINATION] and [RACE_END].");
+                continue;
+            }
+
+            if (HasMarker(line, "[TURN_START]"))
             {
                 FinalizeTurn(result, currentTurn);
                 currentTurn = new TurnState(++result.TurnCount);
                 continue;
             }
 
-            if (line.Contains("[CARD_PHASE] end"))
+            if (HasMarker(line, "[CARD_PHASE] end"))
             {
                 SetStage(result, currentTurn, TurnStage.CardEnd,
                     "[CARD_PHASE] end", "turn start");
                 continue;
             }
 
-            if (line.Contains("[MOVE_PHASE] begin"))
+            if (HasMarker(line, "[MOVE_PHASE] begin"))
             {
                 SetStage(result, currentTurn, TurnStage.MoveBegin,
                     "[MOVE_PHASE] begin", "[CARD_PHASE] end");
                 continue;
             }
 
-            if (line.Contains("[MOVE_PHASE] end"))
+            if (HasMarker(line, "[MOVE_PHASE] end"))
             {
                 SetStage(result, currentTurn, TurnStage.MoveEnd,
                     "[MOVE_PHASE] end", "[MOVE_PHASE] begin");
                 continue;
             }
 
-            if (line.Contains("[SLIPSTREAM_PHASE] begin"))
+            if (HasMarker(line, "[SLIPSTREAM_PHASE] begin"))
             {
                 SetStage(result, currentTurn, TurnStage.SlipstreamBegin,
                     "[SLIPSTREAM_PHASE] begin", "[MOVE_PHASE] end");
@@ -69,26 +124,32 @@ public static class RaceLogAnalyzer
                 continue;
             }
 
-            if (line.Contains("[SLIPSTREAM_PHASE] end"))
+            if (HasMarker(line, "[SLIPSTREAM_PHASE] end"))
             {
                 SetStage(result, currentTurn, TurnStage.SlipstreamEnd,
                     "[SLIPSTREAM_PHASE] end", "[SLIPSTREAM_PHASE] begin");
                 continue;
             }
 
-            if (line.Contains("[DISCARD]"))
+            if (HasMarker(line, "[DISCARD]"))
             {
                 AnalyzeDiscard(result, currentTurn, line);
                 continue;
             }
 
-            if (line.Contains("[RACE_END]"))
+            if (HasMarker(line, "[RACE_END]"))
                 result.SawRaceEnd = true;
         }
 
         FinalizeTurn(result, currentTurn);
         result.IsComplete = result.SawRaceEnd && result.IncompleteTurnCount == 0 && result.TurnCount > 0;
         return result;
+    }
+
+    private static bool HasMarker(string line, string marker)
+    {
+        return line.StartsWith(marker, StringComparison.Ordinal) &&
+            (line.Length == marker.Length || char.IsWhiteSpace(line[marker.Length]));
     }
 
     private static void SetStage(
@@ -199,6 +260,13 @@ public sealed class RaceLogAnalysisResult
     public bool IsValid => errors.Count == 0;
     public bool IsComplete { get; internal set; }
     public bool SawRaceEnd { get; internal set; }
+    /// <summary>Mode observed in setup events; old logs without one remain Unknown.</summary>
+    public RaceLogMode Mode { get; internal set; }
+    /// <summary>Legacy logs remain Unknown; end prose is never guessed.</summary>
+    public RaceLogTermination Termination { get; internal set; }
+    /// <summary>Finished race trace only, not visual/storage/Play Mode sign-off.</summary>
+    public bool HasCompletedRaceEvidence => IsValid && IsComplete &&
+        Termination == RaceLogTermination.Completed;
     public int TurnCount { get; internal set; }
     public int CompletedTurnCount { get; internal set; }
     public int IncompleteTurnCount { get; internal set; }
@@ -210,4 +278,24 @@ public sealed class RaceLogAnalysisResult
     {
         errors.Add(message);
     }
+}
+
+/// <summary>Explicit race setup mode, independent of the termination outcome.</summary>
+public enum RaceLogMode
+{
+    Unknown = 0,
+    Tutorial,
+    FreeRace,
+    Career
+}
+
+/// <summary>Explicit log closure cause, independent of player-facing result text.</summary>
+public enum RaceLogTermination
+{
+    Unknown = 0,
+    Completed,
+    Restarted,
+    Exited,
+    SceneDestroyed,
+    TutorialIncomplete
 }

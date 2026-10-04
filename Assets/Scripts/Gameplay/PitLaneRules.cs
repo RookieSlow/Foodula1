@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// Pure-function pit lane rules — entry/exit detection, pit stop resolution.
+/// Pit lane rules — entry/exit detection, reservation and stop resolution.
 /// JSON tracks already define pit_entry / pit_exit node types.
 /// </summary>
 public static class PitLaneRules
@@ -39,6 +39,26 @@ public static class PitLaneRules
         if (player == null) return;
         player.pitChoiceResolvedThisLap = true;
         player.pitStopRequested = enter;
+    }
+
+    /// <summary>
+    /// Settles a confirmed entry crossing. Returns true only when a reserved
+    /// stop becomes scheduled; an existing schedule must survive later crossings.
+    /// </summary>
+    public static bool ApplyEntryCrossingReservation(PlayerState player)
+    {
+        if (player == null || player.pitStopScheduled) return false;
+
+        if (player.pitStopRequested && !player.isBlown && !player.hasFinished)
+        {
+            player.pitStopRequested = false;
+            player.pitStopScheduled = true;
+            return true;
+        }
+
+        player.pitStopRequested = false;
+        player.pitChoiceResolvedThisLap = false;
+        return false;
     }
 
     /// <summary>

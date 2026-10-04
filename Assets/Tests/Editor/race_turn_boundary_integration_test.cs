@@ -199,6 +199,135 @@ public class RaceTurnBoundaryIntegrationTests
         Assert.AreEqual(0, player.deck.CountTemporaryHeatOutsideEngine());
     }
 
+    [TestCase(3, 0, false, RaceTurnStartAction.ResolveSkip)]
+    [TestCase(7, 0, false, RaceTurnStartAction.SelectGear)]
+    [TestCase(3, 3, true, RaceTurnStartAction.ExcludeTerminal)]
+    [TestCase(7, 3, true, RaceTurnStartAction.ExcludeTerminal)]
+    public void RealFinalSprintReportsCommittedDynamicCostBeforeTemporaryCleanup(
+        int level, int initialSpins, bool blown, RaceTurnStartAction nextAction)
+    {
+        var player = CreatePlayer(TeamId.IT);
+        player.techState.activeNodeIds.Add("it-l2-lasagna");
+        Assert.That(session.EffectiveSpinMax(player), Is.EqualTo(4));
+        ActivateFinalSprint(player, level);
+        player.spinCounter = initialSpins;
+        int uses = player.driverSkill.UsesRemaining;
+        CardData played = player.playedSpeedCardsThisTurn[0];
+        var messages = new List<string>();
+        var hud = host.AddComponent<HUDUI>();
+        manager.hudUI = hud;
+        hud.SetLogSink(message =>
+        {
+            messages.Add(message);
+            if (message.Contains("最后冲刺代价"))
+            {
+                Assert.That(player.spinCounter, Is.EqualTo(initialSpins + 1));
+                Assert.That(player.isBlown, Is.EqualTo(blown));
+                Assert.That(player.skipNextTurn, Is.EqualTo(!blown && level < 7));
+                Assert.That(player.deck.DiscardPile[0], Is.SameAs(played));
+                Assert.That(player.playedSpeedCardsThisTurn, Is.Not.Empty);
+                Assert.That(player.deck.CountTemporaryHeatOutsideEngine(), Is.EqualTo(1));
+            }
+        });
+
+        Cleanup(player);
+
+        Assert.That(messages, Is.EqualTo(new[]
+        {
+            $"driver 最后冲刺代价：强制打转，失控 {initialSpins + 1}/4。",
+            "driver 限时热量牌销毁 1 张。"
+        }));
+        Assert.That(player.driverSkill.ActivatedThisTurn, Is.True);
+        Assert.That(player.driverSkill.UsesRemaining, Is.EqualTo(uses));
+        Assert.That(player.playedSpeedCardsThisTurn, Is.Empty);
+        Assert.That(player.deck.CountTemporaryHeatOutsideEngine(), Is.Zero);
+        Assert.That(player.deck.heatPool.remaining + player.deck.CountPermanentHeatOutsideEngine(), Is.EqualTo(6));
+        session.BeginTurn(player);
+        Assert.That(player.driverSkill.ActivatedThisTurn, Is.False);
+        Assert.That(RaceTurnRules.GetStartAction(player), Is.EqualTo(nextAction));
+    }
+
+    [Test]
+    public void RealFinalSprintReportFailureKeepsCostAndStopsRemainingCleanup()
+    {
+        var player = CreatePlayer(TeamId.IT);
+        ActivateFinalSprint(player, 3);
+        CardData played = player.playedSpeedCardsThisTurn[0];
+        manager.hudUI = host.AddComponent<HUDUI>();
+        var failure = new System.InvalidOperationException("report failure");
+        manager.hudUI.SetLogSink(message =>
+        {
+            Assert.That(message, Does.Contain("最后冲刺代价"));
+            throw failure;
+        });
+
+        var raised = Assert.Throws<TargetInvocationException>(() => Cleanup(player));
+
+        Assert.That(raised.InnerException, Is.SameAs(failure));
+        Assert.That(player.spinCounter, Is.EqualTo(1));
+        Assert.That(player.skipNextTurn, Is.True);
+        Assert.That(player.isBlown, Is.False);
+        Assert.That(player.deck.DiscardPile[0], Is.SameAs(played));
+        Assert.That(player.playedSpeedCardsThisTurn, Is.Not.Empty);
+        Assert.That(player.deck.CountTemporaryHeatOutsideEngine(), Is.EqualTo(1));
+    }
+
+    [TestCase(0)]
+    [TestCase(1)]
+    public void RealCleanupRegistersCurrentOvertakesForNextTurnOnly(int overtakes)
+    {
+        var player = CreatePlayer(TeamId.UK);
+        Assert.That(DriverCatalog.TryGet("uk_nigel_mansell", out DriverProfile profile), Is.True);
+        player.driverSkill.Initialize(profile, 7, true);
+        var recorded = (Dictionary<PlayerState, int>)typeof(MVPGameManager)
+            .GetField("overtakesThisTurn", PrivateInstance).GetValue(manager);
+        if (overtakes > 0) recorded[player] = overtakes;
+
+        Cleanup(player);
+
+        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
+        session.BeginTurn(player);
+        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.EqualTo(overtakes > 0 ? 2 : 0));
+        Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.EqualTo(overtakes > 0 ? 1 : 0));
+        session.BeginTurn(player);
+        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
+        Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.Zero);
+    }
+
+    [Test]
+    public void RealDisabledSkillRuntimeNeverPaysFinalSprintCost()
+    {
+        var player = CreatePlayer(TeamId.IT);
+        Assert.That(DriverCatalog.TryGet("it_tazio_nuvolari", out DriverProfile profile), Is.True);
+        player.driverSkill.Initialize(profile, 7, false);
+        Assert.That(player.driverSkill.TryActivate(profile,
+            new DriverSkillActivationContext(true, 0, 3, 0, 6, 0), out _), Is.False);
+        player.spinCounter = 2;
+        var messages = new List<string>();
+        manager.hudUI = host.AddComponent<HUDUI>();
+        manager.hudUI.SetLogSink(messages.Add);
+
+        Cleanup(player);
+
+        Assert.That(player.spinCounter, Is.EqualTo(2));
+        Assert.That(player.isBlown, Is.False);
+        Assert.That(player.skipNextTurn, Is.False);
+        Assert.That(messages, Is.EqualTo(new[] { "driver 限时热量牌销毁 1 张。" }));
+        Assert.That(player.playedSpeedCardsThisTurn, Is.Empty);
+        session.BeginTurn(player);
+        Assert.That(RaceTurnRules.GetStartAction(player), Is.EqualTo(RaceTurnStartAction.SelectGear));
+    }
+
+    private static void ActivateFinalSprint(PlayerState player, int level)
+    {
+        Assert.That(DriverCatalog.TryGet("it_tazio_nuvolari", out DriverProfile profile), Is.True);
+        player.driverSkill.Initialize(profile, level, true);
+        player.deck.DrawHeatFromPoolToHand(player.deck.heatPool.remaining);
+        Assert.That(player.driverSkill.TryActivate(profile,
+            new DriverSkillActivationContext(true, 0, 3,
+                player.deck.heatPool.remaining, 6, 0), out _), Is.True);
+    }
+
     [TestCase(TeamId.UK)]
     [TestCase(TeamId.DE)]
     [TestCase(TeamId.IT)]

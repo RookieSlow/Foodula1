@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Framework;
+using UnityEngine;
 
 public class RaceRankingTests
 {
@@ -235,5 +237,161 @@ public class RaceRankingTests
         var sorted = RaceRanking.SortByPosition(field);
         Assert.That(sorted.Count, Is.EqualTo(1));
         Assert.That(sorted[0].name, Is.EqualTo("Solo"));
+    }
+}
+
+public class RaceSessionRemainingFinishTests
+{
+    [TestCase(1)]
+    [TestCase(3)]
+    public void RemainingActivePlayersReceiveCurrentOrderByLapThenPosition(int nextOrder)
+    {
+        var session = new RaceSession { NextFinishOrder = nextOrder };
+        var lowerLap = new PlayerState("lower", false, 40, 1) { lap = 1 };
+        var farther = new PlayerState("farther", false, 20, 1) { lap = 2 };
+        var nearer = new PlayerState("nearer", false, 10, 1) { lap = 2 };
+        session.Players.Add(lowerLap);
+        session.Players.Add(nearer);
+        session.Players.Add(farther);
+
+        session.AssignRemainingFinishers();
+
+        Assert.That(farther.finishOrder, Is.EqualTo(nextOrder));
+        Assert.That(nearer.finishOrder, Is.EqualTo(nextOrder + 1));
+        Assert.That(lowerLap.finishOrder, Is.EqualTo(nextOrder + 2));
+        Assert.That(session.NextFinishOrder, Is.EqualTo(nextOrder + 3));
+        Assert.That(session.Players, Is.EqualTo(new[] { lowerLap, nearer, farther }),
+            "Ranking must not reorder the session field.");
+        Assert.That(lowerLap.hasFinished, Is.False);
+        Assert.That(nearer.hasFinished, Is.False);
+        Assert.That(farther.hasFinished, Is.False);
+    }
+
+    [Test]
+    public void ExistingFinisherAndBlownPlayerKeepTheirResults()
+    {
+        var session = new RaceSession { NextFinishOrder = 2 };
+        var finished = new PlayerState("finished", false, 0, 1)
+            { hasFinished = true, finishOrder = 1 };
+        var blown = new PlayerState("blown", true, 30, 1) { isBlown = true };
+        var active = new PlayerState("active", true, 5, 1);
+        session.Players.AddRange(new[] { blown, active, finished });
+
+        session.AssignRemainingFinishers();
+
+        Assert.That(finished.finishOrder, Is.EqualTo(1));
+        Assert.That(blown.finishOrder, Is.Zero);
+        Assert.That(active.finishOrder, Is.EqualTo(2));
+        Assert.That(active.hasFinished, Is.False);
+        Assert.That(session.NextFinishOrder, Is.EqualTo(3));
+    }
+
+    [Test]
+    public void NoEligibleParticipantLeavesFinishCounterUntouched()
+    {
+        var session = new RaceSession { NextFinishOrder = 4 };
+        session.AssignRemainingFinishers();
+        Assert.That(session.NextFinishOrder, Is.EqualTo(4));
+
+        session.Players.Add(new PlayerState("blown", true, 0, 1) { isBlown = true });
+        session.Players.Add(new PlayerState("finished", false, 0, 1)
+            { hasFinished = true, finishOrder = 3 });
+        session.AssignRemainingFinishers();
+        Assert.That(session.NextFinishOrder, Is.EqualTo(4));
+    }
+}
+
+public class RaceEndCoordinatorTests
+{
+    private const BindingFlags PrivateInstance = BindingFlags.Instance | BindingFlags.NonPublic;
+    private GameObject host;
+    private MVPGameManager manager;
+    private RaceSession session;
+
+    [SetUp]
+    public void SetUp()
+    {
+        host = new GameObject("RaceEndCoordinatorTests");
+        host.SetActive(false);
+        manager = host.AddComponent<MVPGameManager>();
+        session = new RaceSession(new SystemRandomSource(31));
+        SetField("session", session);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        if (host != null) Object.DestroyImmediate(host);
+    }
+
+    [Test]
+    public void MissingSessionEndsWithoutReadingModeState()
+    {
+        SetField("session", null);
+        Assert.That(CheckGameEnd(), Is.True);
+    }
+
+    [Test]
+    public void FreeRaceWaitsForEveryActiveOpponentAfterHumanDnf()
+    {
+        session.Players.Add(new PlayerState("human", false, 0, 1) { isBlown = true });
+        var opponent = new PlayerState("opponent", true, 0, 1);
+        session.Players.Add(opponent);
+
+        Assert.That(CheckGameEnd(), Is.False);
+        opponent.hasFinished = true;
+        Assert.That(CheckGameEnd(), Is.True);
+    }
+
+    [Test]
+    public void CareerRaceKeepsTheSameAllParticipantsEndGate()
+    {
+        var season = new CareerSeasonState();
+        Assert.That(CareerModeRules.TryStartSeason(season, TeamId.UK,
+            new[] { TeamId.UK, TeamId.US, TeamId.IT, TeamId.DE }), Is.True);
+        Assert.That(CareerRaceLaunchRequest.TryCreate(season, "race-end-boundary", out var launch), Is.True);
+        SetField("careerRaceLaunch", launch);
+        var human = new PlayerState("human", false, 0, 1) { hasFinished = true };
+        var opponent = new PlayerState("opponent", true, 0, 1);
+        session.Players.Add(human);
+        session.Players.Add(opponent);
+
+        Assert.That(CheckGameEnd(), Is.False);
+        opponent.isBlown = true;
+        Assert.That(CheckGameEnd(), Is.True);
+    }
+
+    [TestCase(TutorialRunPhase.Guided, false)]
+    [TestCase(TutorialRunPhase.Practice, false)]
+    [TestCase(TutorialRunPhase.Completed, true)]
+    [TestCase(TutorialRunPhase.Exited, true)]
+    public void TutorialPhaseOverridesOnlyAfterCompletionOrExit(TutorialRunPhase phase, bool ends)
+    {
+        var director = new TutorialRuntimeDirector(
+            TutorialScenarioDefinition.CreateTeamSpecialty(TeamId.UK),
+            phase != TutorialRunPhase.Guided);
+        if (phase == TutorialRunPhase.Completed)
+            Assert.That(director.CompletePracticeLap(out _), Is.True);
+        if (phase == TutorialRunPhase.Exited)
+            director.ExitTutorial();
+        SetField("tutorialDirector", director);
+        session.Players.Add(new PlayerState("active", false, 0, 1));
+
+        Assert.That(director.Phase, Is.EqualTo(phase));
+        Assert.That(CheckGameEnd(), Is.EqualTo(ends));
+    }
+
+    private bool CheckGameEnd()
+    {
+        var method = typeof(MVPGameManager).GetMethod("CheckGameEnd", PrivateInstance);
+        Assert.That(method, Is.Not.Null);
+        return (bool)method.Invoke(manager, null);
+    }
+
+    private void SetField(string name, object value)
+    {
+        var field = typeof(MVPGameManager).GetField(name, PrivateInstance);
+        Assert.That(field, Is.Not.Null);
+        field.SetValue(manager, value);
     }
 }

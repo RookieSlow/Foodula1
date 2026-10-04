@@ -497,7 +497,7 @@ public static class TrackTeamBalanceBenchmark
                     int baseLimit = cornerLimits.TryGetValue(cornerId, out int value) ? value : 99;
                     int limit = session.EffectiveCornerLimit(p, baseLimit);
                     if (p.cornerTotalThisTurn <= limit) continue;
-                    int heat = p.cornerTotalThisTurn - limit + TeamVehicleRules.GetCornerHeatPenalty(p.teamId);
+                    int heat = ResolveCornerHeatCost(session, p, p.cornerTotalThisTurn - limit);
                     if (!PayHeatOrSpin(p, heat, oldPos))
                     {
                         completedCorner = false;
@@ -709,6 +709,12 @@ public static class TrackTeamBalanceBenchmark
                 estimatedMove - session.EffectiveCornerLimit(p, baseLimit));
         }
         return projectedHeat;
+    }
+
+    /// <summary>Keep the editor benchmark on the live overspeed-cost rule.</summary>
+    internal static int ResolveCornerHeatCost(RaceSession session, PlayerState player, int overspeed)
+    {
+        return session.ResolveOverspeedHeatCost(player, overspeed);
     }
 
     private static bool PayHeatOrSpin(PlayerState p, int amount, int rewindPosition)

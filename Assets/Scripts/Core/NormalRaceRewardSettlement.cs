@@ -31,7 +31,8 @@ public static class NormalRaceRewardSettlement
             {
                 if (TechTreeRules.ShouldApplyCavallino(player.techState, session.TechDb, entry.rank))
                     rp = TechTreeRules.ApplyCavallinoRampante(
-                        rp, entry.rank, TechTreeRules.IsCavallinoHomeRace(trackCountry ?? string.Empty));
+                        rp, entry.rank, TechTreeRules.IsCavallinoHomeRace(
+                            trackCountry, player.DriverProfile.Team));
 
                 player.techState.rpBalance += rp;
                 if (!player.isAI)

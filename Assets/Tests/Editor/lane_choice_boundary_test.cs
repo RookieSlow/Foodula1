@@ -50,7 +50,7 @@ public class LaneChoiceRulesTests
 }
 
 /// <summary>Real callbacks on inactive objects; no scene startup or visual teleport acceptance.</summary>
-public class LaneChoiceBoundaryIntegrationTests
+public partial class LaneChoiceBoundaryIntegrationTests
 {
     private const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
     private GameObject host;
@@ -571,7 +571,7 @@ public class LaneChoiceBoundaryIntegrationTests
     [TestCase("empty-list", 5, 0)]
     [TestCase("null-car", 5, 0)]
     [TestCase("destroyed-car", 5, 0)]
-    public void MissingCarFallbackOnlyWrapsPositionWithoutCrossingSettlement(
+    public void MissingCarFallbackSettlesCrossingsWithoutCarPresentation(
         string reason, int movement, int expected)
     {
         TargetRecorder animator = ConfigureTraversal(out GameObject car);
@@ -587,16 +587,16 @@ public class LaneChoiceBoundaryIntegrationTests
         manager.Player.totalMovementThisTurn = 99; // Explicit movement argument is authoritative.
         manager.Player.pitStopRequested = true;
         input.BeginGearSelection(2);
-        manager.config = null; // Fallback must not require camera/presentation configuration.
+        // Rule configuration remains required; car/camera presentation is optional.
         Vector3 originalCarPosition = car != null ? car.transform.position : Vector3.zero;
         var originalDeck = manager.Player.deck;
 
-        Assert.IsFalse(OuterMovement(manager.Player, index, movement).MoveNext());
+        Drain(OuterMovement(manager.Player, index, movement));
 
         Assert.AreEqual(expected, manager.Player.position);
-        Assert.AreEqual(2, manager.Player.lap); // Existing fallback does not traverse nodes.
-        Assert.IsFalse(manager.Player.hasFinished);
-        Assert.AreEqual(0, manager.Player.finishOrder);
+        Assert.AreEqual(movement > 0 ? 3 : 2, manager.Player.lap);
+        Assert.AreEqual(movement > 0, manager.Player.hasFinished);
+        Assert.AreEqual(movement > 0 ? 1 : 0, manager.Player.finishOrder);
         Assert.AreEqual(2, manager.Player.gear);
         Assert.AreEqual(99, manager.Player.totalMovementThisTurn);
         Assert.IsTrue(manager.Player.pitStopRequested);
@@ -632,12 +632,13 @@ public class LaneChoiceBoundaryIntegrationTests
         participant.lap = 1;
         int otherPosition = other.position;
         participant.totalMovementThisTurn = 99;
-        Assert.IsFalse(OuterMovement(participant, -1, 7).MoveNext());
+        Drain(OuterMovement(participant, -1, 7));
         Assert.AreEqual(1, participant.position);
-        Assert.AreEqual(1, participant.lap);
+        Assert.AreEqual(3, participant.lap);
         Assert.AreEqual(99, participant.totalMovementThisTurn);
         Assert.AreEqual(2, participant.gear);
-        Assert.IsFalse(participant.hasFinished);
+        Assert.IsTrue(participant.hasFinished);
+        Assert.AreEqual(1, participant.finishOrder);
         Assert.AreEqual(otherPosition, other.position);
         Assert.AreEqual(0, other.lap);
         Assert.IsFalse(other.hasFinished);

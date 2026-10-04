@@ -50,6 +50,23 @@ public static class TechTreeRules
 
         var node = db.Get(nodeId);
         if (node == null) return false;
+        // A team may borrow foreign effects during a race (UK L3), but it
+        // cannot purchase another team's unique research into its profile.
+        if (node.IsUnique && node.teamId != state.teamId) return false;
+        if (node.IsCommon)
+        {
+            bool cnEv = db.cnEvNodeIds.Contains(nodeId);
+            if (cnEv && state.teamId != TeamId.CN) return false;
+            if (state.teamId == TeamId.CN && db.commonNodeIds.Contains(nodeId))
+            {
+                // Old CN saves can contain standard L1 IDs. Keep their matching
+                // L2 upgrade usable, but do not offer new standard purchases.
+                bool legacyUpgrade = node.tier == TechTreeTier.L2 &&
+                    node.prerequisites.Length == 1 &&
+                    state.IsUnlocked(node.prerequisites[0]);
+                if (!legacyUpgrade) return false;
+            }
+        }
         if (state.IsUnlocked(nodeId)) return false;
         if (state.rpBalance < node.rpCost) return false;
 
@@ -59,6 +76,11 @@ public static class TechTreeRules
             if (!state.IsUnlocked(prereq))
                 return false;
         }
+
+        // The L1 common gate also opens the L2 common catalogue.
+        if (node.IsCommon && node.tier == TechTreeTier.L2 &&
+            !HasMetTierGate(state, db, TechTreeTier.L1))
+            return false;
 
         // Tier gate: unique techs require N common techs in same tier
         if (node.IsUnique && (node.tier == TechTreeTier.L1 || node.tier == TechTreeTier.L2))
@@ -80,21 +102,26 @@ public static class TechTreeRules
         return CountUnlockedCommonInTier(state, db, tier) >= required;
     }
 
-    /// <summary>Count how many common nodes in a tier are unlocked.</summary>
+    /// <summary>Count unlocked common research lines in a tier.</summary>
     public static int CountUnlockedCommonInTier(TechTreeState state, TechTreeDatabase db, TechTreeTier tier)
     {
+        if (state == null || db == null) return 0;
+
         int count = 0;
         var ids = new List<string>(db.commonNodeIds);
         // China uses the EV catalogue, but legacy saves/tests may contain
-        // standard IDs. Counting both keeps old states valid while the UI
-        // presents only the EV names for new China profiles.
-        if (state != null && state.teamId == TeamId.CN)
+        // standard IDs. Both catalogues use the same numbered research lines;
+        // unlocking both variants of one line must not satisfy two gate slots.
+        bool chineseCatalogue = state.teamId == TeamId.CN;
+        var countedLines = chineseCatalogue ? new HashSet<int>() : null;
+        if (chineseCatalogue)
             ids.AddRange(db.cnEvNodeIds);
 
         foreach (var nodeId in ids)
         {
             var node = db.Get(nodeId);
-            if (node != null && node.tier == tier && state.IsUnlocked(nodeId))
+            if (node != null && node.tier == tier && state.IsUnlocked(nodeId) &&
+                (!chineseCatalogue || countedLines.Add(node.index)))
                 count++;
         }
         return count;
@@ -196,6 +223,43 @@ public static class TechTreeRules
         return new TechTreeState(teamId, DEMO_BUDGET);
     }
 
+    /// <summary>
+    /// Build the existing funded Demo loadout for both new human profiles and AI.
+    /// Purchase the four authored L1 commons in order, then only the first team
+    /// L1 unique. Failed purchases retain normal unlock semantics; this method
+    /// neither saves nor reuses an existing profile. CreateDemoState stays empty.
+    /// </summary>
+    public static TechTreeState CreateDemoProfile(TeamId teamId, TechTreeDatabase db)
+    {
+        var state = CreateDemoState(teamId);
+        // Keep the authored IDs/order rather than buying every future catalogue
+        // entry. CN's EV IDs are required by its L2 upgrade prerequisites.
+        string[] commons = teamId == TeamId.CN
+            ? new[]
+            {
+                "cn-ev-l1-heat-pump",
+                "cn-ev-l1-pmsm",
+                "cn-ev-l1-torque-vector",
+                "cn-ev-l1-solid-state"
+            }
+            : new[]
+            {
+                "common-l1-heat-coating",
+                "common-l1-lightweight-chassis",
+                "common-l1-track-memory",
+                "common-l1-expanded-tank"
+            };
+        foreach (string id in commons)
+            UnlockNode(state, id, db);
+
+        var uniques = db.GetUniqueInTier(teamId, TechTreeTier.L1);
+        if (uniques.Count > 0)
+            UnlockNode(state, uniques[0].id, db);
+
+        ActivateAllUnlocked(state);
+        return state;
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // Modifier Computation
     // ═══════════════════════════════════════════════════════════════════
@@ -286,23 +350,33 @@ public static class TechTreeRules
         var m = TechModifiers.Default;
 
         // Collect all effects from active nodes.
-        foreach (var nodeId in state.activeNodeIds)
+        foreach (var node in EnumerateEffectiveNodes(state, db))
         {
-            var node = db.Get(nodeId);
-            if (node == null) continue;
-
             foreach (var effect in node.effects)
                 TryApplyModifierEffect(ref m, effect);
         }
 
-        // JP L2 Broth: add broth passive values to modifiers
-        if (m.hasBrothSelection && state.brothSelection != BrothType.None)
+        // JP L2 grants the chosen broth. JP L3 temporarily grants all four
+        // broths, including those not chosen at race start. Each broth's
+        // passive is unique and must not be counted twice.
+        bool selectedBrothActive = m.hasBrothSelection && state.brothSelection != BrothType.None;
+        if (selectedBrothActive)
         {
             var broth = BrothModifiers.FromBrothType(state.brothSelection);
             m.speedBonusStraight += broth.straightBonus;
             m.cornerLimitBonus += broth.cornerLimitBonus;
-            m.slipstreamRangeBonus += broth.slipstreamBonus;
+            m.slipstreamMovementBonus += broth.slipstreamBonus;
             // broth.cooldownPerTurn is handled separately in GetBrothCooldownPerTurn()
+        }
+
+        if (m.hasBankuruwase && state.bankuruwaseActive)
+        {
+            if (!selectedBrothActive || state.brothSelection != BrothType.Tonkotsu)
+                m.speedBonusStraight += BrothModifiers.FromBrothType(BrothType.Tonkotsu).straightBonus;
+            if (!selectedBrothActive || state.brothSelection != BrothType.Miso)
+                m.slipstreamMovementBonus += BrothModifiers.FromBrothType(BrothType.Miso).slipstreamBonus;
+            // Shoyu is a separate corner-limit source in RaceSession's
+            // stacking formula; Shio is resolved by GetBrothCooldownPerTurn().
         }
 
         return m;
@@ -353,14 +427,50 @@ public static class TechTreeRules
     public static bool HasEffect(TechTreeState state, TechTreeDatabase db, TechEffectType effectType)
     {
         if (state == null || db == null) return false;
-        foreach (var nodeId in state.activeNodeIds)
+        foreach (var node in EnumerateEffectiveNodes(state, db))
         {
-            var node = db.Get(nodeId);
-            if (node == null) continue;
             foreach (var e in node.effects)
                 if (e.type == effectType) return true;
         }
         return false;
+    }
+
+    // Resolve selected nodes once for both numeric and boolean queries. Ordinary
+    // profiles need no copied ID set; only virtual grants require deduplication.
+    // No cache: changes to the selection or track target apply on the next query.
+    // Virtual grants never mutate unlocks, RP or the saved active selection.
+    private static IEnumerable<TechNodeDef> EnumerateEffectiveNodes(TechTreeState state, TechTreeDatabase db)
+    {
+        bool canGrant = state.teamId == TeamId.UK && state.sunNeverSetsTarget.HasValue;
+        bool sunNeverSets = false;
+        foreach (var id in state.activeNodeIds)
+        {
+            var node = db.Get(id);
+            if (node == null) continue;
+            if (canGrant)
+                foreach (var effect in node.effects)
+                    if (effect.type == TechEffectType.SunNeverSets) sunNeverSets = true;
+            yield return node;
+        }
+        if (!sunNeverSets) yield break;
+
+        var ids = new HashSet<string>(state.activeNodeIds);
+        foreach (var node in GetSunNeverSetsTargetTechs(state, db))
+            if (ids.Add(node.id)) yield return node;
+    }
+
+    public static TeamId? ResolveSunNeverSetsTarget(string trackCountry)
+    {
+        switch ((trackCountry ?? "").Trim().ToUpperInvariant())
+        {
+            case "CN": return TeamId.CN;
+            case "DE": return TeamId.DE;
+            case "IT": return TeamId.IT;
+            case "US": return TeamId.US;
+            case "JP": return TeamId.JP;
+            // Home grants are already owned; handle the extra breakfast separately.
+            default: return null;
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -392,11 +502,7 @@ public static class TechTreeRules
     /// UK L3: Get the tech nodes granted by Sun Never Sets.
     /// Returns the target country's L2 and L3 unique techs.
     ///
-    /// IMPORTANT: The returned nodes are NOT automatically applied by ComputeModifiers().
-    /// The caller (MVPGameManager) must either inject these as virtual nodes or
-    /// manually merge their effects into the race loop (e.g., for CavallinoRampante,
-    /// call ApplyCavallinoRampante() at race end; for Wurstplatte, check the flag
-    /// at corner exit).
+    /// ComputeModifiers and HasEffect share these virtual grants without changing saves.
     /// </summary>
     public static List<TechNodeDef> GetSunNeverSetsTargetTechs(TechTreeState state, TechTreeDatabase db)
     {
@@ -414,7 +520,8 @@ public static class TechTreeRules
     /// <summary>UK L3: Check if home race (UK track) triggers extra FullEnglish.</summary>
     public static bool IsSunNeverSetsHomeBonus(string trackCountry)
     {
-        return string.Equals(trackCountry, "UK", StringComparison.OrdinalIgnoreCase);
+        return string.Equals(trackCountry, "UK", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(trackCountry, "GB", StringComparison.OrdinalIgnoreCase);
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -503,6 +610,12 @@ public static class TechTreeRules
         return string.Equals(trackCountry, "IT", StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>IT L3's second RP multiplier requires both the home circuit and an Italian driver.</summary>
+    public static bool IsCavallinoHomeRace(string trackCountry, TeamId driverTeam)
+    {
+        return driverTeam == TeamId.IT && IsCavallinoHomeRace(trackCountry);
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // US Unique Tech Logic
     // ═══════════════════════════════════════════════════════════════════
@@ -553,7 +666,8 @@ public static class TechTreeRules
         int passCount = landmarkIndex == 0
             ? ++state.landmark1PassCount
             : ++state.landmark2PassCount;
-        bool ultUsed = landmarkIndex == 0 ? state.landmark1UltUsed : state.landmark2UltUsed;
+        // Pass counts are per landmark, but the revival ultimate is once per race.
+        bool ultUsed = state.landmark1UltUsed || state.landmark2UltUsed;
 
         if (passCount <= 2)
         {
@@ -598,10 +712,13 @@ public static class TechTreeRules
     /// <summary>
     /// US L3: Use revival ultimate — convert hand heat to movement.
     /// Returns how many heat cards to convert (caller handles the actual conversion).
+    /// An empty hand does not spend the once-per-race opportunity.
     /// </summary>
     public static int UseMotherRoadUltimate(TechTreeState state, int landmarkIndex, int heatCardsInHand)
     {
-        if (state == null) return 0;
+        if (state == null || heatCardsInHand <= 0 ||
+            state.landmark1UltUsed || state.landmark2UltUsed)
+            return 0;
 
         if (landmarkIndex == 0)
             state.landmark1UltUsed = true;
@@ -700,10 +817,11 @@ public static class TechTreeRules
         state.brothSelection = broth;
     }
 
-    /// <summary>JP L2: Get cooldown per turn from Shio broth.</summary>
+    /// <summary>JP L2 Shio, or JP L3's temporary Shio passive, cools once per turn.</summary>
     public static int GetBrothCooldownPerTurn(TechTreeState state)
     {
-        return state.brothSelection == BrothType.Shio ? 1 : 0;
+        if (state == null) return 0;
+        return state.brothSelection == BrothType.Shio || state.bankuruwaseActive ? 1 : 0;
     }
 
     /// <summary>JP L2: Get the active broth modifiers.</summary>
@@ -842,14 +960,21 @@ public static class TechTreeRules
     /// </summary>
     public static void SelectActiveNodes(TechTreeState state, IEnumerable<string> nodeIds, TechTreeDatabase db)
     {
-        state.activeNodeIds.Clear();
-        foreach (var id in nodeIds)
+        // Materialize before mutating the existing set: callers may pass the
+        // active set itself (or a lazy view over it) when saving a loadout.
+        var selected = new HashSet<string>();
+        if (nodeIds != null)
         {
-            if (state.IsUnlocked(id) || id.StartsWith("sun-never-sets-granted-"))
+            foreach (var id in nodeIds)
             {
-                state.activeNodeIds.Add(id);
+                if (!string.IsNullOrEmpty(id) &&
+                    (state.IsUnlocked(id) || id.StartsWith("sun-never-sets-granted-")))
+                    selected.Add(id);
             }
         }
+
+        state.activeNodeIds.Clear();
+        state.activeNodeIds.UnionWith(selected);
     }
 
     /// <summary>
@@ -867,14 +992,25 @@ public static class TechTreeRules
     /// <summary>
     /// Check if a position crosses a landmark going forward (clockwise).
     /// NOTE: Wrap-around detection only handles targetPos == 0 (start line).
-    /// If landmarks are ever placed at non-zero positions, generalize the wrap check.
+    /// Accepts both an unwrapped forward end (used by the race coordinator)
+    /// and the legacy wrapped end for crossing the start landmark.
     /// </summary>
     public static bool CrossedPositionForward(int oldPos, int newPos, int targetPos, int totalCells)
     {
-        if (oldPos <= targetPos && newPos >= targetPos) return true;
-        // Wrap-around case: crossing the origin (targetPos == 0) from end of track
-        if (oldPos > newPos && targetPos == 0) return true;
-        return false;
+        if (totalCells <= 0 || oldPos < 0 || oldPos >= totalCells ||
+            targetPos < 0 || targetPos >= totalCells || newPos < 0)
+            return false;
+
+        // Existing callers may supply a wrapped endpoint. Without movement
+        // length this is ambiguous for non-zero targets, so retain only the
+        // historical origin-crossing interpretation.
+        if (newPos < oldPos)
+            return targetPos == 0 && newPos < totalCells;
+
+        int distance = (targetPos - oldPos + totalCells) % totalCells;
+        if (distance == 0)
+            distance = totalCells;
+        return newPos - oldPos >= distance;
     }
 
     /// <summary>

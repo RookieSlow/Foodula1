@@ -189,29 +189,15 @@ public class HUDUI : MonoBehaviour
         RefreshDriverSkill(gm, player);
 
         if (lapText != null)
-            lapText.text = $"圈数: {player.lap}/{gm.Config.totalLaps}";
+            lapText.text = RaceHudTextRules.FormatLap(player, gm.Config.totalLaps);
 
         if (positionText != null)
-        {
-            if (allPlayers != null && allPlayers.Count > 0)
-            {
-                int rank = RaceRanking.GetCurrentRank(player, new System.Collections.Generic.List<PlayerState>(allPlayers));
-                positionText.text = $"{TrackPresentationRules.FormatCellPosition(player.position, gm.Track.TotalNodes)} | 排名: {rank}/{allPlayers.Count}";
-            }
-            else
-            {
-                positionText.text = TrackPresentationRules.FormatCellPosition(player.position, gm.Track.TotalNodes);
-            }
-        }
+            positionText.text = RaceHudTextRules.FormatPosition(
+                player, allPlayers, gm.Track.TotalNodes);
 
         if (aiStatusText != null && ai != null)
-        {
-            aiStatusText.text = ai.isBlown
-                ? "<color=red>AI: 爆缸!</color>"
-                : ai.hasFinished
-                    ? "<color=green>AI: 完赛!</color>"
-                    : $"AI: {TeamGearRules.GetDisplayName(ai.teamId, ai.gear)} | 引擎:{ai.deck.heatPool.remaining} | 圈{ai.lap} | 格{TrackPresentationRules.WrapNodeIndex(ai.position, gm.Track.TotalNodes) + 1}";
-        }
+            aiStatusText.text = RaceHudTextRules.FormatAiStatus(
+                ai, gm.Track != null ? gm.Track.TotalNodes : 0);
 
         // 天气显示
         if (weatherText != null)
@@ -224,7 +210,8 @@ public class HUDUI : MonoBehaviour
 
         // 多车排行榜
         if (standingsText != null && allPlayers != null && allPlayers.Count > 1)
-            standingsText.text = FormatStandings(allPlayers, player);
+            standingsText.text = RaceHudTextRules.FormatStandings(
+                allPlayers, player, gm.Track != null ? gm.Track.TotalNodes : 0);
     }
 
     /// <summary>Immediately refreshes the local player's gear and heat resources.</summary>
@@ -236,7 +223,7 @@ public class HUDUI : MonoBehaviour
         // instance lost the private serialized field during prefab rebuild.
         // The gauge is a live view of the player's deck, not a static label.
         EnsurePresentation();
-        HeatGaugeState gauge = HeatGaugeRules.Evaluate(player.deck);
+        HeatGaugeState gauge = HeatGaugeRules.Evaluate(player.deck, player.playedSpeedCardsThisTurn);
 
         if (gearText != null)
             gearText.text = $"档位: {TeamGearRules.GetDisplayName(player.teamId, player.gear)}";
@@ -255,7 +242,7 @@ public class HUDUI : MonoBehaviour
                 + $"手{handHeat} 抽{drawHeat} 弃{discardHeat}{tempInfo}{spinInfo}";
         }
 
-        heatThermometer?.Refresh(player.deck);
+        heatThermometer?.Refresh(player.deck, player.playedSpeedCardsThisTurn);
     }
 
     /// <summary>Builds the authored visual wrappers without changing button ownership.</summary>
@@ -312,11 +299,16 @@ public class HUDUI : MonoBehaviour
     /// <summary>Opens the return confirmation without changing any race state.</summary>
     public void ShowReturnToMenuConfirmation()
     {
+        RequestReturnToMenu(SceneLoader.LoadMainMenu);
+    }
+
+    private void RequestReturnToMenu(UnityEngine.Events.UnityAction loadMainMenu)
+    {
         RequestInRaceAction(
             InRaceConfirmationAction.ReturnToMenu,
             "返回主菜单",
             "确定要退出当前比赛并返回主菜单吗？\n当前比赛进度不会保存。",
-            () => SceneLoader.LoadMainMenu());
+            loadMainMenu);
     }
 
     /// <summary>Dismisses the modal and leaves the race untouched.</summary>
@@ -672,25 +664,6 @@ public class HUDUI : MonoBehaviour
             ? driverSkillLabel
             : driverSkillButton.GetComponentInChildren<TMP_Text>(true);
         if (target != null) target.text = label;
-    }
-
-    /// <summary>生成多车排行榜文本（含自己的标记）。</summary>
-    private string FormatStandings(System.Collections.Generic.IReadOnlyList<PlayerState> all, PlayerState self)
-    {
-        var rankings = RaceRanking.GetRankings(new System.Collections.Generic.List<PlayerState>(all));
-        var sb = new System.Text.StringBuilder();
-        foreach (var e in rankings)
-        {
-            string mark = e.player == self ? " ←你" : "";
-            int totalNodes = gameManager != null && gameManager.Track != null
-                ? gameManager.Track.TotalNodes
-                : 0;
-            string cell = totalNodes > 0
-                ? (TrackPresentationRules.WrapNodeIndex(e.player.position, totalNodes) + 1).ToString()
-                : "?";
-            sb.AppendLine($"{e.rank}. {e.player.name} 圈{e.player.lap} 格{cell}{mark}");
-        }
-        return sb.ToString();
     }
 
     public void SetStatus(string msg)

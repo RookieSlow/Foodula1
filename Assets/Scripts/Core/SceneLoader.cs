@@ -13,11 +13,18 @@ public static class SceneLoader
     /// <summary>加载主菜单场景。</summary>
     public static void LoadMainMenu()
     {
+        ReturnToMainMenu(LoadSceneInternal);
+    }
+
+    // Keep session cleanup ordered before scene I/O; the loader remains responsible
+    // for Build Settings validation and the actual transition.
+    private static void ReturnToMainMenu(System.Action<string> loadScene)
+    {
         Debug.Log("[SceneLoader] Loading MainMenu...");
         TutorialLaunchState.Clear();
         CareerRaceLaunchState.Clear();
         FreeRaceRosterState.Clear();
-        LoadSceneInternal(MAIN_MENU);
+        loadScene(MAIN_MENU);
     }
 
     /// <summary>加载比赛场景。</summary>

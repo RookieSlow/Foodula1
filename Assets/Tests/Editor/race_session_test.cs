@@ -34,6 +34,75 @@ public class RaceSessionTest
 
     // ===== Demo 科技状态 =====
 
+    [TestCase(TeamId.US, 3, true)]
+    [TestCase(TeamId.US, 4, false)]
+    [TestCase(TeamId.US, 24, true)]
+    [TestCase(TeamId.UK, 33, true)]
+    [TestCase(TeamId.UK, 34, false)]
+    [TestCase(TeamId.UK, 54, true)]
+    public void BBQSmokeUsesLeaderEndPositionAndCannotBeBypassed(TeamId leaderTeam, int start, bool blocked)
+    {
+        var session = CreateSession();
+        session.TeamVehicleBonusesEnabled = false;
+        var follower = AddRacer(session, "Follower", start - 1, TeamId.JP, false);
+        var leader = AddRacer(session, "Smoke", start, leaderTeam);
+        var distant = AddRacer(session, "Distant", start + 1, TeamId.IT);
+        follower.techState = new TechTreeState(TeamId.JP);
+        follower.slipstreamRangeBonusThisTurn = 1;
+        leader.techState = new TechTreeState(leaderTeam);
+        leader.techState.activeNodeIds.Add(leaderTeam == TeamId.UK ? "uk-l3-sun-never-sets" : "us-l2-smoked-bbq");
+        leader.techState.sunNeverSetsTarget = TeamId.US;
+        var settled = new Dictionary<PlayerState, int> { { follower, 2 }, { leader, 2 }, { distant, 2 } };
+        var chain = session.ComputeSlipstreamChain(follower, session.Players, 60, settled);
+        Assert.AreEqual(!blocked, chain.Triggered);
+        if (blocked) Assert.AreEqual(0, chain.TotalBonus);
+    }
+
+    [TestCase(1, 3)]
+    [TestCase(2, 0)]
+    public void MisoChangesSlipstreamMovementButNotEligibility(int gap, int expected)
+    {
+        var session = CreateSession();
+        session.TeamVehicleBonusesEnabled = false;
+        var follower = AddRacer(session, "Miso", 10, TeamId.JP, false);
+        var leader = AddRacer(session, "Leader", 10 + gap, TeamId.DE);
+        follower.techState = new TechTreeState(TeamId.JP);
+        follower.techState.activeNodeIds.Add("jp-l2-broth-selection");
+        follower.techState.brothSelection = BrothType.Miso;
+        follower.cornerTotalThisTurn = leader.cornerTotalThisTurn = 3;
+        Assert.AreEqual(expected, session.ComputeSlipstreamBonus(follower, session.Players, 60));
+    }
+
+    [Test]
+    public void BankuruwaseTemporaryBrothsReachMovementCornerAndSlipstreamResolution()
+    {
+        var session = CreateSession();
+        session.TeamVehicleBonusesEnabled = false;
+        var follower = AddRacer(session, "Rotor", 10, TeamId.JP, false);
+        var leader = AddRacer(session, "Leader", 11, TeamId.DE);
+        follower.techState = new TechTreeState(TeamId.JP);
+        follower.techState.activeNodeIds.Add("jp-l2-broth-selection");
+        follower.techState.activeNodeIds.Add("jp-l3-bankuruwase");
+        follower.techState.brothSelection = BrothType.Shio;
+        follower.cornerTotalThisTurn = leader.cornerTotalThisTurn = 3;
+
+        Assert.AreEqual(0, session.ComputeMovementBonus(follower, false));
+        Assert.AreEqual(BASE_LIMIT, session.EffectiveCornerLimit(follower, BASE_LIMIT));
+        Assert.AreEqual(2, session.ComputeSlipstreamBonus(follower, session.Players, 60));
+
+        TechTreeRules.ActivateBankuruwase(follower.techState);
+        Assert.AreEqual(1, session.ComputeMovementBonus(follower, false));
+        Assert.AreEqual(0, session.ComputeMovementBonus(follower, true));
+        Assert.AreEqual(BASE_LIMIT + 1, session.EffectiveCornerLimit(follower, BASE_LIMIT));
+        Assert.AreEqual(3, session.ComputeSlipstreamBonus(follower, session.Players, 60));
+
+        for (int turn = 0; turn < TechTreeRules.BANKURUWASE_DURATION; turn++)
+            TechTreeRules.TickBankuruwase(follower.techState);
+        Assert.AreEqual(0, session.ComputeMovementBonus(follower, false));
+        Assert.AreEqual(BASE_LIMIT, session.EffectiveCornerLimit(follower, BASE_LIMIT));
+        Assert.AreEqual(2, session.ComputeSlipstreamBonus(follower, session.Players, 60));
+    }
+
     [Test]
     public void test_sun_never_sets_applies_target_team_flags_through_shared_mapper()
     {
@@ -48,7 +117,64 @@ public class RaceSessionTest
         Assert.IsTrue(modifiers.hasSunNeverSets);
         Assert.IsTrue(modifiers.hasSmokedBBQ);
         Assert.IsTrue(modifiers.hasMotherRoad);
-        Assert.AreEqual(2, modifiers.EffectiveEngineCapacityBonus);
+        Assert.AreEqual(0, modifiers.EffectiveEngineCapacityBonus);
+        Assert.AreEqual(6, session.EffectiveHeatPoolSize(player, 6));
+        Assert.IsTrue(session.HasSmokedBBQAtPosition(player, 5, 60));
+        Assert.IsFalse(session.HasSmokedBBQAtPosition(player, 6, 60));
+    }
+
+    [TestCase(false, false, "UK", 0)]
+    [TestCase(true, false, "UK", 1)]
+    [TestCase(false, true, "UK", 1)]
+    [TestCase(true, true, "GB", 2)]
+    [TestCase(true, true, "DE", 1)]
+    public void FullEnglishOnDrawAppliesOnlySelectedTechAndUkHomeBonus(
+        bool hasL2, bool hasL3, string country, int expectedTriggers)
+    {
+        var session = CreateSession();
+        var player = CreatePlayer(session, TeamId.UK);
+        player.techState.activeNodeIds.Clear();
+        if (hasL2) player.techState.activeNodeIds.Add("uk-l2-full-english");
+        if (hasL3) player.techState.activeNodeIds.Add("uk-l3-sun-never-sets");
+        Assert.AreEqual(1, player.deck.DrawHeatFromPoolToHand(1));
+        player.deck.AddCardsToHand(new List<CardData>
+        {
+            new CardData(CardType.Speed, 1),
+            CardData.CreateTrick("uk-english-breakfast-tea")
+        });
+
+        Assert.AreEqual(expectedTriggers, session.ResolveFullEnglishOnDraw(player, country));
+        Assert.AreEqual(expectedTriggers, player.slipstreamRangeBonusThisTurn);
+        Assert.AreEqual(1 + expectedTriggers, player.deck.CountHeatInHand());
+        Assert.AreEqual(3 + expectedTriggers, player.deck.HandCount);
+    }
+
+    [Test]
+    public void FullEnglishOnDrawNeedsAllThreeOriginalCardTypesAndUkOwner()
+    {
+        var session = CreateSession();
+        var uk = CreatePlayer(session, TeamId.UK);
+        uk.techState.activeNodeIds.Clear();
+        uk.techState.activeNodeIds.Add("uk-l2-full-english");
+        uk.techState.activeNodeIds.Add("uk-l3-sun-never-sets");
+        uk.deck.AddCardsToHand(new List<CardData>
+        {
+            new CardData(CardType.Speed, 1), CardData.CreateTrick("uk-english-breakfast-tea")
+        });
+        Assert.AreEqual(0, session.ResolveFullEnglishOnDraw(uk, "UK"));
+        Assert.AreEqual(2, uk.deck.HandCount);
+
+        var foreign = CreatePlayer(session, TeamId.DE);
+        foreign.techState.activeNodeIds.Clear();
+        foreign.techState.activeNodeIds.Add("uk-l3-sun-never-sets");
+        Assert.AreEqual(1, foreign.deck.DrawHeatFromPoolToHand(1));
+        foreign.deck.AddCardsToHand(new List<CardData>
+        {
+            new CardData(CardType.Speed, 1),
+            CardData.CreateTrick("uk-english-breakfast-tea")
+        });
+        Assert.AreEqual(0, session.ResolveFullEnglishOnDraw(foreign, "UK"));
+        Assert.AreEqual(3, foreign.deck.HandCount);
     }
 
     [Test]
@@ -499,6 +625,52 @@ public class RaceSessionTest
     }
 
     [Test]
+    public void OverspeedHeatCombinesOneUseTechnologyWithVehiclePenaltyInRuntimeOrder()
+    {
+        var session = CreateSession();
+        var player = new PlayerState("US corner", false, 0, 1)
+        {
+            teamId = TeamId.US,
+            techState = new TechTreeState(TeamId.US)
+        };
+        player.techState.activeNodeIds.Add("common-l1-heat-coating");
+
+        Assert.AreEqual(3, session.ResolveOverspeedHeatCost(player, 3));
+        Assert.AreEqual(4, session.ResolveOverspeedHeatCost(player, 3));
+        session.OnNewLap(player);
+        Assert.AreEqual(3, session.ResolveOverspeedHeatCost(player, 3));
+    }
+
+    [Test]
+    public void OverspeedHeatFloorsTechnologyBeforeVehicleAndCanDisableVehicleBonuses()
+    {
+        var session = CreateSession();
+        var player = new PlayerState("US corner", false, 0, 1)
+        {
+            teamId = TeamId.US,
+            techState = new TechTreeState(TeamId.US)
+        };
+        player.techState.activeNodeIds.Add("common-l1-heat-coating");
+
+        Assert.AreEqual(2, session.ResolveOverspeedHeatCost(player, 1));
+        session.OnNewLap(player);
+        session.TeamVehicleBonusesEnabled = false;
+        Assert.AreEqual(1, session.ResolveOverspeedHeatCost(player, 1));
+    }
+
+    [Test]
+    public void OverspeedHeatAppliesDriverPassiveAfterTechnologyAndVehicle()
+    {
+        var session = CreateSession();
+        var player = new PlayerState("Ma corner", false, 0, 1) { teamId = TeamId.CN };
+        DriverCatalog.TryGet("cn_ma_qinghua", out DriverProfile driver);
+        player.driverSkill.Initialize(driver, 4, true);
+        player.driverSkill.BeginTurn();
+
+        Assert.AreEqual(0, session.ResolveOverspeedHeatCost(player, 1));
+    }
+
+    [Test]
     public void test_grill_spezial_cooldown_tracks_heat_paid()
     {
         var session = CreateSession();
@@ -548,6 +720,61 @@ public class RaceSessionTest
         Assert.IsTrue(chain.Triggered);
         Assert.AreEqual(RaceSession.SLIPSTREAM_BASE_BONUS, chain.TotalBonus);
         Assert.AreSame(leader, chain.Steps[0].Leader);
+    }
+
+    [Test]
+    public void SettledSlipstreamBatchUsesOnePositionSnapshotWithoutApplyingBonuses()
+    {
+        var session = CreateSession();
+        var rear = AddRacer(session, "Rear", 10, TeamId.CN, false);
+        var middle = AddRacer(session, "Middle", 11, TeamId.JP);
+        var front = AddRacer(session, "Front", 12, TeamId.DE);
+        rear.totalMovementThisTurn = 5;
+        middle.totalMovementThisTurn = 6;
+        front.totalMovementThisTurn = 7;
+        var order = new List<PlayerState> { rear, middle, front };
+
+        var chains = session.ComputeSettledSlipstreamChains(order, order, 60);
+
+        Assert.That(chains[rear].Triggered, Is.True);
+        Assert.That(chains[rear].Steps[0].Leader, Is.SameAs(middle));
+        Assert.That(chains[middle].Triggered, Is.True);
+        Assert.That(chains[middle].Steps[0].Leader, Is.SameAs(front));
+        Assert.That(rear.totalMovementThisTurn, Is.EqualTo(5));
+        Assert.That(middle.totalMovementThisTurn, Is.EqualTo(6));
+        Assert.That(front.totalMovementThisTurn, Is.EqualTo(7));
+    }
+
+    [Test]
+    public void SettledSlipstreamBatchPreservesSameCellArrivalOrder()
+    {
+        var session = CreateSession();
+        var first = AddRacer(session, "First", 9, TeamId.UK);
+        var later = AddRacer(session, "Later", 9, TeamId.CN, false);
+        first.totalMovementThisTurn = later.totalMovementThisTurn = 9;
+        var order = new List<PlayerState> { first, later };
+
+        var chains = session.ComputeSettledSlipstreamChains(order, order, 60);
+
+        Assert.That(chains[first].Triggered, Is.False);
+        Assert.That(chains[later].Triggered, Is.True);
+        Assert.That(chains[later].Steps[0].Leader, Is.SameAs(first));
+    }
+
+    [Test]
+    public void SettledSlipstreamBatchOnlyReturnsCallerEligibleFollowers()
+    {
+        var session = CreateSession();
+        var follower = AddRacer(session, "Follower", 10, TeamId.CN, false);
+        var leader = AddRacer(session, "Leader", 11, TeamId.UK);
+        var order = new List<PlayerState> { follower, leader };
+
+        var chains = session.ComputeSettledSlipstreamChains(
+            new List<PlayerState> { follower }, order, 60);
+
+        Assert.That(chains.Count, Is.EqualTo(1));
+        Assert.That(chains[follower].Steps[0].Leader, Is.SameAs(leader));
+        Assert.That(session.ComputeSettledSlipstreamChains(null, order, 60), Is.Empty);
     }
 
     [Test]
@@ -908,6 +1135,58 @@ public class RaceSessionTest
     }
 
     [Test]
+    public void test_crossed_landmark_unwrapped_forward_end_counts_each_landmark()
+    {
+        Assert.IsTrue(RaceSession.CrossedLandmark(58, 62, 0, 60));
+        Assert.IsFalse(RaceSession.CrossedLandmark(58, 62, 30, 60));
+        Assert.IsTrue(RaceSession.CrossedLandmark(58, 95, 30, 60));
+        Assert.IsFalse(RaceSession.CrossedLandmark(30, 30, 30, 60));
+        Assert.IsTrue(RaceSession.CrossedLandmark(30, 90, 30, 60));
+    }
+
+    [TestCase(0, 1)] [TestCase(5, 1)] [TestCase(9, 1)]
+    [TestCase(10, 0)] [TestCase(15, 0)] [TestCase(19, 0)]
+    public void test_first_landmark_ahead_follows_forward_route(int oldPosition, int firstIndex)
+    {
+        Assert.AreEqual(firstIndex, RaceSession.FirstLandmarkAhead(oldPosition, 20));
+    }
+
+    [TestCase(5, 9, new int[0])]
+    [TestCase(5, 10, new[] { 1 })]
+    [TestCase(18, 20, new[] { 0 })]
+    [TestCase(5, 20, new[] { 1, 0 })]
+    [TestCase(15, 30, new[] { 0, 1 })]
+    [TestCase(10, 30, new[] { 0, 1 })]
+    [TestCase(0, 20, new[] { 1, 0 })]
+    public void test_crossed_landmark_pass_plan_follows_physical_order(
+        int oldPosition, int rawEnd, int[] expected)
+    {
+        CollectionAssert.AreEqual(expected,
+            RaceSession.CrossedLandmarkIndicesInOrder(oldPosition, rawEnd, 20));
+    }
+
+    [TestCase(10, 10, 20)]
+    [TestCase(15, 14, 20)]
+    [TestCase(0, 20, 1)]
+    public void test_crossed_landmark_pass_plan_excludes_zero_reverse_and_degenerate_moves(
+        int oldPosition, int rawEnd, int totalCells)
+    {
+        Assert.IsEmpty(RaceSession.CrossedLandmarkIndicesInOrder(
+            oldPosition, rawEnd, totalCells));
+    }
+
+    [TestCase(5, 9, 0)]
+    [TestCase(5, 10, 1)]
+    [TestCase(18, 20, 1)]
+    [TestCase(5, 20, 2)]
+    [TestCase(15, 30, 2)]
+    public void test_drive_thru_counts_distinct_landmarks_crossed_by_base_move(
+        int oldPosition, int rawEnd, int expectedBonus)
+    {
+        Assert.AreEqual(expectedBonus, RaceSession.CountCrossedLandmarks(oldPosition, rawEnd, 20));
+    }
+
+    [Test]
     public void test_crossed_landmark_forward_only()
     {
         Assert.IsTrue(RaceSession.CrossedLandmark(20, 35, 30, 60));
@@ -920,5 +1199,180 @@ public class RaceSessionTest
         Assert.IsTrue(RaceSession.IsInBBQZone(4, 60));   // 靠近起点线
         Assert.IsTrue(RaceSession.IsInBBQZone(28, 60));  // 靠近中点
         Assert.IsFalse(RaceSession.IsInBBQZone(15, 60)); // 两者之间（> 5 格）
+    }
+}
+
+/// <summary>Shared BBQ eligibility: real map sizes, virtual grants and caller-owned timing.</summary>
+public sealed class BBQEligibilityBoundaryTests
+{
+    private static IEnumerable<TestCaseData> OfficialMapCases()
+    {
+        foreach (TrackSelectionOption track in OfficialTrackCatalog.Tracks)
+        {
+            yield return new TestCaseData(track.TrackId, TeamId.US);
+            yield return new TestCaseData(track.TrackId, TeamId.UK);
+        }
+    }
+
+    [TestCaseSource(nameof(OfficialMapCases))]
+    public void EveryOfficialMapCellMatchesCircularRadiusWithoutMutatingPlayer(string trackId, TeamId owner)
+    {
+        TrackConfig track = TrackDataLoader.LoadConfig(trackId);
+        Assert.That(track, Is.Not.Null);
+        int total = track.cells.Length;
+        var session = new RaceSession(new SystemRandomSource(7));
+        PlayerState player = CreateBBQPlayer(owner);
+        player.position = 0;
+        player.deck.heatPool = new HeatPool(8);
+        player.deck.DrawHeatFromPoolToHand(2);
+        player.totalMovementThisTurn = 17;
+        for (int position = 0; position < total; position++)
+        {
+            int originDistance = System.Math.Min(position, total - position);
+            int midpointDistance = System.Math.Abs(position - total / 2);
+            midpointDistance = System.Math.Min(midpointDistance, total - midpointDistance);
+            bool expected = originDistance <= 5 || midpointDistance <= 5;
+            Assert.AreEqual(expected, session.HasSmokedBBQAtPosition(player, position, total),
+                trackId + " cell " + position);
+        }
+        Assert.AreEqual(0, player.position);
+        Assert.AreEqual(17, player.totalMovementThisTurn);
+        Assert.AreEqual(2, player.deck.CountHeatInHand());
+        Assert.AreEqual(6, player.deck.heatPool.remaining);
+        Assert.AreEqual(77, player.techState.rpBalance);
+        Assert.That(player.techState.unlockedNodeIds, Is.Empty);
+        CollectionAssert.AreEqual(new[] { owner == TeamId.US ? "us-l2-smoked-bbq" : "uk-l3-sun-never-sets" },
+            player.techState.activeNodeIds);
+    }
+
+    [TestCase(TeamId.US)]
+    [TestCase(TeamId.UK)]
+    public void PositionAndTechnologyAreReadLiveWithoutCachedBenefits(TeamId owner)
+    {
+        var session = new RaceSession(new SystemRandomSource(7));
+        PlayerState player = CreateBBQPlayer(owner);
+        player.position = 15;
+        Assert.IsTrue(session.HasSmokedBBQAtPosition(player, 5, 60));
+        Assert.IsFalse(session.HasSmokedBBQAtPosition(player, 6, 60));
+        player.position = 0;
+        Assert.IsFalse(session.HasSmokedBBQAtPosition(player, 15, 60));
+        if (owner == TeamId.UK)
+        {
+            player.techState.sunNeverSetsTarget = TeamId.IT;
+            Assert.IsFalse(session.HasSmokedBBQAtPosition(player, 0, 60));
+            player.techState.sunNeverSetsTarget = TeamId.US;
+        }
+        player.techState.activeNodeIds.Clear();
+        Assert.IsFalse(session.HasSmokedBBQAtPosition(player, 0, 60));
+        player.techState.activeNodeIds.Add(owner == TeamId.US ? "us-l2-smoked-bbq" : "uk-l3-sun-never-sets");
+        Assert.IsTrue(session.HasSmokedBBQAtPosition(player, 0, 60));
+    }
+
+    [TestCase(8)]
+    [TestCase(10)]
+    [TestCase(20)]
+    public void OverlappingZonesStillHaveOneBooleanEligibility(int total)
+    {
+        var session = new RaceSession(new SystemRandomSource(7));
+        PlayerState player = CreateBBQPlayer(TeamId.US);
+        for (int position = 0; position < total; position++)
+            Assert.IsTrue(session.HasSmokedBBQAtPosition(player, position, total));
+        Assert.AreEqual(77, player.techState.rpBalance);
+    }
+
+    [Test]
+    public void NoTechnologyOrNoPlayerCannotReceiveBBQ()
+    {
+        var session = new RaceSession(new SystemRandomSource(7));
+        PlayerState player = CreateBBQPlayer(TeamId.US);
+        player.techState = null;
+        Assert.IsFalse(session.HasSmokedBBQAtPosition(player, 0, 60));
+        Assert.IsFalse(session.HasSmokedBBQAtPosition(null, 0, 60));
+        player.techState = new TechTreeState(TeamId.US);
+        player.techState.activeNodeIds.Add("us-l1-drive-thru");
+        Assert.IsFalse(session.HasSmokedBBQAtPosition(player, 0, 60));
+    }
+
+    [TestCase(TeamId.US, 6, 0, false)]
+    [TestCase(TeamId.US, 6, -1, true)]
+    [TestCase(TeamId.US, 5, 0, true)]
+    [TestCase(TeamId.US, 5, 1, false)]
+    [TestCase(TeamId.US, 54, 0, false)]
+    [TestCase(TeamId.US, 54, 1, true)]
+    [TestCase(TeamId.UK, 6, 0, false)]
+    [TestCase(TeamId.UK, 6, -1, true)]
+    [TestCase(TeamId.UK, 5, 0, true)]
+    [TestCase(TeamId.UK, 5, 1, false)]
+    [TestCase(TeamId.UK, 54, 0, false)]
+    [TestCase(TeamId.UK, 54, 1, true)]
+    public void SmokeUsesCallerEndpointWithoutGivingLeaderBonus(TeamId owner, int start, int movement, bool blocked)
+    {
+        var session = new RaceSession(new SystemRandomSource(7));
+        session.TeamVehicleBonusesEnabled = false;
+        PlayerState leader = CreateBBQPlayer(owner);
+        leader.position = start;
+        int end = start + movement;
+        var follower = new PlayerState("Follower", false, end - 1, 1) { teamId = TeamId.DE };
+        session.Players.Add(follower);
+        session.Players.Add(leader);
+        var planned = new Dictionary<PlayerState, int> { { leader, movement }, { follower, 0 } };
+        SlipstreamChainResult result = session.ComputeSlipstreamChain(follower, session.Players, 60, planned);
+        Assert.AreEqual(!blocked, result.Triggered);
+        Assert.AreEqual(blocked ? 0 : 2, result.TotalBonus);
+        Assert.IsFalse(session.ComputeSlipstreamChain(leader, session.Players, 60, planned).Triggered);
+        Assert.AreEqual(start, leader.position);
+        Assert.AreEqual(0, leader.totalMovementThisTurn);
+    }
+
+    [TestCase(TeamId.US)]
+    [TestCase(TeamId.UK)]
+    public void RegionalCapacitySyncUsesLivePositionAndDoesNotStack(TeamId owner)
+    {
+        var session = new RaceSession(new SystemRandomSource(7));
+        PlayerState player = CreateBBQPlayer(owner);
+        player.deck.heatPool = new HeatPool(5);
+
+        session.SyncRegionalHeatCapacity(player, 60);
+        session.SyncRegionalHeatCapacity(player, 60);
+        Assert.AreEqual(2, player.deck.RegionalCapacityBonus);
+        Assert.AreEqual(7, player.deck.heatPool.remaining);
+
+        player.position = 6;
+        session.SyncRegionalHeatCapacity(player, 60);
+        Assert.AreEqual(0, player.deck.RegionalCapacityBonus);
+        Assert.AreEqual(5, player.deck.heatPool.remaining);
+
+        player.position = 30;
+        session.SyncRegionalHeatCapacity(player, 60);
+        Assert.AreEqual(2, player.deck.RegionalCapacityBonus);
+        Assert.AreEqual(7, player.deck.heatPool.remaining);
+
+        session.SyncRegionalHeatCapacity(player, 60, false);
+        Assert.AreEqual(0, player.deck.RegionalCapacityBonus);
+        Assert.AreEqual(5, player.deck.heatPool.remaining);
+    }
+
+    [Test]
+    public void RegionalCapacitySyncIgnoresMissingEngineAndInvalidTrack()
+    {
+        var session = new RaceSession(new SystemRandomSource(7));
+        PlayerState player = CreateBBQPlayer(TeamId.US);
+        session.SyncRegionalHeatCapacity(null, 60);
+        session.SyncRegionalHeatCapacity(player, 60);
+        player.deck.heatPool = new HeatPool(5);
+        session.SyncRegionalHeatCapacity(player, 0);
+        Assert.AreEqual(0, player.deck.RegionalCapacityBonus);
+        Assert.AreEqual(5, player.deck.heatPool.remaining);
+    }
+
+    private static PlayerState CreateBBQPlayer(TeamId owner)
+    {
+        var player = new PlayerState("BBQ", true, 0, 1)
+        {
+            teamId = owner, techState = new TechTreeState(owner, 77)
+        };
+        player.techState.activeNodeIds.Add(owner == TeamId.US ? "us-l2-smoked-bbq" : "uk-l3-sun-never-sets");
+        if (owner == TeamId.UK) player.techState.sunNeverSetsTarget = TeamId.US;
+        return player;
     }
 }

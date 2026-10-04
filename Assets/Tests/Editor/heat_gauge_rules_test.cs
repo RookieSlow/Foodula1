@@ -6,6 +6,66 @@ using UnityEngine;
 public class HeatGaugeRulesTests
 {
     [Test]
+    public void ExpiredRegionalHeatDoesNotInflateCapacityGauge()
+    {
+        CardDeck deck = CreateHeatOnlyDeck(6);
+        deck.SetRegionalCapacityBonus(2);
+        Assert.AreEqual(8, HeatGaugeRules.Evaluate(deck).Capacity);
+        Assert.AreEqual(8, deck.DrawHeatFromPoolToHand(8));
+        deck.SetRegionalCapacityBonus(0);
+        HeatGaugeState expired = HeatGaugeRules.Evaluate(deck);
+        Assert.AreEqual(6, expired.Capacity);
+        Assert.AreEqual(2, deck.RegionalHeatPendingRetirement);
+        Assert.AreEqual(3, deck.CoolHeat(3));
+        Assert.AreEqual(1, deck.heatPool.remaining);
+        Assert.AreEqual(0, deck.RegionalHeatPendingRetirement);
+        Assert.AreEqual(6, HeatGaugeRules.Evaluate(deck).Capacity);
+    }
+
+    [Test]
+    public void GaugeIncludesCommittedHeatWithoutChangingItsCardType()
+    {
+        CardDeck deck = CreateHeatOnlyDeck(6);
+        deck.SetRegionalCapacityBonus(2);
+        deck.DrawHeatFromPoolToHand(1);
+        CardData heat = deck.Hand[0];
+        deck.RemoveFromHand(new List<CardData> { heat });
+        HeatGaugeState active = HeatGaugeRules.Evaluate(deck, new[] { heat });
+        Assert.AreEqual(8, active.Capacity);
+        Assert.AreEqual(1, active.PermanentHeat);
+        deck.SetRegionalCapacityBonus(0);
+        HeatGaugeState outside = HeatGaugeRules.Evaluate(deck, new[] { heat });
+        Assert.AreEqual(6, outside.Capacity);
+        Assert.AreEqual(1, outside.PermanentHeat);
+        Assert.IsTrue(heat.IsHeat);
+        Assert.AreEqual(0, heat.value);
+        deck.DiscardPlayedSpeedCards(new List<CardData> { heat });
+        HeatGaugeState retired = HeatGaugeRules.Evaluate(deck, new[] { heat, heat });
+        Assert.AreEqual(6, retired.Capacity);
+        Assert.AreEqual(1, retired.PermanentHeat,
+            "A committed reference still held during cleanup must not count again after discard.");
+    }
+
+    [Test]
+    public void RegionalCapacityReentryReactivatesOutstandingHeatWithoutStacking()
+    {
+        CardDeck deck = CreateHeatOnlyDeck(6);
+        deck.SetRegionalCapacityBonus(2);
+        Assert.AreEqual(8, deck.DrawHeatFromPoolToHand(8));
+        deck.SetRegionalCapacityBonus(0);
+        Assert.AreEqual(2, deck.RegionalHeatPendingRetirement);
+        deck.SetRegionalCapacityBonus(2);
+        deck.SetRegionalCapacityBonus(2);
+        Assert.AreEqual(0, deck.RegionalHeatPendingRetirement);
+        Assert.AreEqual(0, deck.heatPool.remaining);
+        Assert.AreEqual(2, deck.CoolHeat(2));
+        Assert.AreEqual(2, deck.heatPool.remaining);
+        deck.SetRegionalCapacityBonus(0);
+        Assert.AreEqual(0, deck.heatPool.remaining);
+        Assert.AreEqual(6, HeatGaugeRules.Evaluate(deck).Capacity);
+    }
+
+    [Test]
     public void GaugeCountsEveryZoneButTemporaryHeatDoesNotIncreaseCapacity()
     {
         CardDeck deck = CreateDeck(10);
@@ -108,5 +168,12 @@ public class HeatGaugeRulesTests
         deck.InitializeDeck(config, new HeatPool(poolSize), new SystemRandomSource(17));
         Object.DestroyImmediate(config);
         return deck;
+    }
+
+    // Keeps the regional capacity lifecycle tests runnable without scene or
+    // ScriptableObject setup; they exercise the same CardDeck and gauge rules.
+    private static CardDeck CreateHeatOnlyDeck(int poolSize)
+    {
+        return new CardDeck { heatPool = new HeatPool(poolSize) };
     }
 }

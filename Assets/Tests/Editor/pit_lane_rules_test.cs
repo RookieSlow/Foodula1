@@ -109,6 +109,58 @@ public class PitLaneRulesTests
     // ═══════════════════════════════════════════════════════════════════
 
     [Test]
+    public void entry_crossing_turns_a_healthy_reservation_into_next_turn_stop()
+    {
+        var player = new PlayerState("Test", false, 9, 1);
+        player.pitStopRequested = true;
+        player.pitChoiceResolvedThisLap = true;
+
+        Assert.That(PitLaneRules.ApplyEntryCrossingReservation(player), Is.True);
+        Assert.That(player.pitStopRequested, Is.False);
+        Assert.That(player.pitStopScheduled, Is.True);
+        Assert.That(player.pitChoiceResolvedThisLap, Is.True);
+        Assert.That(player.position, Is.EqualTo(9));
+    }
+
+    [Test]
+    public void entry_crossing_does_not_reverse_an_existing_stop()
+    {
+        var player = new PlayerState("Test", false, 9, 1);
+        player.pitStopScheduled = true;
+        player.pitStopRequested = true;
+        player.pitChoiceResolvedThisLap = true;
+
+        Assert.That(PitLaneRules.ApplyEntryCrossingReservation(player), Is.False);
+        Assert.That(player.pitStopScheduled, Is.True);
+        Assert.That(player.pitStopRequested, Is.True);
+        Assert.That(player.pitChoiceResolvedThisLap, Is.True);
+    }
+
+    [TestCase(false, false)]
+    [TestCase(true, false)]
+    [TestCase(false, true)]
+    public void entry_crossing_without_eligible_reservation_reopens_next_lap_choice(
+        bool isBlown, bool hasFinished)
+    {
+        var player = new PlayerState("Test", false, 9, 1);
+        player.pitStopRequested = !isBlown && !hasFinished ? false : true;
+        player.pitChoiceResolvedThisLap = true;
+        player.isBlown = isBlown;
+        player.hasFinished = hasFinished;
+
+        Assert.That(PitLaneRules.ApplyEntryCrossingReservation(player), Is.False);
+        Assert.That(player.pitStopRequested, Is.False);
+        Assert.That(player.pitStopScheduled, Is.False);
+        Assert.That(player.pitChoiceResolvedThisLap, Is.False);
+    }
+
+    [Test]
+    public void entry_crossing_ignores_missing_player()
+    {
+        Assert.That(PitLaneRules.ApplyEntryCrossingReservation(null), Is.False);
+    }
+
+    [Test]
     public void test_can_enter_pit()
     {
         var nodes = BuildTrackWithPit();

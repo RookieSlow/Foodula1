@@ -72,6 +72,14 @@ public class MVPGameManager : MonoBehaviour
     private readonly RacePhaseState phaseState = new RacePhaseState();
     private RaceTestLogWriter raceLogWriter;
     private int raceTurnNumber;
+    // Storage/display defaults stay at the coordinator boundary; startup/coroutine
+    // regressions replace these dependencies without touching player profiles or resolution.
+    private System.Action<TechTreeState> saveRaceTechState = TechTreeProfileStore.Save;
+    private System.Action<string, int> saveRaceDriverXp = DriverProgressStore.Save;
+    private System.Func<CareerRepository> createRaceCareerRepository = CareerRuntimeRepository.CreateDefault;
+    private System.Action prepareRaceDisplay = GameSettingsRuntime.EnsureLoadedAndApplyDisplay;
+    private System.Func<string, int> loadRaceDriverXp = DriverProgressStore.Load;
+    private System.Func<TeamId, TechTreeDatabase, TechTreeState> loadRaceTechProfile = TechTreeProfileStore.GetOrCreate;
 
     private List<GameObject> carInstances = new List<GameObject>();
     private List<int> laneIndices = new List<int>();
@@ -233,12 +241,12 @@ public class MVPGameManager : MonoBehaviour
     {
         presentationSkipState.End();
         if (raceLogWriter != null && raceLogWriter.IsActive)
-            raceLogWriter.End("scene destroyed");
+            raceLogWriter.End("scene destroyed", RaceLogTermination.SceneDestroyed);
     }
 
     void Start()
     {
-        GameSettingsRuntime.EnsureLoadedAndApplyDisplay();
+        prepareRaceDisplay();
         // 自动创建默认配置
         if (config == null)
         {
@@ -764,10 +772,10 @@ public class MVPGameManager : MonoBehaviour
 
     // ====== 初始化 ======
 
-    private void InitializeGame()
+    // Reused by initial entry and ResetRaceRuntime. Keep mode activation separate
+    // from scene/participant setup so retries cannot inherit prior result flags.
+    private void ActivateRaceLaunchState()
     {
-        int startFinishNodeIndex = trackManager.StartFinishNodeIndex;
-
         tutorialScenario = TutorialLaunchState.ActivateRequested();
         careerRaceLaunch = tutorialScenario == null
             ? CareerRaceLaunchState.ActivateRequested()
@@ -777,6 +785,13 @@ public class MVPGameManager : MonoBehaviour
         careerResultRecorded = false;
         careerInitializationFailure = string.Empty;
         freeRaceRoster = null;
+    }
+
+    private void InitializeGame()
+    {
+        int startFinishNodeIndex = trackManager.StartFinishNodeIndex;
+
+        ActivateRaceLaunchState();
         if (careerRaceLaunch != null && !ValidateCareerRaceLaunch(out careerInitializationFailure))
             return;
         if (tutorialScenario == null && careerRaceLaunch == null &&
@@ -795,7 +810,7 @@ public class MVPGameManager : MonoBehaviour
             quickRaceDriver,
             config.aiTeams,
             config.aiOpponentCount,
-            DriverProgressStore.Load);
+            loadRaceDriverXp);
         tutorialDirector = tutorialScenario != null
             ? new TutorialRuntimeDirector(tutorialScenario, initializeTutorialInPractice)
             : null;
@@ -825,39 +840,14 @@ public class MVPGameManager : MonoBehaviour
         // 人类玩家（Players[0]）
         RaceParticipantPlan humanPlan = participantPlans[0];
         DriverProfile humanDriver = humanPlan.Driver;
-        var human = new PlayerState(
-            humanPlan.Name, false, startFinishNodeIndex, config.minGear);
-        human.driverId = humanDriver.Id;
-        human.driverXp = humanPlan.InitialXp;
-        SetupPlayerForRace(
-            human,
-            humanPlan.Team,
-            humanPlan.CareerTechSnapshot);
-        session.Players.Add(human);
-        human.driverSkill.Initialize(
-            humanDriver,
-            human.DriverLevel,
-            tutorialScenario == null);
+        PlayerState human = CreateParticipantForRace(humanPlan, startFinishNodeIndex);
 
         // AI 对手
         for (int i = 0; i < participantPlans.Count - 1; i++)
         {
             RaceParticipantPlan aiPlan = participantPlans[i + 1];
-            var aiState = new PlayerState(
-                aiPlan.Name, true, startFinishNodeIndex, config.minGear);
-            aiState.driverId = aiPlan.Driver.Id;
-            aiState.driverXp = aiPlan.InitialXp;
-            SetupPlayerForRace(aiState, aiPlan.Team);
-            aiState.driverSkill.Initialize(aiPlan.Driver, aiState.DriverLevel, false);
-            session.Players.Add(aiState);
-            var ctrl = gameObject.AddComponent<AIController>();
-            ctrl.Initialize(
-                this,
-                aiState,
-                tutorialScenario != null
-                    ? new SystemRandomSource(TutorialScenarioDefinition.RuntimeSeed + i + 1)
-                    : null);
-            aiControllers[aiState] = ctrl;
+            PlayerState aiState = CreateParticipantForRace(aiPlan, startFinishNodeIndex);
+            BindAiControllerForRace(aiState, i);
         }
 
         SpawnCars();
@@ -1359,6 +1349,12 @@ public class MVPGameManager : MonoBehaviour
 
     public void ExitTutorialToMainMenu()
     {
+        ExitTutorialRuntime(SceneLoader.LoadMainMenu);
+    }
+
+    // Close evidence before navigation; keep scene I/O at the public entry point.
+    private void ExitTutorialRuntime(System.Action loadMainMenu)
+    {
         if (tutorialDirector != null)
         {
             tutorialDirector.ExitTutorial();
@@ -1368,8 +1364,8 @@ public class MVPGameManager : MonoBehaviour
 
         StopAllCoroutines();
         if (raceLogWriter != null && raceLogWriter.IsActive)
-            raceLogWriter.End("tutorial exited without normal rewards");
-        SceneLoader.LoadMainMenu();
+            raceLogWriter.End("tutorial exited without normal rewards", RaceLogTermination.Exited);
+        loadMainMenu();
     }
 
     private void BeginRaceTestLog(DriverProfile humanDriver, PlayerState human)
@@ -1377,73 +1373,25 @@ public class MVPGameManager : MonoBehaviour
         if (raceLogWriter == null)
             raceLogWriter = new RaceTestLogWriter();
         else if (raceLogWriter.IsActive)
-            raceLogWriter.End("race reset");
+            raceLogWriter.End("race reset", RaceLogTermination.Restarted);
 
         // The menu selection is resolved by TrackManager before the race
         // starts.  The config asset can still contain its default track ID, so
         // log the track that was actually loaded rather than the asset value.
-        string trackId = trackManager != null
-            ? trackManager.TrackId
-            : (config != null ? TrackSelectionState.ResolveTrackId(config.trackId) : "");
-        string trackName = trackManager != null && trackManager.LoadedTrackConfig != null
-            ? trackManager.LoadedTrackConfig.trackName
-            : trackId;
-        raceLogWriter.BeginRace(trackId, trackName, human.name, human.teamId, session.Players.Count - 1);
-        if (tutorialScenario != null)
-        {
-            raceLogWriter.Append(
-                $"[TUTORIAL_SETUP] event=runtime_ready scenario={tutorialScenario.id} " +
-                $"phase={tutorialDirector.Phase}");
-            raceLogWriter.Append(
-                $"[TUTORIAL_SETUP] event=exact_deck_loaded " +
-                $"count={tutorialScenario.exactDrawOrder.Count} opening={tutorialScenario.openingHandSize}");
-            raceLogWriter.Append(
-                $"[TUTORIAL_SETUP] event=weather_script_ready " +
-                $"start={tutorialScenario.guidedStartWeatherId} practice={tutorialScenario.practiceWeatherId}");
-            raceLogWriter.Append(
-                $"[TUTORIAL_SETUP] event=player_checkpoints_ready " +
-                $"count={tutorialScenario.playerCheckpoints.Count} exact_zones=true");
-            if (tutorialScenario.tutorialPitLane != null)
-            {
-                raceLogWriter.Append(
-                    $"[TUTORIAL_SETUP] event=virtual_pit_ready " +
-                    $"entry={tutorialScenario.tutorialPitLane.entryCell} " +
-                    $"exit={tutorialScenario.tutorialPitLane.exitCell} official_track_mutated=false");
-            }
-            TutorialOpponentCue cue = tutorialScenario.opponentScript.Count > 0
-                ? tutorialScenario.opponentScript[0]
-                : null;
-            if (cue != null)
-            {
-                raceLogWriter.Append(
-                    $"[TUTORIAL_SETUP] event=opponent_script_ready step={cue.step} " +
-                    $"leader={cue.leaderCell} player={cue.playerCell} distance={cue.expectedSlipstreamDistance}");
-            }
-        }
-        else if (careerRaceLaunch != null)
-        {
-            raceLogWriter.Append(
-                $"[CAREER_SETUP] result_id={careerRaceLaunch.ResultId} " +
-                $"race={careerRaceLaunch.RaceIndex + 1}/{CareerModeRules.RaceCount} " +
-                $"track={careerRaceLaunch.TrackId} team={careerRaceLaunch.PlayerTeam} " +
-                $"competitors={careerRaceLaunch.Competitors.Count} tech_snapshot=true");
-        }
-        else if (freeRaceRoster != null)
-        {
-            string rosterText = string.Empty;
-            for (int i = 0; i < freeRaceRoster.Length; i++)
-            {
-                if (i > 0) rosterText += ",";
-                FreeRaceRosterEntry entry = freeRaceRoster[i];
-                DriverCatalog.TryGet(entry.DriverId, out DriverProfile driver);
-                rosterText += $"{entry.TeamId}:{driver?.ShortName ?? entry.DriverId}";
-            }
-
-            raceLogWriter.Append(
-                $"[FREE_RACE_SETUP] field={freeRaceRoster.Length} " +
-                $"player={freeRaceRoster[0].TeamId}:{freeRaceRoster[0].DriverId} " +
-                $"roster=[{rosterText}]");
-        }
+        RaceLogStartupRules.TrackIdentity track = RaceLogStartupRules.ResolveTrack(
+            trackManager != null,
+            trackManager != null ? trackManager.TrackId : null,
+            trackManager != null && trackManager.LoadedTrackConfig != null,
+            trackManager != null && trackManager.LoadedTrackConfig != null
+                ? trackManager.LoadedTrackConfig.trackName : null,
+            trackManager == null && config != null
+                ? TrackSelectionState.ResolveTrackId(config.trackId) : "");
+        raceLogWriter.BeginRace(track.Id, track.Name, human.name, human.teamId, session.Players.Count - 1);
+        foreach (string line in RaceLogStartupRules.BuildSetupLines(
+            tutorialScenario,
+            tutorialScenario != null ? tutorialDirector.Phase : default,
+            careerRaceLaunch, freeRaceRoster))
+            raceLogWriter.Append(line);
         if (hudUI != null)
             hudUI.SetLogSink(raceLogWriter.Append);
         Debug.Log($"[RaceTestLog] Started: {raceLogWriter.FilePath}");
@@ -1471,78 +1419,57 @@ public class MVPGameManager : MonoBehaviour
         raceLogWriter.Append(RaceStateLogFormatter.BuildPlayedCards(player, source));
     }
 
-    /// <summary>
-    /// 单个玩家的比赛初始化：车队分配、科技树、独立引擎热量池，以及速度/特技普通牌组。
-    /// </summary>
+    /// <summary>Creates and registers one participant from its resolved launch plan.</summary>
+    // Do not load launch state or progression again here.
+    // Scene objects, AI controllers and race-loop scheduling stay in InitializeGame.
+    private PlayerState CreateParticipantForRace(RaceParticipantPlan plan, int startPosition)
+    {
+        var player = new PlayerState(plan.Name, !plan.IsHuman, startPosition, config.minGear);
+        player.driverId = plan.Driver.Id;
+        player.driverXp = plan.InitialXp;
+        SetupPlayerForRace(player, plan.Team, plan.CareerTechSnapshot);
+
+        // Preserve the original registration order on each role's setup path.
+        if (plan.IsHuman) session.Players.Add(player);
+        player.driverSkill.Initialize(
+            plan.Driver, player.DriverLevel, plan.IsHuman && tutorialScenario == null);
+        if (!plan.IsHuman) session.Players.Add(player);
+        return player;
+    }
+
+    /// <summary>Binds one scene controller to an already registered opponent.</summary>
+    private AIController BindAiControllerForRace(PlayerState opponent, int opponentIndex)
+    {
+        var controller = gameObject.AddComponent<AIController>();
+        controller.Initialize(
+            this,
+            opponent,
+            tutorialScenario != null
+                ? new SystemRandomSource(TutorialScenarioDefinition.RuntimeSeed + opponentIndex + 1)
+                : null);
+        aiControllers[opponent] = controller;
+        return controller;
+    }
+
+    /// <summary>单个玩家的车队、科技、热量池与普通牌组初始化。</summary>
     private void SetupPlayerForRace(
         PlayerState p,
         TeamId teamId,
         CareerTechSnapshot careerTechSnapshot = null)
     {
-        p.teamId = teamId;
-        p.usesChinaGearSystem = teamId == TeamId.CN;
-        int poolSize = tutorialScenario != null
-            ? tutorialScenario.engineHeatCapacity
-            : TeamVehicleRules.GetBaseHeatPoolSize(teamId, config.heatPoolPerPlayer);
-
-        if (tutorialScenario != null)
-        {
-            p.techState = null;
-        }
-        else if (careerTechSnapshot != null)
-        {
-            if (!CareerTechSnapshotMapper.TryCreateRuntimeState(
-                    careerTechSnapshot, session.TechDb, out TechTreeState careerTechState))
+        int poolSize = RaceParticipantTechnologySetup.Prepare(
+            p, teamId, tutorialScenario, careerTechSnapshot,
+            config.enableTechTree, config.heatPoolPerPlayer, config.jpDemoBroth,
+            session, trackManager?.LoadedTrackConfig?.country,
+            team => loadRaceTechProfile(team, session.TechDb),
+            () =>
             {
                 Debug.LogError("[CAREER] Invalid technology snapshot; career race has no active technology.");
-                p.techState = null;
                 careerInitializationFailure = "科技快照无法映射到当前科技数据库";
-            }
-            else
-            {
-                p.techState = careerTechState;
-                TechTreeRules.ResetPerRaceState(p.techState);
-                poolSize = session.EffectiveHeatPoolSize(p, poolSize);
-            }
-        }
-        else if (config.enableTechTree)
-        {
-            p.techState = p.isAI
-                ? session.CreateDemoTechState(teamId)
-                : TechTreeProfileStore.GetOrCreate(teamId, session.TechDb);
-            TechTreeRules.ResetPerRaceState(p.techState);
-            poolSize = session.EffectiveHeatPoolSize(p, poolSize);
+            });
 
-            // JP L2 汤底：demo 自动选择（None=不选）
-            if (config.jpDemoBroth != BrothType.None && session.GetModifiers(p).hasBrothSelection)
-                TechTreeRules.SelectBroth(p.techState, config.jpDemoBroth);
-
-            // UK L3 日不落：demo 自动复制目标国 L2/L3 专属 flag
-            if (config.enableUkSunNeverSetsDemo && session.GetModifiers(p).hasSunNeverSets)
-                p.techState.sunNeverSetsTarget = config.ukSunNeverSetsTargetTeam;
-        }
-        else
-        {
-            p.techState = null;
-        }
-
-        p.trickState = new TrickCardState();
-        p.trickState.ResetPerRace();
-        if (tutorialScenario != null)
-        {
-            List<CardData> exactCards = p.isAI
-                ? tutorialScenario.CreateOpponentDeck()
-                : tutorialScenario.CreateExactDeck();
-            p.deck.InitializeExactOrder(exactCards, new HeatPool(poolSize));
-            p.deck.DrawToHand(tutorialScenario.openingHandSize);
-        }
-        else
-        {
-            p.deck.InitializeDeck(config, new HeatPool(poolSize));
-            if (config.enableTrickCards)
-                p.deck.AddTrickCardsToDrawPile(session.CreateInitialTrickCards(teamId));
-            p.deck.DrawToHand(session.EffectiveHandSize(p, config.handSize));
-        }
+        session.InitializeRaceDeck(p, config, poolSize, tutorialScenario);
+        SyncRegionalHeatCapacity(p);
 
         if (tutorialScenario == null && !p.isAI && teamId == TeamId.CN && config.ensurePlayerAttackTrickInOpeningHand)
         {
@@ -1554,31 +1481,12 @@ public class MVPGameManager : MonoBehaviour
 
     private bool ValidateCareerRaceLaunch(out string failureReason)
     {
-        failureReason = string.Empty;
-        CareerLoadResult loaded = CareerRuntimeRepository.CreateDefault().Load();
-        if (loaded.Status != CareerLoadStatus.Loaded)
-        {
-            failureReason = loaded.Status == CareerLoadStatus.Invalid
-                ? "生涯存档校验失败"
-                : "未找到当前生涯存档";
-            return false;
-        }
-
-        if (!careerRaceLaunch.Matches(loaded.State))
-        {
-            failureReason = "启动请求与当前生涯存档不一致";
-            return false;
-        }
-
+        CareerLoadResult loaded = createRaceCareerRepository().Load();
         string loadedTrackId = trackManager != null && trackManager.LoadedTrackConfig != null
             ? trackManager.LoadedTrackConfig.trackId
             : string.Empty;
-        if (!string.Equals(loadedTrackId, careerRaceLaunch.TrackId, System.StringComparison.Ordinal))
-        {
-            failureReason = "指定正式赛道加载失败，已阻止 fallback 赛道计入生涯";
-            return false;
-        }
-        return true;
+        return CareerRaceLaunchValidation.TryValidate(
+            careerRaceLaunch, loaded, loadedTrackId, out failureReason);
     }
 
     private void SpawnCars()
@@ -1651,7 +1559,7 @@ public class MVPGameManager : MonoBehaviour
             raceCameraController?.BeginTurn();
             foreach (var p in session.Players)
                 session.BeginTurn(p);
-            // JP L3 万骨涌：末位/次末位自动激活，逐回合递减
+            // JP L3 番狂わせ：末位/次末位自动激活，逐回合递减
             TickBankuruwaseForAll();
 
             var turnOrder = session.GetTurnOrder(); // 末位先行（追赶优势）
@@ -1774,18 +1682,13 @@ public class MVPGameManager : MonoBehaviour
                         hudUI.AppendLog("<color=orange>No speed cards! Forced to Gear 1.</color>");
                 }
 
-                // UK L2 英式全餐：手牌同时有热/速/特技 → 尾流距离+1 + 1 张限时热量牌
-                if (p.techState != null && config.enableTechTree &&
-                    session.GetModifiers(p).hasFullEnglish &&
-                    TechTreeRules.ShouldTriggerFullEnglish(
-                        p.deck.CountHeatInHand() > 0,
-                        p.deck.CountSpeedInHand() > 0,
-                        TrickCardRules.CountTricksInHand(p.deck) > 0))
+                // UK L2 英式全餐；L3 在英国主场额外结算一次。
+                if (config.enableTechTree)
                 {
-                    p.slipstreamRangeBonusThisTurn = 1;
-                    p.deck.AddCardsToHand(new List<CardData> { CardData.CreateTempHeat() });
-                    if (hudUI != null)
-                        hudUI.AppendLog($"{p.name} 英式全餐：尾流距离+1，获得 1 张限时热量牌。");
+                    int triggers = session.ResolveFullEnglishOnDraw(
+                        p, trackManager?.LoadedTrackConfig?.country);
+                    if (triggers > 0 && hudUI != null)
+                        hudUI.AppendLog($"{p.name} 英式全餐：尾流距离+{triggers}，获得 {triggers} 张限时热量牌。");
                 }
             }
 
@@ -2017,13 +1920,8 @@ public class MVPGameManager : MonoBehaviour
     private void ResolveSkip(PlayerState p)
     {
         // 失控恢复 / 进站停靠 — 跳过本回合，G1 冷却仍生效
-        if (p.skipNextTurn)
+        if (session.ConsumeRecoverySkip(p, config.minGear))
         {
-            p.skipNextTurn = false;
-            p.gear = TeamGearRules.IsChina(p.teamId)
-                ? ChinaGearShiftRules.RecoverGear
-                : config.minGear;
-            p.chinaConsecutiveGearCount = 0;
             if (hudUI != null)
                 hudUI.AppendLog($"{p.name} sits out this turn (recovery / pit stop).");
         }
@@ -2052,6 +1950,7 @@ public class MVPGameManager : MonoBehaviour
 
         // 回退位置
         p.position = rewindPos;
+        SyncRegionalHeatCapacity(p);
 
         // 强制 1 档
         p.gear = RaceSpinRules.GetRecoveryGear(p.teamId,
@@ -2166,7 +2065,6 @@ public class MVPGameManager : MonoBehaviour
 
     private void ApplyGearShift(PlayerState p, int targetGear)
     {
-        int previousGear = p.gear;
         TeamGearRules.Resolution shift = TeamGearRules.Resolve(
             p.teamId,
             p.gear,
@@ -2178,30 +2076,11 @@ public class MVPGameManager : MonoBehaviour
             config.gearOneCooldown,
             config.gearTwoCooldown);
 
-        int shiftHeatCost = DriverSkillRules.ApplyGearHeatCost(
-            p.driverSkill, shift.HeatCost, false);
-        if (TryPayHeat(p, shiftHeatCost, p.position, "shift 2 gears"))
-        {
-            p.gear = shift.TargetGear;
-            p.chinaConsecutiveGearCount = shift.IsChina ? shift.ConsecutiveCount : 0;
-            if (previousGear != p.gear)
-                AudioService.PlaySfx(AudioEventNames.GearShift);
-
-            // China Go overclock heat is a distinct cost from the standard
-            // two-gear shift payment and follows the normal spin-out path.
-            int additionalHeat = DriverSkillRules.ApplyGearHeatCost(
-                p.driverSkill, shift.AdditionalHeat, true);
-            if (additionalHeat > 0)
-                TryPayHeat(p, additionalHeat, p.position,
-                    $"{TeamGearRules.GetDisplayName(p.teamId, p.gear)} overclock");
-        }
-        else if (!p.isAI)
-        {
-            AudioService.PlaySfx(AudioEventNames.GearFailure);
-        }
-        // 若 TryPayHeat 失败（失控），HandleSpin 已将档位设为最低档
-
-        p.selectedGearThisTurn = p.gear;
+        RaceGearShiftResolver.Apply(
+            p, shift,
+            (amount, reason) => TryPayHeat(p, amount, p.position, reason),
+            () => AudioService.PlaySfx(AudioEventNames.GearShift),
+            () => AudioService.PlaySfx(AudioEventNames.GearFailure));
         raceLogWriter?.Append(
             $"[GEAR] {p.name} role={(p.isAI ? "AI" : "PLAYER")} requested={targetGear} " +
             $"selected={p.gear} engine_heat={p.deck.heatPool.remaining}");
@@ -2212,33 +2091,14 @@ public class MVPGameManager : MonoBehaviour
     /// <summary>
     /// HEAT 规则书步骤 5：根据档位执行冷却。
     /// G1 = 冷却 3，G2 = 冷却 1，G3/G4 = 无冷却。
-    /// 科技加成：JP 盐味汤底 / 万骨涌额外冷却。
+    /// 科技加成：JP 盐味汤底（含番狂わせ临时效果）/ 转子引擎额外冷却。
     /// </summary>
     private void ReactStep(PlayerState p)
     {
         if (p.isBlown || p.hasFinished) return;
 
-        int cooldown = TeamGearRules.GetCooldown(
-            p.teamId, p.gear, p.chinaConsecutiveGearCount,
-            config.gearOneCooldown, config.gearTwoCooldown);
-
-        // Standard teams layer their cooling-efficiency stat on the normal
-        // G1/G2 reaction step. China's Recover cooldown is self-contained and
-        // remains governed solely by ChinaGearShiftRules.
-        if (!TeamGearRules.IsChina(p.teamId) && session.TeamVehicleBonusesEnabled)
-            cooldown += TeamVehicleRules.GetCooling(p.teamId);
-
-        if (p.techState != null)
-        {
-            cooldown += TechTreeRules.GetBrothCooldownPerTurn(p.techState);
-            cooldown += TechTreeRules.GetBankuruwaseCooldownPerTurn(p.techState);
-        }
-
-        if (p.driverSkill != null)
-            cooldown += p.driverSkill.PassiveCoolingBonusThisTurn;
-
-        if (session != null && !DriverSkillRules.IsWeatherImmune(p.driverSkill))
-            cooldown = WeatherRules.ApplyWeatherToCooling(cooldown, session.Weather);
+        int cooldown = session.ComputeReactionCooldown(
+            p, config.gearOneCooldown, config.gearTwoCooldown);
 
         if (p.driverSkill != null && p.driverSkill.IsActive &&
             p.driverSkill.Skill == DriverActiveSkillId.TrueSelf)
@@ -2298,6 +2158,7 @@ public class MVPGameManager : MonoBehaviour
         if (p == null || p.deck == null)
             return;
 
+        CardPlayRules.RetireCommittedHeatForRecovery(p);
         HeatCoolingResult result = p.deck.RecoverAllHeatWithSources();
 
         if (!p.isAI && cardHandUI != null)
@@ -2345,7 +2206,12 @@ public class MVPGameManager : MonoBehaviour
         // unavailable (for example in a headless/editor validation run).
         if (carIndex < 0 || carIndex >= carInstances.Count || carInstances[carIndex] == null)
         {
-            p.position = (p.position + Mathf.Max(0, totalMove)) % trackManager.TotalNodes;
+            // Missing visuals must not suppress lap/weather/finish or lane gates.
+            // Reuse the same ordered node traversal, omitting only car animation.
+            int rawEnd = p.position + totalMove;
+            yield return TraverseMovementNodes(p, null, rawEnd, GetVisualLaneIndex(p));
+            p.position = rawEnd % trackManager.TotalNodes;
+            SyncRegionalHeatCapacity(p);
             yield break;
         }
 
@@ -2367,6 +2233,7 @@ public class MVPGameManager : MonoBehaviour
         yield return StartCoroutine(TraverseMovementNodes(p, car, targetPos, laneIndex));
 
         p.position = targetPos % totalNodes;
+        SyncRegionalHeatCapacity(p);
         RefreshVisualCarLanes();
 
         int overtakeCount = 0;
@@ -2399,8 +2266,11 @@ public class MVPGameManager : MonoBehaviour
         for (int i = p.position + 1; i <= targetPos; i++)
         {
             int nodeIdx = i % totalNodes;
-            Vector3 target = trackManager.GetNodePosition(nodeIdx, laneIndex);
-            yield return GetCarMovementAnimator().MoveToNode(car, target);
+            if (car != null)
+            {
+                Vector3 target = trackManager.GetNodePosition(nodeIdx, laneIndex);
+                yield return GetCarMovementAnimator().MoveToNode(car, target);
+            }
 
             if (trackManager.GetNode(nodeIdx).isStartFinish && RegisterStartFinishCrossing(p))
             {
@@ -2452,6 +2322,33 @@ public class MVPGameManager : MonoBehaviour
         return GetSpeedCardRequirement(p).TotalCardCount;
     }
 
+    public bool CanUseBBQHeatCards(PlayerState player)
+    {
+        return config != null && config.enableTechTree &&
+            CardPlayRules.CanUseHeatAsSpeed(player, session, trackManager != null ? trackManager.TotalNodes : 0);
+    }
+
+    /// <summary>Synchronizes the regional engine loan after each real position change.</summary>
+    private void SyncRegionalHeatCapacity(PlayerState player)
+    {
+        if (session == null || player == null || player.deck == null || player.deck.heatPool == null)
+            return;
+        session.SyncRegionalHeatCapacity(player, trackManager != null ? trackManager.TotalNodes : 0,
+            config != null && config.enableTechTree && trackManager != null);
+        if (session.Players.Contains(player))
+            RefreshHumanHeatPresentation(player);
+    }
+
+    public bool IsPlayableSpeedCard(PlayerState player, CardData card)
+    {
+        return card != null && (card.IsSpeed || (card.IsHeat && CanUseBBQHeatCards(player)));
+    }
+
+    public int CountPlayableSpeedCardsInHand(PlayerState player)
+    {
+        return player.deck.CountSpeedInHand() + (CanUseBBQHeatCards(player) ? player.deck.CountHeatInHand() : 0);
+    }
+
     /// <summary>Required cards exclude optional slots granted by tricks or technology.</summary>
     public int GetRequiredSpeedCardsThisTurn(PlayerState p)
     {
@@ -2479,14 +2376,8 @@ public class MVPGameManager : MonoBehaviour
                 slipstreamsThisTurn[p] = default;
                 continue;
             }
-            int speedPerCardBonus = DriverSkillRules.GetSpeedPerCardBonus(p.driverSkill);
-            int rawSpeedTotal = RaceRules.SumCardValues(p.playedSpeedCardsThisTurn) +
-                speedPerCardBonus * p.playedSpeedCardsThisTurn.Count;
-            p.cornerTotalThisTurn = Mathf.Max(0, rawSpeedTotal -
-                CardPlayRules.GetHotpotCornerExclusion(p, speedPerCardBonus));
-            if (activeTutorialOpponentCue != null &&
-                activeTutorialOpponentCue.step == TutorialStepId.JpTorpedo && p == AI)
-                p.cornerTotalThisTurn = 0;
+            p.cornerTotalThisTurn = RaceMovementRules.ComputeCornerSpeed(
+                p, activeTutorialOpponentCue, p == AI);
         }
 
         // 第二轮：加成（需要弯道信息与对手移动）
@@ -2502,7 +2393,7 @@ public class MVPGameManager : MonoBehaviour
             int italyCornerExitBonus = session.ConsumeItalyCornerExitBonus(p);
             p.italyCornerExitBonusAppliedThisTurn = italyCornerExitBonus > 0;
             bonus += italyCornerExitBonus;
-            // DE L2 猪肘悬挂：过弯 → 出弯后 +1 移动（弯道判定在 ResolveCorners 跳过）
+            // DE L2 香肠拼盘：额外 +1 不计限速，原速度仍在 ResolveCorners 判定。
             if (p.techState != null && TechTreeRules.ShouldTriggerWurstplatte(p.techState, session.TechDb, crossedCorner))
                 bonus += 1;
             // JP L1 寿司：速度精确等于弯道限速 → 每弯 +2
@@ -2520,13 +2411,13 @@ public class MVPGameManager : MonoBehaviour
                 bonus += p.driverSkill.PassiveMovementBonusThisTurn;
 
             // DE L1 黑啤酒燃料：每圈一次，付 1 热 → +2 移动
-            // （自动激活；引擎预留 1 热防失控）。
+            // 引擎支付至弃牌堆；不额外要求保留一张热量。
             if (p.techState != null && config.enableTechTree &&
                 session.GetModifiers(p).hasSchwarzbierFuel &&
-                p.deck.heatPool != null && p.deck.heatPool.remaining > 1 &&
+                p.deck.heatPool != null && p.deck.heatPool.remaining > 0 &&
                 TechTreeRules.CanTriggerSchwarzbierFuelThisLap(p.techState, p.lap))
             {
-                if (TryPayHeat(p, 1, p.positionAtTurnStart, "schwarzbier fuel"))
+                if (TryPayHeat(p, 1, p.positionAtTurnStart, "schwarzbier fuel", HeatPaymentDestination.Discard))
                 {
                     TechTreeRules.UseSchwarzbierFuel(p.techState, p.lap);
                     bonus += 2;
@@ -2535,40 +2426,26 @@ public class MVPGameManager : MonoBehaviour
                 }
             }
 
-            // US L1 得来速：经过地标（起点线/中点）→ +1 移动
+            // US L1 得来速：基础移动每经过一处地标（起点线/中点）→ +1 移动。
+            // 奖励不递归触发本次行动的另一轮得来速判定。
             if (p.techState != null && config.enableTechTree &&
                 session.GetModifiers(p).hasDriveThru)
             {
-                var (lm1, lm2) = RaceSession.GetLandmarks(trackManager.TotalNodes);
-                if (RaceSession.CrossedLandmark(p.position, rawEnd, lm1, trackManager.TotalNodes) ||
-                    RaceSession.CrossedLandmark(p.position, rawEnd, lm2, trackManager.TotalNodes))
+                int crossedLandmarks = RaceSession.CountCrossedLandmarks(
+                    p.position, rawEnd, trackManager.TotalNodes);
+                if (crossedLandmarks > 0)
                 {
-                    bonus += 1;
+                    bonus += crossedLandmarks;
                     if (hudUI != null)
-                        hudUI.AppendLog($"{p.name} 得来速：经过地标 +1 移动。");
+                        hudUI.AppendLog($"{p.name} 得来速：经过 {crossedLandmarks} 处地标 +{crossedLandmarks} 移动。");
                 }
-            }
-
-            // US L2 美式烧烤：处于 BBQ 区（地标 5 格内）→ +2 移动（近似：热量当 2 速）
-            if (p.techState != null && config.enableTechTree &&
-                session.GetModifiers(p).hasSmokedBBQ &&
-                RaceSession.IsInBBQZone(rawEnd % trackManager.TotalNodes, trackManager.TotalNodes))
-            {
-                bonus += 2;
-                if (hudUI != null)
-                    hudUI.AppendLog($"{p.name} 美式烧烤区：+2 移动。");
             }
 
             // 先保存不含尾流的基础移动。尾流必须等所有车辆完成这段移动、
             // 反应和弯道判定后，依据实际落位在回合末结算。
-            p.totalMovementThisTurn = p.cornerTotalThisTurn + bonus;
-            p.totalMovementThisTurn = Mathf.Max(0, p.totalMovementThisTurn);
-            p.totalMovementThisTurn = TutorialOpponentCueRules.ResolveLeaderMovement(
-                activeTutorialOpponentCue,
-                p == AI,
-                p.totalMovementThisTurn);
-            if (activeTutorialOpponentCue != null && p == AI)
-                p.cornerTotalThisTurn = 0;
+            (p.totalMovementThisTurn, p.cornerTotalThisTurn) =
+                RaceMovementRules.ResolveBaseMovement(
+                    p.cornerTotalThisTurn, bonus, activeTutorialOpponentCue, p == AI);
             raceLogWriter?.Append(
                 $"[MOVE_PLAN] {p.name} role={(p.isAI ? "AI" : "PLAYER")} position={p.position} " +
                 $"corner_speed={p.cornerTotalThisTurn} non_slipstream_bonus={bonus} " +
@@ -2576,30 +2453,10 @@ public class MVPGameManager : MonoBehaviour
         }
 
 
-        // Mansell's upgraded charge rewards a real overtake after every base
-        // movement has been planned, so the result is independent of loop order.
-        foreach (var p in turnOrder)
-        {
-            if (RaceTurnRules.IsInactive(p, turnSkipped)) continue;
-            int projectedOvertakes = RaceMovementRules.CountOvertakes(
-                p, turnOrder, trackManager.TotalNodes, true, RaceTurnRules.ShouldSkip);
-            int driverOvertakeBonus = DriverSkillRules.GetOvertakeBonus(p.driverSkill, projectedOvertakes);
-            if (driverOvertakeBonus > 0)
-                p.totalMovementThisTurn += driverOvertakeBonus;
-        }
-
-        // Overtake presentation belongs to the base movement pass. Tailwind is
-        // resolved later from the settled positions and gets its own phase.
-        foreach (var p in turnOrder)
-        {
-            if (RaceTurnRules.IsInactive(p, turnSkipped))
-            {
-                overtakesThisTurn[p] = 0;
-                continue;
-            }
-            overtakesThisTurn[p] = RaceMovementRules.CountOvertakes(
-                p, turnOrder, trackManager.TotalNodes, true, RaceTurnRules.ShouldSkip);
-        }
+        // Presentation overtake counts still belong to the base movement pass;
+        // settled slipstream gets its own phase after everyone has moved.
+        RaceOvertakeResolution.Execute(
+            turnOrder, turnSkipped, trackManager.TotalNodes, overtakesThisTurn);
     }
 
     /// <summary>
@@ -2612,64 +2469,10 @@ public class MVPGameManager : MonoBehaviour
     {
         if (session == null || trackManager == null || turnOrder == null)
             return;
-
-        var settledMovements = new Dictionary<PlayerState, int>(session.Players.Count);
-        foreach (PlayerState racer in session.Players)
-        {
-            if (racer != null)
-                settledMovements[racer] = 0;
-        }
-
-        var resolvedChains = new Dictionary<PlayerState, SlipstreamChainResult>();
-        foreach (PlayerState follower in turnOrder)
-        {
-            if (RaceTurnRules.IsInactive(follower, turnSkipped))
-            {
-                slipstreamsThisTurn[follower] = default;
-                continue;
-            }
-
-            // A scripted tutorial cue demonstrates one specific relationship:
-            // the human player follows the stationary teaching leader. Do not
-            // let the AI win the same-cell tie-break after an incorrect card
-            // selection; that would teach the reverse rule in the tutorial.
-            if (!TutorialOpponentCueRules.ShouldResolveSlipstreamForFollower(
-                    activeTutorialOpponentCue,
-                    follower == Player))
-            {
-                slipstreamsThisTurn[follower] = default;
-                raceLogWriter?.Append(
-                    $"[TUTORIAL_CUE] type=opponent step={activeTutorialOpponentCue.step} " +
-                    $"follower={follower.name} tailwind=blocked reason=player_only");
-                continue;
-            }
-
-            SlipstreamChainResult chain = session.ComputeSlipstreamChain(
-                follower,
-                session.Players,
-                trackManager.TotalNodes,
-                settledMovements,
-                2,
-                turnOrder);
-            slipstreamsThisTurn[follower] = chain;
-            resolvedChains[follower] = chain;
-        }
-
-        // Resolve every chain from the same settled base state before adding
-        // any bonus. Otherwise an earlier follower's tailwind could alter its
-        // tie-break movement and accidentally make a second car look like a
-        // front car in the same-cell case.
-        foreach (PlayerState follower in turnOrder)
-        {
-            if (!resolvedChains.TryGetValue(follower, out SlipstreamChainResult chain))
-                continue;
-            int baseMovement = follower.totalMovementThisTurn;
-            follower.totalMovementThisTurn += chain.TotalBonus;
-            raceLogWriter?.Append(
-                $"[MOVE_PLAN_FINAL] {follower.name} position={follower.position} " +
-                $"base_total={baseMovement} tailwind_bonus={chain.TotalBonus} " +
-                $"total={follower.totalMovementThisTurn}");
-        }
+        RaceSettledSlipstreamResolution.Execute(
+            session, turnOrder, turnSkipped, trackManager.TotalNodes,
+            Player, activeTutorialOpponentCue, slipstreamsThisTurn,
+            message => raceLogWriter?.Append(message));
     }
 
     /// <summary>
@@ -2750,11 +2553,12 @@ public class MVPGameManager : MonoBehaviour
             !TechTreeRules.HasUniqueTech(p.techState, session.TechDb, TechEffectType.MotherRoad))
             return;
 
-        var (lm1, lm2) = RaceSession.GetLandmarks(trackManager.TotalNodes);
-        if (RaceSession.CrossedLandmark(oldPos, rawMovementEnd, lm1, trackManager.TotalNodes))
-            ResolveMotherRoadPass(p, 0, oldPos);
-        if (RaceSession.CrossedLandmark(oldPos, rawMovementEnd, lm2, trackManager.TotalNodes))
-            ResolveMotherRoadPass(p, 1, oldPos);
+        foreach (int landmarkIndex in RaceSession.CrossedLandmarkIndicesInOrder(
+                     oldPos, rawMovementEnd, trackManager.TotalNodes))
+        {
+            if (p.hasFinished) break;
+            ResolveMotherRoadPass(p, landmarkIndex, oldPos);
+        }
     }
 
     private void RegisterPitEntryCrossing(PlayerState p, int oldPos, int rawMovementEnd)
@@ -2768,19 +2572,10 @@ public class MVPGameManager : MonoBehaviour
         // The approach-window choice is only a reservation. Crossing the entry
         // turns it into a stop scheduled for the next turn; no teleport or
         // skipped movement is performed in the current movement phase.
-        if (p.pitStopRequested && !p.isBlown && !p.hasFinished)
+        if (PitLaneRules.ApplyEntryCrossingReservation(p))
         {
-            p.pitStopRequested = false;
-            p.pitStopScheduled = true;
             if (hudUI != null)
                 hudUI.AppendLog($"{p.name} 已越过维修区入口，下一回合执行进站。");
-        }
-        else
-        {
-            // Passing without a reservation leaves the next approach window
-            // available on the following lap.
-            p.pitStopRequested = false;
-            p.pitChoiceResolvedThisLap = false;
         }
     }
 
@@ -2866,22 +2661,17 @@ public class MVPGameManager : MonoBehaviour
         if (!crossedCorner || p.techState == null) return 0;
         if (!TechTreeRules.HasUniqueTech(p.techState, session.TechDb, TechEffectType.Nigiri)) return 0;
 
-        int bonus = 0;
-        foreach (var cornerId in trackManager.GetUniqueCornersCrossed(p.position, rawEnd))
-        {
-            int limit = session.EffectiveCornerLimit(p, trackManager.GetCornerSpeedLimit(cornerId, lane), false);
-            if (p.cornerTotalThisTurn == limit) bonus += 2;
-        }
-        return bonus;
+        return RaceMovementRules.ComputeNigiriBonus(
+            p.cornerTotalThisTurn,
+            trackManager.GetUniqueCornersCrossed(p.position, rawEnd),
+            cornerId => session.EffectiveCornerLimit(
+                p, trackManager.GetCornerSpeedLimit(cornerId, lane), false));
     }
 
     private int GetTorpedoBonus(PlayerState p, List<PlayerState> turnOrder)
     {
-        if (!TrickCardRules.IsTorpedoTempuraActive(p.trickState)) return 0;
-
-        int overtakes = RaceMovementRules.CountOvertakes(
-            p, turnOrder, trackManager.TotalNodes, false, RaceTurnRules.ShouldSkip);
-        return overtakes > 0 ? overtakes * TrickCardRules.GetTorpedoOvertakeBonus() : 0;
+        return RaceMovementRules.ComputeTorpedoBonus(
+            p.trickState, p, turnOrder, trackManager.TotalNodes, RaceTurnRules.ShouldSkip);
     }
 
     // ====== 弯道判定（per-corner-segment，含天气/科技修正） ======
@@ -2893,63 +2683,17 @@ public class MVPGameManager : MonoBehaviour
 
         HashSet<int> corners = trackManager.GetUniqueCornersCrossed(oldPos, rawEndPos);
         if (corners.Count == 0) return false;
-        int totalSpeed = p.cornerTotalThisTurn;
         int laneIndex = GetLane(p);
-        string log = "";
-
-        // DE L2 猪肘悬挂：出弯后跳过弯道判定（移动加成已在 ComputeMovements 结算）
-        if (p.techState != null &&
-            TechTreeRules.ShouldTriggerWurstplatte(p.techState, session.TechDb, corners.Count > 0))
-        {
-            if (hudUI != null)
-                hudUI.AppendLog($"{p.name} 猪肘悬挂：跳过本回合弯道判定。");
-            return true;
-        }
-
-        foreach (int cornerId in corners)
-        {
-            if (p.driverSkill != null && p.driverSkill.TryConsumeCornerIgnore())
-            {
-                log += $"{p.name} 使用 {p.DriverProfile.ActiveName} 无视 {trackManager.GetCornerName(cornerId)} 限速。\n";
-                continue;
-            }
-            // 限速 = 基础 + 科技弯速加成 − 天气惩罚
-            int limit = session.EffectiveCornerLimit(p, trackManager.GetCornerSpeedLimit(cornerId, laneIndex));
-            if (totalSpeed > limit)
-            {
-                int overspeed = totalSpeed - limit;
-                // 科技：每圈 1 次热量减免（最少为 1）
-                int heat = Mathf.Max(1,
-                    overspeed - session.ConsumeHeatReduction(p));
-                if (session.TeamVehicleBonusesEnabled)
-                    heat += TeamVehicleRules.GetCornerHeatPenalty(p.teamId);
-                heat = DriverSkillRules.ReduceCornerHeat(p.driverSkill, heat);
-                string cname = trackManager.GetCornerName(cornerId);
-
-                // 尝试支付热量；引擎不足 → 失控
-                if (heat > 0 && !TryPayHeat(p, heat, oldPos, $"overspeed at {cname} ({totalSpeed}>{limit})"))
-                {
-                    if (hudUI != null) hudUI.AppendLog(log);
-                    return false; // 失控中断后续弯道判定
-                }
-
-                AudioService.PlaySfx(AudioEventNames.CornerOver);
-                log += heat > 0
-                    ? $"{p.name} 在 {cname} 超速 (lane {laneIndex + 1}, 限速 {limit}) 超 {overspeed}！+{heat} 热量。\n"
-                    : $"{p.name} 使用 {p.DriverProfile.ActiveName} 零热量通过 {cname}。\n";
-            }
-            else
-            {
-                AudioService.PlaySfx(AudioEventNames.CornerSafe);
-                log += $"{p.name} 安全通过 {trackManager.GetCornerName(cornerId)} (lane {laneIndex + 1}, {totalSpeed}<={limit})。\n";
-            }
-        }
-
-        if (string.IsNullOrEmpty(log))
-            log = $"{p.name} 直道 - 无弯道。\n";
-
-        if (hudUI != null) hudUI.AppendLog(log);
-        return true;
+        var result = RaceCornerResolver.Resolve(
+            p, laneIndex, corners,
+            cornerId => session.EffectiveCornerLimit(
+                p, trackManager.GetCornerSpeedLimit(cornerId, laneIndex)),
+            trackManager.GetCornerName,
+            overspeed => session.ResolveOverspeedHeatCost(p, overspeed),
+            (heat, reason) => TryPayHeat(p, heat, oldPos, reason),
+            over => AudioService.PlaySfx(over ? AudioEventNames.CornerOver : AudioEventNames.CornerSafe));
+        if (hudUI != null) hudUI.AppendLog(result.log);
+        return result.completed;
     }
 
     // ====== 维修区 ======
@@ -3084,50 +2828,16 @@ public class MVPGameManager : MonoBehaviour
 
     /// <summary>
     /// US L3 母亲之路：经过地标时的自动结算。
-    /// 繁荣(前 2 次过地标) → 免费冷却 2；衰退 → 自动修复付 1 热；复兴 → 手牌热量转移动。
+    /// 繁荣(前 2 次过地标) → 免费冷却 2；衰退 → 引擎有热时修复付 1 热，否则跳过；复兴 → 手牌热量转移动。
     /// </summary>
     private void ResolveMotherRoadPass(PlayerState p, int landmarkIndex, int rewindPos)
     {
-        var result = TechTreeRules.ResolveMotherRoadPass(p.techState, landmarkIndex, config.totalLaps);
-        switch (result.phase)
-        {
-            case MotherRoadResult.MotherRoadPhase.Prosperity:
-            {
-                int cooled = CoolHeatWithPresentation(p, result.freeCooldown);
-                if (hudUI != null)
-                    hudUI.AppendLog($"<color=green>{p.name} 母亲之路(繁荣)：自动冷却 {cooled} 张热量牌。</color>");
-                break;
-            }
-            case MotherRoadResult.MotherRoadPhase.Decline:
-            {
-                // 自动修复：付 1 热（引擎不足 → 失控回退）
-                if (TryPayHeat(p, 1, rewindPos, "mother road repair"))
-                {
-                    TechTreeRules.RepairLandmark(p.techState);
-                    if (hudUI != null)
-                        hudUI.AppendLog($"{p.name} 母亲之路(衰退)：修复地标，付 1 热。");
-                }
-                break;
-            }
-            case MotherRoadResult.MotherRoadPhase.Revival:
-            {
-                // 复兴终极：手牌热量 → 移动（每张 +1，热量牌回收至引擎）
-                int heatInHand = p.deck.CountHeatInHand();
-                int converted = TechTreeRules.UseMotherRoadUltimate(p.techState, landmarkIndex, heatInHand);
-                if (converted > 0)
-                {
-                    var heatCards = new List<CardData>();
-                    foreach (var c in p.deck.Hand)
-                        if (c.IsHeat) heatCards.Add(c);
-                    int returned = p.deck.ReturnHeatCardsToPool(heatCards);
-                    p.position = (p.position + returned) % trackManager.TotalNodes;
-                    MoveCarTo(p, p.position);
-                    if (hudUI != null)
-                        hudUI.AppendLog($"<color=orange>{p.name} 母亲之路(复兴)！{returned} 张热量牌转为移动。</color>");
-                }
-                break;
-            }
-        }
+        RaceMotherRoadExecution.Execute(
+            p, landmarkIndex, config.totalLaps,
+            amount => CoolHeatWithPresentation(p, amount),
+            amount => TryPayHeat(p, amount, rewindPos, "mother road repair"),
+            amount => AdvanceInstantTechnologyMovement(p, amount),
+            message => hudUI?.AppendLog(message));
     }
 
     // ====== 特技牌 ======
@@ -3278,59 +2988,16 @@ public class MVPGameManager : MonoBehaviour
     /// <summary>应用特技牌效果：热量支付/冷却、移动、抽牌、弃牌、限时热量、跳过回合。</summary>
     private void ApplyTrickEffects(PlayerState p, CardData card, TrickPlayResult result)
     {
-        // 热量支付（司康：付 1 热 → +2 移动）
-        if (result.heatToPay > 0)
-        {
-            if (!TryPayHeat(p, result.heatToPay, p.positionAtTurnStart, "scone"))
-                return; // 失控中断（后续效果不应用）
-        }
-
-        // 冷却（红茶 / 关东慢煮）
-        if (result.heatToCool > 0)
-        {
-            int cooled = CoolHeatWithPresentation(p, result.heatToCool);
-            if (cooled > 0 && hudUI != null)
-                hudUI.AppendLog($"{p.name} 特技冷却 {cooled} 张热量牌。");
-        }
-
-        // 移动加成（司康 +2）
-        p.trickMoveBonusThisTurn += result.extraMovement;
-
-        // 抽牌（可乐 +1）
-        if (result.cardsToDraw > 0)
-            p.deck.DrawToHand(p.deck.HandCount + result.cardsToDraw);
-
-        // 弃 1 速度牌换冷却（基安蒂）
-        if (result.requiresSpeedDiscard)
-        {
-            var speeds = p.deck.GetBottomNSpeedCards(1);
-            if (speeds.Count > 0)
+        RaceTrickEffectExecutor.Execute(
+            p, result,
+            amount => TryPayHeat(p, amount, p.positionAtTurnStart, "scone"),
+            amount => CoolHeatWithPresentation(p, amount),
+            () =>
             {
-                p.deck.RemoveFromHand(speeds);
-                p.deck.DiscardSpeedCards(speeds);
-                if (hudUI != null)
-                    hudUI.AppendLog($"{p.name} 弃掉 {speeds[0].value} 速度牌。");
-            }
-        }
-
-        // 限时热量牌（薯条：上回合过地标才可触发）
-        if (TrickCardRules.HasTempHeat(p.trickState))
-        {
-            p.deck.AddCardsToHand(new List<CardData> { CardData.CreateTempHeat() });
-            TrickCardRules.ConsumeTempHeat(p.trickState);
-            if (hudUI != null)
-                hudUI.AppendLog($"{p.name} 获得 1 张限时热量牌（回合结束销毁）。");
-        }
-
-        // 关东慢煮：跳过本回合，累加出牌数到下一回合
-        var def = card != null ? session.TrickDb.Get(card.trickId) : null;
-        if (def != null && def.effectType == TrickEffectType.KantoOden)
-        {
-            p.kantoOdenSkipThisTurn = true;
-            TrickCardRules.AccumulateKantoOden(p.trickState, p.gear);
-            if (hudUI != null)
-                hudUI.AppendLog($"{p.name} 关东慢煮生效：本回合跳过，下回合可多出 {p.gear} 张牌。");
-        }
+                var def = card != null ? session.TrickDb.Get(card.trickId) : null;
+                return def != null ? def.effectType : (TrickEffectType?)null;
+            },
+            message => hudUI?.AppendLog(message));
     }
 
     /// <summary>AI 特技牌启发：热量高 → 防守牌；热量低 → 攻击牌；末位 → 关东慢煮。</summary>
@@ -3346,13 +3013,10 @@ public class MVPGameManager : MonoBehaviour
             var def = session.TrickDb.Get(trick.trickId);
             if (def == null) continue;
 
-            bool play = false;
-            if (def.IsDefense && p.HeatRatio >= config.aiHeatWarningThreshold)
-                play = true;
-            else if (def.IsAttack && p.HeatRatio <= 0.35f)
-                play = true;
-            else if (def.effectType == TrickEffectType.KantoOden && session.GetRank(p) >= session.Players.Count)
-                play = true;
+            bool isLastPlace = def.effectType == TrickEffectType.KantoOden &&
+                session.GetRank(p) >= session.Players.Count;
+            bool play = AITrickSelectionRules.ShouldAttempt(
+                def, p.HeatRatio, config.aiHeatWarningThreshold, isLastPlace);
 
             if (play && PlayTrickCard(p, trick))
                 return;
@@ -3452,11 +3116,12 @@ public class MVPGameManager : MonoBehaviour
 
     private void CleanupTurn(PlayerState p)
     {
-        // 速度牌 → 弃牌堆。热量牌不参与普通抽牌/弃牌，只能通过冷却回引擎。
+        // Played permanent BBQ heat also enters discard; temporary heat vanishes.
         if (!p.isAI && cardHandUI != null && p.playedSpeedCardsThisTurn.Count > 0)
         {
+            var discardVisuals = p.playedSpeedCardsThisTurn.FindAll(card => !card.IsHeat || !card.isTemp);
             cardHandUI.PlayCardTransitions(
-                p.playedSpeedCardsThisTurn,
+                discardVisuals,
                 CardVisualZone.Hand,
                 CardVisualZone.DiscardPile,
                 AudioEventNames.CardPlay);
@@ -3466,10 +3131,11 @@ public class MVPGameManager : MonoBehaviour
 
     private void ResolveCleanupSkills(PlayerState p)
     {
-        ResolveDriverSkillTurnEnd(p);
-        int passiveOvertakes = 0;
-        overtakesThisTurn.TryGetValue(p, out passiveOvertakes);
-        p.driverSkill?.ResolvePassiveTurnEnd(passiveOvertakes);
+        RaceTurnSkillCleanup.Execute(p,
+            participant => session != null ? session.EffectiveSpinMax(participant) : 3,
+            participant => overtakesThisTurn.TryGetValue(participant, out int count) ? count : 0,
+            (participant, spinMax) => hudUI?.AppendLog(
+                $"{participant.name} 最后冲刺代价：强制打转，失控 {participant.spinCounter}/{spinMax}。"));
     }
 
     private void ReportTemporaryCardCleanup(PlayerState p, int tempRemoved)
@@ -3523,15 +3189,7 @@ public class MVPGameManager : MonoBehaviour
                     "yin yang (yin)",
                     HeatPaymentDestination.Discard))
             {
-                int rawEnd = p.position + result.extraMovement;
-                int finishCrossings = TrackRules.CountStartFinishCrossings(
-                    trackManager.Nodes,
-                    p.position,
-                    rawEnd);
-                p.position = rawEnd % trackManager.TotalNodes;
-                for (int i = 0; i < finishCrossings && !p.hasFinished; i++)
-                    OnPlayerCrossedStartFinish(p);
-                MoveCarTo(p, p.position);
+                AdvanceInstantTechnologyMovement(p, result.extraMovement);
                 if (hudUI != null)
                     hudUI.AppendLog($"<color=orange>{p.name} 阴阳茶(阴)：付 1 热 → +{result.extraMovement} 格。</color>");
             }
@@ -3543,6 +3201,23 @@ public class MVPGameManager : MonoBehaviour
             if (cooled > 0 && hudUI != null)
                 hudUI.AppendLog($"<color=cyan>{p.name} 阴阳茶(阳)：自动冷却 {cooled} 张热量牌。</color>");
         }
+    }
+
+    /// <summary>
+    /// Apply non-animated technology movement with the same lap settlement as
+    /// China's Go bonus. Scene movement still owns animated lane cues.
+    /// </summary>
+    private void AdvanceInstantTechnologyMovement(PlayerState p, int movement)
+    {
+        int oldPos = p.position;
+        RaceMovementRules.InstantMovementPlan plan = RaceMovementRules.PlanInstantTechnologyMovement(
+            trackManager.Nodes, oldPos, movement);
+        p.position = plan.FinalPosition;
+        SyncRegionalHeatCapacity(p);
+        for (int i = 0; i < plan.FinishCrossings && !p.hasFinished; i++)
+            OnPlayerCrossedStartFinish(p);
+        RegisterPitEntryCrossing(p, plan.StartPosition, plan.RawEnd);
+        MoveCarTo(p, p.position);
     }
 
     // ====== 圈数与完赛 ======
@@ -3577,38 +3252,15 @@ public class MVPGameManager : MonoBehaviour
             config.totalLaps);
         bool allowWeatherRoll = tutorialScenario == null && config.enableWeather;
 
-        RaceLapWeatherTransition transition = RaceLapWeatherRules.Advance(
-            p.lap,
-            requiredLaps,
-            weatherState.LastRolledLap,
-            allowWeatherRoll);
-        p.lap = transition.Lap;
-        session.OnNewLap(p);
-        AudioService.PlaySfx(transition.HasFinished
-            ? AudioEventNames.Finish
-            : AudioEventNames.LapCross);
-        if (hudUI != null)
-            hudUI.AppendLog($"{p.name} 完成第 {p.lap} 圈！");
-
-        // 每圈掷骰换天（同一圈内多辆车过线只掷一次）
-        if (transition.ShouldRollWeather)
-        {
-            weatherState.MarkLapRolled(transition.Lap);
-            WeatherType before = session.Weather;
-            WeatherType after = session.RollWeatherForLap();
-            if (after != before && hudUI != null)
-            {
-                hudUI.AppendLog($"<color=cyan>天气变化: {WeatherRules.GetDisplayName(before)} → {session.WeatherLabel}</color>");
-            }
-        }
+        RaceLapWeatherTransition transition = RaceLapCrossingExecution.Execute(
+            p, session, weatherState, requiredLaps, allowWeatherRoll,
+            finished => AudioService.PlaySfx(finished
+                ? AudioEventNames.Finish
+                : AudioEventNames.LapCross),
+            message => hudUI?.AppendLog(message));
 
         if (transition.HasFinished)
         {
-            p.hasFinished = true;
-            session.AssignFinish(p);
-            if (hudUI != null)
-                hudUI.AppendLog($"<color=green><b>{p.name} 完赛！</b></color>");
-
             if (!p.isAI && tutorialDirector != null &&
                 tutorialDirector.Phase == TutorialRunPhase.Practice)
             {
@@ -3643,24 +3295,32 @@ public class MVPGameManager : MonoBehaviour
 
     private void ShowGameOver()
     {
+        CompleteRaceWithPersistence(
+            saveRaceTechState, saveRaceDriverXp, createRaceCareerRepository);
+    }
+
+    // Keep the real result/HUD path testable without touching player storage.
+    // Resolve career storage only in the unsaved career branch, as before.
+    private void CompleteRaceWithPersistence(
+        System.Action<TechTreeState> saveTechState,
+        System.Action<string, int> saveDriverXp,
+        System.Func<CareerRepository> createCareerRepository)
+    {
         // 为未完赛玩家按当前排名补记名次
-        AssignRemainingFinishers();
+        session.AssignRemainingFinishers();
         RefreshCarBadges();
 
         string result = RaceRanking.FormatResults(session.Players);
         if (tutorialScenario != null)
         {
-            if (tutorialDirector != null && tutorialDirector.Phase == TutorialRunPhase.Completed)
-                result = "勒芒教程练习完成！\n\n" + result;
-            else
-                result = "本次练习未完成；可以使用教程面板重新开始。\n\n" + result;
-            result += "\n\n教程模式：不发放 RP、车手 XP、解锁或正常赛事进度。";
+            result = TutorialRaceResultPresentation.BuildSummary(
+                result, tutorialDirector != null && tutorialDirector.Phase == TutorialRunPhase.Completed);
         }
         else if (careerRaceLaunch != null)
         {
             if (careerResultRecorded)
             {
-                result += "\n\n生涯赛果已保存。返回主菜单可查看更新后的积分榜。";
+                result += CareerRaceResultPresentation.AlreadySaved;
                 raceLogWriter?.Append(
                     $"[CAREER_RESULT] status=already_saved result_id={careerRaceLaunch.ResultId}");
             }
@@ -3670,41 +3330,24 @@ public class MVPGameManager : MonoBehaviour
                              ? trackManager.LoadedTrackConfig.trackId
                              : string.Empty,
                          session.Players,
-                         CareerRuntimeRepository.CreateDefault(),
+                         createCareerRepository(),
                          out CareerSeasonState updatedCareer,
                          out string failureReason))
             {
                 careerResultRecorded = true;
-                List<CareerStanding> careerStandings = CareerModeRules.GetStandings(updatedCareer);
-                CareerStanding playerStanding = careerStandings
-                    .Find(entry => entry.TeamId == updatedCareer.LockedTeam);
-                result += $"\n\n生涯赛果已保存：总分 {playerStanding?.Points ?? 0}，" +
-                          $"总排名第 {playerStanding?.Rank ?? 0} 名。";
-                if (updatedCareer.Phase == CareerPhase.SummerBreak)
-                    result += "\n已进入夏休，返回主菜单调整一次生涯科技树。";
-                else if (updatedCareer.Phase == CareerPhase.Completed)
-                {
-                    CareerStanding champion = careerStandings.Count > 0 ? careerStandings[0] : null;
-                    result += $"\n八站生涯已完成。总冠军：" +
-                              $"{(champion == null ? "—" : champion.TeamId.ToString())}" +
-                              $"（{champion?.Points ?? 0} 分）。";
-                }
+                result += CareerRaceResultPresentation.BuildSavedSummary(updatedCareer);
                 raceLogWriter?.Append(CareerRaceLogFormatter.BuildSaved(careerRaceLaunch, updatedCareer));
             }
             else
             {
-                result += $"\n\n<color=red>{failureReason}</color>。返回主菜单后可重新开始当前站。";
+                result += CareerRaceResultPresentation.BuildRejectedSummary(failureReason);
                 raceLogWriter?.Append(CareerRaceLogFormatter.BuildRejected(careerRaceLaunch, failureReason));
             }
         }
         else
         {
-            string trackCountry = trackManager != null && trackManager.LoadedTrackConfig != null
-                ? trackManager.LoadedTrackConfig.country
-                : string.Empty;
-            result += "\n\n" + NormalRaceRewardSettlement.Settle(
-                session, trackCountry, tutorialScenario != null, careerRaceLaunch != null,
-                TechTreeProfileStore.Save, DriverProgressStore.Save);
+            result += "\n\n" + SettleNormalRaceRewards(
+                saveTechState, saveDriverXp);
         }
 
         if (hudUI != null) hudUI.ShowGameOver(result);
@@ -3712,48 +3355,45 @@ public class MVPGameManager : MonoBehaviour
         tutorialGuideUI?.Refresh();
         if (raceLogWriter != null && raceLogWriter.IsActive)
         {
-            raceLogWriter.End(result);
+            raceLogWriter.End(result, TutorialRaceResultPresentation.GetTermination(
+                tutorialScenario != null,
+                tutorialDirector != null && tutorialDirector.Phase == TutorialRunPhase.Completed));
             Debug.Log($"[RaceTestLog] Finished: {raceLogWriter.FilePath}");
         }
     }
 
-    private void AssignRemainingFinishers()
+    // Keep live mode/track resolution separate from presentation and persistence.
+    private string SettleNormalRaceRewards(
+        System.Action<TechTreeState> saveTechState,
+        System.Action<string, int> saveDriverXp)
     {
-        var unfinished = new List<PlayerState>();
-        foreach (var p in session.Players)
-            if (!p.isBlown && !p.hasFinished)
-                unfinished.Add(p);
-        if (unfinished.Count == 0) return;
-
-        foreach (var p in RaceRanking.SortByPosition(unfinished))
-            session.AssignFinish(p);
+        string trackCountry = trackManager != null && trackManager.LoadedTrackConfig != null
+            ? trackManager.LoadedTrackConfig.country
+            : string.Empty;
+        return NormalRaceRewardSettlement.Settle(
+            session, trackCountry, tutorialScenario != null, careerRaceLaunch != null,
+            saveTechState, saveDriverXp);
     }
 
-    // ====== 万骨涌（JP L3） ======
+    // ====== 番狂わせ（JP L3） ======
 
     private void TickBankuruwaseForAll()
     {
         if (!config.enableTechTree) return;
 
-        int total = session.Players.Count;
-        foreach (var p in session.Players)
+        session.AdvanceBankuruwaseForAll((p, transition) =>
         {
-            if (p.techState == null) continue;
-
-            if (!p.techState.bankuruwaseActive &&
-                TechTreeRules.ShouldTriggerBankuruwase(p.techState, session.TechDb, session.GetRank(p), total))
+            if (transition == BankuruwaseTurnTransition.Activated)
             {
-                TechTreeRules.ActivateBankuruwase(p.techState);
                 if (hudUI != null)
-                    hudUI.AppendLog($"<color=cyan>{p.name} 万骨涌激活：3 回合全属性加成 + 每回合冷却 1。</color>");
+                    hudUI.AppendLog($"<color=cyan>{p.name} 番狂わせ激活：连续 3 回合获得四种汤底效果，转子引擎额外冷却 1。</color>");
             }
-            else if (p.techState.bankuruwaseActive)
+            else if (transition == BankuruwaseTurnTransition.Expired)
             {
-                bool stillActive = TechTreeRules.TickBankuruwase(p.techState);
-                if (!stillActive && hudUI != null)
-                    hudUI.AppendLog($"{p.name} 万骨涌效果结束。");
+                if (hudUI != null)
+                    hudUI.AppendLog($"{p.name} 番狂わせ效果结束。");
             }
-        }
+        });
     }
 
     // ====== 辅助 ======
@@ -4008,22 +3648,6 @@ public class MVPGameManager : MonoBehaviour
             trackManager != null ? trackManager.TotalNodes : 0);
     }
 
-    private void ResolveDriverSkillTurnEnd(PlayerState player)
-    {
-        if (!DriverSkillRules.ShouldResolveFinalSprintCost(player?.driverSkill))
-            return;
-
-        int spinMax = session != null ? session.EffectiveSpinMax(player) : 3;
-        FinalSprintTurnEndCost cost = DriverSkillRules.EvaluateFinalSprintCost(
-            player.spinCounter, spinMax, player.driverSkill.Tier);
-        player.spinCounter = cost.SpinCounter;
-        if (cost.BlowsEngine)
-            player.isBlown = true;
-        else if (cost.RequiresRecovery)
-            player.skipNextTurn = true;
-        hudUI?.AppendLog($"{player.name} 最后冲刺代价：强制打转，失控 {player.spinCounter}/{spinMax}。" );
-    }
-
     public void OnPlayCardsButtonClicked()
     {
         if (IsTutorialActionInputBlocked) return;
@@ -4071,7 +3695,7 @@ public class MVPGameManager : MonoBehaviour
             return false;
         }
 
-        if (card.IsHeat)
+        if (card.IsHeat && !IsPlayableSpeedCard(player, card))
         {
             if (hudUI != null)
                 hudUI.SetStatus("<color=orange>热量牌不可打出</color>");
@@ -4112,7 +3736,7 @@ public class MVPGameManager : MonoBehaviour
             return true;
         }
 
-        if (card.IsSpeed)
+        if (IsPlayableSpeedCard(player, card))
             return ConfirmPlayerSpeedCards(player, new List<CardData> { card });
 
         return false;
@@ -4128,14 +3752,14 @@ public class MVPGameManager : MonoBehaviour
 
         bool hotpotWasArmed = TrickCardRules.HasHotpotAttack(player.trickState);
         int maxCards = GetMaxSpeedCardsThisTurn(player);
-        SpeedCardCommitResult commit = CardPlayRules.CommitSpeedCards(player, cards, maxCards);
+        SpeedCardCommitResult commit = CardPlayRules.CommitSpeedCards(player, cards, maxCards,
+            config != null && config.enableTechTree ? session : null,
+            trackManager != null ? trackManager.TotalNodes : 0);
         if (commit != SpeedCardCommitResult.Success)
         {
             if (hudUI != null)
             {
-                string message = commit == SpeedCardCommitResult.SpeedLimitReached
-                    ? $"速度牌已达上限：{maxCards} 张（本次选择未提交）"
-                    : "出牌失败：手牌状态已变化";
+                string message = GearRequirementFeedbackRules.FormatSpeedCommitFailure(commit, maxCards);
                 hudUI.SetStatus($"<color=orange>{message}</color>");
             }
             if (commit == SpeedCardCommitResult.CardNotInHand)
@@ -4151,17 +3775,14 @@ public class MVPGameManager : MonoBehaviour
 
         if (hudUI != null)
         {
-            int speedTotal = 0;
-            for (int i = 0; i < cards.Count; i++)
-                speedTotal += cards[i].value;
-            hudUI.AppendLog($"{player.name} 确认 {cards.Count} 张速度牌（速度总和 {speedTotal}）。");
+            hudUI.AppendLog(GearRequirementFeedbackRules.FormatCommittedSpeedLog(player.name, cards));
             if (hotpotWasArmed && player.hotpotAttackAppliedThisTurn)
             {
                 hudUI.AppendLog(
                     $"火锅 ATTACK：速度 {player.hotpotAttackCardValueThisTurn} 的牌获得 +1，整张不计弯道限速。");
             }
-            hudUI.SetStatus(
-                $"已打出 {player.playedSpeedCardsThisTurn.Count}/{maxCards} 张速度牌；可继续多选或结束出牌");
+            hudUI.SetStatus(GearRequirementFeedbackRules.FormatCommittedSpeedStatus(
+                player.playedSpeedCardsThisTurn.Count, maxCards));
         }
         LogPlayedCards(player, "PLAYER");
         RefreshHumanHand(player);
@@ -4237,81 +3858,8 @@ public class MVPGameManager : MonoBehaviour
             return true;
 
         TutorialStepId step = tutorialDirector.CurrentStep.id;
-        if (!TutorialSpecialtyCardRules.ValidateTrickLessonSpeedSelection(
-                step, player != null && TrickCardRules.HasHotpotAttack(player.trickState),
-                selected, out string trickReason))
-        {
-            cardHandUI?.ClearPendingPlaySelection();
-            hudUI?.SetStatus($"<color=orange>教程提示：{trickReason}</color>");
-            raceLogWriter?.Append(
-                $"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={trickReason}");
-            return false;
-        }
-        if (tutorialScenario.id == "tutorial_team_de_v1" &&
-            !TutorialSpecialtyCardRules.ValidateDeStraightSpeedSelection(
-                step, player != null ? player.playedSpeedCardsThisTurn : null,
-                selected, out string deReason))
-        {
-            cardHandUI?.ClearPendingPlaySelection();
-            hudUI?.SetStatus($"<color=orange>教程提示：{deReason}</color>");
-            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={deReason}");
-            return false;
-        }
-        if (tutorialScenario.id == "tutorial_team_it_v1" &&
-            !TutorialSpecialtyCardRules.ValidateItCornerSpeedSelection(
-                step, player != null ? player.playedSpeedCardsThisTurn : null,
-                selected, out string itCornerReason))
-        {
-            cardHandUI?.ClearPendingPlaySelection();
-            hudUI?.SetStatus($"<color=orange>教程提示：{itCornerReason}</color>");
-            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={itCornerReason}");
-            return false;
-        }
-        if (tutorialScenario.id == "tutorial_team_jp_v1" &&
-            !TutorialSpecialtyCardRules.ValidateJpSpeedSelection(
-                step, player != null && player.trickState != null &&
-                player.trickState.torpedoTempuraActive,
-                player != null ? player.playedSpeedCardsThisTurn : null,
-                selected, out string jpReason))
-        {
-            cardHandUI?.ClearPendingPlaySelection();
-            hudUI?.SetStatus($"<color=orange>教程提示：{jpReason}</color>");
-            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={jpReason}");
-            return false;
-        }
-        if (tutorialScenario.id == "tutorial_team_it_v1" &&
-            !TutorialSpecialtyCardRules.ValidateItSlipstreamSpeedSelection(
-                step, player != null && player.trickState != null &&
-                player.trickState.parmigianoActive,
-                player != null ? player.playedSpeedCardsThisTurn : null,
-                selected, out string itReason))
-        {
-            cardHandUI?.ClearPendingPlaySelection();
-            hudUI?.SetStatus($"<color=orange>教程提示：{itReason}</color>");
-            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={itReason}");
-            return false;
-        }
-        if (tutorialScenario.id == "tutorial_team_de_v1" &&
-            !TutorialSpecialtyCardRules.ValidateDeEffectSpeedSelection(
-                step, player != null && player.trickState != null &&
-                (step == TutorialStepId.DeSauerkraut
-                    ? player.trickState.sauerkrautPlayed
-                    : player.trickState.schwarzbrotActive),
-                player != null ? player.playedSpeedCardsThisTurn : null,
-                selected, out string deEffectReason))
-        {
-            cardHandUI?.ClearPendingPlaySelection();
-            hudUI?.SetStatus($"<color=orange>教程提示：{deEffectReason}</color>");
-            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={deEffectReason}");
-            return false;
-        }
-        if (tutorialScenario.id != "tutorial_team_us_v1")
-            return true;
-        if (TutorialSpecialtyCardRules.ValidateUsSpeedSelection(
-                step,
-                player != null ? player.playedSpeedCardsThisTurn : null,
-                selected,
-                out string reason))
+        if (TutorialSpeedSelectionGate.Validate(
+                tutorialScenario.id, step, player, selected, out string reason))
             return true;
 
         cardHandUI?.ClearPendingPlaySelection();
@@ -4328,74 +3876,9 @@ public class MVPGameManager : MonoBehaviour
             return true;
 
         TutorialStepId step = tutorialDirector.CurrentStep.id;
-        if (!TutorialSpecialtyCardRules.ValidateTrickLessonCompletion(
-                step, tutorialDirector.IsActiveStepComplete, out string trickReason))
-        {
-            hudUI?.SetStatus($"<color=orange>教程提示：{trickReason}</color>");
-            raceLogWriter?.Append(
-                $"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={trickReason}");
-            return false;
-        }
-        if (tutorialScenario.id == "tutorial_team_de_v1" &&
-            !TutorialSpecialtyCardRules.ValidateDeStraightSpeedCompletion(
-                step, player != null ? player.playedSpeedCardsThisTurn : null,
-                out string deReason))
-        {
-            hudUI?.SetStatus($"<color=orange>教程提示：{deReason}</color>");
-            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={deReason}");
-            return false;
-        }
-        if (tutorialScenario.id == "tutorial_team_de_v1" &&
-            !TutorialSpecialtyCardRules.ValidateDeEffectSpeedCompletion(
-                step, player != null && player.trickState != null &&
-                (step == TutorialStepId.DeSauerkraut
-                    ? player.trickState.sauerkrautPlayed
-                    : player.trickState.schwarzbrotActive),
-                player != null ? player.playedSpeedCardsThisTurn : null,
-                out string deEffectReason))
-        {
-            hudUI?.SetStatus($"<color=orange>教程提示：{deEffectReason}</color>");
-            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={deEffectReason}");
-            return false;
-        }
-        if (tutorialScenario.id == "tutorial_team_it_v1" &&
-            !TutorialSpecialtyCardRules.ValidateItCornerSpeedCompletion(
-                step, player != null ? player.playedSpeedCardsThisTurn : null,
-                out string itCornerReason))
-        {
-            hudUI?.SetStatus($"<color=orange>教程提示：{itCornerReason}</color>");
-            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={itCornerReason}");
-            return false;
-        }
-        if (tutorialScenario.id == "tutorial_team_jp_v1" &&
-            !TutorialSpecialtyCardRules.ValidateJpSpeedCompletion(
-                step, player != null && player.trickState != null &&
-                player.trickState.torpedoTempuraActive,
-                player != null ? player.extraCardSlotsThisTurn : 0,
-                player != null ? player.playedSpeedCardsThisTurn : null,
-                out string jpReason))
-        {
-            hudUI?.SetStatus($"<color=orange>教程提示：{jpReason}</color>");
-            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={jpReason}");
-            return false;
-        }
-        if (tutorialScenario.id == "tutorial_team_it_v1" &&
-            !TutorialSpecialtyCardRules.ValidateItSlipstreamSpeedCompletion(
-                step, player != null && player.trickState != null &&
-                player.trickState.parmigianoActive,
-                player != null ? player.playedSpeedCardsThisTurn : null,
-                out string itReason))
-        {
-            hudUI?.SetStatus($"<color=orange>教程提示：{itReason}</color>");
-            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false step={step} reason={itReason}");
-            return false;
-        }
-        if (tutorialScenario.id != "tutorial_team_us_v1")
-            return true;
-        if (TutorialSpecialtyCardRules.ValidateUsSpeedPhaseCompletion(
-                step,
-                player != null ? player.playedSpeedCardsThisTurn : null,
-                out string reason))
+        if (TutorialSpeedCompletionGate.Validate(
+                tutorialScenario.id, step, tutorialDirector.IsActiveStepComplete,
+                player, out string reason))
             return true;
 
         hudUI?.SetStatus($"<color=orange>教程提示：{reason}</color>");
@@ -4415,47 +3898,83 @@ public class MVPGameManager : MonoBehaviour
 
     public void ResetGame()
     {
+        DispatchRaceRestart(
+            RestartTutorialGuidedSection,
+            RestartTutorialPracticeLap,
+            SceneLoader.LoadMainMenu,
+            ResetRaceRuntime);
+    }
+
+    // Preserve mode precedence while keeping destructive scene/lifecycle I/O
+    // outside the restart decision. No mutable global callback overrides.
+    private void DispatchRaceRestart(
+        System.Action restartGuided,
+        System.Action restartPractice,
+        System.Action returnToMenu,
+        System.Action restartRuntime)
+    {
         if (tutorialDirector != null)
         {
             if (tutorialDirector.Phase == TutorialRunPhase.Practice ||
                 tutorialDirector.Phase == TutorialRunPhase.Completed)
-                RestartTutorialPracticeLap();
+                restartPractice();
             else
-                RestartTutorialGuidedSection();
+                restartGuided();
             return;
         }
 
         if (careerRaceLaunch != null && careerResultRecorded)
         {
-            SceneLoader.LoadMainMenu();
+            returnToMenu();
             return;
         }
 
-        ResetRaceRuntime();
+        restartRuntime();
     }
 
     private void ResetTutorialRace(bool startInPractice, string reason)
+    {
+        RestartTutorialRuntime(startInPractice, reason, ResetRaceRuntime);
+    }
+
+    // Preserve the closure -> practice flag -> rebuild order, without global hooks.
+    private void RestartTutorialRuntime(bool startInPractice, string reason, System.Action rebuildRuntime)
     {
         if (tutorialScenario == null)
             return;
 
         if (raceLogWriter != null && raceLogWriter.IsActive)
-            raceLogWriter.End($"tutorial reset: {reason}");
+            raceLogWriter.End($"tutorial reset: {reason}", RaceLogTermination.Restarted);
         initializeTutorialInPractice = startInPractice;
-        ResetRaceRuntime();
+        rebuildRuntime();
     }
 
     private void ResetRaceRuntime()
     {
+        RebuildRaceRuntime(
+            controller => Destroy(controller),
+            InitializeGame,
+            InitializeTutorialGuideUI,
+            () => StartCoroutine(GameLoop()));
+    }
+
+    // Retire old bindings before initialization; Destroy remains deferred in play.
+    // Exceptions intentionally stop the remaining work, as in the original path.
+    private void RebuildRaceRuntime(
+        System.Action<AIController> retireController,
+        System.Action initializeRace,
+        System.Action initializeGuide,
+        System.Action startLoop)
+    {
         StopAllCoroutines();
         foreach (var c in GetComponents<AIController>())
-            Destroy(c);
+            retireController(c);
         aiControllers.Clear();
         if (hudUI != null && hudUI.gameOverPanel != null)
             hudUI.gameOverPanel.SetActive(false);
-        InitializeGame();
-        InitializeTutorialGuideUI();
-        StartCoroutine(GameLoop());
+        initializeRace();
+        initializeGuide();
+        startLoop();
     }
 }
 

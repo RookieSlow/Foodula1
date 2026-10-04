@@ -13,9 +13,9 @@ public static class RaceTurnCleanup
         Action<PlayerState, int> reportTemporaryCards,
         Action<PlayerState> resolveTechnology)
     {
-        player.deck.DiscardSpeedCards(player.playedSpeedCardsThisTurn);
+        int playedTemporaryHeat = player.deck.DiscardPlayedSpeedCards(player.playedSpeedCardsThisTurn);
         resolveSkills?.Invoke(player);
-        int removed = player.deck.RemoveTempCardsFromHand();
+        int removed = playedTemporaryHeat + player.deck.RemoveTempCardsFromHand();
         if (removed > 0) reportTemporaryCards?.Invoke(player, removed);
 
         // Evaluate after skill effects, not from a stale start-of-cleanup snapshot.

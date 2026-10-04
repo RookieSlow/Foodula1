@@ -237,6 +237,42 @@ public class CardDeckTest
     }
 
     [Test]
+    public void ReturningMixedHandHeatCountsOnlyCardsActuallyRestoredToEngine()
+    {
+        var deck = CreateDeck(CreateConfig());
+        Assert.AreEqual(1, deck.DrawHeatFromPoolToHand(1));
+        CardData permanent = null;
+        foreach (CardData card in deck.Hand)
+            if (card.IsHeat) permanent = card;
+        var temporary = CardData.CreateTempHeat();
+        deck.AddCardsToHand(new List<CardData> { temporary });
+        int poolBefore = deck.heatPool.remaining;
+
+        Assert.AreEqual(1, deck.CountHandHeatRestorableToEngine());
+        Assert.AreEqual(1, deck.ReturnHeatCardsToPool(new[] { permanent, temporary }));
+        Assert.AreEqual(poolBefore + 1, deck.heatPool.remaining);
+        Assert.AreEqual(0, deck.CountHeatInHand());
+        Assert.AreEqual(0, deck.CountHandHeatRestorableToEngine());
+    }
+
+    [Test]
+    public void ReturningHandHeatPaysOutstandingRegionalLoanBeforeEngineRestoration()
+    {
+        var deck = CreateDeck(CreateConfig(), poolSize: 1);
+        deck.SetRegionalCapacityBonus(2);
+        Assert.AreEqual(3, deck.DrawHeatFromPoolToHand(3));
+        deck.SetRegionalCapacityBonus(0);
+        Assert.AreEqual(2, deck.RegionalHeatPendingRetirement);
+        Assert.AreEqual(1, deck.CountHandHeatRestorableToEngine());
+        var cards = new List<CardData>(deck.Hand);
+
+        Assert.AreEqual(1, deck.ReturnHeatCardsToPool(cards));
+        Assert.AreEqual(0, deck.RegionalHeatPendingRetirement);
+        Assert.AreEqual(1, deck.heatPool.remaining);
+        Assert.AreEqual(0, deck.CountHeatInHand());
+    }
+
+    [Test]
     public void test_temporary_heat_is_destroyed_by_cooling_without_inflating_engine_pool()
     {
         var config = CreateConfig();

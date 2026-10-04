@@ -29,7 +29,9 @@ public static class RaceLapWeatherRules
     /// </summary>
     public static bool ShouldRollWeatherForLap(int lap, int lastWeatherRolledLap, bool weatherEnabled)
     {
-        return weatherEnabled && lap != lastWeatherRolledLap;
+        // The shared lap is a high-water mark: a lagging car must not roll an
+        // earlier lap again or move the gate backwards after the leader.
+        return weatherEnabled && lap > lastWeatherRolledLap;
     }
 }
 

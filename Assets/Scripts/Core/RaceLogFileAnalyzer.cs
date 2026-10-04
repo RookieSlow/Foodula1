@@ -15,17 +15,49 @@ public static class RaceLogFileAnalyzer
     /// </summary>
     public static string FindLatestLogPath(string directory)
     {
+        return FindLatestLogPath(directory, _ => true);
+    }
+
+    /// <summary>
+    /// Finds the newest log with explicit, valid completed-race evidence.
+    /// Aborted, legacy and malformed logs remain available through the
+    /// unfiltered selector but cannot be mistaken for a finished run.
+    /// </summary>
+    public static string FindLatestCompletedLogPath(string directory)
+    {
+        return FindLatestLogPath(directory, path => AnalyzeFile(path).HasCompletedRaceEvidence);
+    }
+
+    /// <summary>
+    /// Selects completed evidence for one explicitly recorded mode. Logs with
+    /// no setup marker never inherit a mode from their filename or prose.
+    /// </summary>
+    public static string FindLatestCompletedLogPath(string directory, RaceLogMode mode)
+    {
+        if (mode == RaceLogMode.Unknown) return null;
+        return FindLatestLogPath(directory, path =>
+        {
+            RaceLogAnalysisResult analysis = AnalyzeFile(path);
+            return analysis.HasCompletedRaceEvidence && analysis.Mode == mode;
+        });
+    }
+
+    private static string FindLatestLogPath(string directory, Func<string, bool> accepts)
+    {
         string[] paths = Directory.GetFiles(directory, "*.log");
         if (paths.Length == 0)
             return null;
 
         Array.Sort(paths, StringComparer.Ordinal);
-        string latestPath = paths[0];
-        DateTime latestWrite = File.GetLastWriteTimeUtc(latestPath);
-        for (int i = 1; i < paths.Length; i++)
+        string latestPath = null;
+        DateTime latestWrite = DateTime.MinValue;
+        for (int i = 0; i < paths.Length; i++)
         {
+            if (!accepts(paths[i]))
+                continue;
+
             DateTime candidateWrite = File.GetLastWriteTimeUtc(paths[i]);
-            if (candidateWrite > latestWrite)
+            if (latestPath == null || candidateWrite > latestWrite)
             {
                 latestPath = paths[i];
                 latestWrite = candidateWrite;

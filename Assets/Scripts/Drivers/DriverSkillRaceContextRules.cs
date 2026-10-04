@@ -7,7 +7,8 @@ public static class DriverSkillRaceContextRules
         PlayerState player, bool canAcceptInput, int totalLaps,
         IReadOnlyList<PlayerState> participants, int totalNodes)
     {
-        HeatGaugeState gauge = player?.deck != null ? HeatGaugeRules.Evaluate(player.deck) : default;
+        HeatGaugeState gauge = player?.deck != null
+            ? HeatGaugeRules.Evaluate(player.deck, player.playedSpeedCardsThisTurn) : default;
         return new DriverSkillActivationContext(
             canAcceptInput, player != null ? player.lap : 0, totalLaps,
             gauge.EngineRemaining, gauge.Capacity,

@@ -50,6 +50,30 @@ public sealed class PlaytestTelemetryService : MonoBehaviour
     public static string DefaultExportRoot => Path.Combine(Application.persistentDataPath, "playtest-exports");
     public static string CurrentSessionDirectory => instance?.writer?.SessionDirectory;
 
+#if UNITY_EDITOR
+    // SessionState survives the Test Runner's domain reload, but is never a
+    // player preference or a build setting. Tests restore it after exiting play.
+    private const string EditorTestLogRootKey = "Foodula1.Tests.PlaytestLogRoot";
+#endif
+
+    private static string ResolveSessionLogRoot()
+    {
+#if UNITY_EDITOR
+        string testRoot = UnityEditor.SessionState.GetString(EditorTestLogRootKey, string.Empty);
+        if (!string.IsNullOrEmpty(testRoot))
+        {
+            string allowedRoot = Path.GetFullPath(Path.Combine(
+                Application.dataPath, "..", "Temp", "Foodula1Regression"));
+            string resolved = Path.GetFullPath(testRoot);
+            if (!Path.IsPathRooted(testRoot) || !resolved.StartsWith(
+                    allowedRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("Test telemetry must stay inside Temp/Foodula1Regression.");
+            return resolved;
+        }
+#endif
+        return DefaultLogRoot;
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics()
     {
@@ -100,7 +124,7 @@ public sealed class PlaytestTelemetryService : MonoBehaviour
                 systemMemoryMb = SystemInfo.systemMemorySize,
                 graphicsMemoryMb = SystemInfo.graphicsMemorySize
             };
-            writer = new PlaytestLogWriter(DefaultLogRoot, metadata);
+            writer = new PlaytestLogWriter(ResolveSessionLogRoot(), metadata);
         }
         catch
         {

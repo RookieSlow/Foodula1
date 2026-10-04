@@ -171,6 +171,7 @@ public class CardHandUI : MonoBehaviour
                     if (def != null) label = $"{def.icon} {def.name}";
                 }
                 ui.SetupCard(card, OnCardClicked, label);
+                ui.SetHeatPlayable(card.IsHeat && CanSelectHeatCard(card));
             }
             cardUIs.Add(ui);
         }
@@ -190,7 +191,11 @@ public class CardHandUI : MonoBehaviour
         HideSelectedCardEffect();
         for (int i = cardUIs.Count - 1; i >= 0; i--)
         {
-            if (cardUIs[i] != null) Destroy(cardUIs[i].gameObject);
+            if (cardUIs[i] == null) continue;
+            if (Application.isPlaying)
+                Destroy(cardUIs[i].gameObject);
+            else
+                DestroyImmediate(cardUIs[i].gameObject);
         }
         cardUIs.Clear();
     }
@@ -213,7 +218,10 @@ public class CardHandUI : MonoBehaviour
                 // Deactivate before Destroy so the LayoutGroup removes only this
                 // card immediately; the remaining hand cards stay visible.
                 cardObject.SetActive(false);
-                Destroy(cardObject);
+                if (Application.isPlaying)
+                    Destroy(cardObject);
+                else
+                    DestroyImmediate(cardObject);
                 if (removedDisplayedCard)
                     RefreshSelectedCardEffect();
                 break; // 只移除第一个匹配的（同一 CardData 引用不会重复出现）
@@ -287,6 +295,7 @@ public class CardHandUI : MonoBehaviour
         ClearPendingPlaySelection();
         if (!isGearMode)
             isDiscardMode = false; // 离开档位模式 → 一定是正常选牌，清除弃牌残留
+        RefreshHeatCardAvailability();
 
         if (gearSelectionPanel != null)
             gearSelectionPanel.SetActive(isGearMode);
@@ -311,6 +320,7 @@ public class CardHandUI : MonoBehaviour
         ClearPendingPlaySelection();
         isDiscardMode = isDiscard;
         isGearSelectionMode = false;
+        RefreshHeatCardAvailability();
         if (gearSelectionPanel != null)
             gearSelectionPanel.SetActive(false);
         if (playCardsButton != null)
@@ -344,7 +354,7 @@ public class CardHandUI : MonoBehaviour
         foreach (CardUI ui in cardUIs)
         {
             if (ui != null && ui.isSelected && ui.cardData != null &&
-                (ui.cardData.IsSpeed || ui.cardData.IsTrick))
+                (IsSpeedSelection(ui.cardData) || ui.cardData.IsTrick))
                 selected.Add(ui.cardData);
         }
         return selected;
@@ -369,13 +379,39 @@ public class CardHandUI : MonoBehaviour
         int count = 0;
         foreach (CardUI ui in cardUIs)
         {
-            if (ui != null && ui.isSelected && ui.cardData != null && ui.cardData.IsSpeed)
+            if (ui != null && ui.isSelected && ui.cardData != null && IsSpeedSelection(ui.cardData))
                 count++;
         }
         return count;
     }
 
     // ====== 回调 ======
+
+    private bool CanSelectHeatCard(CardData card)
+    {
+        return !isDiscardMode && !isGearSelectionMode && gameManager != null &&
+            gameManager.IsPlayableSpeedCard(gameManager.Player, card);
+    }
+
+    private bool IsSpeedSelection(CardData card)
+    {
+        return card != null && (card.IsSpeed || (card.IsHeat && CanSelectHeatCard(card)));
+    }
+
+    private void RefreshHeatCardAvailability()
+    {
+        foreach (CardUI ui in cardUIs)
+            if (ui != null && ui.cardData != null && ui.cardData.IsHeat)
+            {
+                bool playable = CanSelectHeatCard(ui.cardData);
+                ui.SetHeatPlayable(playable);
+                if (!playable)
+                {
+                    ui.SetKeyboardHighlighted(false);
+                    if (displayedEffectCard == ui) HideSelectedCardEffect();
+                }
+            }
+    }
 
     private void OnCardClicked(CardUI card)
     {
@@ -384,8 +420,9 @@ public class CardHandUI : MonoBehaviour
         if (isGearSelectionMode) return;
         gameManager.DismissTutorialInteractionCallout();
 
-        // 热量牌不可打出/不可弃掉 — 忽略点击
-        if (card.cardData.IsHeat) return;
+        if (card == null || card.cardData == null) return;
+        // BBQ permits speed play only, never voluntary heat discard.
+        if (card.cardData.IsHeat && !CanSelectHeatCard(card.cardData)) return;
 
         // 弃牌阶段允许多选任意非热量牌；确认后只弃置，不发动效果。
         if (isDiscardMode)
@@ -414,14 +451,14 @@ public class CardHandUI : MonoBehaviour
             return;
         }
 
-        if (card.cardData.IsSpeed && GetSelectedTrickCard() != null)
+        if (IsSpeedSelection(card.cardData) && GetSelectedTrickCard() != null)
         {
             if (gameManager.hudUI != null)
                 gameManager.hudUI.SetStatus("特技牌已选中；请先确认特技牌，不能与速度牌混选");
             return;
         }
 
-        if (card.cardData.IsSpeed && !card.isSelected &&
+        if (IsSpeedSelection(card.cardData) && !card.isSelected &&
             player.playedSpeedCardsThisTurn.Count + selectedSpeedCount >= maxCards)
         {
             if (gameManager.hudUI != null)
@@ -431,7 +468,7 @@ public class CardHandUI : MonoBehaviour
 
         // Speed cards toggle independently so the player can select a group.
         // A trick card remains a one-card selection and is confirmed alone.
-        if (card.cardData.IsSpeed)
+        if (IsSpeedSelection(card.cardData))
         {
             card.SetSelectedWithoutNotify(!card.isSelected);
             pendingPlayCard = null;
@@ -503,7 +540,7 @@ public class CardHandUI : MonoBehaviour
         {
             CardUI ui = cardUIs[i];
             playable.Add(ui != null && ui.gameObject.activeInHierarchy && ui.cardData != null &&
-                !ui.cardData.IsHeat);
+                (!ui.cardData.IsHeat || CanSelectHeatCard(ui.cardData)));
             ui?.SetKeyboardHighlighted(false);
         }
 
@@ -527,7 +564,8 @@ public class CardHandUI : MonoBehaviour
         }
 
         CardUI card = cardUIs[keyboardHighlightIndex];
-        if (card == null || card.cardData == null || card.cardData.IsHeat)
+        if (card == null || card.cardData == null ||
+            (card.cardData.IsHeat && !CanSelectHeatCard(card.cardData)))
             return false;
         OnCardClicked(card);
         return true;
@@ -659,7 +697,9 @@ public class CardHandUI : MonoBehaviour
         TrickCardDatabase database = gameManager != null && gameManager.Session != null
             ? gameManager.Session.TrickDb
             : null;
-        selectedCardEffectText.text = CardSelectionEffectRules.Format(card.cardData, database);
+        selectedCardEffectText.text = card.cardData.IsHeat && CanSelectHeatCard(card.cardData)
+            ? "烟熏 BBQ：热量牌作为速度 2 打出，占 1 个速度牌槽；永久热量收尾入弃牌堆，限时热量收尾销毁。"
+            : CardSelectionEffectRules.Format(card.cardData, database);
         displayedEffectCard = card;
         selectedCardEffectPanel.SetActive(true);
         selectedCardEffectPanel.transform.SetAsLastSibling();
@@ -731,6 +771,8 @@ public class CardHandUI : MonoBehaviour
         if (current == null || current.deck == null)
             return;
 
+        RefreshHeatCardAvailability();
+
         UpdatePendingCardStatus(current, gameManager.GetMaxSpeedCardsThisTurn(current));
         UpdateActionButtonLabel();
     }
@@ -746,7 +788,7 @@ public class CardHandUI : MonoBehaviour
             maxCards,
             played,
             selectedSpeed,
-            player.deck.CountSpeedInHand(),
+            gameManager.CountPlayableSpeedCardsInHand(player),
             player.deck.heatPool != null ? player.deck.heatPool.remaining : 0);
         string requirementStatus = GearRequirementFeedbackRules.FormatStatus(
             gameManager.GetSpeedCardRequirementLabel(player), feedback);
@@ -757,12 +799,10 @@ public class CardHandUI : MonoBehaviour
             return;
         }
 
-        if (selected[0].IsSpeed)
+        if (IsSpeedSelection(selected[0]))
         {
-            int total = 0;
-            for (int i = 0; i < selected.Count; i++) total += selected[i].value;
             gameManager.hudUI.SetStatus(
-                $"{requirementStatus}\n待确认：{selected.Count} 张速度牌（速度总和 {total}）");
+                GearRequirementFeedbackRules.FormatPendingSpeedStatus(requirementStatus, selected));
             return;
         }
 
@@ -770,44 +810,30 @@ public class CardHandUI : MonoBehaviour
             ? gameManager.Session.TrickDb.Get(selected[0].trickId)
             : null;
         string label = def != null ? def.name : "特技牌";
-        gameManager.hudUI.SetStatus($"{requirementStatus}\n待确认：{label}（确认后立即发动）");
+        gameManager.hudUI.SetStatus(
+            GearRequirementFeedbackRules.FormatPendingTrickStatus(requirementStatus, label));
     }
 
     private void UpdateActionButtonLabel()
     {
         if (playCardsButton == null) return;
 
-        string label;
-        if (isDiscardMode)
-            label = "弃置所选牌";
-        else
-        {
-            List<CardData> selected = GetSelectedPlayCards();
-            if (selected.Count == 0)
-            {
-                GearRequirementFeedback feedback = GetCurrentRequirementFeedback();
-                label = feedback.RequiredCards > 0
-                    ? GearRequirementFeedbackRules.FormatEndButtonLabel(feedback)
-                    : "结束出牌";
-            }
-            else if (selected[0].IsTrick)
-                label = "打出特技牌";
-            else
-                label = selected.Count == 1 ? "打出速度牌" : $"打出速度牌 ({selected.Count})";
-        }
-
-        bool hasSpaceShortcut = isDiscardMode || GetSelectedPlayCards().Count > 0;
-        string shortcutSuffix = hasSpaceShortcut ? "  [空格]" : "";
+        List<CardData> selected = GetSelectedPlayCards();
+        string label = GearRequirementFeedbackRules.FormatActionButtonLabel(
+            isDiscardMode, selected.Count, selected.Count > 0 && selected[0].IsTrick,
+            selected.Count == 0 && !isDiscardMode
+                ? GetCurrentRequirementFeedback()
+                : default);
         TMP_Text tmp = playCardsButton.GetComponentInChildren<TMP_Text>(true);
         if (tmp != null)
         {
-            tmp.text = label + shortcutSuffix;
+            tmp.text = label;
             return;
         }
 
         UnityEngine.UI.Text legacy = playCardsButton.GetComponentInChildren<UnityEngine.UI.Text>(true);
         if (legacy != null)
-            legacy.text = label + shortcutSuffix;
+            legacy.text = label;
     }
 
     private GearRequirementFeedback GetCurrentRequirementFeedback()
@@ -820,7 +846,7 @@ public class CardHandUI : MonoBehaviour
             gameManager.GetMaxSpeedCardsThisTurn(player),
             player.playedSpeedCardsThisTurn.Count,
             GetSelectedSpeedCount(),
-            player.deck.CountSpeedInHand(),
+            gameManager.CountPlayableSpeedCardsInHand(player),
             player.deck.heatPool != null ? player.deck.heatPool.remaining : 0);
     }
 

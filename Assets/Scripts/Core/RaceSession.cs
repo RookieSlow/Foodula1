@@ -99,6 +99,36 @@ public class RaceSession
     }
 
     /// <summary>
+    /// Rebuilds only the participant's trick state, deck and engine pool after
+    /// the coordinator has resolved identity, technology and heat capacity.
+    /// Authored tutorials ignore normal deck/hand configuration. Ordinary races
+    /// retain CardDeck's existing random source (not the weather/session source).
+    /// Opening-card assistance and its warning remain in the coordinator.
+    /// </summary>
+    public void InitializeRaceDeck(
+        PlayerState player, GameConfigSO config, int heatCapacity,
+        TutorialScenarioDefinition scenario = null)
+    {
+        player.trickState = new TrickCardState();
+        player.trickState.ResetPerRace();
+        if (scenario != null)
+        {
+            List<CardData> exactCards = player.isAI
+                ? scenario.CreateOpponentDeck()
+                : scenario.CreateExactDeck();
+            player.deck.InitializeExactOrder(exactCards, new HeatPool(heatCapacity));
+            player.deck.DrawToHand(scenario.openingHandSize);
+        }
+        else
+        {
+            player.deck.InitializeDeck(config, new HeatPool(heatCapacity));
+            if (config.enableTrickCards)
+                player.deck.AddTrickCardsToDrawPile(CreateInitialTrickCards(player.teamId));
+            player.deck.DrawToHand(EffectiveHandSize(player, config.handSize));
+        }
+    }
+
+    /// <summary>
     /// 重置玩家的每回合状态，并把关东慢煮累积的出牌槽转入新回合。
     /// 特技牌结算不依赖科技树是否启用。
     /// </summary>
@@ -113,6 +143,18 @@ public class RaceSession
             TechTreeRules.ResetPerTurnState(player.techState);
         if (player.trickState != null)
             player.extraCardSlotsThisTurn += TrickCardRules.ConsumeKantoOden(player.trickState);
+    }
+
+    /// <summary>Consumes the recovery/pit skip after A1 has chosen that action; presentation stays in the coordinator.</summary>
+    public bool ConsumeRecoverySkip(PlayerState player, int standardMinimumGear)
+    {
+        if (player == null || !player.skipNextTurn)
+            return false;
+
+        player.skipNextTurn = false;
+        player.gear = RaceSpinRules.GetRecoveryGear(player.teamId, standardMinimumGear);
+        player.chinaConsecutiveGearCount = 0;
+        return true;
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -136,6 +178,22 @@ public class RaceSession
     /// <summary>分配完赛顺位（调用方负责设置 hasFinished）。</summary>
     public int AssignFinish(PlayerState p) => RaceRanking.AssignFinishOrder(p, ref NextFinishOrder);
 
+    /// <summary>
+    /// Assigns result order to non-blown participants still on track when the
+    /// coordinator closes a race. Their hasFinished flags remain unchanged.
+    /// </summary>
+    public void AssignRemainingFinishers()
+    {
+        var unfinished = new List<PlayerState>();
+        foreach (var player in Players)
+            if (!player.isBlown && !player.hasFinished)
+                unfinished.Add(player);
+        if (unfinished.Count == 0) return;
+
+        foreach (var player in RaceRanking.SortByPosition(unfinished))
+            AssignFinish(player);
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // 天气（WeatherRules）
     // ═══════════════════════════════════════════════════════════════════
@@ -157,6 +215,35 @@ public class RaceSession
     /// <summary>Current Chinese HUD label for the active weather profile.</summary>
     public string WeatherLabel => WeatherRules.GetDisplayName(Weather);
 
+    /// <summary>
+    /// Computes the reaction-step cooling amount before any cards are moved.
+    /// China Recover uses its own gear rule rather than the standard vehicle
+    /// cooling stat; weather is applied after all positive sources.
+    /// </summary>
+    public int ComputeReactionCooldown(PlayerState player, int gearOneCooldown, int gearTwoCooldown)
+    {
+        int cooldown = TeamGearRules.GetCooldown(
+            player.teamId, player.gear, player.chinaConsecutiveGearCount,
+            gearOneCooldown, gearTwoCooldown);
+
+        if (!TeamGearRules.IsChina(player.teamId) && TeamVehicleBonusesEnabled)
+            cooldown += TeamVehicleRules.GetCooling(player.teamId);
+
+        if (player.techState != null)
+        {
+            cooldown += TechTreeRules.GetBrothCooldownPerTurn(player.techState);
+            cooldown += TechTreeRules.GetBankuruwaseCooldownPerTurn(player.techState);
+        }
+
+        if (player.driverSkill != null)
+            cooldown += player.driverSkill.PassiveCoolingBonusThisTurn;
+
+        if (!DriverSkillRules.IsWeatherImmune(player.driverSkill))
+            cooldown = WeatherRules.ApplyWeatherToCooling(cooldown, Weather);
+
+        return cooldown;
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // 科技树（TechTreeRules）
     // ═══════════════════════════════════════════════════════════════════
@@ -167,38 +254,43 @@ public class RaceSession
     /// </summary>
     public TechTreeState CreateDemoTechState(TeamId teamId)
     {
-        var state = TechTreeRules.CreateDemoState(teamId);
-        UnlockDemoTech(state);
-        TechTreeRules.ActivateAllUnlocked(state);
-        return state;
+        return TechTreeRules.CreateDemoProfile(teamId, TechDb);
     }
 
-    private void UnlockDemoTech(TechTreeState state)
+    /// <summary>
+    /// Advance JP rotor state for the registered field in participant order.
+    /// Only activation and expiry need presentation; a callback exception keeps
+    /// the same stop-at-current-participant behavior as the coordinator loop.
+    /// </summary>
+    public void AdvanceBankuruwaseForAll(Action<PlayerState, BankuruwaseTurnTransition> report)
     {
-        // China uses the EV-named common catalogue.  The effects are shared
-        // with the standard catalogue, but keeping the IDs aligned here is
-        // important because EV L2 prerequisites point to EV L1 nodes.
-        string[] commons = state.teamId == TeamId.CN
-            ? new[]
-            {
-                "cn-ev-l1-heat-pump",
-                "cn-ev-l1-pmsm",
-                "cn-ev-l1-torque-vector",
-                "cn-ev-l1-solid-state"
-            }
-            : new[]
-            {
-                "common-l1-heat-coating",
-                "common-l1-lightweight-chassis",
-                "common-l1-track-memory",
-                "common-l1-expanded-tank"
-            };
-        foreach (var id in commons)
-            TechTreeRules.UnlockNode(state, id, TechDb);
+        int total = Players.Count;
+        foreach (PlayerState player in Players)
+        {
+            if (player.techState == null) continue;
 
-        var uniques = TechDb.GetUniqueInTier(state.teamId, TechTreeTier.L1);
-        if (uniques.Count > 0)
-            TechTreeRules.UnlockNode(state, uniques[0].id, TechDb);
+            BankuruwaseTurnTransition transition = BankuruwaseTurnRules.Advance(
+                player.techState, TechDb, GetRank(player), total);
+            if (transition == BankuruwaseTurnTransition.Activated ||
+                transition == BankuruwaseTurnTransition.Expired)
+                report?.Invoke(player, transition);
+        }
+    }
+
+    /// <summary>
+    /// Prepare an already-selected technology profile for this race. Reset
+    /// transient usage before binding track-only grants; capacity/hand setup
+    /// must read modifiers afterwards. Permanent selections and RP are retained.
+    /// The coordinator owns profile loading and supplies the actual track country.
+    /// </summary>
+    public void PrepareTechnologyForRace(PlayerState player, string trackCountry)
+    {
+        if (player.techState == null) return;
+        TechTreeRules.ResetPerRaceState(player.techState);
+        player.techState.sunNeverSetsTarget = player.teamId == TeamId.UK &&
+            TechTreeRules.HasEffect(player.techState, TechDb, TechEffectType.SunNeverSets)
+            ? TechTreeRules.ResolveSunNeverSetsTarget(trackCountry)
+            : null;
     }
 
     /// <summary>
@@ -207,19 +299,36 @@ public class RaceSession
     /// </summary>
     public TechModifiers GetModifiers(PlayerState p)
     {
-        var m = TechTreeRules.ComputeModifiers(p.techState, TechDb);
+        return TechTreeRules.ComputeModifiers(p.techState, TechDb);
+    }
 
-        // 日不落：复制目标国 L2+L3 专属科技 flag（数值类效果由调用方手动合并）
-        if (m.hasSunNeverSets && p.techState != null && p.techState.sunNeverSetsTarget.HasValue)
-        {
-            var targetTechs = TechTreeRules.GetSunNeverSetsTargetTechs(p.techState, TechDb);
-            foreach (var node in targetTechs)
-            {
-                foreach (var effect in node.effects)
-                    TechTreeRules.TryApplyModifierEffect(ref m, effect);
-            }
-        }
-        return m;
+    /// <summary>
+    /// Resolve UK Full English from the drawn hand. On a UK home track, an active
+    /// Sun Never Sets adds one further trigger, even if L2 is not selected.
+    /// The hand condition is checked before either temporary heat card is added.
+    /// </summary>
+    public int ResolveFullEnglishOnDraw(PlayerState player, string trackCountry)
+    {
+        if (player?.techState == null || player.deck == null) return 0;
+
+        var modifiers = GetModifiers(player);
+        int triggers = modifiers.hasFullEnglish ? 1 : 0;
+        if (player.teamId == TeamId.UK && modifiers.hasSunNeverSets &&
+            TechTreeRules.IsSunNeverSetsHomeBonus(trackCountry))
+            triggers++;
+
+        if (triggers == 0 || !TechTreeRules.ShouldTriggerFullEnglish(
+            player.deck.CountHeatInHand() > 0,
+            player.deck.CountSpeedInHand() > 0,
+            TrickCardRules.CountTricksInHand(player.deck) > 0))
+            return 0;
+
+        var temporaryHeat = new List<CardData>(triggers);
+        for (int i = 0; i < triggers; i++)
+            temporaryHeat.Add(CardData.CreateTempHeat());
+        player.deck.AddCardsToHand(temporaryHeat);
+        player.slipstreamRangeBonusThisTurn += triggers;
+        return triggers;
     }
 
     /// <summary>有效手牌上限 = 基础 + 科技加成。</summary>
@@ -229,7 +338,7 @@ public class RaceSession
         return baseHandSize + GetModifiers(p).handSizeBonus;
     }
 
-    /// <summary>有效引擎热量池 = 基础 + 耐久/容量加成（含 SmokedBBQ +2）。</summary>
+    /// <summary>Permanent engine heat pool = base + durability/capacity; BBQ is contextual.</summary>
     public int EffectiveHeatPoolSize(PlayerState p, int basePoolSize)
     {
         if (p.techState == null) return basePoolSize;
@@ -331,6 +440,19 @@ public class RaceSession
         return reduction;
     }
 
+    /// <summary>
+    /// Settle one actual overspeed event. Technology is consumed before the
+    /// minimum-one floor, then vehicle and driver modifiers apply in that order.
+    /// Call only after the effective corner limit has been exceeded.
+    /// </summary>
+    public int ResolveOverspeedHeatCost(PlayerState player, int overspeed)
+    {
+        int heat = Math.Max(1, overspeed - ConsumeHeatReduction(player));
+        if (TeamVehicleBonusesEnabled)
+            heat += TeamVehicleRules.GetCornerHeatPenalty(player.teamId);
+        return DriverSkillRules.ReduceCornerHeat(player.driverSkill, heat);
+    }
+
     /// <summary>新的一圈开始 — 重置每圈科技跟踪。</summary>
     public void OnNewLap(PlayerState p)
     {
@@ -420,7 +542,7 @@ public class RaceSession
                         bonus += TeamVehicleRules.GetStraightTurnBonus(p.teamId);
                     foreach (CardData card in p.playedSpeedCardsThisTurn)
                         if (card != null)
-                            bonus += TeamVehicleRules.GetStraightCardBonus(p.teamId, card.value);
+                            bonus += TeamVehicleRules.GetStraightCardBonus(p.teamId, CardPlayRules.GetCommittedSpeedCardValue(card));
                 }
             }
             else if (IsGoMode(p))
@@ -470,6 +592,36 @@ public class RaceSession
     // ═══════════════════════════════════════════════════════════════════
     // 尾流系统（Slipstream）
     // ═══════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// Resolve every eligible follower against the same settled base-movement
+    /// snapshot. The caller owns mode-specific filtering and applies the
+    /// returned bonuses only after all chains have been calculated.
+    /// </summary>
+    public Dictionary<PlayerState, SlipstreamChainResult> ComputeSettledSlipstreamChains(
+        IReadOnlyList<PlayerState> eligibleFollowers,
+        IReadOnlyList<PlayerState> arrivalOrder,
+        int totalNodes)
+    {
+        var settledMovements = new Dictionary<PlayerState, int>(Players.Count);
+        foreach (PlayerState racer in Players)
+        {
+            if (racer != null)
+                settledMovements[racer] = 0;
+        }
+
+        var chains = new Dictionary<PlayerState, SlipstreamChainResult>();
+        if (eligibleFollowers == null)
+            return chains;
+
+        foreach (PlayerState follower in eligibleFollowers)
+        {
+            if (follower != null)
+                chains[follower] = ComputeSlipstreamChain(
+                    follower, Players, totalNodes, settledMovements, 2, arrivalOrder);
+        }
+        return chains;
+    }
 
     /// <summary>
     /// 计算完整尾流链。若传入 plannedMovements，则使用其中的移动量模拟终点；
@@ -535,7 +687,9 @@ public class RaceSession
 
             // 冰糕阻断身后气流；不能越过最近车辆去吸更远的车。
             if (TrickCardRules.IsIceJellyActive(leader.trickState) ||
-                DriverSkillRules.BlocksTrailingSlipstream(leader.driverSkill))
+                DriverSkillRules.BlocksTrailingSlipstream(leader.driverSkill) ||
+                HasSmokedBBQAtPosition(leader,
+                    (leader.position + GetPlannedMovement(leader, plannedMovements)) % totalNodes, totalNodes))
                 break;
 
             int bonus = GetSlipstreamMovementBonus(p);
@@ -625,6 +779,7 @@ public class RaceSession
     private int GetSlipstreamMovementBonus(PlayerState p)
     {
         int bonus = SLIPSTREAM_BASE_BONUS;
+        bonus += GetModifiers(p).slipstreamMovementBonus;
         if (TeamVehicleBonusesEnabled)
             bonus += TeamVehicleRules.GetSlipstreamBonus(p.teamId);
         bonus += TrickCardRules.GetParmigianoBonus(p.trickState);
@@ -670,11 +825,88 @@ public class RaceSession
         return TechTreeRules.CrossedPositionForward(oldPos, newPos, landmark, totalCells);
     }
 
+    /// <summary>US Drive-Thru bonus: one cell per distinct landmark crossed by base movement.</summary>
+    public static int CountCrossedLandmarks(int oldPos, int rawMovementEnd, int totalCells)
+    {
+        if (totalCells < 2) return 0;
+        var (lm1, lm2) = GetLandmarks(totalCells);
+        int count = CrossedLandmark(oldPos, rawMovementEnd, lm1, totalCells) ? 1 : 0;
+        if (CrossedLandmark(oldPos, rawMovementEnd, lm2, totalCells)) count++;
+        return count;
+    }
+
+    /// <summary>
+    /// The distinct landmarks crossed by one forward, unwrapped movement,
+    /// ordered as encountered. A later effect may finish the race, so callers
+    /// decide whether to settle the next pass.
+    /// </summary>
+    public static IReadOnlyList<int> CrossedLandmarkIndicesInOrder(
+        int oldPos, int rawMovementEnd, int totalCells)
+    {
+        if (totalCells < 2 || rawMovementEnd <= oldPos)
+            return Array.Empty<int>();
+
+        var (lm1, lm2) = GetLandmarks(totalCells);
+        bool crossedFirst = CrossedLandmark(oldPos, rawMovementEnd, lm1, totalCells);
+        bool crossedSecond = CrossedLandmark(oldPos, rawMovementEnd, lm2, totalCells);
+        if (crossedFirst && crossedSecond)
+            return FirstLandmarkAhead(oldPos, totalCells) == 0
+                ? new[] { 0, 1 }
+                : new[] { 1, 0 };
+        if (crossedFirst) return new[] { 0 };
+        if (crossedSecond) return new[] { 1 };
+        return Array.Empty<int>();
+    }
+
+    /// <summary>When both landmarks are crossed, which one lies first on the forward route?</summary>
+    public static int FirstLandmarkAhead(int oldPos, int totalCells)
+    {
+        if (totalCells <= 1) return 0;
+        int position = oldPos % totalCells;
+        if (position < 0) position += totalCells;
+        var (lm1, lm2) = GetLandmarks(totalCells);
+        int distance1 = (lm1 - position + totalCells) % totalCells;
+        int distance2 = (lm2 - position + totalCells) % totalCells;
+        if (distance1 == 0) distance1 = totalCells;
+        if (distance2 == 0) distance2 = totalCells;
+        return distance2 < distance1 ? 1 : 0;
+    }
+
     /// <summary>是否处于 BBQ 区（美式烧烤：地标周围 5 格）。</summary>
     public static bool IsInBBQZone(int position, int totalCells)
     {
         var (lm1, lm2) = GetLandmarks(totalCells);
         return TechTreeRules.IsInBBQZone(position, lm1, lm2, totalCells);
+    }
+
+    /// <summary>
+    /// Read-only BBQ eligibility shared by action and end-of-round consumers.
+    /// The caller owns timing and supplies the position being evaluated: do not
+    /// silently substitute the player's current position for a projected endpoint.
+    /// Virtual UK grants use the same effective modifier query as owned technology.
+    /// This predicate neither applies benefits nor changes card/heat ownership.
+    /// </summary>
+    public bool HasSmokedBBQAtPosition(PlayerState player, int position, int totalCells)
+    {
+        return player != null && GetModifiers(player).hasSmokedBBQ &&
+            IsInBBQZone(position, totalCells);
+    }
+
+    /// <summary>Regional engine heat granted by the active BBQ zone, never a global pool bonus.</summary>
+    public int GetSmokedBBQEngineCapacityBonusAtPosition(PlayerState player, int position, int totalCells)
+    {
+        return totalCells > 0 && HasSmokedBBQAtPosition(player, position, totalCells) ? 2 : 0;
+    }
+
+    /// <summary>Apply the current regional loan to the player's engine after a position change.</summary>
+    public void SyncRegionalHeatCapacity(PlayerState player, int totalCells, bool technologyEnabled = true)
+    {
+        if (player == null || player.deck == null || player.deck.heatPool == null)
+            return;
+        int bonus = technologyEnabled
+            ? GetSmokedBBQEngineCapacityBonusAtPosition(player, player.position, totalCells)
+            : 0;
+        player.deck.SetRegionalCapacityBonus(bonus);
     }
 
     // ═══════════════════════════════════════════════════════════════════

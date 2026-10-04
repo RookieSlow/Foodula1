@@ -66,7 +66,7 @@ public enum TechEffectType
 
     // ── DE Unique ──
     SchwarzbierFuel,       // L1: pay 1 heat from engine → +2 move
-    WurstplatteSuspension, // L2: after corner exit +1 move + skip corner judgment
+    WurstplatteSuspension, // L2: +1 movement excluded from speed; original speed still judged
     GrillSpezial,          // L3: once/race auto-cool all heat paid this turn
 
     // ── IT Unique ──
@@ -179,6 +179,7 @@ public struct TechModifiers
     public int cornerLimitBonus;         // 0, 1, 2
     public int durabilityBonus;          // 0, 1, 2 (raw engine heat pool increase)
     public int slipstreamRangeBonus;     // 0 or 1 (0=1格, 1=2格)
+    public int slipstreamMovementBonus;  // Miso: movement per slipstream, not trigger range
 
     // ══ Stat modifiers ══
     public int engineCapacityBonus;      // added to base engine capacity
@@ -229,9 +230,9 @@ public struct TechModifiers
     /// <summary>Effective spin counter maximum (base 3 + bonus, capped at 4 for IT L2).</summary>
     public int EffectiveSpinCounterMax => 3 + spinCounterMaxBonus;
 
-    /// <summary>Effective engine capacity bonus, includes SmokedBBQ +2.</summary>
+    /// <summary>Permanent engine capacity bonus; SmokedBBQ is granted only by the active track zone.</summary>
     public int EffectiveEngineCapacityBonus =>
-        engineCapacityBonus + (hasSmokedBBQ ? 2 : 0);
+        engineCapacityBonus;
 
     /// <summary>Creates a default modifier with all zeros/false.</summary>
     public static TechModifiers Default => new TechModifiers();

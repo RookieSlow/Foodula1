@@ -26,10 +26,17 @@ public static class TechTreeProfileCodec
         {
             teamId = state.teamId,
             rpBalance = state.rpBalance,
-            unlocked = new List<string>(state.unlockedNodeIds),
-            active = new List<string>(state.activeNodeIds)
+            unlocked = SortedIds(state.unlockedNodeIds),
+            active = SortedIds(state.activeNodeIds)
         };
         return JsonUtility.ToJson(save);
+    }
+
+    private static List<string> SortedIds(HashSet<string> ids)
+    {
+        var sorted = new List<string>(ids);
+        sorted.Sort(StringComparer.Ordinal);
+        return sorted;
     }
 
     /// <summary>
@@ -39,17 +46,19 @@ public static class TechTreeProfileCodec
     /// </summary>
     public static TechTreeState Decode(string serialized, TeamId teamId, TechTreeDatabase database)
     {
-        if (string.IsNullOrEmpty(serialized)) return null;
+        if (string.IsNullOrEmpty(serialized) || database == null) return null;
 
         SaveData save = JsonUtility.FromJson<SaveData>(serialized);
         if (save == null || save.unlocked == null || save.active == null) return null;
 
         var state = new TechTreeState(teamId, save.rpBalance);
         foreach (string id in save.unlocked)
-            if (database.Get(id) != null) state.unlockedNodeIds.Add(id);
+            if (!string.IsNullOrEmpty(id) && database.Get(id) != null)
+                state.unlockedNodeIds.Add(id);
 
         foreach (string id in save.active)
-            if (state.unlockedNodeIds.Contains(id)) state.activeNodeIds.Add(id);
+            if (!string.IsNullOrEmpty(id) && state.unlockedNodeIds.Contains(id))
+                state.activeNodeIds.Add(id);
 
         return state;
     }

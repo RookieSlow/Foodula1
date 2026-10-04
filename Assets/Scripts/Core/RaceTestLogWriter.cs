@@ -106,9 +106,15 @@ public sealed class RaceTestLogWriter : IDisposable
     /// <summary>Writes a final marker and closes the current file.</summary>
     public void End(string result)
     {
+        End(result, RaceLogTermination.Unknown);
+    }
+
+    public void End(string result, RaceLogTermination termination)
+    {
         if (writer == null)
             return;
 
+        Append("[RACE_TERMINATION] outcome=" + termination);
         Append("[RACE_END] " + result);
         PlaytestTelemetryService.Record("race", "race_log_finished", details: result);
         Close();

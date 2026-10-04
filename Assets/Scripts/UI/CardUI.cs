@@ -11,6 +11,7 @@ public class CardUI : MonoBehaviour
 {
     [Header("UI 组件")]
     public TMP_Text valueText;
+    private bool heatPlayable;
     public Image backgroundImage;
 
     [Header("精灵图 — 卡面")]
@@ -209,7 +210,8 @@ public class CardUI : MonoBehaviour
             overlayImage.color = new Color(1, 1, 1, 0);
         }
 
-        // 热量牌不是可执行动作，避免它进入键盘/手柄的无效焦点序列。
+        heatPlayable = false;
+        // Heat is disabled by default; its owner may explicitly enable BBQ play.
         Button button = GetComponent<Button>();
         if (button != null)
             button.interactable = !data.IsHeat;
@@ -219,12 +221,21 @@ public class CardUI : MonoBehaviour
 
     public void OnCardClicked()
     {
-        // 热量牌不可打出 — 点击无响应
-        if (cardData != null && cardData.IsHeat) return;
+        if (cardData != null && cardData.IsHeat && !heatPlayable) return;
 
         // 选择规则由 CardHandUI 按当前模式统一处理：
         // 正常出牌只允许一个待确认项，弃牌阶段允许多选。
         onClickCallback?.Invoke(this);
+    }
+
+    public void SetHeatPlayable(bool playable)
+    {
+        heatPlayable = playable;
+        if (cardData == null || !cardData.IsHeat) return;
+        Button button = GetComponent<Button>();
+        if (button != null) button.interactable = playable;
+        if (valueText != null) valueText.text = playable ? "BBQ 2" : "";
+        if (!playable) SetSelectedWithoutNotify(false);
     }
 
     private void UpdateVisual()

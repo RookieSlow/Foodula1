@@ -68,13 +68,13 @@ public sealed class HeatThermometerUI : MonoBehaviour
         return thermometer;
     }
 
-    public void Refresh(CardDeck deck)
+    public void Refresh(CardDeck deck, System.Collections.Generic.IReadOnlyList<CardData> committedCards = null)
     {
         TryInitializeSerializedLayout();
         if (!initialized)
             return;
 
-        currentState = HeatGaugeRules.Evaluate(deck);
+        currentState = HeatGaugeRules.Evaluate(deck, committedCards);
         int activeSegments = Mathf.CeilToInt(currentState.Fill01 * SegmentTotal);
 
         for (int i = 0; i < segments.Length; i++)

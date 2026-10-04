@@ -268,7 +268,7 @@ public static class DriverBalanceBenchmark
                 usesChinaGearSystem = TeamGearRules.IsChina(team),
                 techState = session.CreateDemoTechState(team)
             };
-            TechTreeRules.ResetPerRaceState(player.techState);
+            session.PrepareTechnologyForRace(player, track.country);
             bool isTarget = string.Equals(profile.Id, targetProfile.Id, StringComparison.Ordinal);
             player.driverSkill.Initialize(profile, isTarget && enabled ? level : 0, isTarget && enabled);
 
@@ -278,6 +278,7 @@ public static class DriverBalanceBenchmark
                 deckConfig,
                 new HeatPool(pool),
                 new SystemRandomSource(seed + i * 97 + 11));
+            SyncRegionalHeatCapacity(session, player, nodes.Count);
             player.deck.AddTrickCardsToDrawPile(session.CreateInitialTrickCards(team));
             player.deck.DrawToHand(session.EffectiveHandSize(player, cfg.handSize));
             session.Players.Add(player);
@@ -329,7 +330,7 @@ public static class DriverBalanceBenchmark
                     cfg.twoGearShiftHeatCost,
                     cfg.gearOneCooldown,
                     cfg.gearTwoCooldown);
-                if (!PayHeatOrSpin(session, player, shift.HeatCost, player.position, heatPaid))
+                if (!PayHeatOrSpin(session, player, shift.HeatCost, player.position, nodes.Count, heatPaid))
                 {
                     skipped.Add(player);
                     continue;
@@ -337,7 +338,7 @@ public static class DriverBalanceBenchmark
                 player.gear = shift.TargetGear;
                 player.chinaConsecutiveGearCount = shift.IsChina ? shift.ConsecutiveCount : 0;
                 if (shift.AdditionalHeat > 0 &&
-                    !PayHeatOrSpin(session, player, shift.AdditionalHeat, player.position, heatPaid))
+                    !PayHeatOrSpin(session, player, shift.AdditionalHeat, player.position, nodes.Count, heatPaid))
                 {
                     skipped.Add(player);
                     continue;
@@ -363,16 +364,21 @@ public static class DriverBalanceBenchmark
                     cfg.aiHeatWarningThreshold,
                     cfg.aiCautiousHeatThreshold,
                     0f,
-                    session.Random);
+                    session.Random,
+                    CardPlayRules.CanUseHeatAsSpeed(player, session, nodes.Count));
                 int missing = RaceRules.GetMissingSpeedCardCount(requiredCards, chosen.Count);
-                if (missing > 0 && !PayHeatOrSpin(session, player, missing, player.position, heatPaid))
+                if (missing > 0 && !PayHeatOrSpin(session, player, missing, player.position, nodes.Count, heatPaid))
                 {
                     skipped.Add(player);
                     continue;
                 }
-                player.deck.RemoveFromHand(chosen);
-                player.playedSpeedCardsThisTurn.AddRange(chosen);
-                player.cornerTotalThisTurn = RaceRules.SumCardValues(chosen) +
+                if (CommitBenchmarkSpeedCards(session, player, chosen, requiredCards, nodes.Count) !=
+                    SpeedCardCommitResult.Success)
+                {
+                    skipped.Add(player);
+                    continue;
+                }
+                player.cornerTotalThisTurn = CardPlayRules.SumCommittedSpeedCardValues(chosen) +
                     DriverSkillRules.GetSpeedPerCardBonus(player.driverSkill) * chosen.Count;
             }
 
@@ -441,10 +447,9 @@ public static class DriverBalanceBenchmark
                     if (player.cornerTotalThisTurn <= limit)
                         continue;
 
-                    int heat = Mathf.Max(1, player.cornerTotalThisTurn - limit);
-                    heat += TeamVehicleRules.GetCornerHeatPenalty(player.teamId);
-                    heat = DriverSkillRules.ReduceCornerHeat(player.driverSkill, heat);
-                    if (!PayHeatOrSpin(session, player, heat, oldPosition, heatPaid))
+                    int heat = session.ResolveOverspeedHeatCost(
+                        player, player.cornerTotalThisTurn - limit);
+                    if (!PayHeatOrSpin(session, player, heat, oldPosition, nodes.Count, heatPaid))
                     {
                         completedCorner = false;
                         break;
@@ -490,7 +495,7 @@ public static class DriverBalanceBenchmark
                     else if (player.driverSkill.Tier < 3)
                         player.skipNextTurn = true;
                 }
-                player.deck.DiscardSpeedCards(player.playedSpeedCardsThisTurn);
+                player.deck.DiscardPlayedSpeedCards(player.playedSpeedCardsThisTurn);
                 player.playedSpeedCardsThisTurn.Clear();
                 player.deck.DiscardPlayableCardsFromHand(player.deck.GetTricksInHand());
                 player.deck.RemoveTempCardsFromHand();
@@ -541,7 +546,7 @@ public static class DriverBalanceBenchmark
         if (!enabled || player.driverId != targetProfile.Id)
             return;
 
-        HeatGaugeState gauge = HeatGaugeRules.Evaluate(player.deck);
+        HeatGaugeState gauge = HeatGaugeRules.Evaluate(player.deck, player.playedSpeedCardsThisTurn);
         int nearby = CountNearbyOpponentsBehind(player, session.Players, totalNodes, 3);
         var context = new DriverSkillActivationContext(
             true,
@@ -598,6 +603,7 @@ public static class DriverBalanceBenchmark
             }
         }
         player.position = Normalize(newPosition, nodes.Count);
+        SyncRegionalHeatCapacity(session, player, nodes.Count);
     }
 
     private static int ChooseGear(
@@ -634,10 +640,11 @@ public static class DriverBalanceBenchmark
 
         if (player.HeatRatio >= cfg.aiHeatWarningThreshold)
             return Mathf.Max(cfg.minGear, player.gear - 1);
-        if (player.deck.CountSpeedInHand() < player.gear)
-            return Mathf.Max(cfg.minGear, player.deck.CountSpeedInHand());
+        int playableCards = CountPlayableSpeedCards(session, player, nodes.Count);
+        if (playableCards < player.gear)
+            return Mathf.Max(cfg.minGear, playableCards);
 
-        int estimate = EstimateMovement(player, player.gear);
+        int estimate = EstimatePlayableMovement(session, player, player.gear, nodes.Count, false);
         int lookAhead = Mathf.Min(Mathf.Min(cfg.aiLookAheadNodes, nodes.Count - 1), Mathf.Max(1, estimate));
         for (int offset = 1; offset <= lookAhead; offset++)
         {
@@ -653,9 +660,19 @@ public static class DriverBalanceBenchmark
         return player.gear;
     }
 
-    private static int EstimateMovement(PlayerState player, int cardCount)
+    internal static int CountPlayableSpeedCards(RaceSession session, PlayerState player, int totalNodes)
     {
-        return RaceRules.SumCardValues(player.deck.GetTopNSpeedCards(cardCount));
+        return player.deck.CountSpeedInHand() +
+            (CardPlayRules.CanUseHeatAsSpeed(player, session, totalNodes)
+                ? player.deck.CountHeatInHand() : 0);
+    }
+
+    internal static int EstimatePlayableMovement(
+        RaceSession session, PlayerState player, int cardCount, int totalNodes, bool lowest)
+    {
+        bool heatAsSpeed = CardPlayRules.CanUseHeatAsSpeed(player, session, totalNodes);
+        return CardPlayRules.SumCommittedSpeedCardValues(
+            AIPlanner.GetSpeedCards(player.deck, cardCount, lowest, heatAsSpeed));
     }
 
     private static bool HasUpcomingCornerRisk(
@@ -666,7 +683,7 @@ public static class DriverBalanceBenchmark
         RaceSession session,
         int configuredLookAhead)
     {
-        int estimatedMove = EstimateMovement(player, cardCount);
+        int estimatedMove = EstimatePlayableMovement(session, player, cardCount, nodes.Count, false);
         int lookAhead = Mathf.Min(Mathf.Min(configuredLookAhead, nodes.Count - 1), Mathf.Max(1, estimatedMove));
         for (int offset = 1; offset <= lookAhead; offset++)
         {
@@ -687,7 +704,7 @@ public static class DriverBalanceBenchmark
         RaceSession session,
         int configuredLookAhead)
     {
-        int estimatedMove = RaceRules.SumCardValues(player.deck.GetBottomNSpeedCards(cardCount));
+        int estimatedMove = EstimatePlayableMovement(session, player, cardCount, nodes.Count, true);
         int lookAhead = Mathf.Min(Mathf.Min(configuredLookAhead, nodes.Count - 1), Mathf.Max(1, estimatedMove));
         int projectedHeat = 0;
         var visited = new HashSet<int>();
@@ -706,6 +723,7 @@ public static class DriverBalanceBenchmark
         PlayerState player,
         int amount,
         int rewindPosition,
+        int totalNodes,
         Dictionary<PlayerState, int> heatPaid)
     {
         if (amount <= 0)
@@ -721,8 +739,10 @@ public static class DriverBalanceBenchmark
         }
 
         player.spinCounter++;
+        CardPlayRules.RetireCommittedHeatForRecovery(player);
         player.deck.RecoverAllHeatToPool();
         player.position = rewindPosition;
+        SyncRegionalHeatCapacity(session, player, totalNodes);
         player.gear = TeamGearRules.IsChina(player.teamId)
             ? ChinaGearShiftRules.RecoverGear
             : 1;
@@ -731,6 +751,18 @@ public static class DriverBalanceBenchmark
         if (player.spinCounter >= session.EffectiveSpinMax(player))
             player.isBlown = true;
         return false;
+    }
+
+    internal static void SyncRegionalHeatCapacity(RaceSession session, PlayerState player, int totalNodes)
+    {
+        if (session != null)
+            session.SyncRegionalHeatCapacity(player, totalNodes);
+    }
+
+    internal static SpeedCardCommitResult CommitBenchmarkSpeedCards(
+        RaceSession session, PlayerState player, IReadOnlyList<CardData> cards, int maxCards, int totalNodes)
+    {
+        return CardPlayRules.CommitSpeedCards(player, cards, maxCards, session, totalNodes);
     }
 
     private static void AppendRow(

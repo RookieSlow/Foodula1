@@ -45,13 +45,14 @@ public static class AIPlanner
         CardDeck deck,
         int cardCount,
         int targetMovement,
-        out List<CardData> result)
+        out List<CardData> result,
+        bool heatAsSpeed = false)
     {
         result = null;
         if (deck == null || cardCount <= 0 || targetMovement <= 0)
             return false;
 
-        List<CardData> candidates = deck.GetSpeedCardsSortedDesc();
+        List<CardData> candidates = CardPlayRules.GetSpeedCandidates(deck, heatAsSpeed);
         if (candidates.Count < cardCount)
             return false;
 
@@ -71,7 +72,8 @@ public static class AIPlanner
         float heatWarningThreshold,
         float cautiousHeatThreshold,
         float variationChance,
-        IRandomSource randomSource)
+        IRandomSource randomSource,
+        bool heatAsSpeed = false)
     {
         // A known corner risk takes priority over aggression even when the
         // engine is still cool.  Choosing the highest cards in that state
@@ -82,9 +84,7 @@ public static class AIPlanner
             heatRatio >= heatWarningThreshold ||
             (hasCornerRisk && heatRatio >= cautiousHeatThreshold);
 
-        List<CardData> chosen = chooseLowCards
-            ? deck.GetBottomNSpeedCards(maxCards)
-            : deck.GetTopNSpeedCards(maxCards);
+        List<CardData> chosen = GetSpeedCards(deck, maxCards, chooseLowCards, heatAsSpeed);
 
         if (chosen.Count > 1 &&
             variationChance > 0f &&
@@ -112,7 +112,8 @@ public static class AIPlanner
         for (int i = startIndex; i <= candidates.Count - remainingCards; i++)
         {
             CardData card = candidates[i];
-            if (card == null || !card.IsSpeed || card.value <= 0 || card.value > remainingMovement)
+            int value = CardPlayRules.GetCommittedSpeedCardValue(card);
+            if (value <= 0 || value > remainingMovement)
                 continue;
 
             selected.Add(card);
@@ -120,7 +121,7 @@ public static class AIPlanner
                 candidates,
                 i + 1,
                 remainingCards - 1,
-                remainingMovement - card.value,
+                remainingMovement - value,
                 selected))
             {
                 return true;
@@ -140,5 +141,14 @@ public static class AIPlanner
             list[i] = list[j];
             list[j] = temp;
         }
+    }
+
+    public static List<CardData> GetSpeedCards(CardDeck deck, int count, bool lowest, bool heatAsSpeed)
+    {
+        if (!heatAsSpeed) return lowest ? deck.GetBottomNSpeedCards(count) : deck.GetTopNSpeedCards(count);
+        var cards = CardPlayRules.GetSpeedCandidates(deck, true);
+        if (lowest) cards.Reverse();
+        count = System.Math.Max(0, System.Math.Min(count, cards.Count));
+        return cards.GetRange(0, count);
     }
 }
