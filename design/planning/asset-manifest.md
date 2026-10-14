@@ -122,11 +122,11 @@
 | 选牌/取消 | `card_select.wav`、`card_deselect.wav` | 纸牌轻触与机械卡扣 | ✅ 已接入 |
 | 打出/主动弃牌 | `card_play.wav`、`card_discard.wav` | 方向感不同，能区分“使用”和“放弃” | ✅ 已接入 |
 | 抽牌/洗牌 | `card_draw.wav`、`deck_shuffle.wav` | 短纸牌声；批量时限频 | 🟨 抽牌已接入；洗牌待事件点 |
-| 换挡/挡位失败 | `gear_shift.wav`、`gear_failure.wav` | 机械拨档；失败带低沉卡滞 | ✅ 已接入 |
+| 换挡/挡位失败 | `team_shift_{uk,de,it,us,cn,jp}_{up,down}.wav`、`gear_failure.wav` | 六队独立成功升降挡/电驱模式切换；失败带低沉卡滞 | 专属声已接入；旧统一声保留缺资源回退 |
 | 支付热量 | `heat_pay.wav` | 温暖、受控的压力释放声，非爆炸 | ✅ 已接入 |
 | 冷却热量 | `heat_cool.wav` | 清脆、短促的降温声 | ✅ 已接入 |
 | 热量警告 | `heat_warning.wav` | 可识别但不持续轰鸣；设置冷却时间 | 🟨 成品齐；警告阈值事件待接入 |
-| 逐格移动 | `car_hop.wav` | 轻量棋子/悬架落点，连续播放需限频 | ✅ 已接入并限频 |
+| 赛车前进 | `Engines/team_engine_{uk,de,it,us,cn,jp}{,_mid,_high}.wav` | 六队真实录音低／中／高三层；按实际格数交叉淡入拉转，结束收束 | 18 循环层替代逐格落点；旧 `car_hop.wav` 保留兼容资产 |
 | 尾流阶段 | `slipstream_trigger.wav`、`slipstream_move.wav` | 先确认触发，再用短气流推进；仅在独立尾流阶段播放 | ✅ 已接入 |
 | 弯道成功/超速/失控 | `corner_safe.wav`、`corner_over.wav`、`spin_out.wav` | 三种结果清晰可分；失控不使用重撞击爆炸声 | ✅ 已接入 |
 
@@ -142,6 +142,15 @@
 | 小雨/大雨环境循环 | `amb_light_rain.ogg`、`amb_heavy_rain.ogg` | ⬜ |
 
 ### 音频技术规格
+
+2026-10-12 修订六队音频包：18 个引擎循环层 + 12 个升降挡提示，48 kHz/16-bit/mono PCM，
+约 2.29 MB。以 muted.io / Sebastien 的 CC0 原始性能车录音及 Joseph Sardin 的 CC0
+汽车天线电机实录为主体，机械换挡触感沿用项目已有 Sonniss 许可录音，进行稳定段筛选、
+轻度 EQ、统一响度和循环接缝处理；纯合成引擎包已由实录方案替换。
+生成脚本 `tools/Audio/build_team_vehicle_audio.py` 与
+`Assets/Resources/Audio/team_vehicle_profiles.json` 记录声纹、格式、峰值、RMS、SHA256 和
+可重复生成方式；原录音未认证具体汽车品牌，CN 是电机音色设计而非赛车实录。来源详情见
+`docs/audio/team-vehicle-recordings-provenance.md`；旧 GDC 2026 包来源记录继续保留。
 
 - 音乐：OGG Vorbis、44.1/48kHz、立体声、无缝循环；建议目标综合响度约 -16 LUFS。
 - 短音效：WAV、44.1/48kHz；无空间方向需求的 UI 声保持 2D，建议峰值不高于 -3 dBFS。

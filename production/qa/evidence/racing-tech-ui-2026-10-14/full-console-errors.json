@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "message": "Retrieved 3 log entries.",
+  "data": [
+    {
+      "type": "Exception",
+      "message": "MissingReferenceException: The object of type 'AudioSource' has been destroyed but you are still trying to access it.",
+      "file": "Assets/Scripts/Audio/AudioService.cs",
+      "line": 308,
+      "stackTrace": "Your script should either check if it is null or you should not destroy the object.\nUnityEngine.AudioSource.Stop () (at <e2d3892d778c41cda4d74ac2a8d608a9>:0)\nAudioService.StopVehicleEngine () (at Assets/Scripts/Audio/AudioService.cs:308)\nAudioService.OnSceneUnloaded (UnityEngine.SceneManagement.Scene scene) (at Assets/Scripts/Audio/AudioService.cs:351)\nUnityEngine.SceneManagement.SceneManager.Internal_SceneUnloaded (UnityEngine.SceneManagement.Scene scene) (at <8cdc7e7e8a17404287a8b220eb9eec72>:0)\n"
+    },
+    {
+      "type": "Exception",
+      "message": "MissingReferenceException: The object of type 'AudioSource' has been destroyed but you are still trying to access it.",
+      "file": "Assets/Scripts/Audio/AudioService.cs",
+      "line": 308,
+      "stackTrace": "Your script should either check if it is null or you should not destroy the object.\nUnityEngine.AudioSource.Stop () (at <e2d3892d778c41cda4d74ac2a8d608a9>:0)\nAudioService.StopVehicleEngine () (at Assets/Scripts/Audio/AudioService.cs:308)\nAudioService.OnSceneLoaded (UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) (at Assets/Scripts/Audio/AudioService.cs:344)\nUnityEngine.SceneManagement.SceneManager.Internal_SceneLoaded (UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) (at <8cdc7e7e8a17404287a8b220eb9eec72>:0)\n"
+    },
+    {
+      "type": "Error",
+      "message": "[TrackDataLoader] Track config not found: Resources/Configs/Tracks/no_such_track.json",
+      "file": "Assets/Scripts/Gameplay/TrackDataLoader.cs",
+      "line": 22,
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nTrackDataLoader:LoadConfig (string) (at Assets/Scripts/Gameplay/TrackDataLoader.cs:22)\nTrackDataLoaderTest:test_load_config_missing_track_returns_null () (at Assets/Tests/Editor/track_data_loader_test.cs:192)\nSystem.Reflection.MethodBase:Invoke (object,object[])\nNUnit.Framework.Internal.Reflect:InvokeMethod (System.Reflection.MethodInfo,object,object[])\nNUnit.Framework.Internal.MethodWrapper:Invoke (object,object[])\nNUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod (NUnit.Framework.Internal.ITestExecutionContext)\nNUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod (NUnit.Framework.Internal.ITestExecutionContext)\nNUnit.Framework.Internal.Commands.TestMethodCommand:Execute (NUnit.Framework.Internal.ITestExecutionContext)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n"
+    }
+  ]
+}

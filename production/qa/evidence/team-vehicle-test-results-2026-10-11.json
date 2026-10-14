@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-11",
+  "feature": "Team engine audio and gear presentation",
+  "runs": [
+    {
+      "job_id": "1b134710498747db9bf6ef34918e759f",
+      "kind": "first movement/audio/rules subset",
+      "total": 49,
+      "passed": 49,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "job_id": "d8216077cff941b384990a970521bb55",
+      "kind": "initial UI fixture run",
+      "total": 23,
+      "passed": 0,
+      "failed": 23,
+      "note": "Test Build reflected public config/hudUI using NonPublic. Corrected to direct public assignments; this is not acceptance evidence."
+    },
+    {
+      "job_id": "eafa9f763dff4b189777af2d4e1e0148",
+      "kind": "final UI subset",
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "job_id": "5f9ae33292c746f0946ed0f2936d5831",
+      "kind": "real engine playback across Enter/ExitPlayMode",
+      "native_run_finished": {
+        "fullName": "Foodula1",
+        "resultState": "Passed",
+        "endedUtc": "2026-10-11T05:22:42.7545639Z",
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0
+      },
+      "note": "MCP callbacks lost across domain reload; native Test Runner RunFinished is authoritative."
+    },
+    {
+      "job_id": "8dc3c29928364ae4a7de161eabae6c44",
+      "kind": "final audio/movement/UI/existing gear subset",
+      "total": 76,
+      "passed": 76,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "job_id": "20f7c0426a8047eb9aedfa7470bf1183",
+      "kind": "full native EditMode suite",
+      "native_run_finished": {
+        "fullName": "Foodula1",
+        "resultState": "Passed",
+        "endedUtc": "2026-10-11T05:26:43.0387549Z",
+        "total": 2577,
+        "passed": 2577,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0
+      },
+      "note": "MCP reported an initialization timeout during reload; the native suite did run and RunFinished completed. The MCP status is not counted as a pass."
+    }
+  ],
+  "final_editor": {
+    "scene": "MainMenu",
+    "sceneDirty": false,
+    "sceneCount": 1,
+    "isPlaying": false,
+    "isCompiling": false,
+    "isUpdating": false,
+    "evidenceArmed": false,
+    "activeRenderTarget": "none",
+    "featureTestObjects": 0
+  },
+  "limits": [
+    "Screenshots are isolated component renders, not a full-screen driving walkthrough.",
+    "Programmatic voice playback is verified; subjective timbre/listening approval remains with the user.",
+    "Existing standard and China gameplay rules retained.",
+    "No Git commit or push."
+  ],
+  "preserved_baseline_hashes": "[[\""
+}

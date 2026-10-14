@@ -66,9 +66,18 @@ public class HUDUI : MonoBehaviour
     private TMP_Text returnToMenuConfirmTitle;
     [SerializeField] private HeatThermometerUI heatThermometer;
     [SerializeField] private GearDialPresentationUI gearDialPresentation;
+    [SerializeField] private TeamGearPresentationUI teamGearPresentation;
+    private bool teamGearControlsEnabled = true;
+    private GameObject telemetryDetailsPanel;
+    private TMP_Text telemetryDetailsText;
+    private Button closeTelemetryDetailsButton;
+    private PlayerState telemetryPlayer;
 
     public HeatThermometerUI HeatThermometer => heatThermometer;
     public GearDialPresentationUI GearDialPresentation => gearDialPresentation;
+    public TeamGearPresentationUI TeamGearPresentation => teamGearPresentation;
+    public bool IsTelemetryDetailsOpen => telemetryDetailsPanel != null && telemetryDetailsPanel.activeSelf;
+    public GameConfigSO GameConfigForPresentation => gameManager != null ? gameManager.Config : null;
     public bool IsReturnToMenuConfirmationVisible =>
         returnToMenuConfirmPanel != null && returnToMenuConfirmPanel.activeSelf;
 
@@ -141,8 +150,7 @@ public class HUDUI : MonoBehaviour
         ButtonClickAnimation.Attach(cancelReturnToMenuButton);
 
         EnsureGameOverPresentation();
-        if (gameOverPanel != null)
-            gameOverPanel.SetActive(false);
+        HideGameOver();
 
         EnsurePresentation();
     }
@@ -159,7 +167,10 @@ public class HUDUI : MonoBehaviour
     /// <summary>在游戏初始化后设置引用。</summary>
     public void SetGameManager(MVPGameManager gm)
     {
+        if (gameManager != gm && telemetryDetailsPanel != null) telemetryDetailsPanel.SetActive(false);
         gameManager = gm;
+        if (gm != null && gm.Player != null) RefreshTurnTelemetry(gm.Player);
+        RefreshTeamGearPresentation();
     }
 
     /// <summary>Sets an optional sink for full-fidelity manual playtest logs.</summary>
@@ -217,7 +228,10 @@ public class HUDUI : MonoBehaviour
     /// <summary>Immediately refreshes the local player's gear and heat resources.</summary>
     public void RefreshPlayerResources(PlayerState player)
     {
-        if (player == null || player.deck == null) return;
+        if (player == null) return;
+        RefreshTurnTelemetry(player);
+        RefreshTeamGearPresentation();
+        if (player.deck == null) return;
 
         // Resolve the authored thermometer even when an older RaceCanvas
         // instance lost the private serialized field during prefab rebuild.
@@ -242,7 +256,9 @@ public class HUDUI : MonoBehaviour
                 + $"手{handHeat} 抽{drawHeat} 弃{discardHeat}{tempInfo}{spinInfo}";
         }
 
-        heatThermometer?.Refresh(player.deck, player.playedSpeedCardsThisTurn);
+        if (heatThermometer != null) heatThermometer.RefreshSnapshot(gauge,
+            teamGearPresentation != null && teamGearPresentation.Telemetry != null
+                ? teamGearPresentation.Telemetry.LivePreview?.ProjectedHeat : null);
     }
 
     /// <summary>Builds the authored visual wrappers without changing button ownership.</summary>
@@ -254,10 +270,16 @@ public class HUDUI : MonoBehaviour
             heatThermometer = HeatThermometerUI.Attach(heatText);
 
         Transform gearContainer = gear1Button != null ? gear1Button.transform.parent : null;
-        if (gearContainer != null && gearDialPresentation == null)
+        if (gearContainer != null && teamGearPresentation == null)
         {
-            gearDialPresentation = GearDialPresentationUI.Attach(
-                gearContainer, gear1Button, gear2Button, gear3Button, gear4Button);
+            // Keep authored dial components available to legacy tools, while
+            // the team view is the only runtime writer of the gear layout.
+            if (gearDialPresentation == null)
+                gearDialPresentation = gearContainer.GetComponent<GearDialPresentationUI>();
+            if (gearDialPresentation != null)
+                gearDialPresentation.enabled = false;
+            teamGearPresentation = TeamGearPresentationUI.Attach(
+                gearContainer, this, gear1Button, gear2Button, gear3Button, gear4Button);
         }
     }
 
@@ -318,6 +340,7 @@ public class HUDUI : MonoBehaviour
         pendingConfirmationType = null;
         if (returnToMenuConfirmPanel != null)
             returnToMenuConfirmPanel.SetActive(false);
+        RefreshTeamGearPresentation();
     }
 
     /// <summary>Confirms the destructive navigation action.</summary>
@@ -334,6 +357,7 @@ public class HUDUI : MonoBehaviour
             action.Invoke();
         else
             SceneLoader.LoadMainMenu();
+        RefreshTeamGearPresentation();
     }
 
     /// <summary>
@@ -346,7 +370,7 @@ public class HUDUI : MonoBehaviour
         string message,
         UnityEngine.Events.UnityAction callback)
     {
-        if (callback == null)
+        if (callback == null || IsTelemetryDetailsOpen)
             return;
 
         if (!InRaceConfirmationRules.IsEnabled(
@@ -373,6 +397,7 @@ public class HUDUI : MonoBehaviour
         SetConfirmationButtonLabels(action);
         returnToMenuConfirmPanel.transform.SetAsLastSibling();
         returnToMenuConfirmPanel.SetActive(true);
+        RefreshTeamGearPresentation();
     }
 
     private void SetConfirmationButtonLabels(InRaceConfirmationAction action)
@@ -396,6 +421,14 @@ public class HUDUI : MonoBehaviour
     /// <summary>Public adapter used by procedural/fallback gear buttons.</summary>
     public void RequestGearSelection(int gear)
     {
+        if (gameManager == null || !gameManager.CanSelectGearForPresentation ||
+            !teamGearControlsEnabled || IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
+            (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf))
+            return;
+        PlayerState player = gameManager.Player;
+        if (player == null || gear < 1 || gear > (player.teamId == TeamId.CN ? 2 : 4) ||
+            (player.teamId != TeamId.CN && Mathf.Abs(gear - player.gear) > 2))
+            return;
         gameManager?.DismissTutorialInteractionCallout();
         string gearName = $"档位 {gear}";
         if (gameManager != null && gameManager.Player != null)
@@ -404,7 +437,11 @@ public class HUDUI : MonoBehaviour
             InRaceConfirmationAction.GearSelection,
             "确认换挡选择",
             $"确定选择 {gearName} 吗？",
-            () => gameManager?.OnGearButtonClicked(gear));
+            () =>
+            {
+                gameManager?.OnGearButtonClicked(gear);
+                RefreshTeamGearPresentation();
+            });
     }
 
     /// <summary>Keyboard adapter that preserves the configured gear-confirmation gate.</summary>
@@ -453,12 +490,14 @@ public class HUDUI : MonoBehaviour
         }
         cornerLimitDetailsPanel.transform.SetAsLastSibling();
         cornerLimitDetailsPanel.SetActive(true);
+        RefreshTeamGearPresentation();
     }
 
     public void HideCornerLimitDetails()
     {
         if (cornerLimitDetailsPanel != null)
             cornerLimitDetailsPanel.SetActive(false);
+        RefreshTeamGearPresentation();
     }
 
     private static string FormatSignedModifier(int modifier)
@@ -644,14 +683,165 @@ public class HUDUI : MonoBehaviour
 
     public void ConfigureGearPresentation(bool chinaMode, int currentGear)
     {
+        ConfigureGearPresentation(chinaMode ? TeamId.CN : TeamId.UK, currentGear);
+    }
+
+    public void ConfigureGearPresentation(TeamId team, int currentGear)
+    {
+        if (telemetryDetailsPanel != null) telemetryDetailsPanel.SetActive(false);
         EnsurePresentation();
-        gearDialPresentation?.Configure(chinaMode, currentGear);
+        teamGearPresentation?.Configure(team, currentGear);
+        if (gameManager != null && gameManager.Player != null) RefreshTurnTelemetry(gameManager.Player);
+        RefreshTeamGearPresentation();
+    }
+
+    public void SetTeamGearControlsInteractable(bool interactable)
+    {
+        teamGearControlsEnabled = interactable;
+        RefreshTeamGearPresentation();
+    }
+
+    /// <summary>Reads pending and actual state separately; confirmation never fakes a successful shift.</summary>
+    public void RefreshTeamGearPresentation()
+    {
+        EnsurePresentation();
+        if (gameManager == null || gameManager.Player == null || teamGearPresentation == null)
+            return;
+        bool modal = IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
+            (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf);
+        teamGearPresentation.Refresh(gameManager.Player, gameManager.PendingGearForPresentation,
+            teamGearControlsEnabled && gameManager.CanSelectGearForPresentation && !modal,
+            gameManager.TutorialInputPhase != "gear", gameManager.Config,
+            gameManager.CurrentPhase == GamePhase.WaitingForGear);
+    }
+
+    public void SetEnginePresentation(float intensity)
+    {
+        // Audio cleanup may arrive after the HUD or its visual children are destroyed.
+        // Startup owns creation; an intensity update must never rebuild UI during teardown.
+        if (this == null || teamGearPresentation == null) return;
+        teamGearPresentation.SetEngineIntensity(intensity);
+    }
+
+    public void RefreshTurnTelemetry(PlayerState player) => RefreshTurnTelemetryInternal(player, null);
+
+    public void RefreshGearTelemetryPreview(PlayerState player, int gear) => RefreshTurnTelemetryInternal(player, gear);
+
+    private void RefreshTurnTelemetryInternal(PlayerState player, int? gearOverride)
+    {
+        if (this == null || player == null) return;
+        EnsurePresentation();
+        if (telemetryPlayer != null && telemetryPlayer != player && telemetryDetailsPanel != null)
+            telemetryDetailsPanel.SetActive(false);
+        telemetryPlayer = player;
+        RaceTelemetryStripUI strip = teamGearPresentation != null ? teamGearPresentation.Telemetry : null;
+        if (strip == null) return;
+        RaceTurnPreview preview = gameManager != null ? gameManager.BuildTurnTelemetryPreview(player, gearOverride) : null;
+        HeatGaugeState realHeat = HeatGaugeRules.Evaluate(player.deck, player.playedSpeedCardsThisTurn);
+        strip.Refresh(player.turnMovement, realHeat,
+            CardPlayRules.SumCommittedSpeedCardValues(player.playedSpeedCardsThisTurn), preview);
+        if (heatThermometer != null) heatThermometer.RefreshSnapshot(realHeat, preview?.ProjectedHeat);
+        if (IsTelemetryDetailsOpen && telemetryDetailsText != null)
+            telemetryDetailsText.text = strip.FormatDetails();
+    }
+
+    // Check geometry before EventSystem dispatch: the opening click cannot skip movement.
+    public bool IsPointerOverTelemetry(Vector2 screenPosition)
+    {
+        if (IsTelemetryDetailsOpen) return true;
+        Button target = teamGearPresentation != null && teamGearPresentation.Telemetry != null
+            ? teamGearPresentation.Telemetry.MovementButton : null;
+        if (target == null || !target.gameObject.activeInHierarchy) return false;
+        Canvas canvas = target.GetComponentInParent<Canvas>();
+        Camera camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
+        return RectTransformUtility.RectangleContainsScreenPoint(target.transform as RectTransform, screenPosition, camera);
+    }
+
+    public void ShowTelemetryDetails()
+    {
+        if ((gameManager != null && gameManager.CurrentPhase == GamePhase.GameOver) || IsReturnToMenuConfirmationVisible ||
+            (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf)) return;
+        EnsureTelemetryDetails();
+        PlayerState player = gameManager != null ? gameManager.Player : telemetryPlayer;
+        if (player != null) RefreshTurnTelemetry(player);
+        if (telemetryDetailsText != null && teamGearPresentation != null && teamGearPresentation.Telemetry != null)
+            telemetryDetailsText.text = teamGearPresentation.Telemetry.FormatDetails();
+        telemetryDetailsPanel.transform.SetAsLastSibling();
+        telemetryDetailsPanel.SetActive(true);
+        RefreshTeamGearPresentation();
+    }
+
+    public void HideTelemetryDetails()
+    {
+        if (telemetryDetailsPanel != null) telemetryDetailsPanel.SetActive(false);
+        RefreshTeamGearPresentation();
+    }
+
+    private void EnsureTelemetryDetails()
+    {
+        if (telemetryDetailsPanel != null) return;
+        TMP_FontAsset font = FindReferenceFont(transform.root);
+        telemetryDetailsPanel = new GameObject("TurnTelemetryDetails", typeof(RectTransform), typeof(Image));
+        telemetryDetailsPanel.transform.SetParent(transform.root, false);
+        RectTransform overlay = telemetryDetailsPanel.GetComponent<RectTransform>();
+        overlay.anchorMin = Vector2.zero; overlay.anchorMax = Vector2.one;
+        overlay.offsetMin = overlay.offsetMax = Vector2.zero;
+        Image overlayImage = telemetryDetailsPanel.GetComponent<Image>();
+        overlayImage.color = new Color(0f, 0f, 0f, 0.82f);
+        overlayImage.raycastTarget = true;
+
+        GameObject card = new GameObject("DetailsCard", typeof(RectTransform), typeof(Image));
+        card.transform.SetParent(overlay, false);
+        RectTransform cardRect = card.GetComponent<RectTransform>();
+        cardRect.anchorMin = new Vector2(0.25f, 0.15f); cardRect.anchorMax = new Vector2(0.75f, 0.85f);
+        cardRect.offsetMin = cardRect.offsetMax = Vector2.zero;
+        card.GetComponent<Image>().color = ModernUIStyle.Panel;
+        TMP_Text title = CreateConfirmationText(card.transform, "Title", "本回合位移来源", font, 24,
+            TextAlignmentOptions.Center, new Vector2(0.05f, 0.9f), new Vector2(0.95f, 0.98f), ModernUIStyle.TextPrimary);
+        title.raycastTarget = false;
+
+        GameObject viewport = new GameObject("DetailsViewport", typeof(RectTransform), typeof(Image), typeof(RectMask2D), typeof(ScrollRect));
+        viewport.transform.SetParent(card.transform, false);
+        RectTransform viewportRect = viewport.GetComponent<RectTransform>();
+        viewportRect.anchorMin = new Vector2(0.06f, 0.17f); viewportRect.anchorMax = new Vector2(0.94f, 0.87f);
+        viewportRect.offsetMin = viewportRect.offsetMax = Vector2.zero;
+        viewport.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.01f);
+        telemetryDetailsText = CreateConfirmationText(viewport.transform, "DetailsText", "", font, 18,
+            TextAlignmentOptions.TopLeft, new Vector2(0f, 1f), Vector2.one, ModernUIStyle.TextPrimary);
+        telemetryDetailsText.raycastTarget = false;
+        RectTransform content = telemetryDetailsText.rectTransform;
+        content.pivot = new Vector2(0.5f, 1f);
+        ContentSizeFitter fitter = content.gameObject.AddComponent<ContentSizeFitter>();
+        fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        ScrollRect scroll = viewport.GetComponent<ScrollRect>();
+        scroll.viewport = viewportRect; scroll.content = content; scroll.horizontal = false;
+        scroll.movementType = ScrollRect.MovementType.Clamped;
+
+        closeTelemetryDetailsButton = CreateConfirmationButton(card.transform, "CloseTelemetryDetailsButton", "关闭详情",
+            Vector2.zero, ModernUIStyle.AccentBlue, true, font);
+        RectTransform closeRect = closeTelemetryDetailsButton.transform as RectTransform;
+        closeRect.anchorMin = new Vector2(0.35f, 0.035f); closeRect.anchorMax = new Vector2(0.65f, 0.13f);
+        closeRect.offsetMin = closeRect.offsetMax = Vector2.zero;
+        closeTelemetryDetailsButton.onClick.AddListener(HideTelemetryDetails);
+        telemetryDetailsPanel.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+        if (telemetryDetailsPanel != null) telemetryDetailsPanel.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        if (telemetryDetailsPanel == null || telemetryDetailsPanel.transform.IsChildOf(transform)) return;
+        // A HUD nested below its canvas owns a sibling overlay; clean that up too.
+        if (Application.isPlaying) Destroy(telemetryDetailsPanel);
+        else DestroyImmediate(telemetryDetailsPanel);
     }
 
     public void SelectGearPresentation(int gear)
     {
-        EnsurePresentation();
-        gearDialPresentation?.SetSelectedGear(gear);
+        RefreshTeamGearPresentation();
     }
 
     public void RefreshDriverSkill(MVPGameManager gm, PlayerState player)
@@ -714,8 +904,16 @@ public class HUDUI : MonoBehaviour
 
     // ====== 游戏结束 ======
 
+    /// <summary>Hide the result without clearing data or rebuilding cached presentation controls.</summary>
+    public void HideGameOver()
+    {
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(false);
+    }
+
     public void ShowGameOver(string result)
     {
+        if (telemetryDetailsPanel != null) telemetryDetailsPanel.SetActive(false);
         EnsureGameOverPresentation();
         if (gameOverPanel != null)
         {
@@ -895,12 +1093,20 @@ public class HUDUI : MonoBehaviour
 
     private void OnConfirmGearClicked()
     {
+        if (gameManager == null || !gameManager.CanSelectGearForPresentation ||
+            !teamGearControlsEnabled || IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
+            (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf))
+            return;
         gameManager?.DismissTutorialInteractionCallout();
         RequestInRaceAction(
             InRaceConfirmationAction.GearCommit,
             "确认锁定档位",
             "确定锁定当前档位并进入出牌阶段吗？",
-            () => gameManager?.OnConfirmGearClicked());
+            () =>
+            {
+                gameManager?.OnConfirmGearClicked();
+                RefreshTeamGearPresentation();
+            });
     }
 
     private void OnDriverSkillClicked()
@@ -921,8 +1127,7 @@ public class HUDUI : MonoBehaviour
             () =>
             {
                 gameManager?.ResetGame();
-                if (gameOverPanel != null)
-                    gameOverPanel.SetActive(false);
+                HideGameOver();
             });
     }
 

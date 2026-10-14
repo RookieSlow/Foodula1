@@ -1,0 +1,20 @@
+{
+  "method": "WCAG sRGB relative luminance; opaque unhovered theme colors only, not font size or full accessibility certification",
+  "pairs": [
+    {
+      "foreground": "#F4F6F8",
+      "background": "ActualFill",
+      "ratio": 8.614
+    },
+    {
+      "foreground": "#F4F6F8",
+      "background": "PendingFill",
+      "ratio": 7.654
+    },
+    {
+      "foreground": "#F4F6F8",
+      "background": "Raised",
+      "ratio": 13.707
+    }
+  ]
+}

@@ -764,6 +764,58 @@ public sealed class RaceRestartAdapterTests
         Assert.That(trace, Is.EqualTo(new[] { "runtime" }));
     }
 
+    [TestCase(false)]
+    [TestCase(true)]
+    public void RebuildHidesRealResultBeforeInitializationAndRetainsCachedPresentation(bool initiallyVisible)
+    {
+        var hud = root.AddComponent<HUDUI>();
+        manager.hudUI = hud;
+        var panel = new UnityEngine.GameObject("Result", typeof(UnityEngine.RectTransform), typeof(UnityEngine.UI.Image));
+        panel.transform.SetParent(root.transform, false);
+        var text = new UnityEngine.GameObject("ResultText", typeof(UnityEngine.RectTransform), typeof(TMPro.TextMeshProUGUI));
+        text.transform.SetParent(panel.transform, false);
+        hud.gameOverPanel = panel;
+        hud.gameOverText = text.GetComponent<TMPro.TMP_Text>();
+        panel.GetComponent<UnityEngine.RectTransform>().sizeDelta = new UnityEngine.Vector2(800, 600);
+        hud.ShowGameOver("=== 比赛结果 ===\n\n1. Old result [完赛]");
+        var scroll = hud.gameOverScrollRect;
+        var title = hud.gameOverTitle;
+        string result = hud.gameOverText.text;
+        int children = panel.GetComponentsInChildren<UnityEngine.Transform>(true).Length;
+        panel.SetActive(initiallyVisible);
+        var trace = new List<string>();
+
+        Rebuild(c => Assert.Fail("No AI controllers belong to this fixture."), () =>
+        {
+            Assert.That(panel.activeSelf, Is.False, "Hide must precede race initialization.");
+            Assert.That(hud.gameOverText.text, Is.EqualTo(result));
+            Assert.That(hud.gameOverScrollRect, Is.SameAs(scroll));
+            Assert.That(hud.gameOverTitle, Is.SameAs(title));
+            trace.Add("initialize");
+        }, () => trace.Add("guide"), () => trace.Add("loop"));
+
+        Assert.That(trace, Is.EqualTo(new[] { "initialize", "guide", "loop" }));
+        hud.HideGameOver(); // repeated hide must not clear or reconstruct the cached result
+        hud.ShowGameOver("New result");
+        Assert.That(panel.activeSelf, Is.True);
+        Assert.That(hud.gameOverText.text, Is.EqualTo("New result"));
+        Assert.That(hud.gameOverScrollRect, Is.SameAs(scroll));
+        Assert.That(hud.gameOverTitle, Is.SameAs(title));
+        Assert.That(panel.GetComponentsInChildren<UnityEngine.Transform>(true).Length, Is.EqualTo(children));
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void RebuildWithoutResultPresentationStillInitializesGuideAndLoop(bool hasHud)
+    {
+        if (hasHud) manager.hudUI = root.AddComponent<HUDUI>();
+        var trace = new List<string>();
+        Rebuild(c => Assert.Fail("No AI controllers belong to this fixture."),
+            () => trace.Add("initialize"), () => trace.Add("guide"), () => trace.Add("loop"));
+        Assert.That(trace, Is.EqualTo(new[] { "initialize", "guide", "loop" }));
+        if (hasHud) Assert.DoesNotThrow(() => manager.hudUI.HideGameOver());
+    }
+
     [TestCase(0)]
     [TestCase(11)]
     public void RebuildRetiresOwnedControllersBeforeClearInitializeGuideAndLoop(int count)
@@ -829,6 +881,85 @@ public sealed class RaceRestartAdapterTests
         Assert.That(trace, Is.EqualTo(Enumerable.Range(0, failureStage + 1)));
         Assert.That(bindings.Count, Is.EqualTo(failureStage == 0 ? 1 : 0));
         Assert.That(old, Is.Not.Null, "Recording retirement does not destroy any live editor object.");
+    }
+
+    [TestCase(0)]
+    [TestCase(1)]
+    [TestCase(11)]
+    public void ConsecutiveRebuildsRetireOnlyThePreviousGeneration(int count)
+    {
+        var bindings = (Dictionary<PlayerState, AIController>)Get("aiControllers");
+        for (int i = 0; i < count; i++)
+            bindings.Add(new PlayerState("initial-" + i, true, 0, 1), root.AddComponent<AIController>());
+        var retired = new HashSet<AIController>();
+        for (int generation = 0; generation < 3; generation++)
+        {
+            var previous = bindings.Values.ToArray();
+            var next = new PlayerState("generation-" + generation, true, 0, 1);
+            var trace = new List<string>();
+            Rebuild(controller =>
+            {
+                Assert.That(previous, Does.Contain(controller));
+                Assert.That(retired.Add(controller), Is.True, "No generation is retired twice.");
+                trace.Add("retire");
+                UnityEngine.Object.DestroyImmediate(controller);
+            }, () =>
+            {
+                Assert.That(bindings, Is.Empty);
+                Assert.That(root.GetComponents<AIController>(), Is.Empty);
+                bindings.Add(next, root.AddComponent<AIController>());
+                trace.Add("initialize");
+            }, () => trace.Add("guide"), () => trace.Add("loop"));
+            Assert.That(trace, Is.EqualTo(Enumerable.Repeat("retire", previous.Length)
+                .Concat(new[] { "initialize", "guide", "loop" })));
+            Assert.That(bindings.Keys, Is.EqualTo(new[] { next }));
+            Assert.That(root.GetComponents<AIController>(), Is.EqualTo(bindings.Values.ToArray()));
+        }
+        Assert.That(retired.Count, Is.EqualTo(count + 2));
+    }
+
+    [TestCase(0)]
+    [TestCase(1)]
+    [TestCase(2)]
+    [TestCase(3)]
+    public void FailedRebuildCanBeFollowedByFreshOwnedBindingsWithoutRollback(int failureStage)
+    {
+        var bindings = (Dictionary<PlayerState, AIController>)Get("aiControllers");
+        var old = root.AddComponent<AIController>();
+        bindings.Add(new PlayerState("old", true, 0, 1), old);
+        var failedGeneration = new PlayerState("failed generation", true, 0, 1);
+        var failure = new InvalidOperationException("fixture generation failure");
+        Assert.That(Assert.Throws<TargetInvocationException>(() => Rebuild(
+            controller =>
+            {
+                if (failureStage == 0) throw failure;
+                UnityEngine.Object.DestroyImmediate(controller);
+            }, () =>
+            {
+                bindings.Add(failedGeneration, root.AddComponent<AIController>());
+                if (failureStage == 1) throw failure;
+            }, () => { if (failureStage == 2) throw failure; },
+            () => { if (failureStage == 3) throw failure; })).InnerException, Is.SameAs(failure));
+        var remnants = root.GetComponents<AIController>();
+        Assert.That(remnants.Length, Is.EqualTo(1));
+        var fresh = new PlayerState("fresh", true, 0, 1);
+        var retired = new List<AIController>();
+        int guideCalls = 0, loopCalls = 0;
+        Rebuild(controller =>
+        {
+            retired.Add(controller);
+            UnityEngine.Object.DestroyImmediate(controller);
+        }, () =>
+        {
+            Assert.That(bindings, Is.Empty);
+            Assert.That(root.GetComponents<AIController>(), Is.Empty);
+            bindings.Add(fresh, root.AddComponent<AIController>());
+        }, () => guideCalls++, () => loopCalls++);
+        Assert.That(retired, Is.EqualTo(remnants));
+        Assert.That(bindings.Keys, Is.EqualTo(new[] { fresh }));
+        Assert.That(root.GetComponents<AIController>(), Is.EqualTo(bindings.Values.ToArray()));
+        Assert.That(guideCalls, Is.EqualTo(1));
+        Assert.That(loopCalls, Is.EqualTo(1));
     }
 
     private CareerSeasonState SeedCareer(TeamId team, bool recorded)

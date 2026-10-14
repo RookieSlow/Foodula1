@@ -86,6 +86,19 @@ public class CardDeck
     }
 
     /// <summary>该玩家的引擎牌库 — 每玩家独立的 HeatPool 实例，支付热量时从此扣除。</summary>
+    /// <summary>Independent zone containers and engine pool for deterministic UI forecasting.</summary>
+    public CardDeck CreatePresentationCopy()
+    {
+        return new CardDeck {
+            drawPile = new List<CardData>(drawPile), hand = new List<CardData>(hand),
+            discardPile = new List<CardData>(discardPile),
+            heatPool = heatPool != null ? new HeatPool(heatPool.remaining) : null,
+            randomSource = new SystemRandomSource(0),
+            usesExactOrder = usesExactOrder, regionalCapacityBonus = regionalCapacityBonus,
+            regionalHeatPendingRetirement = regionalHeatPendingRetirement
+        };
+    }
+
     public HeatPool heatPool;
 
     // --- 只读属性 ---
@@ -711,6 +724,27 @@ public class CardDeck
                     ReturnPermanentHeatToEngine();
                 return true;
             }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Recover at most one permanent heat for Fish and Chips: hand first, then discard.
+    /// Temporary heat and the ordinary draw pile are not recovery sources.
+    /// Returns whether a card was removed, including regional heat pending retirement.
+    /// </summary>
+    public bool RecoverOnePermanentHeatFromHandOrDiscard()
+        => RecoverOnePermanentHeatFromPile(hand) || RecoverOnePermanentHeatFromPile(discardPile);
+
+    private bool RecoverOnePermanentHeatFromPile(List<CardData> pile)
+    {
+        for (int i = pile.Count - 1; i >= 0; i--)
+        {
+            CardData card = pile[i];
+            if (card == null || !card.IsHeat || card.isTemp) continue;
+            pile.RemoveAt(i);
+            ReturnPermanentHeatToEngine();
+            return true;
         }
         return false;
     }

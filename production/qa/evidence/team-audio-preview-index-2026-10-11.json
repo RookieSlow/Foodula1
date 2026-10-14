@@ -1,0 +1,26 @@
+[
+  {
+    "team": "UK",
+    "start_seconds": 0.25
+  },
+  {
+    "team": "DE",
+    "start_seconds": 4.5
+  },
+  {
+    "team": "IT",
+    "start_seconds": 8.75
+  },
+  {
+    "team": "US",
+    "start_seconds": 13.0
+  },
+  {
+    "team": "CN",
+    "start_seconds": 17.25
+  },
+  {
+    "team": "JP",
+    "start_seconds": 21.5
+  }
+]

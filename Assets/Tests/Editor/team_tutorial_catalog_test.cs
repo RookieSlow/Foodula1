@@ -4,6 +4,52 @@ using NUnit.Framework;
 
 public class TeamTutorialCatalogTests
 {
+    [TestCase("tutorial_team_uk_v1", false)]
+    [TestCase("tutorial_team_jp_v1", false)]
+    [TestCase("tutorial_team_uk_v1", true)]
+    [TestCase("tutorial_team_jp_v1", true)]
+    [TestCase("tutorial_le_mans_uk_v1", false)]
+    [TestCase("tutorial_team_cn_v1", false)]
+    [TestCase(null, false)]
+    [TestCase("TUTORIAL_TEAM_UK_V1", false)]
+    public void GuidedTrickDispatchMatchesLegacyGateForEveryStep(string scenarioId, bool ai)
+    {
+        string[] tricks = { null, "unknown", "uk-scone", "uk-english-breakfast-tea",
+            "jp-kanto-oden", "jp-torpedo-tempura" };
+        foreach (TutorialStepId step in System.Enum.GetValues(typeof(TutorialStepId)))
+        foreach (string trick in tricks)
+        {
+            string expectedReason = string.Empty;
+            bool expected = true;
+            if (!ai && scenarioId == "tutorial_team_uk_v1")
+                expected = TutorialSpecialtyCardRules.ValidateUkTrickSelection(step, trick, out expectedReason);
+            if (!ai && scenarioId == "tutorial_team_jp_v1")
+                expected = TutorialSpecialtyCardRules.ValidateJpTrickSelection(step, trick, out expectedReason);
+            Assert.That(TutorialSpecialtyCardRules.ValidateGuidedTrickSelection(
+                ai, scenarioId, step, trick, out string reason), Is.EqualTo(expected), step + ":" + trick);
+            Assert.That(reason, Is.EqualTo(expectedReason));
+        }
+        Assert.That(TutorialSpecialtyCardRules.ValidateGuidedTrickSelection(
+            ai, scenarioId, null, "unknown", out string absentReason), Is.True);
+        Assert.That(absentReason, Is.Empty);
+    }
+
+    [TestCase("tutorial_team_uk_v1", TutorialStepId.UkSpecialtyScone, "uk-scone", true)]
+    [TestCase("tutorial_team_uk_v1", TutorialStepId.UkSpecialtyScone, "jp-kanto-oden", false)]
+    [TestCase("tutorial_team_uk_v1", TutorialStepId.UkSpecialtyTea, "uk-english-breakfast-tea", true)]
+    [TestCase("tutorial_team_uk_v1", TutorialStepId.UkSpecialtyTea, "uk-scone", false)]
+    [TestCase("tutorial_team_jp_v1", TutorialStepId.JpKantoSkip, "jp-kanto-oden", true)]
+    [TestCase("tutorial_team_jp_v1", TutorialStepId.JpKantoSkip, "uk-scone", false)]
+    [TestCase("tutorial_team_jp_v1", TutorialStepId.JpTorpedo, "jp-torpedo-tempura", true)]
+    [TestCase("tutorial_team_jp_v1", TutorialStepId.JpTorpedo, "jp-kanto-oden", false)]
+    public void GuidedTrickDispatchRetainsAuthoredCardAndFailureText(
+        string scenarioId, TutorialStepId step, string trick, bool accepted)
+    {
+        Assert.That(TutorialSpecialtyCardRules.ValidateGuidedTrickSelection(
+            false, scenarioId, step, trick, out string reason), Is.EqualTo(accepted));
+        Assert.That(string.IsNullOrEmpty(reason), Is.EqualTo(accepted));
+    }
+
     [Test]
     public void CatalogContainsFoundationAndExactlySixTeamCourses()
     {

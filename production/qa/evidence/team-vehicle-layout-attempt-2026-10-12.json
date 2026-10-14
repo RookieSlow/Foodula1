@@ -1,0 +1,26 @@
+{
+  "jobId": "3276b79ba9d24321ac018dfa093057d2",
+  "authority": "Unity TestRunner native RunFinished",
+  "summary": {
+    "fullName": "Foodula1",
+    "resultState": "Failed(Child)",
+    "endedUtc": "2026-10-12T02:19:05.2846470Z",
+    "total": 100,
+    "passed": 93,
+    "failed": 7,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "One or more child tests had errors",
+    "output": ""
+  },
+  "restoredEditor": {
+    "result": "{\"fullName\":\"Foodula1\",\"resultState\":\"Failed(Child)\",\"endedUtc\":\"2026-10-12T02:19:05.2846470Z\",\"total\":100,\"passed\":93,\"failed\":7,\"skipped\":0,\"inconclusive\":0,\"message\":\"One or more child tests had errors\",\"output\":\"\"}",
+    "armed": false,
+    "scene": "MainMenu",
+    "dirty": false,
+    "playing": false,
+    "compiling": false,
+    "updating": false
+  },
+  "diagnosis": "Seven pointer fixture failures: theoretical fractional center differed from native integer mouse hit coordinates; nested prefab Canvas uses its own GraphicRegistry/raycaster. Keep topmost-hit and actual callback assertions, adjust only owned pointer fixtures."
+}

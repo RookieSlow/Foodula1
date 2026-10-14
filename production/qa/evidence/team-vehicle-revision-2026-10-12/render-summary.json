@@ -1,0 +1,21 @@
+{
+  "reportCreatedUtc": "2026-10-12 02:18:34 UTC",
+  "sourcePrefab": "Assets/Prefabs/UI/RaceCanvas.prefab",
+  "resolutions": [
+    [
+      1920,
+      1080
+    ],
+    [
+      2560,
+      1440
+    ]
+  ],
+  "images": 34,
+  "textRecords": 114,
+  "textOverflow": 0,
+  "usMinimumRowHeight1080": 22.1,
+  "scenePreserved": true,
+  "sourceFontPreserved": true,
+  "method": "Inactive prefab clone, isolated static TMP font/material copies, PreviewScene, synchronous camera render. Ledger fixture: card4/driver2/technology1/other1, actual3. Heat: permanent2+temporary1, capacity6. Controlled HUD render; no full race/map/audio playback implied."
+}

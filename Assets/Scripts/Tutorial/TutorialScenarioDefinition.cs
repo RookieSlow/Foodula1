@@ -304,6 +304,23 @@ public static class TutorialOpponentCueRules
 /// </summary>
 public static class TutorialSpecialtyCardRules
 {
+    /// <summary>
+    /// Dispatches only the authored human UK/JP lesson restrictions. Other
+    /// courses, AI and a missing active step retain ordinary trick selection.
+    /// Existing course-specific validators remain the source of failure text.
+    /// </summary>
+    public static bool ValidateGuidedTrickSelection(
+        bool isAI, string scenarioId, TutorialStepId? step, string trickId, out string reason)
+    {
+        reason = string.Empty;
+        if (isAI || !step.HasValue) return true;
+        if (scenarioId == "tutorial_team_uk_v1")
+            return ValidateUkTrickSelection(step.Value, trickId, out reason);
+        if (scenarioId == "tutorial_team_jp_v1")
+            return ValidateJpTrickSelection(step.Value, trickId, out reason);
+        return true;
+    }
+
     public static bool JpKantoResolved(bool skipTurn, int gear,
         int carriedCards, int handHeatBefore, int handHeatAfter,
         int engineHeatBefore, int engineHeatAfter)

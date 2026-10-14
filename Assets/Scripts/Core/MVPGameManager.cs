@@ -90,6 +90,9 @@ public class MVPGameManager : MonoBehaviour
     private RaceCameraController raceCameraController;
     private CarOrientationController carOrientationController;
     private ICarMovementAnimator carMovementAnimator;
+    private PlayerState movementAudioPlayer;
+    private PlayerState instantAudioPlayer;
+    private int movementAudioCompletedCells;
 
     private float nodeWaitDuration;
     private readonly RacePresentationSkipState presentationSkipState = new RacePresentationSkipState();
@@ -139,6 +142,13 @@ public class MVPGameManager : MonoBehaviour
     public bool IsPresentationSkipActive => presentationSkipState.IsActive;
     public bool IsPresentationSkipRequested => presentationSkipState.IsSkipRequested;
     public GameConfigSO Config => config;
+    /// <summary>Preview or locked choice; actual gear commits only after payment.</summary>
+    public int PendingGearForPresentation => inputState.PendingGear > 0
+        ? inputState.PendingGear : (Player != null ? Player.gear : 1);
+    /// <summary>Shares the race and tutorial input gate with team shifter controls.</summary>
+    public bool CanSelectGearForPresentation =>
+        !IsTutorialActionInputBlocked &&
+        (hudUI == null || !hudUI.IsTelemetryDetailsOpen) && phaseState.CanAcceptGear(inputState);
     public TrackManager Track => trackManager;
     /// <summary>当前天气显示名。</summary>
     public string WeatherLabel => session != null ? session.WeatherLabel : "晴天";
@@ -156,7 +166,9 @@ public class MVPGameManager : MonoBehaviour
     /// </summary>
     public bool RequestPresentationSkip()
     {
-        return presentationSkipState.RequestSkip();
+        bool accepted = presentationSkipState.RequestSkip();
+        if (accepted) StopMovementAudio(true);
+        return accepted;
     }
 
     private bool IsPresentationSkipRequestedNow()
@@ -164,8 +176,10 @@ public class MVPGameManager : MonoBehaviour
         if (!presentationSkipState.IsActive)
             return false;
 
-        if (Input.GetMouseButtonDown(0))
-            presentationSkipState.RequestSkip();
+        if (Input.GetMouseButtonDown(0) &&
+            (hudUI == null || (!hudUI.IsTelemetryDetailsOpen &&
+                !hudUI.IsPointerOverTelemetry(Input.mousePosition))))
+            RequestPresentationSkip();
         return presentationSkipState.IsSkipRequested;
     }
 
@@ -179,6 +193,8 @@ public class MVPGameManager : MonoBehaviour
             DismissTutorialInteractionCallout();
 
         bool spacePressed = Input.GetKeyDown(KeyCode.Space);
+        if (hudUI != null && hudUI.IsTelemetryDetailsOpen)
+            return;
 
         // Presentation skip has priority over phase actions so one press cannot
         // both settle an animation and accidentally confirm the following phase.
@@ -239,9 +255,15 @@ public class MVPGameManager : MonoBehaviour
 
     void OnDestroy()
     {
+        StopMovementAudio(true);
         presentationSkipState.End();
         if (raceLogWriter != null && raceLogWriter.IsActive)
             raceLogWriter.End("scene destroyed", RaceLogTermination.SceneDestroyed);
+    }
+
+    void OnDisable()
+    {
+        StopMovementAudio(true);
     }
 
     void Start()
@@ -258,7 +280,8 @@ public class MVPGameManager : MonoBehaviour
             config,
             carOrientationController,
             null,
-            () => IsPresentationSkipRequestedNow());
+            () => IsPresentationSkipRequestedNow(),
+            OnMovementNodeProgress);
 
         // 自动创建缺失的引用
         if (trackManager == null)
@@ -542,6 +565,7 @@ public class MVPGameManager : MonoBehaviour
 
         if (confirmGearControl != null)
             confirmGearControl.interactable = interactable;
+        hudUI?.SetTeamGearControlsInteractable(interactable);
     }
 
     /// <summary>
@@ -557,7 +581,8 @@ public class MVPGameManager : MonoBehaviour
         SetGearButtonLabel(2, china ? "Go" : "G2");
         SetGearButtonLabel(3, "G3");
         SetGearButtonLabel(4, "G4");
-        hudUI?.ConfigureGearPresentation(china, player != null ? player.gear : 1);
+        hudUI?.ConfigureGearPresentation(player != null ? player.teamId : TeamId.UK,
+            player != null ? player.gear : 1);
     }
 
     private void SetGearButtonVisible(int gear, bool visible)
@@ -1355,6 +1380,7 @@ public class MVPGameManager : MonoBehaviour
     // Close evidence before navigation; keep scene I/O at the public entry point.
     private void ExitTutorialRuntime(System.Action loadMainMenu)
     {
+        StopMovementAudio(true);
         if (tutorialDirector != null)
         {
             tutorialDirector.ExitTutorial();
@@ -1544,6 +1570,9 @@ public class MVPGameManager : MonoBehaviour
     {
         while (phaseState.IsRunning)
         {
+            // Keep this turn ledger available while its details are being read.
+            if (hudUI != null && hudUI.IsTelemetryDetailsOpen)
+                yield return new WaitWhile(() => hudUI != null && hudUI.IsTelemetryDetailsOpen);
             // Reading steps, completed action steps and history review all wait
             // for an explicit guide-panel navigation click. This includes the
             // very first lesson before turn one opens the gear controls.
@@ -1559,6 +1588,7 @@ public class MVPGameManager : MonoBehaviour
             raceCameraController?.BeginTurn();
             foreach (var p in session.Players)
                 session.BeginTurn(p);
+            hudUI?.RefreshTurnTelemetry(Player);
             // JP L3 番狂わせ：末位/次末位自动激活，逐回合递减
             TickBankuruwaseForAll();
 
@@ -1911,6 +1941,7 @@ public class MVPGameManager : MonoBehaviour
         }
 
         // ──── 游戏结束 ────
+        StopMovementAudio(true);
         phaseState.CompleteGame();
         ShowGameOver();
     }
@@ -1937,6 +1968,7 @@ public class MVPGameManager : MonoBehaviour
     public void HandleSpin(PlayerState p, int rewindPos, string reason)
     {
         if (p.isBlown) return;
+        if (movementAudioPlayer == p || instantAudioPlayer == p) StopMovementAudio(true);
 
         int spinMax = session != null ? session.EffectiveSpinMax(p) : 3;
         RaceSpinOutcome outcome = RaceSpinRules.Evaluate(
@@ -1949,8 +1981,11 @@ public class MVPGameManager : MonoBehaviour
         RecoverAllHeatWithPresentation(p);
 
         // 回退位置
+        if (trackManager != null && trackManager.TotalNodes > 0)
+            p.turnMovement.RecordRewind((p.position - rewindPos + trackManager.TotalNodes) % trackManager.TotalNodes);
         p.position = rewindPos;
         SyncRegionalHeatCapacity(p);
+        if (p == Player) hudUI?.RefreshTurnTelemetry(p);
 
         // 强制 1 档
         p.gear = RaceSpinRules.GetRecoveryGear(p.teamId,
@@ -2018,18 +2053,13 @@ public class MVPGameManager : MonoBehaviour
         amount = cost.Amount;
         if (amount <= 0) return true;
 
-        int drawn = p.deck.DrawHeatFromPool(amount, destination, p.heatPaidCardsThisTurn);
-        // Record actual payments even if the engine can only pay part of the request.
-        if (session != null)
-            session.TrackHeatPaid(p, drawn);
-        if (drawn < amount)
+        RaceHeatPaymentResult payment = RaceHeatPaymentExecution.Pay(p, session, amount, destination);
+        int drawn = payment.Drawn;
+        if (!payment.Sufficient)
         {
             // UK L1 炸鱼薯条：每场限 1 次 — 忽略本次热量判定，回收 1 张热量牌至引擎
-            if (p.techState != null && session != null &&
-                TechTreeRules.CanUseFishAndChips(p.techState, session.TechDb))
+            if (payment.UsedFishAndChips)
             {
-                TechTreeRules.UseFishAndChips(p.techState);
-                p.deck.RemoveOneHeatFromDeck();
                 RefreshHumanHeatPresentation(p);
                 if (hudUI != null)
                     hudUI.AppendLog($"<color=green>{p.name} 炸鱼薯条！忽略本次热量判定，回收 1 张热量牌至引擎。</color>");
@@ -2039,10 +2069,6 @@ public class MVPGameManager : MonoBehaviour
             HandleSpin(p, rewindPos, reason);
             return false;
         }
-
-        // DE L3 烤肉拼盘跟踪 + CN L2 连击追踪（付热）
-        if (p.techState != null)
-            TechTreeRules.TrackDimSumCombo(p.techState, false, false, true);
 
         if (!p.isAI && cardHandUI != null)
         {
@@ -2065,6 +2091,7 @@ public class MVPGameManager : MonoBehaviour
 
     private void ApplyGearShift(PlayerState p, int targetGear)
     {
+        int previousGear = p.gear;
         TeamGearRules.Resolution shift = TeamGearRules.Resolve(
             p.teamId,
             p.gear,
@@ -2079,8 +2106,9 @@ public class MVPGameManager : MonoBehaviour
         RaceGearShiftResolver.Apply(
             p, shift,
             (amount, reason) => TryPayHeat(p, amount, p.position, reason),
-            () => AudioService.PlaySfx(AudioEventNames.GearShift),
+            () => AudioService.PlayTeamGearShift(p.teamId, previousGear, p.gear),
             () => AudioService.PlaySfx(AudioEventNames.GearFailure));
+        if (p == Player) hudUI?.RefreshTeamGearPresentation();
         raceLogWriter?.Append(
             $"[GEAR] {p.name} role={(p.isAI ? "AI" : "PLAYER")} requested={targetGear} " +
             $"selected={p.gear} engine_heat={p.deck.heatPool.remaining}");
@@ -2100,9 +2128,9 @@ public class MVPGameManager : MonoBehaviour
         int cooldown = session.ComputeReactionCooldown(
             p, config.gearOneCooldown, config.gearTwoCooldown);
 
-        if (p.driverSkill != null && p.driverSkill.IsActive &&
-            p.driverSkill.Skill == DriverActiveSkillId.TrueSelf)
-            TryPayHeat(p, 1, p.positionAtTurnStart, "driver skill: true self");
+        int driverHeatCost = DriverSkillRules.GetReactionHeatCost(p.driverSkill);
+        if (driverHeatCost > 0)
+            TryPayHeat(p, driverHeatCost, p.positionAtTurnStart, "driver skill: true self");
 
         if (cooldown > 0)
         {
@@ -2121,9 +2149,7 @@ public class MVPGameManager : MonoBehaviour
         int cooled = result.Total;
         if (!p.isAI && cooled > 0 && cardHandUI != null)
         {
-            cardHandUI.PlayHeatTransitions(result.FromHand, CardVisualZone.Hand, CardVisualZone.Engine);
-            cardHandUI.PlayHeatTransitions(result.FromDraw, CardVisualZone.DrawPile, CardVisualZone.Engine);
-            cardHandUI.PlayHeatTransitions(result.FromDiscard, CardVisualZone.DiscardPile, CardVisualZone.Engine);
+            cardHandUI.PlayHeatCoolingTransitions(result);
         }
         if (cooled > 0)
             RefreshHumanHeatPresentation(p);
@@ -2163,9 +2189,7 @@ public class MVPGameManager : MonoBehaviour
 
         if (!p.isAI && cardHandUI != null)
         {
-            cardHandUI.PlayHeatTransitions(result.FromHand, CardVisualZone.Hand, CardVisualZone.Engine);
-            cardHandUI.PlayHeatTransitions(result.FromDraw, CardVisualZone.DrawPile, CardVisualZone.Engine);
-            cardHandUI.PlayHeatTransitions(result.FromDiscard, CardVisualZone.DiscardPile, CardVisualZone.Engine);
+            cardHandUI.PlayHeatCoolingTransitions(result);
         }
         RefreshHumanHeatPresentation(p);
         if (!p.isAI && result.Total > 0)
@@ -2230,7 +2254,21 @@ public class MVPGameManager : MonoBehaviour
                 yield return WaitForPresentationDelay(leadDelay);
         }
 
-        yield return StartCoroutine(TraverseMovementNodes(p, car, targetPos, laneIndex));
+        if (totalMove > 0 && !IsPresentationSkipRequestedNow())
+        {
+            instantAudioPlayer = null;
+            movementAudioPlayer = p;
+            movementAudioCompletedCells = 0;
+            AudioService.BeginVehicleEngine(this, p.teamId, p.gear);
+        }
+        try
+        {
+            yield return StartCoroutine(TraverseMovementNodes(p, car, targetPos, laneIndex));
+        }
+        finally
+        {
+            StopMovementAudio(IsPresentationSkipRequested);
+        }
 
         p.position = targetPos % totalNodes;
         SyncRegionalHeatCapacity(p);
@@ -2270,17 +2308,67 @@ public class MVPGameManager : MonoBehaviour
             {
                 Vector3 target = trackManager.GetNodePosition(nodeIdx, laneIndex);
                 yield return GetCarMovementAnimator().MoveToNode(car, target);
+                if (movementAudioPlayer == p)
+                {
+                    movementAudioCompletedCells++;
+                    UpdateMovementAudio(movementAudioCompletedCells);
+                }
             }
+
+            p.turnMovement.Advance(1);
+            if (p == Player) hudUI?.RefreshTurnTelemetry(p);
 
             if (trackManager.GetNode(nodeIdx).isStartFinish && RegisterStartFinishCrossing(p))
             {
+                // A lane decision may wait indefinitely; a stationary car must
+                // not keep its previous high-rev loop running underneath it.
+                AudioService.EndVehicleEngine(this, true);
+                if (hudUI != null) hudUI.SetEnginePresentation(0f);
                 yield return WaitForIndianapolisLaneChoice();
+                if (i < targetPos && movementAudioPlayer == p && !p.hasFinished && !IsPresentationSkipRequestedNow())
+                    AudioService.BeginVehicleEngine(this, p.teamId, p.gear, movementAudioCompletedCells);
                 // The choice can change the lane while this traversal is suspended.
                 laneIndex = GetVisualLaneIndex(p);
             }
 
             yield return WaitForPresentationDelay(nodeWaitDuration);
         }
+    }
+
+    private void OnMovementNodeProgress(float progress)
+    {
+        if (movementAudioPlayer != null && !IsPresentationSkipRequestedNow())
+            UpdateMovementAudio(movementAudioCompletedCells + Mathf.Clamp01(progress));
+    }
+
+    private void UpdateMovementAudio(float cells)
+    {
+        AudioService.UpdateVehicleEngine(this, cells);
+        if (movementAudioPlayer == Player && hudUI != null)
+            hudUI.SetEnginePresentation(AudioService.Instance != null
+                ? AudioService.Instance.EngineIntensity : 0f);
+    }
+
+    private void StopMovementAudio(bool immediate)
+    {
+        AudioService.EndVehicleEngine(this, immediate);
+        movementAudioPlayer = null;
+        instantAudioPlayer = null;
+        movementAudioCompletedCells = 0;
+        // Unity objects can retain a managed reference after their scene object is destroyed.
+        if (hudUI != null) hudUI.SetEnginePresentation(0f);
+    }
+
+    private void PlayInstantMovementAudio(PlayerState player, int cells)
+    {
+        if (player == null || cells <= 0 || player.isBlown || player.hasFinished ||
+            IsPresentationSkipRequested || session == null)
+            return;
+        int index = session.Players.IndexOf(player);
+        if (index < 0 || index >= carInstances.Count || carInstances[index] == null)
+            return;
+        instantAudioPlayer = player;
+        AudioService.PlayTeamAccelerationCue(this, player.teamId, player.gear, cells);
     }
 
     /// <summary>
@@ -2389,38 +2477,40 @@ public class MVPGameManager : MonoBehaviour
             int lane = GetLane(p);
             bool crossedCorner = trackManager.GetUniqueCornersCrossed(p.position, rawEnd).Count > 0;
 
-            int bonus = session.ComputeMovementBonus(p, crossedCorner);
+            p.turnMovement.BeginBasePlan();
+            string trickId = p.trickState?.trickPlayedThisTurnId;
+            string trickName = !string.IsNullOrEmpty(trickId) ? session.TrickDb?.Get(trickId)?.name : null;
+            RaceMovementRules.RecordCardAndDriverMovementPlan(p, crossedCorner, trickName);
+            int bonus = session.ComputeMovementBonusWithBreakdown(p, crossedCorner, p.turnMovement);
             int italyCornerExitBonus = session.ConsumeItalyCornerExitBonus(p);
             p.italyCornerExitBonusAppliedThisTurn = italyCornerExitBonus > 0;
             bonus += italyCornerExitBonus;
+            p.turnMovement.AddPlan("意大利：弯后出弯加速", italyCornerExitBonus, TurnMovementKind.Other);
             // DE L2 香肠拼盘：额外 +1 不计限速，原速度仍在 ResolveCorners 判定。
             if (p.techState != null && TechTreeRules.ShouldTriggerWurstplatte(p.techState, session.TechDb, crossedCorner))
+            {
                 bonus += 1;
+                p.turnMovement.AddPlan("科技：香肠拼盘", 1, TurnMovementKind.Technology);
+            }
             // JP L1 寿司：速度精确等于弯道限速 → 每弯 +2
-            bonus += GetNigiriBonus(p, crossedCorner, rawEnd, lane);
+            int nigiriBonus = GetNigiriBonus(p, crossedCorner, rawEnd, lane);
+            bonus += nigiriBonus;
+            p.turnMovement.AddPlan("科技：寿司精确过弯", nigiriBonus, TurnMovementKind.Technology);
             // JP 特技牌 鱼雷天妇罗：超车 +1
-            bonus += GetTorpedoBonus(p, turnOrder);
-            // CN 特技牌 火锅底料：下一张正常速度牌整体移出弯道速度，并获得 +1。
-            int speedPerCardBonus = DriverSkillRules.GetSpeedPerCardBonus(p.driverSkill);
-            bonus += CardPlayRules.GetHotpotMovementContribution(p, speedPerCardBonus);
-            // 特技牌即时移动（司康 +2 等）
-            bonus += p.trickMoveBonusThisTurn;
-            bonus += DriverSkillRules.GetMovementBonus(p.driverSkill, crossedCorner);
-            bonus -= DriverSkillRules.GetGutterMovementPenalty(p.driverSkill);
-            if (p.driverSkill != null)
-                bonus += p.driverSkill.PassiveMovementBonusThisTurn;
+            int torpedoBonus = GetTorpedoBonus(p, turnOrder);
+            bonus += torpedoBonus;
+            p.turnMovement.AddPlan("特技牌：鱼雷天妇罗", torpedoBonus, TurnMovementKind.Card);
+            bonus += RaceMovementRules.ComputeCardAndDriverMovementBonus(p, crossedCorner);
 
             // DE L1 黑啤酒燃料：每圈一次，付 1 热 → +2 移动
             // 引擎支付至弃牌堆；不额外要求保留一张热量。
-            if (p.techState != null && config.enableTechTree &&
-                session.GetModifiers(p).hasSchwarzbierFuel &&
-                p.deck.heatPool != null && p.deck.heatPool.remaining > 0 &&
-                TechTreeRules.CanTriggerSchwarzbierFuelThisLap(p.techState, p.lap))
+            if (session.CanTriggerSchwarzbierFuel(p, config.enableTechTree))
             {
                 if (TryPayHeat(p, 1, p.positionAtTurnStart, "schwarzbier fuel", HeatPaymentDestination.Discard))
                 {
                     TechTreeRules.UseSchwarzbierFuel(p.techState, p.lap);
                     bonus += 2;
+                    p.turnMovement.AddPlan("科技：黑啤酒燃料", 2, TurnMovementKind.Technology);
                     if (hudUI != null)
                         hudUI.AppendLog($"{p.name} 黑啤酒燃料（本圈一次）：付 1 热 → +2 移动。");
                 }
@@ -2428,17 +2518,14 @@ public class MVPGameManager : MonoBehaviour
 
             // US L1 得来速：基础移动每经过一处地标（起点线/中点）→ +1 移动。
             // 奖励不递归触发本次行动的另一轮得来速判定。
-            if (p.techState != null && config.enableTechTree &&
-                session.GetModifiers(p).hasDriveThru)
+            int crossedLandmarks = session.ComputeDriveThruMovementBonus(
+                p, config.enableTechTree, rawEnd, trackManager.TotalNodes);
+            if (crossedLandmarks > 0)
             {
-                int crossedLandmarks = RaceSession.CountCrossedLandmarks(
-                    p.position, rawEnd, trackManager.TotalNodes);
-                if (crossedLandmarks > 0)
-                {
-                    bonus += crossedLandmarks;
-                    if (hudUI != null)
-                        hudUI.AppendLog($"{p.name} 得来速：经过 {crossedLandmarks} 处地标 +{crossedLandmarks} 移动。");
-                }
+                bonus += crossedLandmarks;
+                p.turnMovement.AddPlan("科技：得来速地标", crossedLandmarks, TurnMovementKind.Technology);
+                if (hudUI != null)
+                    hudUI.AppendLog($"{p.name} 得来速：经过 {crossedLandmarks} 处地标 +{crossedLandmarks} 移动。");
             }
 
             // 先保存不含尾流的基础移动。尾流必须等所有车辆完成这段移动、
@@ -2446,6 +2533,7 @@ public class MVPGameManager : MonoBehaviour
             (p.totalMovementThisTurn, p.cornerTotalThisTurn) =
                 RaceMovementRules.ResolveBaseMovement(
                     p.cornerTotalThisTurn, bonus, activeTutorialOpponentCue, p == AI);
+            p.turnMovement.ReconcileBaseTotal(p.totalMovementThisTurn);
             raceLogWriter?.Append(
                 $"[MOVE_PLAN] {p.name} role={(p.isAI ? "AI" : "PLAYER")} position={p.position} " +
                 $"corner_speed={p.cornerTotalThisTurn} non_slipstream_bonus={bonus} " +
@@ -2457,6 +2545,7 @@ public class MVPGameManager : MonoBehaviour
         // settled slipstream gets its own phase after everyone has moved.
         RaceOvertakeResolution.Execute(
             turnOrder, turnSkipped, trackManager.TotalNodes, overtakesThisTurn);
+        hudUI?.RefreshTurnTelemetry(Player);
     }
 
     /// <summary>
@@ -2473,6 +2562,7 @@ public class MVPGameManager : MonoBehaviour
             session, turnOrder, turnSkipped, trackManager.TotalNodes,
             Player, activeTutorialOpponentCue, slipstreamsThisTurn,
             message => raceLogWriter?.Append(message));
+        hudUI?.RefreshTurnTelemetry(Player);
     }
 
     /// <summary>
@@ -2773,7 +2863,7 @@ public class MVPGameManager : MonoBehaviour
     private void DecideAIPit(PlayerState p, int distance)
     {
         // AI 启发：热量高 → 在入口前窗口预定进站；决策不会立即传送赛车。
-        bool enter = p.HeatRatio >= 0.6f;
+        bool enter = PitLaneRules.ShouldAIReservePit(p.HeatRatio);
         PitLaneRules.RecordApproachChoice(p, enter);
         if (hudUI != null)
             hudUI.AppendLog(enter
@@ -2795,6 +2885,9 @@ public class MVPGameManager : MonoBehaviour
         }
 
         MoveCarTo(p, p.position);       // 移动到维修区出口
+        p.turnMovement.RecordInstant("维修区：出站奖励", result.exitMoveBonus, TurnMovementKind.Other);
+        if (p == Player) hudUI?.RefreshTurnTelemetry(p);
+        PlayInstantMovementAudio(p, result.exitMoveBonus);
         if (hudUI != null)
             hudUI.AppendLog($"<color=green>{p.name} 进站执行：本回合停靠，冷却全部热量，出站后前进 {result.exitMoveBonus} 格（{result.pitExitPosition}→{result.exitPosition}）。</color>");
         if (!p.isAI)
@@ -2836,7 +2929,7 @@ public class MVPGameManager : MonoBehaviour
             p, landmarkIndex, config.totalLaps,
             amount => CoolHeatWithPresentation(p, amount),
             amount => TryPayHeat(p, amount, rewindPos, "mother road repair"),
-            amount => AdvanceInstantTechnologyMovement(p, amount),
+            amount => AdvanceInstantMovementWithSource(p, amount, "科技：母亲之路", TurnMovementKind.Technology),
             message => hudUI?.AppendLog(message));
     }
 
@@ -2875,24 +2968,12 @@ public class MVPGameManager : MonoBehaviour
             return false;
         }
 
-        if (!p.isAI && tutorialScenario != null &&
-            tutorialScenario.id == "tutorial_team_uk_v1" &&
-            tutorialDirector?.CurrentStep != null &&
-            !TutorialSpecialtyCardRules.ValidateUkTrickSelection(
-                tutorialDirector.CurrentStep.id, card.trickId, out string ukGuideReason))
+        if (!TutorialSpecialtyCardRules.ValidateGuidedTrickSelection(
+                p.isAI, tutorialScenario?.id, tutorialDirector?.CurrentStep?.id,
+                card.trickId, out string guideReason))
         {
-            hudUI?.SetStatus($"<color=orange>教程提示：{ukGuideReason}</color>");
-            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false reason={ukGuideReason}");
-            return false;
-        }
-        if (!p.isAI && tutorialScenario != null &&
-            tutorialScenario.id == "tutorial_team_jp_v1" &&
-            tutorialDirector?.CurrentStep != null &&
-            !TutorialSpecialtyCardRules.ValidateJpTrickSelection(
-                tutorialDirector.CurrentStep.id, card.trickId, out string jpGuideReason))
-        {
-            hudUI?.SetStatus($"<color=orange>教程提示：{jpGuideReason}</color>");
-            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false reason={jpGuideReason}");
+            hudUI?.SetStatus($"<color=orange>教程提示：{guideReason}</color>");
+            raceLogWriter?.Append($"[TUTORIAL_CARD_GUIDE] accepted=false reason={guideReason}");
             return false;
         }
 
@@ -3164,9 +3245,7 @@ public class MVPGameManager : MonoBehaviour
         {
             if (!p.isAI && cardHandUI != null)
             {
-                cardHandUI.PlayHeatTransitions(result.FromHand, CardVisualZone.Hand, CardVisualZone.DiscardPile);
-                cardHandUI.PlayHeatTransitions(result.FromDraw, CardVisualZone.DrawPile, CardVisualZone.DiscardPile);
-                cardHandUI.PlayHeatTransitions(cooled, CardVisualZone.DiscardPile, CardVisualZone.Engine);
+                cardHandUI.PlayHeatCoolingTransitions(result, throughDiscard: true);
             }
             RefreshHumanHeatPresentation(p);
             if (!p.isAI) AudioService.PlaySfx(AudioEventNames.HeatCool);
@@ -3189,7 +3268,7 @@ public class MVPGameManager : MonoBehaviour
                     "yin yang (yin)",
                     HeatPaymentDestination.Discard))
             {
-                AdvanceInstantTechnologyMovement(p, result.extraMovement);
+                AdvanceInstantMovementWithSource(p, result.extraMovement, "科技：阴阳茶（阴）", TurnMovementKind.Technology);
                 if (hudUI != null)
                     hudUI.AppendLog($"<color=orange>{p.name} 阴阳茶(阴)：付 1 热 → +{result.extraMovement} 格。</color>");
             }
@@ -3209,6 +3288,11 @@ public class MVPGameManager : MonoBehaviour
     /// </summary>
     private void AdvanceInstantTechnologyMovement(PlayerState p, int movement)
     {
+        AdvanceInstantMovementWithSource(p, movement, "科技：即时前进", TurnMovementKind.Technology);
+    }
+
+    private void AdvanceInstantMovementWithSource(PlayerState p, int movement, string label, TurnMovementKind kind)
+    {
         int oldPos = p.position;
         RaceMovementRules.InstantMovementPlan plan = RaceMovementRules.PlanInstantTechnologyMovement(
             trackManager.Nodes, oldPos, movement);
@@ -3218,6 +3302,10 @@ public class MVPGameManager : MonoBehaviour
             OnPlayerCrossedStartFinish(p);
         RegisterPitEntryCrossing(p, plan.StartPosition, plan.RawEnd);
         MoveCarTo(p, p.position);
+        p.turnMovement.RecordInstant(label, movement, kind);
+        if (movement < 0) p.turnMovement.RecordRewind(-movement);
+        if (p == Player) hudUI?.RefreshTurnTelemetry(p);
+        PlayInstantMovementAudio(p, movement);
     }
 
     // ====== 圈数与完赛 ======
@@ -3261,6 +3349,7 @@ public class MVPGameManager : MonoBehaviour
 
         if (transition.HasFinished)
         {
+            if (movementAudioPlayer == p || instantAudioPlayer == p) StopMovementAudio(true);
             if (!p.isAI && tutorialDirector != null &&
                 tutorialDirector.Phase == TutorialRunPhase.Practice)
             {
@@ -3540,7 +3629,8 @@ public class MVPGameManager : MonoBehaviour
     private ICarMovementAnimator GetCarMovementAnimator()
     {
         if (carMovementAnimator == null)
-            carMovementAnimator = new CarMovementAnimator(config, GetCarOrientationController());
+            carMovementAnimator = new CarMovementAnimator(config, GetCarOrientationController(),
+                null, () => IsPresentationSkipRequestedNow(), OnMovementNodeProgress);
         return carMovementAnimator;
     }
 
@@ -3572,6 +3662,24 @@ public class MVPGameManager : MonoBehaviour
         hudUI.ShowCornerLimitDetails(
             trackManager.GetCornerName(cornerId),
             ResolveCornerLimitBreakdown(cornerId, laneIndex));
+    }
+
+    /// <summary>Reads live inputs into an isolated forecast; confirmed ledgers remain authoritative.</summary>
+    public RaceTurnPreview BuildTurnTelemetryPreview(PlayerState player, int? gearOverride = null)
+    {
+        if (player == null || player != Player || player.turnMovement.HasBasePlan || player.isBlown ||
+            player.hasFinished || (CurrentPhase != GamePhase.WaitingForGear && CurrentPhase != GamePhase.WaitingForCards))
+            return null;
+        bool trial = CurrentPhase == GamePhase.WaitingForGear && inputState.WaitingForGear;
+        if (!trial && !inputState.WaitingForCards) return null;
+        IReadOnlyList<CardData> selected = cardHandUI != null ? cardHandUI.GetSelectedPlayCards() : null;
+        int gear = trial ? gearOverride ?? PendingGearForPresentation : player.gear;
+        return RaceTurnPreviewRules.Evaluate(player, session, config, selected, trial, gear,
+            (start, end) => trackManager != null && trackManager.GetUniqueCornersCrossed(start, end).Count > 0,
+            (copy, corner, end) => trackManager != null ? GetNigiriBonus(copy, corner, end, GetLane(player)) : 0,
+            trackManager != null ? trackManager.TotalNodes : 0,
+            (start, end) => trackManager != null ? trackManager.GetUniqueCornersCrossed(start, end) : new HashSet<int>(),
+            id => trackManager != null ? trackManager.GetCornerSpeedLimit(id, GetLane(player)) : 99);
     }
 
     public void OnGearButtonClicked(int gear)
@@ -3621,6 +3729,7 @@ public class MVPGameManager : MonoBehaviour
         string message = $"{player.DriverProfile.ActiveName} 已发动（剩余 {player.driverSkill.UsesRemaining} 次）";
         hudUI?.AppendLog($"<color=#D9A7FF>{message}</color>");
         hudUI?.SetStatus(message + "；请选择并确认档位");
+        if (hudUI != null) hudUI.RefreshTurnTelemetry(player);
         hudUI?.RefreshDriverSkill(this, player);
         trackManager?.RefreshCornerLimitLabels();
         raceLogWriter?.Append(
@@ -3842,6 +3951,7 @@ public class MVPGameManager : MonoBehaviour
             hudUI.RefreshPlayerResources(player);
         cardHandUI.ClearPendingPlaySelection();
         inputState.EndCardSelection();
+        if (hudUI != null) hudUI.RefreshTurnTelemetry(player);
         cardHandUI.HideAll();
         if (player.teamId == TeamId.JP && player.gear == 1 &&
             player.extraCardSlotsThisTurn == 2 && speedCount == 3)
@@ -3966,12 +4076,12 @@ public class MVPGameManager : MonoBehaviour
         System.Action initializeGuide,
         System.Action startLoop)
     {
+        StopMovementAudio(true);
         StopAllCoroutines();
         foreach (var c in GetComponents<AIController>())
             retireController(c);
         aiControllers.Clear();
-        if (hudUI != null && hudUI.gameOverPanel != null)
-            hudUI.gameOverPanel.SetActive(false);
+        hudUI?.HideGameOver();
         initializeRace();
         initializeGuide();
         startLoop();

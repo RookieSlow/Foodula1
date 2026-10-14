@@ -10,10 +10,10 @@ public sealed class HeatThermometerUI : MonoBehaviour
 {
     public const int SegmentTotal = 10;
 
-    private static readonly Color ColdColor = new Color(0.22f, 0.68f, 1f, 1f);
-    private static readonly Color WarmColor = new Color(0.97f, 0.58f, 0.24f, 1f);
-    private static readonly Color HotColor = new Color(0.97f, 0.28f, 0.25f, 1f);
-    private static readonly Color InactiveColor = new Color(0.18f, 0.23f, 0.31f, 0.55f);
+    private static readonly Color ColdColor = RacingTechTheme.Actual;
+    private static readonly Color WarmColor = RacingTechTheme.Projected;
+    private static readonly Color HotColor = RacingTechTheme.Critical;
+    private static readonly Color InactiveColor = RacingTechTheme.Raised;
 
     [SerializeField] private Image[] segments = new Image[SegmentTotal];
     [SerializeField] private TMP_Text percentText;
@@ -21,6 +21,8 @@ public sealed class HeatThermometerUI : MonoBehaviour
 
     private HeatGaugeState currentState;
     private bool initialized;
+    private readonly Image[] forecastSegments = new Image[SegmentTotal];
+    public HeatGaugeState? ForecastState { get; private set; }
 
     public HeatGaugeState CurrentState => currentState;
     public int SegmentCount => segments != null ? segments.Length : 0;
@@ -33,14 +35,9 @@ public sealed class HeatThermometerUI : MonoBehaviour
         TryInitializeSerializedLayout();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (pulseGroup == null)
-            return;
-
-        pulseGroup.alpha = currentState.WarningLevel == HeatWarningLevel.Critical
-            ? 0.78f + Mathf.PingPong(Time.unscaledTime * 0.45f, 0.22f)
-            : 1f;
+        if (pulseGroup != null) pulseGroup.alpha = 1f;
     }
 
     private void OnDisable()
@@ -70,28 +67,46 @@ public sealed class HeatThermometerUI : MonoBehaviour
 
     public void Refresh(CardDeck deck, System.Collections.Generic.IReadOnlyList<CardData> committedCards = null)
     {
-        TryInitializeSerializedLayout();
-        if (!initialized)
-            return;
+        RefreshSnapshot(HeatGaugeRules.Evaluate(deck, committedCards));
+    }
 
-        currentState = HeatGaugeRules.Evaluate(deck, committedCards);
+    public void RefreshSnapshot(HeatGaugeState state, HeatGaugeState? forecast = null)
+    {
+        TryInitializeSerializedLayout();
+        if (!initialized) return;
+        currentState = state;
+        ForecastState = forecast;
+        if (pulseGroup != null) pulseGroup.alpha = 1f;
         int activeSegments = Mathf.CeilToInt(currentState.Fill01 * SegmentTotal);
+        int predicted = forecast.HasValue ? Mathf.CeilToInt(forecast.Value.Fill01 * SegmentTotal) : 0;
 
         for (int i = 0; i < segments.Length; i++)
         {
             if (segments[i] == null)
                 continue;
             segments[i].color = i < activeSegments ? GetSegmentColor(i) : InactiveColor;
+            if (forecast.HasValue && forecastSegments[i] == null)
+            {
+                forecastSegments[i] = GetOrCreateImage("Forecast", segments[i].transform);
+                RectTransform rect = forecastSegments[i].rectTransform;
+                rect.anchorMin = new Vector2(0.5f, 0f); rect.anchorMax = Vector2.one;
+                ResetRect(rect);
+            }
+            if (forecastSegments[i] != null)
+            {
+                forecastSegments[i].gameObject.SetActive(forecast.HasValue);
+                forecastSegments[i].color = i < predicted ? RacingTechTheme.Projected : InactiveColor;
+            }
         }
 
         if (percentText != null)
         {
-            percentText.text = $"{currentState.Percent}%";
-            percentText.color = currentState.WarningLevel == HeatWarningLevel.Critical
-                ? HotColor
-                : currentState.WarningLevel == HeatWarningLevel.Elevated
-                    ? WarmColor
-                    : ColdColor;
+            percentText.text = forecast.HasValue ? $"{currentState.Percent}%\n预{forecast.Value.Percent}%" : $"{currentState.Percent}%";
+            percentText.fontSize = forecast.HasValue ? 9f : 11f;
+            Vector2 labelTop = percentText.rectTransform.offsetMax;
+            labelTop.y = forecast.HasValue ? 12f : 0f;
+            percentText.rectTransform.offsetMax = labelTop;
+            percentText.color = RacingTechTheme.Primary;
         }
     }
 
@@ -130,6 +145,35 @@ public sealed class HeatThermometerUI : MonoBehaviour
         // The segment references are the minimum contract. A percentage label
         // is optional so older compact gauges can still display their fill.
         initialized = hasAllSegments;
+        if (initialized) ApplyStaticTheme();
+    }
+
+    private void ApplyStaticTheme()
+    {
+        if (pulseGroup != null)
+        {
+            pulseGroup.alpha = 1f;
+            pulseGroup.blocksRaycasts = false;
+            pulseGroup.interactable = false;
+        }
+        foreach (Image segment in segments) if (segment != null) segment.raycastTarget = false;
+        StyleExistingImage("GaugeBackground", RacingTechTheme.Graphite);
+        StyleExistingImage("Tick50", WarmColor);
+        StyleExistingImage("Tick70", HotColor);
+        if (percentText != null)
+        {
+            percentText.color = RacingTechTheme.Primary;
+            percentText.raycastTarget = false;
+        }
+    }
+
+    private void StyleExistingImage(string name, Color tint)
+    {
+        Transform child = transform.Find(name);
+        Image image = child != null ? child.GetComponent<Image>() : null;
+        if (image == null) return;
+        image.color = tint;
+        image.raycastTarget = false;
     }
 
     private void Build(TMP_Text sourceText)
@@ -153,7 +197,7 @@ public sealed class HeatThermometerUI : MonoBehaviour
         backgroundRect.anchorMin = new Vector2(0.2f, 0.12f);
         backgroundRect.anchorMax = new Vector2(0.8f, 0.88f);
         ResetRect(backgroundRect);
-        background.color = new Color(0.025f, 0.04f, 0.07f, 0.9f);
+        background.color = RacingTechTheme.Graphite;
 
         segments = new Image[SegmentTotal];
         const float gap = 0.012f;
@@ -187,6 +231,7 @@ public sealed class HeatThermometerUI : MonoBehaviour
         sourceRect.anchorMax = new Vector2(Mathf.Min(sourceRect.anchorMax.x, 0.79f), sourceRect.anchorMax.y);
         sourceText.fontSize = Mathf.Min(sourceText.fontSize, 13f);
         initialized = true;
+        ApplyStaticTheme();
     }
 
     private void CreateTick(string name, float normalizedHeat, Color color)
@@ -204,10 +249,8 @@ public sealed class HeatThermometerUI : MonoBehaviour
     private static Color GetSegmentColor(int index)
     {
         float t = (index + 0.5f) / SegmentTotal;
-        return t < HeatGaugeRules.ElevatedThreshold
-            ? Color.Lerp(ColdColor, WarmColor, t / HeatGaugeRules.ElevatedThreshold)
-            : Color.Lerp(WarmColor, HotColor,
-                (t - HeatGaugeRules.ElevatedThreshold) / (1f - HeatGaugeRules.ElevatedThreshold));
+        return t < HeatGaugeRules.ElevatedThreshold ? ColdColor
+            : t < HeatGaugeRules.CriticalThreshold ? WarmColor : HotColor;
     }
 
     private static Image GetOrCreateImage(string name, Transform parent)

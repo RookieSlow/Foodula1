@@ -45,6 +45,38 @@ public class RacePitTurnBoundaryTests
     private void Invoke(string name, params object[] args) =>
         typeof(MVPGameManager).GetMethod(name, Private).Invoke(manager, args);
 
+    [TestCase(1, false, false, 2, 0)]
+    [TestCase(3, false, false, 1, 1)]
+    [TestCase(1, true, false, 2, 0)]
+    [TestCase(1, false, true, 2, 0)]
+    public void ActualReactionPaysActiveTrueSelfBeforeCoolingButSkipsTerminalPlayers(
+        int gear, bool finished, bool blown, int expectedPool, int expectedHand)
+    {
+        session.TeamVehicleBonusesEnabled = false;
+        Assert.IsTrue(DriverCatalog.TryGet("us_tony_stewart", out DriverProfile driver));
+        config.gearOneCooldown = 3;
+        config.gearTwoCooldown = 1;
+        var player = new PlayerState("TrueSelf reaction", false, 5, gear)
+        { teamId = TeamId.US, hasFinished = finished, isBlown = blown, positionAtTurnStart = 3 };
+        player.deck.heatPool = new HeatPool(2);
+        player.driverSkill = new DriverSkillRuntimeState();
+        player.driverSkill.Initialize(driver, 7, true);
+        Assert.IsTrue(player.driverSkill.TryActivate(driver,
+            new DriverSkillActivationContext(true, 2, 3, 1, 10, 3), out string reason), reason);
+        int uses = player.driverSkill.UsesRemaining, turns = player.driverSkill.ActiveTurnsRemaining;
+
+        Invoke("ReactStep", player);
+
+        Assert.That(player.deck.heatPool.remaining, Is.EqualTo(expectedPool));
+        Assert.That(player.deck.Hand.Count, Is.EqualTo(expectedHand));
+        Assert.That(player.deck.CountHeatInDiscardPile(), Is.Zero);
+        Assert.That(player.spinCounter, Is.Zero);
+        Assert.That(player.driverSkill.UsesRemaining, Is.EqualTo(uses));
+        Assert.That(player.driverSkill.ActiveTurnsRemaining, Is.EqualTo(turns));
+        Assert.That(player.position, Is.EqualTo(5));
+        Assert.That(player.gear, Is.EqualTo(gear));
+    }
+
     [TestCase(TeamId.US)] [TestCase(TeamId.UK)]
     public void RegionalBBQCapacityFollowsPositionAndReentryWithoutStacking(TeamId team)
     {
@@ -139,6 +171,30 @@ public class RacePitTurnBoundaryTests
         }
     }
 
+    [TestCase(false, -6, 6, 0)]
+    [TestCase(false, 3, 6, 9)]
+    [TestCase(true, -6, 2, 1)]
+    [TestCase(true, 3, 2, 10)]
+    public void ActualMovementAdapterRetainsHotpotExclusionAndFinalClamp(
+        bool hotpot, int trick, int corner, int movement)
+    {
+        session.TeamVehicleBonusesEnabled = false;
+        var nodes = new List<TrackNode>();
+        for (int i = 0; i < 60; i++) nodes.Add(new TrackNode(i, 99));
+        typeof(TrackManager).GetField("nodes", Private).SetValue(manager.trackManager, nodes);
+        var player = new PlayerState("card driver adapter", false, 5, 1)
+        { hotpotAttackAppliedThisTurn = hotpot, hotpotAttackCardValueThisTurn = 4, trickMoveBonusThisTurn = trick };
+        player.playedSpeedCardsThisTurn.Add(new CardData(CardType.Speed, 4));
+        player.playedSpeedCardsThisTurn.Add(new CardData(CardType.Speed, 2));
+        CardData[] cards = player.playedSpeedCardsThisTurn.ToArray();
+        Invoke("ComputeMovements", new List<PlayerState> { player }, new HashSet<PlayerState>());
+        Assert.AreEqual(corner, player.cornerTotalThisTurn);
+        Assert.AreEqual(movement, player.totalMovementThisTurn);
+        Assert.AreEqual(5, player.position);
+        Assert.AreEqual(hotpot, player.hotpotAttackAppliedThisTurn);
+        CollectionAssert.AreEqual(cards, player.playedSpeedCardsThisTurn);
+    }
+
     [TestCase(TeamId.US, false)] [TestCase(TeamId.US, true)]
     [TestCase(TeamId.UK, false)] [TestCase(TeamId.UK, true)]
     public void BBQRuntimeUsesActualHeatSpeedAndFullRecoveryCannotRefundTwice(TeamId team, bool temporary)
@@ -219,6 +275,65 @@ public class RacePitTurnBoundaryTests
 
         Assert.AreEqual(cardSpeed, player.cornerTotalThisTurn);
         Assert.AreEqual(cardSpeed + expectedBonus, player.totalMovementThisTurn);
+    }
+
+    [TestCase(true, true, true, 1, 0, -1, true)]
+    [TestCase(true, true, true, 2, 1, 0, true)]
+    [TestCase(false, true, true, 1, 0, -1, false)]
+    [TestCase(true, false, true, 1, 0, -1, false)]
+    [TestCase(true, true, false, 1, 0, -1, false)]
+    [TestCase(true, true, true, 0, 0, -1, false)]
+    [TestCase(true, true, true, 1, 0, 0, false)]
+    [TestCase(true, true, true, 1, -1, -1, false)]
+    public void FuelEligibilityIsEquivalentAndNeverPaysOrMarksLap(
+        bool enabled, bool selected, bool hasPool, int remaining, int lap, int usedLap, bool expected)
+    {
+        var player = new PlayerState("Fuel query", false, 5, 1)
+        { teamId = TeamId.DE, techState = new TechTreeState(TeamId.DE), lap = lap };
+        if (selected) player.techState.activeNodeIds.Add("de-l1-schwarzbier-fuel");
+        player.techState.schwarzbierFuelLastLap = usedLap;
+        player.deck.heatPool = hasPool ? new HeatPool(remaining) : null;
+        bool legacy = player.techState != null && enabled && session.GetModifiers(player).hasSchwarzbierFuel &&
+            player.deck.heatPool != null && player.deck.heatPool.remaining > 0 &&
+            TechTreeRules.CanTriggerSchwarzbierFuelThisLap(player.techState, player.lap);
+        for (int i = 0; i < 2; i++)
+        {
+            Assert.AreEqual(expected, session.CanTriggerSchwarzbierFuel(player, enabled));
+            Assert.AreEqual(legacy, session.CanTriggerSchwarzbierFuel(player, enabled));
+        }
+        Assert.AreEqual(usedLap, player.techState.schwarzbierFuelLastLap);
+        if (hasPool) Assert.AreEqual(remaining, player.deck.heatPool.remaining);
+        Assert.AreEqual(0, player.deck.CountHeatInDiscardPile());
+        Assert.IsEmpty(player.deck.Hand);
+        player.techState = null;
+        Assert.IsFalse(session.CanTriggerSchwarzbierFuel(player, enabled));
+    }
+
+    [TestCase(true, true, 5, 9, 20, 0)]
+    [TestCase(true, true, 5, 10, 20, 1)]
+    [TestCase(true, true, 18, 20, 20, 1)]
+    [TestCase(true, true, 5, 20, 20, 2)]
+    [TestCase(false, true, 5, 20, 20, 0)]
+    [TestCase(true, false, 5, 20, 20, 0)]
+    [TestCase(true, true, 5, 20, 1, 0)]
+    public void DriveThruQueryUsesUnmodifiedBaseEndpoint(
+        bool enabled, bool selected, int start, int end, int cells, int expected)
+    {
+        var player = new PlayerState("Drive-Thru query", false, start, 1)
+        { teamId = TeamId.US, techState = new TechTreeState(TeamId.US) };
+        if (selected) player.techState.activeNodeIds.Add("us-l1-drive-thru");
+        int legacy = enabled && session.GetModifiers(player).hasDriveThru
+            ? RaceSession.CountCrossedLandmarks(start, end, cells) : 0;
+        for (int i = 0; i < 2; i++)
+        {
+            Assert.AreEqual(expected, session.ComputeDriveThruMovementBonus(player, enabled, end, cells));
+            Assert.AreEqual(legacy, session.ComputeDriveThruMovementBonus(player, enabled, end, cells));
+        }
+        Assert.AreEqual(start, player.position);
+        Assert.AreEqual(0, player.totalMovementThisTurn);
+        Assert.IsEmpty(player.playedSpeedCardsThisTurn);
+        player.techState = null;
+        Assert.AreEqual(0, session.ComputeDriveThruMovementBonus(player, enabled, end, cells));
     }
 
     [TestCase(TeamId.US)] [TestCase(TeamId.UK)]

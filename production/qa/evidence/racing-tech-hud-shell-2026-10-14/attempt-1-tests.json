@@ -1,0 +1,40 @@
+{
+  "result": {
+    "success": true,
+    "message": "Test job status retrieved.",
+    "error": null,
+    "data": {
+      "job_id": "5910978131884e79b0080405343e186e",
+      "status": "failed",
+      "mode": "EditMode",
+      "started_unix_ms": 1791964249427,
+      "finished_unix_ms": 1791964255289,
+      "last_update_unix_ms": 1791964255289,
+      "progress": {
+        "completed": 71,
+        "total": 2919,
+        "current_test_full_name": null,
+        "current_test_started_unix_ms": 1791964254269,
+        "last_finished_test_full_name": "TeamGearPresentationTests.UsDragReleaseUsesExistingSelectionConfirmationAndCancelRestoresControl",
+        "last_finished_unix_ms": 1791964254315,
+        "stuck_suspected": false,
+        "editor_is_focused": false,
+        "blocked_reason": null,
+        "failures_so_far": [
+          {
+            "full_name": "RacingTechHudShellTests.DisabledShellIgnoresGlobalTextEventsAndReenabledShellRefreshesWithoutUpdateLoop",
+            "message": "  Expected: greater than 253.95401f\r\n  But was:  253.95401f\r\n"
+          },
+          {
+            "full_name": "RacingTechHudShellTests.TextNotificationGrowsTwelveRowsShrinksShortTextAndRespondsToViewportHeight",
+            "message": "  Expected: greater than 253.95401f\r\n  But was:  253.95401f\r\n"
+          }
+        ],
+        "failures_capped": false
+      },
+      "error": null,
+      "result": null
+    },
+    "hint": null
+  }
+}

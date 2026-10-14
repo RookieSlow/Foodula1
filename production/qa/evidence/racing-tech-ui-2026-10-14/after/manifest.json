@@ -1,0 +1,332 @@
+{
+    "kind": "Controlled EditMode production RaceCanvas prefab preview; no live race, track or gameplay manager",
+    "utc": "2026-10-14T03:06:24.9679882Z",
+    "stage": "after",
+    "scaling": "Production reference 1920x1080, width/height match 0.5; same-aspect captures use width/1920",
+    "records": [
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\CN-1920x1080-actual-6-of-14.png",
+            "team": "CN",
+            "fixture": "actual-6-of-14",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\CN-1920x1080-forecast-14-heat-5-to-7.png",
+            "team": "CN",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\CN-2560x1440-actual-6-of-14.png",
+            "team": "CN",
+            "fixture": "actual-6-of-14",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\CN-2560x1440-forecast-14-heat-5-to-7.png",
+            "team": "CN",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\CN-1280x720-actual-6-of-14.png",
+            "team": "CN",
+            "fixture": "actual-6-of-14",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\CN-1280x720-forecast-14-heat-5-to-7.png",
+            "team": "CN",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\UK-1920x1080-actual-6-of-14.png",
+            "team": "UK",
+            "fixture": "actual-6-of-14",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\UK-1920x1080-forecast-14-heat-5-to-7.png",
+            "team": "UK",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\UK-2560x1440-actual-6-of-14.png",
+            "team": "UK",
+            "fixture": "actual-6-of-14",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\UK-2560x1440-forecast-14-heat-5-to-7.png",
+            "team": "UK",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\UK-1280x720-actual-6-of-14.png",
+            "team": "UK",
+            "fixture": "actual-6-of-14",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\UK-1280x720-forecast-14-heat-5-to-7.png",
+            "team": "UK",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\US-1920x1080-actual-6-of-14.png",
+            "team": "US",
+            "fixture": "actual-6-of-14",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\US-1920x1080-forecast-14-heat-5-to-7.png",
+            "team": "US",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\US-2560x1440-actual-6-of-14.png",
+            "team": "US",
+            "fixture": "actual-6-of-14",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\US-2560x1440-forecast-14-heat-5-to-7.png",
+            "team": "US",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\US-1280x720-actual-6-of-14.png",
+            "team": "US",
+            "fixture": "actual-6-of-14",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\US-1280x720-forecast-14-heat-5-to-7.png",
+            "team": "US",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\DE-1920x1080-actual-6-of-14.png",
+            "team": "DE",
+            "fixture": "actual-6-of-14",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\DE-1920x1080-forecast-14-heat-5-to-7.png",
+            "team": "DE",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\DE-2560x1440-actual-6-of-14.png",
+            "team": "DE",
+            "fixture": "actual-6-of-14",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\DE-2560x1440-forecast-14-heat-5-to-7.png",
+            "team": "DE",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\DE-1280x720-actual-6-of-14.png",
+            "team": "DE",
+            "fixture": "actual-6-of-14",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\DE-1280x720-forecast-14-heat-5-to-7.png",
+            "team": "DE",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\IT-1920x1080-actual-6-of-14.png",
+            "team": "IT",
+            "fixture": "actual-6-of-14",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\IT-1920x1080-forecast-14-heat-5-to-7.png",
+            "team": "IT",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\IT-2560x1440-actual-6-of-14.png",
+            "team": "IT",
+            "fixture": "actual-6-of-14",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\IT-2560x1440-forecast-14-heat-5-to-7.png",
+            "team": "IT",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\IT-1280x720-actual-6-of-14.png",
+            "team": "IT",
+            "fixture": "actual-6-of-14",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\IT-1280x720-forecast-14-heat-5-to-7.png",
+            "team": "IT",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\JP-1920x1080-actual-6-of-14.png",
+            "team": "JP",
+            "fixture": "actual-6-of-14",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\JP-1920x1080-forecast-14-heat-5-to-7.png",
+            "team": "JP",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\JP-2560x1440-actual-6-of-14.png",
+            "team": "JP",
+            "fixture": "actual-6-of-14",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\JP-2560x1440-forecast-14-heat-5-to-7.png",
+            "team": "JP",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\JP-1280x720-actual-6-of-14.png",
+            "team": "JP",
+            "fixture": "actual-6-of-14",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 2,
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-ui-2026-10-14\\after\\JP-1280x720-forecast-14-heat-5-to-7.png",
+            "team": "JP",
+            "fixture": "forecast-14-heat-5-to-7",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 2,
+            "overflows": []
+        }
+    ]
+}

@@ -106,6 +106,9 @@ public static class TechTreeProfileStore
             save(state);
     }
 
+    /// <summary>Forget in-memory profiles at application entry; never delete saved progress.</summary>
+    public static void ResetRuntimeCache() => Cache.Clear();
+
     /// <summary>Development helper used by tests and reset controls.</summary>
     public static void Clear(TeamId teamId)
     {

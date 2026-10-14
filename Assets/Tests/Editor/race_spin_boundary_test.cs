@@ -112,6 +112,58 @@ public class RaceSpinBoundaryIntegrationTests
         Assert.AreEqual(5, player.deck.CountPermanentHeatOutsideEngine());
     }
 
+    [TestCase(false, HeatPaymentDestination.Hand)]
+    [TestCase(true, HeatPaymentDestination.Hand)]
+    [TestCase(false, HeatPaymentDestination.Discard)]
+    [TestCase(true, HeatPaymentDestination.Discard)]
+    public void RealPaymentAdapterUsesFishOnceThenSpinsOnNextInsufficiency(
+        bool ai, HeatPaymentDestination destination)
+    {
+        var player = Player(TeamId.UK, ai);
+        player.techState = new TechTreeState(TeamId.UK)
+        { dimSumPlayedTrick = true, dimSumPlayedSpeed = true };
+        player.techState.activeNodeIds.Add("uk-l1-fish-and-chips");
+        // Preserve the existing payment adapter's technology gate: no new config check.
+        config.enableTechTree = false;
+        var originalHandHeat = player.deck.Hand[1];
+        var originalDiscard = new System.Collections.Generic.List<CardData>(player.deck.DiscardPile);
+
+        Assert.IsTrue(manager.TryPayHeat(player, 2, 9, "engine failure", destination));
+        Assert.IsTrue(player.techState.fishAndChipsUsed);
+        Assert.AreEqual(0, player.spinCounter);
+        Assert.AreEqual(17, player.position);
+        Assert.AreEqual(4, player.gear);
+        Assert.IsFalse(player.skipNextTurn);
+        Assert.AreEqual(1, player.deck.heatPool.remaining);
+        Assert.AreEqual(5, player.deck.CountPermanentHeatOutsideEngine());
+        Assert.AreEqual(1, player.heatPaidCardsThisTurn.Count);
+        if (destination == HeatPaymentDestination.Hand)
+        {
+            CollectionAssert.DoesNotContain(player.deck.Hand, player.heatPaidCardsThisTurn[0]);
+            CollectionAssert.Contains(player.deck.Hand, originalHandHeat);
+            CollectionAssert.AreEqual(originalDiscard, player.deck.DiscardPile);
+        }
+        else
+        {
+            CollectionAssert.DoesNotContain(player.deck.Hand, originalHandHeat);
+            originalDiscard.Add(player.heatPaidCardsThisTurn[0]);
+            CollectionAssert.AreEqual(originalDiscard, player.deck.DiscardPile);
+        }
+        Assert.AreEqual(1, player.techState.grillSpezialHeatPaidThisTurn);
+        Assert.IsFalse(player.techState.dimSumPaidHeat);
+
+        Assert.IsFalse(manager.TryPayHeat(player, 2, 9, "engine failure", destination));
+        Assert.AreEqual(1, player.spinCounter);
+        Assert.AreEqual(9, player.position);
+        Assert.AreEqual(2, player.gear);
+        Assert.IsTrue(player.skipNextTurn);
+        Assert.AreEqual(6, player.deck.heatPool.remaining);
+        Assert.AreEqual(0, player.deck.CountPermanentHeatOutsideEngine());
+        Assert.AreEqual(2, player.heatPaidCardsThisTurn.Count);
+        Assert.AreEqual(2, player.techState.grillSpezialHeatPaidThisTurn);
+        Assert.IsFalse(player.techState.dimSumPaidHeat);
+    }
+
     [TestCase(2, false)]
     [TestCase(3, true)]
     public void ActualTechnologyCapIsUsedBeforeSpin(int before, bool eliminated)

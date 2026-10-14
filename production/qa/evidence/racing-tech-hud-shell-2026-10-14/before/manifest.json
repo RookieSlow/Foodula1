@@ -1,0 +1,3626 @@
+{
+    "kind": "Controlled EditMode production RaceCanvas prefab preview; no live race, track or gameplay manager",
+    "utc": "2026-10-14T07:29:18.0819152Z",
+    "stage": "before",
+    "scaling": "Production reference 1920x1080, width/height match 0.5; same-aspect captures use width/1920",
+    "records": [
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\CN-1920x1080-normal-4.png",
+            "team": "CN",
+            "fixture": "normal-4",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: Go",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 69.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\CN-1920x1080-stress-12-top.png",
+            "team": "CN",
+            "fixture": "stress-12-top",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: Go",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 69.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\CN-2560x1440-normal-4.png",
+            "team": "CN",
+            "fixture": "normal-4",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: Go",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 69.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\CN-2560x1440-stress-12-top.png",
+            "team": "CN",
+            "fixture": "stress-12-top",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: Go",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 69.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\CN-1280x720-normal-4.png",
+            "team": "CN",
+            "fixture": "normal-4",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: Go",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 69.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\CN-1280x720-stress-12-top.png",
+            "team": "CN",
+            "fixture": "stress-12-top",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: Go",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 69.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\UK-1920x1080-normal-4.png",
+            "team": "UK",
+            "fixture": "normal-4",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\UK-1920x1080-stress-12-top.png",
+            "team": "UK",
+            "fixture": "stress-12-top",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\UK-2560x1440-normal-4.png",
+            "team": "UK",
+            "fixture": "normal-4",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\UK-2560x1440-stress-12-top.png",
+            "team": "UK",
+            "fixture": "stress-12-top",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\UK-1280x720-normal-4.png",
+            "team": "UK",
+            "fixture": "normal-4",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\UK-1280x720-stress-12-top.png",
+            "team": "UK",
+            "fixture": "stress-12-top",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\US-1920x1080-normal-4.png",
+            "team": "US",
+            "fixture": "normal-4",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\US-1920x1080-stress-12-top.png",
+            "team": "US",
+            "fixture": "stress-12-top",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\US-2560x1440-normal-4.png",
+            "team": "US",
+            "fixture": "normal-4",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\US-2560x1440-stress-12-top.png",
+            "team": "US",
+            "fixture": "stress-12-top",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\US-1280x720-normal-4.png",
+            "team": "US",
+            "fixture": "normal-4",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\US-1280x720-stress-12-top.png",
+            "team": "US",
+            "fixture": "stress-12-top",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\DE-1920x1080-normal-4.png",
+            "team": "DE",
+            "fixture": "normal-4",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\DE-1920x1080-stress-12-top.png",
+            "team": "DE",
+            "fixture": "stress-12-top",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\DE-2560x1440-normal-4.png",
+            "team": "DE",
+            "fixture": "normal-4",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\DE-2560x1440-stress-12-top.png",
+            "team": "DE",
+            "fixture": "stress-12-top",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\DE-1280x720-normal-4.png",
+            "team": "DE",
+            "fixture": "normal-4",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\DE-1280x720-stress-12-top.png",
+            "team": "DE",
+            "fixture": "stress-12-top",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\IT-1920x1080-normal-4.png",
+            "team": "IT",
+            "fixture": "normal-4",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\IT-1920x1080-stress-12-top.png",
+            "team": "IT",
+            "fixture": "stress-12-top",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\IT-2560x1440-normal-4.png",
+            "team": "IT",
+            "fixture": "normal-4",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\IT-2560x1440-stress-12-top.png",
+            "team": "IT",
+            "fixture": "stress-12-top",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\IT-1280x720-normal-4.png",
+            "team": "IT",
+            "fixture": "normal-4",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\IT-1280x720-stress-12-top.png",
+            "team": "IT",
+            "fixture": "stress-12-top",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\JP-1920x1080-normal-4.png",
+            "team": "JP",
+            "fixture": "normal-4",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\JP-1920x1080-stress-12-top.png",
+            "team": "JP",
+            "fixture": "stress-12-top",
+            "width": 1920,
+            "height": 1080,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\JP-2560x1440-normal-4.png",
+            "team": "JP",
+            "fixture": "normal-4",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\JP-2560x1440-stress-12-top.png",
+            "team": "JP",
+            "fixture": "stress-12-top",
+            "width": 2560,
+            "height": 1440,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\JP-1280x720-normal-4.png",
+            "team": "JP",
+            "fixture": "normal-4",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 8,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 12 回合 · 等待选择挡位",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 265.7699890136719,
+                    "preferredHeight": 40.54999923706055,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 2/3",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 68.91000366210938,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/4",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 157.1199951171875,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈2 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 190.24000549316407,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：多云",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 75.01000213623047,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食车手1 圈2 格140\r\n2. 美食车手2 圈2 格139\r\n3. 受控预览车手 圈2 格138 ←你\r\n4. 美食车手4 圈2 格137\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 196.69000244140626,
+                    "preferredHeight": 81.08999633789063,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-hud-shell-2026-10-14\\before\\JP-1280x720-stress-12-top.png",
+            "team": "JP",
+            "fixture": "stress-12-top",
+            "width": 1280,
+            "height": 720,
+            "checkedLabels": 8,
+            "overflows": [
+                "StatusText: 受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                "StandingsText: 1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n"
+            ],
+            "labels": [
+                {
+                    "name": "StatusText",
+                    "text": "受控 UI 预览 · 第 99999 回合 · 等待选择挡位与确认当前操作，实际与预计数据分别显示",
+                    "width": 209.66403198242188,
+                    "height": 44.22599792480469,
+                    "preferredWidth": 555.7100219726563,
+                    "preferredHeight": 60.81999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                },
+                {
+                    "name": "GearText",
+                    "text": "档位: G3",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 68.30000305175781,
+                    "preferredHeight": 26.06999969482422,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "HeatText",
+                    "text": "引擎 7/12  <color=#58A6FF>热量 5</color>\n手5 抽0 弃0",
+                    "width": 204.48004150390626,
+                    "height": 61.236053466796878,
+                    "preferredWidth": 121.12999725341797,
+                    "preferredHeight": 46.34000015258789,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "LapText",
+                    "text": "圈数: 999/1000",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 117.37000274658203,
+                    "preferredHeight": 24.6200008392334,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "PositionText",
+                    "text": "格 138/142 | 排名: 3/12",
+                    "width": 241.9200439453125,
+                    "height": 61.235992431640628,
+                    "preferredWidth": 166.24000549316407,
+                    "preferredHeight": 23.170000076293947,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "AIStatusText",
+                    "text": "AI: Go | 引擎:12 | 圈999 | 格140",
+                    "width": 241.9200439453125,
+                    "height": 61.23602294921875,
+                    "preferredWidth": 207.33999633789063,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "WeatherText",
+                    "text": "天气：大雨 · 弯道限速降低",
+                    "width": 241.9200439453125,
+                    "height": 54.431976318359378,
+                    "preferredWidth": 186.75999450683595,
+                    "preferredHeight": 21.719999313354493,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": false,
+                    "scrollContent": false
+                },
+                {
+                    "name": "StandingsText",
+                    "text": "1. 美食赛车超长中文名称第1号车手 圈999 格140\r\n2. 美食赛车超长中文名称第2号车手 圈999 格139\r\n3. 受控预览中国美食赛车超级长中文车手名称 圈999 格138 ←你\r\n4. 美食赛车超长中文名称第4号车手 圈999 格137\r\n5. 美食赛车超长中文名称第5号车手 圈999 格136\r\n6. 美食赛车超长中文名称第6号车手 圈999 格135\r\n7. 美食赛车超长中文名称第7号车手 圈999 格134\r\n8. 美食赛车超长中文名称第8号车手 圈999 格133\r\n9. 美食赛车超长中文名称第9号车手 圈999 格132\r\n10. 美食赛车超长中文名称第10号车手 圈999 格131\r\n11. 美食赛车超长中文名称第11号车手 圈999 格130\r\n12. 美食赛车超长中文名称第12号车手 圈999 格129\r\n",
+                    "width": 241.9200439453125,
+                    "height": 156.4919891357422,
+                    "preferredWidth": 394.6499938964844,
+                    "preferredHeight": 486.5299987792969,
+                    "viewportHeight": 0.0,
+                    "tmpOverflow": true,
+                    "scrollContent": false
+                }
+            ]
+        }
+    ]
+}

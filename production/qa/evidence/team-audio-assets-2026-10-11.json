@@ -1,0 +1,155 @@
+{
+  "assets": 18,
+  "engines": 6,
+  "shift_cues": 12,
+  "unique_hashes": 18,
+  "format": "48000 Hz / mono / PCM16",
+  "max_peak_dbfs": -7.99985,
+  "loop_boundaries_match": true,
+  "items": [
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_uk.wav",
+      "sha256": "1b7e8348b7dc95362844555dbb7af1a038a53e4634b10c87b546ad7276962941",
+      "frames": 57600,
+      "peak_dbfs": -9.99986,
+      "looping": true,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_up.wav",
+      "sha256": "989771846677e5fecb7befa318ca5c7f8a7bb373883230d98058ba6c936313e0",
+      "frames": 11040,
+      "peak_dbfs": -7.99985,
+      "looping": false,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_down.wav",
+      "sha256": "8361e6f67bfdcd5240c68e09f0da152d154bdebd83460ea5ac85c05eb5106a3c",
+      "frames": 13920,
+      "peak_dbfs": -7.99985,
+      "looping": false,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_de.wav",
+      "sha256": "2c6520d9eb264c7a70f2ea8232a6f85ecfacf6f8b2206329186d930dc72cc3cd",
+      "frames": 57600,
+      "peak_dbfs": -9.99986,
+      "looping": true,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_up.wav",
+      "sha256": "d1a54913ec7623a135db8ca02d9f052b6a25381fa3acdc0733b465090a6cc235",
+      "frames": 11040,
+      "peak_dbfs": -7.99985,
+      "looping": false,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_down.wav",
+      "sha256": "be81aedaaeaf9ce7b01a3780c198bb1b37aebb05cc06231b6f88816ec0d1dcb3",
+      "frames": 13920,
+      "peak_dbfs": -7.99985,
+      "looping": false,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_it.wav",
+      "sha256": "a9ea8cff24b55c14c1ddbaeb20cf80a1f3fe28e8cc73221bee7dcc1f2326b91d",
+      "frames": 57600,
+      "peak_dbfs": -9.99986,
+      "looping": true,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_up.wav",
+      "sha256": "8993338a16f3b00cf86429a5080ba0e43833850f86ed8da7afefbcbf97f66db6",
+      "frames": 11040,
+      "peak_dbfs": -7.99985,
+      "looping": false,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_down.wav",
+      "sha256": "18246d4478e9ffe4e697525db8b2e55890357e0e716552a124ad4270f86fbc4e",
+      "frames": 13920,
+      "peak_dbfs": -7.99985,
+      "looping": false,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_us.wav",
+      "sha256": "eaaa5a6a88e0bea5a269b697de3f33fd2db2a563c31d69529d451b2883c4ff75",
+      "frames": 57600,
+      "peak_dbfs": -9.99986,
+      "looping": true,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_up.wav",
+      "sha256": "75364ccb3c6a1eedc4f73a1110594a038219dbdc33fa1535c0f16ea1292626e5",
+      "frames": 11040,
+      "peak_dbfs": -7.99985,
+      "looping": false,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_down.wav",
+      "sha256": "ba92045fa96e279e73a45d987a6c343ebeb573cf8fe340f5c2bc6acdda3ec92d",
+      "frames": 13920,
+      "peak_dbfs": -7.99985,
+      "looping": false,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_cn.wav",
+      "sha256": "ef163eb489d15066138b9c2e7396bb311b5992034e13d379fc9ba6835fbd3b5c",
+      "frames": 57600,
+      "peak_dbfs": -9.99986,
+      "looping": true,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_up.wav",
+      "sha256": "c2990abcb56303958a54e9cb50b2d35c4031c9b09c5dd095923abef77a2cfa0f",
+      "frames": 11040,
+      "peak_dbfs": -7.99985,
+      "looping": false,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_down.wav",
+      "sha256": "8037c91e284ebeee0b46b51347b911e9a85a863f737b89f13615a186f4ca50f7",
+      "frames": 13920,
+      "peak_dbfs": -7.99985,
+      "looping": false,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_jp.wav",
+      "sha256": "585e15d983e5fad28e2839dfefbcb2c46ecc4f8524795c2a195d9b184f8d986a",
+      "frames": 57600,
+      "peak_dbfs": -9.99986,
+      "looping": true,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_up.wav",
+      "sha256": "45a5ddfd0e66ed9c88fb9aa849567c6330933e5c4f3ea288b35ef3590de200bd",
+      "frames": 11040,
+      "peak_dbfs": -7.99985,
+      "looping": false,
+      "boundary_sample_delta": 0
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_down.wav",
+      "sha256": "fcc7824f12bbb2d0fd24fa37c67fc187025ad73fd523ec36cddff7fb16fcd206",
+      "frames": 13920,
+      "peak_dbfs": -7.99985,
+      "looping": false,
+      "boundary_sample_delta": 0
+    }
+  ]
+}

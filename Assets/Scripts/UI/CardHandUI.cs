@@ -780,6 +780,7 @@ public class CardHandUI : MonoBehaviour
     private void UpdatePendingCardStatus(PlayerState player, int maxCards)
     {
         if (gameManager == null || gameManager.hudUI == null || player == null) return;
+        gameManager.hudUI.RefreshTurnTelemetry(player);
 
         int played = player.playedSpeedCardsThisTurn.Count;
         List<CardData> selected = GetSelectedPlayCards();
@@ -873,6 +874,12 @@ public class CardHandUI : MonoBehaviour
             ResolveCardSourceRects(cards),
             sourceRect,
             destinationRect);
+    }
+
+    /// <summary>Maps cooling receipts to their authored visual routes; never mutates the deck.</summary>
+    public void PlayHeatCoolingTransitions(HeatCoolingResult result, bool throughDiscard = false)
+    {
+        CardZoneTransitionRules.PresentHeatCooling(result, throughDiscard, PlayHeatTransitions);
     }
 
     /// <summary>Plays one or more heat cards between engine, hand and pile zones.</summary>

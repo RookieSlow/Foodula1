@@ -1,0 +1,18 @@
+{
+  "evidenceType": "Root-reported MCP completed result; native RunFinished not armed for this baseline",
+  "job": "ee75bac1fe3e404ea8a990a1b9325360",
+  "status": "succeeded",
+  "total": 83,
+  "passed": 83,
+  "failed": 0,
+  "skipped": 0,
+  "durationSeconds": 2.8487942,
+  "groups": [
+    "HeatGaugeRulesTests",
+    "TeamGearPresentationTests",
+    "RaceUILayoutTests",
+    "GearRequirementFeedbackTests"
+  ],
+  "phase": "before production package 3 changes",
+  "provenance": "Root message; historical baseline only, not final package test result"
+}

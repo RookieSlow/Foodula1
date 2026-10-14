@@ -1,0 +1,148 @@
+{
+  "jobId": "26015c97f87e4c4eac2a642abfea116a",
+  "mode": "EditMode",
+  "authority": "Native Unity Test Runner RunFinished captured in SessionState",
+  "nativeSummary": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-10-12T02:47:18.9968925Z",
+    "total": 2872,
+    "passed": 2872,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": ""
+  },
+  "registeredCoroutineCases": [
+    {
+      "key": "Foodula1.Tests.GameLoop.CaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.CompletionCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.StartupDeckCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.CustomRosterDeckCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.ThunderstormDeckCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.WeatherDeckCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.PitCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.StartupPitCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.WeatherPitCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.CrossingCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.CareerCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.CareerRecoveryCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.CareerStartupGateCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.CareerSummerCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.CareerFifthCaseResult",
+      "present": true,
+      "passed": true
+    },
+    {
+      "key": "Foodula1.Tests.GameLoop.CareerFinaleCaseResult",
+      "present": true,
+      "passed": true
+    }
+  ],
+  "editorAfterRun": {
+    "checkedUtc": "2026-10-12T02:48:55.7939927Z",
+    "scene": "Assets/Scenes/MainMenu.unity",
+    "isDirty": false,
+    "isPlaying": false,
+    "isCompiling": false,
+    "isUpdating": false,
+    "sceneCount": 1,
+    "evidenceArmed": false
+  },
+  "mcpTransport": {
+    "status": "failed",
+    "error": "Job orphaned after domain reload",
+    "lastProgressCompleted": 1048,
+    "discoveredTotal": 2872,
+    "result": null,
+    "interpretation": "MCP progress was lost on domain reload; it is not the native test outcome. Native RunFinished is authoritative. MCP itself cleared its stale job after the run."
+  },
+  "console": {
+    "unexpectedCompilationErrors": 0,
+    "observed": [
+      {
+        "type": "Error",
+        "message": "[TrackDataLoader] Track config not found: Resources/Configs/Tracks/no_such_track.json",
+        "expectedBy": "Assets/Tests/Editor/track_data_loader_test.cs:190 LogAssert.Expect"
+      },
+      {
+        "type": "Warning",
+        "message": "MCP TestJobManager cleared stale job after domain reload",
+        "expectedToolCleanup": true
+      }
+    ]
+  },
+  "integrity": {
+    "checkedUtc": "2026-10-12T02:49:35.4525772Z",
+    "beforeRunCSharpPaths": 316,
+    "afterRunCSharpPaths": 316,
+    "modifiedDuringRun": [],
+    "newDuringRun": [],
+    "resumeBaselineMissingPaths": [],
+    "sourceFontHashPreserved": true,
+    "head": "7fe271b939d2bef8a61553b0d1bf9313198cc9b2",
+    "indexEmpty": true,
+    "gitDiffCheckPassed": true
+  },
+  "limits": [
+    "Controlled HUD screenshots and integration fixtures are not a complete default race visual or subjective listening acceptance.",
+    "No commit or push. No scene or prefab was saved."
+  ]
+}

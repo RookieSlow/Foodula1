@@ -24,6 +24,13 @@ public static class GameSettingsRuntime
     private static GameSettingsRepository repository;
     private static GameSettingsData current;
 
+    /// <summary>Reload persisted settings next session without saving or applying display changes here.</summary>
+    public static void ResetRuntimeCache()
+    {
+        repository = null;
+        current = null;
+    }
+
     public static GameSettingsData Current
     {
         get

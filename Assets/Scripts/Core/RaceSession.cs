@@ -302,6 +302,21 @@ public class RaceSession
         return TechTreeRules.ComputeModifiers(p.techState, TechDb);
     }
 
+    /// <summary>Read-only fuel eligibility; payment and the once-per-lap marker belong to the caller.</summary>
+    public bool CanTriggerSchwarzbierFuel(PlayerState p, bool techEnabled)
+    {
+        return p.techState != null && techEnabled && GetModifiers(p).hasSchwarzbierFuel &&
+            p.deck.heatPool != null && p.deck.heatPool.remaining > 0 &&
+            TechTreeRules.CanTriggerSchwarzbierFuelThisLap(p.techState, p.lap);
+    }
+
+    /// <summary>Count only landmarks crossed by the base endpoint, never by the awarded bonus.</summary>
+    public int ComputeDriveThruMovementBonus(PlayerState p, bool techEnabled, int rawBaseEnd, int totalCells)
+    {
+        return p.techState != null && techEnabled && GetModifiers(p).hasDriveThru
+            ? CountCrossedLandmarks(p.position, rawBaseEnd, totalCells) : 0;
+    }
+
     /// <summary>
     /// Resolve UK Full English from the drawn hand. On a UK home track, an active
     /// Sun Never Sets adds one further trigger, even if L2 is not selected.
@@ -526,6 +541,11 @@ public class RaceSession
     /// </summary>
     public int ComputeMovementBonus(PlayerState p, bool crossedCorner)
     {
+        return ComputeMovementBonusWithBreakdown(p, crossedCorner, null);
+    }
+
+    public int ComputeMovementBonusWithBreakdown(PlayerState p, bool crossedCorner, TurnMovementBreakdown breakdown)
+    {
         int bonus = 0;
         if (TeamVehicleBonusesEnabled && !crossedCorner)
         {
@@ -535,14 +555,24 @@ public class RaceSession
             // Recover mode remains a deliberately conservative one-card turn.
             if (!TeamGearRules.IsChina(p.teamId) || !p.usesChinaGearSystem)
             {
-                bonus += TeamVehicleRules.GetStraightMovementBonus(p.teamId);
+                int chassis = TeamVehicleRules.GetStraightMovementBonus(p.teamId);
+                bonus += chassis;
+                breakdown?.AddPlan("车队底盘：直道", chassis, TurnMovementKind.Other);
                 if (p.playedSpeedCardsThisTurn != null)
                 {
                     if (p.playedSpeedCardsThisTurn.Count > 0)
-                        bonus += TeamVehicleRules.GetStraightTurnBonus(p.teamId);
+                    {
+                        int turnBonus = TeamVehicleRules.GetStraightTurnBonus(p.teamId);
+                        bonus += turnBonus;
+                        breakdown?.AddPlan("车队：直道出牌", turnBonus, TurnMovementKind.Card);
+                    }
                     foreach (CardData card in p.playedSpeedCardsThisTurn)
                         if (card != null)
-                            bonus += TeamVehicleRules.GetStraightCardBonus(p.teamId, CardPlayRules.GetCommittedSpeedCardValue(card));
+                        {
+                            int cardBonus = TeamVehicleRules.GetStraightCardBonus(p.teamId, CardPlayRules.GetCommittedSpeedCardValue(card));
+                            bonus += cardBonus;
+                            breakdown?.AddPlan("车队：速度牌转换", cardBonus, TurnMovementKind.Card);
+                        }
                 }
             }
             else if (IsGoMode(p))
@@ -550,14 +580,22 @@ public class RaceSession
                 // Go expresses the electric drivetrain's documented +1 top
                 // speed / +2 acceleration package on a straight.  Recover
                 // remains deliberately conservative at one card.
-                bonus += TeamVehicleRules.GetStraightMovementBonus(p.teamId);
+                int electric = TeamVehicleRules.GetStraightMovementBonus(p.teamId);
+                bonus += electric;
+                breakdown?.AddPlan("Go 电驱直道", electric, TurnMovementKind.Other);
             }
         }
 
         if (p.techState != null && !crossedCorner &&
             (!TeamGearRules.IsChina(p.teamId) || !p.usesChinaGearSystem || IsGoMode(p)))
-            bonus += GetModifiers(p).EffectiveSpeedBonusStraight;
-        bonus += TrickCardRules.GetSauerkrautBonus(p.trickState, crossedCorner);
+        {
+            int technology = GetModifiers(p).EffectiveSpeedBonusStraight;
+            bonus += technology;
+            breakdown?.AddPlan("科技：直道加速", technology, TurnMovementKind.Technology);
+        }
+        int sauerkraut = TrickCardRules.GetSauerkrautBonus(p.trickState, crossedCorner);
+        bonus += sauerkraut;
+        breakdown?.AddPlan("特技牌：酸菜", sauerkraut, TurnMovementKind.Card);
         return bonus;
     }
 

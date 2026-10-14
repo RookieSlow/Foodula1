@@ -1,0 +1,27 @@
+[
+  {
+    "path": "Assets/Scripts/UI/HeatThermometerUI.cs",
+    "copy": "HeatThermometerUI-source-before.cs.txt",
+    "sha256": "733586511570DF7EE0FBAB8C0C9976323F49A7A4F4EB3FD1C32551D1EEB3193A"
+  },
+  {
+    "path": "Assets/Scripts/UI/TeamGearGraphic.cs",
+    "copy": "TeamGearGraphic-source-before.cs.txt",
+    "sha256": "BF8B2253C92292203ADD2E34876DEC65589D1A652520E906B3D02B7DB8B58597"
+  },
+  {
+    "path": "Assets/Scripts/UI/TeamGearPresentationUI.cs",
+    "copy": "TeamGearPresentationUI-source-before.cs.txt",
+    "sha256": "24F1A99D9005D27CACA016296BB17B7F7DEC608AA8F8820F2F5F687940C350B2"
+  },
+  {
+    "path": "Assets/Scripts/UI/GearDialPresentationUI.cs",
+    "copy": "GearDialPresentationUI-source-before.cs.txt",
+    "sha256": "BF2B5147829F71AFA48984D356E316B32015E021D0FA57ED985DAA1EE06F34E2"
+  },
+  {
+    "path": "Assets/Scripts/Gameplay/RaceCarBadgeUI.cs",
+    "copy": "RaceCarBadgeUI-source-before.cs.txt",
+    "sha256": "864715608DD0F2B14E7838FB8F2539EAD6A7193A679D078D47CB18535A613CDC"
+  }
+]

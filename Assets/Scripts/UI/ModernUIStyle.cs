@@ -25,6 +25,9 @@ public static class ModernUIStyle
     private static readonly Dictionary<string, Sprite> SpriteCache =
         new Dictionary<string, Sprite>();
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetRuntimeCache() => SpriteCache.Clear();
+
     public static void ApplyOverlay(Image image)
     {
         if (image == null) return;

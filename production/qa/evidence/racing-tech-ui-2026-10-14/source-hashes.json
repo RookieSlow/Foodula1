@@ -1,0 +1,26 @@
+[
+  {
+    "Path": "D:\\UnityProject\\Foodula1\\Assets\\Scripts\\UI\\RacingTechTheme.cs",
+    "Hash": "CD2CB8D799E25D5FC5A570136842D3292296EB76AA30FAC25B59CE00E26A27EF"
+  },
+  {
+    "Path": "D:\\UnityProject\\Foodula1\\Assets\\Scripts\\UI\\RaceTelemetryStripUI.cs",
+    "Hash": "00F0633F2A1A9204E46A1D76DFB8F2BB9F710AB85AB62E6A25CF8530F492E602"
+  },
+  {
+    "Path": "D:\\UnityProject\\Foodula1\\Assets\\Scripts\\Audio\\AudioService.cs",
+    "Hash": "780CCA4A0627287BC60AEB0366189DB9F73F15B7EE35073240CD1AA413908734"
+  },
+  {
+    "Path": "D:\\UnityProject\\Foodula1\\Assets\\Scripts\\Editor\\RacingTechPreviewCapture.cs",
+    "Hash": "9E4F5FEB7CF573BF2F7DC86F52F2C7CAB12ECD9AB96B3ABCE3957921160AD6AD"
+  },
+  {
+    "Path": "D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\racing_tech_theme_test.cs",
+    "Hash": "28868338713029A2C93C5C6B70724E06CD8B390D2EA3617E7CCC19E7A055C374"
+  },
+  {
+    "Path": "D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\racing_tech_audio_teardown_test.cs",
+    "Hash": "5BAAC37FD05AECB0886FB77C6A84F449AC1D8C2C9CFFB08BFD473AFD3E620B04"
+  }
+]

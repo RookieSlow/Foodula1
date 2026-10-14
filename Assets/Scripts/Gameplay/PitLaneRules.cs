@@ -18,6 +18,12 @@ public static class PitLaneRules
     /// <summary>Heat cooled during a standard pit stop.</summary>
     public const int PIT_HEAT_COOLDOWN = 999; // All heat returned to engine
 
+    /// <summary>Existing AI offer policy only; eligibility and reservation stay separate.</summary>
+    public static bool ShouldAIReservePit(float handHeatRatio)
+    {
+        return handHeatRatio >= 0.6f;
+    }
+
     /// <summary>Reads the existing pre-entry offer gate without consuming a choice.</summary>
     public static bool TryGetApproachChoiceDistance(PlayerState player,
         IReadOnlyList<TrackNode> nodes, bool enabled, out int distance)

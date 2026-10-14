@@ -284,6 +284,12 @@ public static class DriverSkillRules
         return 0;
     }
 
+    /// <summary>Reaction cost only; payment and cooling order remain owned by the race coordinator.</summary>
+    public static int GetReactionHeatCost(DriverSkillRuntimeState state)
+    {
+        return Active(state, DriverActiveSkillId.TrueSelf) ? 1 : 0;
+    }
+
     public static int GetOvertakeBonus(DriverSkillRuntimeState state, int overtakes)
     {
         return Active(state, DriverActiveSkillId.AngryCharge) && state.Tier >= 2 && overtakes > 0 ? 1 : 0;

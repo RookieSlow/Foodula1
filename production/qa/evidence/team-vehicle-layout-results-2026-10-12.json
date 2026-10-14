@@ -1,0 +1,26 @@
+{
+  "jobId": "47950fca2c1d4a219960434289979b35",
+  "authority": "Unity TestRunner native RunFinished",
+  "summary": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-10-12T02:34:57.0220294Z",
+    "total": 100,
+    "passed": 100,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": ""
+  },
+  "restoredEditor": {
+    "result": "{\"fullName\":\"Foodula1\",\"resultState\":\"Passed\",\"endedUtc\":\"2026-10-12T02:34:57.0220294Z\",\"total\":100,\"passed\":100,\"failed\":0,\"skipped\":0,\"inconclusive\":0,\"message\":\"\",\"output\":\"\"}",
+    "armed": false,
+    "scene": "MainMenu",
+    "dirty": false,
+    "playing": false,
+    "compiling": false,
+    "updating": false
+  },
+  "coverage": "48 team UI cases including six authored RaceCanvas cases; layout, gear selection, China rules, shift resolver and requirement feedback."
+}

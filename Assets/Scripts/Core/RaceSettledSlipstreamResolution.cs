@@ -53,6 +53,7 @@ public static class RaceSettledSlipstreamResolution
                 continue;
             int baseMovement = follower.totalMovementThisTurn;
             follower.totalMovementThisTurn += chain.TotalBonus;
+            follower.turnMovement.AddPlan("尾流", chain.TotalBonus, TurnMovementKind.Other);
             log?.Invoke(
                 $"[MOVE_PLAN_FINAL] {follower.name} position={follower.position} " +
                 $"base_total={baseMovement} tailwind_bonus={chain.TotalBonus} " +

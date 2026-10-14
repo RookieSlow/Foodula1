@@ -383,6 +383,15 @@ public class TechTreeState
     /// <summary>UK L3: which country's techs are being copied (null if not set).</summary>
     public TeamId? sunNeverSetsTarget;
 
+    /// <summary>Independent one-shot flags and node sets for input forecasting.</summary>
+    public TechTreeState CreatePresentationCopy()
+    {
+        var copy = (TechTreeState)MemberwiseClone();
+        copy.unlockedNodeIds = new HashSet<string>(unlockedNodeIds);
+        copy.activeNodeIds = new HashSet<string>(activeNodeIds);
+        return copy;
+    }
+
     public TechTreeState() { }
 
     public TechTreeState(TeamId teamId, int initialRp = 0)

@@ -1,0 +1,254 @@
+{
+  "utc": "2026-10-14T16:36:31.6082104Z",
+  "state": "Prepared index only; no commit or push performed by reviewer",
+  "exclusions": [
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_down.wav",
+      "exists": true,
+      "sha256": "7F964F4A9B11FEE8A80BB39E895078904D6F46A5F867FF7CCEA9675BBEE5FA86",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_down.wav.meta",
+      "exists": true,
+      "sha256": "4B2E59C7E802FE89A86891F94345A625C363D744BB486DFC9CFCB5C665765635",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_up.wav",
+      "exists": true,
+      "sha256": "D662327E2D9EBCF890AFD2AAAAA00AE3C91100E6E29EE36D73AD4D175CC7FAA6",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_up.wav.meta",
+      "exists": true,
+      "sha256": "B24E84062CE25D51512DFF5D749F4667734C55E8C8FE6BAAECEF8B7DBE062923",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_down.wav",
+      "exists": true,
+      "sha256": "0F66F01AEED37367697E9DAE3053D78D8DF90E8872FFB252411137CCD20BFAB2",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_down.wav.meta",
+      "exists": true,
+      "sha256": "B8C3C623BA96921354F77A432A3F158F34A437639B8F145E000215679AE06BCD",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_up.wav",
+      "exists": true,
+      "sha256": "65DB7D98805FE2FD98AB650EB165D39FEE68E9F08094F4C97DA1286C8362AECC",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_up.wav.meta",
+      "exists": true,
+      "sha256": "8F091C39DCA4F1D74E1ABD6517BC9848BA8E122566CA1D7FD7F0A042FC8814F6",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_down.wav",
+      "exists": true,
+      "sha256": "C6160BAC8898CBFC83FF4BBC65D63F03ABDACDCA2FBC01D2CCCB8089F262C0A1",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_down.wav.meta",
+      "exists": true,
+      "sha256": "24F648517A6248D140452DC38B3BCB8124184C5C65AE04548A1E87A03D494171",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_up.wav",
+      "exists": true,
+      "sha256": "A57A7CCB4027D0B2933D3685C5BF1D96F6B853E1AA50151CC30F4D69A2B2255B",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_up.wav.meta",
+      "exists": true,
+      "sha256": "54DCC293F9D226B839C7422F4D862687852A6287EB878EAD3FA2F01D9445BCE4",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_down.wav",
+      "exists": true,
+      "sha256": "193D3A359A45E3B7457A4EE191C90112F842EB738791C7E7DF6AB63086792E4C",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_down.wav.meta",
+      "exists": true,
+      "sha256": "A309C3FD55C5BF607D13F93611B6646AB55BE9193392583DBE3B4938849452E5",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_up.wav",
+      "exists": true,
+      "sha256": "E21F10C98297DD2B84D7E87479D0569E315726E54A615451FF839703B933F42A",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_up.wav.meta",
+      "exists": true,
+      "sha256": "415F380BDE0E99EDBC6E629F9C9529FF552658919DC991B1FF460A86E70A3092",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_down.wav",
+      "exists": true,
+      "sha256": "CAD1DC8CA916550E9D54EE638CE54B2C95A379ECAC0BA81596B3BDC0DC9E924D",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_down.wav.meta",
+      "exists": true,
+      "sha256": "9B4B82E187F4E9669DA65B82220AE91CD03CB9137103A4FF6AEC89D034B58603",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_up.wav",
+      "exists": true,
+      "sha256": "EE528C57586FDB43461CAC44323129268A04704423C91F58FDED3B7918838C3D",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_up.wav.meta",
+      "exists": true,
+      "sha256": "2639281915628EDCA12E3DBC58686598AB5E45A8174FC937CC5CE37E89AF8A6C",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_down.wav",
+      "exists": true,
+      "sha256": "01960BCA2DAC910DB96605DCD1E356732A6006C98609D46E8D34C0111CCBBD8A",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_down.wav.meta",
+      "exists": true,
+      "sha256": "731FECF28A27687500FCF91EA281C40EF938FF51B18408D59D2367449D609129",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_up.wav",
+      "exists": true,
+      "sha256": "96A86665BD8DE86547ADC63DD965D0534528E0D22BAFB0542372E2756F18AF99",
+      "staged": false
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_up.wav.meta",
+      "exists": true,
+      "sha256": "DC8B14CCCC6B7FF0063AEA2E07085EFD3E4C1C9294DC36ED039810C8FD6A7617",
+      "staged": false
+    },
+    {
+      "path": "production/qa/evidence/team-audio-preview-2026-10-11.wav",
+      "exists": true,
+      "sha256": "317D934F0FFB694307C0140871D917FBA2AF61E151FB2A420BDB65CB3FE8836A",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/team_vehicle_comparison.wav",
+      "exists": true,
+      "sha256": "4993A0FD1933888A6ED71725D4634D54BBD061B953BDC5DDB42374140A33AA44",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/team_vehicle_tuning_comparison.wav",
+      "exists": true,
+      "sha256": "9F94DC1043B874D6434F8BF25B917223F9BAADAFC3A612B51C36081E99417975",
+      "staged": false
+    },
+    {
+      "path": "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset",
+      "exists": true,
+      "sha256": "F7D82E76D855C4902653063D1FC4ADCEF16A145086EC6A106100E0B32618846A",
+      "staged": false
+    },
+    {
+      "path": "ProjectSettings/EditorSettings.asset",
+      "exists": true,
+      "sha256": "6AB19FE30172C763029B8F2E0616C6DC3DCFE480E845FC1AAAEF5975C948EEC0",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_cn_down.wav",
+      "exists": true,
+      "sha256": "94E83E7EC58D01E0158BE34B008E09677440232CB9100879EC108B0C8F438233",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_cn_up.wav",
+      "exists": true,
+      "sha256": "498F966F3CDD0796300D15A3BDB206C52454E4E9FB3F4FD54052D7C0C12686FB",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_de_down.wav",
+      "exists": true,
+      "sha256": "84DA130C536BD46B7270E8EA4BEFB2ACF0B0692DACA89B1C36ED66EB4BACC996",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_de_up.wav",
+      "exists": true,
+      "sha256": "E107AFC86DDF9B19CEC68ED8677153FB633BED7FD4DA983CD72BE5ED2A0B8742",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_it_down.wav",
+      "exists": true,
+      "sha256": "038A7527E6D63C89709B7582E03CC32D53F6A51822F815863DA06A637F1616DE",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_it_up.wav",
+      "exists": true,
+      "sha256": "1682D7B8AC26C2236A93EC453B207439EFF822DC7EBDB7EED15F796E8B143EEC",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_jp_down.wav",
+      "exists": true,
+      "sha256": "75EE13ACE7AD6EE73109D56E0D6C687FBE3831AFC437763277475C81B2492060",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_jp_up.wav",
+      "exists": true,
+      "sha256": "E85EF5A574DCCB95AC0A6A105ADAADF943EA51A5CD234196FE4CB9F0C954692F",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_uk_down.wav",
+      "exists": true,
+      "sha256": "3DABB7AF5402024734462ABBFBB80FCE818C160743851EEB523CBAA79D89E7D9",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_uk_up.wav",
+      "exists": true,
+      "sha256": "7BD98DD221F8DD5D800F13909C3937D127F16BF62FA7250963970499577E143C",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_us_down.wav",
+      "exists": true,
+      "sha256": "5EB01C3B78C99EB95A0D21CB188AB34C0CC47B79FB071968967BEF2FA44D8FD3",
+      "staged": false
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_us_up.wav",
+      "exists": true,
+      "sha256": "1CF6E277D4133976BF15798C28061B23AD15F532B7A3CDA4629A6DDBF6282DB0",
+      "staged": false
+    }
+  ],
+  "reason": "Original 12 Sonniss-bearing shifts plus metas preserved locally; three standalone previews and duplicate CC0 staging WAVs excluded; user font cache and fast-play EditorSettings remain local",
+  "accidentallyStagedExclusionCount": 0
+}

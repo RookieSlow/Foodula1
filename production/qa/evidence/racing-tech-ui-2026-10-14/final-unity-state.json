@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "message": "Code executed successfully.",
+  "data": {
+    "result": {
+      "run": "{\"fullName\":\"Foodula1\",\"resultState\":\"Passed\",\"endedUtc\":\"2026-10-14T03:45:49.0682678Z\",\"total\":2913,\"passed\":2913,\"failed\":0,\"skipped\":0,\"inconclusive\":0,\"message\":\"\",\"output\":\"\",\"stackTrace\":\"\"}",
+      "scene": "Assets/Scenes/MainMenu.unity",
+      "dirty": false,
+      "playing": false,
+      "compiling": false,
+      "updating": false,
+      "armed": false,
+      "previewScenes": 1,
+      "freeLicense": true
+    },
+    "compiler": "codedom"
+  }
+}

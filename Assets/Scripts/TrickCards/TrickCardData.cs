@@ -142,6 +142,9 @@ public class TrickCardState
     /// <summary>Temporary heat card available from Fries (usable this turn, destroyed end of turn).</summary>
     public bool tempHeatAvailable;
 
+    /// <summary>All fields are scalar flags/counters; preview consumption stays on this copy.</summary>
+    public TrickCardState CreatePresentationCopy() => (TrickCardState)MemberwiseClone();
+
     /// <summary>Reset per-turn state. Call at start of each turn.</summary>
     public void ResetPerTurn()
     {

@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "message": "Retrieved 1 log entries.",
+  "data": [
+    {
+      "type": "Error",
+      "message": "[TrackDataLoader] Track config not found: Resources/Configs/Tracks/no_such_track.json",
+      "file": "Assets/Scripts/Gameplay/TrackDataLoader.cs",
+      "line": 22,
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nTrackDataLoader:LoadConfig (string) (at Assets/Scripts/Gameplay/TrackDataLoader.cs:22)\nTrackDataLoaderTest:test_load_config_missing_track_returns_null () (at Assets/Tests/Editor/track_data_loader_test.cs:192)\nSystem.Reflection.MethodBase:Invoke (object,object[])\nNUnit.Framework.Internal.Reflect:InvokeMethod (System.Reflection.MethodInfo,object,object[])\nNUnit.Framework.Internal.MethodWrapper:Invoke (object,object[])\nNUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod (NUnit.Framework.Internal.ITestExecutionContext)\nNUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod (NUnit.Framework.Internal.ITestExecutionContext)\nNUnit.Framework.Internal.Commands.TestMethodCommand:Execute (NUnit.Framework.Internal.ITestExecutionContext)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n"
+    }
+  ]
+}

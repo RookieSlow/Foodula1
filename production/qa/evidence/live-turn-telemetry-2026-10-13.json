@@ -1,0 +1,117 @@
+{
+  "dateLocal": "2026-10-13",
+  "engine": "Unity 2022.3.62f3c1",
+  "jobId": "c940b3fbb6e2435d8d7146c52d41b53d",
+  "nativeRun": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-10-12T17:14:12.8366702Z",
+    "total": 185,
+    "passed": 185,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": "",
+    "stackTrace": ""
+  },
+  "nativeUiCase": {
+    "fullName": "LiveTurnTelemetryRuntimeTests.AuthoredHudRefreshesBeforeConfirmAndRestoresRealHeatAfterInputCloses",
+    "resultState": "Passed",
+    "endedUtc": "2026-10-12T17:14:11.2933162Z",
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": "",
+    "stackTrace": ""
+  },
+  "scope": {
+    "editModeCases": 184,
+    "nativePlayerLoopUiCases": 1,
+    "fullSuiteRun": false,
+    "completeDefaultRaceRun": false
+  },
+  "finalEditor": {
+    "scene": "MainMenu",
+    "sceneCount": 1,
+    "dirty": false,
+    "play": false,
+    "compile": false,
+    "updating": false,
+    "armed": false
+  },
+  "forecast": {
+    "gear": "Current known hand, best available legal speed combination; not a deck draw",
+    "cards": "Committed cards plus currently selected cards, as if ending card play now",
+    "heat": "Shift/chain/trick/missing-required-card/reaction/corner costs and known cooling",
+    "stateIsolation": "Independent card zones, engine pool, driver, trick and technology state; independent RNG",
+    "unsettled": [
+      "future draws",
+      "slipstream",
+      "overtakes",
+      "landmark repairs",
+      "opponent actions"
+    ]
+  },
+  "render": {
+    "states": 24,
+    "pngFiles": 56,
+    "textRecords": 252,
+    "overflows": 0,
+    "sourceFontAndScenePreserved": true
+  },
+  "finalConsole": {
+    "errors": 0,
+    "warnings": 1,
+    "warning": "CardHandUI: cardPrefab is not set. Drag CardPrefab into the Inspector.",
+    "context": "Existing inactive card-phase test fixture; authored native UI case uses the real assigned CardPrefab."
+  },
+  "audit": {
+    "BaselineFiles": 212,
+    "OwnExistingChanges": [
+      "Assets/Scripts/Core/CardDeck.cs",
+      "Assets/Scripts/UI/HUDUI.cs",
+      "Assets/Scripts/UI/CardHandUI.cs",
+      "docs/memory/project-overview.md",
+      "Assets/Scripts/Core/MVPGameManager.cs",
+      "Assets/Scripts/UI/RaceTelemetryStripUI.cs",
+      "docs/memory/current-task-list.md",
+      "docs/memory/game-mechanics.md",
+      "Assets/Scripts/UI/TeamGearPresentationUI.cs",
+      "Assets/Tests/Editor/race_coroutine_test_evidence.cs",
+      "design/quick-specs/team-engine-and-gear-presentation-2026-10-11.md",
+      "Assets/Tests/Editor/team_gear_telemetry_drag_test.cs"
+    ],
+    "UnexpectedBaselineChanges": [],
+    "VerifiedCSharpFiles": 356,
+    "SourceChangesSinceFinalTest": [],
+    "FontPreserved": true,
+    "FontSize": 34156615,
+    "Labels": 252,
+    "TextOverflows": 0,
+    "Screenshots": 56,
+    "Head": "7fe271b939d2bef8a61553b0d1bf9313198cc9b2",
+    "StagedFiles": []
+  },
+  "attempts": {
+    "initialFocused": {
+      "total": 133,
+      "failed": 2,
+      "reason": "Fixture sent heat to discard but asserted hand cooling; corrected to explicit hand payment."
+    },
+    "runtimeBeforeFixtureFix": {
+      "runs": 3,
+      "failedCasesPerRun": 1,
+      "reason": "Test searched CardHand children instead of its sibling handContainer; native failure at test line 89. Fixed fixture path."
+    }
+  },
+  "notes": [
+    "Native RunFinished is authoritative; stale MCP job cleared only after native completion and clean idle MainMenu.",
+    "Source frozen for the final combined run.",
+    "No Git commit/push or scene/prefab saves."
+  ],
+  "gitDiffCheckPassed": true
+}

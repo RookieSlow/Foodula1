@@ -22,6 +22,7 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
     private readonly CarOrientationController orientationController;
     private readonly Func<float> deltaTimeProvider;
     private readonly Func<bool> skipRequestedProvider;
+    private readonly Action<float> nodeProgress;
 
     /// <summary>
     /// Creates a movement adapter with runtime configuration, an optional clock
@@ -31,7 +32,8 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
         GameConfigSO config,
         CarOrientationController orientationController,
         Func<float> deltaTimeProvider = null,
-        Func<bool> skipRequestedProvider = null)
+        Func<bool> skipRequestedProvider = null,
+        Action<float> nodeProgress = null)
     {
         fallbackMoveSpeed = config != null ? Mathf.Max(0f, config.moveAnimSpeed) : 12f;
         float fallbackDuration = fallbackMoveSpeed > 0f ? 1f / fallbackMoveSpeed : 0.15f;
@@ -42,6 +44,7 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
         this.orientationController = orientationController ?? new CarOrientationController(config);
         this.deltaTimeProvider = deltaTimeProvider ?? (() => Time.deltaTime);
         this.skipRequestedProvider = skipRequestedProvider ?? (() => false);
+        this.nodeProgress = nodeProgress;
     }
 
     /// <summary>Animates one car to a target node and preserves its tangent-facing rotation.</summary>
@@ -80,6 +83,7 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
             float deltaTime = Mathf.Max(0f, deltaTimeProvider());
             elapsed += deltaTime;
             float progress = Mathf.Clamp01(elapsed / nodeMoveDuration);
+            nodeProgress?.Invoke(progress);
             car.transform.position = Vector3.LerpUnclamped(startPosition, targetPosition, progress);
             orientationController.RotateTowards(car, targetPosition, deltaTime);
             yield return null;
@@ -94,6 +98,6 @@ public sealed class CarMovementAnimator : ICarMovementAnimator
 
         car.transform.position = targetPosition;
         orientationController.RotateTowards(car, targetPosition, Mathf.Max(0f, deltaTimeProvider()));
-        AudioService.PlaySfx(AudioEventNames.CarHop);
+        nodeProgress?.Invoke(1f);
     }
 }

@@ -1,0 +1,364 @@
+{
+  "created_utc": "2026-10-14T16:39:29.590602+00:00",
+  "manifest_path": "tools/Audio/cc0-shift-staging/manifest.json",
+  "manifest_sha256": "3c02f555c657bf6d30a9776705fc41d90a0604cc0e0d48f0ca4fab74fc495435",
+  "new_assets_count": 12,
+  "new_assets": [
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_uk_up.wav",
+      "manifest_sha256": "7bd98dd221f8dd5d800f13909c3937d127f16bf62fa7250963970499577e143c",
+      "asset_sha256": "7bd98dd221f8dd5d800f13909c3937d127f16bf62fa7250963970499577e143c",
+      "match": true,
+      "meta_guid": "3997f980357542baa719fe02efa7fa23",
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_uk_down.wav",
+      "manifest_sha256": "3dabb7af5402024734462abbfbb80fce818c160743851eeb523cbaa79d89e7d9",
+      "asset_sha256": "3dabb7af5402024734462abbfbb80fce818c160743851eeb523cbaa79d89e7d9",
+      "match": true,
+      "meta_guid": "7943c103b70741a7a1a3da782badc5b6",
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_de_up.wav",
+      "manifest_sha256": "e107afc86ddf9b19cec68ed8677153fb633bed7fd4da983cd72be5ed2a0b8742",
+      "asset_sha256": "e107afc86ddf9b19cec68ed8677153fb633bed7fd4da983cd72be5ed2a0b8742",
+      "match": true,
+      "meta_guid": "d6395497557d4276bf201a7daa387000",
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_de_down.wav",
+      "manifest_sha256": "84da130c536bd46b7270e8ea4befb2acf0b0692daca89b1c36ed66eb4bacc996",
+      "asset_sha256": "84da130c536bd46b7270e8ea4befb2acf0b0692daca89b1c36ed66eb4bacc996",
+      "match": true,
+      "meta_guid": "c10adb51a71b423b8cf84871bbdbfe9e",
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_it_up.wav",
+      "manifest_sha256": "1682d7b8ac26c2236a93ec453b207439eff822dc7ebdb7eed15f796e8b143eec",
+      "asset_sha256": "1682d7b8ac26c2236a93ec453b207439eff822dc7ebdb7eed15f796e8b143eec",
+      "match": true,
+      "meta_guid": "1ad1ff1a25cc4421a22c1e554e5113b9",
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_it_down.wav",
+      "manifest_sha256": "038a7527e6d63c89709b7582e03cc32d53f6a51822f815863da06a637f1616de",
+      "asset_sha256": "038a7527e6d63c89709b7582e03cc32d53f6a51822f815863da06a637f1616de",
+      "match": true,
+      "meta_guid": "8f5041dbe4fb430c8afde29df8fd22f0",
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_us_up.wav",
+      "manifest_sha256": "1cf6e277d4133976bf15798c28061b23ad15f532b7a3cda4629a6ddbf6282db0",
+      "asset_sha256": "1cf6e277d4133976bf15798c28061b23ad15f532b7a3cda4629a6ddbf6282db0",
+      "match": true,
+      "meta_guid": "08c9249ff65f4beda092181031e6a75c",
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_us_down.wav",
+      "manifest_sha256": "5eb01c3b78c99eb95a0d21cb188ab34c0cc47b79fb071968967bef2fa44d8fd3",
+      "asset_sha256": "5eb01c3b78c99eb95a0d21cb188ab34c0cc47b79fb071968967bef2fa44d8fd3",
+      "match": true,
+      "meta_guid": "01bc7230f1e744c2ab0ba06dde049877",
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_cn_up.wav",
+      "manifest_sha256": "498f966f3cdd0796300d15a3bdb206c52454e4e9fb3f4fd54052d7c0c12686fb",
+      "asset_sha256": "498f966f3cdd0796300d15a3bdb206c52454e4e9fb3f4fd54052d7c0c12686fb",
+      "match": true,
+      "meta_guid": "dd72ac2f43904a36b0d74163fa94a9a2",
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_cn_down.wav",
+      "manifest_sha256": "94e83e7ec58d01e0158be34b008e09677440232cb9100879ec108b0c8f438233",
+      "asset_sha256": "94e83e7ec58d01e0158be34b008e09677440232cb9100879ec108b0c8f438233",
+      "match": true,
+      "meta_guid": "32c8ab85344845c5b09c13ddec46882f",
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_jp_up.wav",
+      "manifest_sha256": "e85ef5a574dccb95ac0a6a105adaadf943ea51a5cd234196fe4cb9f0c954692f",
+      "asset_sha256": "e85ef5a574dccb95ac0a6a105adaadf943ea51a5cd234196fe4cb9f0c954692f",
+      "match": true,
+      "meta_guid": "73de03f9b0ad42a7b67fcd05e363d576",
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_jp_down.wav",
+      "manifest_sha256": "75ee13ace7ad6ee73109d56e0d6c687fbe3831afc437763277475c81b2492060",
+      "asset_sha256": "75ee13ace7ad6ee73109d56e0d6c687fbe3831afc437763277475c81b2492060",
+      "match": true,
+      "meta_guid": "1cebcecd25b048f889fe988ce88d00c4",
+      "license": "CC0-1.0"
+    }
+  ],
+  "configured_paths": [
+    {
+      "team": "UK",
+      "direction": "up",
+      "resource_path": "Audio/SFX/team_shift_cc0_uk_up",
+      "cc0_only": true
+    },
+    {
+      "team": "UK",
+      "direction": "down",
+      "resource_path": "Audio/SFX/team_shift_cc0_uk_down",
+      "cc0_only": true
+    },
+    {
+      "team": "DE",
+      "direction": "up",
+      "resource_path": "Audio/SFX/team_shift_cc0_de_up",
+      "cc0_only": true
+    },
+    {
+      "team": "DE",
+      "direction": "down",
+      "resource_path": "Audio/SFX/team_shift_cc0_de_down",
+      "cc0_only": true
+    },
+    {
+      "team": "IT",
+      "direction": "up",
+      "resource_path": "Audio/SFX/team_shift_cc0_it_up",
+      "cc0_only": true
+    },
+    {
+      "team": "IT",
+      "direction": "down",
+      "resource_path": "Audio/SFX/team_shift_cc0_it_down",
+      "cc0_only": true
+    },
+    {
+      "team": "US",
+      "direction": "up",
+      "resource_path": "Audio/SFX/team_shift_cc0_us_up",
+      "cc0_only": true
+    },
+    {
+      "team": "US",
+      "direction": "down",
+      "resource_path": "Audio/SFX/team_shift_cc0_us_down",
+      "cc0_only": true
+    },
+    {
+      "team": "CN",
+      "direction": "up",
+      "resource_path": "Audio/SFX/team_shift_cc0_cn_up",
+      "cc0_only": true
+    },
+    {
+      "team": "CN",
+      "direction": "down",
+      "resource_path": "Audio/SFX/team_shift_cc0_cn_down",
+      "cc0_only": true
+    },
+    {
+      "team": "JP",
+      "direction": "up",
+      "resource_path": "Audio/SFX/team_shift_cc0_jp_up",
+      "cc0_only": true
+    },
+    {
+      "team": "JP",
+      "direction": "down",
+      "resource_path": "Audio/SFX/team_shift_cc0_jp_down",
+      "cc0_only": true
+    }
+  ],
+  "legacy_files": [
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_up.wav",
+      "current_sha256": "ee528c57586fdb43461cac44323129268a04704423c91f58fded3b7918838c3d",
+      "original_ui_baseline_sha256": "ee528c57586fdb43461cac44323129268a04704423c91f58fded3b7918838c3d",
+      "matches_original_ui_baseline": true
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_up.wav.meta",
+      "current_sha256": "2639281915628edca12e3dbc58686598ab5e45a8174fc937cc5ce37e89af8a6c",
+      "original_ui_baseline_sha256": "1d2fbd50823eb7649b68a0666391ca7eed1ac96702a0ba15b9f5e18a037d6baa",
+      "matches_original_ui_baseline": false,
+      "baseline_reconstructed_by_restoring_authorized_removed_trailing_spaces": true,
+      "guid": "369e5c6ec2e35e1586f6ccf4ab9249e2"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_down.wav",
+      "current_sha256": "cad1dc8ca916550e9d54ee638ce54b2c95a379ecac0ba81596b3bdc0dc9e924d",
+      "original_ui_baseline_sha256": "cad1dc8ca916550e9d54ee638ce54b2c95a379ecac0ba81596b3bdc0dc9e924d",
+      "matches_original_ui_baseline": true
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_down.wav.meta",
+      "current_sha256": "9b4b82e187f4e9669da65b82220ae91cd03cb9137103a4ff6aec89d034b58603",
+      "original_ui_baseline_sha256": "a7b46c21f382c9e3172d42d5e9eb3b83e168961ba96b32c6682d850d5794befe",
+      "matches_original_ui_baseline": false,
+      "baseline_reconstructed_by_restoring_authorized_removed_trailing_spaces": true,
+      "guid": "a48b5b34ec37558196257dcbdacb3f43"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_up.wav",
+      "current_sha256": "65db7d98805fe2fd98ab650eb165d39fee68e9f08094f4c97da1286c8362aecc",
+      "original_ui_baseline_sha256": "65db7d98805fe2fd98ab650eb165d39fee68e9f08094f4c97da1286c8362aecc",
+      "matches_original_ui_baseline": true
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_up.wav.meta",
+      "current_sha256": "8f091c39dca4f1d74e1abd6517bc9848ba8e122566ca1d7fd7f0a042fc8814f6",
+      "original_ui_baseline_sha256": "4b1b22f8241aad9d320b94698295f56d7fe0c05b26ae026cebad6692012cf005",
+      "matches_original_ui_baseline": false,
+      "baseline_reconstructed_by_restoring_authorized_removed_trailing_spaces": true,
+      "guid": "8b32a8671843500b83806e4bf8f5ea71"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_down.wav",
+      "current_sha256": "0f66f01aeed37367697e9dae3053d78d8df90e8872ffb252411137ccd20bfab2",
+      "original_ui_baseline_sha256": "0f66f01aeed37367697e9dae3053d78d8df90e8872ffb252411137ccd20bfab2",
+      "matches_original_ui_baseline": true
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_down.wav.meta",
+      "current_sha256": "b8c3c623ba96921354f77a432a3f158f34a437639b8f145e000215679ae06bcd",
+      "original_ui_baseline_sha256": "6946e425cea31cb3ed20a01d2e73d31c05b7b9d82f5b3fc4b57e89cc5c01b7e5",
+      "matches_original_ui_baseline": false,
+      "baseline_reconstructed_by_restoring_authorized_removed_trailing_spaces": true,
+      "guid": "4e54a6565ab853ed80ca8930e5a89ed3"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_up.wav",
+      "current_sha256": "a57a7ccb4027d0b2933d3685c5bf1d96f6b853e1aa50151cc30f4d69a2b2255b",
+      "original_ui_baseline_sha256": "a57a7ccb4027d0b2933d3685c5bf1d96f6b853e1aa50151cc30f4d69a2b2255b",
+      "matches_original_ui_baseline": true
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_up.wav.meta",
+      "current_sha256": "54dcc293f9d226b839c7422f4d862687852a6287eb878ead3fa2f01d9445bce4",
+      "original_ui_baseline_sha256": "7cdab74f2a2281d493e2bdedb8d8ec749045b5b19ec398e7f80716648a99b519",
+      "matches_original_ui_baseline": false,
+      "baseline_reconstructed_by_restoring_authorized_removed_trailing_spaces": true,
+      "guid": "f97eec0471715591b7f3589fd7c01bfc"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_down.wav",
+      "current_sha256": "c6160bac8898cbfc83ff4bbc65d63f03abdacdca2fbc01d2cccb8089f262c0a1",
+      "original_ui_baseline_sha256": "c6160bac8898cbfc83ff4bbc65d63f03abdacdca2fbc01d2cccb8089f262c0a1",
+      "matches_original_ui_baseline": true
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_down.wav.meta",
+      "current_sha256": "24f648517a6248d140452dc38b3bcb8124184c5c65ae04548a1e87a03d494171",
+      "original_ui_baseline_sha256": "b2fbe7d6347e4da393c8be01725220add03cc70996c7a3d47d2da90d24533328",
+      "matches_original_ui_baseline": false,
+      "baseline_reconstructed_by_restoring_authorized_removed_trailing_spaces": true,
+      "guid": "9c871018b7d45854af9359d7f2770ffd"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_up.wav",
+      "current_sha256": "96a86665bd8de86547adc63dd965d0534528e0d22bafb0542372e2756f18af99",
+      "original_ui_baseline_sha256": "96a86665bd8de86547adc63dd965d0534528e0d22bafb0542372e2756f18af99",
+      "matches_original_ui_baseline": true
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_up.wav.meta",
+      "current_sha256": "dc8b14cccc6b7ff0063aea2e07085efd3e4c1c9294dc36ed039810c8fd6a7617",
+      "original_ui_baseline_sha256": "edaa0cd9543e2d544ac4ddad20646bb137e18083d9a52ee259f7cf3b443e5ca8",
+      "matches_original_ui_baseline": false,
+      "baseline_reconstructed_by_restoring_authorized_removed_trailing_spaces": true,
+      "guid": "132d6d21b83256f283062e59d2348749"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_down.wav",
+      "current_sha256": "01960bca2dac910db96605dcd1e356732a6006c98609d46e8d34c0111ccbbd8a",
+      "original_ui_baseline_sha256": "01960bca2dac910db96605dcd1e356732a6006c98609d46e8d34c0111ccbbd8a",
+      "matches_original_ui_baseline": true
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_down.wav.meta",
+      "current_sha256": "731fecf28a27687500fcf91ea281c40ef938ff51b18408d59d2367449d609129",
+      "original_ui_baseline_sha256": "4fb3f3c0e775bf85730c1d3f6c4e06e5b35b15041bf97de75b74d52b34873d56",
+      "matches_original_ui_baseline": false,
+      "baseline_reconstructed_by_restoring_authorized_removed_trailing_spaces": true,
+      "guid": "0b372772c926535f912041bf9aa20b03"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_up.wav",
+      "current_sha256": "d662327e2d9ebcf890afd2aaaaa00ae3c91100e6e29ee36d73ad4d175cc7faa6",
+      "original_ui_baseline_sha256": "d662327e2d9ebcf890afd2aaaaa00ae3c91100e6e29ee36d73ad4d175cc7faa6",
+      "matches_original_ui_baseline": true
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_up.wav.meta",
+      "current_sha256": "b24e84062ce25d51512dff5d749f4667734c55e8c8fe6baaecef8b7dbe062923",
+      "original_ui_baseline_sha256": "5b06a9c5e6c113dca3de79bbe7078bc890456dbc3f8371aecba5e0c47cf73f5e",
+      "matches_original_ui_baseline": false,
+      "baseline_reconstructed_by_restoring_authorized_removed_trailing_spaces": true,
+      "guid": "79f86c5baf6e5c1fa3243f9bb2110602"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_down.wav",
+      "current_sha256": "7f964f4a9b11fee8a80bb39e895078904d6f46a5f867ff7ccea9675bbee5fa86",
+      "original_ui_baseline_sha256": "7f964f4a9b11fee8a80bb39e895078904d6f46a5f867ff7ccea9675bbee5fa86",
+      "matches_original_ui_baseline": true
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_down.wav.meta",
+      "current_sha256": "4b2e59c7e802fe89a86891f94345a625c363d744bb486dfc9cfcb5c665765635",
+      "original_ui_baseline_sha256": "d0a7ac2a8245866ea2865952866c030dc9124955dee77015084b4a8b0e2cdc3b",
+      "matches_original_ui_baseline": false,
+      "baseline_reconstructed_by_restoring_authorized_removed_trailing_spaces": true,
+      "guid": "e305e32953a55f449247e1af1202fcb6"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_up.wav",
+      "current_sha256": "e21f10c98297dd2b84d7e87479d0569e315726e54a615451ff839703b933f42a",
+      "original_ui_baseline_sha256": "e21f10c98297dd2b84d7e87479d0569e315726e54a615451ff839703b933f42a",
+      "matches_original_ui_baseline": true
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_up.wav.meta",
+      "current_sha256": "415f380bde0e99edbc6e629f9c9529ff552658919dc991b1ff460a86e70a3092",
+      "original_ui_baseline_sha256": "19af87c5b6df4b38376caad5bfbc9e5217e0061e33b3b33f9ff6edc13d32195d",
+      "matches_original_ui_baseline": false,
+      "baseline_reconstructed_by_restoring_authorized_removed_trailing_spaces": true,
+      "guid": "00df425997f35afaa97b45cb5bcca86e"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_down.wav",
+      "current_sha256": "193d3a359a45e3b7457a4ee191c90112f842eb738791c7e7df6ab63086792e4c",
+      "original_ui_baseline_sha256": "193d3a359a45e3b7457a4ee191c90112f842eb738791c7e7df6ab63086792e4c",
+      "matches_original_ui_baseline": true
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_down.wav.meta",
+      "current_sha256": "a309c3fd55c5bf607d13f93611b6646ab55be9193392583dbe3b4938849452e5",
+      "original_ui_baseline_sha256": "cb44c52e8cee0373746b023349ffc40b7582ff4906a3aae7a43845977da33c34",
+      "matches_original_ui_baseline": false,
+      "baseline_reconstructed_by_restoring_authorized_removed_trailing_spaces": true,
+      "guid": "fad0d58554885a0abf26b96ea935832d"
+    }
+  ],
+  "legacy_cc0_integration_boundary": "All 24 pre/post SHA256 values compared equal inside the integration operation; current original-UI comparison separately records earlier authorized whitespace cleanup.",
+  "native_test_evidence": "cc0-audio-focused-41-native.json",
+  "native_result": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-10-14T16:35:26.7222399Z",
+    "total": 41,
+    "passed": 41,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": "",
+    "stackTrace": ""
+  },
+  "acceptance_boundary": "Owned AudioSource actual playback and PCM verification; not subjective listening or full-match audio acceptance."
+}

@@ -56,6 +56,62 @@ public class RaceTurnBoundaryIntegrationTests
         method.Invoke(manager, new object[] { player });
     }
 
+    [TestCase(false, 0)] [TestCase(true, 0)]
+    [TestCase(false, 1)] [TestCase(true, 1)]
+    [TestCase(false, 2)] [TestCase(true, 2)]
+    [TestCase(false, 3)] [TestCase(true, 3)]
+    public void RealYangCoolingUsesOnlyHandInOrderAndNeverReclaimsDiscardReceipts(bool ai, int handMode)
+    {
+        var player = new PlayerState("Yang cooling", ai, 8, ChinaGearShiftRules.RecoverGear)
+        { teamId = TeamId.CN, techState = new TechTreeState(TeamId.CN) };
+        var speed = new CardData(CardType.Speed, 3);
+        var drawSpeed = new CardData(CardType.Speed, 2);
+        player.deck.InitializeExactOrder(new[] { speed, drawSpeed }, new HeatPool(6));
+        player.deck.DrawToHand(1);
+        player.deck.DrawHeatFromPool(1, HeatPaymentDestination.Discard, player.heatPaidCardsThisTurn);
+        CardData discardHeat = player.deck.DiscardPile[0];
+        var temporary = CardData.CreateTempHeat();
+        if (handMode == 2) player.deck.AddCardsToHand(new[] { temporary });
+        CardData permanent = null;
+        if (handMode > 0)
+        {
+            player.deck.DrawHeatFromPoolToHand(1);
+            permanent = player.deck.Hand[player.deck.Hand.Count - 1];
+        }
+        if (handMode == 3) player.deck.AddCardsToHand(new[] { temporary });
+        var method = typeof(MVPGameManager).GetMethod("ApplyYinYang", PrivateInstance);
+        Assert.IsNotNull(method);
+        int before = player.deck.heatPool.remaining;
+
+        method.Invoke(manager, new object[] { player, YinYangResult.Yang });
+
+        // Preserve the existing reverse scan within the hand-only source.
+        Assert.That(player.deck.heatPool.remaining, Is.EqualTo(before + (handMode == 1 || handMode == 2 ? 1 : 0)));
+        if (handMode > 0)
+            Assert.That(player.deck.ContainsInHand(permanent), Is.EqualTo(handMode == 3));
+        Assert.That(player.deck.ContainsInHand(temporary), Is.EqualTo(handMode == 2));
+        Assert.That(player.deck.Hand[0], Is.SameAs(speed));
+        Assert.That(player.deck.DrawPile, Is.EqualTo(new[] { drawSpeed }));
+        Assert.That(player.deck.DiscardPile, Is.EqualTo(new[] { discardHeat }));
+        Assert.That(player.heatPaidCardsThisTurn, Is.EqualTo(new[] { discardHeat }));
+
+        // A second trigger consumes only the remaining hand heat; a third cannot
+        // substitute the still-owned discard receipt or return a removed card twice.
+        method.Invoke(manager, new object[] { player, YinYangResult.Yang });
+        method.Invoke(manager, new object[] { player, YinYangResult.Yang });
+        Assert.That(player.deck.heatPool.remaining, Is.EqualTo(5));
+        Assert.That(player.deck.Hand, Is.EqualTo(new[] { speed }));
+        Assert.That(player.deck.DrawPile, Is.EqualTo(new[] { drawSpeed }));
+        Assert.That(player.deck.DiscardPile, Is.EqualTo(new[] { discardHeat }));
+        Assert.That(player.deck.CountRecordedHeat(player.heatPaidCardsThisTurn), Is.EqualTo(1));
+        Assert.That(player.deck.CountTemporaryHeatOutsideEngine(), Is.Zero);
+        Assert.That(player.deck.heatPool.remaining + player.deck.CountPermanentHeatOutsideEngine(), Is.EqualTo(6));
+        Assert.That(player.position, Is.EqualTo(8));
+        Assert.That(player.lap, Is.Zero);
+        Assert.That(player.gear, Is.EqualTo(ChinaGearShiftRules.RecoverGear));
+        Assert.That(player.spinCounter, Is.Zero);
+    }
+
     [TestCase(HeatPaymentDestination.Hand)]
     [TestCase(HeatPaymentDestination.Discard)]
     public void RealBreadPaymentUsesAdjustedAmountAndRequestedDestination(HeatPaymentDestination target)

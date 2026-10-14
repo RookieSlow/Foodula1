@@ -56,6 +56,46 @@ public static class RaceMovementRules
     }
 
     /// <summary>
+    /// Read-only card/driver contributions, excluding technology payments and
+    /// consumed bonuses. Return the signed sum; final movement is clamped later.
+    /// </summary>
+    public static int ComputeCardAndDriverMovementBonus(PlayerState player, bool crossedCorner)
+    {
+        int speedPerCardBonus = DriverSkillRules.GetSpeedPerCardBonus(player.driverSkill);
+        int bonus = CardPlayRules.GetHotpotMovementContribution(player, speedPerCardBonus);
+        bonus += player.trickMoveBonusThisTurn;
+        bonus += DriverSkillRules.GetMovementBonus(player.driverSkill, crossedCorner);
+        bonus -= DriverSkillRules.GetGutterMovementPenalty(player.driverSkill);
+        if (player.driverSkill != null)
+            bonus += player.driverSkill.PassiveMovementBonusThisTurn;
+        return bonus;
+    }
+
+    /// <summary>Record read-only card/driver values without consuming any effect again.</summary>
+    public static void RecordCardAndDriverMovementPlan(PlayerState player, bool crossedCorner, string trickName = null)
+    {
+        var ledger = player.turnMovement;
+        int index = 0;
+        foreach (var card in player.playedSpeedCardsThisTurn)
+        {
+            int value = CardPlayRules.GetCommittedSpeedCardValue(card);
+            ledger.AddPlan($"速度牌 {++index}（{value}）", value, TurnMovementKind.Card);
+        }
+        string activeName = player.DriverProfile?.ActiveName ?? "车手主动技能";
+        string passiveName = player.DriverProfile?.PassiveName ?? "车手被动技能";
+        ledger.AddPlan($"车手：{activeName}（每张牌）",
+            DriverSkillRules.GetSpeedPerCardBonus(player.driverSkill) * player.playedSpeedCardsThisTurn.Count,
+            TurnMovementKind.Driver);
+        if (player.hotpotAttackAppliedThisTurn)
+            ledger.AddPlan("特技牌：火锅 ATTACK", TrickCardRules.GetHotpotSpeedBonus(), TurnMovementKind.Card);
+        ledger.AddPlan("特技牌：" + (trickName ?? "即时加速"), player.trickMoveBonusThisTurn, TurnMovementKind.Card);
+        ledger.AddPlan("车手：" + activeName, DriverSkillRules.GetMovementBonus(player.driverSkill, crossedCorner), TurnMovementKind.Driver);
+        ledger.AddPlan("车手技能：移动修正", -DriverSkillRules.GetGutterMovementPenalty(player.driverSkill), TurnMovementKind.Driver);
+        if (player.driverSkill != null)
+            ledger.AddPlan("车手：" + passiveName, player.driverSkill.PassiveMovementBonusThisTurn, TurnMovementKind.Driver);
+    }
+
+    /// <summary>
     /// Keep the original order: clamp base movement, apply the authored leader
     /// movement, then remove that leader's corner speed for corner resolution.
     /// </summary>

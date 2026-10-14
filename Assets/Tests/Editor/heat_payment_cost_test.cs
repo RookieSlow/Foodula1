@@ -2,7 +2,104 @@ using NUnit.Framework;
 
 public class HeatPaymentCostTests
 {
+    [TestCase(HeatPaymentDestination.Hand, 3, true)]
+    [TestCase(HeatPaymentDestination.Discard, 3, true)]
+    [TestCase(HeatPaymentDestination.Hand, 1, false)]
+    [TestCase(HeatPaymentDestination.Discard, 1, false)]
+    [TestCase(HeatPaymentDestination.Hand, 0, false)]
+    public void DataPaymentTracksActualReceiptsAndMarksComboOnlyWhenSufficient(
+        HeatPaymentDestination destination, int available, bool sufficient)
+    {
+        var player = Player();
+        player.techState = new TechTreeState(TeamId.CN)
+        { dimSumPlayedTrick = true, dimSumPlayedSpeed = true };
+        player.deck.heatPool = new HeatPool(available);
+        var session = new RaceSession(new SystemRandomSource(1));
+
+        var result = RaceHeatPaymentExecution.Pay(player, session, 3, destination);
+
+        Assert.AreEqual(available, result.Drawn);
+        Assert.AreEqual(sufficient, result.Sufficient);
+        Assert.IsFalse(result.UsedFishAndChips);
+        Assert.AreEqual(available, player.techState.grillSpezialHeatPaidThisTurn);
+        Assert.AreEqual(sufficient, player.techState.dimSumPaidHeat);
+        Assert.AreEqual(available, player.heatPaidCardsThisTurn.Count);
+        var target = destination == HeatPaymentDestination.Hand ? player.deck.Hand : player.deck.DiscardPile;
+        CollectionAssert.AreEqual(player.heatPaidCardsThisTurn, target);
+        Assert.AreEqual(0, player.deck.heatPool.remaining);
+        Assert.AreEqual(0, player.spinCounter, "Insufficiency is returned; only the coordinator spins.");
+    }
+
+    [TestCase(HeatPaymentDestination.Hand)]
+    [TestCase(HeatPaymentDestination.Discard)]
+    public void FishAndChipsRecoversPartialPaymentOnceWithoutMarkingCombo(HeatPaymentDestination destination)
+    {
+        var player = Player();
+        player.techState = new TechTreeState(TeamId.UK)
+        { dimSumPlayedTrick = true, dimSumPlayedSpeed = true };
+        player.techState.activeNodeIds.Add("uk-l1-fish-and-chips");
+        player.deck.heatPool = new HeatPool(1);
+        var session = new RaceSession(new SystemRandomSource(1));
+
+        var first = RaceHeatPaymentExecution.Pay(player, session, 3, destination);
+
+        Assert.AreEqual(1, first.Drawn);
+        Assert.IsFalse(first.Sufficient);
+        Assert.IsTrue(first.UsedFishAndChips);
+        Assert.IsTrue(player.techState.fishAndChipsUsed);
+        Assert.AreEqual(1, player.deck.heatPool.remaining);
+        Assert.AreEqual(0, player.deck.CountHeatInHand());
+        Assert.IsEmpty(player.deck.DiscardPile);
+        Assert.AreEqual(1, player.heatPaidCardsThisTurn.Count, "Recovery does not erase payment receipts.");
+        Assert.AreEqual(1, player.techState.grillSpezialHeatPaidThisTurn);
+        Assert.IsFalse(player.techState.dimSumPaidHeat);
+
+        var second = RaceHeatPaymentExecution.Pay(player, session, 3, destination);
+        Assert.IsFalse(second.Sufficient);
+        Assert.IsFalse(second.UsedFishAndChips);
+        Assert.AreEqual(0, player.deck.heatPool.remaining);
+        Assert.AreEqual(2, player.techState.grillSpezialHeatPaidThisTurn);
+        Assert.IsFalse(player.techState.dimSumPaidHeat);
+        Assert.AreEqual(0, player.spinCounter);
+    }
+
+    [TestCase(0)]
+    [TestCase(-1)]
+    public void NonpositiveDataPaymentDoesNotRequirePlayerOrSession(int amount)
+    {
+        var result = RaceHeatPaymentExecution.Pay(null, null, amount, HeatPaymentDestination.Hand);
+        Assert.IsTrue(result.Sufficient);
+        Assert.AreEqual(0, result.Drawn);
+        Assert.IsFalse(result.UsedFishAndChips);
+    }
+
     private static PlayerState Player() => new PlayerState("driver", false, 0, 1);
+
+    [TestCase(HeatPaymentDestination.Hand)]
+    [TestCase(HeatPaymentDestination.Discard)]
+    public void FishWithoutPermanentRecoverySourceStillIgnoresInsufficiencyOnlyOnce(
+        HeatPaymentDestination destination)
+    {
+        var player = Player();
+        player.techState = new TechTreeState(TeamId.UK);
+        player.techState.activeNodeIds.Add("uk-l1-fish-and-chips");
+        player.deck.heatPool = new HeatPool(0);
+        var temporary = CardData.CreateTempHeat();
+        player.deck.AddCardsToHand(new[] { temporary });
+        var session = new RaceSession(new SystemRandomSource(1));
+
+        var first = RaceHeatPaymentExecution.Pay(player, session, 2, destination);
+        var second = RaceHeatPaymentExecution.Pay(player, session, 2, destination);
+
+        Assert.IsTrue(first.UsedFishAndChips);
+        Assert.IsFalse(first.Sufficient);
+        Assert.IsFalse(second.UsedFishAndChips);
+        Assert.IsFalse(second.Sufficient);
+        Assert.AreEqual(0, first.Drawn + second.Drawn);
+        Assert.AreEqual(0, player.deck.heatPool.remaining);
+        CollectionAssert.AreEqual(new[] { temporary }, player.deck.Hand);
+        Assert.IsEmpty(player.heatPaidCardsThisTurn);
+    }
 
     [TestCase(0, true, 1, 0, 1)]
     [TestCase(-1, true, 1, 0, 1)]

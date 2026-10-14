@@ -8,6 +8,54 @@ using UnityEngine;
 /// </summary>
 public class CardDeckTest
 {
+    [TestCase(2, 2)]
+    [TestCase(1, 2)]
+    [TestCase(1, 0)]
+    [TestCase(0, 2)]
+    [TestCase(0, 1)]
+    [TestCase(0, 0)]
+    public void FishRecoveryPreservesInstancesAndPermanentHeat(int handHeat, int discardHeat)
+    {
+        var deck = new CardDeck();
+        var speed = new CardData(CardType.Speed, 3);
+        var trick = CardData.CreateTrick("test");
+        deck.InitializeExactOrder(new[] { speed }, new HeatPool(4));
+        deck.DrawHeatFromPool(handHeat, HeatPaymentDestination.Hand);
+        deck.DrawHeatFromPool(discardHeat, HeatPaymentDestination.Discard);
+        var handBefore = new List<CardData>(deck.Hand);
+        var discardBefore = new List<CardData>(deck.DiscardPile);
+        var temporary = CardData.CreateTempHeat();
+        deck.AddCardsToHand(new[] { temporary, trick });
+        // Inject a legacy draw-pile heat: this is explicitly NOT a Fish recovery source.
+        var draw = (List<CardData>)typeof(CardDeck).GetField("drawPile",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(deck);
+        var legacyHeat = new CardData(CardType.Heat, 0);
+        draw.Add(legacyHeat);
+        int poolBefore = deck.heatPool.remaining;
+        int permanentBefore = poolBefore + deck.CountPermanentHeatOutsideEngine();
+        bool expected = handHeat + discardHeat > 0;
+
+        Assert.AreEqual(expected, deck.RecoverOnePermanentHeatFromHandOrDiscard());
+        if (handHeat > 0) handBefore.RemoveAt(handBefore.Count - 1);
+        else if (discardHeat > 0) discardBefore.RemoveAt(discardBefore.Count - 1);
+        handBefore.Add(temporary);
+        handBefore.Add(trick);
+        CollectionAssert.AreEqual(handBefore, deck.Hand);
+        CollectionAssert.AreEqual(discardBefore, deck.DiscardPile);
+        CollectionAssert.AreEqual(new[] { speed, legacyHeat }, deck.DrawPile);
+        Assert.AreEqual(poolBefore + (expected ? 1 : 0), deck.heatPool.remaining);
+        Assert.AreEqual(permanentBefore, deck.heatPool.remaining + deck.CountPermanentHeatOutsideEngine());
+
+        int remaining = handHeat + discardHeat - (expected ? 1 : 0);
+        for (int i = 0; i < remaining; i++)
+            Assert.IsTrue(deck.RecoverOnePermanentHeatFromHandOrDiscard());
+        Assert.IsFalse(deck.RecoverOnePermanentHeatFromHandOrDiscard());
+        Assert.AreEqual(4, deck.heatPool.remaining, "Temporary/legacy heat cannot inflate the engine.");
+        CollectionAssert.AreEqual(new[] { temporary, trick }, deck.Hand);
+        Assert.IsEmpty(deck.DiscardPile);
+        CollectionAssert.AreEqual(new[] { speed, legacyHeat }, deck.DrawPile);
+    }
+
     private GameConfigSO CreateConfig()
     {
         var config = ScriptableObject.CreateInstance<GameConfigSO>();

@@ -68,6 +68,7 @@ public class PlayerState
     public List<CardData> playedSpeedCardsThisTurn = new List<CardData>();
     public List<CardData> playedHeatCardsThisTurn = new List<CardData>();
     public int totalMovementThisTurn;
+    public readonly TurnMovementBreakdown turnMovement = new TurnMovementBreakdown();
 
     /// <summary>本回合特技牌附加移动（司康 / 关东慢煮前等）。</summary>
     public int trickMoveBonusThisTurn;
@@ -145,6 +146,7 @@ public class PlayerState
         playedSpeedCardsThisTurn.Clear();
         playedHeatCardsThisTurn.Clear();
         totalMovementThisTurn = 0;
+        turnMovement.Reset();
         selectedGearThisTurn = gear;
         trickMoveBonusThisTurn = 0;
         cornerTotalThisTurn = 0;

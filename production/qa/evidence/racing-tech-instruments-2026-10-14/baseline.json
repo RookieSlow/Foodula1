@@ -1,0 +1,2976 @@
+{
+  "utc": "2026-10-14T08:39:45.8857744Z",
+  "workspace": "D:\\UnityProject\\Foodula1",
+  "head": "7fe271b939d2bef8a61553b0d1bf9313198cc9b2",
+  "status": [
+    " M Assets/Scripts/Audio/AudioService.cs",
+    " M Assets/Scripts/Core/CardDeck.cs",
+    " M Assets/Scripts/Core/MVPGameManager.cs",
+    " M Assets/Scripts/Core/PlayerState.cs",
+    " M Assets/Scripts/Core/RaceMovementRules.cs",
+    " M Assets/Scripts/Core/RaceOvertakeResolution.cs",
+    " M Assets/Scripts/Core/RaceSession.cs",
+    " M Assets/Scripts/Core/RaceSettledSlipstreamResolution.cs",
+    " M Assets/Scripts/Drivers/DriverSkillRules.cs",
+    " M Assets/Scripts/Drivers/DriverSkillRuntime.cs",
+    " M Assets/Scripts/Editor/EditorPlayBootstrapper.cs",
+    " M Assets/Scripts/Gameplay/CarMovementAnimator.cs",
+    " M Assets/Scripts/Gameplay/PitLaneRules.cs",
+    " M Assets/Scripts/Settings/GameSettingsRuntime.cs",
+    " M Assets/Scripts/TechTree/TechTreeData.cs",
+    " M Assets/Scripts/TechTree/TechTreeProfileStore.cs",
+    " M Assets/Scripts/TrickCards/TrickCardData.cs",
+    " M Assets/Scripts/Tutorial/TutorialScenarioDefinition.cs",
+    " M Assets/Scripts/UI/CardHandUI.cs",
+    " M Assets/Scripts/UI/CardZoneTransitionUI.cs",
+    " M Assets/Scripts/UI/HUDUI.cs",
+    " M Assets/Scripts/UI/HeatThermometerUI.cs",
+    " M Assets/Scripts/UI/ModernUIStyle.cs",
+    " M Assets/Scripts/UI/RaceUILayoutController.cs",
+    " M Assets/Tests/Editor/card_deck_test.cs",
+    " M Assets/Tests/Editor/card_zone_transition_test.cs",
+    " M Assets/Tests/Editor/career_race_integration_test.cs",
+    " M Assets/Tests/Editor/driver_skill_rules_test.cs",
+    " M Assets/Tests/Editor/heat_payment_cost_test.cs",
+    " M Assets/Tests/Editor/pit_approach_choice_test.cs",
+    " M Assets/Tests/Editor/race_coroutine_test_evidence.cs",
+    " M Assets/Tests/Editor/race_full_completion_coroutine_test.cs",
+    " M Assets/Tests/Editor/race_lane_rules_test.cs",
+    " M Assets/Tests/Editor/race_movement_rules_test.cs",
+    " M Assets/Tests/Editor/race_pit_turn_boundary_test.cs",
+    " M Assets/Tests/Editor/race_player_card_phase_adapter_test.cs",
+    " M Assets/Tests/Editor/race_result_presentation_test.cs",
+    " M Assets/Tests/Editor/race_spin_boundary_test.cs",
+    " M Assets/Tests/Editor/race_turn_boundary_integration_test.cs",
+    " M Assets/Tests/Editor/team_tutorial_catalog_test.cs",
+    " M Assets/Tests/Editor/tutorial_heat_feedback_test.cs",
+    " M \"Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset\"",
+    " M ProjectSettings/EditorSettings.asset",
+    " M design/gdd/foodula-1-audio-style.md",
+    " M design/planning/asset-manifest.md",
+    " M docs/architecture/refactor-roadmap-2026-09-27.md",
+    " M docs/memory/current-task-list.md",
+    " M docs/memory/game-mechanics.md",
+    " M docs/memory/project-overview.md",
+    " M docs/tech-debt-register.md",
+    "?? Assets/Resources/Audio/Engines.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_cn.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_cn.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_cn_high.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_cn_high.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_cn_mid.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_cn_mid.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_de.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_de.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_de_high.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_de_high.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_de_mid.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_de_mid.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_it.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_it.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_it_high.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_it_high.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_it_mid.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_it_mid.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_jp.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_jp.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_jp_high.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_jp_high.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_jp_mid.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_jp_mid.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_uk.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_uk.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_uk_high.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_uk_high.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_uk_mid.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_uk_mid.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_us.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_us.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_us_high.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_us_high.wav.meta",
+    "?? Assets/Resources/Audio/Engines/team_engine_us_mid.wav",
+    "?? Assets/Resources/Audio/Engines/team_engine_us_mid.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_cn_down.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_cn_down.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_cn_up.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_cn_up.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_de_down.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_de_down.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_de_up.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_de_up.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_it_down.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_it_down.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_it_up.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_it_up.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_jp_down.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_jp_down.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_jp_up.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_jp_up.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_uk_down.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_uk_down.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_uk_up.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_uk_up.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_us_down.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_us_down.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_us_up.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_us_up.wav.meta",
+    "?? Assets/Resources/Audio/team_vehicle_profiles.json",
+    "?? Assets/Resources/Audio/team_vehicle_profiles.json.meta",
+    "?? Assets/Scripts/Audio/TeamVehicleAudioRules.cs",
+    "?? Assets/Scripts/Audio/TeamVehicleAudioRules.cs.meta",
+    "?? Assets/Scripts/Core/RaceHeatPaymentExecution.cs",
+    "?? Assets/Scripts/Core/RaceHeatPaymentExecution.cs.meta",
+    "?? Assets/Scripts/Core/RaceTurnPreviewRules.cs",
+    "?? Assets/Scripts/Core/RaceTurnPreviewRules.cs.meta",
+    "?? Assets/Scripts/Core/RuntimeSessionReset.cs",
+    "?? Assets/Scripts/Core/RuntimeSessionReset.cs.meta",
+    "?? Assets/Scripts/Core/TurnMovementBreakdown.cs",
+    "?? Assets/Scripts/Core/TurnMovementBreakdown.cs.meta",
+    "?? Assets/Scripts/Editor/RacingTechHudShellCapture.cs",
+    "?? Assets/Scripts/Editor/RacingTechHudShellCapture.cs.meta",
+    "?? Assets/Scripts/Editor/RacingTechPreviewCapture.cs",
+    "?? Assets/Scripts/Editor/RacingTechPreviewCapture.cs.meta",
+    "?? Assets/Scripts/UI/RaceTelemetryStripUI.cs",
+    "?? Assets/Scripts/UI/RaceTelemetryStripUI.cs.meta",
+    "?? Assets/Scripts/UI/RacingTechHudShellUI.cs",
+    "?? Assets/Scripts/UI/RacingTechHudShellUI.cs.meta",
+    "?? Assets/Scripts/UI/RacingTechTheme.cs",
+    "?? Assets/Scripts/UI/RacingTechTheme.cs.meta",
+    "?? Assets/Scripts/UI/TeamGearDragHandleUI.cs",
+    "?? Assets/Scripts/UI/TeamGearDragHandleUI.cs.meta",
+    "?? Assets/Scripts/UI/TeamGearGraphic.cs",
+    "?? Assets/Scripts/UI/TeamGearGraphic.cs.meta",
+    "?? Assets/Scripts/UI/TeamGearPresentationUI.cs",
+    "?? Assets/Scripts/UI/TeamGearPresentationUI.cs.meta",
+    "?? Assets/Tests/Editor/career_completed_menu_pointer_test.cs",
+    "?? Assets/Tests/Editor/career_completed_menu_pointer_test.cs.meta",
+    "?? Assets/Tests/Editor/career_summer_menu_pointer_test.cs",
+    "?? Assets/Tests/Editor/career_summer_menu_pointer_test.cs.meta",
+    "?? Assets/Tests/Editor/career_ui_pointer_test_scope.cs",
+    "?? Assets/Tests/Editor/career_ui_pointer_test_scope.cs.meta",
+    "?? Assets/Tests/Editor/live_turn_telemetry_runtime_test.cs",
+    "?? Assets/Tests/Editor/live_turn_telemetry_runtime_test.cs.meta",
+    "?? Assets/Tests/Editor/race_career_completion_coroutine_test.cs",
+    "?? Assets/Tests/Editor/race_career_completion_coroutine_test.cs.meta",
+    "?? Assets/Tests/Editor/race_career_completion_recovery_coroutine_test.cs",
+    "?? Assets/Tests/Editor/race_career_completion_recovery_coroutine_test.cs.meta",
+    "?? Assets/Tests/Editor/race_career_fifth_completion_coroutine_test.cs",
+    "?? Assets/Tests/Editor/race_career_fifth_completion_coroutine_test.cs.meta",
+    "?? Assets/Tests/Editor/race_career_finale_coroutine_test.cs",
+    "?? Assets/Tests/Editor/race_career_finale_coroutine_test.cs.meta",
+    "?? Assets/Tests/Editor/race_career_startup_gate_coroutine_test.cs",
+    "?? Assets/Tests/Editor/race_career_startup_gate_coroutine_test.cs.meta",
+    "?? Assets/Tests/Editor/race_career_summer_checkpoint_coroutine_test.cs",
+    "?? Assets/Tests/Editor/race_career_summer_checkpoint_coroutine_test.cs.meta",
+    "?? Assets/Tests/Editor/race_startup_deck_completion_coroutine_test.cs",
+    "?? Assets/Tests/Editor/race_startup_deck_completion_coroutine_test.cs.meta",
+    "?? Assets/Tests/Editor/race_turn_preview_test.cs",
+    "?? Assets/Tests/Editor/race_turn_preview_test.cs.meta",
+    "?? Assets/Tests/Editor/racing_tech_audio_teardown_test.cs",
+    "?? Assets/Tests/Editor/racing_tech_audio_teardown_test.cs.meta",
+    "?? Assets/Tests/Editor/racing_tech_hud_shell_test.cs",
+    "?? Assets/Tests/Editor/racing_tech_hud_shell_test.cs.meta",
+    "?? Assets/Tests/Editor/racing_tech_theme_test.cs",
+    "?? Assets/Tests/Editor/racing_tech_theme_test.cs.meta",
+    "?? Assets/Tests/Editor/runtime_session_reset_test.cs",
+    "?? Assets/Tests/Editor/runtime_session_reset_test.cs.meta",
+    "?? Assets/Tests/Editor/team_gear_live_telemetry_test.cs",
+    "?? Assets/Tests/Editor/team_gear_live_telemetry_test.cs.meta",
+    "?? Assets/Tests/Editor/team_gear_presentation_test.cs",
+    "?? Assets/Tests/Editor/team_gear_presentation_test.cs.meta",
+    "?? Assets/Tests/Editor/team_gear_telemetry_drag_test.cs",
+    "?? Assets/Tests/Editor/team_gear_telemetry_drag_test.cs.meta",
+    "?? Assets/Tests/Editor/team_vehicle_audio_test.cs",
+    "?? Assets/Tests/Editor/team_vehicle_audio_test.cs.meta",
+    "?? Assets/Tests/Editor/team_vehicle_movement_audio_test.cs",
+    "?? Assets/Tests/Editor/team_vehicle_movement_audio_test.cs.meta",
+    "?? Assets/Tests/Editor/team_vehicle_runtime_audio_test.cs",
+    "?? Assets/Tests/Editor/team_vehicle_runtime_audio_test.cs.meta",
+    "?? Assets/Tests/Editor/turn_movement_breakdown_test.cs",
+    "?? Assets/Tests/Editor/turn_movement_breakdown_test.cs.meta",
+    "?? design/quick-specs/team-engine-and-gear-presentation-2026-10-11.md",
+    "?? design/ux/racing-tech-ui-checklist.md",
+    "?? design/ux/racing-tech-ui.md",
+    "?? docs/audio/team-vehicle-recordings-provenance.md",
+    "?? docs/ui/racing-tech-resource-licenses.md",
+    "?? production/qa/evidence/hud-audio-teardown-2026-10-12.json",
+    "?? production/qa/evidence/hud-audio-teardown-2026-10-12.md",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13.json",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13.md",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/CN-1920x1080-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/CN-1920x1080-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/CN-2560x1440-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/CN-2560x1440-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/DE-1920x1080-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/DE-1920x1080-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/DE-2560x1440-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/DE-2560x1440-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/IT-1920x1080-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/IT-1920x1080-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/IT-2560x1440-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/IT-2560x1440-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/JP-1920x1080-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/JP-1920x1080-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/JP-2560x1440-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/JP-2560x1440-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/UK-1920x1080-details.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/UK-1920x1080-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/UK-1920x1080-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/UK-2560x1440-details.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/UK-2560x1440-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/UK-2560x1440-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/US-1920x1080-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/US-1920x1080-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/US-2560x1440-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/US-2560x1440-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/six-teams-1920x1080.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/six-teams-2560x1440.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/cards/text-geometry.csv",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/CN-1920x1080-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/CN-1920x1080-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/CN-2560x1440-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/CN-2560x1440-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/DE-1920x1080-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/DE-1920x1080-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/DE-2560x1440-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/DE-2560x1440-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/IT-1920x1080-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/IT-1920x1080-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/IT-2560x1440-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/IT-2560x1440-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/JP-1920x1080-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/JP-1920x1080-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/JP-2560x1440-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/JP-2560x1440-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/UK-1920x1080-details.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/UK-1920x1080-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/UK-1920x1080-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/UK-2560x1440-details.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/UK-2560x1440-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/UK-2560x1440-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/US-1920x1080-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/US-1920x1080-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/US-2560x1440-gear.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/US-2560x1440-hud.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/six-teams-1920x1080.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/six-teams-2560x1440.png",
+    "?? production/qa/evidence/live-turn-telemetry-2026-10-13/trial/text-geometry.csv",
+    "?? production/qa/evidence/play-entry-and-engine-tuning-2026-10-12.json",
+    "?? production/qa/evidence/play-entry-and-engine-tuning-2026-10-12.md",
+    "?? production/qa/evidence/play-entry-optimization-2026-10-13.md",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/README.md",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/CN-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/CN-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/CN-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/CN-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/CN-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/CN-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/DE-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/DE-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/DE-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/DE-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/DE-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/DE-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/IT-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/IT-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/IT-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/IT-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/IT-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/IT-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/JP-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/JP-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/JP-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/JP-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/JP-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/JP-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/UK-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/UK-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/UK-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/UK-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/UK-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/UK-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/US-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/US-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/US-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/US-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/US-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/US-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/manifest.json",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1280x720-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1280x720-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1280x720-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1920x1080-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1920x1080-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1920x1080-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-2560x1440-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-2560x1440-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-2560x1440-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1280x720-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1280x720-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1280x720-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1920x1080-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1920x1080-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1920x1080-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-2560x1440-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-2560x1440-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-2560x1440-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1280x720-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1280x720-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1280x720-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1920x1080-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1920x1080-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1920x1080-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-2560x1440-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-2560x1440-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-2560x1440-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1280x720-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1280x720-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1280x720-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1920x1080-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1920x1080-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1920x1080-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-2560x1440-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-2560x1440-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-2560x1440-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1280x720-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1280x720-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1280x720-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1920x1080-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1920x1080-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1920x1080-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-2560x1440-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-2560x1440-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-2560x1440-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1280x720-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1280x720-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1280x720-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1920x1080-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1920x1080-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1920x1080-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-2560x1440-normal-2.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-2560x1440-normal-6.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-2560x1440-stress-12-bottom.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/manifest.json",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/artifact-sha256.csv",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/attempt-1-tests.json",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/baseline-diff.txt",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/baseline.json",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/CN-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/CN-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/CN-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/CN-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/CN-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/CN-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/DE-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/DE-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/DE-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/DE-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/DE-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/DE-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/IT-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/IT-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/IT-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/IT-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/IT-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/IT-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/JP-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/JP-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/JP-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/JP-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/JP-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/JP-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/UK-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/UK-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/UK-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/UK-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/UK-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/UK-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/US-1280x720-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/US-1280x720-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/US-1920x1080-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/US-1920x1080-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/US-2560x1440-normal-4.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/US-2560x1440-stress-12-top.png",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/manifest.json",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/final-baseline-comparison.json",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/final-git-status.txt",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/final-unity-state.json",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/focused-7-final-native.json",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/focused-85-native.json",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/full-2920-native.json",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/layout-source-before.cs.txt",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/resume-state.json",
+    "?? production/qa/evidence/racing-tech-hud-shell-2026-10-14/shell-source-attempt-1.cs.txt",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/README.md",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after-worktree.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/CN-1280x720-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/CN-1280x720-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/CN-1920x1080-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/CN-1920x1080-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/CN-2560x1440-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/CN-2560x1440-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/DE-1280x720-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/DE-1280x720-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/DE-1920x1080-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/DE-1920x1080-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/DE-2560x1440-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/DE-2560x1440-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/IT-1280x720-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/IT-1280x720-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/IT-1920x1080-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/IT-1920x1080-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/IT-2560x1440-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/IT-2560x1440-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/JP-1280x720-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/JP-1280x720-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/JP-1920x1080-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/JP-1920x1080-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/JP-2560x1440-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/JP-2560x1440-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/UK-1280x720-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/UK-1280x720-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/UK-1920x1080-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/UK-1920x1080-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/UK-2560x1440-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/UK-2560x1440-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/US-1280x720-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/US-1280x720-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/US-1920x1080-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/US-1920x1080-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/US-2560x1440-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/US-2560x1440-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/after/manifest.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/audio-diagnostic-native-run.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/audio-native-fixed-run.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/audio-source-before.cs.txt",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/baseline-diff.txt",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/baseline.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/CN-1280x720-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/CN-1280x720-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/CN-1920x1080-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/CN-1920x1080-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/CN-2560x1440-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/CN-2560x1440-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/DE-1280x720-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/DE-1280x720-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/DE-1920x1080-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/DE-1920x1080-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/DE-2560x1440-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/DE-2560x1440-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/IT-1280x720-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/IT-1280x720-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/IT-1920x1080-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/IT-1920x1080-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/IT-2560x1440-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/IT-2560x1440-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/JP-1280x720-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/JP-1280x720-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/JP-1920x1080-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/JP-1920x1080-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/JP-2560x1440-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/JP-2560x1440-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/UK-1280x720-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/UK-1280x720-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/UK-1920x1080-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/UK-1920x1080-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/UK-2560x1440-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/UK-2560x1440-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/US-1280x720-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/US-1280x720-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/US-1920x1080-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/US-1920x1080-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/US-2560x1440-actual-6-of-14.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/US-2560x1440-forecast-14-heat-5-to-7.png",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/before/manifest.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/dead-target-callback-red-tests.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/final-console.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/final-focused-after-unsubscribe-native-run.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/final-focused-after-unsubscribe-native-ui-case.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/final-focused-native-run.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/final-focused-native-ui-case.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/final-unity-state.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/focused-final-native-run.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/focused-final-native-ui-case.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/focused-native-run.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/focused-native-ui-case.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/full-after-source-guard-console-errors.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/full-after-source-guard-native-run.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/full-after-unsubscribe-console-errors.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/full-after-unsubscribe-native-run.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/full-console-errors.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/full-final-native-run.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/full-native-run.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/screenshot-integrity.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/source-hashes.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/stale-scene-callback-red-test.json",
+    "?? production/qa/evidence/racing-tech-ui-2026-10-14/telemetry-source-before.cs.txt",
+    "?? production/qa/evidence/team-audio-assets-2026-10-11.json",
+    "?? production/qa/evidence/team-audio-preview-2026-10-11.wav",
+    "?? production/qa/evidence/team-audio-preview-index-2026-10-11.json",
+    "?? production/qa/evidence/team-gear-2026-10-11/CN.png",
+    "?? production/qa/evidence/team-gear-2026-10-11/DE.png",
+    "?? production/qa/evidence/team-gear-2026-10-11/IT.png",
+    "?? production/qa/evidence/team-gear-2026-10-11/JP.png",
+    "?? production/qa/evidence/team-gear-2026-10-11/UK.png",
+    "?? production/qa/evidence/team-gear-2026-10-11/US.png",
+    "?? production/qa/evidence/team-gear-2026-10-11/six-team-overview.png",
+    "?? production/qa/evidence/team-vehicle-focused-results-2026-10-12.json",
+    "?? production/qa/evidence/team-vehicle-full-results-2026-10-12.json",
+    "?? production/qa/evidence/team-vehicle-layout-attempt-2026-10-12.json",
+    "?? production/qa/evidence/team-vehicle-layout-results-2026-10-12.json",
+    "?? production/qa/evidence/team-vehicle-presentation-2026-10-11.md",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12.md",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/CN-1920x1080-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/CN-1920x1080-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/CN-2560x1440-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/CN-2560x1440-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/DE-1920x1080-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/DE-1920x1080-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/DE-2560x1440-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/DE-2560x1440-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/IT-1920x1080-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/IT-1920x1080-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/IT-2560x1440-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/IT-2560x1440-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/JP-1920x1080-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/JP-1920x1080-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/JP-2560x1440-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/JP-2560x1440-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/UK-1920x1080-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/UK-1920x1080-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/UK-2560x1440-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/UK-2560x1440-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/US-1920x1080-drag-preview-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/US-1920x1080-drag-preview-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/US-1920x1080-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/US-1920x1080-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/US-1920x1080-long-details-bottom.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/US-1920x1080-long-details-top.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/US-2560x1440-drag-preview-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/US-2560x1440-drag-preview-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/US-2560x1440-gear.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/US-2560x1440-hud.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/US-2560x1440-long-details-bottom.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/US-2560x1440-long-details-top.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/render-summary.json",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/six-teams-1920x1080.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/six-teams-2560x1440.png",
+    "?? production/qa/evidence/team-vehicle-revision-2026-10-12/text-geometry.csv",
+    "?? production/qa/evidence/team-vehicle-test-results-2026-10-11.json",
+    "?? tools/Audio/build_team_vehicle_audio.py",
+    "?? tools/Audio/team_vehicle_comparison.wav",
+    "?? tools/Audio/team_vehicle_tuning_comparison.wav"
+  ],
+  "staged": [],
+  "files": [
+    {
+      "path": "Assets/Resources/Audio/Engines.meta",
+      "sha256": "EAB6925CA2E16B34A2EE6BD497AFF6420A4B5930D408A783191428A67F4EF0DE"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_cn_high.wav",
+      "sha256": "B6284B9EDFB247302E5E13DF511E9C6F5A8CBC0D1D1B590664CA333722F4D409"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_cn_high.wav.meta",
+      "sha256": "87A764933FC509437271E9CF138B6D79744A85076948FC4F2330B9CCBCB35CE4"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_cn_mid.wav",
+      "sha256": "A8E25F8FD1E0D86F63387138816CDAA189C7D76B354802298B1BF5282C066E51"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_cn_mid.wav.meta",
+      "sha256": "84C262672FC5B9420E85D44CA36A22B17757831EE73A6863F3F236E14F65F0BC"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_cn.wav",
+      "sha256": "11C09CE295FAF4477FCA1C759205DB0F68DF17FFAA589D6BE1C3FD82578C9F63"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_cn.wav.meta",
+      "sha256": "5C1255CF7E3BF72E41E6DF6058C760E6B2C6F6F944AB9AACDC7FD3D3B230A382"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_de_high.wav",
+      "sha256": "5CAB9D586F679BC5E1BB95DC535203B8D4029F4D195725BE884C5CCCEC8051F4"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_de_high.wav.meta",
+      "sha256": "B4AEE9E4ABBDA9CDE282AAE30F584C57167B14C7FF319D83A4130D82D316FD92"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_de_mid.wav",
+      "sha256": "0A48F3364E64E7FE50D8C3BC9CB6731BEED875CAD46562509DCF5C7D023E70B9"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_de_mid.wav.meta",
+      "sha256": "A4089DF9FE97B83A2D9A18C1AACCF4F96682039FCFF2B5F8D380B9448ADAC3AA"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_de.wav",
+      "sha256": "B03AB7004BA60F19C756850B87C898331EB34190A5511A72BDB5D975E4FEE0A3"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_de.wav.meta",
+      "sha256": "EC3D9042AE5DBE97FA9FCE5560ACA45DBAC611D3B181214003E7772C6BC41B20"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_it_high.wav",
+      "sha256": "9B1568BBB379AB0C596555A5D9B2E9D66B9D6F0716183A2E02D986C95942AAC3"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_it_high.wav.meta",
+      "sha256": "68F3FD6E9390B4CD74D4C0BF3ED33ADE30A04CA597B8CF24B6BE8F1B71AB0037"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_it_mid.wav",
+      "sha256": "6530F8ECE9BA8212AB25B771C49FA60B08C6EC5ADBD6B6BE8E73FF9EDA8E2944"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_it_mid.wav.meta",
+      "sha256": "B6E9D1AEBF5AF581D4D99A15035E4E342C33F14117AD52CCBA5E51781617E310"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_it.wav",
+      "sha256": "94F0AA1A0FD113DA2785C95702793C9A0775E8CAD9D70AAB3E925E99A458E72D"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_it.wav.meta",
+      "sha256": "E5A6D5231C29DF5A32049BE57A4E25DEE2D98CDC524ED99D761724A306C132C9"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_jp_high.wav",
+      "sha256": "06A23CD4B8F106E2372204F58501759DA5334D627E4A4F56E343CF30728807B7"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_jp_high.wav.meta",
+      "sha256": "64AD417133A6E8E4AD10B3455EF8DBFEC1D7AEA85C61AEAF0ABE4552995113B2"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_jp_mid.wav",
+      "sha256": "35B7D95DDE79F22A64215EFF284B5EF3DBAE91B16BC3692DE01FE8630C81100C"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_jp_mid.wav.meta",
+      "sha256": "37E7C062AD22D9E436356E3F00111EBD601C155615BAC0D2C35D1215FE732754"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_jp.wav",
+      "sha256": "56018C6CF89771456759A158BFBAD8C22106E5FED79C5A80BF65222266148F9A"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_jp.wav.meta",
+      "sha256": "EA8E6C94B45DEAD446DA3E8F39CA7C196CF6B89A8ED0068DE926A60F859338A2"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_uk_high.wav",
+      "sha256": "01564FAA03ADCDA74721C3C179E84ADA6FF4F8595E0E5E359B7E74CA5B8A94DE"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_uk_high.wav.meta",
+      "sha256": "2AD0C198C5574B076C7F62D11844A973F0338BCDCFF7CDA2C45C6B4569E7DC36"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_uk_mid.wav",
+      "sha256": "A53F7325CA6E61A0E913A9D33A2600EAF260520036519D50543BAC79AC7E27E0"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_uk_mid.wav.meta",
+      "sha256": "8C0ABCEC13BD257E08D821691C81A1F36B4F6921B81C48E49819C9690E42A051"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_uk.wav",
+      "sha256": "41363041E2BB4EBCBC2F7A6E8346477248ECE69E1D05112F2792BA2BFEDD0BF7"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_uk.wav.meta",
+      "sha256": "75322914AB924D437661E78DDCF174F1CDE83CA589906C84CBEC37B200D4CB60"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_us_high.wav",
+      "sha256": "159094543A5A5734BB6EC624A0053D589F015FDC5A649769D59E7091FA40E78E"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_us_high.wav.meta",
+      "sha256": "4403B7A3CC1CBFEF4EAF6E07D02F39C8376C56D95D42E74C6D56DA88AF296D40"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_us_mid.wav",
+      "sha256": "BD5AB9BC127BFD7F9CB1F73CEA523C7BBB5BC203264977B8C6D537C518708DD7"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_us_mid.wav.meta",
+      "sha256": "8C2AFC706A04956813F57127174C2747D58457E9608F8F2921E7E389027D2186"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_us.wav",
+      "sha256": "2F5220642FC4F2259D8AA9902C4000FE19E683498D9157B6A19850593D8C3812"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_us.wav.meta",
+      "sha256": "8C88CC41E0F88A933C34F50545C9E13348815162F25A127422A0DF2E1D517E2F"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_down.wav",
+      "sha256": "7F964F4A9B11FEE8A80BB39E895078904D6F46A5F867FF7CCEA9675BBEE5FA86"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_down.wav.meta",
+      "sha256": "D0A7AC2A8245866EA2865952866C030DC9124955DEE77015084B4A8B0E2CDC3B"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_up.wav",
+      "sha256": "D662327E2D9EBCF890AFD2AAAAA00AE3C91100E6E29EE36D73AD4D175CC7FAA6"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_up.wav.meta",
+      "sha256": "5B06A9C5E6C113DCA3DE79BBE7078BC890456DBC3F8371AECBA5E0C47CF73F5E"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_down.wav",
+      "sha256": "0F66F01AEED37367697E9DAE3053D78D8DF90E8872FFB252411137CCD20BFAB2"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_down.wav.meta",
+      "sha256": "6946E425CEA31CB3ED20A01D2E73D31C05B7B9D82F5B3FC4B57E89CC5C01B7E5"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_up.wav",
+      "sha256": "65DB7D98805FE2FD98AB650EB165D39FEE68E9F08094F4C97DA1286C8362AECC"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_up.wav.meta",
+      "sha256": "4B1B22F8241AAD9D320B94698295F56D7FE0C05B26AE026CEBAD6692012CF005"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_down.wav",
+      "sha256": "C6160BAC8898CBFC83FF4BBC65D63F03ABDACDCA2FBC01D2CCCB8089F262C0A1"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_down.wav.meta",
+      "sha256": "B2FBE7D6347E4DA393C8BE01725220ADD03CC70996C7A3D47D2DA90D24533328"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_up.wav",
+      "sha256": "A57A7CCB4027D0B2933D3685C5BF1D96F6B853E1AA50151CC30F4D69A2B2255B"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_up.wav.meta",
+      "sha256": "7CDAB74F2A2281D493E2BDEDB8D8EC749045B5B19EC398E7F80716648A99B519"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_down.wav",
+      "sha256": "193D3A359A45E3B7457A4EE191C90112F842EB738791C7E7DF6AB63086792E4C"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_down.wav.meta",
+      "sha256": "CB44C52E8CEE0373746B023349FFC40B7582FF4906A3AAE7A43845977DA33C34"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_up.wav",
+      "sha256": "E21F10C98297DD2B84D7E87479D0569E315726E54A615451FF839703B933F42A"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_up.wav.meta",
+      "sha256": "19AF87C5B6DF4B38376CAAD5BFBC9E5217E0061E33B3B33F9FF6EDC13D32195D"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_down.wav",
+      "sha256": "CAD1DC8CA916550E9D54EE638CE54B2C95A379ECAC0BA81596B3BDC0DC9E924D"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_down.wav.meta",
+      "sha256": "A7B46C21F382C9E3172D42D5E9EB3B83E168961BA96B32C6682D850D5794BEFE"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_up.wav",
+      "sha256": "EE528C57586FDB43461CAC44323129268A04704423C91F58FDED3B7918838C3D"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_up.wav.meta",
+      "sha256": "1D2FBD50823EB7649B68A0666391CA7EED1AC96702A0BA15B9F5E18A037D6BAA"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_down.wav",
+      "sha256": "01960BCA2DAC910DB96605DCD1E356732A6006C98609D46E8D34C0111CCBBD8A"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_down.wav.meta",
+      "sha256": "4FB3F3C0E775BF85730C1D3F6C4E06E5B35B15041BF97DE75B74D52B34873D56"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_up.wav",
+      "sha256": "96A86665BD8DE86547ADC63DD965D0534528E0D22BAFB0542372E2756F18AF99"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_up.wav.meta",
+      "sha256": "EDAA0CD9543E2D544AC4DDAD20646BB137E18083D9A52EE259F7CF3B443E5CA8"
+    },
+    {
+      "path": "Assets/Resources/Audio/team_vehicle_profiles.json",
+      "sha256": "D76483B208ECE80B6EF3ED683C6B5DB2A9F7FB0395E595D1CECE02F61A5C05D0"
+    },
+    {
+      "path": "Assets/Resources/Audio/team_vehicle_profiles.json.meta",
+      "sha256": "2EC271BF6F80B227467D5E75D5E0D11A1F047A98B9D21E2366286D40F2CD56E6"
+    },
+    {
+      "path": "Assets/Scripts/Audio/AudioService.cs",
+      "sha256": "780CCA4A0627287BC60AEB0366189DB9F73F15B7EE35073240CD1AA413908734"
+    },
+    {
+      "path": "Assets/Scripts/Audio/TeamVehicleAudioRules.cs",
+      "sha256": "EA093DC4F951C4135080DDC3DC079F09FF428D23E7D0E7945A664FFFAD158208"
+    },
+    {
+      "path": "Assets/Scripts/Audio/TeamVehicleAudioRules.cs.meta",
+      "sha256": "D11FE8AE04783C5F0BFDF557F3EA643D459F70CB00CE9A36417AB82520C7B487"
+    },
+    {
+      "path": "Assets/Scripts/Core/CardDeck.cs",
+      "sha256": "F5BDC0E2720E008C57A08757DC19E5C95E69C9A93C35D6858C2DA900AED8C488"
+    },
+    {
+      "path": "Assets/Scripts/Core/MVPGameManager.cs",
+      "sha256": "E94C64E1986A8B04F672C41309644346720538AF69DB58480C0792974F74D530"
+    },
+    {
+      "path": "Assets/Scripts/Core/PlayerState.cs",
+      "sha256": "D92593E61DD73D90A23DFBD0033ECB9C1AEBB3F0CD587D8E6D65E8AEA0EBE867"
+    },
+    {
+      "path": "Assets/Scripts/Core/RaceHeatPaymentExecution.cs",
+      "sha256": "63022E8DA125A72157F4380D8B28ECF9F9E283EE095B56428DBCD44DCCFC8DD8"
+    },
+    {
+      "path": "Assets/Scripts/Core/RaceHeatPaymentExecution.cs.meta",
+      "sha256": "917575723C7D102A4CF52DCB9BA126B34368A82245B3BE55C314F69B48B1DF34"
+    },
+    {
+      "path": "Assets/Scripts/Core/RaceMovementRules.cs",
+      "sha256": "360991066E9DC0E04F04724A4968159EE719587F50140DDD386CC603217D0AED"
+    },
+    {
+      "path": "Assets/Scripts/Core/RaceOvertakeResolution.cs",
+      "sha256": "953B57911186D8A4D0D383DFA6A2C87CABFD2AEF690290F769C8BD25796A8C3A"
+    },
+    {
+      "path": "Assets/Scripts/Core/RaceSession.cs",
+      "sha256": "CFA587A0E2D71B06825A7465C458A6887567E0CA4FB04AF336873453F78B6AB3"
+    },
+    {
+      "path": "Assets/Scripts/Core/RaceSettledSlipstreamResolution.cs",
+      "sha256": "C2FC56AE897CB415D078B8BB10D1E2106B5227199DFE74BD1758E614D9A3C6B5"
+    },
+    {
+      "path": "Assets/Scripts/Core/RaceTurnPreviewRules.cs",
+      "sha256": "56E4A67C096C25B20AB2269896EBC373D630CBDBDF22803922739506EB928C49"
+    },
+    {
+      "path": "Assets/Scripts/Core/RaceTurnPreviewRules.cs.meta",
+      "sha256": "61E2303595D171463B28321FE190A8562C545CA8C7468E6043FD5F8D7C9988AC"
+    },
+    {
+      "path": "Assets/Scripts/Core/RuntimeSessionReset.cs",
+      "sha256": "3AE72994EDECB7D11263992458C6D7A80F632E02BBC256B44FF93FEE313BBF23"
+    },
+    {
+      "path": "Assets/Scripts/Core/RuntimeSessionReset.cs.meta",
+      "sha256": "011943003A76E1736A8112A84086B723E82873FF2A88E5CA0E7C5ED644BBB3FC"
+    },
+    {
+      "path": "Assets/Scripts/Core/TurnMovementBreakdown.cs",
+      "sha256": "C07B7CDE0E012DE69AF02B88712CA69314972CCA8E3F66772BD7899850820136"
+    },
+    {
+      "path": "Assets/Scripts/Core/TurnMovementBreakdown.cs.meta",
+      "sha256": "6E37188B8F09FB56AFBF271DAC2BDB5C723EB877AA26F7EBDD54C811CF24D3BB"
+    },
+    {
+      "path": "Assets/Scripts/Drivers/DriverSkillRules.cs",
+      "sha256": "1EAF5C3E54B7F25E1930F9EB7F0F2B33984B89D3A45A41B0401E58E00A5BA175"
+    },
+    {
+      "path": "Assets/Scripts/Drivers/DriverSkillRuntime.cs",
+      "sha256": "69CF5948DC663DD5146A312441D8068C786F3C749AC55636B71BFCB8A1E857DD"
+    },
+    {
+      "path": "Assets/Scripts/Editor/EditorPlayBootstrapper.cs",
+      "sha256": "8D8C328892515E70198A66B912179CB1471286E28A20374A788ED1EAB36AEBB2"
+    },
+    {
+      "path": "Assets/Scripts/Editor/RacingTechHudShellCapture.cs",
+      "sha256": "EAC8A94EA0EFC6EA7983260FF3B5430D3BC5ED6BCB77C143C87ACDAB902CA4B0"
+    },
+    {
+      "path": "Assets/Scripts/Editor/RacingTechHudShellCapture.cs.meta",
+      "sha256": "1CD70C702AC0FCE9E7B2097958889BF32BA36FC4880D77E3CE9D78B9B30CC9BB"
+    },
+    {
+      "path": "Assets/Scripts/Editor/RacingTechPreviewCapture.cs",
+      "sha256": "9E4F5FEB7CF573BF2F7DC86F52F2C7CAB12ECD9AB96B3ABCE3957921160AD6AD"
+    },
+    {
+      "path": "Assets/Scripts/Editor/RacingTechPreviewCapture.cs.meta",
+      "sha256": "870EC0987CAFAAB13616D0FD2E1C88600E1700FCAA52F4BF0B0A574A23F251D0"
+    },
+    {
+      "path": "Assets/Scripts/Gameplay/CarMovementAnimator.cs",
+      "sha256": "5711837EB09821A94AFCEF58BE68AEE3112CD343BDB75761E1001B913554CEED"
+    },
+    {
+      "path": "Assets/Scripts/Gameplay/PitLaneRules.cs",
+      "sha256": "627FC8D769A05876E24AAFE620E675A1117E5E563F27A823648DA6C0C044E151"
+    },
+    {
+      "path": "Assets/Scripts/Settings/GameSettingsRuntime.cs",
+      "sha256": "A9FF536250A5093FA3ADE83AF96FFA080933337F69B8802253C491662621C6AC"
+    },
+    {
+      "path": "Assets/Scripts/TechTree/TechTreeData.cs",
+      "sha256": "1A9654E5155074D575BD26F2F66D141AFEF42626D68E0B403BE9B970BDAF4F10"
+    },
+    {
+      "path": "Assets/Scripts/TechTree/TechTreeProfileStore.cs",
+      "sha256": "9ECFDE08B73F1455B5CAFF2C392BF6DBCAABD1A6EB45189A168ED0EDC0A359F5"
+    },
+    {
+      "path": "Assets/Scripts/TrickCards/TrickCardData.cs",
+      "sha256": "BCDE6574B82A46FCE3A0F0BC053BBD6C19F55480B4A6924D74AC1C95A35C405F"
+    },
+    {
+      "path": "Assets/Scripts/Tutorial/TutorialScenarioDefinition.cs",
+      "sha256": "4D0D0E6B37BCC8CA79C377673DB61B2E1F6DAAD469766501F07AE55213BA7067"
+    },
+    {
+      "path": "Assets/Scripts/UI/CardHandUI.cs",
+      "sha256": "5B58B9A86F8E6884D9FE876386E29B226BE81AD7E934662489D0E2E31F32FF75"
+    },
+    {
+      "path": "Assets/Scripts/UI/CardZoneTransitionUI.cs",
+      "sha256": "9BA89CD61FAABFEB4903EBF6E4466D201F009BB4EC1A36C6C11128222D8B4F61"
+    },
+    {
+      "path": "Assets/Scripts/UI/HeatThermometerUI.cs",
+      "sha256": "733586511570DF7EE0FBAB8C0C9976323F49A7A4F4EB3FD1C32551D1EEB3193A"
+    },
+    {
+      "path": "Assets/Scripts/UI/HUDUI.cs",
+      "sha256": "202E4BFD81381C498AB228B9423B112B6A955E98B7544182AE3FCB488C0A7F1D"
+    },
+    {
+      "path": "Assets/Scripts/UI/ModernUIStyle.cs",
+      "sha256": "E9F860149D293DE5B04CBC6DAC0672D33DC41E7C964108B8B8CE2A4A2AB814D2"
+    },
+    {
+      "path": "Assets/Scripts/UI/RaceTelemetryStripUI.cs",
+      "sha256": "00F0633F2A1A9204E46A1D76DFB8F2BB9F710AB85AB62E6A25CF8530F492E602"
+    },
+    {
+      "path": "Assets/Scripts/UI/RaceTelemetryStripUI.cs.meta",
+      "sha256": "24C90956479C94E4C656544E9E1B2047AED2CBEF70B851DBAAE53C25C2DD930A"
+    },
+    {
+      "path": "Assets/Scripts/UI/RaceUILayoutController.cs",
+      "sha256": "73FC8EBE185104569CF3E8B7BEB13ABAF926E16AD4C1E93C8D53D8C0D85D093D"
+    },
+    {
+      "path": "Assets/Scripts/UI/RacingTechHudShellUI.cs",
+      "sha256": "D2A63089F64B36846E3AFFEC3F64AF105BB30CEA286BE6F1CA2362758B4A54F5"
+    },
+    {
+      "path": "Assets/Scripts/UI/RacingTechHudShellUI.cs.meta",
+      "sha256": "143B46A20F1B24DB23272CD2AF00B7A7A27A2200DD5F33A9930604F1BB743C39"
+    },
+    {
+      "path": "Assets/Scripts/UI/RacingTechTheme.cs",
+      "sha256": "CD2CB8D799E25D5FC5A570136842D3292296EB76AA30FAC25B59CE00E26A27EF"
+    },
+    {
+      "path": "Assets/Scripts/UI/RacingTechTheme.cs.meta",
+      "sha256": "8BA81349D81C29A044285BDE4C76763447A55D0405335C06D8A2F6BDA2657320"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearDragHandleUI.cs",
+      "sha256": "2312FB561568D0ED298F54DBD9FF6D51A3DD6384EF8D4335F0B7882C89A82D78"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearDragHandleUI.cs.meta",
+      "sha256": "65DAB3F570D074CF43FB2FE4CCF1BEB84A7773A85032149F2FE242417C1FA19E"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearGraphic.cs",
+      "sha256": "BF8B2253C92292203ADD2E34876DEC65589D1A652520E906B3D02B7DB8B58597"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearGraphic.cs.meta",
+      "sha256": "1C580D18816F817FA6D874396F0E4CA9D7009955FC2BDF917EA16BF15ABC90B6"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearPresentationUI.cs",
+      "sha256": "24F1A99D9005D27CACA016296BB17B7F7DEC608AA8F8820F2F5F687940C350B2"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearPresentationUI.cs.meta",
+      "sha256": "15367B10F6EEC0E4F27253849D7801273995DCFF077B7CDD1F2932D686A470CE"
+    },
+    {
+      "path": "Assets/Tests/Editor/card_deck_test.cs",
+      "sha256": "ED1BFFB1C83E1EDD08A9585FFF4B9D5F0E6DAD9A9BF0B610BE160339AFD8BB03"
+    },
+    {
+      "path": "Assets/Tests/Editor/card_zone_transition_test.cs",
+      "sha256": "0118B29632EA8AB1A3F89A2F91727C14A378D946D9FA3C3B4CED9C591815C2C4"
+    },
+    {
+      "path": "Assets/Tests/Editor/career_completed_menu_pointer_test.cs",
+      "sha256": "4175B338FA84E579BB4349DEECEC5175A5731A1888724A7026A2398E24A7D2BC"
+    },
+    {
+      "path": "Assets/Tests/Editor/career_completed_menu_pointer_test.cs.meta",
+      "sha256": "E70DAF40CDD211DD3F323A0A47E568458ED9B478EB2CAC1F638C4F499DC9235B"
+    },
+    {
+      "path": "Assets/Tests/Editor/career_race_integration_test.cs",
+      "sha256": "57F6F16E496277992E9A0901B4ED3718D89FCDE3765A6D0843C0121A9B01FF2E"
+    },
+    {
+      "path": "Assets/Tests/Editor/career_summer_menu_pointer_test.cs",
+      "sha256": "2C44ECADC84CB214D7A9DD40D6510761CDE1647701F31EF06241195BC773AB44"
+    },
+    {
+      "path": "Assets/Tests/Editor/career_summer_menu_pointer_test.cs.meta",
+      "sha256": "B33AE3025B2347378C71F8042806E991013088628B984C6A842F67826CC83DE5"
+    },
+    {
+      "path": "Assets/Tests/Editor/career_ui_pointer_test_scope.cs",
+      "sha256": "D14995048755878BA2C5BDCF386043C5EDDBD72E728D8F071F6D07F0E96B4EE1"
+    },
+    {
+      "path": "Assets/Tests/Editor/career_ui_pointer_test_scope.cs.meta",
+      "sha256": "9D18354B1AF8027A71915A2FFCCC331ECB9EA32C2AD32C9F3F63A2FFCA9BB2B2"
+    },
+    {
+      "path": "Assets/Tests/Editor/driver_skill_rules_test.cs",
+      "sha256": "4A116C9F804507A7993598C082F53501326F035BA14E9B8C6AD5DF182926802E"
+    },
+    {
+      "path": "Assets/Tests/Editor/heat_payment_cost_test.cs",
+      "sha256": "83346C8B6DDCB83BF94410A064CFCBC2BDB4AADB891CBBFD7C14F90C13EE8E7F"
+    },
+    {
+      "path": "Assets/Tests/Editor/live_turn_telemetry_runtime_test.cs",
+      "sha256": "198DFF33A4A0043A45DFD62230992C42AC66111E34470A45E179980B43EC4512"
+    },
+    {
+      "path": "Assets/Tests/Editor/live_turn_telemetry_runtime_test.cs.meta",
+      "sha256": "068582611640FEEFE8395B26F172199C40EF21A0F65F43DE49F9CB4C89C3D8F4"
+    },
+    {
+      "path": "Assets/Tests/Editor/pit_approach_choice_test.cs",
+      "sha256": "966F063B70B2F184B4D4B2D62BE761802E620D8F29816419866026F3CAB96E53"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_career_completion_coroutine_test.cs",
+      "sha256": "67B4CE1EBBFDF21BACB62327E7B3F6762E5C3A1C26DEFC89A3FC956E72FD347A"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_career_completion_coroutine_test.cs.meta",
+      "sha256": "EB4DB088D1A78DEB95B4B4D5049283ED11B4EC8F8748AFB458EB7B2D70FF98B2"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_career_completion_recovery_coroutine_test.cs",
+      "sha256": "BD75D6D516C6FE773DDD6B7A62A90A72C0164698D1AF28E3A5546E5B8B3FCC6C"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_career_completion_recovery_coroutine_test.cs.meta",
+      "sha256": "10F36B3F6D81AC384F912ACA2F496E0A1B4885C96DA2C95120122982715122D4"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_career_fifth_completion_coroutine_test.cs",
+      "sha256": "A019F0E8DA7AAC46A369E6F27C490F592B69C8B62DCBDE5C615C9FAB12062D73"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_career_fifth_completion_coroutine_test.cs.meta",
+      "sha256": "CE494D96526F2F723585CFDE793D071B2CE63D1C0EEE0C8DC29C9FCD691C3289"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_career_finale_coroutine_test.cs",
+      "sha256": "A93A1412279A6C2742B3BC7FDC334C07F8090D7E51D9EB5C8064B8CD27E8BD31"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_career_finale_coroutine_test.cs.meta",
+      "sha256": "83199FF352A1C9D377B88FD369465609E2FAF3B1F127D66D647988898E89D276"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_career_startup_gate_coroutine_test.cs",
+      "sha256": "DAA3C5AFCF31494E5E277A75800D0A6296595A46372C848268C7DAD7083537AB"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_career_startup_gate_coroutine_test.cs.meta",
+      "sha256": "ACE953AF92D51367712BCC6D522640AD0644F4106C50321750EFF7DD98226930"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_career_summer_checkpoint_coroutine_test.cs",
+      "sha256": "8433C858B8B320E077423037DC9E194DE3995C7FD7DECB2BEF059FAB16E0D21F"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_career_summer_checkpoint_coroutine_test.cs.meta",
+      "sha256": "F5A75B22B6C54655EE5B83504A27D4CAE1F660AD5146C390CAF693A9E22D8A46"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_coroutine_test_evidence.cs",
+      "sha256": "4C782C87ED195C5FACEF7FFFAA1B8637072AD70BBFB86E6A17A2E75DACE03463"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_full_completion_coroutine_test.cs",
+      "sha256": "AD0F67CD748E5A2D956DAB8746F0B59A32A52A48849BAC6D0EFBD26C4A3C03C6"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_lane_rules_test.cs",
+      "sha256": "4CAA40E0953FDE7CE6032AAFB9F5050A7B256EF54777D1C15577BFC99628DADE"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_movement_rules_test.cs",
+      "sha256": "F1E009C55457F45A5A260AD488883FA127FF8AFEADE3BBF9AE6FF78DFAFAF1DC"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_pit_turn_boundary_test.cs",
+      "sha256": "113A92A3150212CA655F26905AA35B660B07C996013623036ECDEE06662358DA"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_player_card_phase_adapter_test.cs",
+      "sha256": "000A15D10D0EE2B018DCBC328C3A53872CADC0DC54D67A7C9BD7F8A418768EFF"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_result_presentation_test.cs",
+      "sha256": "0B7DEA124B0DCF63BF553B4F4D5D9745349CE5D3467CDA7BCEF16766765CB48F"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_spin_boundary_test.cs",
+      "sha256": "1D2B91E13F259C1726D0C2BF40FFC9C9325D3274035BBD189077D6A0343808A6"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_startup_deck_completion_coroutine_test.cs",
+      "sha256": "57C75030E82FCC0A0CE68D3725CAAD469533A818B82FAA3F5F555AFFBFE8ABF8"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_startup_deck_completion_coroutine_test.cs.meta",
+      "sha256": "35357B761B5E971E5CAB561B21646506AAD6849CE697DE3A67FA3E33CB103665"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_turn_boundary_integration_test.cs",
+      "sha256": "A7C5C472E99C5651A0F00AF6618F35B80F349FB56ED7963EE1B24A44866CCE1E"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_turn_preview_test.cs",
+      "sha256": "0A3384EF9797184BD9B97D9C289F4F13000D8C1D4A263FB307F664F1AAE8CFAF"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_turn_preview_test.cs.meta",
+      "sha256": "667217506EC04488EC253818E6F974C2240A7D338172D4189544C177AAEB8368"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_audio_teardown_test.cs",
+      "sha256": "5BAAC37FD05AECB0886FB77C6A84F449AC1D8C2C9CFFB08BFD473AFD3E620B04"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_audio_teardown_test.cs.meta",
+      "sha256": "0980532CD6072FE24A1A9AE6A168D1FC3D69F6CB3C46364E18190C55DE8B09AB"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_hud_shell_test.cs",
+      "sha256": "62480D1C21DB9E35D923AC83A80967A9D086006122D8F4CE3AC3A488EA607139"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_hud_shell_test.cs.meta",
+      "sha256": "BF6FFBC33E86C0F0EFCA3916780115232B160BD45CB686631FB38183D4138E7B"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_theme_test.cs",
+      "sha256": "28868338713029A2C93C5C6B70724E06CD8B390D2EA3617E7CCC19E7A055C374"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_theme_test.cs.meta",
+      "sha256": "B83FD82CDB528257674B5759DC7BF4E355073A0108AB1359A48512556E07E03B"
+    },
+    {
+      "path": "Assets/Tests/Editor/runtime_session_reset_test.cs",
+      "sha256": "B792A547CE04335F790CC6BB1869F6CCE1527C690AF649460256182B14ACFFA5"
+    },
+    {
+      "path": "Assets/Tests/Editor/runtime_session_reset_test.cs.meta",
+      "sha256": "C675557AE70CD1B8483DA762E15CB1F445AB19336128B30492E041A81F937B9C"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_gear_live_telemetry_test.cs",
+      "sha256": "94345C9EF8C8808F297A0FD019E081788DDB428EC789B8FC52182079E27F2E83"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_gear_live_telemetry_test.cs.meta",
+      "sha256": "2773D6527F71442F4E995D713CE2E1BE6770401DADE96F6FF7DDC3881B1ECC22"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_gear_presentation_test.cs",
+      "sha256": "E0DF0D72882904974415AFA2BDD7E04AB5D23E20D1E45483858A7B6CD85DD31A"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_gear_presentation_test.cs.meta",
+      "sha256": "A3A204C391227E3A684A61F63B577600A70EC1582684EC6E06E7CA096952D39A"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_gear_telemetry_drag_test.cs",
+      "sha256": "8BAFBB88E9D2B35587EBFACB2B1A55956939F91CA01AD71A8FDE7CDF1F29BA5D"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_gear_telemetry_drag_test.cs.meta",
+      "sha256": "E70CA55EAF7A4223EFD5301719E18D57240942796620ADAF777C04E65A8E4DA8"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_tutorial_catalog_test.cs",
+      "sha256": "366072700E51AE5638DA87D4C905EF3E9B282103C6E46C9ED1426FF796297465"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_vehicle_audio_test.cs",
+      "sha256": "38DAFD0AA5268E426861B6E773DA8C30309AB3F3C80542FF0842349FA7D43584"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_vehicle_audio_test.cs.meta",
+      "sha256": "C038C6FE536948D0B0ED93845566ED226F189C9668479735682957E3F8A3C8A2"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_vehicle_movement_audio_test.cs",
+      "sha256": "B146193F99D249650D411AD5CC55EF8C63D31DFAC268BB5DD654FA4DE4CB0E32"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_vehicle_movement_audio_test.cs.meta",
+      "sha256": "C455C87F9AA02ADF638D62E060261B50A376721FF12F71F504F425A82AECF70F"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_vehicle_runtime_audio_test.cs",
+      "sha256": "6888A5AAEBB2FEEF799441D57184E33CA808F3DAFB8A58C42F147F8338773F9D"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_vehicle_runtime_audio_test.cs.meta",
+      "sha256": "87F1ECB1088AA442F4EB1BAEB724C4BF09A3A921F93E28DF3BF0F8C8D29110DD"
+    },
+    {
+      "path": "Assets/Tests/Editor/turn_movement_breakdown_test.cs",
+      "sha256": "D59B5C2746F63B39CA26161632131DD03B6E39FE0EC3E764EBB6AAA06E774D8C"
+    },
+    {
+      "path": "Assets/Tests/Editor/turn_movement_breakdown_test.cs.meta",
+      "sha256": "F3E5F83F558DB2224C266E179E14FFC1A3F9CE76A16AF30C7EA269972E7977E9"
+    },
+    {
+      "path": "Assets/Tests/Editor/tutorial_heat_feedback_test.cs",
+      "sha256": "D9671C4FE162641516E0375DC937D1882A3B5C02CCF74EC94097EE9ED30D66BC"
+    },
+    {
+      "path": "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset",
+      "sha256": "03690AC22C2BE836091644437F30A4F9CF6F5A4A158D9AC1040936C3EEDAF686"
+    },
+    {
+      "path": "design/gdd/foodula-1-audio-style.md",
+      "sha256": "3CBDE3EDAEB26D99D40E246FDFF551FDA93A4C67992CCADB6BA0BC238C4A5AF8"
+    },
+    {
+      "path": "design/planning/asset-manifest.md",
+      "sha256": "AABD04954E6E4A24462378B485A930A319784E0EC1818CA4751A7FFE5351EE23"
+    },
+    {
+      "path": "design/quick-specs/team-engine-and-gear-presentation-2026-10-11.md",
+      "sha256": "9CE7767B49548B635DF86796EF0A1A94EC38F6EBD8F85D1227569E0A33A52630"
+    },
+    {
+      "path": "design/ux/racing-tech-ui-checklist.md",
+      "sha256": "8078253B71008E93E5E25B309AAE5E19E9ECE3E85F17B6A06D095B8860E0C585"
+    },
+    {
+      "path": "design/ux/racing-tech-ui.md",
+      "sha256": "E065F8B71DFC80A7C562BF3B9EAA4510D14504875B1E8063C1AD7714BC5BB32A"
+    },
+    {
+      "path": "docs/architecture/refactor-roadmap-2026-09-27.md",
+      "sha256": "BCC265C6EB49963B2009CBCBFBED14034274D7C9EE789A6E798325D8E9A7D479"
+    },
+    {
+      "path": "docs/audio/team-vehicle-recordings-provenance.md",
+      "sha256": "9940E810D423AAE5CD839FC2CC3488B99FDE6EC64AD0577D08D841A5B35D7586"
+    },
+    {
+      "path": "docs/memory/current-task-list.md",
+      "sha256": "0454C86314046CA18A5B2D7016B9F8137F319A93E86995565F9BD3FA7ADF14EC"
+    },
+    {
+      "path": "docs/memory/game-mechanics.md",
+      "sha256": "41CD6B1575D737671BD357307E52BD5E7EC04C580D9361BA899A0F454BD6A56D"
+    },
+    {
+      "path": "docs/memory/project-overview.md",
+      "sha256": "7C329C9BB58A6E3D1C9E275607E4FF256579E4BDDCDC39714839B2651291A453"
+    },
+    {
+      "path": "docs/tech-debt-register.md",
+      "sha256": "00DC632F23D365D0E4EFA9E592A068DFD4E60A25CEB395539D92197A3E6211CB"
+    },
+    {
+      "path": "docs/ui/racing-tech-resource-licenses.md",
+      "sha256": "8B0028DB5191EB2A5CC7BD9C4ADE9715C772EF1BDEF130E4C4525A6F3469D9FC"
+    },
+    {
+      "path": "production/qa/evidence/hud-audio-teardown-2026-10-12.json",
+      "sha256": "B66263225308158B58C583EFC5F52DE07DBA16ADBD9E1C8AD7CB3555D3DF93C5"
+    },
+    {
+      "path": "production/qa/evidence/hud-audio-teardown-2026-10-12.md",
+      "sha256": "960C60178D830F9654EF0A858BA28C353AEE209142BD935591028916ACF6E0B2"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13.json",
+      "sha256": "A71D5B5780718D66273720941A08E5626CE76088D52F34450154D08C13545855"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13.md",
+      "sha256": "4C4B27BDBA58BD63B6060CC04AE59D0035F61901161889F35456350C9090D9F9"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/CN-1920x1080-gear.png",
+      "sha256": "D95C380E4F6E52EFB73B362D712B34101D021065BD40792AC642653731EDBE36"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/CN-1920x1080-hud.png",
+      "sha256": "A309269A000C3DC1043CB10EB072EE54D9BCE966354FA12715986920C61DD815"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/CN-2560x1440-gear.png",
+      "sha256": "2815045F8AC89EDEB443F603484EA132A9EB6A7DF91F2F1DF954A3713F97485E"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/CN-2560x1440-hud.png",
+      "sha256": "C21F4506234BFFB5DF83FE1643D8A06F041BCE41C998F943A7630D508CE627B9"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/DE-1920x1080-gear.png",
+      "sha256": "C06B16096A61EFF060D3FB80BA37608A3DD21D22E59B189B8C057F4FDE7B2802"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/DE-1920x1080-hud.png",
+      "sha256": "ED40954C5CEEAB1A59F9DF0033554796EB0DB1B1FC1F98C84ABACEF5CC110CB0"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/DE-2560x1440-gear.png",
+      "sha256": "DF97B99C68B5DBA8DF09ACCC1A81B63A69AADC5E014190FC36C01531A966B676"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/DE-2560x1440-hud.png",
+      "sha256": "656272258AC239EA4D07FD1B10DB6564B8BB783146DF72BED3E41E1B406C4B55"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/IT-1920x1080-gear.png",
+      "sha256": "CDB73602848AF4F932A50AFDFD6015E9C0CE2B8A61A789A258EBC0911F89B56C"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/IT-1920x1080-hud.png",
+      "sha256": "3D3D371904D5C12AC294158FC50EB2ACC2CA5B406B8C1B5DF096146BA528C090"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/IT-2560x1440-gear.png",
+      "sha256": "75E0B164B140AC8BF57D83F320359B906E7E85525CA71D15C781616691680770"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/IT-2560x1440-hud.png",
+      "sha256": "410A2F07C5DD02EE156C1C0F90C5B964A815E7AAEDFC4C0824A0538409CAD55B"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/JP-1920x1080-gear.png",
+      "sha256": "D05E5318B3E0E9DF8C7503D8A9C0C6B574C121FE8424127EF9303DC02E399150"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/JP-1920x1080-hud.png",
+      "sha256": "E51ED92EDBB1FFCE0237D6FD12F13F1AAC121FC90D8E2002689E818A67768541"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/JP-2560x1440-gear.png",
+      "sha256": "3A15F0571F77B53E94CB98641B780FCAEF9D08C66F085C5913BC1BE8AFC00C3C"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/JP-2560x1440-hud.png",
+      "sha256": "D1A56046CB5F20486275B17DF849441AC024B15AEF876154F6B4F146DE6710B9"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/six-teams-1920x1080.png",
+      "sha256": "68BE3CDBDAF1BC6F88318C406535018C56202E0D21F698C35FDB0E6AE0870C56"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/six-teams-2560x1440.png",
+      "sha256": "B430111A9D93544172D5565AB57462F646679D3DE8E78567C98869C7926D31B4"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/text-geometry.csv",
+      "sha256": "017D6C3F685C25E5B79E99572C1CCC69DDF2EDA4DB9ADC665B31DDB48F0374A7"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/UK-1920x1080-details.png",
+      "sha256": "79E7172109BFD60BD30F9A6F001085E26E2A68958B6D08759464FF75C0974914"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/UK-1920x1080-gear.png",
+      "sha256": "27CFF23A0A4B01A4AED1F57A0DD5A6A416ABB5A4A5D959AD7F550D1C32464C66"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/UK-1920x1080-hud.png",
+      "sha256": "48E57FFB0B4289826FA587CC828CA46A50312CA4A46D912061FB0B080185F874"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/UK-2560x1440-details.png",
+      "sha256": "5A5261F51F9F5634FFC9183A751E83FA5BDF72890056109ED070BBEA15932C0E"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/UK-2560x1440-gear.png",
+      "sha256": "F8836F63CCECCBB89F4F62B301C51FCAC07A6402C5E30507F3895D5BE9B731CD"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/UK-2560x1440-hud.png",
+      "sha256": "2D42E328E8B5776E26D1C8B86DE30D4CF6AF7436C1B788D554B6FD21284B21D4"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/US-1920x1080-gear.png",
+      "sha256": "72BABD0BCD8733C282321D01452383E0500D0EB5E1E6A422B246271C98E2F382"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/US-1920x1080-hud.png",
+      "sha256": "FD449C886CAAB09FD330A23394FAC80A667C2F80B297EF2DCF786E30B11CFA39"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/US-2560x1440-gear.png",
+      "sha256": "F7966A8A68C80012C01BB94D35AAAF8A656B2AD366905D0EBAFDFD4D0D928360"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/cards/US-2560x1440-hud.png",
+      "sha256": "E6E0F2EF47665392F6816AC156FEAE3E9B8B705E2EA7BC89471BB48E02C4C103"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/CN-1920x1080-gear.png",
+      "sha256": "8E0D61860CD01B0FB244DC3BCCD807DBF09188E4D5394B9AB09A1B960D32AB5F"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/CN-1920x1080-hud.png",
+      "sha256": "BEDAA7493B72A21FFC4FFF413F10A6E16F2A1B8EC4B2D5D67F955B89CE496B54"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/CN-2560x1440-gear.png",
+      "sha256": "3DF44B18EED3792A0D6BA4CCD350DBA9D2DF1585A42E3D5987A9F1419B11A0AE"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/CN-2560x1440-hud.png",
+      "sha256": "0F71EFBE0C5F546A4BCC5A888AE55475C8361FF61C4F065BF24A5BDBCD5974CC"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/DE-1920x1080-gear.png",
+      "sha256": "C4072A04A47B10F640C122B1481D0108D21409193D0B89AB390D3803CE3939F0"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/DE-1920x1080-hud.png",
+      "sha256": "A6CD2C9AE00F46225F17B5EA3E6F9B44ADE6CDCE8361DDB68C4A736C1D752B0A"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/DE-2560x1440-gear.png",
+      "sha256": "331B04DB50ECFB2C90BF40882F290A8AFA50C823C1E6EF227986FBA35D355DB1"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/DE-2560x1440-hud.png",
+      "sha256": "70FC63E0CE764682F41F710D37B16B4A4FEBFE642BE216170C3FE8B290DABFD5"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/IT-1920x1080-gear.png",
+      "sha256": "3E734790192CD3944EBBB7FFE95708F4C0DB2B44DBB1F4E06DF3943F4D8E1E33"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/IT-1920x1080-hud.png",
+      "sha256": "A63814097C5BF08F36CE91862ABD5410F5297BC8C83AF68B83F9C0B45194ACDD"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/IT-2560x1440-gear.png",
+      "sha256": "F03B3A7147EA8EC80C514EE52C3ADFA211E466D59A9AEC9CB089D9DBC7FFE46E"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/IT-2560x1440-hud.png",
+      "sha256": "0E2784CE50997DFB3EEA511E05A67979940F5EF28DCE6E79511840B05D823BFF"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/JP-1920x1080-gear.png",
+      "sha256": "7B23C129EC5E194BA3C630EF9561D166415F7F23ACC9051E988A94F1B90C26E9"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/JP-1920x1080-hud.png",
+      "sha256": "92AE0114F28D1D2FC4418C3C734996EC1D5F1D9E20EDEEFD335FA25FA9000687"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/JP-2560x1440-gear.png",
+      "sha256": "33F676F4E294BFDDCC5F04ED9CE5DD6BF8179B484AD10F8BBBC431C461726BCB"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/JP-2560x1440-hud.png",
+      "sha256": "9CE545E557A8DCB96D20501E6C142D245AF87E9337A0249B7DD51DB0E2ADE025"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/six-teams-1920x1080.png",
+      "sha256": "565F91061CA647668616C89193131E075B75E30186D80EC57F69DECB2DC6AA87"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/six-teams-2560x1440.png",
+      "sha256": "001F6EBADAA68A62AAB66151BBD5419F4CAC3BBC9C3CFA29C94CFAAE9A0FCFA5"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/text-geometry.csv",
+      "sha256": "2017A26B9D1BFDF05CE5F3EDFEBB4F58E553BA58C2D2FA2CBBF95A1B0EA9B103"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/UK-1920x1080-details.png",
+      "sha256": "1E5563699C0EDB258852CF68FC01D763C2EE02962EA498688ADB053A3C30FF40"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/UK-1920x1080-gear.png",
+      "sha256": "E24C31D2D21B5D92CA05EF9D8F164CB9A4A2BFA57663F516D00F9FD8BF29D2EE"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/UK-1920x1080-hud.png",
+      "sha256": "874E10E2FA7C161F9533CBBFE199E241385EA1807711C81C523FBBBD2D65625D"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/UK-2560x1440-details.png",
+      "sha256": "EFA665220B56EE0C63B42538B178764D82D83D5BB4DD796F7CACD5E7C8159EE4"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/UK-2560x1440-gear.png",
+      "sha256": "F67A14077AADAAB926C0CC6CA4E1615C6A9A46CA7B814BCFEA0E2072801391FE"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/UK-2560x1440-hud.png",
+      "sha256": "C29071E1564480C533FDFD2D2BD2125E7E3EF7049298D36BACC32CD6B2C44A2B"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/US-1920x1080-gear.png",
+      "sha256": "AC01C84643AAC1E9FD8A3CD9C206A4914F3761ACBB96F964102708D5B22EC2EE"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/US-1920x1080-hud.png",
+      "sha256": "19DC58B86458771A9B8F734389168A5F68DCDA5C37F804EBDB61CA1485807D6B"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/US-2560x1440-gear.png",
+      "sha256": "45B10B6B2DC3B2C4910848BC100061F5776D2E213B5D80F69D00627A12C8E692"
+    },
+    {
+      "path": "production/qa/evidence/live-turn-telemetry-2026-10-13/trial/US-2560x1440-hud.png",
+      "sha256": "3F7EBE20B3D972659C84831D4FFA2939698273370D44D6FC3939AEF00093B74C"
+    },
+    {
+      "path": "production/qa/evidence/play-entry-and-engine-tuning-2026-10-12.json",
+      "sha256": "078CE6546976A4229BDAD807ECE7BB467E416376436CA9EE65F8D7FD64A6760C"
+    },
+    {
+      "path": "production/qa/evidence/play-entry-and-engine-tuning-2026-10-12.md",
+      "sha256": "7F6DE3AA2D3C18D5703F8CCFB45BC355A9599E780BE470E8F9809B0876F4B740"
+    },
+    {
+      "path": "production/qa/evidence/play-entry-optimization-2026-10-13.md",
+      "sha256": "7C03CC238B43586785315A8FA985BEEF2FB1C8380F811B960F2D593CE990E272"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/CN-1280x720-normal-4.png",
+      "sha256": "B760A61E3B4FF4A259E054D8A326229B45EF07FBE9B3C9CEDDCCCD80F9A37D63"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/CN-1280x720-stress-12-top.png",
+      "sha256": "1896000777DA3F712D26907610B822506F521A83619C42056FF44E2F3F81CDC0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/CN-1920x1080-normal-4.png",
+      "sha256": "72EC5423720CCA04816CA05C26E30749444001562E59E7ACB641F445CED572F1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/CN-1920x1080-stress-12-top.png",
+      "sha256": "51521B848F9C9D250E972BBF7A29323FB34C824284C25B228B31F591D4BDBD87"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/CN-2560x1440-normal-4.png",
+      "sha256": "06C08FEE0A53746A4491E0AFD425E02A31E887072436EC901E22EC57C7FA6993"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/CN-2560x1440-stress-12-top.png",
+      "sha256": "8ACF6B5AB7B57E21F0CFC0FFB524A4EF120E92D6FBCF8ED1569B786B6A879654"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/DE-1280x720-normal-4.png",
+      "sha256": "EEE04FFFF65E9194F01B828F3F658A22D0FBA2F5434FD00F859432217E588185"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/DE-1280x720-stress-12-top.png",
+      "sha256": "D817C39C964E828B2E213E05CED00BB069A6995BB50DA773FC6C683AB2A9BD82"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/DE-1920x1080-normal-4.png",
+      "sha256": "2A6FB8DD50905ABE28BB24BCC5C9AAD5E989CEAE71F32CBCFF68A7405B6F1E75"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/DE-1920x1080-stress-12-top.png",
+      "sha256": "527957F247B9FDCB448BB62566E56E6EA0D7340E246D2694BD6F8E9B52B4FCFA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/DE-2560x1440-normal-4.png",
+      "sha256": "E8C0D6E16EA4CF551EB1BA5BA608AA98D05169940442DF4B6C5DD4CECE97A394"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/DE-2560x1440-stress-12-top.png",
+      "sha256": "12502B5DD1600E72D0FB94237D0713CB3491E6AECC8DB2E8A43B05020626FBB9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/IT-1280x720-normal-4.png",
+      "sha256": "9A78D068B4A029D0318EA63A91FAF7CEA02BB7D86AF95A6303B3B31882616FE3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/IT-1280x720-stress-12-top.png",
+      "sha256": "4EE7364D62D5DF324AA5CDD7915D0A43661846EFA1EAE2F0A37BA33FDCA2396A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/IT-1920x1080-normal-4.png",
+      "sha256": "2E556369309B696B8313847B42B264AFB41D9CB7BFDA0CE1E3ED801A12278B30"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/IT-1920x1080-stress-12-top.png",
+      "sha256": "773FE8307AD99C165FEEBC08C1C3F0912254AE24D8EF3FBDEC792583E43278C4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/IT-2560x1440-normal-4.png",
+      "sha256": "19FB08A27C67AB054753FD936BA0B9F980E3880434EA67393C0C2469E96D12F0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/IT-2560x1440-stress-12-top.png",
+      "sha256": "BAAE95EDBFF5323540E5C3E8AE3F7D9D7A1F744EE41DC548C459CF14C6FB714F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/JP-1280x720-normal-4.png",
+      "sha256": "BFB030693DFD6B44F4587703832AFA7DAD72121115FADE9EAE233E9170047F80"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/JP-1280x720-stress-12-top.png",
+      "sha256": "3B55FE7053BC86F83BABF6F65FF308B8586F6D6A5CC9E51FE6D0CCD3521459E7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/JP-1920x1080-normal-4.png",
+      "sha256": "423D022D0C5EE234FA30546DF2A63E9B6171671603F7B1D1CBAF10319002FDEB"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/JP-1920x1080-stress-12-top.png",
+      "sha256": "F4FD982CB8231C1EA4CA9ECC7C175C37B09B7F61A80DAD7BE241725680C3A33D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/JP-2560x1440-normal-4.png",
+      "sha256": "3F0021555699B3B523C7919EE05D93CEBBD99C1A15939133F91B4E8491979BDE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/JP-2560x1440-stress-12-top.png",
+      "sha256": "EE855EE363217A33C32565C115C96037165A261D5D7E7F8B7B018499D0D04527"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/manifest.json",
+      "sha256": "0F64E691C1D31C0EDB976C7374F9BAB060B648B6D6979E6810AB7C3903B34877"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/UK-1280x720-normal-4.png",
+      "sha256": "560438750FAEBBB74493BEB3108F7B799546FDC64C148F70177B4B15394C8075"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/UK-1280x720-stress-12-top.png",
+      "sha256": "B070D81BE4B973C75571CD0E8D4377A5DF0C22E304A083AFF3DF333D193FAF6E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/UK-1920x1080-normal-4.png",
+      "sha256": "0C3E31307D4E16AC1AD8A23BB5DB368F0CD0CE1FEFCAED3B7D06CF5E37FE0B39"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/UK-1920x1080-stress-12-top.png",
+      "sha256": "E8A3DEDF156BDB6AFA66542F83B68C054A9E01017E9D33B8D9E57BBDB3729588"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/UK-2560x1440-normal-4.png",
+      "sha256": "996E1B6C4EC4E12666D87C420D2759092C510CA2F678F7FE5044B724ADD33E76"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/UK-2560x1440-stress-12-top.png",
+      "sha256": "22522288B239D3B60BC11CC0C9288E0086B9B614D7D42CD93FC422C553BC0F28"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/US-1280x720-normal-4.png",
+      "sha256": "D2A98655E4AED28B2F530DA2D8C9F1D94B749FE6007AB17664031D55EDDFF6D8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/US-1280x720-stress-12-top.png",
+      "sha256": "E3526C8BD8C06FC564424BBAC22107F863DED89730EE045993C5DDDA44B8CCA3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/US-1920x1080-normal-4.png",
+      "sha256": "3B880E5CBDDA81C13EE3F58DAC3EEE561D93F8BE60FFFA17E418BA48A55A2B92"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/US-1920x1080-stress-12-top.png",
+      "sha256": "4145E3B1B85700CA7B30ACE4DC960A57D25DD4CD9C51016B4FBCF8FB5E929657"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/US-2560x1440-normal-4.png",
+      "sha256": "C4DA7907DA5954E1B99F284936F8146A8D8E9363ECDB7C3BE7635E1DD4C9E739"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after-attempt-1/US-2560x1440-stress-12-top.png",
+      "sha256": "29CAD3ACBF4A79DCA68D2B8B5213BFFD0793CBFC461EA5F600E387E59305B153"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1280x720-normal-2.png",
+      "sha256": "9A471A6381B2FAECA3E7F4988733EEF9CDB7B02807DECB626298450F7CC3A9DD"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1280x720-normal-4.png",
+      "sha256": "B760A61E3B4FF4A259E054D8A326229B45EF07FBE9B3C9CEDDCCCD80F9A37D63"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1280x720-normal-6.png",
+      "sha256": "360366B4EE5A919665EFB0591832938058A03A1F42166CC689340542749A1BFE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1280x720-stress-12-bottom.png",
+      "sha256": "C6428924089C13EAA0E7B250E743DA73A6009822EA921F5C30EE0DA0D24D58F0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1280x720-stress-12-top.png",
+      "sha256": "7432B3381FD35823945FE6647C5056585C553D426406AC5CB6630D31829B0F20"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1920x1080-normal-2.png",
+      "sha256": "C7CBD133BBEFE0988FA1A131B32D09F097346D2FB119CF744634B4C03C6088AA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1920x1080-normal-4.png",
+      "sha256": "72EC5423720CCA04816CA05C26E30749444001562E59E7ACB641F445CED572F1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1920x1080-normal-6.png",
+      "sha256": "F3D0C95B268751E4471387A8FC7CE7836E401C6E28188EC9C9FAA0E5D840C327"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1920x1080-stress-12-bottom.png",
+      "sha256": "50BAE666A0436EA5DDC0EB78BC404B6B19C60A471EB0855624774170EBE549F7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-1920x1080-stress-12-top.png",
+      "sha256": "8F8C5FC8033C26318E67BF83DED35A10C4A56517AB7FFAC998652B7DD93CED45"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-2560x1440-normal-2.png",
+      "sha256": "0320D99AE7EE620F44BF0F2FC82A2CC6CA090A8198E2C1901DA66D2AF4968C96"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-2560x1440-normal-4.png",
+      "sha256": "06C08FEE0A53746A4491E0AFD425E02A31E887072436EC901E22EC57C7FA6993"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-2560x1440-normal-6.png",
+      "sha256": "D8168FEF4ADD6D1AA9174C85CFDEF4809865A64CEEA720B826C644CEABA4B154"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-2560x1440-stress-12-bottom.png",
+      "sha256": "16FA715299E70AA1CAA37305A1E04B6E5E6D1788C61C9DB10CA8F6F78A8F489A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/CN-2560x1440-stress-12-top.png",
+      "sha256": "50E24F81234DF13229526B571B32AEA6BBCE76BC3CF3BA6E6EF2F9ED520C80D8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1280x720-normal-2.png",
+      "sha256": "03755E582FF93A04F4EF0796913D029289E4571623671C95D3D861121439A374"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1280x720-normal-4.png",
+      "sha256": "EEE04FFFF65E9194F01B828F3F658A22D0FBA2F5434FD00F859432217E588185"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1280x720-normal-6.png",
+      "sha256": "B5F7429C45C04360C18E3C6AE1361D9A2712F35C5DB6D561F41838FD44F0B8BF"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1280x720-stress-12-bottom.png",
+      "sha256": "868838318193E65D9A15E0DDD96F3EF0DA8A2AA4D530183DC6A0DC497BB0F0E8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1280x720-stress-12-top.png",
+      "sha256": "68E39C60DE04BF5F23ECB789B89269B33ED00CFE3A73F3959C7491E1C2E16D39"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1920x1080-normal-2.png",
+      "sha256": "9627601B4148ABA5AC21520AC2A7CDD49A8C63EA6CD87B54A05CCB0D9D3DBF73"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1920x1080-normal-4.png",
+      "sha256": "2A6FB8DD50905ABE28BB24BCC5C9AAD5E989CEAE71F32CBCFF68A7405B6F1E75"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1920x1080-normal-6.png",
+      "sha256": "ACAE0E66CE14FE15CE69CA7C935724B9C332D75D66215F2A2B9AFD025728A286"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1920x1080-stress-12-bottom.png",
+      "sha256": "0D07BEA59798046BBE8228C73C7425C6B97D46A30F9F7E590FC656E1689F2C77"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-1920x1080-stress-12-top.png",
+      "sha256": "A358F11D09CFC7F747536CA93077823D2B468690EFA0415335F26CAFF5D8F101"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-2560x1440-normal-2.png",
+      "sha256": "C5D8F58F5849DFA7103AADBCA7832E4240B07985FF48FFD456C4283FD78DE4D8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-2560x1440-normal-4.png",
+      "sha256": "E8C0D6E16EA4CF551EB1BA5BA608AA98D05169940442DF4B6C5DD4CECE97A394"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-2560x1440-normal-6.png",
+      "sha256": "035FBBE02011EC318C242BEA173EB19E42197E55FD8AA7FA598152722BACD610"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-2560x1440-stress-12-bottom.png",
+      "sha256": "DF81B061710EF281E49BDA06B659A403120E101D25E9E4FBF9F2D5AAC9983D5F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/DE-2560x1440-stress-12-top.png",
+      "sha256": "D2522EF3A207DD06981AEBA5372B705588486BFE3F734FFE58F0BF6623DC9EBA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1280x720-normal-2.png",
+      "sha256": "663D2FB4269D540D959895DB96862E849221445BE392623647BE49F39B1A480E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1280x720-normal-4.png",
+      "sha256": "9A78D068B4A029D0318EA63A91FAF7CEA02BB7D86AF95A6303B3B31882616FE3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1280x720-normal-6.png",
+      "sha256": "2C3C5BFBED74513C3071983D1AAF35DF4C6161EF177C44A36648085CB5C59BA9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1280x720-stress-12-bottom.png",
+      "sha256": "24FA81345A62518C806CC6C4FF6975652BA072AA3E316A1768A6AC69BA041097"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1280x720-stress-12-top.png",
+      "sha256": "4A9FE54AC3A85DDD9DB30A5B4820CF6DA27FBB91A77C398E091E0EED15B9D419"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1920x1080-normal-2.png",
+      "sha256": "C4F271E518BDAE79FB13078272D482DCA973453B90FF9969EF6C5EE11B3EC835"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1920x1080-normal-4.png",
+      "sha256": "2E556369309B696B8313847B42B264AFB41D9CB7BFDA0CE1E3ED801A12278B30"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1920x1080-normal-6.png",
+      "sha256": "168307EDBD765CE3FFBAD5243A0F0909D233AA15C207D50FE7909A7332C4AA5B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1920x1080-stress-12-bottom.png",
+      "sha256": "6F294200896BE097FB671079D3D763CFCEFFEE0727512F077BE5BFBE72C6EA6D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-1920x1080-stress-12-top.png",
+      "sha256": "B3B929B9E5F62DB5F4673382D35AA2C86B00B1D2181BF18FBE6F8C5CE2772255"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-2560x1440-normal-2.png",
+      "sha256": "D6766985A004438711FBB1415F6A15CEED7C415546352EA762CFE69B9E5A34C8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-2560x1440-normal-4.png",
+      "sha256": "19FB08A27C67AB054753FD936BA0B9F980E3880434EA67393C0C2469E96D12F0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-2560x1440-normal-6.png",
+      "sha256": "10ECFCDB1F9FE8C53AC4218135DF525DCFFAB5EE61976BC9E46EC26C989BDD8F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-2560x1440-stress-12-bottom.png",
+      "sha256": "8CE83AA2FBA808F23A535597CF2E426FF19CF85F421395C7E1FD3A93198F658F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/IT-2560x1440-stress-12-top.png",
+      "sha256": "58D9F15E159F4BDA912409C31DC57415B01B30835B656F7876E8C06ABB4B200C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1280x720-normal-2.png",
+      "sha256": "127814E4A484C52B8EC8D1B2B38BA6D19C2952192201F7153FCC63C12C579EF3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1280x720-normal-4.png",
+      "sha256": "BFB030693DFD6B44F4587703832AFA7DAD72121115FADE9EAE233E9170047F80"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1280x720-normal-6.png",
+      "sha256": "5FCD1082F23B23BF1F21E3575C955493527DFC373DBB2EC288EBFB26DF80B96B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1280x720-stress-12-bottom.png",
+      "sha256": "987C160472E0D7A808D4D612666A71564C62E03A6789C2332FB7C550BD2B53ED"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1280x720-stress-12-top.png",
+      "sha256": "DB3DF5762C5A0807FECA7328D6779552F01CA1E3F69B19D286B5DEE813A97FBE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1920x1080-normal-2.png",
+      "sha256": "53573437607B3D0567D9D74B20021F9BB62BCA4A747CF2460283EECA316AD879"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1920x1080-normal-4.png",
+      "sha256": "423D022D0C5EE234FA30546DF2A63E9B6171671603F7B1D1CBAF10319002FDEB"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1920x1080-normal-6.png",
+      "sha256": "030E42D3583C639952CDA51B603C5EBB6DDA26135918B8F960480FE65B967139"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1920x1080-stress-12-bottom.png",
+      "sha256": "D08CA67865D84379F9054201FF8AFC8AC6AB2726B64B32CD1179C6BE39A920B9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-1920x1080-stress-12-top.png",
+      "sha256": "40D43BD0BB5D351D6F67AE99FC96F0C5A5C1C360FC58A419F40678FF8AB5783C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-2560x1440-normal-2.png",
+      "sha256": "4C9EDFC4B59A077EA54C09D782C5FBF68014CA3A15DD1BDC0F06562B8EF87399"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-2560x1440-normal-4.png",
+      "sha256": "3F0021555699B3B523C7919EE05D93CEBBD99C1A15939133F91B4E8491979BDE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-2560x1440-normal-6.png",
+      "sha256": "30DCBF1A9DCE21CB360FD51A1A0DDD819E10409D0BA5E5BF578C8A16D7D117BD"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-2560x1440-stress-12-bottom.png",
+      "sha256": "7844538D2E06D432AE445B6DC95D3A4B74A20F673E71EAA5F6DC0FC8BAE22288"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/JP-2560x1440-stress-12-top.png",
+      "sha256": "A021BD6D2F5A5018F6733EA8F94FF39A18A24123F5E24B2B1A9CED7712F283CD"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/manifest.json",
+      "sha256": "32DB83B0CC17E9E52C83B64049DBA296C4D5C3ABCA8D17A0B130C734C39EABAB"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1280x720-normal-2.png",
+      "sha256": "948258E4468B4EBF9E9F1407CA3245CD4BBF7C41E947900DB1A6802990F43EE1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1280x720-normal-4.png",
+      "sha256": "560438750FAEBBB74493BEB3108F7B799546FDC64C148F70177B4B15394C8075"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1280x720-normal-6.png",
+      "sha256": "5FC49EA1AFCA44602CAB4CD24FCA9DB90CBDFFBFCD90583AAA5CCEC144DFE364"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1280x720-stress-12-bottom.png",
+      "sha256": "7D6BB93CA6CB3E8B9BF39DC8D296BCA3C6E2BC034217BB5E548CC1CD1703E1FF"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1280x720-stress-12-top.png",
+      "sha256": "F0EA9705F301DC058D10F241C90BD32A3403BF65F2C83A8A7C51FD9FDDA21C5C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1920x1080-normal-2.png",
+      "sha256": "33C862CB7F652A77F7A7A5A3344921134D195CB257FF8FA976B0114D17C1C219"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1920x1080-normal-4.png",
+      "sha256": "0C3E31307D4E16AC1AD8A23BB5DB368F0CD0CE1FEFCAED3B7D06CF5E37FE0B39"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1920x1080-normal-6.png",
+      "sha256": "8112A678F815A057DB7C2E3831D450220A48111C07D37186F9F470D9CD520F6E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1920x1080-stress-12-bottom.png",
+      "sha256": "AB694C9573E90987E34618073AED079EC542343913AC097E603A9C79CB431CE3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-1920x1080-stress-12-top.png",
+      "sha256": "4FE2089243642FA5381A7F3179815B9C186C2002D0D618A478E0700D168F12DF"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-2560x1440-normal-2.png",
+      "sha256": "B15BE9C6FEDF63E1DED11B08E9CDDAC8C35AD6A8DAEAFF7C09D881EB6A06A967"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-2560x1440-normal-4.png",
+      "sha256": "996E1B6C4EC4E12666D87C420D2759092C510CA2F678F7FE5044B724ADD33E76"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-2560x1440-normal-6.png",
+      "sha256": "0A4DD5AB923EE972F09C3F587BDF28558FB0421A1C0B72E1D18E93F80907317C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-2560x1440-stress-12-bottom.png",
+      "sha256": "3D02F89BF6B4C0ED652150A6887C7CCC99A189C237ECABC6078D8083E884E21F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/UK-2560x1440-stress-12-top.png",
+      "sha256": "C251CA859424FAC6B8F282D46A1EE8E9A0008DC18356770DB910FA7D44198763"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1280x720-normal-2.png",
+      "sha256": "7E5B13D00E8BFD90A44C3E4AE0D46545AE5F5AB1362822D6D59F390FAD8D89FC"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1280x720-normal-4.png",
+      "sha256": "D2A98655E4AED28B2F530DA2D8C9F1D94B749FE6007AB17664031D55EDDFF6D8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1280x720-normal-6.png",
+      "sha256": "C23F893DFE96E97612A9A9F1A80E4208FF9CFD984B673602C55DDFF78470A3AE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1280x720-stress-12-bottom.png",
+      "sha256": "CD6B623E3E1880353DB2739B313ABFD5C80E028F0EFDF6EAEE6D41547640F126"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1280x720-stress-12-top.png",
+      "sha256": "ED4A843494A321B94DF964457AEE6AEE9E3CA91B8A97194B120C63AAF51B5B15"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1920x1080-normal-2.png",
+      "sha256": "ABD413FCE451F34AB516B25D8114E37E4BE164701CE4AE1FDB26DC55D2E4A437"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1920x1080-normal-4.png",
+      "sha256": "3B880E5CBDDA81C13EE3F58DAC3EEE561D93F8BE60FFFA17E418BA48A55A2B92"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1920x1080-normal-6.png",
+      "sha256": "6B87732B279BECCB30C56A93CC8456376FF0B9C72EC9DB3AA8666969DA7C3AF6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1920x1080-stress-12-bottom.png",
+      "sha256": "18B9FFB7366994F5B9F6137E3A1CBF3028D9423A39982993EC91EFB77D29716A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-1920x1080-stress-12-top.png",
+      "sha256": "9398DEE08DE196CB87CCE8F83544F0AA9357C20DF1802D99FAA1FF6345FE4881"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-2560x1440-normal-2.png",
+      "sha256": "A67E4A885C2921B89A8B67FE8044F44BF82F87DF8E3CFBE2A280FC52E93F715E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-2560x1440-normal-4.png",
+      "sha256": "C4DA7907DA5954E1B99F284936F8146A8D8E9363ECDB7C3BE7635E1DD4C9E739"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-2560x1440-normal-6.png",
+      "sha256": "D0C5D7938CB1BBBDC46178A26D2925CA169C925B9BE529BBB37B0C1E0834068F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-2560x1440-stress-12-bottom.png",
+      "sha256": "EBBF535CCD82CA2192DACFB8839FA34D1BE6C91CCB76B222B2A1F986FF3171D7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/after/US-2560x1440-stress-12-top.png",
+      "sha256": "F9F55844D6D2170C04F66B1D82A93AC386510B0D22D08C012511ECF2C73A867C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/artifact-sha256.csv",
+      "sha256": "5E488B746B94767C254E28A15B783E67B0C3D24AC85D7CF67AD7D089E68D5A31"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/attempt-1-tests.json",
+      "sha256": "BC1AC6C982BD8E4681C881054374BB4924429047D8E1906F5B79E2D135827B76"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/baseline-diff.txt",
+      "sha256": "FE9A52641EE6C600E5B39A189E882D27205CB709135E09FFDF246E5303F389BB"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/baseline.json",
+      "sha256": "8FE44DD35F734280AAF0F55B59EB3F918AB12030C96D3DA917C6C9AEDFC3DD43"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/CN-1280x720-normal-4.png",
+      "sha256": "E5AC5FF8B41BE4FB67D88252DB9A5F21827687C5CE5D3A61C63A5A3492E4560A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/CN-1280x720-stress-12-top.png",
+      "sha256": "67AC8380AC59F6BCEE4A0F7C8F3CA59FA84DA320A89FAE01262E4B3B775AF20B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/CN-1920x1080-normal-4.png",
+      "sha256": "5ECEBF32983E8CE4D978F1C23A4B63CEC791883F50095E4F466D3327CAC1F7CA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/CN-1920x1080-stress-12-top.png",
+      "sha256": "769ABE25136F4F5B613D8177E729282BB35BB05965B53DD6E34E04A1ECE0909F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/CN-2560x1440-normal-4.png",
+      "sha256": "21E4D86D361CA7ED8435D23FE45600042B29932979F3AF20B90F73462497E5BE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/CN-2560x1440-stress-12-top.png",
+      "sha256": "40917398F1EEBBD007C6411024D78DB648591EBBADB6C83EBD53F1A740699381"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/DE-1280x720-normal-4.png",
+      "sha256": "37B5B9BD07041F951E1FF98080417DC92C021993D08B8D93F72B27FFC10FC244"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/DE-1280x720-stress-12-top.png",
+      "sha256": "1FD290C395C85722F8AA0A19C9F4AFD9938090891FF3071C6C5566237DDC8BA2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/DE-1920x1080-normal-4.png",
+      "sha256": "C41A0834910E0E6A18DD0756C90363DD8C08D60097EE7DE2F10F066B0CA70337"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/DE-1920x1080-stress-12-top.png",
+      "sha256": "B544CB4FEAB3D8AD014814753C8DA5F5CCBEF2CFD809C5EAEA464E3517EACC4A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/DE-2560x1440-normal-4.png",
+      "sha256": "724FA190E3FC0481614609882721C8C2728E74A6E97CDD4B6BB4BD8A2E04C2C9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/DE-2560x1440-stress-12-top.png",
+      "sha256": "AA40B4EBAAF944386B81E4661654B44233869E616D89F1572DF7231C38147C27"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/IT-1280x720-normal-4.png",
+      "sha256": "35FEAAD5CD24B8A9E70C6DB086C62B68C3E05067BDA9626135C6487CC3602E63"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/IT-1280x720-stress-12-top.png",
+      "sha256": "79BDE7FECCDB2DA5DE3AFA3F3D2F1B263F717065973848EE1D16A1D6C1925598"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/IT-1920x1080-normal-4.png",
+      "sha256": "95BE7053FBE0B10357C02CF907F388643163B71A3B2901BDC2E3DA31BAAF1E22"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/IT-1920x1080-stress-12-top.png",
+      "sha256": "F328DE00082E394D9497C62796B97024684246B43B53AB0B43DD8B0107C3359E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/IT-2560x1440-normal-4.png",
+      "sha256": "8FFB30462D2E890D4EBD3EC30957D8B1FF4521DFDF916F3CE87C29BA62FC4D9A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/IT-2560x1440-stress-12-top.png",
+      "sha256": "87316AA830685E2136198B83FBF6AF52C191B229FC2AC19DDED2E0FA6FD859C6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/JP-1280x720-normal-4.png",
+      "sha256": "17DDA630BCE2E0E23D2370895C720CCA8666DBC8635E5F5CDC1D2D7E210D3A41"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/JP-1280x720-stress-12-top.png",
+      "sha256": "E1C196E09D6DDA082E23D4DF2B3A96B54E85D2FDDEC1EC7960828B12D54246A1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/JP-1920x1080-normal-4.png",
+      "sha256": "9D2C6869ACB9699D712BA940DDFC79DFD24ED2122834F32845C38DE22B964B73"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/JP-1920x1080-stress-12-top.png",
+      "sha256": "886E6B4F89D4D0983A068A73E599A5A9723629F54C48647AA122AF6DC1D400EB"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/JP-2560x1440-normal-4.png",
+      "sha256": "3E0E5489D64B5EDD90FA05656E56EB9106505792D1F4351880B25ECA0262B02D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/JP-2560x1440-stress-12-top.png",
+      "sha256": "A68B5321BA6E372AF277EE148B373574FBBAA410C98919A94DAC45C121F15DC8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/manifest.json",
+      "sha256": "34C4E2515C1218DBDC981269320018B0D92571905E8B50544508E113B924B4C2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/UK-1280x720-normal-4.png",
+      "sha256": "31C3A41095DDE689DAB8FC53005747DBEBFA0AE5477222D3DC0B5FA854017A59"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/UK-1280x720-stress-12-top.png",
+      "sha256": "C6A7C2A1ABE42B43E372DB5530F72EA61BD8B044536FC48D0B92EF057467DA6B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/UK-1920x1080-normal-4.png",
+      "sha256": "49B8E611363E809B370288DB20F3044EB6DA0F8278A5E59C0A636EE28C758E64"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/UK-1920x1080-stress-12-top.png",
+      "sha256": "3A8889831DC4A1C35A6C5F9E7D3267C6D3D3E900FCAB41E94E63E1E87FD3DAA6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/UK-2560x1440-normal-4.png",
+      "sha256": "2A52C17EA9217D9783C7FF8227104B028B66582A42C9DEB715044B25A92CA746"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/UK-2560x1440-stress-12-top.png",
+      "sha256": "0B8D024462CDB1EF52A1C392EAA67BCE48B25669CD68119821195ABE908691D6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/US-1280x720-normal-4.png",
+      "sha256": "1F4CF3C0A5EB55C3FB23B22D95604635F47E06D081241AC845EBC9B4106CBB70"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/US-1280x720-stress-12-top.png",
+      "sha256": "CD8D759840C8CBB5EE6FCDDAA3F8E9362552C0F1D47AE1EA2EE86CE752AF13CD"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/US-1920x1080-normal-4.png",
+      "sha256": "506576DDB37A83C68BA6E0F3964CDEB2778A9B6F73389BA22C6AAA2B444A0F29"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/US-1920x1080-stress-12-top.png",
+      "sha256": "B12630243F4AA776243A103FA680C3FC5F8E50F15B2D3A495B8547848DC3B79E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/US-2560x1440-normal-4.png",
+      "sha256": "9A76F7E87C9D70027E6920564883582E7A1DE762CE4E50C700935E5F76612C22"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/before/US-2560x1440-stress-12-top.png",
+      "sha256": "5FE93E268EF75887B6A0A4B7128E1A93063AB173FFACCAAD1264947ADD7F0F13"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/final-baseline-comparison.json",
+      "sha256": "3497BF10D8396E268E93866A0BC4567C899657DF24769FEA8EF92666FDEBE70C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/final-git-status.txt",
+      "sha256": "FC7EC266152790ABA06069E6F938466FFEB951573A701E0BBDEA8D93AA882928"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/final-unity-state.json",
+      "sha256": "E7445CD7C3E72ED1E7F82E183DF120D04C19D3C726CD4FDBD64A0FADE725565D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/focused-7-final-native.json",
+      "sha256": "017B98B634814E89372C8598FF53D3537D56BA7F7B70D099CBF5C6FF062E92F0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/focused-85-native.json",
+      "sha256": "6BFFE976E1360735FF539CA7689DD4E331824EA148C8504AD2BD1FDFBEBFA8DB"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/full-2920-native.json",
+      "sha256": "1FACE96D9E2DA9F2FFCE5F988E41B577E434BA3781AF7C630C4C415D78016D28"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/layout-source-before.cs.txt",
+      "sha256": "ADC091E8964FA93837D5D154F4E0F235D901F2217C1BD2A76D81CAD6A870EA61"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/README.md",
+      "sha256": "B6EDF535E8A127882CF40C3C0A3D655C49F818C69FBEE66D38CF272036B7D6A3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/resume-state.json",
+      "sha256": "F5AFA0BC1EDCECC910F4A20F03193A6C46B032B59678A8294C856D776C5585BD"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-hud-shell-2026-10-14/shell-source-attempt-1.cs.txt",
+      "sha256": "DBE9CF13D7F07E08FF37DE27C20369982129675B9E03B853DC9AF9FB7FCB879F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after-worktree.json",
+      "sha256": "4310EB328506363B7DB6D26585CC7F1365D3F31BD41CA038CEBE236AC99A1405"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/CN-1280x720-actual-6-of-14.png",
+      "sha256": "E22FC5D4120CBB8A587619A232069FA986860D1075C9B9B93303A88DBC17EBC6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/CN-1280x720-forecast-14-heat-5-to-7.png",
+      "sha256": "AD25829095ADACB29CB5413B5927DED6EC9E63A0FCD4DD9EAD3984A9557CBF66"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/CN-1920x1080-actual-6-of-14.png",
+      "sha256": "7995BE1277CEADB35F0B960D2F982C204AFD25382A621BBF7E218E9F50B65944"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/CN-1920x1080-forecast-14-heat-5-to-7.png",
+      "sha256": "171CA34CF57525996EEDCCDEE0893DD42C4C072B66EF7F0C8E559A02646AD344"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/CN-2560x1440-actual-6-of-14.png",
+      "sha256": "F6496A3EF46BE9A8A35F73FDB96FA073810CA7531558F5B45FA3A80DD2D6F4A4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/CN-2560x1440-forecast-14-heat-5-to-7.png",
+      "sha256": "7A5689F0763A274BC9293CCF0CB8CD0306E62D78D8DDDAAC280A2C873905C003"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/DE-1280x720-actual-6-of-14.png",
+      "sha256": "A551DDA36F39D341E34776D5CED0CCA22B311DD5F7C897FD7A375D8D482FDA0E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/DE-1280x720-forecast-14-heat-5-to-7.png",
+      "sha256": "6325EDF53E19D70173CC85EA3497B99682A48C4B936403C5DBC71AFC55E5E1DF"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/DE-1920x1080-actual-6-of-14.png",
+      "sha256": "2DE15050692A715E9AAF78FBE011C60864E4C40A9545B40356204E564B4A1625"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/DE-1920x1080-forecast-14-heat-5-to-7.png",
+      "sha256": "18C7007D5971323911391AE55067CD709FBE14B327AA286526DC3D790512E0B0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/DE-2560x1440-actual-6-of-14.png",
+      "sha256": "EFF08272B3BFC5159486C49CFE03DF1637F432CE9CC9B85DFEDEBCAD4CD80362"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/DE-2560x1440-forecast-14-heat-5-to-7.png",
+      "sha256": "569E0B472F2A10F42A122067DB57811397451386B8F71EB234F48E2B3310FC03"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/IT-1280x720-actual-6-of-14.png",
+      "sha256": "35A9411D2204ED38F926A365FD652C9CD9AAC3C0FD153F12FFC83192DBC8CB08"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/IT-1280x720-forecast-14-heat-5-to-7.png",
+      "sha256": "21FBB2A7043004717DB105958A149265F95CD05BD2454EF3839D757FF9816669"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/IT-1920x1080-actual-6-of-14.png",
+      "sha256": "731952B237833167EE29AD766875F98F65A7A62280B29BDE316E586EFAC908DF"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/IT-1920x1080-forecast-14-heat-5-to-7.png",
+      "sha256": "968AC7E7FBD05843EB228F86ACC587D4CB9A2D6316F65B50D6FD99C8A9B7B5AB"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/IT-2560x1440-actual-6-of-14.png",
+      "sha256": "5F5A7E7C3A0B910103082916CBD0362969C9A836740C1E64786C9589B91A2AB6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/IT-2560x1440-forecast-14-heat-5-to-7.png",
+      "sha256": "98DF5D48F7E2F54438923A2DD3D2E38EC030FC3FA45BBB464FD0A1BD55D4A4D9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/JP-1280x720-actual-6-of-14.png",
+      "sha256": "8BC0B3C5EE1D15AEBF1B9E0643493D7905120E41D982C5E26493AB8CB97E33F6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/JP-1280x720-forecast-14-heat-5-to-7.png",
+      "sha256": "296BE8AC7A3063A0469EBD96BAC3086F474F989C2222023C43AF6850F1ABF03C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/JP-1920x1080-actual-6-of-14.png",
+      "sha256": "C3F9E4FA28DF315A9330E4578E5AAF79BCCF5E2B5DBE51C2C765A4F0A2E464B7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/JP-1920x1080-forecast-14-heat-5-to-7.png",
+      "sha256": "35A4CBC49C770413711FD18BF44F7CB29B335FD97D13188A62A59993914409D2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/JP-2560x1440-actual-6-of-14.png",
+      "sha256": "48224319E6E0AA232C3E0DF3012069D58FD1935A5446CB8102E9C8BC6BCF3521"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/JP-2560x1440-forecast-14-heat-5-to-7.png",
+      "sha256": "086996C12DD12D30F908E561B3CA0F2247B85DD8B9747C6A5C3BACF27D727F67"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/manifest.json",
+      "sha256": "C505CD8E652C318B5436B3B89C99E7ADC0C44F8288A71698F0C4DDB96AB4A118"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/UK-1280x720-actual-6-of-14.png",
+      "sha256": "7F888315719CEB4A2EF20190438A141CB14E2C95B60DCCA9AAFFB6DBA0692415"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/UK-1280x720-forecast-14-heat-5-to-7.png",
+      "sha256": "B55C0A89AFFA1B83C27EA026247FAA58BAEE7FA2C4C0FCDE2961FA50BDA93D16"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/UK-1920x1080-actual-6-of-14.png",
+      "sha256": "0E2192D676D1D0408548CEB25F48BEB82AC0136A4E6A9623E715AA13634C4E99"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/UK-1920x1080-forecast-14-heat-5-to-7.png",
+      "sha256": "9608A93EC4FF11671588EBDD49085309082D8985AB3B91984151C66C8A1DB898"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/UK-2560x1440-actual-6-of-14.png",
+      "sha256": "00E4D085A6E69391146E98E1EA2076A15EFC0BFB6A3CBB44D87E6E69E2DAB34A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/UK-2560x1440-forecast-14-heat-5-to-7.png",
+      "sha256": "1F3CC232B5963169307BCC2F4CC3B7B24FF8E3B155DF5FEC7D4ECB19DFA3E069"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/US-1280x720-actual-6-of-14.png",
+      "sha256": "E28040A2751AE97B26E9A1F2A9F5E65A6483EC118F4D5F02F440FA601CA3DE15"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/US-1280x720-forecast-14-heat-5-to-7.png",
+      "sha256": "8A3E5BCCCAFC16C8450C84CCAA33BBE77E664C570DA70F958CB389FC946E0115"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/US-1920x1080-actual-6-of-14.png",
+      "sha256": "9D4E392A32991D786B16FE468F26BFDE501035E17F80BA80B071D828081B9DB9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/US-1920x1080-forecast-14-heat-5-to-7.png",
+      "sha256": "84785886A3A3A149CA0AA409B915B5F6871DE3A37C7C5FF5614E9B33127EACC4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/US-2560x1440-actual-6-of-14.png",
+      "sha256": "8291C452B90C8D1049F002F77DD71F6840097A33BE3C341EDFB8F2EBB16E7B42"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/after/US-2560x1440-forecast-14-heat-5-to-7.png",
+      "sha256": "4F431D281ADB66F8EAA68388CC4C8F95A6CF04456BA3F3A6E1262CA84E628335"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/audio-diagnostic-native-run.json",
+      "sha256": "87756AC9A5E654B0765584A8A3F6FCA456036BCF2D593ED42D75F592BA4CC3E6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/audio-native-fixed-run.json",
+      "sha256": "6344A0E2508737C041B2F4E64C27EA1669AC9E3A2C309C6A0301350CC2A58BA9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/audio-source-before.cs.txt",
+      "sha256": "DD62AA55C0CFE929FB1DF78CF18C0D6BBEAE2E8C86119B67BF1B6591F9BC37C9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/baseline-diff.txt",
+      "sha256": "AB4E7BFE7684D19784E49CF20C607E8ED8BD3164B12160B52A0EDF40D22014D3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/baseline.json",
+      "sha256": "51271100F6B43AD4D38EE2ED2543851D4B096A65C41018BBEEA9AD19B97AD3BE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/CN-1280x720-actual-6-of-14.png",
+      "sha256": "2688D2EEE34A3063C60D9BDBC3924BE624D1C48A12649DDBEB0DC9FE20D9E2C1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/CN-1280x720-forecast-14-heat-5-to-7.png",
+      "sha256": "5215ABBAFDC2F1355EFA9EEB41AA00EE1A4DD40156780B5CC868F7FCED828B98"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/CN-1920x1080-actual-6-of-14.png",
+      "sha256": "ACBA39AEAE4C94D14F5205C356D9508D20A9E999AC4F0F7911813978369A1C1A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/CN-1920x1080-forecast-14-heat-5-to-7.png",
+      "sha256": "31D1B9EFB8042A611B494B7F0D596DE08577A06979FE0A58398851A821D5A2F0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/CN-2560x1440-actual-6-of-14.png",
+      "sha256": "90C2589F3A3AA2F3207FA404FC4FC4766E16A9F3B9E6FD59B26E0257D23762B8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/CN-2560x1440-forecast-14-heat-5-to-7.png",
+      "sha256": "7DF37AEEF5BAB4DAD1482313E394C29B843D9DD36A26DA724407873BBF1DCF35"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/DE-1280x720-actual-6-of-14.png",
+      "sha256": "528912776F71C7CED38E3ECB00DAC36163FC3DF1AD882C934A791B81C53EF66E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/DE-1280x720-forecast-14-heat-5-to-7.png",
+      "sha256": "798DCEC6AC644078ED1BD119A31CC04E04DFC5CE61146D40947843952C2782C2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/DE-1920x1080-actual-6-of-14.png",
+      "sha256": "889DB99D1DEBB8B90EFF426D1B920D89A7070E269E865912E3C8CC64CD3BA61C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/DE-1920x1080-forecast-14-heat-5-to-7.png",
+      "sha256": "CE41F44AF205B90C788909F9F119C2EC6BEE013520E2BFB4387E4564BF564A7B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/DE-2560x1440-actual-6-of-14.png",
+      "sha256": "0A38E2E9F50B58C161DE5B4E9F078E81A3EF0A3ABDDBDE47FC82840A7AC45AA1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/DE-2560x1440-forecast-14-heat-5-to-7.png",
+      "sha256": "78B7E6F35D22A958FAEDD56B720D8863C30AA1B91DD21EACAD56CAD5297C9BEE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/IT-1280x720-actual-6-of-14.png",
+      "sha256": "78CF21D0C805C0F63E5D76938B8D919C3A656721B2AADCB62BA7F0AC9434ACF7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/IT-1280x720-forecast-14-heat-5-to-7.png",
+      "sha256": "A85D60BAB5BF0385E00BC052D77F73FD0ED39A355459BE8F831673B114175D9A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/IT-1920x1080-actual-6-of-14.png",
+      "sha256": "682C1C33D16DDBCD211C31E84D9BFA36DEE7BA4308A6AF2C21AA914347E25961"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/IT-1920x1080-forecast-14-heat-5-to-7.png",
+      "sha256": "86540EAB53505C313E9AE1C78594DF00769EC29272982F54BCB8B03E47DF6781"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/IT-2560x1440-actual-6-of-14.png",
+      "sha256": "822BF210888E0E095C2730160BA29686E63DDE5FDB145F30F76CD1ABE5257C7D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/IT-2560x1440-forecast-14-heat-5-to-7.png",
+      "sha256": "72B14A67709AFA24237AC3FA621931678C31EDD332FD22B7765B81C5AEBDF562"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/JP-1280x720-actual-6-of-14.png",
+      "sha256": "7F3114913D99BFCA7A4E39DBD0A57B53BDA18C6502FD9CACF02AD081E354BD8D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/JP-1280x720-forecast-14-heat-5-to-7.png",
+      "sha256": "6F3A7CDC40287449A269D1AF3EB113B710DAF0C2B9313F908E053FE2CC7AB12B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/JP-1920x1080-actual-6-of-14.png",
+      "sha256": "D95A51C48AB94FE2B5AC3F2DA659B39C206E7DEDA042F24361A2E8907217BB4B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/JP-1920x1080-forecast-14-heat-5-to-7.png",
+      "sha256": "DE187E217BFC06737852C85E0964AAECBC15E381F31CF01F823E12FA633112C9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/JP-2560x1440-actual-6-of-14.png",
+      "sha256": "07B3A10EC3D59691C5123F230CDEF668D236B5FC1630F3EEFD42B8A263F26F8B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/JP-2560x1440-forecast-14-heat-5-to-7.png",
+      "sha256": "A56CEF61EA162C7D15B0B963109029767DBD695CFBCD8E1914F65A3DBDE75D1F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/manifest.json",
+      "sha256": "129E6B80C3E77747C21148C2B91BD46B9B1EE87925C799F7107E5D4870B46D23"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/UK-1280x720-actual-6-of-14.png",
+      "sha256": "3E3AEBBC3FCCC35C1780678A1526076D32062D24198FCCC56EBCA05460382085"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/UK-1280x720-forecast-14-heat-5-to-7.png",
+      "sha256": "E51A10B4CD500B8BE57851CEF18945416CE6591990F1ED4C5B9597F19ECA7523"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/UK-1920x1080-actual-6-of-14.png",
+      "sha256": "E6264586F0EAD8A7169CC416F2BDA5F8D1654D6C06C9BAFB0A181BDAA1C1E1A5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/UK-1920x1080-forecast-14-heat-5-to-7.png",
+      "sha256": "47F0CA8B0AFB00C2B4241D9CBC757087AA40D4C03CEAE726531E009FA60BEB95"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/UK-2560x1440-actual-6-of-14.png",
+      "sha256": "6908C9C01F7E758A9280101FB9B53C884D8BD22DE9D14069B1CD02C051AA4AF1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/UK-2560x1440-forecast-14-heat-5-to-7.png",
+      "sha256": "D57A3E43CE9AA88CEACEA729C72A84BF7F2D3CFA925E09116028813BFDB36328"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/US-1280x720-actual-6-of-14.png",
+      "sha256": "F015B3D1815D16D7D971BBB5DAAA6B7430D141697F625B875AA7737B39A37755"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/US-1280x720-forecast-14-heat-5-to-7.png",
+      "sha256": "CAA812FE6983BB3F94B7F29002575591CAC66A9721FA28C666E6534CC9B500E1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/US-1920x1080-actual-6-of-14.png",
+      "sha256": "33062E1F61F4DDF2241EF681242E69EFA02F46DFFA86D28E46CA4B4EDB61F4C2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/US-1920x1080-forecast-14-heat-5-to-7.png",
+      "sha256": "2344764EAD6AA94F0CEBE21FDDC68A58C9DD1C3D5F5EE5900F452DE652EA4CAE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/US-2560x1440-actual-6-of-14.png",
+      "sha256": "D21364A9B5F22E6806C5F6DA16703C5711F51E112FE3957A27634FE784D539ED"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/before/US-2560x1440-forecast-14-heat-5-to-7.png",
+      "sha256": "F21D9D9AB249C9B79946B58BA9804549A062909A3F671304DDF642D31A12C4E5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/dead-target-callback-red-tests.json",
+      "sha256": "47A3F4B90703E5801855E126EC7230CE92C41DBC93621D61E8AA67F91CCC6CCE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/final-console.json",
+      "sha256": "D9DDD3FCFC0D9ED1C7B49D6DDC732A6866B16322A9D45C41A9A4B1C19E111BAD"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/final-focused-after-unsubscribe-native-run.json",
+      "sha256": "3A2B187CFF35CA594B5753E82F631FDF2FEDE50D8065860DD46D25F902371374"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/final-focused-after-unsubscribe-native-ui-case.json",
+      "sha256": "DEC7A04AF967D55F86FDD9EE2CAD0452A82EAB73ED9E65C70ED104CB8F6034D5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/final-focused-native-run.json",
+      "sha256": "EA1FF6FB432F3353E7C921FA2783BB128063B37042D93F62DDAC7FBDFBEE27E4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/final-focused-native-ui-case.json",
+      "sha256": "FBB96BD2BF0843631C1386456BFC5A5665FBCB442E6FA18A7BB615397537ABBB"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/final-unity-state.json",
+      "sha256": "713CC2957A35C4A3B58A2329DFCEB37C5ED40D69CBC179B5B2D2F5CF8B833327"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/focused-final-native-run.json",
+      "sha256": "20A1DC73000B74B03B9B67E5DFC567C3E81C36430BF3EF9EC2BAF3736894D3CB"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/focused-final-native-ui-case.json",
+      "sha256": "C02892AE2AC878FDC3E348ED2D321177E0EC410CC8FB29A2978E0575A2187E78"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/focused-native-run.json",
+      "sha256": "A39EAD91BD5637F81E43486E9FAADFF6C1F3A120D084E8A0A5D451134ED5094A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/focused-native-ui-case.json",
+      "sha256": "CD1EAF208E477E1D3EA0FD9CE9F9B572AFF96D04796B8FA70B47F4487E83205C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/full-after-source-guard-console-errors.json",
+      "sha256": "2D3E556F429A515BC9CB13835DFB1C858CC070B41385DFA7A094ADA47B8E8484"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/full-after-source-guard-native-run.json",
+      "sha256": "CB8DBC9109363DCECB40340B2D3B410DD7C01B36910F5EFE8BDF680964118EF3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/full-after-unsubscribe-console-errors.json",
+      "sha256": "2D3E556F429A515BC9CB13835DFB1C858CC070B41385DFA7A094ADA47B8E8484"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/full-after-unsubscribe-native-run.json",
+      "sha256": "8F0FB82F2752963A6F61B2301655F7823BB9F5C4695E5DE34B7AAC71E0726385"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/full-console-errors.json",
+      "sha256": "B9A0BB2BC6C1C9AD884B9D7C6869F98621C35198B9B267B6DE565A366C09CC1C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/full-final-native-run.json",
+      "sha256": "B0763B17D99472E83496DB3C0D8286F52B17CFB4360D16850AE3C5F4F57116D6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/full-native-run.json",
+      "sha256": "EC086E9AD137D1D5A34286647EECADCAB968E8118F6A5A190DC174AD0B245DD3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/README.md",
+      "sha256": "64CE1432E3B2224EA5611F13F9F6387ED26A352DC2C24C9CEDC885024F67B7D7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/screenshot-integrity.json",
+      "sha256": "A94173C942AF9C1902C0D3A6A0617B23EEE1588239D701D2A34BEB1EA3542CA2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/source-hashes.json",
+      "sha256": "85AAFF99F836443C544DED625FC5ADF7147A2CAC019EA4ABB5983CB134081A76"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/stale-scene-callback-red-test.json",
+      "sha256": "DCE4191518841D7DC33077976DAC4192CD487FF09BD471A16675A49469D273A4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-ui-2026-10-14/telemetry-source-before.cs.txt",
+      "sha256": "FA4F83A9F498B8C2985825AD2F952894AA6941380CAF1F7D8181E962EC11597B"
+    },
+    {
+      "path": "production/qa/evidence/team-audio-assets-2026-10-11.json",
+      "sha256": "6BE0785D3568ABA5EB71BDDFF3FE7094CB6DCBB3529EFBFA97D70A740FE46DEC"
+    },
+    {
+      "path": "production/qa/evidence/team-audio-preview-2026-10-11.wav",
+      "sha256": "317D934F0FFB694307C0140871D917FBA2AF61E151FB2A420BDB65CB3FE8836A"
+    },
+    {
+      "path": "production/qa/evidence/team-audio-preview-index-2026-10-11.json",
+      "sha256": "4DC580F69CB5524FECA721E97250BE44E18E627E6FBBD7926AA41EDA0B41A9B2"
+    },
+    {
+      "path": "production/qa/evidence/team-gear-2026-10-11/CN.png",
+      "sha256": "EE658B648D593FD5A24837F6755146B2600697E850E310233F5A852A39A74706"
+    },
+    {
+      "path": "production/qa/evidence/team-gear-2026-10-11/DE.png",
+      "sha256": "7398CFCDFF6171F2E9904251C9A2FE1BF0EC25DE45C302D6215E0E1AD4A9D98D"
+    },
+    {
+      "path": "production/qa/evidence/team-gear-2026-10-11/IT.png",
+      "sha256": "6892760543FA0239E5B4B0C1189A542C7FDB1D44905C51DE94A5ADFC81888111"
+    },
+    {
+      "path": "production/qa/evidence/team-gear-2026-10-11/JP.png",
+      "sha256": "A8B38112776D3AE75BA3EF2E28924C5D207ADA0C19D78C02CB011522BF24F18C"
+    },
+    {
+      "path": "production/qa/evidence/team-gear-2026-10-11/six-team-overview.png",
+      "sha256": "9F5D674C51BC096B37BB67CF515FF38CC64A22CF9928058E9A504ADEC8D651A9"
+    },
+    {
+      "path": "production/qa/evidence/team-gear-2026-10-11/UK.png",
+      "sha256": "D056E3FBD93E00511715A919E897FA4A74AFF419287D414A49CCA1D8B8C54292"
+    },
+    {
+      "path": "production/qa/evidence/team-gear-2026-10-11/US.png",
+      "sha256": "3BFD37A28F4EFDDAB08E71C3B8D61A38DBBC4ACFE0D56EE649E44CFA819A17C9"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-focused-results-2026-10-12.json",
+      "sha256": "79F994A4A7F33B6CB8318600D2EA5343C9F970E803D7F67040AA6BE71EED7802"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-full-results-2026-10-12.json",
+      "sha256": "FEDDC4A8A54A2FE2DB5EC0E2282C0D4974480C0E64044713468F5A88C540F2E2"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-layout-attempt-2026-10-12.json",
+      "sha256": "4FB03C771E2AFF48FAF139BE4CD50E5B50E3029726659C7E7CE472D00E0609A5"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-layout-results-2026-10-12.json",
+      "sha256": "D66741852B68734FE3EFAC212C04526A425ABDB1D4238B2DD0AB400FC61E6974"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-presentation-2026-10-11.md",
+      "sha256": "1E1C0FFDD9B465F29178D993C4CFBDE76631CE6906C616580892D32B427AC383"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12.md",
+      "sha256": "6000B3736277F354D86358AEC72B7A485383AB008761A9F150BE4C565A3F8369"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/CN-1920x1080-gear.png",
+      "sha256": "5E0870F279C4839D53EAE3C1EB57EA26A7FF3E54EB6774EC48D520F29678E01C"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/CN-1920x1080-hud.png",
+      "sha256": "BD3254420E05E790799A75D700AB078CFC23BCC5C6BD240F785A47B308559597"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/CN-2560x1440-gear.png",
+      "sha256": "377F6962BAD9ACAFED8D4FFE5C646E4A64867AAD6213E6A1F5871F35DB990F93"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/CN-2560x1440-hud.png",
+      "sha256": "C4940789204AEB98DE6A959FE6AC83DBA34C19474E65CE26A6C5C2A3FF7E02A4"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/DE-1920x1080-gear.png",
+      "sha256": "167D7A053444849748EE793AAC136406555D9848BF7CB5D88AE31F06046FBFA8"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/DE-1920x1080-hud.png",
+      "sha256": "4C361AF8B4D957E2261D767F318E6A5DAE3A3A3A3EB29A40006F674AB9FDCD77"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/DE-2560x1440-gear.png",
+      "sha256": "48B70AFA5D25C6C7CAABCF098B019A63762428F795520B4C909F225B8E97DA0B"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/DE-2560x1440-hud.png",
+      "sha256": "9FB8952F8AD0B8941EFA9458A5448BD5B3AB2AE34A7400788DE2237A27E22EF8"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/IT-1920x1080-gear.png",
+      "sha256": "D76522823DE9B55E6405CFAE3D1866E6BBE943F406D24801DB960A227BF477B1"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/IT-1920x1080-hud.png",
+      "sha256": "8A2B57C6C3DEE20B7E4831EB63BC5F0737948DFCCBA236097468B9C2EA1564D2"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/IT-2560x1440-gear.png",
+      "sha256": "8C194B0A1A10E53C6880105A0C82A4883347896B86313559DB880A446DE12964"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/IT-2560x1440-hud.png",
+      "sha256": "983E13F6887C7F71B6C4DB1C313419EEF98A77FA0E333B5CADD596DB677CDC7F"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/JP-1920x1080-gear.png",
+      "sha256": "E7D1BF8564399C17E3A915E39AAB770D145CBC88367E8FFCEA2E7FD2132F9B92"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/JP-1920x1080-hud.png",
+      "sha256": "3AF790EBEB36F0EDFAF49A0600CA62D2CCF4A722FD9E29C9C1F0ED2CEBA16ACA"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/JP-2560x1440-gear.png",
+      "sha256": "1499E790719B9C943769CA38649DD6A08A0A638E66BCAB55BE99BEF12D1565DE"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/JP-2560x1440-hud.png",
+      "sha256": "153B75BB3C47A802F6B2153FB3D1BBBFA345D758FCF2A5F91BD699F752460EDF"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/render-summary.json",
+      "sha256": "FBBDAF650932145BC3E1ABE7E0289E973BA5EEB9B38EE715712539EDC5C294D2"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/six-teams-1920x1080.png",
+      "sha256": "274532E3AF2BC6C958819A4BE7E38FE62BF77311CC4E46BA416E8BA348C53943"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/six-teams-2560x1440.png",
+      "sha256": "8CCCAA2EF153EF46D4BE8BDDE64654CA9E47573D6BBC738A06FFAD388602E7C4"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/text-geometry.csv",
+      "sha256": "CD2AC40C9580F55B644B08CE4A68F98D38D0F56DF7ED33A725054CE7CF582A9D"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/UK-1920x1080-gear.png",
+      "sha256": "E711C8F5CF7B2CF7EE0BC7CA2FA9D75A96FC689414AA9FBB05E741355A637738"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/UK-1920x1080-hud.png",
+      "sha256": "D7930AA07E39029EE879BAB41852C0BC259A3152BEEA4F5D4686693D3D0E4D6A"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/UK-2560x1440-gear.png",
+      "sha256": "0B3326787FC26995297D969ACE267558C7E14D27FAADAEC2C275E8FC2C400DEF"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/UK-2560x1440-hud.png",
+      "sha256": "896C5124A265A4A3EE87B7FD91889AF95D7D1D96016333900151669131A190F0"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/US-1920x1080-drag-preview-gear.png",
+      "sha256": "238FF3FBA4238FFD442733E0FEA54067F35630458F5723E2979CC36C5C914D17"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/US-1920x1080-drag-preview-hud.png",
+      "sha256": "2B96E4051DA9BC4946551F13BD6A3882B671272604CC08F385EF4BAF277D41BF"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/US-1920x1080-gear.png",
+      "sha256": "12B59C9F11390CD3F7833A1EF48E16555365AB08345C2E40DE5FBB5DE365D80A"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/US-1920x1080-hud.png",
+      "sha256": "2A30775CA3D2135653C603183A631068C6E5EE94E27DEE133F88039AAE3D711B"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/US-1920x1080-long-details-bottom.png",
+      "sha256": "91A7945D914A48515E2AC1E0CD29E7C2E04A8B3B7801BDE7EC9728A3D6EEE5B4"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/US-1920x1080-long-details-top.png",
+      "sha256": "CBBA5F709FE3A1CF9994583E328E8A64DC6A4A335166AA725326DF17A1EDD9A4"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/US-2560x1440-drag-preview-gear.png",
+      "sha256": "DF1BFE908E7C7F8F3028235AEB28C564FC5BCC934AAD18F5BF17BB535E4F0FEA"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/US-2560x1440-drag-preview-hud.png",
+      "sha256": "C4C3D9B092A8D3230D071888D94C35D21FC60598C0D889A1AAB6E062F1EF097C"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/US-2560x1440-gear.png",
+      "sha256": "B81678BB82F497FE88B9FE7BDCACF6A4033A17282A3B9462281FE5D30ED61F43"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/US-2560x1440-hud.png",
+      "sha256": "540A665C38D56B60767325C17FA0A2C7C73BA77A68C9178F98B07D6EFB71F23D"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/US-2560x1440-long-details-bottom.png",
+      "sha256": "5FF1CBC5AAF3D920F812DF64653B6AE86DF9D33A53D29F5F5D69F93368A881B0"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-revision-2026-10-12/US-2560x1440-long-details-top.png",
+      "sha256": "F98A3371CC04F90D36109C5B505E6EAA939596C126C25671615A706987162706"
+    },
+    {
+      "path": "production/qa/evidence/team-vehicle-test-results-2026-10-11.json",
+      "sha256": "B9335C5908F1CAEA7A6A659B46F32F31D33D2B55AF1F344035B8BA16D9D6B5C6"
+    },
+    {
+      "path": "ProjectSettings/EditorSettings.asset",
+      "sha256": "6AB19FE30172C763029B8F2E0616C6DC3DCFE480E845FC1AAAEF5975C948EEC0"
+    },
+    {
+      "path": "tools/Audio/build_team_vehicle_audio.py",
+      "sha256": "F9A017CD5F2A45B880CD07E134F980D89836EF89B4E29460B428F8C1F5CBBBEB"
+    },
+    {
+      "path": "tools/Audio/team_vehicle_comparison.wav",
+      "sha256": "4993A0FD1933888A6ED71725D4634D54BBD061B953BDC5DDB42374140A33AA44"
+    },
+    {
+      "path": "tools/Audio/team_vehicle_tuning_comparison.wav",
+      "sha256": "9F94DC1043B874D6434F8BF25B917223F9BAADAFC3A612B51C36081E99417975"
+    }
+  ],
+  "note": "Snapshot precedes this evidence directory and package 3 writes. Existing deleted paths are recorded as missing; no existing files modified."
+}

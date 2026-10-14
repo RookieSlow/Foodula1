@@ -31,14 +31,14 @@ public class RaceUILayoutController : MonoBehaviour
     public static Vector2 ReturnToMenuAnchorMax => new Vector2(0.92f, 0.89f);
     public static Vector2 ResetAnchorMin => new Vector2(0.08f, 0.73f);
     public static Vector2 ResetAnchorMax => new Vector2(0.92f, 0.80f);
-    public static Vector2 GearGridAnchorMin => new Vector2(0.08f, 0.49f);
-    public static Vector2 GearGridAnchorMax => new Vector2(0.92f, 0.69f);
-    public static Vector2 DriverSkillAnchorMin => new Vector2(0.08f, 0.40f);
-    public static Vector2 DriverSkillAnchorMax => new Vector2(0.92f, 0.46f);
-    public static Vector2 PromptPanelAnchorMin => new Vector2(0.04f, 0.16f);
-    public static Vector2 PromptPanelAnchorMax => new Vector2(0.96f, 0.37f);
-    public static Vector2 LogScrollAnchorMin => new Vector2(0.06f, 0.165f);
-    public static Vector2 LogScrollAnchorMax => new Vector2(0.94f, 0.265f);
+    public static Vector2 GearGridAnchorMin => new Vector2(0.08f, 0.41f);
+    public static Vector2 GearGridAnchorMax => new Vector2(0.92f, 0.72f);
+    public static Vector2 DriverSkillAnchorMin => new Vector2(0.08f, 0.3f);
+    public static Vector2 DriverSkillAnchorMax => new Vector2(0.92f, 0.395f);
+    public static Vector2 PromptPanelAnchorMin => new Vector2(0.04f, 0.135f);
+    public static Vector2 PromptPanelAnchorMax => new Vector2(0.96f, 0.29f);
+    public static Vector2 LogScrollAnchorMin => new Vector2(0.06f, 0.135f);
+    public static Vector2 LogScrollAnchorMax => new Vector2(0.94f, 0.2f);
     public static Vector2 PrimaryActionAnchorMin => new Vector2(0.08f, 0.04f);
     public static Vector2 PrimaryActionAnchorMax => new Vector2(0.92f, 0.13f);
 
@@ -74,6 +74,8 @@ public class RaceUILayoutController : MonoBehaviour
             ApplyAuthoredButtonStyles(hud, cardHand);
             cardHand?.EnsureSelectedCardEffectUI(deckPanel, FindFont(root));
             ApplyReadableTypography(hud, cardHand);
+            ApplyTeamGearLayout(hud);
+            RacingTechHudShellUI.Attach(root, hud);
             UsesAuthoredLayout = true;
             applied = true;
             return;
@@ -135,10 +137,12 @@ public class RaceUILayoutController : MonoBehaviour
         BuildScoreboardPanel(hud, font);
         BuildDeckPanel(cardHand, font);
         ApplyReadableTypography(hud, cardHand);
+        ApplyTeamGearLayout(hud);
 
         if (hud != null && hud.gameOverPanel != null)
             Dock(hud.gameOverPanel.transform, trackFrame, new Vector2(0.2f, 0.2f), new Vector2(0.8f, 0.8f));
 
+        RacingTechHudShellUI.Attach(root, hud);
         applied = true;
     }
 
@@ -202,7 +206,8 @@ public class RaceUILayoutController : MonoBehaviour
 
         if (hud != null)
         {
-            Transform gearButtons = FindDeep(hud.transform, "GearButtons");
+            Transform gearButtons = hud.gear1Button != null ? hud.gear1Button.transform.parent
+                : FindDeep(hud.transform.root, "GearButtons");
             if (gearButtons != null)
             {
                 Dock(gearButtons, operationPanel, GearGridAnchorMin, GearGridAnchorMax);
@@ -210,20 +215,16 @@ public class RaceUILayoutController : MonoBehaviour
                 if (group != null)
                     group.enabled = false;
 
-                // The original horizontal group was wider than the narrow
-                // operation column. Use a compact 2x2 gear grid instead.
-                DockButton(hud.gear1Button, gearButtons, new Vector2(0.02f, 0.52f), new Vector2(0.48f, 0.98f));
-                DockButton(hud.gear2Button, gearButtons, new Vector2(0.52f, 0.52f), new Vector2(0.98f, 0.98f));
-                DockButton(hud.gear3Button, gearButtons, new Vector2(0.02f, 0.02f), new Vector2(0.48f, 0.48f));
-                DockButton(hud.gear4Button, gearButtons, new Vector2(0.52f, 0.02f), new Vector2(0.98f, 0.48f));
+                // TeamGearPresentationUI arranges the individual controls after
+                // the surrounding panel has completed docking and styling.
             }
 
             DockButton(hud.confirmGearButton, operationPanel, PrimaryActionAnchorMin, PrimaryActionAnchorMax);
             DockButton(hud.driverSkillButton, operationPanel, DriverSkillAnchorMin, DriverSkillAnchorMax);
             DockButton(hud.resetButton, operationPanel, ResetAnchorMin, ResetAnchorMax);
             DockButton(hud.returnToMenuButton, operationPanel, ReturnToMenuAnchorMin, ReturnToMenuAnchorMax);
-            DockText(hud.statusText, operationPanel, 0.27f, 0.36f, 12);
-            DockText(hud.logText, operationPanel, 0.17f, 0.26f, 10);
+            DockText(hud.statusText, operationPanel, 0.22f, 0.285f, 12);
+            DockText(hud.logText, operationPanel, 0.135f, 0.2f, 10);
         }
 
         if (cardHand != null)
@@ -243,17 +244,14 @@ public class RaceUILayoutController : MonoBehaviour
         if (operationPanel == null)
             return;
 
-        Transform gearButtons = hud != null ? FindDeep(hud.transform, "GearButtons") : null;
+        Transform gearButtons = hud != null && hud.gear1Button != null ? hud.gear1Button.transform.parent
+            : hud != null ? FindDeep(hud.transform.root, "GearButtons") : null;
         if (gearButtons != null)
         {
             Dock(gearButtons, operationPanel, GearGridAnchorMin, GearGridAnchorMax);
             LayoutGroup group = gearButtons.GetComponent<LayoutGroup>();
             if (group != null)
                 group.enabled = false;
-            DockButton(hud.gear1Button, gearButtons, new Vector2(0.02f, 0.52f), new Vector2(0.48f, 0.98f));
-            DockButton(hud.gear2Button, gearButtons, new Vector2(0.52f, 0.52f), new Vector2(0.98f, 0.98f));
-            DockButton(hud.gear3Button, gearButtons, new Vector2(0.02f, 0.02f), new Vector2(0.48f, 0.48f));
-            DockButton(hud.gear4Button, gearButtons, new Vector2(0.52f, 0.02f), new Vector2(0.98f, 0.48f));
         }
         if (hud != null)
         {
@@ -261,8 +259,8 @@ public class RaceUILayoutController : MonoBehaviour
             DockButton(hud.driverSkillButton, operationPanel, DriverSkillAnchorMin, DriverSkillAnchorMax);
             DockButton(hud.resetButton, operationPanel, ResetAnchorMin, ResetAnchorMax);
             DockButton(hud.returnToMenuButton, operationPanel, ReturnToMenuAnchorMin, ReturnToMenuAnchorMax);
-            DockText(hud.statusText, operationPanel, 0.27f, 0.36f, 12);
-            DockText(hud.logText, operationPanel, 0.17f, 0.26f, 10);
+            DockText(hud.statusText, operationPanel, 0.22f, 0.285f, 12);
+            DockText(hud.logText, operationPanel, 0.135f, 0.2f, 10);
         }
         if (cardHand != null)
             DockButton(cardHand.playCardsButton, operationPanel, PrimaryActionAnchorMin, PrimaryActionAnchorMax);
@@ -277,6 +275,14 @@ public class RaceUILayoutController : MonoBehaviour
             promptPanel.SetAsFirstSibling();
         }
         EnsureLogScrollView(hud);
+    }
+
+    private static void ApplyTeamGearLayout(HUDUI hud)
+    {
+        if (hud == null) return;
+        hud.EnsurePresentation();
+        hud.TeamGearPresentation?.ApplyLayout();
+        hud.RefreshTeamGearPresentation();
     }
 
     private void EnsureLogScrollView(HUDUI hud)
@@ -442,6 +448,14 @@ public class RaceUILayoutController : MonoBehaviour
             SetButtonLabelSize(hud.gear4Button, 20f);
             SetButtonLabelSize(hud.confirmGearButton, 20f);
             SetButtonLabelSize(hud.driverSkillButton, 20f);
+            if (hud.driverSkillButton != null)
+                foreach (TMP_Text label in hud.driverSkillButton.GetComponentsInChildren<TMP_Text>(true))
+                {
+                    label.enableAutoSizing = true;
+                    label.fontSizeMin = 12f;
+                    label.fontSizeMax = 20f;
+                    label.enableWordWrapping = true;
+                }
             SetButtonLabelSize(hud.resetButton, 20f);
             SetButtonLabelSize(hud.returnToMenuButton, 20f);
             SetButtonLabelSize(hud.backToMenuButton, 20f);

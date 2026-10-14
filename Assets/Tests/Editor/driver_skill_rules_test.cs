@@ -3,6 +3,29 @@ using NUnit.Framework;
 
 public class DriverSkillRulesTests
 {
+    [TestCase(3)] [TestCase(5)] [TestCase(7)]
+    public void ReactionHeatCostMatchesLegacyGateWithoutConsumingAnyDriverState(int level)
+    {
+        Assert.That(DriverSkillRules.GetReactionHeatCost(null), Is.Zero);
+        foreach (DriverProfile driver in DriverCatalog.All)
+        {
+            var state = new DriverSkillRuntimeState();
+            state.Initialize(driver, level, true);
+            Assert.That(DriverSkillRules.GetReactionHeatCost(state), Is.Zero, driver.Id);
+            Assert.That(state.TryActivate(driver,
+                new DriverSkillActivationContext(true, 2, 3, 1, 10, 3), out string reason), Is.True, reason);
+            int uses = state.UsesRemaining, turns = state.ActiveTurnsRemaining;
+            int expected = state.IsActive && state.Skill == DriverActiveSkillId.TrueSelf ? 1 : 0;
+            for (int i = 0; i < 2; i++)
+                Assert.That(DriverSkillRules.GetReactionHeatCost(state), Is.EqualTo(expected), driver.Id);
+            Assert.That(state.UsesRemaining, Is.EqualTo(uses));
+            Assert.That(state.ActiveTurnsRemaining, Is.EqualTo(turns));
+            Assert.That(state.ActivatedThisTurn, Is.True);
+            state.Initialize(driver, level, false);
+            Assert.That(DriverSkillRules.GetReactionHeatCost(state), Is.Zero);
+        }
+    }
+
     [Test]
     public void EveryDriverMapsToOneUniqueActiveSkill()
     {

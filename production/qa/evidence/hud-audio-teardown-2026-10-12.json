@@ -1,0 +1,88 @@
+{
+  "reportedIssue": "HUDUI MissingReferenceException during MVPGameManager.OnDisable and OnDestroy",
+  "beforeFix": {
+    "reproducedCallbacks": [
+      "OnDisable",
+      "OnDestroy"
+    ],
+    "unityNull": true,
+    "managedReferenceNull": false,
+    "exception": "MissingReferenceException"
+  },
+  "fix": {
+    "runtimeSources": [
+      "Assets/Scripts/Core/MVPGameManager.cs",
+      "Assets/Scripts/UI/HUDUI.cs"
+    ],
+    "behavior": [
+      "Use Unity destroyed-object null checks for engine HUD writes.",
+      "Do not initialize or reconstruct presentation from intensity updates.",
+      "Keep audio stop and owner/progress cleanup independent of HUD lifetime."
+    ]
+  },
+  "editMode": {
+    "jobId": "692a69a42fd8410586d81d72c11bc1c1",
+    "groups": [
+      "TeamVehicleMovementAudioTests",
+      "TeamGearPresentationTests"
+    ],
+    "summary": {
+      "total": 60,
+      "passed": 60,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 3.7463994,
+      "resultState": "Passed"
+    },
+    "endedUtc": "2026-10-12T15:11:53.112Z"
+  },
+  "nativePlayerLoop": {
+    "jobId": "b174087d9a224d48ac27363ed34d85f7",
+    "testName": "TeamVehicleRuntimeAudioTests.DestroyedHudDoesNotInterruptNativeDisableDestroyOrPlayModeExit",
+    "authority": "Native Unity Test Runner RunFinished in SessionState",
+    "summary": {
+      "fullName": "Foodula1",
+      "resultState": "Passed",
+      "endedUtc": "2026-10-12T15:13:06.6938341Z",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "inconclusive": 0
+    },
+    "verified": [
+      "HUD destroyed before late engine progress update.",
+      "Native OnDisable when deactivating the active manager.",
+      "Native OnDisable/OnDestroy when destroying the active manager.",
+      "Native OnDestroy at ExitPlayMode with a previously active, now disabled manager holding a destroyed HUD.",
+      "All 3 engine layers stopped with null clips and zero volumes.",
+      "Movement/instant owner and cell progress cleared; player gear/position unchanged."
+    ],
+    "raceStartRan": false
+  },
+  "toolStatus": {
+    "oldJobId": "26015c97f87e4c4eac2a642abfea116a",
+    "oldWarningMeaning": "TestJobManager restored a running SessionState record more than 5 minutes old, and cleared the orphaned tool job. Historical native 2872/2872 pass evidence remains saved.",
+    "runtimeJobProgressLostDuringDomainReload": true,
+    "nativeResultWasAuthoritative": true,
+    "orphanClearedOnlyAfterNativeCompletionAndCleanIdleEditor": true
+  },
+  "integrity": {
+    "sourceFilesChecked": 316,
+    "sourceFilesModifiedDuringNativeTest": [],
+    "baselineMissingPaths": [],
+    "originalFontHashPreserved": true,
+    "scene": "Assets/Scenes/MainMenu.unity",
+    "sceneDirty": false,
+    "sceneCount": 1,
+    "playing": false,
+    "compiling": false,
+    "updating": false,
+    "evidenceArmed": false,
+    "diffCheckPassed": true,
+    "indexEmpty": true,
+    "committed": false,
+    "pushed": false
+  },
+  "limits": "This change has 60 scoped EditMode passes and 1 native player-loop pass. 2879 is the discovery count, not a new full-suite result. The previous 2872 full-suite pass is historical."
+}

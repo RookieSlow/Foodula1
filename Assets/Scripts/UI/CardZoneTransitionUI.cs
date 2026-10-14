@@ -277,6 +277,23 @@ public sealed class CardZoneTransitionUI : MonoBehaviour
 /// <summary>Pure presentation rules for card-zone transitions.</summary>
 public static class CardZoneTransitionRules
 {
+    /// <summary>
+    /// Routes an actual cooling receipt without changing card ownership.
+    /// Grill keeps its authored hand/draw-to-discard cues before the combined
+    /// discard-to-engine cue. Zero counts are preserved for the FX adapter.
+    /// </summary>
+    public static void PresentHeatCooling(
+        HeatCoolingResult result,
+        bool throughDiscard,
+        System.Action<int, CardVisualZone, CardVisualZone> present)
+    {
+        CardVisualZone destination = throughDiscard ? CardVisualZone.DiscardPile : CardVisualZone.Engine;
+        present(result.FromHand, CardVisualZone.Hand, destination);
+        present(result.FromDraw, CardVisualZone.DrawPile, destination);
+        present(throughDiscard ? result.Total : result.FromDiscard,
+            CardVisualZone.DiscardPile, CardVisualZone.Engine);
+    }
+
     public static int GetVisualCount(int eventCardCount, int maxVisuals)
     {
         if (eventCardCount <= 0 || maxVisuals <= 0)

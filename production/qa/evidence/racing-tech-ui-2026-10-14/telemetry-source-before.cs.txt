@@ -1,0 +1,230 @@
+using System.Collections.Generic;
+using System.Text;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+/// <summary>Reads the turn ledger and real heat ownership; audio intensity never resets these strips.</summary>
+public sealed class RaceTelemetryStripUI : MonoBehaviour
+{
+    private HUDUI owner;
+    private Button movementButton;
+    private TMP_Text movementLabel;
+    private TMP_Text heatLabel;
+    private Image heatFill;
+    private Image heatPreviewFill;
+    private RaceTurnPreview preview;
+    private RectTransform movementTrack;
+    private readonly List<Image> portions = new List<Image>();
+    private TurnMovementBreakdown movement;
+    private HeatGaugeState heat;
+    private int cardEstimate;
+
+    public Button MovementButton => movementButton;
+    public HeatGaugeState HeatState => heat;
+    public HeatGaugeState ForecastHeatState => preview != null ? preview.ProjectedHeat : heat;
+    public RaceTurnPreview LivePreview => preview;
+    public string HeatText => heatLabel != null ? heatLabel.text : "";
+    public string MovementText => movementLabel != null ? movementLabel.text : "";
+    public int VisiblePortionCount { get; private set; }
+
+    public static RaceTelemetryStripUI Attach(Transform parent, HUDUI hud, TMP_FontAsset font)
+    {
+        Transform existing = parent.Find("TurnTelemetry");
+        GameObject host = existing != null ? existing.gameObject : new GameObject("TurnTelemetry", typeof(RectTransform));
+        host.transform.SetParent(parent, false);
+        RaceTelemetryStripUI view = host.GetComponent<RaceTelemetryStripUI>();
+        if (view == null) view = host.AddComponent<RaceTelemetryStripUI>();
+        view.Initialize(hud, font);
+        return view;
+    }
+
+    private void Initialize(HUDUI hud, TMP_FontAsset font)
+    {
+        owner = hud;
+        Dock(transform, Vector2.zero, Vector2.one);
+        Image background = ImageChild(transform, "MovementStrip", new Color(0.035f, 0.055f, 0.085f));
+        Dock(background.transform, new Vector2(0f, 0.76f), new Vector2(1f, 0.89f));
+        background.raycastTarget = true;
+        movementButton = background.GetComponent<Button>();
+        if (movementButton == null) movementButton = background.gameObject.AddComponent<Button>();
+        movementButton.targetGraphic = background;
+        movementButton.onClick.RemoveListener(OpenDetails);
+        movementButton.onClick.AddListener(OpenDetails);
+        movementLabel = Label(background.transform, "MovementLabel", font);
+        Dock(movementLabel.transform, new Vector2(0.01f, 0.22f), new Vector2(0.99f, 1f));
+        Image track = ImageChild(background.transform, "Sources", new Color(0.13f, 0.17f, 0.22f));
+        Dock(track.transform, new Vector2(0.025f, 0.02f), new Vector2(0.975f, 0.16f));
+        movementTrack = track.rectTransform;
+        Image heatBackground = ImageChild(transform, "HeatStrip", new Color(0.04f, 0.055f, 0.065f));
+        Dock(heatBackground.transform, new Vector2(0f, 0.625f), new Vector2(1f, 0.75f));
+        heatLabel = Label(heatBackground.transform, "HeatLabel", font);
+        Dock(heatLabel.transform, new Vector2(0.01f, 0.18f), new Vector2(0.99f, 1f));
+        Image heatTrack = ImageChild(heatBackground.transform, "HeatTrack", new Color(0.15f, 0.18f, 0.21f));
+        Dock(heatTrack.transform, new Vector2(0.025f, 0.02f), new Vector2(0.975f, 0.16f));
+        heatFill = ImageChild(heatTrack.transform, "Fill", Color.cyan);
+        heatPreviewFill = ImageChild(heatTrack.transform, "ForecastFill", Color.yellow);
+        heatPreviewFill.gameObject.SetActive(false);
+        Image warm = ImageChild(heatTrack.transform, "Threshold50", new Color(1f, 0.74f, 0.22f));
+        Image hot = ImageChild(heatTrack.transform, "Threshold70", new Color(1f, 0.35f, 0.29f));
+        Dock(warm.transform, new Vector2(0.5f, 0f), new Vector2(0.51f, 1f));
+        Dock(hot.transform, new Vector2(0.7f, 0f), new Vector2(0.71f, 1f));
+    }
+
+    public void Refresh(TurnMovementBreakdown ledger, HeatGaugeState heatState,
+        int committedCardEstimate = 0, RaceTurnPreview livePreview = null)
+    {
+        movement = ledger;
+        heat = heatState;
+        preview = ledger == null || !ledger.HasBasePlan ? livePreview : null;
+        cardEstimate = preview == null && ledger != null && !ledger.HasBasePlan
+            ? Mathf.Max(0, committedCardEstimate) : 0;
+        int actual = ledger != null ? ledger.ActualCells : 0;
+        int total = (ledger != null ? ledger.TotalCells : 0) +
+            (preview != null ? preview.Movement.TotalCells : cardEstimate);
+        movementLabel.text = preview != null && preview.GearTrial
+            ? $"手牌试算 {total} 格 · {TeamGearRules.GetDisplayName(preview.Team, preview.Gear)}"
+            : total > 0 || preview != null || (ledger != null && ledger.HasBasePlan)
+                ? $"已前进 {actual} / 预计 {total} 格" : "待出牌 · 点击查看来源";
+        movementLabel.fontSize = 13f;
+        int used = 0;
+        int offset = 0;
+        if (ledger != null)
+            foreach (TurnMovementEntry entry in ledger.Entries)
+                DrawEntry(entry, total, ref used, ref offset);
+        if (preview != null)
+            foreach (TurnMovementEntry entry in preview.Movement.Entries)
+                DrawEntry(entry, total, ref used, ref offset);
+        else if (cardEstimate > 0)
+            SetPortion(used++, offset / (float)total, 1f,
+                Color.Lerp(SourceColor(TurnMovementKind.Card), new Color(0.07f, 0.09f, 0.12f), 0.7f));
+        for (int i = used; i < portions.Count; i++) portions[i].gameObject.SetActive(false);
+        VisiblePortionCount = used;
+        heatLabel.text = preview != null
+            ? preview.CanPay ? $"热量 {heat.TotalHeat}→预计 {preview.ProjectedHeat.TotalHeat}/{preview.ProjectedHeat.Capacity}"
+                : $"热量 {heat.TotalHeat}/{heat.Capacity} · 费用不足"
+            : $"热量 {heat.TotalHeat}/{heat.Capacity} · {heat.Percent}%";
+        heatLabel.fontSize = 13f;
+        Dock(heatFill.transform, Vector2.zero, new Vector2(heat.Fill01, preview != null ? 0.5f : 1f));
+        heatFill.color = heat.WarningLevel == HeatWarningLevel.Critical ? new Color(0.96f, 0.29f, 0.25f)
+            : heat.WarningLevel == HeatWarningLevel.Elevated ? new Color(0.97f, 0.65f, 0.23f) : new Color(0.25f, 0.68f, 1f);
+        heatPreviewFill.gameObject.SetActive(preview != null);
+        if (preview != null)
+        {
+            Dock(heatPreviewFill.transform, new Vector2(0f, 0.5f), new Vector2(preview.ProjectedHeat.Fill01, 1f));
+            heatPreviewFill.color = preview.CanPay ? new Color(1f, 0.78f, 0.3f) : new Color(1f, 0.3f, 0.25f);
+        }
+    }
+
+    private void DrawEntry(TurnMovementEntry entry, int total, ref int used, ref int offset)
+    {
+        if (entry.EffectiveCells <= 0) return;
+        float start = offset / (float)Mathf.Max(1, total);
+        float end = (offset + entry.EffectiveCells) / (float)Mathf.Max(1, total);
+        float split = start + (end - start) * Mathf.Clamp01(entry.ActualCells / (float)entry.EffectiveCells);
+        SetPortion(used++, start, end, Color.Lerp(SourceColor(entry.Kind), new Color(0.07f, 0.09f, 0.12f), 0.7f));
+        SetPortion(used++, start, split, SourceColor(entry.Kind));
+        offset += entry.EffectiveCells;
+    }
+
+    public string FormatDetails()
+    {
+        var copy = new StringBuilder();
+        int estimate = preview != null ? preview.Movement.TotalCells : cardEstimate;
+        copy.AppendLine($"已前进 {movement?.ActualCells ?? 0} 格 / 本回合预计 {(movement?.TotalCells ?? 0) + estimate} 格");
+        if (movement != null && movement.RewindCells > 0) copy.AppendLine($"失控等回退：{movement.RewindCells} 格（另计）");
+        copy.AppendLine("蓝：卡牌  紫：车手  金：科技  青：其他");
+        if (preview != null)
+        {
+            copy.AppendLine(preview.GearTrial ? "挡位试算：使用当前手牌中可打出的最高速度组合；尚未选牌，抽牌后可能改变。"
+                : "实时预估：按已提交和当前已选的牌结束回合计算；继续选牌会更新。");
+            copy.AppendLine($"{TeamGearRules.GetDisplayName(preview.Team, preview.Gear)} · 速度牌 {preview.CardCount}/{preview.RequiredCards}");
+        }
+        copy.AppendLine();
+        if (movement != null)
+            foreach (TurnMovementEntry entry in movement.Entries) AppendEntry(copy, entry, false);
+        if (preview != null)
+        {
+            copy.AppendLine($"卡牌预估    +{preview.CardSpeedTotal} 格（待结算）");
+            foreach (TurnMovementEntry entry in preview.Movement.Entries) AppendEntry(copy, entry, true);
+            if (!string.IsNullOrEmpty(preview.Note)) copy.AppendLine(preview.Note);
+            copy.AppendLine($"预计费用 +{preview.HeatPaid} 热（弯道 {preview.CornerHeat} 热） · 预计冷却 {preview.HeatCooled} 热");
+            if (preview.MissingCards > 0) copy.AppendLine($"当前组合缺 {preview.MissingCards} 张必选速度牌，已计入缺牌费用。");
+            copy.AppendLine("未计入之后的抽牌、尾流、超车、地标修复和对手行动；这些按实际结算更新。");
+        }
+        else if (cardEstimate > 0) copy.AppendLine($"已提交卡牌预估    +{cardEstimate} 格（待结算）");
+        else if (movement == null || movement.Entries.Count == 0) copy.AppendLine("尚无位移来源，选牌后实时更新。");
+        copy.AppendLine();
+        copy.Append($"当前热量 {heat.TotalHeat}/{heat.Capacity} · 引擎剩余 {heat.EngineRemaining} · 临时热量 {heat.TemporaryHeat}");
+        if (preview != null) copy.Append($"\n预计热量 {preview.ProjectedHeat.TotalHeat}/{preview.ProjectedHeat.Capacity}（上排金色为预估，下排为当前）");
+        return copy.ToString();
+    }
+
+    private static void AppendEntry(StringBuilder copy, TurnMovementEntry entry, bool predicted)
+    {
+        if (entry.Cells < 0) copy.AppendLine($"{entry.Label}    {entry.Cells} 格（修正）");
+        else
+        {
+            string adjusted = entry.Cells != entry.EffectiveCells ? $" · 结算后 {entry.EffectiveCells} 格" : "";
+            string state = predicted ? "（预估）" : $"已兑现 {entry.ActualCells}/{entry.EffectiveCells}";
+            copy.AppendLine($"{entry.Label}    +{entry.Cells} 格{adjusted}    {state}");
+        }
+    }
+
+    private void SetPortion(int index, float start, float end, Color tint)
+    {
+        while (portions.Count <= index)
+            portions.Add(ImageChild(movementTrack, "Source" + portions.Count, tint));
+        Image portion = portions[index];
+        portion.gameObject.SetActive(end > start);
+        portion.color = tint;
+        Dock(portion.transform, new Vector2(start, 0f), new Vector2(end, 1f));
+    }
+
+    private void OpenDetails() => owner?.ShowTelemetryDetails();
+    private void OnDestroy() { if (movementButton != null) movementButton.onClick.RemoveListener(OpenDetails); }
+
+    public static Color SourceColor(TurnMovementKind kind)
+    {
+        switch (kind)
+        {
+            case TurnMovementKind.Card: return new Color(0.27f, 0.64f, 1f);
+            case TurnMovementKind.Driver: return new Color(0.76f, 0.46f, 1f);
+            case TurnMovementKind.Technology: return new Color(1f, 0.74f, 0.26f);
+            default: return new Color(0.18f, 0.86f, 0.67f);
+        }
+    }
+
+    private static Image ImageChild(Transform parent, string name, Color tint)
+    {
+        Transform old = parent.Find(name);
+        GameObject host = old != null ? old.gameObject : new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        host.transform.SetParent(parent, false);
+        Image image = host.GetComponent<Image>();
+        image.color = tint;
+        image.raycastTarget = false;
+        return image;
+    }
+
+    private static TMP_Text Label(Transform parent, string name, TMP_FontAsset font)
+    {
+        Transform old = parent.Find(name);
+        GameObject host = old != null ? old.gameObject : new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
+        host.transform.SetParent(parent, false);
+        TMP_Text label = host.GetComponent<TMP_Text>();
+        label.font = font;
+        label.alignment = TextAlignmentOptions.Center;
+        label.color = Color.white;
+        label.enableWordWrapping = false;
+        label.raycastTarget = false;
+        label.margin = Vector4.zero;
+        return label;
+    }
+
+    private static void Dock(Transform target, Vector2 min, Vector2 max)
+    {
+        RectTransform rect = target as RectTransform;
+        rect.anchorMin = min; rect.anchorMax = max;
+        rect.offsetMin = Vector2.zero; rect.offsetMax = Vector2.zero;
+    }
+}

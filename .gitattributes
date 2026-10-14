@@ -33,3 +33,6 @@
 # to the generated font-material directory rather than all Unity .asset files.
 "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/*.asset" filter=lfs diff=lfs merge=lfs -text
 "Assets/ttf/* SDF.asset" filter=lfs diff=lfs merge=lfs -text
+
+# Preserve exact source diffs captured as QA evidence, including original whitespace.
+production/qa/evidence/**/baseline-diff.txt -whitespace

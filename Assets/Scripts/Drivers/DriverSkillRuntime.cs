@@ -31,6 +31,9 @@ public sealed class DriverSkillRuntimeState
     private int passiveTurnNumber;
     private bool pendingOvertakeReward;
 
+    /// <summary>Copies scalar runtime state, including private one-shot readiness flags.</summary>
+    public DriverSkillRuntimeState CreatePresentationCopy() => (DriverSkillRuntimeState)MemberwiseClone();
+
     public bool IsActive => Enabled && ActiveTurnsRemaining > 0;
 
     public void Initialize(DriverProfile profile, int level, bool enabled)

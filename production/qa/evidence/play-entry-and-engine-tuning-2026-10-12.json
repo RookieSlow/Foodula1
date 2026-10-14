@@ -1,0 +1,200 @@
+{
+  "createdUtc": "2026-10-12T16:03:00Z",
+  "scope": "Normal main-menu Play Mode entry diagnosis plus six-team engine gain and pitch tuning",
+  "performance": {
+    "normalEntryRequestUtc": "2026-10-12T15:42:08Z",
+    "normalEntryLog": {
+      "domainReloadMs": 21420,
+      "assetRefreshMs": 22345,
+      "finalizeReloadMs": 20807,
+      "setupLoadedEditorAssembliesMs": 9327,
+      "initializeOnLoadAttributesMs": 7669,
+      "initializeOnLoadMethodAttributesMs": 372,
+      "awakeAfterBackupRestorationMs": 9616
+    },
+    "earlierDomainReloadRangeMs": [
+      20088,
+      31220
+    ],
+    "confirmation": {
+      "scene": "Assets/Scenes/MainMenu.unity",
+      "playing": true,
+      "mainMenuLive": true,
+      "audioServiceLive": true,
+      "engineOwner": false,
+      "profilerEnabled": false,
+      "consoleEntries": 0,
+      "loadedAssemblies": 186,
+      "editorAllocatedMemoryMB": 227
+    },
+    "budget": "No startup-time budget found in maintained GDDs",
+    "interpretation": "Most of the measured reload is editor assembly initialization and editor-object restoration. A specific plugin/class has not been attributed by this phase-level measurement.",
+    "enterPlayModeOptions": {
+      "enabledBefore": false,
+      "enabledAfter": false,
+      "storedFlags": "DisableDomainReload, DisableSceneReload",
+      "flagsApplied": false,
+      "settingsFileChanged": false
+    },
+    "unmeasured": "No comparison with domain reload disabled and no claim of a speed fix."
+  },
+  "audio": {
+    "comparison": {
+      "path": "tools/Audio/team_vehicle_tuning_comparison.wav",
+      "frames": 1612800,
+      "duration_seconds": 33.6,
+      "peak_dbfs": -7.9999,
+      "rms_dbfs": -24.5293,
+      "looping": false,
+      "boundary_sample_delta": 0,
+      "sha256": "9f94dc1043b874d6434f8bf25b917223f9baadafc3a612b51c36081e99417975"
+    },
+    "order": [
+      "UK",
+      "DE",
+      "IT",
+      "US",
+      "CN",
+      "JP"
+    ],
+    "each_team": "old 2.5s, silence 0.15s, new 2.5s, silence 0.45s; both use the same 0-12 travelled cells",
+    "single_common_preview_normalization": true,
+    "profile_metrics": [
+      {
+        "team": "UK",
+        "old_gain": 0.36,
+        "new_gain": 0.78,
+        "gain_increase_db": 6.716,
+        "pitch": [
+          0.92,
+          1.44
+        ],
+        "cells_to_max": 10,
+        "six_cell_glide_semitones": 5.056,
+        "engine_only_peak_bound_dbfs": -9.148
+      },
+      {
+        "team": "DE",
+        "old_gain": 0.34,
+        "new_gain": 0.74,
+        "gain_increase_db": 6.755,
+        "pitch": [
+          0.94,
+          1.46
+        ],
+        "cells_to_max": 11,
+        "six_cell_glide_semitones": 4.565,
+        "engine_only_peak_bound_dbfs": -9.605
+      },
+      {
+        "team": "IT",
+        "old_gain": 0.32,
+        "new_gain": 0.72,
+        "gain_increase_db": 7.044,
+        "pitch": [
+          0.96,
+          1.52
+        ],
+        "cells_to_max": 10,
+        "six_cell_glide_semitones": 5.196,
+        "engine_only_peak_bound_dbfs": -9.843
+      },
+      {
+        "team": "US",
+        "old_gain": 0.4,
+        "new_gain": 0.84,
+        "gain_increase_db": 6.444,
+        "pitch": [
+          0.88,
+          1.36
+        ],
+        "cells_to_max": 10,
+        "six_cell_glide_semitones": 4.902,
+        "engine_only_peak_bound_dbfs": -8.504
+      },
+      {
+        "team": "CN",
+        "old_gain": 0.31,
+        "new_gain": 0.7,
+        "gain_increase_db": 7.075,
+        "pitch": [
+          0.94,
+          1.44
+        ],
+        "cells_to_max": 11,
+        "six_cell_glide_semitones": 4.41,
+        "engine_only_peak_bound_dbfs": -10.088
+      },
+      {
+        "team": "JP",
+        "old_gain": 0.33,
+        "new_gain": 0.76,
+        "gain_increase_db": 7.246,
+        "pitch": [
+          0.94,
+          1.52
+        ],
+        "cells_to_max": 10,
+        "six_cell_glide_semitones": 5.453,
+        "engine_only_peak_bound_dbfs": -9.374
+      }
+    ]
+  },
+  "rebuild": {
+    "comparedDataFiles": 32,
+    "differences": [],
+    "runtimeWavFilesUnchangedFromBeforeTuning": 30,
+    "originalRecordingsAndMetasPreserved": true,
+    "masterAndSfxMuteRulesPreserved": true,
+    "engineOnlyPeakBoundExcludesMusicAndOtherSfx": true
+  },
+  "editMode": {
+    "jobId": "4ef8631bd43144469a9a8910e4eb36c1",
+    "summary": {
+      "total": 41,
+      "passed": 41,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 2.2260779,
+      "resultState": "Passed"
+    }
+  },
+  "nativePlayerLoop": {
+    "jobId": "0c1d74df164a4dfcb62a99c02277cf7b",
+    "group": "TeamVehicleRuntimeAudioTests",
+    "authority": "Native Test Runner RunFinished",
+    "summary": {
+      "fullName": "Foodula1",
+      "resultState": "Passed",
+      "endedUtc": "2026-10-12T15:57:02.2692829Z",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "inconclusive": 0,
+      "message": "",
+      "output": ""
+    }
+  },
+  "editorAfterNativeRun": {
+    "checkedUtc": "2026-10-12T15:58:42.5508304Z",
+    "scene": "Assets/Scenes/MainMenu.unity",
+    "dirty": false,
+    "sceneCount": 1,
+    "playing": false,
+    "compiling": false,
+    "updating": false,
+    "evidenceArmed": false
+  },
+  "integrity": {
+    "sourceFilesChecked": 316,
+    "sourceModifiedDuringNativeRun": [],
+    "fontPreserved": true,
+    "baselineMissing": [],
+    "indexEmpty": true,
+    "head": "7fe271b939d2bef8a61553b0d1bf9313198cc9b2",
+    "commitOrPush": false
+  },
+  "toolJob": "MCP lost its progress during domain reload; the stale job was cleared only after native 3/3 completion and clean idle MainMenu.",
+  "limits": "2885 is the discovered count, not a new full-suite pass. Subjective listening and a full default race mix remain distinct from these checks."
+}

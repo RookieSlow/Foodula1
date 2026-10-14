@@ -1,0 +1,1119 @@
+{
+  "utc": "2026-10-14T16:41:37.1114344Z",
+  "headBeforeCommit": "7fe271b939d2bef8a61553b0d1bf9313198cc9b2",
+  "baselineHead": "7fe271b939d2bef8a61553b0d1bf9313198cc9b2",
+  "note": "Read-only final evidence snapshot before root commit. Self excluded from hash list. Existing files retained. Subsequent Git HEAD change is expected.",
+  "baselineFileCount": 593,
+  "missingBaselineFiles": [],
+  "changedBaselineFiles": [
+    {
+      "path": "Assets/Resources/Audio/Engines.meta",
+      "before": "EAB6925CA2E16B34A2EE6BD497AFF6420A4B5930D408A783191428A67F4EF0DE",
+      "after": "7385D03852196EE24D6C7A55DD9F80B0D698554564977077664136F82D045A83"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_cn_high.wav.meta",
+      "before": "87A764933FC509437271E9CF138B6D79744A85076948FC4F2330B9CCBCB35CE4",
+      "after": "3E521F463A97DCF6F8C47CA7622F656B96C81EE1119AAE42A831D2F8678B57DA"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_cn_mid.wav.meta",
+      "before": "84C262672FC5B9420E85D44CA36A22B17757831EE73A6863F3F236E14F65F0BC",
+      "after": "BE2F3D10D6C8462A7C5D27D156EC5524E57D69B85A9A5E5601366C58D841E725"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_cn.wav.meta",
+      "before": "5C1255CF7E3BF72E41E6DF6058C760E6B2C6F6F944AB9AACDC7FD3D3B230A382",
+      "after": "F16DEB52A006EDFD802E39A4DB213FFA3DC4854CEC47DF405CE9092E981845F7"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_de_high.wav.meta",
+      "before": "B4AEE9E4ABBDA9CDE282AAE30F584C57167B14C7FF319D83A4130D82D316FD92",
+      "after": "489526D9BEC0B8EEE6920C4B89E3A243C1BB5587F7EAFF46CFB84998A22C2D78"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_de_mid.wav.meta",
+      "before": "A4089DF9FE97B83A2D9A18C1AACCF4F96682039FCFF2B5F8D380B9448ADAC3AA",
+      "after": "50C8931EA84D2E243F56680B8F6E59DF94C0DF676BF6F5D987A6CEE390DF7283"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_de.wav.meta",
+      "before": "EC3D9042AE5DBE97FA9FCE5560ACA45DBAC611D3B181214003E7772C6BC41B20",
+      "after": "411DCADE257F66A642F142C14CD81DC5C026F7DE52E4C4C14E5BC168959E2F05"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_it_high.wav.meta",
+      "before": "68F3FD6E9390B4CD74D4C0BF3ED33ADE30A04CA597B8CF24B6BE8F1B71AB0037",
+      "after": "99CF8DED442CA1A1995802E8646DC324770FF349B8596CFD05E0A115EA7B6748"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_it_mid.wav.meta",
+      "before": "B6E9D1AEBF5AF581D4D99A15035E4E342C33F14117AD52CCBA5E51781617E310",
+      "after": "B8CCBF03E3FCF3073393DD3672F792302883741B7E842C406080F141B083C3F2"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_it.wav.meta",
+      "before": "E5A6D5231C29DF5A32049BE57A4E25DEE2D98CDC524ED99D761724A306C132C9",
+      "after": "9BE00BE33965A92F18BACEE0DE92E28E8A1D98D3C65A076F9CE83D6CB5A4A6ED"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_jp_high.wav.meta",
+      "before": "64AD417133A6E8E4AD10B3455EF8DBFEC1D7AEA85C61AEAF0ABE4552995113B2",
+      "after": "67DFC0AF63296ADA727AF9140DCE964F16390323F9C283D4DCC5A424D31B93BA"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_jp_mid.wav.meta",
+      "before": "37E7C062AD22D9E436356E3F00111EBD601C155615BAC0D2C35D1215FE732754",
+      "after": "3DE1C7848CE9D268C65DE4179DD8664C095F21E194D208371B76F70F96CAA70E"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_jp.wav.meta",
+      "before": "EA8E6C94B45DEAD446DA3E8F39CA7C196CF6B89A8ED0068DE926A60F859338A2",
+      "after": "A011F571C381EE55C088EEEBF0574E6A43581751FC5D8A4835C28F48FDCC0FBE"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_uk_high.wav.meta",
+      "before": "2AD0C198C5574B076C7F62D11844A973F0338BCDCFF7CDA2C45C6B4569E7DC36",
+      "after": "D5BDEADBB545D84DDCC1A32CB08F505F068F58FDE5E15546036BCA2B091036C5"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_uk_mid.wav.meta",
+      "before": "8C0ABCEC13BD257E08D821691C81A1F36B4F6921B81C48E49819C9690E42A051",
+      "after": "23904A3E630166BD1994F2ED99886AB5AD0DB4B0804084A8C613476F2C87588F"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_uk.wav.meta",
+      "before": "75322914AB924D437661E78DDCF174F1CDE83CA589906C84CBEC37B200D4CB60",
+      "after": "EB155F778E70666121CDC89EA8691741823B15D7771E02DB2997217C33D3AD2D"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_us_high.wav.meta",
+      "before": "4403B7A3CC1CBFEF4EAF6E07D02F39C8376C56D95D42E74C6D56DA88AF296D40",
+      "after": "1101A40BDA0E64EC64174D48F98BF51FFE5162E10267775030037251AA0AF2EA"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_us_mid.wav.meta",
+      "before": "8C2AFC706A04956813F57127174C2747D58457E9608F8F2921E7E389027D2186",
+      "after": "ED2DA9C7BF6B2879D4C79345AE3313BB8271F1ECB3E8A10ADF59279798E7A73A"
+    },
+    {
+      "path": "Assets/Resources/Audio/Engines/team_engine_us.wav.meta",
+      "before": "8C88CC41E0F88A933C34F50545C9E13348815162F25A127422A0DF2E1D517E2F",
+      "after": "8E3604107BA04D6FB5BFC0B29658E8C3325733B63DEDF4D5F5E3482E16F77CEE"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_down.wav.meta",
+      "before": "D0A7AC2A8245866EA2865952866C030DC9124955DEE77015084B4A8B0E2CDC3B",
+      "after": "4B2E59C7E802FE89A86891F94345A625C363D744BB486DFC9CFCB5C665765635"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_up.wav.meta",
+      "before": "5B06A9C5E6C113DCA3DE79BBE7078BC890456DBC3F8371AECBA5E0C47CF73F5E",
+      "after": "B24E84062CE25D51512DFF5D749F4667734C55E8C8FE6BAAECEF8B7DBE062923"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_down.wav.meta",
+      "before": "6946E425CEA31CB3ED20A01D2E73D31C05B7B9D82F5B3FC4B57E89CC5C01B7E5",
+      "after": "B8C3C623BA96921354F77A432A3F158F34A437639B8F145E000215679AE06BCD"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_up.wav.meta",
+      "before": "4B1B22F8241AAD9D320B94698295F56D7FE0C05B26AE026CEBAD6692012CF005",
+      "after": "8F091C39DCA4F1D74E1ABD6517BC9848BA8E122566CA1D7FD7F0A042FC8814F6"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_down.wav.meta",
+      "before": "B2FBE7D6347E4DA393C8BE01725220ADD03CC70996C7A3D47D2DA90D24533328",
+      "after": "24F648517A6248D140452DC38B3BCB8124184C5C65AE04548A1E87A03D494171"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_up.wav.meta",
+      "before": "7CDAB74F2A2281D493E2BDEDB8D8EC749045B5B19EC398E7F80716648A99B519",
+      "after": "54DCC293F9D226B839C7422F4D862687852A6287EB878EAD3FA2F01D9445BCE4"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_down.wav.meta",
+      "before": "CB44C52E8CEE0373746B023349FFC40B7582FF4906A3AAE7A43845977DA33C34",
+      "after": "A309C3FD55C5BF607D13F93611B6646AB55BE9193392583DBE3B4938849452E5"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_up.wav.meta",
+      "before": "19AF87C5B6DF4B38376CAAD5BFBC9E5217E0061E33B3B33F9FF6EDC13D32195D",
+      "after": "415F380BDE0E99EDBC6E629F9C9529FF552658919DC991B1FF460A86E70A3092"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_down.wav.meta",
+      "before": "A7B46C21F382C9E3172D42D5E9EB3B83E168961BA96B32C6682D850D5794BEFE",
+      "after": "9B4B82E187F4E9669DA65B82220AE91CD03CB9137103A4FF6AEC89D034B58603"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_up.wav.meta",
+      "before": "1D2FBD50823EB7649B68A0666391CA7EED1AC96702A0BA15B9F5E18A037D6BAA",
+      "after": "2639281915628EDCA12E3DBC58686598AB5E45A8174FC937CC5CE37E89AF8A6C"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_down.wav.meta",
+      "before": "4FB3F3C0E775BF85730C1D3F6C4E06E5B35B15041BF97DE75B74D52B34873D56",
+      "after": "731FECF28A27687500FCF91EA281C40EF938FF51B18408D59D2367449D609129"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_up.wav.meta",
+      "before": "EDAA0CD9543E2D544AC4DDAD20646BB137E18083D9A52EE259F7CF3B443E5CA8",
+      "after": "DC8B14CCCC6B7FF0063AEA2E07085EFD3E4C1C9294DC36ED039810C8FD6A7617"
+    },
+    {
+      "path": "Assets/Resources/Audio/team_vehicle_profiles.json",
+      "before": "D76483B208ECE80B6EF3ED683C6B5DB2A9F7FB0395E595D1CECE02F61A5C05D0",
+      "after": "0C3E427A0A46959B1DF67F65CAA7EEF88CF54A3082F30AADAA423635CA771D1D"
+    },
+    {
+      "path": "Assets/Resources/Audio/team_vehicle_profiles.json.meta",
+      "before": "2EC271BF6F80B227467D5E75D5E0D11A1F047A98B9D21E2366286D40F2CD56E6",
+      "after": "EB317AFD85C765FB480BBD71287A7600F14EAAF474810BA35C2860FFCEE43E93"
+    },
+    {
+      "path": "Assets/Scripts/Audio/TeamVehicleAudioRules.cs.meta",
+      "before": "D11FE8AE04783C5F0BFDF557F3EA643D459F70CB00CE9A36417AB82520C7B487",
+      "after": "C8EF4C06BD5A046D168295E366DC910798D00B90E74BAEBE7D17D9D6656A88D1"
+    },
+    {
+      "path": "Assets/Scripts/Core/RaceHeatPaymentExecution.cs.meta",
+      "before": "917575723C7D102A4CF52DCB9BA126B34368A82245B3BE55C314F69B48B1DF34",
+      "after": "2A7449DD6169B791A25FFDD137D8DF58239B88348B169B1BCB9D7C4DA51CD6DB"
+    },
+    {
+      "path": "Assets/Scripts/Core/RaceTurnPreviewRules.cs",
+      "before": "56E4A67C096C25B20AB2269896EBC373D630CBDBDF22803922739506EB928C49",
+      "after": "AE7AB1740B64F8BDD585F05D0AD2752CAEB7254F1B7E6816C38EB6BD2A9079CB"
+    },
+    {
+      "path": "Assets/Scripts/Core/RuntimeSessionReset.cs.meta",
+      "before": "011943003A76E1736A8112A84086B723E82873FF2A88E5CA0E7C5ED644BBB3FC",
+      "after": "937DEF46F859F9391D20A4B20AC461CE58B03B9B502BD896F8708A2296360B90"
+    },
+    {
+      "path": "Assets/Scripts/Editor/RacingTechHudShellCapture.cs.meta",
+      "before": "1CD70C702AC0FCE9E7B2097958889BF32BA36FC4880D77E3CE9D78B9B30CC9BB",
+      "after": "4DCA03850D67F91409FEEC0B7645CE4AB41683AFD22D5545ED58EA731D27AA1B"
+    },
+    {
+      "path": "Assets/Scripts/Editor/RacingTechPreviewCapture.cs.meta",
+      "before": "870EC0987CAFAAB13616D0FD2E1C88600E1700FCAA52F4BF0B0A574A23F251D0",
+      "after": "A44B7716DD078FB9279C45FFCC3B7E0C307DE1A76AFE95978D17C4540359CD96"
+    },
+    {
+      "path": "Assets/Scripts/UI/HeatThermometerUI.cs",
+      "before": "733586511570DF7EE0FBAB8C0C9976323F49A7A4F4EB3FD1C32551D1EEB3193A",
+      "after": "AC301021419E5963A46C8BB9EB11E96B94C0841D05C8A7819E1397E5CF5ACCBB"
+    },
+    {
+      "path": "Assets/Scripts/UI/RaceTelemetryStripUI.cs.meta",
+      "before": "24C90956479C94E4C656544E9E1B2047AED2CBEF70B851DBAAE53C25C2DD930A",
+      "after": "78335162D5F9FC82EFE2F400B69B20468F5BE87232E44AA2B5AEDFA7AF23CE98"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearDragHandleUI.cs.meta",
+      "before": "65DAB3F570D074CF43FB2FE4CCF1BEB84A7773A85032149F2FE242417C1FA19E",
+      "after": "A4BA66AC3F3056DBF26780D4A5BA06F41EDA306C1E1E6899D155FAAB84FE9224"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearGraphic.cs",
+      "before": "BF8B2253C92292203ADD2E34876DEC65589D1A652520E906B3D02B7DB8B58597",
+      "after": "2AD180378BCD476D3A735C1B4E747FBAF5366C92D0628DA9740F4790DE0FB4AC"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearGraphic.cs.meta",
+      "before": "1C580D18816F817FA6D874396F0E4CA9D7009955FC2BDF917EA16BF15ABC90B6",
+      "after": "82ACFBA90122D52A4EE8EAAE8546036B380F88347660E313DACB9C7393112B9C"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearPresentationUI.cs",
+      "before": "24F1A99D9005D27CACA016296BB17B7F7DEC608AA8F8820F2F5F687940C350B2",
+      "after": "ACDB9B443A5A21546752329B7D3D050820064900BDC1E0C261FFF2AEE7188A70"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearPresentationUI.cs.meta",
+      "before": "15367B10F6EEC0E4F27253849D7801273995DCFF077B7CDD1F2932D686A470CE",
+      "after": "108F2BD32EBE059AE7FC3932CD010B67A5F933008410D75248B9599923280B69"
+    },
+    {
+      "path": "Assets/Tests/Editor/race_turn_preview_test.cs",
+      "before": "0A3384EF9797184BD9B97D9C289F4F13000D8C1D4A263FB307F664F1AAE8CFAF",
+      "after": "3B93DD6A5E5D0876281DB134E63323785E9683B2FEC970E5436D5706C622434A"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_audio_teardown_test.cs.meta",
+      "before": "0980532CD6072FE24A1A9AE6A168D1FC3D69F6CB3C46364E18190C55DE8B09AB",
+      "after": "766BBBB288CB21EEFF2C39F7E19890C74D82D8C83DD6A4E509C4FBD05279DBE5"
+    },
+    {
+      "path": "Assets/Tests/Editor/runtime_session_reset_test.cs.meta",
+      "before": "C675557AE70CD1B8483DA762E15CB1F445AB19336128B30492E041A81F937B9C",
+      "after": "AEA545451E5B53369724CEA73C6B9CD76224B4D05F0D81F5584726EC1B6039B5"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_gear_live_telemetry_test.cs",
+      "before": "94345C9EF8C8808F297A0FD019E081788DDB428EC789B8FC52182079E27F2E83",
+      "after": "9A09FCCC517DAC091F8DA3BBBC7DFD7698B585F8FFF3B14C14E58B38261B9E62"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_gear_presentation_test.cs.meta",
+      "before": "A3A204C391227E3A684A61F63B577600A70EC1582684EC6E06E7CA096952D39A",
+      "after": "9C0AB0A31444FD8870414069E6F1C18EBBA037314D817C42ABD7B3D1E0D9EF1D"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_gear_telemetry_drag_test.cs",
+      "before": "8BAFBB88E9D2B35587EBFACB2B1A55956939F91CA01AD71A8FDE7CDF1F29BA5D",
+      "after": "04E994B3E1E7AF4825D0FD4BD3DA00DE7ABB215FC53733FA4E9359AC2DB961DB"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_gear_telemetry_drag_test.cs.meta",
+      "before": "E70CA55EAF7A4223EFD5301719E18D57240942796620ADAF777C04E65A8E4DA8",
+      "after": "2F5D50DC077C56175A9173178846AD3FC2279E289E109A85B5EFA54EE3DD0E12"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_vehicle_audio_test.cs.meta",
+      "before": "C038C6FE536948D0B0ED93845566ED226F189C9668479735682957E3F8A3C8A2",
+      "after": "CD558E35ECD4CE0E7409F376E6E24D6443EFF96367BEE3C54D08685A7687D7EF"
+    },
+    {
+      "path": "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset",
+      "before": "03690AC22C2BE836091644437F30A4F9CF6F5A4A158D9AC1040936C3EEDAF686",
+      "after": "F7D82E76D855C4902653063D1FC4ADCEF16A145086EC6A106100E0B32618846A"
+    },
+    {
+      "path": "design/ux/racing-tech-ui-checklist.md",
+      "before": "8078253B71008E93E5E25B309AAE5E19E9ECE3E85F17B6A06D095B8860E0C585",
+      "after": "DEE0ACCD2CF8FB012011B7F602054DF54EC231BD716951425DDD71E9DE760281"
+    },
+    {
+      "path": "design/ux/racing-tech-ui.md",
+      "before": "E065F8B71DFC80A7C562BF3B9EAA4510D14504875B1E8063C1AD7714BC5BB32A",
+      "after": "97401956E301048CDFF6204BB0A5CF88F8BB1678A9A1DCCEDB8A1493BCE61E2D"
+    },
+    {
+      "path": "docs/audio/team-vehicle-recordings-provenance.md",
+      "before": "9940E810D423AAE5CD839FC2CC3488B99FDE6EC64AD0577D08D841A5B35D7586",
+      "after": "7AFFEF92E7E19A0F3C5237D66151320B16713509FEA7C0E4BEC81DAFBB5815D2"
+    },
+    {
+      "path": "docs/memory/current-task-list.md",
+      "before": "0454C86314046CA18A5B2D7016B9F8137F319A93E86995565F9BD3FA7ADF14EC",
+      "after": "1A661F1F847D05059A4F3D2C42D4978E49D0A813D90735347ABE72671D9D6C5B"
+    },
+    {
+      "path": "docs/memory/project-overview.md",
+      "before": "7C329C9BB58A6E3D1C9E275607E4FF256579E4BDDCDC39714839B2651291A453",
+      "after": "397F63D85CEFE66CD526029BFA740E5D994EB94777C7FF8CBBDF8EBA3AFC7C68"
+    },
+    {
+      "path": "docs/ui/racing-tech-resource-licenses.md",
+      "before": "8B0028DB5191EB2A5CC7BD9C4ADE9715C772EF1BDEF130E4C4525A6F3469D9FC",
+      "after": "62E3B7272FD5B4C408086D75118C94F578F6C5641D4463F527879BACE83565DB"
+    },
+    {
+      "path": "tools/Audio/build_team_vehicle_audio.py",
+      "before": "F9A017CD5F2A45B880CD07E134F980D89836EF89B4E29460B428F8C1F5CBBBEB",
+      "after": "CE7DC31B07299ABE956C30A3A3654B1F7D60AEA665B881593DE3E181E4F1511E"
+    }
+  ],
+  "files": [
+    {
+      "path": "Assets/Scripts/UI/HeatThermometerUI.cs",
+      "bytes": 10940,
+      "sha256": "AC301021419E5963A46C8BB9EB11E96B94C0841D05C8A7819E1397E5CF5ACCBB"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearGraphic.cs",
+      "bytes": 16062,
+      "sha256": "2AD180378BCD476D3A735C1B4E747FBAF5366C92D0628DA9740F4790DE0FB4AC"
+    },
+    {
+      "path": "Assets/Scripts/UI/TeamGearPresentationUI.cs",
+      "bytes": 20676,
+      "sha256": "ACDB9B443A5A21546752329B7D3D050820064900BDC1E0C261FFF2AEE7188A70"
+    },
+    {
+      "path": "Assets/Scripts/UI/RacingTechInstrumentStyle.cs",
+      "bytes": 348,
+      "sha256": "87A72183B35A39A2837E09B7537198E6AA1FD40BD1B19C533A2AC963DE9797C7"
+    },
+    {
+      "path": "Assets/Scripts/Editor/RacingTechInstrumentsCapture.cs",
+      "bytes": 18547,
+      "sha256": "EF12127FF0535317F0A0ED87356B53C6325A4328A0EDE8F978EC7E837C7B89E4"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_instruments_test.cs",
+      "bytes": 11533,
+      "sha256": "26EAB8BF14468EE6CFB4580D368553E0B4EC76909BF4609FEBFC2EEA923A6288"
+    },
+    {
+      "path": "Assets/Tests/Editor/team_gear_telemetry_drag_test.cs",
+      "bytes": 25005,
+      "sha256": "04E994B3E1E7AF4825D0FD4BD3DA00DE7ABB215FC53733FA4E9359AC2DB961DB"
+    },
+    {
+      "path": "Assets/Resources/Audio/team_vehicle_profiles.json",
+      "bytes": 32502,
+      "sha256": "0C3E427A0A46959B1DF67F65CAA7EEF88CF54A3082F30AADAA423635CA771D1D"
+    },
+    {
+      "path": "tools/Audio/build_cc0_team_shifts.py",
+      "bytes": 7184,
+      "sha256": "937DAD498D42C76778F62E6488B788BD2A50396FB9F221EA0C5B6A34892AC345"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/manifest.json",
+      "bytes": 26829,
+      "sha256": "3C02F555C657BF6D30A9776705FC41D90A0604CC0E0D48F0CA4FAB74FC495435"
+    },
+    {
+      "path": "docs/audio/team-shift-cc0-provenance.md",
+      "bytes": 4024,
+      "sha256": "9BB66A99C52B1E6EBDE6396922BA808BC2E3AA4B0DBA0AC6B6D4E8D0EDD09F07"
+    },
+    {
+      "path": "docs/audio/licenses/README.md",
+      "bytes": 4719,
+      "sha256": "D2957955A04C916DD8496FE1305AAD1831914062B70BCB8C90881212EC002C93"
+    },
+    {
+      "path": "docs/memory/project-overview.md",
+      "bytes": 149007,
+      "sha256": "397F63D85CEFE66CD526029BFA740E5D994EB94777C7FF8CBBDF8EBA3AFC7C68"
+    },
+    {
+      "path": "docs/memory/current-task-list.md",
+      "bytes": 251283,
+      "sha256": "1A661F1F847D05059A4F3D2C42D4978E49D0A813D90735347ABE72671D9D6C5B"
+    },
+    {
+      "path": "design/ux/racing-tech-ui-checklist.md",
+      "bytes": 7963,
+      "sha256": "DEE0ACCD2CF8FB012011B7F602054DF54EC231BD716951425DDD71E9DE760281"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 1717,
+      "sha256": "FA1B2BF6635BEF5654130F2D621A379FB9772503D68E1FD7D9F4CFD486586C33"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/baseline-diff.txt",
+      "bytes": 609839,
+      "sha256": "DEAB790252578D54D938FE15CDF5E114ED802DA31A5B203A7E1892CADBC3569F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/baseline-tests.json",
+      "bytes": 567,
+      "sha256": "EB12B831ADB1FA7559F672E06AF3412006BFC5431A8243300E7A28D440912AD9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/baseline.json",
+      "bytes": 164798,
+      "sha256": "A9C9C1693F96166C392F2DBD97941D2D9A28DF7BEEE845BB0E2CFA302E3CFA4F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/cc0-audio-focused-41-native.json",
+      "bytes": 192,
+      "sha256": "E3EEEAC9DF73989E7F969D88036D3755E23D8A4028F90DB8F4B7A9C696F785EA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/cc0-integration-audit.json",
+      "bytes": 16836,
+      "sha256": "F79E1FFC569F9B2CC54EED00A1F9C824DAD0CD78968B5D270C48C826A7D61E18"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/commit-exclusions.json",
+      "bytes": 9297,
+      "sha256": "9E0998E572BE1B35343C08665EE7430F7BC63A1111AF02452603ED3E18529CF7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/contrast-review.json",
+      "bytes": 466,
+      "sha256": "3EE4C9104FC3683226F949841A7B6CA3E86C90F3EC2B601327E3E11F611B1DE4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/final-unity-state.json",
+      "bytes": 142,
+      "sha256": "6C25D075F410F73C0BD60DFFAA2028F04FE3FC19A8123AF75C75EFA6F949BED0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/focused-102-native.json",
+      "bytes": 194,
+      "sha256": "58DDFDFA7931F9D10AF2E13DEF41C1C2A6FF94983860EB69E737686D3F38D17F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/focused-attempt-1-native.json",
+      "bytes": 234,
+      "sha256": "7FDA79E4FAE5B3ABC8735B243C5E1A91F6A6FC13FB0913203A5FA38A84E015A4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/full-final-2932-native.json",
+      "bytes": 196,
+      "sha256": "2A80D8BB739A65DA7DFEB5831C7B19DDBD3AC82C470B238BDA62DEA12C88250A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/full-ui-2931-native.json",
+      "bytes": 196,
+      "sha256": "5BD4105C2310FA39E09533D2B147F0B421BF5B46303D2E5148DCEBE4D104DB1B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/GearDialPresentationUI-source-before.cs.txt",
+      "bytes": 5321,
+      "sha256": "BF2B5147829F71AFA48984D356E316B32015E021D0FA57ED985DAA1EE06F34E2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/HeatThermometerUI-source-before.cs.txt",
+      "bytes": 10427,
+      "sha256": "733586511570DF7EE0FBAB8C0C9976323F49A7A4F4EB3FD1C32551D1EEB3193A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/RaceCarBadgeUI-source-before.cs.txt",
+      "bytes": 6832,
+      "sha256": "864715608DD0F2B14E7838FB8F2539EAD6A7193A679D078D47CB18535A613CDC"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/README.md",
+      "bytes": 4920,
+      "sha256": "C29F059E1D2005F942AD4B9AEF7890A93ABDC9D78EA901E30776087CBF949F84"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/resume-audit.json",
+      "bytes": 66575,
+      "sha256": "446A8EB8668F5676D1BA78D3F952683826AA4B45E03D47C760B18E06ADFA78D2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/source-baseline.json",
+      "bytes": 1034,
+      "sha256": "AE08BDA58526188023BA068081DC63FC17961074CEA81E62656A21FF6BEAD47B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/TeamGearGraphic-source-before.cs.txt",
+      "bytes": 16856,
+      "sha256": "BF8B2253C92292203ADD2E34876DEC65589D1A652520E906B3D02B7DB8B58597"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/TeamGearPresentationUI-source-before.cs.txt",
+      "bytes": 20548,
+      "sha256": "24F1A99D9005D27CACA016296BB17B7F7DEC608AA8F8820F2F5F687940C350B2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/visual-review.json",
+      "bytes": 2587,
+      "sha256": "7E75CE5561FB40E1C1C304A50FCB9D8DE5C545D6B9A9C2FBA8EA9AD9050ECBF5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/CN-1280x720-confirmed.png",
+      "bytes": 70712,
+      "sha256": "364E9F27CE64DFD90846FF73951E26F71AEB77F72B305C9DE28398DF417B8DCE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/CN-1280x720-disabled-zero-capacity.png",
+      "bytes": 71347,
+      "sha256": "DE5C2E4662442BD0A590EC1350CFA8FC949454DD7BA1C952A8CC85B433212A4B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/CN-1280x720-selected.png",
+      "bytes": 72359,
+      "sha256": "BA1D2A0C4883B6C6230DC061114E228A3E95D20728A60862BEA1401FD2DEB872"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/CN-1920x1080-confirmed.png",
+      "bytes": 133197,
+      "sha256": "438FF51525EDECC0907058D4A2984070DAC812853D33100DF0B6691B593D9EAD"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/CN-1920x1080-disabled-zero-capacity.png",
+      "bytes": 134575,
+      "sha256": "C332BBA28FAAF84A62B6113EAE0C0C53125BC28D3FF6E557474C98E145F0D74A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/CN-1920x1080-selected.png",
+      "bytes": 135927,
+      "sha256": "5F559BA7336AD8096FCB76876417D6CF15E1BFDFD2517B2FB03EFD3B667AB61E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/CN-2560x1440-confirmed.png",
+      "bytes": 204349,
+      "sha256": "B3BA57932D1457EFB9EE0E578F858729E8C36EEB18C8BD9EE551545204441D46"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/CN-2560x1440-disabled-zero-capacity.png",
+      "bytes": 206168,
+      "sha256": "9EC12FC3684B0A00EB19FF02A28FBC4DAA4E101494F0617653984E3D6C814C6D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/CN-2560x1440-selected.png",
+      "bytes": 208488,
+      "sha256": "18DBBD864A31A8AD51787D4109C6C02385F1E537E78FACC683A20A037FA0B839"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/DE-1280x720-confirmed.png",
+      "bytes": 71673,
+      "sha256": "B0C1B12F67006C25DF9DDCFDE7A712008AA7D0390AF1871320B1540EC6009909"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/DE-1280x720-disabled-zero-capacity.png",
+      "bytes": 72310,
+      "sha256": "53849C11DF7EA45480747101FA0353BA24603A8C0229C8A39C53A65FB0B7B78B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/DE-1280x720-selected.png",
+      "bytes": 72272,
+      "sha256": "16A09A1BEC9BA54DEB7D3DF06966D9FB034C66DADCAC40920F89198536174997"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/DE-1920x1080-confirmed.png",
+      "bytes": 134071,
+      "sha256": "16938FDCEFCAA2FB4CEDBC480A2B8D463C90C5396784B1AB33D7E8573B896D5E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/DE-1920x1080-disabled-zero-capacity.png",
+      "bytes": 135473,
+      "sha256": "57A6BCA73D4C86C049088B1DAC444CDC6651961D86871AA9859985ECC8C18984"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/DE-1920x1080-selected.png",
+      "bytes": 135011,
+      "sha256": "348051859AB3744FF5C407F725BE0E7E46CA80DACFEE6FFC0190C4D859FD7175"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/DE-2560x1440-confirmed.png",
+      "bytes": 205566,
+      "sha256": "6C37ED6137C2F73AEDA07E212E3E5B2504C2CC38DA4A12CD278DA6BDB744C9F4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/DE-2560x1440-disabled-zero-capacity.png",
+      "bytes": 207364,
+      "sha256": "303F424686F783718125797A1997B412668A761EFADA0AF9D575E1B5C0B8E6D5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/DE-2560x1440-selected.png",
+      "bytes": 206718,
+      "sha256": "14B6A220141A796D1B95DBCE5BACDC8549D9ED0064A6F15B0FCD3E16C238999D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/IT-1280x720-confirmed.png",
+      "bytes": 70272,
+      "sha256": "282C46F3315BF168D7C83B425C5602DC5B649A3E10FAFD10361C3D73575F3183"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/IT-1280x720-disabled-zero-capacity.png",
+      "bytes": 70919,
+      "sha256": "DD0BA3F5C594FB14F543F506E0D29ACF5A0631C1C5453B72557AA29FAED9CCB7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/IT-1280x720-selected.png",
+      "bytes": 71025,
+      "sha256": "2E12CA4DF7346E068FEC45840278D49CB07FAE14379AF79CBCB1D56B7CF38AE6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/IT-1920x1080-confirmed.png",
+      "bytes": 132255,
+      "sha256": "98356CFBA1873A37F8140E0AC5F1BF8EE1B0E12021ADE367B5235D2D1D89338B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/IT-1920x1080-disabled-zero-capacity.png",
+      "bytes": 133707,
+      "sha256": "1E3A4FCDDFA5A25599988005EACDCC3C32B8BEFC1AD32DF7F8A1B4BBBC65283C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/IT-1920x1080-selected.png",
+      "bytes": 133414,
+      "sha256": "674708A6E09C0D8400F0D47EE1CE5AE55E6845AC41318493822CF5A244244FBD"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/IT-2560x1440-confirmed.png",
+      "bytes": 203134,
+      "sha256": "E662DC901E6815A35C07396D0FED3D5630F9275DC36D113922A646F79915465C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/IT-2560x1440-disabled-zero-capacity.png",
+      "bytes": 205180,
+      "sha256": "D92FCD26B993EFC9252F35FD3C7A32256098883311AEEC2CAEF2B55E3D03AB57"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/IT-2560x1440-selected.png",
+      "bytes": 204681,
+      "sha256": "DE9112082860BB42F4BEDB6C515402D77C5C6D4F40903CB7FDA54C57D6FCB5F2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/JP-1280x720-confirmed.png",
+      "bytes": 71985,
+      "sha256": "69565C8638FC6D20FA14363D15842B89F99250494CEEC9E58E5A15B2947AF452"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/JP-1280x720-disabled-zero-capacity.png",
+      "bytes": 72607,
+      "sha256": "29BD919AD1EC5A6A4677009D853FB97A53DEDA3EBFC04F0D42EF3872A212AF5A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/JP-1280x720-selected.png",
+      "bytes": 72707,
+      "sha256": "CE8CD791F54D290CA57D4F68AF9B6BA93D6D7E657245AE1F7556594E85A9CE42"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/JP-1920x1080-confirmed.png",
+      "bytes": 134973,
+      "sha256": "E6C33AFE0D38099ACCB0CAC14B6456DF1F7D1B7A8C0DA0A6A19B930741D91D11"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/JP-1920x1080-disabled-zero-capacity.png",
+      "bytes": 136373,
+      "sha256": "B4771D4D409B1ECB9A047510D4836B95A80411CBE4B8D1B5A6623A57DB215D50"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/JP-1920x1080-selected.png",
+      "bytes": 136079,
+      "sha256": "9A9619A2E26E7C845ED121FFCD4E8F9C3183D96B9E854204DE94F1E8C7FF9020"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/JP-2560x1440-confirmed.png",
+      "bytes": 206975,
+      "sha256": "42462964B88D257D3064583E98573E3C77A0E3891F54CE1A6A82B6A4940E2BB4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/JP-2560x1440-disabled-zero-capacity.png",
+      "bytes": 208910,
+      "sha256": "77A669AADD07FF6602911D9B8B950C55E0072BBA67141672F743D5E9A167191A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/JP-2560x1440-selected.png",
+      "bytes": 208505,
+      "sha256": "839A9CB93392F6DC476CA389458444A92F43A652603B94B3118A91D5BA33B073"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/manifest.json",
+      "bytes": 482768,
+      "sha256": "BE84B4DB5A03728C6BE0E8D11212ECDD68ADCFF2B3AA16E156784B675262DD2A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/UK-1280x720-confirmed.png",
+      "bytes": 70481,
+      "sha256": "5296A3F748327250B72558935B64F30C8FBEC48E9680C35EF0FF7A75C05AA675"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/UK-1280x720-disabled-zero-capacity.png",
+      "bytes": 71143,
+      "sha256": "9E49082FF6B6693D1AF009B52DA2B3ABB5ED6D6E3A82A5216FBA818F787C8C90"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/UK-1280x720-selected.png",
+      "bytes": 71340,
+      "sha256": "83E83F5C7FD08723AE9C717D1EABE11B73C36CAC4FE6884A3FF39A25C3D28397"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/UK-1920x1080-confirmed.png",
+      "bytes": 132460,
+      "sha256": "83F30640139A903E6B3715D6A0C7BB1A8D1440BA661AC2E2100FB36B97A14FD8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/UK-1920x1080-disabled-zero-capacity.png",
+      "bytes": 133918,
+      "sha256": "4386884FFF85859DF66B8D74C25B84303DB3D5B2E9604F62CEB9C16EE40100DC"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/UK-1920x1080-selected.png",
+      "bytes": 133705,
+      "sha256": "A518941FA362A24730398FCED1A23A2E264B051889B6BE449CFEC9E75DD2B03E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/UK-2560x1440-confirmed.png",
+      "bytes": 203744,
+      "sha256": "3CF30A77B4DCC577485DA612E4D7A49CC7FD56E9BD76B8EA953720F5E0EE14F3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/UK-2560x1440-disabled-zero-capacity.png",
+      "bytes": 205773,
+      "sha256": "0F864DC98BE909D3E67B37BAFCEF5453D4259855008B775AE8E85606EC969789"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/UK-2560x1440-selected.png",
+      "bytes": 205286,
+      "sha256": "48B4C0F75529973FDB2A7FB7F20E761979BAD950F5E56BA75D4BA537F6FFE6DE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/US-1280x720-confirmed.png",
+      "bytes": 70317,
+      "sha256": "D32C326F32C0A5D3E15640311205C6E5C27294AC6BC595EBF8B6D4654E77F58D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/US-1280x720-disabled-zero-capacity.png",
+      "bytes": 70967,
+      "sha256": "801D522C173F4485976648C3C920D2A037C61247295790AD91738A8B5BC5DFFB"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/US-1280x720-selected.png",
+      "bytes": 71001,
+      "sha256": "8AF1938B96068558A5662F35E96C8406CD621F40449FB7A11CA219D2C65EF65E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/US-1920x1080-confirmed.png",
+      "bytes": 132171,
+      "sha256": "4D7389F51340B5ECA456E017BE69C8A4509C1844C73B5FB1D2B3C22ACF7EDA56"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/US-1920x1080-disabled-zero-capacity.png",
+      "bytes": 133636,
+      "sha256": "4B929DD4C6E8F52648143D012168A5441D21CE0B5DBD0FE76B7D53B4D3575C16"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/US-1920x1080-selected.png",
+      "bytes": 133310,
+      "sha256": "500931FAD2E804E5930056564A25997854F635E9A1B7B67B81429EC6DA2AA454"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/US-2560x1440-confirmed.png",
+      "bytes": 202984,
+      "sha256": "93B7092BFDB233CB16350A80BE9428CD2A1A4F061A41AB5EA0F052745CA73D86"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/US-2560x1440-disabled-zero-capacity.png",
+      "bytes": 205007,
+      "sha256": "B54F5FB80B8843DBA1B9A107C8147E72A920B999D0CB402B2CEBEDC8BE22DDD9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/after/US-2560x1440-selected.png",
+      "bytes": 204455,
+      "sha256": "1C3271925AE7DBB53FB544256379E3F29561D952397098E07CB2F2DF8062BC19"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/CN-1280x720-confirmed.png",
+      "bytes": 70731,
+      "sha256": "2E157CFA001D68D79D42447AC62DDB2677EE0BE597AE908F5BF1AD3475101222"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/CN-1280x720-disabled-zero-capacity.png",
+      "bytes": 71342,
+      "sha256": "B4C51E9B78A708986C5173396D26A30FF009AD31EFE98F0527D1CBEEA0BC132E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/CN-1280x720-selected.png",
+      "bytes": 72410,
+      "sha256": "A0DC20338CC07B2112F9A58B7ECD17A864091C74132BF9688FE49218BE39684B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/CN-1920x1080-confirmed.png",
+      "bytes": 133181,
+      "sha256": "734B4BDE32CB8DE18AE1E9B1FC6BDBE2BA342D5883156A272799FD70DE8CBDB1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/CN-1920x1080-disabled-zero-capacity.png",
+      "bytes": 134525,
+      "sha256": "0A0A0A17D5264FE5C92AC0A72560F9C6D07515410588FF55353DDBB666F2EA02"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/CN-1920x1080-selected.png",
+      "bytes": 135926,
+      "sha256": "8DC1CB4F6F4A48B930E13AB984AA634AA8D806E716FCD67F38CBFBE08BDDFFB9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/CN-2560x1440-confirmed.png",
+      "bytes": 204309,
+      "sha256": "43B31BA7BEFCDDFB5D0AD4A5481A708693731E16AFB9628D2257283D3698F0A9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/CN-2560x1440-disabled-zero-capacity.png",
+      "bytes": 206142,
+      "sha256": "50A64D8C4AC084F7D9197A24E1EA96E0E929417694386460BFDD8D7CFAD6EE39"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/CN-2560x1440-selected.png",
+      "bytes": 208412,
+      "sha256": "AC4970B316A3D3464B80D09125CA152DAE1E2BEC05ECDAD2258EE709E256C1F4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/DE-1280x720-confirmed.png",
+      "bytes": 71752,
+      "sha256": "6C1DEB7E4FAAD6B0F85B19C469AF8E474814DC636C0B8C63A83C3A10D531AB45"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/DE-1280x720-disabled-zero-capacity.png",
+      "bytes": 72360,
+      "sha256": "19A3ADBD2657D5ED8A7A6EDF9C95F7C8C8BF99940A2F53E22D7FE6B45740A678"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/DE-1280x720-selected.png",
+      "bytes": 72350,
+      "sha256": "45F5C0D17EF25B60193ACA5880710765A7E1811A71746F7C5AA02AED7FC54B37"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/DE-1920x1080-confirmed.png",
+      "bytes": 134165,
+      "sha256": "6B83054E45A9644B6E88662266EC9446395BFB16D4350079D6CD45CFDD63C70E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/DE-1920x1080-disabled-zero-capacity.png",
+      "bytes": 135540,
+      "sha256": "B9007DBBEE1CA418124E29716E2D9BD28426C15D0C4B98BF6D3BD1C53AAFA3EA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/DE-1920x1080-selected.png",
+      "bytes": 135107,
+      "sha256": "F23FCAC96582D1DBE0A3AE8103BFD84C66CB6FDD6B7F707584DE367621343C75"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/DE-2560x1440-confirmed.png",
+      "bytes": 205515,
+      "sha256": "0187D2C365400C0D7742A0E68F8F01147590BD9C60760C27E7AC92D1505C0ED3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/DE-2560x1440-disabled-zero-capacity.png",
+      "bytes": 207330,
+      "sha256": "A6672362BBE8539BD09527468DB7E2D53D7C6B5BA28211DB7A51C2071FE1AD84"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/DE-2560x1440-selected.png",
+      "bytes": 206669,
+      "sha256": "AAA197BDED3B395A412975CBABADB646734967FC218B6BFF3F66F1AF7D9C1DF7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/IT-1280x720-confirmed.png",
+      "bytes": 70554,
+      "sha256": "6E5C59093AE84B75397600476D262BA29AA5D4747C4FFE3506252E7977596062"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/IT-1280x720-disabled-zero-capacity.png",
+      "bytes": 71174,
+      "sha256": "BCC6BDC2850D3936211BF685BCCD0EE79889665EE7A9B917A3EFC7BB8BD4D430"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/IT-1280x720-selected.png",
+      "bytes": 71286,
+      "sha256": "2A6738B9AD232BD5B6258D6861F670B87FE59F18157B49773640111DA521F50D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/IT-1920x1080-confirmed.png",
+      "bytes": 132660,
+      "sha256": "48A54F8CF8C0538C026151A279E858E5CC9936AA050AA3B37B408C14F7D2D8BA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/IT-1920x1080-disabled-zero-capacity.png",
+      "bytes": 134089,
+      "sha256": "147CDD9D532CE933296159C6A1B767503842B993C9FD0F2D3AD3147FCA6AA1F3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/IT-1920x1080-selected.png",
+      "bytes": 133805,
+      "sha256": "E18B4B16F02C26C9AEAFAD601E38C1425F742ED2C6B2A041CE0F109CE821AF01"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/IT-2560x1440-confirmed.png",
+      "bytes": 203344,
+      "sha256": "A9355A1C0BF7C5F28CEF7457FE2AAE3C257B30CF9D7F73DD4F000CBCA9C61FD1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/IT-2560x1440-disabled-zero-capacity.png",
+      "bytes": 205358,
+      "sha256": "EF7822A8E7CCFD2A08D60BD1A59C96EEA881250AD322945E6D2525C841924473"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/IT-2560x1440-selected.png",
+      "bytes": 204889,
+      "sha256": "90E3260207E2A5E1DAD8A9B1202F4726F738C4B09BE893216B6257D6EC0FB7A5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/JP-1280x720-confirmed.png",
+      "bytes": 72304,
+      "sha256": "640AF123B5EADD17C145B037763FDDFCE50ADC84223D153F5422238A489FFA4A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/JP-1280x720-disabled-zero-capacity.png",
+      "bytes": 72936,
+      "sha256": "4ACE620F740E6C88630BE869F51A3168C13BAFFF9C175B0C35F078C3B6333995"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/JP-1280x720-selected.png",
+      "bytes": 72893,
+      "sha256": "FBB1000127018F5D185E4668B54809986BE71E81955C3EF6D07051467065096A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/JP-1920x1080-confirmed.png",
+      "bytes": 135300,
+      "sha256": "1D21457420993B458A6A46E52547B4448A7C5E4149C3B3E797EA1F2267B8B9CF"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/JP-1920x1080-disabled-zero-capacity.png",
+      "bytes": 136815,
+      "sha256": "6417DC9559793647E0C17FCD3B086E80854CE9494A1A7EF0C7200739FC7ECD63"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/JP-1920x1080-selected.png",
+      "bytes": 136517,
+      "sha256": "4793952AD61C4999C88ED04250C0553A51D5976D974296A75FA30697B09B7934"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/JP-2560x1440-confirmed.png",
+      "bytes": 207251,
+      "sha256": "FBFDEA8D804879B04177458C7D66230DCD17FBBBC74581DC3E366463B33AD755"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/JP-2560x1440-disabled-zero-capacity.png",
+      "bytes": 209275,
+      "sha256": "AC482E09ED2E773AACE1FA04F27CBFC4F1AC6E839AC2B5BE35A4C7DA1AF5D4ED"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/JP-2560x1440-selected.png",
+      "bytes": 208838,
+      "sha256": "5F37B17EA458F5E2BB96AB3AB432D928AEA5528866C45CBE882015E07627E4BD"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/manifest.json",
+      "bytes": 482823,
+      "sha256": "CC934FBD5862A32F1A234D080DAAE6FEB017B1513A84C152F597DDB9F6B7DBC6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/UK-1280x720-confirmed.png",
+      "bytes": 70980,
+      "sha256": "1408C2A145AB0C5F36E63F43157406EF858E6AFFF48E182A2184E4CDEE336706"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/UK-1280x720-disabled-zero-capacity.png",
+      "bytes": 71607,
+      "sha256": "08210ED1FC131BE773AE4E796F7D0428EBEBED907681C3FF1582DDACDFC32E78"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/UK-1280x720-selected.png",
+      "bytes": 71820,
+      "sha256": "B057625DD76B5C5A5C2A6887CA0B6A79EFDA18407DB6076EE849717116E95630"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/UK-1920x1080-confirmed.png",
+      "bytes": 133100,
+      "sha256": "4741FF8BA5C55E2AA06B6292671B3503A1E3B5DA1004FDD3F09EA16E09779CD1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/UK-1920x1080-disabled-zero-capacity.png",
+      "bytes": 134522,
+      "sha256": "4DCC4B09EB1C958B63E50673513194C1A86AAFD51008B0C0FEE5B044412E4E77"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/UK-1920x1080-selected.png",
+      "bytes": 134464,
+      "sha256": "643E7CB9534F8E90D179CC7D5284D1C88EAA9DBAA59BD9855884EB4C20AB7178"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/UK-2560x1440-confirmed.png",
+      "bytes": 204157,
+      "sha256": "7D69080AEF7CD54AA9DA6CF57D2AD2C355520D8A6AA43CD3FABBF927A1F09FA1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/UK-2560x1440-disabled-zero-capacity.png",
+      "bytes": 206170,
+      "sha256": "AF386636D1A4B40FDED4AA2467D29022E298E13EC2AF48F617FC053F566B5CB6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/UK-2560x1440-selected.png",
+      "bytes": 205906,
+      "sha256": "1110C5D8FDF824B0B3263B3F1E76F7E093BFD229470904F8F2D6EA04B54BBB85"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/US-1280x720-confirmed.png",
+      "bytes": 70461,
+      "sha256": "114E9F9026C16828A690F5A787194BC016453B176946E299ECA21970EF8413BF"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/US-1280x720-disabled-zero-capacity.png",
+      "bytes": 71082,
+      "sha256": "DD41CC83D61684407FAC58E448F96923561CA145B233C7866A8D096492079E1F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/US-1280x720-selected.png",
+      "bytes": 71193,
+      "sha256": "67212DA08CDB944FA99DA8FDD22665C109A681310F7574192B90C81243C64CCE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/US-1920x1080-confirmed.png",
+      "bytes": 132333,
+      "sha256": "6D7D1BC66D4B1F05301525C82D879F3E0D026A6340E9F3DED8AF1298723A413D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/US-1920x1080-disabled-zero-capacity.png",
+      "bytes": 133769,
+      "sha256": "36D8A121310AE07D3A4FDD874B5BFA2E90D6006A064E36E3AD53CA83A30762F6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/US-1920x1080-selected.png",
+      "bytes": 133464,
+      "sha256": "4CFCAABC930840E254BF6B30EF8C4C87B77B3F21D3767C7323FBBC89FF2A4F4B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/US-2560x1440-confirmed.png",
+      "bytes": 203065,
+      "sha256": "747C4F9B38F06763DFD7FECB4E0130B999AE1292275D171B6E240C12634C11FE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/US-2560x1440-disabled-zero-capacity.png",
+      "bytes": 205074,
+      "sha256": "AFD301C36C898F5533EAA94D39E7A919FE10AB834EB38E933C625C5FD7982A68"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-instruments-2026-10-14/before/US-2560x1440-selected.png",
+      "bytes": 204539,
+      "sha256": "6DCE09ACF030A904FE26336B6B64457604011060DE9E5479B06A9D55FEED4515"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_cn_down.wav",
+      "bytes": 15404,
+      "sha256": "94E83E7EC58D01E0158BE34B008E09677440232CB9100879EC108B0C8F438233"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_cn_up.wav",
+      "bytes": 15404,
+      "sha256": "498F966F3CDD0796300D15A3BDB206C52454E4E9FB3F4FD54052D7C0C12686FB"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_de_down.wav",
+      "bytes": 17324,
+      "sha256": "84DA130C536BD46B7270E8EA4BEFB2ACF0B0692DACA89B1C36ED66EB4BACC996"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_de_up.wav",
+      "bytes": 17324,
+      "sha256": "E107AFC86DDF9B19CEC68ED8677153FB633BED7FD4DA983CD72BE5ED2A0B8742"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_it_down.wav",
+      "bytes": 19244,
+      "sha256": "038A7527E6D63C89709B7582E03CC32D53F6A51822F815863DA06A637F1616DE"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_it_up.wav",
+      "bytes": 19244,
+      "sha256": "1682D7B8AC26C2236A93EC453B207439EFF822DC7EBDB7EED15F796E8B143EEC"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_jp_down.wav",
+      "bytes": 17324,
+      "sha256": "75EE13ACE7AD6EE73109D56E0D6C687FBE3831AFC437763277475C81B2492060"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_jp_up.wav",
+      "bytes": 17324,
+      "sha256": "E85EF5A574DCCB95AC0A6A105ADAADF943EA51A5CD234196FE4CB9F0C954692F"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_uk_down.wav",
+      "bytes": 21164,
+      "sha256": "3DABB7AF5402024734462ABBFBB80FCE818C160743851EEB523CBAA79D89E7D9"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_uk_up.wav",
+      "bytes": 21164,
+      "sha256": "7BD98DD221F8DD5D800F13909C3937D127F16BF62FA7250963970499577E143C"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_us_down.wav",
+      "bytes": 23084,
+      "sha256": "5EB01C3B78C99EB95A0D21CB188AB34C0CC47B79FB071968967BEF2FA44D8FD3"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cc0_us_up.wav",
+      "bytes": 23084,
+      "sha256": "1CF6E277D4133976BF15798C28061B23AD15F532B7A3CDA4629A6DDBF6282DB0"
+    }
+  ],
+  "screenshotBeforeCount": 54,
+  "screenshotAfterCount": 54
+}

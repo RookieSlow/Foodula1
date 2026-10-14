@@ -4,6 +4,79 @@ using NUnit.Framework;
 
 public class RaceMovementRulesTests
 {
+    private static IEnumerable<TestCaseData> CardDriverBonusCases()
+    {
+        foreach (DriverProfile driver in DriverCatalog.All)
+            foreach (bool corner in new[] { false, true })
+                yield return new TestCaseData(driver.Id, corner);
+    }
+
+    [TestCaseSource(nameof(CardDriverBonusCases))]
+    public void CardDriverSumPreservesLegacyOrderAndDoesNotConsumeState(string driverId, bool crossedCorner)
+    {
+        Assert.IsTrue(DriverCatalog.TryGet(driverId, out DriverProfile driver));
+        var state = new DriverSkillRuntimeState();
+        state.Initialize(driver, 7, true);
+        Assert.IsTrue(state.TryActivate(driver,
+            new DriverSkillActivationContext(true, 2, 3, 1, 10, 3), out string reason), reason);
+        var player = new PlayerState("movement", false, 9, 2)
+        {
+            driverSkill = state, hotpotAttackAppliedThisTurn = true,
+            hotpotAttackCardValueThisTurn = 4, trickMoveBonusThisTurn = -2
+        };
+        int expected = CardPlayRules.GetHotpotMovementContribution(player,
+            DriverSkillRules.GetSpeedPerCardBonus(state));
+        expected += player.trickMoveBonusThisTurn;
+        expected += DriverSkillRules.GetMovementBonus(state, crossedCorner);
+        expected -= DriverSkillRules.GetGutterMovementPenalty(state);
+        expected += state.PassiveMovementBonusThisTurn;
+        int uses = state.UsesRemaining, duration = state.ActiveTurnsRemaining;
+        for (int i = 0; i < 2; i++)
+            Assert.AreEqual(expected, RaceMovementRules.ComputeCardAndDriverMovementBonus(player, crossedCorner));
+        Assert.AreEqual(uses, state.UsesRemaining);
+        Assert.AreEqual(duration, state.ActiveTurnsRemaining);
+        Assert.IsTrue(state.ActivatedThisTurn);
+        Assert.IsTrue(player.hotpotAttackAppliedThisTurn);
+        Assert.AreEqual(4, player.hotpotAttackCardValueThisTurn);
+        Assert.AreEqual(-2, player.trickMoveBonusThisTurn);
+        Assert.AreEqual(9, player.position);
+        Assert.AreEqual(2, player.gear);
+    }
+
+    [Test]
+    public void CardDriverSumReadsLivePassiveRewardWithoutConsumingOrCachingIt()
+    {
+        Assert.IsTrue(DriverCatalog.TryGet("uk_nigel_mansell", out DriverProfile driver));
+        var state = new DriverSkillRuntimeState();
+        state.Initialize(driver, 7, true);
+        state.ResolvePassiveTurnEnd(1);
+        state.BeginTurn();
+        int passive = state.PassiveMovementBonusThisTurn;
+        Assert.Greater(passive, 0);
+        var player = new PlayerState("passive", false, 0, 1) { driverSkill = state };
+        Assert.AreEqual(passive, RaceMovementRules.ComputeCardAndDriverMovementBonus(player, false));
+        Assert.AreEqual(passive, RaceMovementRules.ComputeCardAndDriverMovementBonus(player, true));
+        Assert.AreEqual(passive, state.PassiveMovementBonusThisTurn);
+        player.hotpotAttackAppliedThisTurn = true;
+        player.hotpotAttackCardValueThisTurn = 4;
+        Assert.AreEqual(passive + 5, RaceMovementRules.ComputeCardAndDriverMovementBonus(player, false));
+        state.BeginTurn();
+        Assert.AreEqual(0, state.PassiveMovementBonusThisTurn);
+        Assert.AreEqual(5, RaceMovementRules.ComputeCardAndDriverMovementBonus(player, false));
+    }
+
+    [TestCase(false, -6, -6)]
+    [TestCase(false, 3, 3)]
+    [TestCase(true, -6, -1)]
+    [TestCase(true, 3, 8)]
+    public void CardDriverSumWithoutSkillRetainsSignedBonus(bool hotpot, int trick, int expected)
+    {
+        var player = new PlayerState("no skill", false, 0, 1)
+        { hotpotAttackAppliedThisTurn = hotpot, hotpotAttackCardValueThisTurn = 4, trickMoveBonusThisTurn = trick };
+        Assert.AreEqual(expected, RaceMovementRules.ComputeCardAndDriverMovementBonus(player, false));
+        Assert.AreEqual(expected, RaceMovementRules.ComputeCardAndDriverMovementBonus(player, true));
+    }
+
     [Test]
     public void CornerSpeedUsesCommittedCardsIncludingBbqHeat()
     {

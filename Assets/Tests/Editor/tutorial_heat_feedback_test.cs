@@ -160,4 +160,68 @@ public class TutorialHeatFeedbackIntegrationTests
         Assert.AreEqual(completes, director.IsActiveStepComplete);
         Assert.AreEqual(index, director.CurrentStepIndex);
     }
+
+    [TestCase(HeatPaymentDestination.Hand, 2, false, false, false)]
+    [TestCase(HeatPaymentDestination.Discard, 2, false, false, false)]
+    [TestCase(HeatPaymentDestination.Hand, 2, false, true, false)]
+    [TestCase(HeatPaymentDestination.Discard, 2, false, true, false)]
+    [TestCase(HeatPaymentDestination.Hand, 2, false, false, true)]
+    [TestCase(HeatPaymentDestination.Discard, 2, false, false, true)]
+    [TestCase(HeatPaymentDestination.Hand, 1, true, false, false)]
+    [TestCase(HeatPaymentDestination.Discard, 1, true, false, false)]
+    [TestCase(HeatPaymentDestination.Hand, 0, true, false, false)]
+    [TestCase(HeatPaymentDestination.Discard, 0, true, false, false)]
+    [TestCase(HeatPaymentDestination.Hand, 1, false, false, false)]
+    [TestCase(HeatPaymentDestination.Discard, 1, false, false, false)]
+    public void RealPaymentFeedbackDistinguishesPaidOperationFromWaiverAndSpin(
+        HeatPaymentDestination destination, int available, bool fish, bool ai, bool pending)
+    {
+        Guide(TutorialScenarioDefinition.CreateLeMansUk(), TutorialAction.PayHeat);
+        var player = Player(TeamId.UK, ai);
+        player.deck.InitializeExactOrder(new[] { new CardData(CardType.Speed, 1) }, new HeatPool(available));
+        player.techState = new TechTreeState(TeamId.UK);
+        if (fish) player.techState.activeNodeIds.Add("uk-l1-fish-and-chips");
+        var session = (RaceSession)typeof(MVPGameManager).GetField("session", Private).GetValue(manager);
+        session.Players.Add(player);
+        typeof(MVPGameManager).GetField("pendingTutorialGuideRefreshAtTurnStart", Private).SetValue(manager, pending);
+        var config = ScriptableObject.CreateInstance<GameConfigSO>();
+        config.minGear = 1;
+        manager.config = config;
+        int index = director.CurrentStepIndex;
+        bool sufficient = available == 2;
+        bool spins = !sufficient && !fish;
+        bool completes = sufficient && !ai && !pending;
+        try
+        {
+            Assert.AreEqual(!spins, manager.TryPayHeat(player, 2, 0, "shift 2 gears", destination));
+            Assert.AreEqual(completes, director.IsActiveStepComplete);
+            Assert.AreEqual(index, director.CurrentStepIndex, "No payment path auto-advances the lesson.");
+            var events = director.DrainNewEvents();
+            Assert.AreEqual(completes ? 1 : 0, events.Count);
+            if (completes) Assert.AreEqual("step_completed", events[0].eventId);
+            Assert.AreEqual(available, player.heatPaidCardsThisTurn.Count,
+                "Actual partial payment remains recorded even after recovery/spin.");
+            Assert.AreEqual(available, player.techState.grillSpezialHeatPaidThisTurn);
+            Assert.AreEqual(fish, player.techState.fishAndChipsUsed);
+            Assert.AreEqual(spins ? 1 : 0, player.spinCounter);
+            Assert.AreEqual(spins, player.skipNextTurn);
+            Assert.AreEqual(sufficient ? 0 : available, player.deck.heatPool.remaining);
+            Assert.AreEqual(sufficient ? 2 : 0, player.deck.CountPermanentHeatOutsideEngine());
+            if (sufficient)
+            {
+                var target = destination == HeatPaymentDestination.Hand ? player.deck.Hand : player.deck.DiscardPile;
+                CollectionAssert.AreEqual(player.heatPaidCardsThisTurn, target);
+            }
+            else
+            {
+                Assert.IsEmpty(player.deck.Hand);
+                Assert.IsEmpty(player.deck.DiscardPile);
+            }
+        }
+        finally
+        {
+            manager.config = null;
+            UnityEngine.Object.DestroyImmediate(config);
+        }
+    }
 }

@@ -21,7 +21,10 @@ public static class RaceOvertakeResolution
                 player, turnOrder, totalNodes, true, RaceTurnRules.ShouldSkip);
             int bonus = DriverSkillRules.GetOvertakeBonus(player.driverSkill, projectedOvertakes);
             if (bonus > 0)
+            {
                 player.totalMovementThisTurn += bonus;
+                player.turnMovement.AddPlan("车手：" + player.DriverProfile.ActiveName + "（超车）", bonus, TurnMovementKind.Driver);
+            }
         }
 
         foreach (PlayerState player in turnOrder)

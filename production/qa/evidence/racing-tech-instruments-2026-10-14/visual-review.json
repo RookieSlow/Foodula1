@@ -1,0 +1,60 @@
+{
+  "utc": "2026-10-14T16:25:56.0334193Z",
+  "reviewer": "capture_review",
+  "type": "Actual image reading via view_image, production prefab controlled EditMode preview",
+  "viewedCount": 34,
+  "viewed": [
+    "after/CN-1280x720-selected.png",
+    "after/CN-1920x1080-selected.png",
+    "after/CN-2560x1440-selected.png",
+    "after/CN-1280x720-confirmed.png",
+    "after/CN-1280x720-disabled-zero-capacity.png",
+    "after/UK-1280x720-selected.png",
+    "after/UK-1920x1080-selected.png",
+    "after/UK-2560x1440-selected.png",
+    "after/UK-1280x720-confirmed.png",
+    "after/UK-1280x720-disabled-zero-capacity.png",
+    "after/US-1280x720-selected.png",
+    "after/US-1920x1080-selected.png",
+    "after/US-2560x1440-selected.png",
+    "after/US-1280x720-confirmed.png",
+    "after/US-1280x720-disabled-zero-capacity.png",
+    "after/DE-1280x720-selected.png",
+    "after/DE-1920x1080-selected.png",
+    "after/DE-2560x1440-selected.png",
+    "after/DE-1280x720-confirmed.png",
+    "after/DE-1280x720-disabled-zero-capacity.png",
+    "after/IT-1280x720-selected.png",
+    "after/IT-1920x1080-selected.png",
+    "after/IT-2560x1440-selected.png",
+    "after/IT-1280x720-confirmed.png",
+    "after/IT-1280x720-disabled-zero-capacity.png",
+    "after/JP-1280x720-selected.png",
+    "after/JP-1920x1080-selected.png",
+    "after/JP-2560x1440-selected.png",
+    "after/JP-1280x720-confirmed.png",
+    "after/JP-1280x720-disabled-zero-capacity.png",
+    "after/CN-1920x1080-confirmed.png",
+    "after/UK-2560x1440-confirmed.png",
+    "after/DE-1920x1080-disabled-zero-capacity.png",
+    "after/JP-2560x1440-disabled-zero-capacity.png"
+  ],
+  "findings": [
+    "No new label crop or overlap observed in reviewed images",
+    "Six drivetrain silhouettes preserved with simpler graphite surfaces",
+    "Actual/selected/locked state has text in addition to tint",
+    "Actual 42%, forecast75%, confirmed75%, zero capacity0% consistent with manifest"
+  ],
+  "limits": [
+    "1280x720 inherited compact labels and approx6px forecast percentage are not comfortable readability acceptance",
+    "2560 images displayed resized by tool to2048x1152; original dimensions verified from capture manifest",
+    "Still screenshots do not establish temporal pulse behavior, pointer/drag correctness or full mode gameplay"
+  ],
+  "manifestRecordCount": 54,
+  "manifestOverflowCount": 0,
+  "beforeViewed": [
+    "before/CN-1920x1080-selected.png",
+    "before/UK-1920x1080-confirmed.png",
+    "before/DE-1920x1080-disabled-zero-capacity.png"
+  ]
+}
