@@ -315,7 +315,11 @@ public class HUDUI : MonoBehaviour
             BuildReturnToMenuConfirmationUI(canvasRoot);
 
         if (returnToMenuConfirmPanel != null)
+        {
+            RacingTechConfirmationStyle.Apply(returnToMenuConfirmPanel, returnToMenuConfirmTitle,
+                returnToMenuConfirmText, cancelReturnToMenuButton, confirmReturnToMenuButton);
             returnToMenuConfirmPanel.SetActive(false);
+        }
     }
 
     /// <summary>Opens the return confirmation without changing any race state.</summary>

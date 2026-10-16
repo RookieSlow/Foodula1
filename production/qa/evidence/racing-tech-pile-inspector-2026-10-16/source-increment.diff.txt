@@ -1,0 +1,12 @@
+diff --git a/production/qa/evidence/racing-tech-pile-inspector-2026-10-16/CardPilePreviewUI.cs.source-before.txt b/Assets/Scripts/UI/CardPilePreviewUI.cs
+index fa0efc4..49dd834 100644
+--- a/production/qa/evidence/racing-tech-pile-inspector-2026-10-16/CardPilePreviewUI.cs.source-before.txt
++++ b/Assets/Scripts/UI/CardPilePreviewUI.cs
+@@ -297,6 +297,7 @@ public sealed class CardPilePreviewUI : MonoBehaviour
+         for (int i = 0; i < entries.Count; i++)
+             CreateInspectorEntry(content.transform, entries[i]);
+ 
++        RacingTechPileInspectorStyle.Apply(panel.transform, title, note, close, scroll);
+         overlay.transform.SetAsLastSibling();
+     }
+ 

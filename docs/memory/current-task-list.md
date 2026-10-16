@@ -1376,3 +1376,50 @@ maintained source for current work.
 - 用户随后另行授权将12个换挡成品替换为可公开分发的CC0录音版本；旧含Sonniss文件保留本地、不随本次提交散发，独立试听WAV亦排除。该独立音频整改的最终回归与提交结果由根任务另记，不能用上述UI阶段全量代替。全部UI升级尚未完成；下一有限包仍为徽章/卡牌/操作/弹窗，不重复扩展已完成项。
 
 第三包最终补记（2026-10-15）：用户另行授权的CC0换挡整改已接入12个新资源名，旧12份WAV/meta及3份独立试听、12份暂存重复、字体缓存和EditorSettings均保留本地并排除提交。许可原文/来源与成品哈希归档；音频原生定向41/41，整改后最终原生RunFinished2932/2932，失败/跳过/不确定0（UTC2026-10-14T16:40:05.768Z）。MainMenu干净、未播放/编译/导入，resource idle/ready；Console仅no_such_track缺失赛道测试预期error，无warning。此时为待提交索引，不冒称已commit/push。最终证据见第三包README/final-hash-manifest.json；720p小字、完整模式视觉及剩余页面仍待后续有限包。
+
+## 2026-10-15 用户优先地图选择页与追加超车录音（最终组合回归中）
+
+- 用户明确优先地图选择页，现有TrackSelectionUI石墨面板/白字/细分隔接入；保留8条正式赛道ID/顺序/中文与国家美食副题、点击即启动原回调及返回关闭，不新增第9赛道或二次确认。当前选择有左细线+文字+底部摘要；不是EventSystem焦点标记。新增装饰不接收射线，原网格/字体/生命周期保持。
+- 真实生产Initialize/Show/原按钮入口隔离预览：三尺寸改前3张全部实际看，改后最终39张/0文字溢出，最终重审24张（9原生Selectable态+三尺寸默认/GP/勒芒/北环/关闭15张）；此前30张均已查看但不混报重拍数量。关闭画面是空独立宿主，非主菜单恢复；720p动作字约10px紧凑、全模式/其余页面仍待验。地图原生最终定向33/33，失败/跳过/不确定0。
+- 用户追加汽车掠过实录超车声音，沿原RaceEventFX实际超车表现槽启动单个0.760s CC0声音，不改变超车判定。专用声源master×SFX×0.85、pitch1、不叠声，跳过/禁用/销毁/场景退出/token保护；视觉原超车信息保持。经只读审查补自然完成与SFX0边界后，音频6组原生定向40/40通过，失败/跳过/不确定0；主观耳机/扬声器、完整赛事听验不能由数值/测试替代。
+- 地图首次全量由用户取消；1094项已完成均通过但原生Failed(Child)含Cancelled子项，不记全量通过。当前组合最终2949项正在运行，尚未以预期总数冒称结果。证据分别 production/qa/evidence/racing-tech-track-selection-2026-10-15/ 与超车音效包；最终RunFinished及Unity状态待后续补记。
+- 前包HEAD58656899已由根任务提交并推送，旧“此时待提交”属于当时快照而非当前Git状态。本轮仍为未提交工作；41项原有字体/快进设置/旧音频与暂存重复保留，不自动commit/push。用户本轮地图优先顺序覆盖之前常规迁移顺序；整个UI升级尚未完成。
+
+地图证据补充：加强中间轮次focused-attempt-2-native.json曾32/33通过、1失败，已保留，最终原生33/33复跑为权威；未描述成首次通过。
+
+地图/超车录音最终补记（2026-10-15）：组合原生RunFinished2949/2949全部通过，失败/跳过/不确定0，结束UTC2026-10-15T06:33:14.3194297Z，512.8688699秒；权威证据 production/qa/evidence/overtake-audio-2026-10-15/full-2949-native.json。此结果替代“组合回归中”临时状态，不把用户取消的1094轮次或地图预期2945误记通过。地图33/33、音频加强40/40仍按各自定向分别记录。最终MainMenu干净、未播放/编译/导入，resource idle/ready与Free License可用；Console仅1条no_such_track缺失赛道测试预期error（TrackDataLoaderTest:192），无warning/新增运行错误。地图证据README、验收清单与最终哈希已同步；41项原有文件全部存在且SHA与本包基线一致，HEAD仍58656899，本轮未commit/push。地图本包完成；完整开赛/教程/生涯视觉、720p舒适大字、其余页面和完整赛事主观听验仍保留未验收边界，不声称整个UI升级完成。
+
+## 2026-10-15 共享操作确认弹窗有限包（已接入）
+
+- 本轮仅HUDUI构造/复用共享确认层增加4行样式hook和独立RacingTechConfirmationStyle，620×300卡片/190×52双按钮、八动作原文案/标签/回调、逐项mask、Space普通确认及Reset/Menu保护不变；未改比赛规则、存档、卡牌或其他弹窗。石墨平面/白字/细分隔接入，无新资源、订阅或每帧重建。
+- 真实RaceCanvas/HUD.RequestInRaceAction隔离PreviewScene证据：最终before-isolated27张、after36张，两个manifest均0文字溢出，原取消/确认handler回调0/1；初次before27张保留。实际查看after全部36张、隔离before代表6张（初次before另3张），覆盖八动作三尺寸、长中文/数字、原生hover/pressed/disabled；无新增裁切遮挡，静态中文字体可读。背景没有真实比赛manager/赛道数据，明确为受控生产UI夹具；声音监听只在夹具两按钮隔离，不改生产事件。
+- 新程序集6组原生RunFinished **77/77通过，失败/跳过/不确定0**，UTC2026-10-15T11:39:30.8703966Z；新增12项中含1项原生生命周期用例。2961仅发现数，本纯视觉有限包未再跑全量，历史2949不能冒称本轮结果。原生pointer/射线/禁用、有效文字对比、标签/mask/取消重开单次提交及Space相关测试已通过。
+- root最终MainMenu干净、未播放/编译/导入，ready/资源空闲与Free License可用；定向后Console实际0error/warning。改前已有no_such_track Error及来源未知的On demand scheduler protocol error Assert留基线记录，不声称已修复其根因。git diff --check退出0仅换行提示，HEAD仍58656899，未commit/push、未恢复暂停自动化。
+- 证据 production/qa/evidence/racing-tech-actions-2026-10-15/README.md。151项既有文件完整保留，仅本轮授权HUD/UX/清单/两continuity有明确增量；旧地图/音频、用户字体缓存和快进设置不清理。720p正文约12.7px舒适大字、完整自由赛/教程/生涯走查与其他页面仍未验收；本包完成不代表整个UI升级完成。下一有界包仍为原操作按钮/卡牌/其他弹窗，避免重做已验收modal。
+## 2026-10-15 UTC／本地10-16 五个比赛主操作按钮有限包（已接入）
+
+- RaceUILayoutController authored/fallback共用RacingTechActionButtonStyle，仅确认换挡/技能/重开/返回/出牌五Button平面化；原位置/字号/字体材质/引用/事件与交互门控保持，不改HUDUI、CardHandUI、gear1–4、赛果backToMenu或已完成确认modal。原出牌阶段PlayBtn覆盖禁用confirm的active/层级保持，不新增互斥规则。
+- 真实RaceCanvas经原Start/ApplyLayout受控PreviewScene：before36、after60，两manifest目标文字溢出均0；本人实际查看after40（六队720基本12+CN动态/原生态三尺寸24+CN大尺寸基本4）及before3。技能×1/2回合/Lv3与阶段禁用原因、单/多速/特技/弃牌/缺3→+3热由原formatter/ShowHand/选择接口生成，无新增裁切遮挡。inactive独占manager不运行GameLoop，inactive卡牌仅供动态标签读取、不显示卡面；背景不是完整比赛，不能据此验收整场或卡牌视觉。
+- 新程序集六组原生RunFinished **61/61通过，失败/跳过/不确定0**，UTC2026-10-15T17:05:32.1895263Z，3.2888873秒；新增8项中1原生。实际pointer/有效对比/禁用/回调取消单次提交/双布局与重复Apply覆盖。防双击只以自定义0.05秒测试真实恢复，生产默认0.25秒源码未改，不冒称实测默认延时。2969仅发现数，本纯视觉包未重跑全量，历史2949及前包77不计本轮通过。
+- root最终UTC17:06:12Z：MainMenu干净、未播放/编译/导入，资源idle/ready、测试结束、许可有效，Console0error/warning；中间一次MCP WebSocket未初始化warning保留事实，不称已修复工具。276项展开基线/原始diff与8份源码文档副本保留，HUD/CardHand/旧modal及旧地图/音频不覆盖；仅本轮布局主题、测试、证据及授权文档增量。HEAD仍58656899，未commit/push、未恢复暂停自动化。
+- 证据 production/qa/evidence/racing-tech-primary-actions-2026-10-15/README.md。selected仅原生状态测试、无专门截图；可能失控更长风险标签/其他队极端技能原因、720p舒适度及完整自由赛/教程/生涯/OS输入仍未验。整体UI尚未完成，下包优先风险标签/卡牌等有限切片，不无限美化已完成按钮。
+## 2026-10-16 牌桌四区域壳有限包（已接入）
+
+- 已保存411项展开基线、原始Git差异与相关源副本，HEAD58656899；overview39段全读、current-task-list由ui_impl完整分页、game-mechanics由UX完整分页，首尾SHA一致记录于本包continuity-read-audit.json。缺active/governance仅记录。
+- scope仅四区域底板/标题/统计和动态计数/空堆提示；原CardUI卡面、缩略牌/叠背、详情/输入/规则保持。新独立捕获helper初次字符串替换编译失败，整行修正后根任务才成功拍改前27张，未掩盖失败。
+- before真实六队三尺寸与CN空堆/原formatter失控风险/native selected，7张实例实际可见；本审查者实际看6张。54处原TMPoverflow全为HandTitle/DeckTableTitle高度不足，风险按钮原两行完整不溢出；仅两个标题获最小扩高授权，改前原图保留。
+- 证据production/qa/evidence/racing-tech-card-zones-2026-10-16/README.md；最终补记：after27/0overflow，根任务实看after9/before2；新程序集六组原生59/59通过，失败/跳过/不确定0，2.5227451秒（UTC17:47:34Z），2977仅发现数、未全量。最后UTC22:35:09Z MainMenu干净/idle/ready/许可有效，Console0error/warning；四区及两个标题最小补高已接入。协作额度限制留下独立改后审查缺口，根任务有限自审不冒称该门通过。受控UI不等于完整GameLoop，720p舒适度、完整模式和卡面/详情主题继续未验；不commit/push、不恢复自动化。
+
+## 2026-10-16 牌堆详情弹窗有限包（已接入）
+
+- 原ShowInspector末尾1行接独立RacingTechPileInspectorStyle；原黑0.72遮罩、940×650几何、字体/完整文案、抽牌隐藏顺序汇总/弃牌新到旧、MiniCard/Glyph保持。真实before路由正文→Overlay获准局部Panel空Button消费，after正文→Panel、Close→CloseButton；原遮罩外/关闭销毁保留，无玩法/输入扩展。
+- before21/after24三尺寸真实生产弹窗夹具均0overflow；本人实际看before6/after18，最长Go ATTACK全文三尺寸居中完整，末行可达、类型字形保持。独立ownedCanvas与原catalog诊断库存，不是普通赛事牌组/GameLoop；静态font/material克隆，无存档/现场景修改。
+- 四组原生RunFinished39/39通过，失败/跳过/不确定0，UTC2026-10-15T23:13:44.9013542Z，2.1340991秒，新增7含1原生；2984仅发现数，未全量。root最终MainMenu干净/idle/ready/许可有效、未播放编译导入、Console0error/warning；中间MCP重载warning不称生产错误或已修复。
+- 证据production/qa/evidence/racing-tech-pile-inspector-2026-10-16/README.md。514文件基线/源副本、三文档全分页读及最终保留/SHA归档；旧包冻结、HEAD58656899不变、无Git提交/推送/自动化恢复。Close selected专门图、极端数字、逐全六队效果/既有MiniGlyph对比、720舒适度、完整模式与整体UI仍未验，后续按有限迁移顺序。
+
+## 2026-10-16 选中牌效果面板有限包（已接入，有限验收通过）
+
+- CardHandUI原Ensure创建/复用两路径接独立RacingTechSelectedEffectStyle，仅石墨/白正文/细边；原金标题、15字号、nowrap/Ellipsis、位置高度/字体材质与真实Show/keyboard/clear流程保持。before45均完整，未增加wrap或补高，不改formatter、卡面/规则或旧八包。
+- before45/after45三尺寸六队12特技及速度/普通heat诊断/US真实BBQ，全部目标0overflow/0truncated，原文匹配/完整显示/清空隐藏/重开均45/45；raw/parsed/几何前后完全一致。本人实际看before6/after9，另UX3/12与root3/3分别记录，受控RaceCanvas非完整GameLoop，普通heatprivateShow不冒称正常可选。
+- 四组原生定向56/56，失败/跳过/不确定0，UTC2026-10-16T04:07:37.1394358Z，3.2094577秒；新增6项含1原生，本轮新原生全量2990/2990通过，失败/跳过/不确定0，UTC2026-10-16T04:19:55.0543520Z、710.7150231秒，原文件归github-submission-2026-10-16；最终MainMenu干净/无播放编译导入、许可/idle/ready有效、testsfalse，Console仅no_such_track负向预期error1、warnings0、无新增运行错误。
+- 证据production/qa/evidence/racing-tech-selected-effect-2026-10-16/README.md；602项展开基线/11源副本及三文档全分页读审计已存，旧文件保留。用户另明确要求完成当前未完工作后提交Github，提交范围/保护排除与最终Git结果由root另记，本代理未操作Git。720舒适度、物理输入/完整模式、卡面既有对比及长期剩余页面仍未验，不因本包或提交称全部UI完成。

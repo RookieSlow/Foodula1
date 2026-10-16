@@ -1,0 +1,502 @@
+[
+  {
+    "path": "Assets/Scripts/Editor/RacingTechCardZonesCapture.cs",
+    "bytes": 20366,
+    "sha256": "F046BA645D89B7DA0E12BD6033AA92D51D18B941913AC827D6D4ECE8A1494507"
+  },
+  {
+    "path": "Assets/Scripts/Editor/RacingTechCardZonesCapture.cs.meta",
+    "bytes": 240,
+    "sha256": "31543B0EC3BF388CC358F8CF79AAB96314423DF7B3977C6AEFCD3AA202D07A16"
+  },
+  {
+    "path": "Assets/Scripts/UI/CardPilePreviewUI.cs",
+    "bytes": 26614,
+    "sha256": "87C9155C07020105B65DDAB3096E42230F4D832DC14E74FB79F24D4F501626EE"
+  },
+  {
+    "path": "Assets/Scripts/UI/RaceUILayoutController.cs",
+    "bytes": 27776,
+    "sha256": "C621F76ED617B2CC8EAE0B3E38766EB858D87C0F9121681D065720D29FF1709C"
+  },
+  {
+    "path": "Assets/Scripts/UI/RacingTechCardZoneStyle.cs",
+    "bytes": 3847,
+    "sha256": "5267485DEAED0563BDEE9DE0EBA3CED61F1AC5F5AF711A5C3A47DAE830DB2034"
+  },
+  {
+    "path": "Assets/Scripts/UI/RacingTechCardZoneStyle.cs.meta",
+    "bytes": 251,
+    "sha256": "FB3D153011B542B8BA73AF87AA3A3010126CFD8B9E6BD061A8DF0444D7463EE4"
+  },
+  {
+    "path": "Assets/Tests/Editor/racing_tech_card_zone_test.cs",
+    "bytes": 17341,
+    "sha256": "CAF3B5C5D33F5823038691F95D391D6CF8E646ED5EBC7D2FB917A8BC80C365BF"
+  },
+  {
+    "path": "Assets/Tests/Editor/racing_tech_card_zone_test.cs.meta",
+    "bytes": 251,
+    "sha256": "BBAA2BB9BA8F1856526A44902B06CF64FCDFFB830C5535B394A44236D603C87F"
+  },
+  {
+    "path": "design/ux/racing-tech-ui-checklist.md",
+    "bytes": 15559,
+    "sha256": "F23F6B512FF5F7E88026B23F66B118620375990FEC50283D3C44B9A55E1CF59C"
+  },
+  {
+    "path": "design/ux/racing-tech-ui.md",
+    "bytes": 53691,
+    "sha256": "91802F4315F806C0AEF0E64F70F45C9761D2CB4FA560A60299996C198A7325B7"
+  },
+  {
+    "path": "docs/memory/current-task-list.md",
+    "bytes": 260557,
+    "sha256": "418BCB1F5CE64239E58EFD5C46D9A5BCE23A68D941CB0A507B5F3F0D0B21CC63"
+  },
+  {
+    "path": "docs/memory/project-overview.md",
+    "bytes": 158281,
+    "sha256": "22DE44323E36FFFFC729D85EA41B19494587D6F444D4F2273C84B239EE70C06F"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/CN-1280x720-empty-piles.png",
+    "bytes": 104597,
+    "sha256": "12F1C2F0FDF8D82FCB9F0388C08E2CF05DC8D3557CFCAB4DBA0B20D8146052D4"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/CN-1280x720-selected-native.png",
+    "bytes": 140683,
+    "sha256": "AEC44813297A9164D456DA7645EE536F0B0B16EF127D2EA384782D561F050A97"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/CN-1280x720-seven-hand-nonempty-piles.png",
+    "bytes": 129479,
+    "sha256": "4658F1F28D565F11C75850F53F05650EBF03592A3743FFB83F6D9403A34D474D"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/CN-1280x720-zero-engine-spin-risk.png",
+    "bytes": 102148,
+    "sha256": "36673A2770999C5C62A84A2EEDC7E2E20EDCC2A8C7C8F1E625820CDECC7EFA2A"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/CN-1920x1080-empty-piles.png",
+    "bytes": 158028,
+    "sha256": "EE2081216B2B253288387971524BD01EA445CF90E973BF70AE13ED83172AAC6A"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/CN-1920x1080-selected-native.png",
+    "bytes": 219513,
+    "sha256": "E8F3CFF8CA3D8645A92E14D2515B0FED7E340C4B5912D7B114F66602ED3418DF"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/CN-1920x1080-seven-hand-nonempty-piles.png",
+    "bytes": 193232,
+    "sha256": "E8A4A4B60579AFB880F787D8B7B2E91422DF3368F1EC6E4280690EBDA79051A2"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/CN-1920x1080-zero-engine-spin-risk.png",
+    "bytes": 156327,
+    "sha256": "EC6C818CAEC5F575AA167CB8EA95096C00AEA5087FEE160C2C403B6E205D0634"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/CN-2560x1440-empty-piles.png",
+    "bytes": 334697,
+    "sha256": "88F785FFE3CA4ABCB2E57F9CDE1F500CB5CC49EDB00B5C4DDB472D883A93B4E7"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/CN-2560x1440-selected-native.png",
+    "bytes": 465540,
+    "sha256": "C6CB5B43E74589CD90CAAB00F26137904A3B7ED54987BA1B20D5430FFA6DA27C"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/CN-2560x1440-seven-hand-nonempty-piles.png",
+    "bytes": 424340,
+    "sha256": "7FF6C049B7ECD32D21DB590C305C61627D85A0BE41543A1CA8C1D55A4A62001B"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/CN-2560x1440-zero-engine-spin-risk.png",
+    "bytes": 321894,
+    "sha256": "CEE6937E4EF353AC6F656BADF01479F45339CF4EC6071B1474407B9095BE17F7"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/DE-1280x720-seven-hand-nonempty-piles.png",
+    "bytes": 130361,
+    "sha256": "974486FCAB779F317E3CB428EB7059B482762172E573653D3658BCDEB229489E"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/DE-1920x1080-seven-hand-nonempty-piles.png",
+    "bytes": 193786,
+    "sha256": "C0A076E9F4496790A5B825438C1007027B0412638677FCFE3FA41518CA1BCBD4"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/DE-2560x1440-seven-hand-nonempty-piles.png",
+    "bytes": 424929,
+    "sha256": "8116053FE23CBFCC3A1A9AF2A70CEE838E209E69B9C73D5D17E15B7B949B33BA"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/IT-1280x720-seven-hand-nonempty-piles.png",
+    "bytes": 129345,
+    "sha256": "D148F12C43D0BE88C68CAC8122401DF0B4B45C88C34AA484BBF5696579A66838"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/IT-1920x1080-seven-hand-nonempty-piles.png",
+    "bytes": 192983,
+    "sha256": "A75B0E76DF9A02D98B49B12E78C048C779ED7FCE1928E3CB41269EB64A5ED8EB"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/IT-2560x1440-seven-hand-nonempty-piles.png",
+    "bytes": 423779,
+    "sha256": "2D0ACEEBF6ED163F8B17430509A0D9C6CE042F3FB23BA8859CD73C6A46D51BFC"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/JP-1280x720-seven-hand-nonempty-piles.png",
+    "bytes": 130607,
+    "sha256": "03B4998A506F2BECF4BE20809A53F382923C210A504A3FC17F90FC008393B154"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/JP-1920x1080-seven-hand-nonempty-piles.png",
+    "bytes": 194754,
+    "sha256": "D26F7278E2C296F3CD1AB46A3F2BD315E3EAFCA0534C9895B84D68F66D8EDA4B"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/JP-2560x1440-seven-hand-nonempty-piles.png",
+    "bytes": 427033,
+    "sha256": "C91287FEB9CDB46407BB7873C7D16397A441A47132494BF0ECB10BDA67656934"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/manifest.json",
+    "bytes": 221060,
+    "sha256": "CBB22FD3ABC8E4ED5176A3030E55CE98E7916254F0B33541FCB3171E5D72009B"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/UK-1280x720-seven-hand-nonempty-piles.png",
+    "bytes": 129846,
+    "sha256": "40ACD572433B8940AF402FA4015C4EFE5B386B81BD62D85F5429C30D1BDD3D75"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/UK-1920x1080-seven-hand-nonempty-piles.png",
+    "bytes": 193599,
+    "sha256": "BCF0E596067FD2C1D0B8C2E40D0646C24D7B29EFF594294687E91F21847A1FB8"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/UK-2560x1440-seven-hand-nonempty-piles.png",
+    "bytes": 425226,
+    "sha256": "86890B14D668222D55EA5636E23D92F12D0C7F1BE2BD0151EA67238761028ECA"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/US-1280x720-seven-hand-nonempty-piles.png",
+    "bytes": 129293,
+    "sha256": "F5C5F8E51E5BEFFBB5217E643A6821D7BCF8E5201A9F99A48BF2DAC93B53CBA8"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/US-1920x1080-seven-hand-nonempty-piles.png",
+    "bytes": 192582,
+    "sha256": "DDA9024C3B913F44D993D1F413A699041289C6F460C534226560232FAD82F029"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/after/US-2560x1440-seven-hand-nonempty-piles.png",
+    "bytes": 423102,
+    "sha256": "21C2E068C509E08CA5AC4C1F1C686E028DCD74D37F396C2D9A7A009C433ED3A1"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/baseline-diff-stderr.txt",
+    "bytes": 1551,
+    "sha256": "851CCF17EB3F1B16EEC763A9E84CF932C87BBDFFE36F357E56BE12B8911B7D21"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/baseline-diff.txt",
+    "bytes": 73956,
+    "sha256": "836C5408691D40C72FFE565DD9FAF06703217DE19482AF901B369D7768628964"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/baseline-diffstat-stderr.txt",
+    "bytes": 1551,
+    "sha256": "851CCF17EB3F1B16EEC763A9E84CF932C87BBDFFE36F357E56BE12B8911B7D21"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/baseline-diffstat.txt",
+    "bytes": 899,
+    "sha256": "782F60DF996D3EE4DDBC63B018122B42EBC64DCE86B5B37FEBAD82BCBA160E40"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/baseline-names-stderr.txt",
+    "bytes": 1551,
+    "sha256": "851CCF17EB3F1B16EEC763A9E84CF932C87BBDFFE36F357E56BE12B8911B7D21"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/baseline-names.txt",
+    "bytes": 563,
+    "sha256": "4DC910E5196E7508BAF24E7B9272CF4595F9280F78D42AED50D5EEA5B6675C50"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/baseline-preservation.json",
+    "bytes": 1559,
+    "sha256": "37226F88D33D3E18A017B43249733F403E026716EF949718CD67ADC06A0C5165"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/baseline-status.txt",
+    "bytes": 4651,
+    "sha256": "BC15BAC62C010C60EBEB8968481DF108D631531DDFB105FA7622B620CE1AA598"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/baseline.json",
+    "bytes": 97418,
+    "sha256": "ADD5BA097B7BF4C57991E597A970927A449B5B5E99810B0008F071EF05A579DB"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/CN-1280x720-empty-piles.png",
+    "bytes": 104517,
+    "sha256": "94FE1C10D78DBF7CF13267108E3F3CE9A8C21832D6CE73A98331B670B43E0329"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/CN-1280x720-selected-native.png",
+    "bytes": 139001,
+    "sha256": "EDC6B9691A7F84E81AC3929612B02677F031561D70AECF087C80873BD0505B54"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/CN-1280x720-seven-hand-nonempty-piles.png",
+    "bytes": 127975,
+    "sha256": "5182FC64EFCE27DE2969D185F72DC2884EE3461BE3B71AC6F232074066F1DF85"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/CN-1280x720-zero-engine-spin-risk.png",
+    "bytes": 99097,
+    "sha256": "072D30FE11CDD5A683AED6FB71282BFA5ED7E66A03FB54801964EDA7EEB92327"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/CN-1920x1080-empty-piles.png",
+    "bytes": 157812,
+    "sha256": "865D2B72DD3626BFA0B69856B3E4D0333D74D36A08FA84CE791286DE7A8770FD"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/CN-1920x1080-selected-native.png",
+    "bytes": 217241,
+    "sha256": "0508A205F7C49C52AFBB4A0E5E7B64AFB1FE8413C752B23F828336CADC9267C2"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/CN-1920x1080-seven-hand-nonempty-piles.png",
+    "bytes": 190825,
+    "sha256": "E7C05C5CFE203C4027523F3B3A68EB97EAA712A9FFD36EBE70DD689A984C7EEA"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/CN-1920x1080-zero-engine-spin-risk.png",
+    "bytes": 153998,
+    "sha256": "65E48EAF3ED2B7BF3908F2CD9169B8A640986CDDFF24869614197F61BD73E8AD"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/CN-2560x1440-empty-piles.png",
+    "bytes": 334218,
+    "sha256": "DAF49F95B662C01700ABB262CFF7AA862AB0630AEFDE9389263DB8FF7A1A64F2"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/CN-2560x1440-selected-native.png",
+    "bytes": 458692,
+    "sha256": "8AD01C68BBFB26B9001D0C52CEF2075D6E072EA19D7B0E205E9535ADE603413C"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/CN-2560x1440-seven-hand-nonempty-piles.png",
+    "bytes": 416652,
+    "sha256": "0D91E8E140C271E2140D4D5DE2F6DC3CC71A134AD37AF56C9D6C1B8582BA80DF"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/CN-2560x1440-zero-engine-spin-risk.png",
+    "bytes": 312670,
+    "sha256": "14CBEAC4D318F6D97237436957512F1B40EDC39671BD406C33D98B224F56CF60"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/DE-1280x720-seven-hand-nonempty-piles.png",
+    "bytes": 128741,
+    "sha256": "E81DA516D01685AD8838438C6F46FDA51012AC6F959759BF127E565E7567569F"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/DE-1920x1080-seven-hand-nonempty-piles.png",
+    "bytes": 191381,
+    "sha256": "FC965FF37BD937EA59E90968AD509229D653CE670955D9E0E2177561D16F9540"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/DE-2560x1440-seven-hand-nonempty-piles.png",
+    "bytes": 417167,
+    "sha256": "97EAADE78AC04AEB1616E6149527817AF0B59BB924285CAA3728A064007C35C6"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/IT-1280x720-seven-hand-nonempty-piles.png",
+    "bytes": 127766,
+    "sha256": "A8EA72F290293A93D1A51146F0362B5E5DC48959BD0B27D9D2F9A72F0ED65910"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/IT-1920x1080-seven-hand-nonempty-piles.png",
+    "bytes": 190559,
+    "sha256": "E5053AAABAE0E9775A0C523BDCF0E8B3EB52266AD05F6A1D5DBC6EA125D963A4"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/IT-2560x1440-seven-hand-nonempty-piles.png",
+    "bytes": 416111,
+    "sha256": "956FDA3F98408668D3D542F1EBB750C5EB2EC52D6952274CB1E796CDA3EB0DB5"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/JP-1280x720-seven-hand-nonempty-piles.png",
+    "bytes": 128956,
+    "sha256": "1344BF877E1BF2DCCCAD20A90E355CFD587AD92FF4EA450755F2A75F1F5A66C0"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/JP-1920x1080-seven-hand-nonempty-piles.png",
+    "bytes": 192421,
+    "sha256": "F67FDEBFC36B0C5A81C123306B683F85CF9EFB211A61DEDC93D8ED45B023ADE6"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/JP-2560x1440-seven-hand-nonempty-piles.png",
+    "bytes": 419531,
+    "sha256": "F2BE1DF72E86605FD5B2B09B99D561DD436659B264496230C3A3BD43DD372D09"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/manifest.json",
+    "bytes": 224247,
+    "sha256": "97075C0AD00F7E95637A714B4AF16DF5B3A417849CC1941EE6A0DD623D5AC3C4"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/UK-1280x720-seven-hand-nonempty-piles.png",
+    "bytes": 128336,
+    "sha256": "296D25553140B1021D26D6012DB4DC3AE018841DDFFFEFA5088A7D076B6FC9F3"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/UK-1920x1080-seven-hand-nonempty-piles.png",
+    "bytes": 191197,
+    "sha256": "502FA1B4E722EFB8A2FA925E3BDA605E95D45FEC19598FB988131F376CFADB3C"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/UK-2560x1440-seven-hand-nonempty-piles.png",
+    "bytes": 417536,
+    "sha256": "8A9373FD29F594B61906CA91224A14AC97B06DBF2DD497B3EAD681BFDDA2691B"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/US-1280x720-seven-hand-nonempty-piles.png",
+    "bytes": 127725,
+    "sha256": "39446901E45BD08FBBFDF89D756FD3207DEF5A916FC672AA3F6619B0E9FF1A3D"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/US-1920x1080-seven-hand-nonempty-piles.png",
+    "bytes": 190131,
+    "sha256": "FB2826AE3E56D2E502E2D8CA49FCB74732225FB3A2555F88337ABD369BE1EFB6"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/before/US-2560x1440-seven-hand-nonempty-piles.png",
+    "bytes": 415662,
+    "sha256": "136C948FEE5264871BFC08D00605092B835EC6ED1BF3202167AC945AF03DC502"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/card-prefab-source-baseline.json",
+    "bytes": 296,
+    "sha256": "D468D4B1978C260668248FBD2D532D1EFC4BA3247B2C54B33B29BC49CD3184F4"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/CardHandUI.cs.source-before.txt",
+    "bytes": 39019,
+    "sha256": "5B58B9A86F8E6884D9FE876386E29B226BE81AD7E934662489D0E2E31F32FF75"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/CardPilePreviewUI.cs.source-before.txt",
+    "bytes": 26436,
+    "sha256": "7C8F3572BA46CEF9DBAFEDD232E2B82120A88A24B56275CBC798E013045008DC"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/CardPrefab.prefab.actual-source-before.txt",
+    "bytes": 8641,
+    "sha256": "98605584CB869420C81C32C48071508F9CB22B81659E13FBB927939BF99E7FCD"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/CardUI.cs.source-before.txt",
+    "bytes": 13040,
+    "sha256": "B2464DD73BEA8419700F9046C65774F0D4E8DAF95C17D818EEE0EF5395514D70"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/continuity-overview-read-audit.json",
+    "bytes": 390,
+    "sha256": "C5BB78B33EE9230E7DAF4842658F99C1404379444D6856B76004E3680F715B34"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/continuity-read-audit.json",
+    "bytes": 1833,
+    "sha256": "5E05895C1E22CE1A9AF2D02A3BBDB4D5F08EB89474DA672AEAA58EDF3B6BDE02"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/continuity-task-list-read-audit.json",
+    "bytes": 639,
+    "sha256": "3024280C7865BA3F993CAB6FCF5E657D88B2A21F0713707B8C8BDC0064F95487"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/current-task-list.md.source-before.txt",
+    "bytes": 259026,
+    "sha256": "83723C62EDFCF434E9F102C907E5870282F80D4951D365D698433553A24860DD"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/final-unity-state.json",
+    "bytes": 238,
+    "sha256": "E5C84AB9187195ECBE1AA90939F00B07AF23546525D2476957ADC35968BF7530"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/focused-native.json",
+    "bytes": 193,
+    "sha256": "9F769132BEC7DD0D9E278AF397A3D1B322AF5F9D5F8A0E507C577BDD9201A39E"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/focused-summary.json",
+    "bytes": 360,
+    "sha256": "45ACDAE9A133C6A705EDA54987B71F7C95E6F02360CB641D09B1109E7F0C90C4"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/GearRequirementFeedbackRules.cs.source-before.txt",
+    "bytes": 5634,
+    "sha256": "B288D2F0D569557C2ADBBB81860C7F9DAAE4835BE0AC16CB45F1FD433C0EC818"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/helper-compile-correction.json",
+    "bytes": 600,
+    "sha256": "B4998518E19AF551727681B8FF3C4302430B5DB3CFC139AAB3FB9FD007517B9A"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/project-overview.md.source-before.txt",
+    "bytes": 156750,
+    "sha256": "90F4DAB3AF577E6D3A82A04353AFA59638D79DB37789261DC73E01846D149A5C"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/RaceUIFactory.cs.source-before.txt",
+    "bytes": 10423,
+    "sha256": "9447E87C4DA2759919DEF5EE6F80540B56604F047D2C9C1A5BEA3BB23A87E006"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/RaceUILayoutController.cs.source-before.txt",
+    "bytes": 27640,
+    "sha256": "77F0F946550DEFA5B3D2960F12FC188D32793F20FD76B80E796246E2CF8CCE8F"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/racing-tech-ui-checklist.md.source-before.txt",
+    "bytes": 13437,
+    "sha256": "A7DCF6F6B8C85EFBB046500201C84F5B11CB61D933B2F4565B2C554D4B5B69B9"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/racing-tech-ui.md.source-before.txt",
+    "bytes": 45501,
+    "sha256": "A17B336D0682D4FF0FC6B2AC7D9AD9199F10DE6D23717841A54441F1ECDF3086"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/README.md",
+    "bytes": 4432,
+    "sha256": "FFFFC410295F29CFEC07FD85E9B4AC25EBCFF188F1308A56BFDB6BE48C655AE1"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/source-baseline.json",
+    "bytes": 2087,
+    "sha256": "9D9183B24E665B754B2C1EA378CEDD7AE0C3037D6AF94F4AD1E860167434F2AA"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/source-review.json",
+    "bytes": 2520,
+    "sha256": "D0747886251BCBB3A73E9EE769ACD8DF7B358B945B9EAD6E146CD48A8A384264"
+  },
+  {
+    "path": "production/qa/evidence/racing-tech-card-zones-2026-10-16/title-geometry-comparison.json",
+    "bytes": 15441,
+    "sha256": "8B16996E8CFDE5A1181EB93FE809EB341B95B5F66E62044D562B71EF4DFD6470"
+  }
+]

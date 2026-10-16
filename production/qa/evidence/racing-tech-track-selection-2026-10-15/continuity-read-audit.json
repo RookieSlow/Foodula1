@@ -1,0 +1,16 @@
+{
+  "readUtc": "2026-10-15T01:12:05.9052530Z",
+  "overviewSha256": "397F63D85CEFE66CD526029BFA740E5D994EB94777C7FF8CBBDF8EBA3AFC7C68",
+  "previousFullyReadSha256": "397F63D85CEFE66CD526029BFA740E5D994EB94777C7FF8CBBDF8EBA3AFC7C68",
+  "method": "Exact SHA256 equals previous fully read overview plus authored package3 result append; no new unread delta",
+  "missing": [
+    "production/session-state/active.md",
+    ".Codex/docs/directory-structure.md",
+    ".Codex/docs/technical-preferences.md",
+    ".Codex/docs/coordination-rules.md",
+    ".Codex/docs/coding-standards.md",
+    ".Codex/docs/context-management.md",
+    "design/accessibility-requirements.md"
+  ],
+  "unity": "Root reports MainMenu is playing/changing; no Unity tools or Assets writes by capture reviewer. No scene saving."
+}

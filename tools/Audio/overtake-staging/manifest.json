@@ -1,0 +1,157 @@
+{
+  "source_page": "https://bigsoundbank.com/cars-passages-s0556.html",
+  "download_url": "https://bigsoundbank.com/UPLOAD/bwf-en/0556.wav",
+  "download_date": "2026-10-15",
+  "author": "Joseph SARDIN",
+  "license": "CC0-1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode.en",
+  "source": "tools/Audio/overtake-staging/source/bigsoundbank_0556_bwf.wav",
+  "source_sha256": "6afee85df5e2f3c417a7e743fc14006ea3a0a1fdfb0b74ba01ee3ce8db8b5703",
+  "source_frames": 3384589,
+  "source_duration_seconds": 70.51227083333333,
+  "source_format": "48000 Hz / 16-bit PCM / stereo BWF",
+  "excerpt_start_seconds": 5.0,
+  "excerpt_end_seconds": 5.76,
+  "processing": "L+R mean; one-pole HP70Hz LP6500Hz; cosine fade in35ms out100ms; RMS target -22 dBFS capped peak -9 dBFS; no time/pitch shift or synthetic layers",
+  "output": "tools/Audio/overtake-staging/overtake_cc0.wav",
+  "output_sha256": "456af869f1b432c69530197f4aa0df57e74c6d315108e417133914618b976165",
+  "output_format": "48000 Hz / 16-bit PCM / mono",
+  "frames": 36480,
+  "duration_seconds": 0.76,
+  "peak_dbfs": -9.000392326786972,
+  "rms_dbfs": -22.328653058043024,
+  "full_scale_samples": 0,
+  "first_sample": 0,
+  "last_sample": 0,
+  "subjective_listening": "Pending; objective PCM checks do not establish perceptual quality",
+  "excerpt_selection": "First of six passages; 100ms RMS maximum 5.4-5.5s (-11.92dBFS); crop includes approach rise 5.0s (-16.26), apex and initial departure 5.7s (-15.66), then designed fade. Does not retain entire distant approach/recession.",
+  "source_100ms_envelope_4_to_7_seconds": [
+    {
+      "source_start_seconds": 4.0,
+      "rms_dbfs": -24.98880735023644
+    },
+    {
+      "source_start_seconds": 4.1,
+      "rms_dbfs": -23.776605194240723
+    },
+    {
+      "source_start_seconds": 4.2,
+      "rms_dbfs": -23.144049271202157
+    },
+    {
+      "source_start_seconds": 4.3,
+      "rms_dbfs": -22.43796488787092
+    },
+    {
+      "source_start_seconds": 4.4,
+      "rms_dbfs": -21.625857161440507
+    },
+    {
+      "source_start_seconds": 4.5,
+      "rms_dbfs": -21.20809990407679
+    },
+    {
+      "source_start_seconds": 4.6,
+      "rms_dbfs": -19.650657825002035
+    },
+    {
+      "source_start_seconds": 4.7,
+      "rms_dbfs": -19.988261511184334
+    },
+    {
+      "source_start_seconds": 4.8,
+      "rms_dbfs": -18.915929587557383
+    },
+    {
+      "source_start_seconds": 4.9,
+      "rms_dbfs": -18.427214478506233
+    },
+    {
+      "source_start_seconds": 5.0,
+      "rms_dbfs": -16.264993064826733
+    },
+    {
+      "source_start_seconds": 5.1,
+      "rms_dbfs": -15.208030448889831
+    },
+    {
+      "source_start_seconds": 5.2,
+      "rms_dbfs": -13.849852626453508
+    },
+    {
+      "source_start_seconds": 5.3,
+      "rms_dbfs": -13.083846489022086
+    },
+    {
+      "source_start_seconds": 5.4,
+      "rms_dbfs": -11.918463818324119
+    },
+    {
+      "source_start_seconds": 5.5,
+      "rms_dbfs": -13.531672607937056
+    },
+    {
+      "source_start_seconds": 5.6,
+      "rms_dbfs": -14.134026508104247
+    },
+    {
+      "source_start_seconds": 5.7,
+      "rms_dbfs": -15.655345484154035
+    },
+    {
+      "source_start_seconds": 5.8,
+      "rms_dbfs": -17.084684146271098
+    },
+    {
+      "source_start_seconds": 5.9,
+      "rms_dbfs": -19.567125113725716
+    },
+    {
+      "source_start_seconds": 6.0,
+      "rms_dbfs": -23.145930090238366
+    },
+    {
+      "source_start_seconds": 6.1,
+      "rms_dbfs": -23.615983380770565
+    },
+    {
+      "source_start_seconds": 6.2,
+      "rms_dbfs": -26.18289692885864
+    },
+    {
+      "source_start_seconds": 6.3,
+      "rms_dbfs": -26.799741028933273
+    },
+    {
+      "source_start_seconds": 6.4,
+      "rms_dbfs": -28.34245958352338
+    },
+    {
+      "source_start_seconds": 6.5,
+      "rms_dbfs": -29.685104561988027
+    },
+    {
+      "source_start_seconds": 6.6,
+      "rms_dbfs": -31.132904519579213
+    },
+    {
+      "source_start_seconds": 6.7,
+      "rms_dbfs": -31.79919402443874
+    },
+    {
+      "source_start_seconds": 6.8,
+      "rms_dbfs": -32.36403618230601
+    },
+    {
+      "source_start_seconds": 6.9,
+      "rms_dbfs": -32.62287987819277
+    }
+  ],
+  "review": {
+    "path": "tools/Audio/overtake-staging/overtake_source_then_cue.wav",
+    "sha256": "43970e1b0b9ec94ef092cbd1ec17f9d505f417c11464fb37e6bd3edebca19c26",
+    "duration_seconds": 4.26,
+    "layout": "0-3s: source4-7s stereo peak-attenuated; 3-3.5s silence; 3.5-4.26s mono cue duplicated L/R",
+    "reference_gain": 0.36202809755921306
+  }
+}

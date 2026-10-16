@@ -1,0 +1,60 @@
+[
+  {
+    "path": "Assets/Scripts/UI/CardPilePreviewUI.cs",
+    "bytes": 26614,
+    "sha256": "87c9155c07020105b65ddab3096e42230f4d832dc14e74fb79f24d4f501626ee",
+    "copy": "CardPilePreviewUI.cs.source-before.txt"
+  },
+  {
+    "path": "Assets/Scripts/UI/CardPileEntryRules.cs",
+    "missing": true
+  },
+  {
+    "path": "Assets/Scripts/UI/CardHandUI.cs",
+    "bytes": 39019,
+    "sha256": "5b58b9a86f8e6884d9fe876386e29b226be81ad7e934662489d0e2e31f32ff75",
+    "copy": "CardHandUI.cs.source-before.txt"
+  },
+  {
+    "path": "Assets/Scripts/UI/RaceUILayoutController.cs",
+    "bytes": 27776,
+    "sha256": "c621f76ed617b2cc8eae0b3e38766eb858d87c0f9121681d065720d29ff1709c",
+    "copy": "RaceUILayoutController.cs.source-before.txt"
+  },
+  {
+    "path": "Assets/Scripts/UI/RacingTechCardZoneStyle.cs",
+    "bytes": 3847,
+    "sha256": "5267485deaed0563bdee9de0eba3ced61f1ac5f5af711a5c3a47dae830db2034",
+    "copy": "RacingTechCardZoneStyle.cs.source-before.txt"
+  },
+  {
+    "path": "Assets/Prefab/CardPrefab.prefab",
+    "bytes": 8641,
+    "sha256": "98605584cb869420c81c32c48071508f9cb22b81659e13fbb927939bf99e7fcd",
+    "copy": "CardPrefab.prefab.source-before.txt"
+  },
+  {
+    "path": "design/ux/racing-tech-ui.md",
+    "bytes": 53691,
+    "sha256": "91802f4315f806c0aef0e64f70f45c9761d2cb4fa560a60299996c198a7325b7",
+    "copy": "racing-tech-ui.md.source-before.txt"
+  },
+  {
+    "path": "design/ux/racing-tech-ui-checklist.md",
+    "bytes": 15559,
+    "sha256": "f23f6b512ff5f7e88026b23f66b118620375990fec50283d3c44b9a55e1cf59c",
+    "copy": "racing-tech-ui-checklist.md.source-before.txt"
+  },
+  {
+    "path": "docs/memory/project-overview.md",
+    "bytes": 158281,
+    "sha256": "22de44323e36ffffc729d85ea41b19494587d6f444d4f2273c84b239ee70c06f",
+    "copy": "project-overview.md.source-before.txt"
+  },
+  {
+    "path": "docs/memory/current-task-list.md",
+    "bytes": 260557,
+    "sha256": "418bcb1f5ce64239e58efd5c46d9a5bce23a68d941cb0a507b5f3f0d0b21cc63",
+    "copy": "current-task-list.md.source-before.txt"
+  }
+]

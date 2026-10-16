@@ -1,0 +1,542 @@
+[
+  {
+    "team": "CN",
+    "width": 1920,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1920,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1920,
+    "fixture": "empty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1920,
+    "fixture": "empty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1920,
+    "fixture": "zero-engine-spin-risk",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1920,
+    "fixture": "zero-engine-spin-risk",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1920,
+    "fixture": "selected-native",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1920,
+    "fixture": "selected-native",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 2560,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 2560,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 2560,
+    "fixture": "empty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 2560,
+    "fixture": "empty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 2560,
+    "fixture": "zero-engine-spin-risk",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 2560,
+    "fixture": "zero-engine-spin-risk",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 2560,
+    "fixture": "selected-native",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 2560,
+    "fixture": "selected-native",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1280,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1280,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1280,
+    "fixture": "empty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1280,
+    "fixture": "empty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1280,
+    "fixture": "zero-engine-spin-risk",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1280,
+    "fixture": "zero-engine-spin-risk",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1280,
+    "fixture": "selected-native",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "CN",
+    "width": 1280,
+    "fixture": "selected-native",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "UK",
+    "width": 1920,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "UK",
+    "width": 1920,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "UK",
+    "width": 2560,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "UK",
+    "width": 2560,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "UK",
+    "width": 1280,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "UK",
+    "width": 1280,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "US",
+    "width": 1920,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "US",
+    "width": 1920,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "US",
+    "width": 2560,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "US",
+    "width": 2560,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "US",
+    "width": 1280,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "US",
+    "width": 1280,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "DE",
+    "width": 1920,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "DE",
+    "width": 1920,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "DE",
+    "width": 2560,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "DE",
+    "width": 2560,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "DE",
+    "width": 1280,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "DE",
+    "width": 1280,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "IT",
+    "width": 1920,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "IT",
+    "width": 1920,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "IT",
+    "width": 2560,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "IT",
+    "width": 2560,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "IT",
+    "width": 1280,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "IT",
+    "width": 1280,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "JP",
+    "width": 1920,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "JP",
+    "width": 1920,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "JP",
+    "width": 2560,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "JP",
+    "width": 2560,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  },
+  {
+    "team": "JP",
+    "width": 1280,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "HandPanel/HandTitle",
+    "beforeHeight": 23.224334716796875,
+    "afterHeight": 26.224334716796875,
+    "preferredHeight": 24.6200008392334,
+    "afterOverflow": false
+  },
+  {
+    "team": "JP",
+    "width": 1280,
+    "fixture": "seven-hand-nonempty-piles",
+    "label": "DeckTablePanel/DeckTableTitle",
+    "beforeHeight": 24.191986083984375,
+    "afterHeight": 29.191986083984375,
+    "preferredHeight": 27.520000457763672,
+    "afterOverflow": false
+  }
+]

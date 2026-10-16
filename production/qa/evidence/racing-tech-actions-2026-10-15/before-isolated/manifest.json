@@ -1,0 +1,1547 @@
+{
+    "utc": "2026-10-15T07:23:08.3409726Z",
+    "stage": "before-isolated",
+    "kind": "Controlled EditMode real RaceCanvas HUD.RequestInRaceAction preview. No gameplay manager, live match, scene loading or settings persistence.",
+    "lifecycle": "Disabled project behaviours; HUD.Start invoked explicitly on owned prefab clone. Isolated all-confirmations settings object, exact previous current/repository restored. Owned modal button listeners are rebound only to original HUD handlers after Start, isolating ButtonClickAnimation audio side effects; real cancel and confirm handlers use counter callbacks. Native Selectable protected DoStateTransition instant=true supplies after-state visuals; disabled also sets interactable=false. One explicitly synthetic long-copy stress fixture. Fonts/materials cloned as static; no saved scenes or source font mutation.",
+    "records": [
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1920x1080-gear-selection-normal.png",
+            "action": "GearSelection",
+            "fixture": "gear-selection-normal",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认换挡选择",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定选择 档位 3 吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回修改",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "选择档位",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1920x1080-gear-commit-normal.png",
+            "action": "GearCommit",
+            "fixture": "gear-commit-normal",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认锁定档位",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定锁定当前档位并进入出牌阶段吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回修改",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "锁定档位",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1920x1080-card-action-normal.png",
+            "action": "CardAction",
+            "fixture": "card-action-normal",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认出牌",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定按当前选择打出这些牌吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回选牌",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "确认提交",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1920x1080-driver-skill-normal.png",
+            "action": "DriverSkill",
+            "fixture": "driver-skill-normal",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认发动技能",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "车手技能发动后会消耗本场次数，确定继续吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "发动技能",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1920x1080-reset-race-normal.png",
+            "action": "ResetRace",
+            "fixture": "reset-race-normal",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认重新开始",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "当前比赛进度会丢失，确定重新开始吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "继续比赛",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "重新开始",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1920x1080-return-menu-normal.png",
+            "action": "ReturnToMenu",
+            "fixture": "return-menu-normal",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "返回主菜单",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定要退出当前比赛并返回主菜单吗？\n当前比赛进度不会保存。",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 55.029998779296878,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "留在比赛",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回主菜单",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1920x1080-pit-decision-normal.png",
+            "action": "PitDecision",
+            "fixture": "pit-decision-normal",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认预定进站",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "车辆将在通过维修区入口后的下一回合停站、冷却，并获得维修区出口推进。",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 55.029998779296878,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回决定",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "确认选择",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1920x1080-lane-change-normal.png",
+            "action": "LaneChange",
+            "fixture": "lane-change-normal",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认起点换道",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定选择“向内一格”并完成本次车道决定吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回选择",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "确认换道",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1920x1080-synthetic-long-copy-normal.png",
+            "action": "CardAction",
+            "fixture": "synthetic-long-copy-normal",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "受控长中文与数字压力样本",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "中国队 / 英国队 / 美国队 / 德国队 / 意大利队 / 日本队\n当前选择：1234567890；预计数据：9 / 12。\n此段为受控排版检查文字，确定继续当前操作吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回选牌",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "确认提交",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\2560x1440-gear-selection-normal.png",
+            "action": "GearSelection",
+            "fixture": "gear-selection-normal",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认换挡选择",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定选择 档位 3 吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回修改",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "选择档位",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\2560x1440-gear-commit-normal.png",
+            "action": "GearCommit",
+            "fixture": "gear-commit-normal",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认锁定档位",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定锁定当前档位并进入出牌阶段吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回修改",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "锁定档位",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\2560x1440-card-action-normal.png",
+            "action": "CardAction",
+            "fixture": "card-action-normal",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认出牌",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定按当前选择打出这些牌吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回选牌",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "确认提交",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\2560x1440-driver-skill-normal.png",
+            "action": "DriverSkill",
+            "fixture": "driver-skill-normal",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认发动技能",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "车手技能发动后会消耗本场次数，确定继续吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "发动技能",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\2560x1440-reset-race-normal.png",
+            "action": "ResetRace",
+            "fixture": "reset-race-normal",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认重新开始",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "当前比赛进度会丢失，确定重新开始吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "继续比赛",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "重新开始",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\2560x1440-return-menu-normal.png",
+            "action": "ReturnToMenu",
+            "fixture": "return-menu-normal",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "返回主菜单",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定要退出当前比赛并返回主菜单吗？\n当前比赛进度不会保存。",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 55.029998779296878,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "留在比赛",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回主菜单",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\2560x1440-pit-decision-normal.png",
+            "action": "PitDecision",
+            "fixture": "pit-decision-normal",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认预定进站",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "车辆将在通过维修区入口后的下一回合停站、冷却，并获得维修区出口推进。",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 55.029998779296878,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回决定",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "确认选择",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\2560x1440-lane-change-normal.png",
+            "action": "LaneChange",
+            "fixture": "lane-change-normal",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认起点换道",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定选择“向内一格”并完成本次车道决定吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回选择",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "确认换道",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\2560x1440-synthetic-long-copy-normal.png",
+            "action": "CardAction",
+            "fixture": "synthetic-long-copy-normal",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "受控长中文与数字压力样本",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "中国队 / 英国队 / 美国队 / 德国队 / 意大利队 / 日本队\n当前选择：1234567890；预计数据：9 / 12。\n此段为受控排版检查文字，确定继续当前操作吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回选牌",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "确认提交",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1280x720-gear-selection-normal.png",
+            "action": "GearSelection",
+            "fixture": "gear-selection-normal",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认换挡选择",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定选择 档位 3 吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回修改",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "选择档位",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1280x720-gear-commit-normal.png",
+            "action": "GearCommit",
+            "fixture": "gear-commit-normal",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认锁定档位",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定锁定当前档位并进入出牌阶段吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回修改",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "锁定档位",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1280x720-card-action-normal.png",
+            "action": "CardAction",
+            "fixture": "card-action-normal",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认出牌",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定按当前选择打出这些牌吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回选牌",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "确认提交",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1280x720-driver-skill-normal.png",
+            "action": "DriverSkill",
+            "fixture": "driver-skill-normal",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认发动技能",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "车手技能发动后会消耗本场次数，确定继续吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "发动技能",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1280x720-reset-race-normal.png",
+            "action": "ResetRace",
+            "fixture": "reset-race-normal",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认重新开始",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "当前比赛进度会丢失，确定重新开始吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "继续比赛",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "重新开始",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1280x720-return-menu-normal.png",
+            "action": "ReturnToMenu",
+            "fixture": "return-menu-normal",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "返回主菜单",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定要退出当前比赛并返回主菜单吗？\n当前比赛进度不会保存。",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 55.029998779296878,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "留在比赛",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回主菜单",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1280x720-pit-decision-normal.png",
+            "action": "PitDecision",
+            "fixture": "pit-decision-normal",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认预定进站",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "车辆将在通过维修区入口后的下一回合停站、冷却，并获得维修区出口推进。",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 55.029998779296878,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回决定",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "确认选择",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1280x720-lane-change-normal.png",
+            "action": "LaneChange",
+            "fixture": "lane-change-normal",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认起点换道",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "确定选择“向内一格”并完成本次车道决定吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回选择",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "确认换道",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-actions-2026-10-15\\before-isolated\\1280x720-synthetic-long-copy-normal.png",
+            "action": "CardAction",
+            "fixture": "synthetic-long-copy-normal",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbackCount": 0,
+            "confirmCallbackCount": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "confirmWidth": 190.0,
+            "confirmHeight": 52.0,
+            "cancelWidth": 190.0,
+            "cancelHeight": 52.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "cancelInteractable": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "受控长中文与数字压力样本",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "中国队 / 英国队 / 美国队 / 德国队 / 意大利队 / 日本队\n当前选择：1234567890；预计数据：9 / 12。\n此段为受控排版检查文字，确定继续当前操作吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "返回选牌",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                },
+                {
+                    "name": "Label",
+                    "text": "确认提交",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": true
+                }
+            ],
+            "overflows": []
+        }
+    ]
+}

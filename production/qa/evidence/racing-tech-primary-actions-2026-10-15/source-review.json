@@ -1,0 +1,63 @@
+{
+  "utc": "2026-10-15T17:10:15.0955551Z",
+  "scope": "RaceUILayoutController visual integration only, 13insertions6deletions; independent style/test/helper added. HUD/CardHand/RaceUIFactory unchanged.",
+  "files": [
+    {
+      "path": "Assets/Scripts/UI/RaceUILayoutController.cs",
+      "before": "73FC8EBE185104569CF3E8B7BEB13ABAF926E16AD4C1E93C8D53D8C0D85D093D",
+      "after": "77F0F946550DEFA5B3D2960F12FC188D32793F20FD76B80E796246E2CF8CCE8F",
+      "unchanged": false,
+      "sourceBefore": "RaceUILayoutController.cs.source-before.txt"
+    },
+    {
+      "path": "Assets/Scripts/UI/HUDUI.cs",
+      "before": "AD8E821826FD946A0FF31FE6FADD2DA83C7833F019EE6AD527ACE251A3ECBE1E",
+      "after": "AD8E821826FD946A0FF31FE6FADD2DA83C7833F019EE6AD527ACE251A3ECBE1E",
+      "unchanged": true,
+      "sourceBefore": "HUDUI.cs.source-before.txt"
+    },
+    {
+      "path": "Assets/Scripts/UI/CardHandUI.cs",
+      "before": "5B58B9A86F8E6884D9FE876386E29B226BE81AD7E934662489D0E2E31F32FF75",
+      "after": "5B58B9A86F8E6884D9FE876386E29B226BE81AD7E934662489D0E2E31F32FF75",
+      "unchanged": true,
+      "sourceBefore": "CardHandUI.cs.source-before.txt"
+    },
+    {
+      "path": "Assets/Scripts/UI/RaceUIFactory.cs",
+      "before": "9447E87C4DA2759919DEF5EE6F80540B56604F047D2C9C1A5BEA3BB23A87E006",
+      "after": "9447E87C4DA2759919DEF5EE6F80540B56604F047D2C9C1A5BEA3BB23A87E006",
+      "unchanged": true,
+      "sourceBefore": "RaceUIFactory.cs.source-before.txt"
+    },
+    {
+      "path": "design/ux/racing-tech-ui.md",
+      "before": "5EE7B731EA2F07E5B654ECBDD8EAE136A7F8D61B22DB8C0BC1633E2C7BAC7B5D",
+      "after": "A17B336D0682D4FF0FC6B2AC7D9AD9199F10DE6D23717841A54441F1ECDF3086",
+      "unchanged": false,
+      "sourceBefore": "racing-tech-ui.md.source-before.txt"
+    },
+    {
+      "path": "design/ux/racing-tech-ui-checklist.md",
+      "before": "1547BF37575C57B41DCAF449948C41E1A411ACBE44B9AFD3B937A822BE9FD74B",
+      "after": "A7DCF6F6B8C85EFBB046500201C84F5B11CB61D933B2F4565B2C554D4B5B69B9",
+      "unchanged": false,
+      "sourceBefore": "racing-tech-ui-checklist.md.source-before.txt"
+    },
+    {
+      "path": "docs/memory/project-overview.md",
+      "before": "156FB45ADDED4B31F822B3DC62058416AB48149B78515BD92D48DEA549D772A8",
+      "after": "90F4DAB3AF577E6D3A82A04353AFA59638D79DB37789261DC73E01846D149A5C",
+      "unchanged": false,
+      "sourceBefore": "project-overview.md.source-before.txt"
+    },
+    {
+      "path": "docs/memory/current-task-list.md",
+      "before": "AAC0A6CC948FBDA1E4684D5B8C92C366C1FD857C1A7CDDAB9ED858DC638DD256",
+      "after": "83723C62EDFCF434E9F102C907E5870282F80D4951D365D698433553A24860DD",
+      "unchanged": false,
+      "sourceBefore": "current-task-list.md.source-before.txt"
+    }
+  ],
+  "oldConfirmationStyleSha": "9ABBE15D63C2151BAB531A2B1057BD93CECDE58A89B9DE25E50F9F8F64447366"
+}

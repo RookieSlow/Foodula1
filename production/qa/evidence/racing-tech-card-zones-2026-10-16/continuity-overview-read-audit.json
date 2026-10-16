@@ -1,0 +1,10 @@
+{
+  "path": "docs/memory/project-overview.md",
+  "characters": 114883,
+  "pages": 39,
+  "range": "0..114882",
+  "fullRead": true,
+  "shaBefore": "90F4DAB3AF577E6D3A82A04353AFA59638D79DB37789261DC73E01846D149A5C",
+  "shaAfter": "90F4DAB3AF577E6D3A82A04353AFA59638D79DB37789261DC73E01846D149A5C",
+  "readMethod": "3000character sequential bounded pages, no output page truncated"
+}

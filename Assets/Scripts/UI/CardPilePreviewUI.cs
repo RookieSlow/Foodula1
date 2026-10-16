@@ -166,6 +166,7 @@ public sealed class CardPilePreviewUI : MonoBehaviour
 
         if (emptyLabel == null)
             emptyLabel = CreateLabel("EmptyLabel", "空", 16f);
+        RacingTechCardZoneStyle.ApplyPreviewLabels(countBadge, emptyLabel, inspectHint);
     }
 
     private void EnsureInteraction()
@@ -199,6 +200,7 @@ public sealed class CardPilePreviewUI : MonoBehaviour
             inspectHint.alignment = TextAlignmentOptions.MidlineLeft;
             inspectHint.color = new Color(0.58f, 0.76f, 0.94f);
         }
+        RacingTechCardZoneStyle.ApplyPreviewLabels(countBadge, emptyLabel, inspectHint);
     }
 
     private void ShowInspector()
@@ -295,6 +297,7 @@ public sealed class CardPilePreviewUI : MonoBehaviour
         for (int i = 0; i < entries.Count; i++)
             CreateInspectorEntry(content.transform, entries[i]);
 
+        RacingTechPileInspectorStyle.Apply(panel.transform, title, note, close, scroll);
         overlay.transform.SetAsLastSibling();
     }
 

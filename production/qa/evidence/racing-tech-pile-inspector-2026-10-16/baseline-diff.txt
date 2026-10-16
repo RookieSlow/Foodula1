@@ -1,0 +1,856 @@
+diff --git a/Assets/Scripts/Audio/AudioEventNames.cs b/Assets/Scripts/Audio/AudioEventNames.cs
+index bb9fa9d..c6971ee 100644
+--- a/Assets/Scripts/Audio/AudioEventNames.cs
++++ b/Assets/Scripts/Audio/AudioEventNames.cs
+@@ -16,6 +16,7 @@ public static class AudioEventNames
+     public const string HeatPay = "heat_pay";
+     public const string HeatCool = "heat_cool";
+     public const string CarHop = "car_hop";
++    public const string OvertakePassby = "overtake_passby";
+     public const string SlipstreamTrigger = "slipstream_trigger";
+     public const string SlipstreamMove = "slipstream_move";
+     public const string CornerSafe = "corner_safe";
+diff --git a/Assets/Scripts/Audio/AudioRuntimeRules.cs b/Assets/Scripts/Audio/AudioRuntimeRules.cs
+index df4261b..1b67acf 100644
+--- a/Assets/Scripts/Audio/AudioRuntimeRules.cs
++++ b/Assets/Scripts/Audio/AudioRuntimeRules.cs
+@@ -43,6 +43,8 @@ public static class AudioRuntimeRules
+     {
+         switch (eventName)
+         {
++            case AudioEventNames.OvertakePassby:
++                return 0.12f;
+             case AudioEventNames.CarHop:
+                 return 0.09f;
+             case AudioEventNames.CardDraw:
+diff --git a/Assets/Scripts/Audio/AudioService.cs b/Assets/Scripts/Audio/AudioService.cs
+index 99f1b87..478182d 100644
+--- a/Assets/Scripts/Audio/AudioService.cs
++++ b/Assets/Scripts/Audio/AudioService.cs
+@@ -17,6 +17,7 @@ public sealed class AudioService : MonoBehaviour
+     private AudioSource[] musicSources;
+     private AudioSource sfxSource;
+     private AudioSource uiSource;
++    private OvertakeAudioPresentation overtakePresentation;
+     private AudioSource engineSource;
+     private AudioSource[] engineSources;
+     private MonoBehaviour engineOwner;
+@@ -95,6 +96,7 @@ public sealed class AudioService : MonoBehaviour
+         if (instance != this)
+             return;
+         StopVehicleEngine();
++        StopOvertake();
+         instance = null;
+     }
+ 
+@@ -104,7 +106,16 @@ public sealed class AudioService : MonoBehaviour
+         SceneManager.sceneUnloaded -= OnSceneUnloaded;
+     }
+ 
+-    private void OnDisable() => StopVehicleEngine();
++    private void OnDisable()
++    {
++        StopVehicleEngine();
++        StopOvertake();
++    }
++
++    private void StopOvertake()
++    {
++        if (overtakePresentation != null) overtakePresentation.Stop();
++    }
+ 
+     private void LateUpdate()
+     {
+@@ -141,6 +152,7 @@ public sealed class AudioService : MonoBehaviour
+         instance.sfxSource.volume = sfxVolume;
+         instance.uiSource.volume = sfxVolume;
+         instance.ApplyEngineVolume();
++        if (instance.overtakePresentation != null) instance.overtakePresentation.SetVolume(sfxVolume);
+ 
+         if (instance.musicFade == null && instance.musicSources != null)
+         {
+@@ -159,6 +171,31 @@ public sealed class AudioService : MonoBehaviour
+         instance?.PlayOneShot(eventName, instance.uiSource);
+     }
+ 
++    /// <summary>One recorded cue for a committed overtake presentation, irrespective of car count.</summary>
++    public static int BeginOvertake(MonoBehaviour owner, int count)
++    {
++        if (instance == null || !instance.isActiveAndEnabled || !Application.isPlaying ||
++            count <= 0 || owner == null || !owner.isActiveAndEnabled)
++            return 0;
++        AudioClip clip = instance.LoadClip(AudioRuntimeRules.GetSfxPath(AudioEventNames.OvertakePassby));
++        if (clip == null || !instance.throttle.ShouldPlay(AudioEventNames.OvertakePassby,
++                Time.unscaledTime, AudioRuntimeRules.GetCooldown(AudioEventNames.OvertakePassby)))
++            return 0;
++        if (instance.overtakePresentation == null)
++        {
++            var host = new GameObject("OvertakePassby");
++            host.transform.SetParent(instance.transform, false);
++            instance.overtakePresentation = host.AddComponent<OvertakeAudioPresentation>();
++        }
++        return instance.overtakePresentation.Begin(owner, clip, instance.sfxVolume);
++    }
++
++    public static void EndOvertake(MonoBehaviour owner, int token)
++    {
++        if (instance != null && instance.overtakePresentation != null)
++            instance.overtakePresentation.End(owner, token);
++    }
++
+     public static void BeginVehicleEngine(MonoBehaviour owner, TeamId team, int gear, float completedCells = 0f)
+     {
+         if (instance == null || owner == null || !owner.isActiveAndEnabled)
+@@ -353,6 +390,7 @@ public sealed class AudioService : MonoBehaviour
+             return;
+         }
+         StopVehicleEngine();
++        StopOvertake();
+         PlaySceneMusic(scene.name);
+     }
+ 
+@@ -363,6 +401,7 @@ public sealed class AudioService : MonoBehaviour
+             UnsubscribeSceneEvents();
+             return;
+         }
++        StopOvertake();
+         if (engineOwner == null || engineOwner.gameObject.scene == scene)
+             StopVehicleEngine();
+     }
+diff --git a/Assets/Scripts/Gameplay/RaceEventFX.cs b/Assets/Scripts/Gameplay/RaceEventFX.cs
+index 777b667..113bfdc 100644
+--- a/Assets/Scripts/Gameplay/RaceEventFX.cs
++++ b/Assets/Scripts/Gameplay/RaceEventFX.cs
+@@ -6,7 +6,7 @@ using UnityEngine;
+ using UnityEngine.UI;
+ 
+ /// <summary>
+-/// Lightweight, asset-free race-event presentation layer.
++/// Lightweight race-event presentation layer with optional recorded audio.
+ /// It keeps spectacle out of the rules and movement code while still working
+ /// in both the authored RaceCanvas and the procedural fallback HUD.
+ /// </summary>
+@@ -36,6 +36,7 @@ public sealed class RaceEventFX : MonoBehaviour
+     private TMP_FontAsset font;
+     private bool initialized;
+     private bool effectBusy;
++    private int overtakeAudioToken;
+     private bool timeScaleOverrideActive;
+ 
+     private const float GameplayTimeScale = 1f;
+@@ -153,24 +154,27 @@ public sealed class RaceEventFX : MonoBehaviour
+     /// </summary>
+     public IEnumerator PlayOvertake(Transform car, int count, Func<bool> shouldSkip = null)
+     {
+-        if (!initialized || car == null)
++        if (!initialized || car == null || count <= 0 || !isActiveAndEnabled)
+             yield break;
+ 
+         yield return AcquireEffectSlot(shouldSkip);
+-        if (ShouldSkip(shouldSkip))
++        if (ShouldSkip(shouldSkip) || !isActiveAndEnabled)
+             yield break;
+         SetMessage("OVERTAKE!", count > 1 ? $"超车 ×{count} · 领先车手抓住了机会" : "超车成功 · 领先车手抓住了机会", OvertakeColor);
+         Vector3 originalScale = car.localScale;
+         Quaternion originalRotation = car.rotation;
+         BeginSlowMotion(0.28f);
++        int audioToken = 0;
+ 
+         try
+         {
++            audioToken = AudioService.BeginOvertake(this, count);
++            overtakeAudioToken = audioToken;
+             float elapsed = 0f;
+             const float duration = 0.78f;
+             while (elapsed < duration)
+             {
+-                if (ShouldSkip(shouldSkip))
++                if (ShouldSkip(shouldSkip) || !isActiveAndEnabled)
+                     yield break;
+ 
+                 elapsed += Time.unscaledDeltaTime;
+@@ -184,6 +188,8 @@ public sealed class RaceEventFX : MonoBehaviour
+         }
+         finally
+         {
++            AudioService.EndOvertake(this, audioToken);
++            if (overtakeAudioToken == audioToken) overtakeAudioToken = 0;
+             car.localScale = originalScale;
+             car.rotation = originalRotation;
+             EndSlowMotion();
+@@ -443,6 +449,8 @@ public sealed class RaceEventFX : MonoBehaviour
+ 
+     private void OnDisable()
+     {
++        AudioService.EndOvertake(this, overtakeAudioToken);
++        overtakeAudioToken = 0;
+         EndSlowMotion();
+         // Safety net for a coroutine stopped before it could enter its
+         // finally block. This project has no other gameplay time-scale owner.
+@@ -452,6 +460,8 @@ public sealed class RaceEventFX : MonoBehaviour
+ 
+     private void OnDestroy()
+     {
++        AudioService.EndOvertake(this, overtakeAudioToken);
++        overtakeAudioToken = 0;
+         EndSlowMotion();
+         Time.timeScale = GameplayTimeScale;
+     }
+diff --git a/Assets/Scripts/UI/CardPilePreviewUI.cs b/Assets/Scripts/UI/CardPilePreviewUI.cs
+index aa2aad4..fa0efc4 100644
+--- a/Assets/Scripts/UI/CardPilePreviewUI.cs
++++ b/Assets/Scripts/UI/CardPilePreviewUI.cs
+@@ -166,6 +166,7 @@ public sealed class CardPilePreviewUI : MonoBehaviour
+ 
+         if (emptyLabel == null)
+             emptyLabel = CreateLabel("EmptyLabel", "空", 16f);
++        RacingTechCardZoneStyle.ApplyPreviewLabels(countBadge, emptyLabel, inspectHint);
+     }
+ 
+     private void EnsureInteraction()
+@@ -199,6 +200,7 @@ public sealed class CardPilePreviewUI : MonoBehaviour
+             inspectHint.alignment = TextAlignmentOptions.MidlineLeft;
+             inspectHint.color = new Color(0.58f, 0.76f, 0.94f);
+         }
++        RacingTechCardZoneStyle.ApplyPreviewLabels(countBadge, emptyLabel, inspectHint);
+     }
+ 
+     private void ShowInspector()
+diff --git a/Assets/Scripts/UI/HUDUI.cs b/Assets/Scripts/UI/HUDUI.cs
+index 163bf1a..5ebb01f 100644
+--- a/Assets/Scripts/UI/HUDUI.cs
++++ b/Assets/Scripts/UI/HUDUI.cs
+@@ -315,7 +315,11 @@ public class HUDUI : MonoBehaviour
+             BuildReturnToMenuConfirmationUI(canvasRoot);
+ 
+         if (returnToMenuConfirmPanel != null)
++        {
++            RacingTechConfirmationStyle.Apply(returnToMenuConfirmPanel, returnToMenuConfirmTitle,
++                returnToMenuConfirmText, cancelReturnToMenuButton, confirmReturnToMenuButton);
+             returnToMenuConfirmPanel.SetActive(false);
++        }
+     }
+ 
+     /// <summary>Opens the return confirmation without changing any race state.</summary>
+diff --git a/Assets/Scripts/UI/RaceUILayoutController.cs b/Assets/Scripts/UI/RaceUILayoutController.cs
+index 0245630..e7da18a 100644
+--- a/Assets/Scripts/UI/RaceUILayoutController.cs
++++ b/Assets/Scripts/UI/RaceUILayoutController.cs
+@@ -75,6 +75,8 @@ public class RaceUILayoutController : MonoBehaviour
+             cardHand?.EnsureSelectedCardEffectUI(deckPanel, FindFont(root));
+             ApplyReadableTypography(hud, cardHand);
+             ApplyTeamGearLayout(hud);
++            ApplyActionButtonTheme(hud, cardHand);
++            RacingTechCardZoneStyle.ApplyLayout(deckPanel, cardHand);
+             RacingTechHudShellUI.Attach(root, hud);
+             UsesAuthoredLayout = true;
+             applied = true;
+@@ -142,6 +144,8 @@ public class RaceUILayoutController : MonoBehaviour
+         if (hud != null && hud.gameOverPanel != null)
+             Dock(hud.gameOverPanel.transform, trackFrame, new Vector2(0.2f, 0.2f), new Vector2(0.8f, 0.8f));
+ 
++        ApplyActionButtonTheme(hud, cardHand);
++        RacingTechCardZoneStyle.ApplyLayout(deckPanel, cardHand);
+         RacingTechHudShellUI.Attach(root, hud);
+         applied = true;
+     }
+@@ -188,15 +192,20 @@ public class RaceUILayoutController : MonoBehaviour
+             ModernUIStyle.ApplyButton(hud.gear2Button, ModernUIStyle.AccentCyan);
+             ModernUIStyle.ApplyButton(hud.gear3Button, ModernUIStyle.AccentGold);
+             ModernUIStyle.ApplyButton(hud.gear4Button, ModernUIStyle.AccentPurple);
+-            ModernUIStyle.ApplyButton(hud.confirmGearButton, ModernUIStyle.AccentBlue, true);
+-            ModernUIStyle.ApplyButton(hud.driverSkillButton, ModernUIStyle.AccentPurple);
+-            ModernUIStyle.ApplyButton(hud.resetButton, ModernUIStyle.AccentGold);
+-            ModernUIStyle.ApplyButton(hud.returnToMenuButton, ModernUIStyle.AccentRed);
+             ModernUIStyle.ApplyButton(hud.backToMenuButton, ModernUIStyle.AccentRed);
+         }
++    }
+ 
+-        if (cardHand != null)
+-            ModernUIStyle.ApplyButton(cardHand.playCardsButton, ModernUIStyle.AccentGreen, true);
++    private static void ApplyActionButtonTheme(HUDUI hud, CardHandUI cardHand)
++    {
++        if (hud != null)
++        {
++            RacingTechActionButtonStyle.Apply(hud.confirmGearButton, true);
++            RacingTechActionButtonStyle.Apply(hud.driverSkillButton, false);
++            RacingTechActionButtonStyle.Apply(hud.resetButton, false);
++            RacingTechActionButtonStyle.Apply(hud.returnToMenuButton, false);
++        }
++        if (cardHand != null) RacingTechActionButtonStyle.Apply(cardHand.playCardsButton, true);
+     }
+ 
+     private void BuildOperationPanel(HUDUI hud, CardHandUI cardHand, TMP_FontAsset font)
+diff --git a/Assets/Scripts/UI/TrackSelectionUI.cs b/Assets/Scripts/UI/TrackSelectionUI.cs
+index 4c88d67..9d43854 100644
+--- a/Assets/Scripts/UI/TrackSelectionUI.cs
++++ b/Assets/Scripts/UI/TrackSelectionUI.cs
+@@ -22,6 +22,8 @@ public sealed class TrackSelectionUI : MonoBehaviour
+     };
+ 
+     private readonly Dictionary<string, Image> trackCardImages = new Dictionary<string, Image>();
++    private readonly Dictionary<string, Image> selectionEdges = new Dictionary<string, Image>();
++    private readonly Dictionary<string, TMP_Text> actionLabels = new Dictionary<string, TMP_Text>();
+     private Action<string> onTrackSelected;
+     private GameObject overlay;
+     private TMP_Text selectedTrackText;
+@@ -71,7 +73,8 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         overlay = CreateUIObject("TrackSelectionOverlay", transform);
+         StretchToParent(overlay.GetComponent<RectTransform>());
+         Image overlayImage = overlay.AddComponent<Image>();
+-        ModernUIStyle.ApplyOverlay(overlayImage);
++        overlayImage.color = new Color(RacingTechTheme.Graphite.r, RacingTechTheme.Graphite.g, RacingTechTheme.Graphite.b, 0.96f);
++        overlayImage.raycastTarget = true;
+ 
+         GameObject panel = CreateUIObject("TrackSelectionPanel", overlay.transform);
+         RectTransform panelRect = panel.GetComponent<RectTransform>();
+@@ -79,17 +82,19 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         panelRect.pivot = new Vector2(0.5f, 0.5f);
+         panelRect.sizeDelta = new Vector2(1360f, 820f);
+         panel.AddComponent<Image>();
+-        ModernUIStyle.ApplyPanel(panel, true);
++        RacingTechTheme.ApplySurface(panel.GetComponent<Image>());
++        panel.GetComponent<Image>().raycastTarget = true;
++        CreateLine(panel.transform, "HeaderSeparator", new Vector2(0.04f, 0.79f), new Vector2(0.96f, 0.79f), RacingTechTheme.Separator);
+ 
+         CreateText(panel.transform, "Title", MainMenuLabels.QuickRaceTrackTitle, 48f,
+             new Vector2(0f, 335f), new Vector2(900f, 70f), FontStyles.Bold);
+         CreateText(panel.transform, "Hint", "选择一条赛道后立即开始自由赛事", 22f,
+             new Vector2(0f, 285f), new Vector2(900f, 40f), FontStyles.Normal,
+-            new Color(0.62f, 0.72f, 0.84f));
++            RacingTechTheme.Secondary);
+ 
+         selectedTrackText = CreateText(panel.transform, "SelectedTrack", string.Empty, 20f,
+             new Vector2(0f, -320f), new Vector2(900f, 36f), FontStyles.Normal,
+-            new Color(0.45f, 0.82f, 1f));
++            RacingTechTheme.Primary);
+ 
+         GameObject grid = CreateUIObject("TrackGrid", panel.transform);
+         RectTransform gridRect = grid.GetComponent<RectTransform>();
+@@ -123,16 +128,18 @@ public sealed class TrackSelectionUI : MonoBehaviour
+     {
+         GameObject card = CreateUIObject($"Track_{option.TrackId}", parent);
+         Image background = card.AddComponent<Image>();
+-        background.color = TrackColors[index % TrackColors.Length];
++        background.color = RacingTechTheme.Raised;
++        CreateLine(card.transform, "TrackIdentity", new Vector2(0.06f, 0.98f), new Vector2(0.94f, 0.98f), TrackColors[index % TrackColors.Length]);
++        Image edge = CreateLine(card.transform, "SelectionEdge", new Vector2(0f, 0.06f), new Vector2(0f, 0.94f), RacingTechTheme.Actual);
++        edge.rectTransform.offsetMin = Vector2.zero;
++        edge.rectTransform.offsetMax = new Vector2(3f, 0f);
++        edge.gameObject.SetActive(false);
++        selectionEdges[option.TrackId] = edge;
+         trackCardImages[option.TrackId] = background;
+ 
+         Button button = card.AddComponent<Button>();
+         button.targetGraphic = background;
+-        ColorBlock colors = button.colors;
+-        colors.highlightedColor = Color.Lerp(background.color, Color.white, 0.18f);
+-        colors.pressedColor = Color.Lerp(background.color, Color.black, 0.18f);
+-        colors.selectedColor = colors.highlightedColor;
+-        button.colors = colors;
++        RacingTechTheme.ApplyTelemetryButton(button);
+ 
+         TrackSelectionOption capturedOption = option;
+         button.onClick.AddListener(() => SelectTrack(capturedOption.TrackId));
+@@ -141,10 +148,10 @@ public sealed class TrackSelectionUI : MonoBehaviour
+             new Vector2(0f, 26f), new Vector2(260f, 70f), FontStyles.Bold);
+         CreateText(card.transform, "Subtitle", option.Subtitle, 18f,
+             new Vector2(0f, -38f), new Vector2(250f, 42f), FontStyles.Normal,
+-            new Color(0.92f, 0.95f, 1f));
+-        CreateText(card.transform, "Action", "点击开始", 15f,
++            RacingTechTheme.Secondary);
++        actionLabels[option.TrackId] = CreateText(card.transform, "Action", "点击开始", 15f,
+             new Vector2(0f, -76f), new Vector2(220f, 28f), FontStyles.Normal,
+-            new Color(0.78f, 0.86f, 0.96f));
++            RacingTechTheme.Secondary);
+     }
+ 
+     private void SelectTrack(string trackId)
+@@ -164,11 +171,11 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         string resolvedTrackId = TrackSelectionState.ResolveTrackId(string.Empty);
+         foreach (KeyValuePair<string, Image> entry in trackCardImages)
+         {
+-            int optionIndex = FindTrackIndex(entry.Key);
+-            Color baseColor = TrackColors[Mathf.Max(0, optionIndex) % TrackColors.Length];
+-            entry.Value.color = entry.Key == resolvedTrackId
+-                ? Color.Lerp(baseColor, Color.white, 0.22f)
+-                : baseColor;
++            bool isSelected = entry.Key == resolvedTrackId;
++            entry.Value.color = isSelected ? RacingTechTheme.Surface : RacingTechTheme.Raised;
++            selectionEdges[entry.Key].gameObject.SetActive(isSelected);
++            actionLabels[entry.Key].text = isSelected ? "当前选择 · 点击开始" : "点击开始";
++            actionLabels[entry.Key].color = isSelected ? RacingTechTheme.Primary : RacingTechTheme.Secondary;
+         }
+ 
+         TrackSelectionOption selected = FindTrack(resolvedTrackId);
+@@ -178,20 +185,6 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         }
+     }
+ 
+-    private static int FindTrackIndex(string trackId)
+-    {
+-        IReadOnlyList<TrackSelectionOption> tracks = TrackSelectionState.AvailableTracks;
+-        for (int i = 0; i < tracks.Count; i++)
+-        {
+-            if (tracks[i].TrackId == trackId)
+-            {
+-                return i;
+-            }
+-        }
+-
+-        return 0;
+-    }
+-
+     private static TrackSelectionOption FindTrack(string trackId)
+     {
+         IReadOnlyList<TrackSelectionOption> tracks = TrackSelectionState.AvailableTracks;
+@@ -228,7 +221,7 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         text.fontSize = fontSize;
+         text.fontStyle = fontStyle;
+         text.alignment = TextAlignmentOptions.Center;
+-        text.color = color ?? Color.white;
++        text.color = color ?? RacingTechTheme.Primary;
+         text.raycastTarget = false;
+         if (font != null)
+         {
+@@ -257,7 +250,8 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         Image image = buttonObject.AddComponent<Image>();
+         Button button = buttonObject.AddComponent<Button>();
+         button.targetGraphic = image;
+-        ModernUIStyle.ApplyButton(button, color);
++        RacingTechTheme.ApplySurface(image, true);
++        RacingTechTheme.ApplyTelemetryButton(button);
+         ButtonClickAnimation.Attach(button);
+ 
+         TMP_Text buttonText = CreateText(buttonObject.transform, "Label", label, fontSize,
+@@ -267,6 +261,20 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         return button;
+     }
+ 
++    private static Image CreateLine(Transform parent, string name, Vector2 min, Vector2 max, Color tint)
++    {
++        GameObject host = CreateUIObject(name, parent);
++        RectTransform rect = host.GetComponent<RectTransform>();
++        rect.anchorMin = min;
++        rect.anchorMax = max;
++        rect.offsetMin = new Vector2(0f, -1f);
++        rect.offsetMax = Vector2.zero;
++        Image image = host.AddComponent<Image>();
++        image.color = tint;
++        image.raycastTarget = false;
++        return image;
++    }
++
+     private static GameObject CreateUIObject(string objectName, Transform parent)
+     {
+         var gameObject = new GameObject(objectName, typeof(RectTransform));
+diff --git a/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset b/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset
+index ca2f2d6..b9b6726 100644
+--- a/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset	
++++ b/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset	
+@@ -1,3 +1,3 @@
+ version https://git-lfs.github.com/spec/v1
+-oid sha256:138eb727664c34cec3defb833ccd2d527aac13a6296e1e9b1475ea1a900e53ed
+-size 34155550
++oid sha256:f7d82e76d855c4902653063d1fc4adcef16a145086ec6a106100e0b32618846a
++size 34177075
+diff --git a/ProjectSettings/EditorSettings.asset b/ProjectSettings/EditorSettings.asset
+index ce486a2..cfda889 100644
+--- a/ProjectSettings/EditorSettings.asset
++++ b/ProjectSettings/EditorSettings.asset
+@@ -24,8 +24,8 @@ EditorSettings:
+   m_EnableEditorAsyncCPUTextureLoading: 0
+   m_AsyncShaderCompilation: 1
+   m_PrefabModeAllowAutoSave: 1
+-  m_EnterPlayModeOptionsEnabled: 0
+-  m_EnterPlayModeOptions: 3
++  m_EnterPlayModeOptionsEnabled: 1
++  m_EnterPlayModeOptions: 1
+   m_GameObjectNamingDigits: 1
+   m_GameObjectNamingScheme: 0
+   m_AssetNamingUsesSpace: 1
+diff --git a/design/ux/racing-tech-ui-checklist.md b/design/ux/racing-tech-ui-checklist.md
+index ef3bcce..53d2662 100644
+--- a/design/ux/racing-tech-ui-checklist.md
++++ b/design/ux/racing-tech-ui-checklist.md
+@@ -47,6 +47,50 @@
+ 
+ 证据：`production/qa/evidence/racing-tech-instruments-2026-10-14/README.md`。本包不声称完整模式或720p舒适可读性完成，剩余页面继续按有限顺序推进。
+ 
++## 用户优先包：地图选择页
++
++- [x] 保存HEAD58656899、41项原有改动和真实页面源码基线；用户原字体/快进设置/旧音频保留。
++- [x] 确认真实目录8条，点击即开始与返回关闭语义；未构造第9赛道或额外确认。
++- [x] 三尺寸改前真实生产入口预览3张已全部查看，8卡可见、0文字溢出；定向MCP completed20/20，非native。
++- [x] 首次30张全部查看；最终39张/0溢出，重审24张（9原生悬停/按下/禁用+三尺寸默认/GP/勒芒/北环/关闭），无新增裁切；closed active卡/标签0，不冒充主菜单恢复。
++- [x] 最终原生定向33/33，失败/跳过/不确定0，含原生点击/关闭/重开/禁用及有效文字对比检查。
++- [x] 原生交互/生命周期及组合最终全量2949/2949，失败/跳过/不确定0；中断轮次1094不是通过，未冒称地图2945已完成。
++- [x] MainMenu干净/idle/ready/Free License可用；Console仅缺失赛道测试预期error，无warning或新增运行错误。
++- [x] 最终哈希、许可与两份连续性同步；41原文件SHA不变，剩余页面/完整模式边界保留。
++
++证据：`production/qa/evidence/racing-tech-track-selection-2026-10-15/README.md`。关闭夹具为空独立宿主，不冒称完整主菜单画面。
++
++## 第五包：比赛共享操作确认弹窗
++
++- [x] 本轮完整分页读取game-mechanics1–789，首尾SHA256一致；当前UX/清单/交互与确认源码对照完成。
++- [x] 有界UX/视觉规范gate通过，仅共享确认层；八动作/原双按钮标签、mask与Space保护保持，无新交互/资源。
++- [x] 改前基线及三尺寸明确受控生产夹具截图保存；UX实际查看隔离改前3张，初次before另外保留。
++- [x] 独立主题适配器接入构造/复用路径；原layout/font/material/listeners/navigation及其他弹窗保持；仅两Button允许ColorTint。
++- [x] 八动作三尺寸/压力及状态共36张改后、manifest溢出0；UX实际查看16张覆盖八动作/三尺寸/压力/hover/pressed/disabled，无新增裁切/遮挡，不冒称全部目视审查。
++- [x] normal/highlighted/pressed/selected/disabled有效文字对比≥4.5:1实际回归，原语义标签与动作位置保持。
++- [x] 模态阻挡、取消无回调、确认一次、mask关闭直达、Space普通动作/Reset/Menu保护、禁用/重开及重复Ensure实际验证；不替代完整模式/OS输入验收。
++- [x] 新程序集实际定向原生77/77，失败/跳过/不确定0，UTC11:39:30.8703966Z；2961仅发现数，历史2949不计本轮。纯视觉包本轮不强制全量，阶段收口/核心风险时再安排。
++- [x] 最终root核验MainMenu干净、未播放/编译/导入、ready/资源空闲与Free License可用；定向后Console实际0error/warning（不称已修复旧Error/未知Assert）。77/77原生定向与两份continuity同步，151基线0missing、仅4份授权UX/continuity增量；HUD独立源快照确认4行插入。git diff --check退出0、HEAD58656899未变，final-hash-manifest.json归档；本包未全量。
++
++此包只共享确认弹窗；操作主按钮、卡牌及其他明细/决策/赛果未因此完成。完整模式走查、720p舒适可读性与主观最终验收独立保留。
++
++证据：`production/qa/evidence/racing-tech-actions-2026-10-15/README.md`。UX/视觉/引擎有界审查APPROVED；720p正文仍约12.7屏幕像素，不因零溢出勾选舒适度。
++
++## 第六包：五个比赛主操作按钮
++
++- [x] 本轮完整分页重读game-mechanics1–789、首尾hash一致；动态技能/出牌文案及原禁用/确认偏好核对。
++- [x] UX/视觉gate通过，确认换挡/技能/重开/返回/出牌五目标；不扩gear1–4、赛果、卡牌或弹窗。
++- [x] 根任务保存276文件基线及原文快照；改前36图/0溢出，UX实际查看三尺寸代表3张。
++- [x] 独立主题接入authored/fallback两路径，只有五目标替换旧Modern样式；原布局/字体材质/事件/门控保持，play覆盖禁用confirm的原active/interactable/层级不改，不新增互斥开关。
++- [x] 改后60图/0溢出，UX实际查看20张覆盖六队/三尺寸/真实缺3→+3热/五动态组及hover/pressed/disabled；独占inactive管理器/纯状态夹具明确非整个GameLoop，不冒称全状态图审。
++- [x] 原生正常/hover/pressed/selected/disabled有效对比≥4.5:1；所看长技能原因/次数/回合与缺牌热量原文保留，不仅靠颜色表达。
++- [x] 相关定向验证pointer/原叠放、确认取消/重开、禁用无回调、原标签刷新；原生防双击用custom0.05秒恢复，生产默认0.25秒未改，不称测过默认延时。
++- [ ] “可能失控”风险标签及selected专门截图未覆盖；selected有pointer/Selectable测试，原formatter规则测试保持，不冒称完整视觉验收。
++- [x] 本轮六组定向原生61/61，失败/跳过/不确定0，UTC17:05:32.1895263Z；2969仅发现总数，未跑全量，不挪上包77或历史全量。
++- [x] 最终MainMenu干净/未播放编译导入、idle/ready/许可有效、Console0error/warning；276基线0missing、272SHA一致、仅4授权UX/continuity增量。两continuity与README同步，源/证据SHA清单归档，HEAD58656899未变、diffcheck0；未全量/commit/push。
++
++只五按钮主题；六队输入、卡牌、其他弹窗/菜单/赛果及完整模式/720p舒适度未因此完成。
++
+ ## 有限迁移顺序与现有屏幕
+ 
+ | 顺序 | 现有界面 / 责任脚本 | 接入 | 实际视觉验收 |
+@@ -60,7 +104,7 @@
+ | 3 | 明细、确认、维修区、车道弹窗：HUDUI 现有构造入口 | [ ] | [ ] |
+ | 4 | 主菜单：MainMenuUI | [ ] | [ ] |
+ | 4 | 车手/名单：DriverSelectionUI / FreeRaceRosterUI | [ ] | [ ] |
+-| 4 | 赛道：TrackSelectionUI | [ ] | [ ] |
++| 4 | 赛道：TrackSelectionUI | [x] 用户优先接入 | [x] 三尺寸受控39状态图；完整开赛模式待验 |
+ | 5 | 设置/百科：GameSettingsUI / GameEncyclopediaUI | [ ] | [ ] |
+ | 5 | 科技/生涯科技：TechTreeUI / CareerTechTreeUI | [ ] | [ ] |
+ | 5 | 生涯：CareerModeUI / CareerMenuPresentation | [ ] | [ ] |
+@@ -79,3 +123,21 @@
+ - [ ] 无明显每帧重建/资源加载/入口性能退化，记录检查边界。
+ 
+ 全部现有屏幕接入、交互/模式及规定截图审查通过后，仅报告“UI升级已完成，等待用户最终主观验收”，停止扩张。
++
++## 第七包：牌桌四区域壳与计数（已接入，独立改后审查待补）
++
++- [x] 本轮完整分页重读game-mechanics1–789并核对首尾SHA；当前UX/清单/interaction与相关core/visual规范、动态牌堆入口对照。
++- [x] 根任务保存411项基线及11份相关源码快照；有界UX/视觉/引擎约束gate允许实现，仅四区域底板/标题/统计/计数与空堆提示。
++- [x] authored/fallback及动态CountBadge/EmptyLabel/InspectHint主题真实接入，原CardUI/缩略图/叠背/检查器/布局/字体/输入与计数规则保持。
++- [x] 三尺寸改前27/54标题溢出、改后27/0；根任务实际查看after9/before2，另审查者before6；六队、可见speed/heat、空/多牌堆、风险及selected已覆盖。特技、大数字、pile hover/pressed专门图未覆盖。
++- [x] 原formatter真实“可能失控”长风险及selected截图补证；改前风险两行完整无overflow，按钮布局不改，不删字/缩字/改规则。
++- [x] 精确count/空堆/层数/原卡面、检查器点击/禁用/射线及重复配置、最终有效对比实际定向通过，记录本轮总/通过/失败/跳过/不确定数。
++- [x] 本轮Unity/Console/基线差异与证据同步；未冒称完整模式、卡面/详情主题、720p舒适度或全部UI完成。
++
++本包无新第三方资源，沿用已核验现有卡面与字体及原创uGUI几何；上一包61/61与历史全量均不计本轮结果。CardUI既有减少动态支持缺口独立记录，本包不扩改。
++
++- [x] 改前27图manifest确认仅HandTitle/DeckTableTitle高度不足共54项；UX实际查看CN1080七牌及CN720失控风险2张，允许两标题向下最小补高，其他文字/几何排除。
++- [x] 两标题改后无overflow、顶部/anchors/字体保持、已有足高不改及重复应用幂等通过；三尺寸实际检查不碰牌面/分隔线。
++
++- [x] 原生定向59/59通过，失败/跳过/不确定0，2.5227451秒；2977只发现数，未全量，证据在card-zones本包。
++- [ ] 独立改后UX/视觉审查因协作额度限制待补；根任务有限自审不替代该门。
+diff --git a/design/ux/racing-tech-ui.md b/design/ux/racing-tech-ui.md
+index 8ad2b7c..64e5198 100644
+--- a/design/ux/racing-tech-ui.md
++++ b/design/ux/racing-tech-ui.md
+@@ -182,3 +182,211 @@ UX 规范审查：**APPROVED（仅第三包有界实现）**，设计阻塞 0；
+ 要求本轮实际验证：六队 × 1920×1080/2560×1440，另 1280×720 压力检查；正常/高温/critical/预计/预计关闭、当前与待选不同/锁定/禁用；CN 双模式、DE/JP 升降与 US 实际拖动/释放及原预估刷新。检查文字溢出/遮挡、实际/预计几何区分、装饰无射线与命中不退化；静态危险帧前后透明度相同；重复初始化不累积。已有小字号舒适可读性、完整自由赛/教程/生涯视觉与未迁移界面继续独立保留，不由定向测试替代。
+ 
+ 已复核 visual-style 第 301–565 行：旧过热闪烁由本任务明确静态化；旧数字字体候选不要求更换当前合适中文字体；比赛统一标准 UI 语义色与六队几何身份兼容。独立艺术/HUD/可访问性等级与治理规范缺失仍只记录，不创建占位。来源核验与失败边界见许可清单第三包记录。
++
++## 15. 第四包：自由赛事赛道选择页
++
++日期：2026-10-15。用户指出地图选择仍是旧 UI，本包优先迁移 `TrackSelectionUI` 这一现有页面。保持其完整流程、目录、中文字体及按钮事件；仅原创 uGUI 几何和已有主题 token，不增加缩略图或外部资源，也不改其他菜单。
++
++### 15.1 原流程与有界设计
++
++现有流程为自由赛事阵容确认 → 赛道选择覆盖层 → **点击赛道卡立即开始比赛**。`SelectTrack` 先调用 `TrackSelectionState.TrySelect`，成功后刷新选择并调用原 `onTrackSelected(trackId)`。没有独立“确认开赛”步骤，本包不新增它；保留“选择一条赛道后立即开始自由赛事”和“点击开始”的清晰行动说明。返回只调用原 Hide、不开始比赛、不清空阵容或已选赛道；Show 仍刷新并置于顶层。原覆盖层互斥由现有菜单入口管理，不改此规则。
++
++`TrackSelectionState.AvailableTracks` 与目录原顺序提供八条官方赛道，`fallback_42` 不进入菜单。标题、DisplayName、Subtitle、当前选择完整摘要保持；不重新编写赛道数据/圈数/天气。默认赛道解析继续会话选择 → 合法配置回退 → 目录首项的原规则，UI 原调用方式保持，不因换肤新增选择、存档或 GameConfigSO 写入。
++
++### 15.2 方案与视觉规格
++
++方案比较：全页重排或增加图片会扩大布局/加载影响；只替换彩底不能明确当前项。本包选择**保留四列两行结构的平面卡片**，石墨层级结合非颜色的当前项标记。覆盖层 Graphite、面板 Surface、普通卡 Raised；主标题与中文赛道名 Primary，副标题/说明 Secondary，分组只用细分隔线，去掉全卡多色底、粗 Outline、装饰 Sprite 和过量阴影。可沿用局部细边强调，不引入队徽或官方品牌图形。
++
++当前赛道以细青边加卡内“当前选择”文字/标记表达，保留底部完整“当前选择：名称　副标题”摘要。持续当前项由解析后的 trackId 决定，必须和 Button 的悬停/键盘焦点 selected 状态分开。悬停使用轻微提亮、按下使用克制深色填；白字在所有可用状态目标至少 4.5:1。若使用有色填则用既有深蓝 #174C63 配 Primary（8.61:1），亮青只用于细边。禁用不响应原点击回调，仍可读，不能仅靠灰色识别；本包不新增赛道锁定条件，禁用只呈现既有 Button.interactable 状态。
++
++### 15.3 布局与输入边界
++
++保持原 4×2 网格、标题/提示、底部摘要与固定返回位置，先按真实 CanvasScaler 与 Canvas 坐标验证。1360×820 为参考画布单位；1920×1080 的参考比例缩到 1280×720 不等于超出视口，不能用 raw 像素比较强行引入滚动或重排。本包默认不增加 ScrollRect。若真实截图/文字几何证明裁切，先局部调整现有边距、文本换行/容器或安全缩放，记录实际改变；不得通过极小字、删短中文、隐藏部分赛道来通过。
++
++既有鼠标点击和返回按钮路径保持；不新增手柄/键盘导航或新确认弹窗。标题、细线和选择标记 raycastTarget=false；覆盖层继续阻挡底层菜单，卡片的整块命中区域保持，不让装饰拦截点击。保持现有动效设置/按压反馈，不新增闪烁或播放循环。重复 Initialize/Show/Hide 不累积卡片、标记、监听器或资源加载。
++
++### 15.4 设计审查与实际验收要求
++
++UX 规范审查 **APPROVED（仅 TrackSelectionUI 有界迁移）**，设计阻塞 0；视觉规范审查 **APPROVED（石墨/白字/细分隔/非颜色当前项）**。已对照现有选择源码、交互模式、free-race 流程与 tracks 当前八图清单；旧艺术规范中缩略图是已有背景派生方向，本包未引入缩略图，不能声称该项美术制作完成。缺失规范继续仅记录。
++
++本轮须实际获取 1920×1080、2560×1440 与 1280×720 改前/后页面截图并查看：八条卡片、最长中文名称/副标题与数字、当前项、悬停/按下/禁用、底部摘要与返回无裁切遮挡。交互验证原八条 trackId/顺序、点击一次只回调一次且传原 ID、未知 ID 不触发、关闭不启动/不改原选择、重新打开显示当前项、覆盖层不穿透、字体引用及默认回退保持。若 Unity 正在用户播放，等待明确允许后才进行脚本导入/测试，不中断用户。设计 gate 不代替实际运行、测试或整套 UI 完成。
++
++## 16. 第五包：比赛共享操作确认弹窗
++
++日期：2026-10-15。状态：UX/视觉规范 **APPROVED（仅共享确认弹窗有界实现）**，实现及实际验收待本包证据。用户已预授权自主视觉选择；本轮按 team-ui lean 的设计→视觉→实现→交互/可访问性审查→打磨流程。平台为现有PC鼠标及已实现键盘路径，未承诺完整键盘独立操作/手柄或新增可访问性等级。
++
++### 16.1 玩家需要与最小范围
++
++玩家刚发出换挡、出牌或导航等原操作，希望辨认即将执行的动作及后果，并能安全返回原选择。弹窗位于原HUD操作和实际提交之间，不取代原输入门。本包比较全部操作按钮/明细弹窗统一与仅共享确认层：前者牵连卡牌、技能和多个独立构造入口，后者用一个模态层覆盖八类操作并保留既有空间记忆。因此只处理 `HUDUI.EnsureReturnToMenuConfirmationUI` 复用/构造的 `ReturnToMenuConfirmPanel`、其卡片、标题/正文及原两个按钮；通过独立主题适配器和少量接入完成，不重写HUDUI。
++
++卡牌/操作主按钮、弯道限速和位移明细、维修/换道选择面板、赛果、车身徽章均不在本包；不得修改通用 `CreateConfirmationButton` 来间接给这些界面换肤。数据、文案、回调、字体/材质、原按钮引用、锚点/尺寸/兄弟顺序及navigation配置保持。原运行时默认卡片620×300、按钮190×52作为基线，手工布局优先，不能为主题强制覆盖authored值。
++
++### 16.2 数据、入口与退出契约
++
++标题/正文由 `RequestInRaceAction(action,title,message,callback)` 原调用者提供；按钮文字由 `InRaceConfirmationRules` 原样提供。八种动作与以下标签保持，不把共同按钮固定写成“确定/取消”或把所有确认都当危险退出。
++
++| 动作 | 左侧取消 | 右侧确认 |
++|---|---|---|
++| 换挡选择 | 返回修改 | 选择档位 |
++| 确认换挡 | 返回修改 | 锁定档位 |
++| 出牌/弃牌 | 返回选牌 | 确认提交 |
++| 车手技能 | 暂不发动 | 发动技能 |
++| 重新开始 | 继续比赛 | 重新开始 |
++| 返回主菜单 | 留在比赛 | 返回主菜单 |
++| 维修区决定 | 返回决定 | 确认选择 |
++| 印地换道 | 返回选择 | 确认换道 |
++
++`inRaceConfirmationMask`逐动作控制：开关关闭仍直接执行原回调，不新增确认步骤；GearSelection默认关闭规则不改。正常路径仍保存同一pending动作/类型、设置原文、置顶并打开；取消清空pending并关闭，不改变牌/挡位/位置/热量/模式请求/阵容/存档；确认先清pending并关闭再调用原动作，重复点击不可再次执行。标题中的“当前比赛进度不会保存”等后果说明不得删减。
++
++空callback或明细占用时保留原拒绝；缺确认UI保留原状态提示，不改为静默提交。数据本地同步提供，无异步加载态、空列表或新增自动消失计时。关闭/禁用与重复Ensure不累积装饰或监听器，不复活旧回调；主题只显示，不拥有或写入比赛状态。
++
++### 16.3 视觉、状态与布局
++
++沿用§4主题：遮罩用石墨深色半透明，卡片Surface，标题Primary、正文Secondary；只在卡片顶部内缘放最多一条1参考像素Separator，不穿过手工标题/正文。去掉本卡片的厚Outline、Kenney装饰Sprite/粗框与多余渐变；不递归更改其他弹窗、HUD、车队或教程边框。
++
++取消按钮Raised `#222830`，确认按钮深蓝 `#174C63`，Primary `#F4F6F8`标签；主白在深蓝上约8.61:1、次灰在Raised上约8.05:1。确认可用Actual细边强调，取消保持克制；不强制红色填充或新增危险图标。真实normal/highlighted/pressed/selected/disabled的最终显示色都须测≥4.5:1，不能仅验ColorBlock字面值而忽略Image tint/alpha相乘。禁用仍可读并保持原interactable、无点击/按压反馈；不要只把白字刷成低对比灰来表示禁用。文字和明确左右动作位置提供非颜色区分，不以红蓝承担后果语义。
++
++仅对这两个既有确认/取消Button，若原transition=None导致ColorBlock状态色无法显示，允许改为ColorTint作为本包视觉状态接入；不改变navigation、焦点策略、事件监听器或interactable，也不把此调整扩散到其他按钮。ColorTint不新增缩放/位移动画，原ButtonClickAnimation及其减少动态设置继续保留。
++
++原字号/换行起点保留，不能缩字、截断、删“不会保存”等内容掩盖溢出；检查最长真实标题/正文/按钮标签，并用约40%扩展文字及多行中文/数字做压力夹具，不设会截掉真实文案的字符上限。默认和authored布局分别验证，若确有原有溢出先报告具体几何，不因换肤擅自改布局。1920×1080、2560×1440为规定尺寸，1280×720为压力检查；原CanvasScaler继续负责缩放，raw参考像素不直接当屏幕像素。
++
++### 16.4 交互、可访问性与预算
++
++保持全屏遮罩拦截底层点击、层级置顶，取消/确认仅原按钮命中，标题/正文/细线raycastTarget=false；不新增背景点击关闭、Escape处理、焦点抢占或默认确认。`TryConfirmKeyboardAction` 对普通原动作继续生效，ResetRace/ReturnToMenu继续拒绝Space确认；Space出牌旁路、牌数不足/空选择规则、必需pit/lane/tutorial决策门控不变。主题不得新增导航/监听器、声音、闪动或过渡；原ButtonClickAnimation与减少动态/动画速度设置保持。
++
++视觉预算为一个既有模态层、一个既有卡片、原两按钮、最多一条非交互细线；没有新材质/字体/纹理/第三方资源。样式在Ensure构造或复用时应用，不在Update逐帧扫描/重建/加载。全部状态保留原中文文本和清晰后果，静音不影响理解；文字对比及原输入路径可验证，不因此宣称缺失的完整可访问性规范已满足。
++
++### 16.5 审查与验收门槛
++
++UX审查 **APPROVED**、视觉规范审查 **APPROVED**，实施前阻塞0。相关需求为core-mechanics的局内误触保护/键盘安全、interaction-patterns的共享确认、visual-style的深底细线按钮以及本任务主题。独立player-journey/accessibility要求、技术偏好等缺失治理文件仍只记录，不造占位；本包没有新交互模式，不改模式库。game-mechanics本轮完整分页1–789行读完，首尾SHA256同为 `41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d`；其旧温度计pulsing描述与§14静态升级不一致，本包不借此回滚或扩改其他界面。
++
++本轮需改前/后真实生产UI或明确受控生产夹具截图：八动作各三尺寸，长中文/数字、悬停/按下/selected/禁用代表、覆盖背景与取消后状态。实际检查裁切遮挡、有效文字对比、射线穿透、原按钮引用和字体/材质、取消不执行/确认只一次/重复请求、mask关闭直达、Space普通动作与Reset/Menu保护、重复Ensure无新增对象/监听器及禁用/重开生命周期。本包仅纯视觉适配，不改核心规则、存档或赛事调度，必须实际运行必要定向测试；整体阶段收口或出现跨系统/核心风险时再安排一次全量，**阶段全量不等于每个样式包强制重跑**。编译通过不能代替截图/交互，上一轮2949不得充作本轮通过；完整自由赛/教程/生涯走查及全部UI升级仍保留未验收边界。
++
++### 16.6 本轮实现与审查结果
++
++2026-10-15，本包独立 `RacingTechConfirmationStyle` 已通过HUD.Ensure的一处接入应用到构造/复用路径。只改变共享遮罩、卡片及原两按钮视觉，源码审查未见Update扫描/每帧重建、新资源加载、监听器或导航更改；两Button的ColorTint为本节明确许可的视觉状态接入。布局/字体/材质/文本/事件与非目标弹窗的保持由本轮回归验证，不将背景静态HUD显示当完整赛事数据验收。
++
++实际读取本轮 `focused-77-native.json`：原生RunFinished **77/77**，失败/跳过/不确定均0，UTC `2026-10-15T11:39:30.8703966Z`。包含新增12个案例及五组既有相关回归：八动作文案/取消重开/单次提交/mask旁路、原普通键盘确认与Reset/Menu保护、真实射线阻挡和禁用无回调、Selectable正常/悬停/按下/selected/禁用最终色对比≥4.5、原生HUD.Start及原回调复用等。没有每个纯视觉包再跑全量；2961仅发现数，上一轮2949为历史记录，均非本轮全量通过。
++
++图像为真实RaceCanvas预制体在独立PreviewScene中经原HUD.Start/RequestInRaceAction生成的明确受控夹具，未运行比赛manager/导航/存储。隔离改前27张和改后36张分别保留，after manifest实际统计36记录、文字溢出0。UX审查者**实际查看改后16张、隔离改前3张**，未冒称36张全部目视审查；最初未隔离before的同3张另有查看但不作正式隔离对照计数。
++
++改后查看覆盖：1280×720八动作全部normal与合成长中文/数字样本（9张）；1920×1080返回菜单hover/pressed/disabled及压力样本（4张）；2560×1440维修区/返回菜单及压力样本（3张）。正式隔离改前对照为1080p返回菜单、720p压力、1440p维修区。所看弹窗无新增裁切/遮挡，原动作和“不保存”等后果完整；按下/禁用仍有清晰白字，装饰减少且标题层级清楚。720p正文沿原19参考字号缩放后约12.7屏幕像素，仍偏小，不能据零溢出宣布舒适可读性通过。
++
++本包UX/交互、视觉、引擎实现审查结论：**APPROVED（仅共享确认层与已测范围）**，新增阻塞0。可访问性结论限于已测对比、清晰语义标签、无新增闪烁和原输入/模态行为保持，不宣称完整键盘独立操作、手柄、完整可访问性等级或OS物理输入通过。完整自由赛/教程/生涯走查、720p舒适度、其他弹窗/主按钮/卡牌和用户主观终验仍待后续有限包。截图及实际最终Unity/Console/基线审计以 [本包证据](../../production/qa/evidence/racing-tech-actions-2026-10-15/README.md) 为准，不由此图审提前声称收尾状态。
++
++## 17. 第六包：比赛五个主操作按钮
++
++日期：2026-10-15开始，2026-10-16北京时间审查。状态：**五按钮已接入，已测范围UX/视觉/引擎审查APPROVED**；本轮定向61/61通过，完整模式及未覆盖状态边界见§17.5。基线由根任务保存后才写本节。用户预授权延续；不新增玩法、输入、确认步骤或外部资源。
++
++### 17.1 玩家需要与范围
++
++玩家在原操作区辨认当前可执行的提交、技能和导航动作，需要清晰文字与稳定位置，而非大片红黄绿紫底色。本包选择在原位置平面化五个既有Button：`HUDUI.confirmGearButton`、`driverSkillButton`、`resetButton`、`returnToMenuButton`及`CardHandUI.playCardsButton`。不同时迁移gear1–4、赛果backToMenu、六队机构、卡牌/牌堆、日志或其他弹窗；§16已完成共享确认主题保持。
++
++实际接入点是 `RaceUILayoutController.ApplyLayout` authored和默认fallback两条布局路径。现有方法名为 `ApplyAuthoredButtonStyles`，其中只移除本包五目标的旧ModernUIStyle刷色调用，避免旧Sprite加载后立即覆盖；gear1–4和backToMenu原调用不动。主题实现独立、只装饰原Button/Graphic/标签，在初始化布局时应用，不改布局控制器的锚点计算/原Apply幂等门控，不在Update逐帧重套皮肤。
++
++### 17.2 数据与状态契约
++
++| 对象/状态 | 原来源与必须保留的表达 |
++|---|---|
++| 确认换挡 | 原标签及阶段门控；待选/实际挡位仍由六队控件、状态提示和实时试算表达；不在换肤中提前提交或回写实际挡位 |
++| 车手技能可用 | `DriverSkillPresentationRules`原技能名＋“×剩余次数” |
++| 技能持续中 | 原“N回合”或“本场有效”；不把持续中误标为可再次发动 |
++| 技能不可用 | 原Lv3解锁、当前模式禁用、次数已用完、仅档位确认前、最后一圈、90%热量或身后3格需对手等真实原因；不删原因只留灰色 |
++| 选中速度牌/特技/弃牌 | `GearRequirementFeedbackRules.FormatActionButtonLabel`原“打出速度牌(n) / 打出特技牌 / 弃置所选牌”与适用的“[空格]” |
++| 未选牌/结束 | 原“结束出牌”，或“缺N→+N热 / 可能失控”；缺牌风险不等于新禁用条件，必须保留原允许主动结束的规则 |
++| 重开/返回 | 原“重新开始 / 返回主菜单”和其原确认偏好/后果文案；不靠红黄背景替代语义 |
++
++源码核对：CardHand.UpdateActionButtonLabel只写文字，HUD.RefreshDriverSkill只写文字和interactable，不覆盖颜色；无需为动态标签新增每帧主题刷新。实际阶段/显示隐藏仍由管理器与CardHand原路径控制；confirmGear由原SetGearControlsInteractable控制。CardHand原0.25秒WaitForSecondsRealtime防双击禁用及恢复、技能合法性/次数/热量规则、CN Go/Recover/六队特技和实时预测完全不变。
++
++真实RaceCanvas的 `CardHandUI.gearSelectionPanel=null`；原 `SetGearSelectionMode(false)` 显示playCardsButton时，不负责隐藏confirmGearButton，管理器只禁用confirmGear。两者沿用相同PrimaryAction锚点，出牌阶段由原顶层play按钮覆盖已禁用confirm按钮。此行为不是待修复的互斥开关，本包必须保留原active/interactable/兄弟层级和遮挡顺序，不为换肤新增互斥active规则。
++
++原pointer回调与逐动作 `inRaceConfirmationMask` 保持；Space选牌后直达提交、空选择不结束出牌、Reset/Menu不可被Space确认仍保持。主题不重绑/清理监听器、不写interactable/active、不自动抢焦点、不改变navigation/拖动/快捷键或玩家设置。缺可选引用安全跳过，不造替代Button或代提交。没有异步数据、加载/空列表或新增通知状态。
++
++### 17.3 视觉与可访问性
++
++confirmGear/playCards作为主提交用深蓝 `#174C63`，driverSkill/reset/return用Raised `#222830`，标签Primary `#F4F6F8`。使用平面原创uGUI、细边和现有主题状态色，移除仅五按钮自身的旧装饰Sprite/厚Shadow/Outline；不递归擦除车队或教程聚光边框，不给重开/返回固定大片红黄底。正常、hover/selected、pressed、disabled均保留可读白字；主蓝稍亮悬停、Graphite按下、Raised禁用均须测最终有效对比≥4.5:1，含Image色×CanvasRenderer色，避免暗底重复相乘或alpha减低文字对比。
++
++仅五目标允许ColorTint从旧None接入，fade=0或沿已批准静态颜色反馈；没有新缩放/位移动效。原ButtonClickAnimation和减少动态/动画速度设置保持。按钮功能、不可用原因和风险由原文字/位置表达，不只靠紫/绿/红状态。纯临时防双击禁用保留原行为，不为它增加玩法提示或重命名按钮。
++
++接入核对：旧 `ModernUIStyle.ApplyButton` 本来就调用 `ButtonClickAnimation.Attach`。五目标换用独立主题后保留该Attach是延续旧路径，并非新增动画模式；Attach须复用既有组件，重复样式应用不得添加重复监听器。此处只说明实现边界，尚未据代码核对勾选运行回归或改后视觉。
++
++原RectTransform、命中面积、sibling、字体/字号/材质、换行和引用保持。最长“结束出牌·缺N，可能失控”、技能名＋不可用原因可能受到现有操作区宽度限制，必须先看改前真实截图；不得缩字、删风险文案、硬塞短标签或强改authored布局掩盖溢出。若真实输出原已溢出，明确区分原有与新增并报告，不通过主题测试冒称整屏无问题。1920×1080和2560×1440为规定尺寸，1280×720为压力检查，720p舒适度仍独立保留。
++
++视觉预算为原五按钮，最多各一条细边，无新面板/图标/纹理/字体/音频/资源下载。无每帧遍历、资源重载、材质实例或监听器增长。布局主题不拥有比赛状态；不存在新交互模式，模式库无需新增占位。
++
++### 17.4 设计gate及验收要求
++
++UX规范审查 **APPROVED**、视觉规范审查 **APPROVED**，实施前新增阻塞0。对照当前interaction-patterns、core-mechanics误触保护/键盘安全和visual-style深底细线规定。缺失独立player-journey/accessibility等级/治理规范仍只记录；不为此新增输入或伪称全面可访问性通过。
++
++本轮重新完整分页读取game-mechanics1–789：1–35、36–70、71–105、106–140、141–175、176–210、211–280、281–410、411–540、541–670、671–789，所有输出无截断，首尾SHA256同为 `41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d`。历史温度计pulsing与后续静态主题差异不在本包回改。
++
++验收须通过真实ApplyLayout与HUD/CardHand原阶段方法生成动态标签，至少三尺寸改前/后图：确认换挡/原等待或阶段门控、速度牌单/多选、特技/弃牌/结束、缺牌热量/失控风险、技能可用/持续/不可用、hover/pressed/selected/disabled和防双击恢复；原active/interactable及上述play覆盖禁用confirm的顺序保持。可由夹具独占inactive管理器和纯状态调用真实formatter生成输出，必须明确标记为受控fixture，不能据此称整个GameLoop已走查。额外合成压力夹具须明确标注，不冒称实际规则输出；原四挡/赛果按钮/其他弹窗的颜色/引用保持。
++
++相关定向须实际运行：原图形/字体材质/布局/监听器/navigation/interactable保持、重复Apply无增长、有效对比、禁用不触发、原确认偏好及取消/单次提交、Space边界、短防双击恢复、authored/fallback均接入。编译不代替图审或交互；纯视觉包不强制再跑八分钟全量，阶段收口或核心/跨系统风险再安排。上一包77及历史2949不计本轮通过；完整模式、OS物理输入、720p舒适度及全部UI终验继续保留未验收边界。
++
++### 17.5 本轮实现与实际审查
++
++`RacingTechActionButtonStyle`已在authored/fallback两处接入；只五目标移除旧Modern样式，原gear1–4及赛果backToMenu调用保持。实际读过独立样式全文件和布局差异，无新Update/资源加载/状态写入或监听器重绑；旧Attach按§17.3保留。原主按钮叠放active/interactable/sibling关系未改，不把play覆盖禁用confirm误当待修复互斥问题。
++
++本轮实际读取 `focused-native.json`：原生RunFinished **61/61**，失败/跳过/不确定0，UTC `2026-10-15T17:05:32.1895263Z`；根任务记录六组相关定向耗时3.2888873秒。测试包括双布局五目标/排除项、原事件/几何/字体材质/导航、真实射线命中/原叠放和禁用拒绝、正常/hover/pressed/selected/disabled最终对比≥4.5、真实HUD/CardHand刷新不覆盖主题，以及原生重开确认/取消/重开等。防双击恢复用例**实际传入0.05秒**并等待恢复；生产默认0.25秒源码未改，不能称本轮测量了默认0.25秒延时。2969仅发现总数，本轮未全量，不挪用上一包77或历史2949。
++
++截图为真实RaceCanvas在独立预览场景经原ApplyLayout、HUD.Start、CardHand原模式/选牌和技能formatter生成；独占manager从未激活，纯Session/Player供数据，未运行Awake/Start/GameLoop、真实赛道或玩家存储。程序选择前关闭夹具CardUI以使用既有即时路径，不冒称物理卡牌点击/拖动或完整比赛。主矩阵空速度手牌实际生成“结束出牌·缺3→+3热”，不是“可能失控”状态；新增五组动态样本也使用真实原formatter，非编造规则结果。
++
++独立解析manifest：改前36、改后60张，文字溢出均0；UX审查者**实际查看改后20张和改前3张**，不宣称60张全部目视审查。改后覆盖六队720p gear各一（6张）、六队1440p card各一（6张）、CN1080p技能ready/单选/多选持续技能/特技/弃牌五组（5张）、CN720p hover/pressed/disabled（3张）。改前对照为CN720p gear、UK1080p card、JP1440p gear；完整图片位于 [本包证据](../../production/qa/evidence/racing-tech-primary-actions-2026-10-15/README.md) 的before/after。
++
++所看五按钮没有新增裁切或遮挡，重开/返回由原大片彩色装饰改为石墨白字，提交深蓝保持可读。六队技能长名/不可用原因沿原布局换成两行，次数/持续回合、选牌数量与“[空格]”保持；“缺3→+3热”较贴近原按钮边缘但未溢出，不通过缩字或删风险词冒称更优布局。周边状态/温度计仍有既有小字，720p整体舒适可读性未验收。
++
++UX/视觉/引擎实现gate **APPROVED（仅实际覆盖的五按钮切片）**，新增阻塞0；不新增资源、输入模式或视觉打磨扩域。selected由原生pointer/Selectable测试覆盖，**没有selected专门截图**；“可能失控”原formatter规则测试保持，**本轮未专门截图审查该风险标签**。完整自由赛/教程/生涯、OS物理输入、720p舒适度及其他UI仍待验，不把本包等同全状态视觉/整体可访问性通过。最终Console/Unity/基线审计由根任务和证据记录，不由此图审提前确认。
++
++## 18. 第七包：牌桌四区域壳与牌堆计数
++
++日期：2026-10-16。状态：UX/视觉设计gate **APPROVED（仅本节有界实现）**，实现、图审和本轮测试待证据。根任务已保存411项基线及11份相关源码快照后才写本节；原有修改保留。按team-ui lean推进，不新增输入、玩法、资源下载或确认步骤。
++
++### 18.1 玩家需要与选择
++
++玩家需要在原牌桌位置区分抽牌堆、引擎库、手牌和弃牌堆，并读取精确数量、空堆提示与当前选择。比较整套卡面重制和区域壳平面化，前者涉及真实卡面、车队特技、选择状态和动态刷新，本包选择后者：只迁移 `DrawPilePanel`、`EnginePanel`、`HandPanel`、`DiscardPilePanel` 自身底板、四个已有标题、现有统计文字，以及抽/弃牌堆的计数徽标、空堆/查看提示。已完成的DeckTablePanel外壳不重复改造；仅§18.5实证标题高度缺陷允许局部修复。
++
++真实CardUI和三张顶部实际缩略图继续显示；卡面、牌背叠放、图标/数字、选中/悬停/禁用状态机、所有权流转动画和检查器详情面板均不改。OperationPromptPanel、选中牌效果面板、其他弹窗/按钮与新屏幕不扩域。当前CardUI减少动态设置支持不足作为既有问题记录，不顺手改动画策略。
++
++### 18.2 视觉与数据契约
++
++| 目标 | 本包主题 | 必须保留 |
++|---|---|---|
++| 抽牌/引擎/弃牌区域底板 | Raised #222830 平面 | 原锚点、尺寸、sibling、射线和遮罩 |
++| 手牌区域底板 | Surface #171B20 平面 | 原7牌位置、cardSizeOverride、选择抬升空间与RectMask2D |
++| 四个已有标题/精确计数 | Primary #F4F6F8 | 原名称、完整数字、字体/字号/材质/对齐 |
++| 统计/查看与空堆提示 | Secondary #B6C0CA | 原字符串与动态显隐，不以灰色替代空/禁用文案 |
++| CountBadge底 | Graphite #101317 | 原矩形与精确count刷新，raycastTarget=false |
++
++只清除四底板自身装饰Sprite、厚Outline/Shadow，不递归删除卡面、选中牌/教程聚光等后代效果；最多各一条1参考像素Separator #46515E，装饰不接收射线。白/灰文字在最终有效背景上目标对比至少4.5:1，包含既有Button tint/alpha；不是只验静态token。没有新图标、字体、纹理、声音或动效，现有中文字体保留。
++
++`CardHandUI.UpdateDeckInfo` 与 `CardPilePreviewUI.Refresh` 原样提供数据。保留顶部3张实际缩略图、每3张增加1层且最多7层牌背、精确徽标数字；不把牌堆退化成纯文字。不更改抽牌检查器隐藏顺序/按种类汇总、弃牌最新顺序与原打开/关闭行为。当前生效实现的 `Engine\nN heat`、`空`、`点击查看/暂无卡牌` 等原字符串保留，不在换肤中顺手翻译或改写数据。
++
++### 18.3 引擎与交互约束
++
++四区域主题在原布局构造/复用入口适配authored与fallback；CountBadge/EmptyLabel/InspectHint由EnsurePilePreview→Configure运行时创建，故计数主题应在创建或复用点接入，不能仅在它们尚未存在的ApplyLayout时调用一次。Refresh只改计数、可见性和原牌面，不为主题增加每帧扫描/重建或资源加载。缺可选引用安全跳过，重复Apply/Configure不累积细线、组件或监听器。
++
++抽/弃区域父Image同时是既有检查Button的targetGraphic：原Button/ColorBlock/transition/navigation/interactable、targetGraphic引用、射线命中和ShowInspector回调保留；不能因换底板破坏点击或让新增装饰抢射线。原手牌点击/选择/拖动/Space、安全确认偏好、mandatory决策门与实时预测保持，主题不持有或写入比赛资源/顺序/状态。
++
++本包补拍由原formatter实际生成的 `结束出牌 · 缺N，可能失控` 长风险标签；先以原布局查看，不预设裁切。仅实际几何/截图证明需要时，才作该标签局部换行/容器安全调整并记录前后；不删字、缩字、不增加警告层，不改其主动结束允许规则。selected截图另作既有视觉状态补证，不由上一包pointer测试冒充。
++
++### 18.4 验收与设计审查
++
++本轮重新完整分页读取game-mechanics1–789，首尾SHA256同为 `41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d`；141–210初次合并输出截断后已分别重读，最终无未读段。当前UX1–339、清单1–125、interaction全文及core卡牌/误触保护、visual信息优先/牌堆/卡牌相关段落已对照。缺active.md、technical-preferences、player-journey、accessibility-requirements仅记录，不造占位。旧视觉规范的旋钮/温度计方向不回滚已获授权升级；无新交互模式需新增模式库条目。
++
++UX规范、视觉规范及引擎实现约束gate **APPROVED**，实施前新增阻塞0；该结论只允许上述切片，不代表运行或完整可访问性通过。需本轮真实三尺寸改前/后图，六队代表、真实可见手牌/特技/热量与选择、0/1/3/大量牌堆和大数字、空/可查看/hover/pressed/disabled、真实失控长风险及selected。实际查看数量须如实记录，受控fixture不当完整GameLoop。重点检查底板对比、标题/计数裁切、选中牌是否被遮、点击检查器无穿透和字体/原区域几何保持。
++
++必要定向实际验证双布局、计数动态创建/刷新/空堆/层数、原卡面/顺序/回调保持、射线/禁用/重复配置/有效对比及相关规则回归；纯视觉包不强制每次全量，阶段收口或跨系统/核心风险时再安排。上包61/61和历史全量不计本包通过。完整自由赛/教程/生涯、OS物理输入、720p舒适度、卡面/详情主题和用户最终主观验收继续保留。
++
++### 18.5 改前实证与两标题高度例外
++
++改前真实受控夹具27张，manifest每张仅报告两标题溢出，共54项；UX本次实际查看CN1920×1080七牌/非空牌堆和CN1280×720零引擎失控风险2张。前者7张牌及牌堆/计数真实可见；后者原formatter长标签自动完整换成两行，无按钮溢出，故本包**不修改风险按钮布局或文字**。原selectedCardEffectText不在本包修复范围。
++
++manifest首图记录HandTitle高度23.2243、preferredHeight24.6200；DeckTableTitle高度24.1920、preferredHeight27.5200，均tmpOverflow=true。为真实既有缺陷修正，允许独立adapter仅对这两个既有标题在高度不足时向下扩展：`offsetMin.y -= ceil(preferredHeight - rect.height) + 1`；本基线分别约补3与5参考单位。保留anchors、顶部边、水平矩形、字体/字号/材质/内容/对齐及其他几何，不添加空标题、不修改其他文字或复改外壳。需在当前TMP布局可测量后计算，确认有限有效高度，够高即不改，重复Apply不得持续增高；新文字变化不触发每帧轮询。
++
++改前图中标题与牌面之间有足够间距，修复仍需三尺寸改后实际确认，不以公式代替图审。定向应覆盖不足时补高、已足不改、重复应用幂等、anchors/top和非目标矩形保持、最终无溢出且不碰卡面/分隔线。UX/视觉最小修复gate **APPROVED**，不扩展为外层标题重新美化或整体布局重排；尚未据此勾选修复通过。
++### 18.6 接入与本轮有限自审结果
++
++四区域与动态计数/提示已接入，两个短标题只向下补高；before27图54项标题溢出，after27图0。根任务实际查看after9张（六队基准及CN空/风险/selected，覆盖三尺寸）、before2张；原两行失控文案完整，不改按钮。卡面/缩略牌/选择抬升保持，未见新增遮挡；720p提示仍小，舒适度不通过。
++
++本轮原生RunFinished59/59，失败/跳过/不确定0，2.5227451秒，新增8项；2977仅发现数，未全量。设计及实施前引擎约束gate已批准，改后独立UX/视觉代理因额度限制未完成；根任务接续有限自审，不将独立评审记为通过。特技卡、大数字及牌堆hover/pressed专门截图、完整GameLoop/物理输入和整体可访问性仍未验。证据见production/qa/evidence/racing-tech-card-zones-2026-10-16/README.md。
+\ No newline at end of file
+diff --git a/docs/memory/current-task-list.md b/docs/memory/current-task-list.md
+index b88586b..dfcb5de 100644
+--- a/docs/memory/current-task-list.md
++++ b/docs/memory/current-task-list.md
+@@ -1376,3 +1376,36 @@ maintained source for current work.
+ - 用户随后另行授权将12个换挡成品替换为可公开分发的CC0录音版本；旧含Sonniss文件保留本地、不随本次提交散发，独立试听WAV亦排除。该独立音频整改的最终回归与提交结果由根任务另记，不能用上述UI阶段全量代替。全部UI升级尚未完成；下一有限包仍为徽章/卡牌/操作/弹窗，不重复扩展已完成项。
+ 
+ 第三包最终补记（2026-10-15）：用户另行授权的CC0换挡整改已接入12个新资源名，旧12份WAV/meta及3份独立试听、12份暂存重复、字体缓存和EditorSettings均保留本地并排除提交。许可原文/来源与成品哈希归档；音频原生定向41/41，整改后最终原生RunFinished2932/2932，失败/跳过/不确定0（UTC2026-10-14T16:40:05.768Z）。MainMenu干净、未播放/编译/导入，resource idle/ready；Console仅no_such_track缺失赛道测试预期error，无warning。此时为待提交索引，不冒称已commit/push。最终证据见第三包README/final-hash-manifest.json；720p小字、完整模式视觉及剩余页面仍待后续有限包。
++
++## 2026-10-15 用户优先地图选择页与追加超车录音（最终组合回归中）
++
++- 用户明确优先地图选择页，现有TrackSelectionUI石墨面板/白字/细分隔接入；保留8条正式赛道ID/顺序/中文与国家美食副题、点击即启动原回调及返回关闭，不新增第9赛道或二次确认。当前选择有左细线+文字+底部摘要；不是EventSystem焦点标记。新增装饰不接收射线，原网格/字体/生命周期保持。
++- 真实生产Initialize/Show/原按钮入口隔离预览：三尺寸改前3张全部实际看，改后最终39张/0文字溢出，最终重审24张（9原生Selectable态+三尺寸默认/GP/勒芒/北环/关闭15张）；此前30张均已查看但不混报重拍数量。关闭画面是空独立宿主，非主菜单恢复；720p动作字约10px紧凑、全模式/其余页面仍待验。地图原生最终定向33/33，失败/跳过/不确定0。
++- 用户追加汽车掠过实录超车声音，沿原RaceEventFX实际超车表现槽启动单个0.760s CC0声音，不改变超车判定。专用声源master×SFX×0.85、pitch1、不叠声，跳过/禁用/销毁/场景退出/token保护；视觉原超车信息保持。经只读审查补自然完成与SFX0边界后，音频6组原生定向40/40通过，失败/跳过/不确定0；主观耳机/扬声器、完整赛事听验不能由数值/测试替代。
++- 地图首次全量由用户取消；1094项已完成均通过但原生Failed(Child)含Cancelled子项，不记全量通过。当前组合最终2949项正在运行，尚未以预期总数冒称结果。证据分别 production/qa/evidence/racing-tech-track-selection-2026-10-15/ 与超车音效包；最终RunFinished及Unity状态待后续补记。
++- 前包HEAD58656899已由根任务提交并推送，旧“此时待提交”属于当时快照而非当前Git状态。本轮仍为未提交工作；41项原有字体/快进设置/旧音频与暂存重复保留，不自动commit/push。用户本轮地图优先顺序覆盖之前常规迁移顺序；整个UI升级尚未完成。
++
++地图证据补充：加强中间轮次focused-attempt-2-native.json曾32/33通过、1失败，已保留，最终原生33/33复跑为权威；未描述成首次通过。
++
++地图/超车录音最终补记（2026-10-15）：组合原生RunFinished2949/2949全部通过，失败/跳过/不确定0，结束UTC2026-10-15T06:33:14.3194297Z，512.8688699秒；权威证据 production/qa/evidence/overtake-audio-2026-10-15/full-2949-native.json。此结果替代“组合回归中”临时状态，不把用户取消的1094轮次或地图预期2945误记通过。地图33/33、音频加强40/40仍按各自定向分别记录。最终MainMenu干净、未播放/编译/导入，resource idle/ready与Free License可用；Console仅1条no_such_track缺失赛道测试预期error（TrackDataLoaderTest:192），无warning/新增运行错误。地图证据README、验收清单与最终哈希已同步；41项原有文件全部存在且SHA与本包基线一致，HEAD仍58656899，本轮未commit/push。地图本包完成；完整开赛/教程/生涯视觉、720p舒适大字、其余页面和完整赛事主观听验仍保留未验收边界，不声称整个UI升级完成。
++
++## 2026-10-15 共享操作确认弹窗有限包（已接入）
++
++- 本轮仅HUDUI构造/复用共享确认层增加4行样式hook和独立RacingTechConfirmationStyle，620×300卡片/190×52双按钮、八动作原文案/标签/回调、逐项mask、Space普通确认及Reset/Menu保护不变；未改比赛规则、存档、卡牌或其他弹窗。石墨平面/白字/细分隔接入，无新资源、订阅或每帧重建。
++- 真实RaceCanvas/HUD.RequestInRaceAction隔离PreviewScene证据：最终before-isolated27张、after36张，两个manifest均0文字溢出，原取消/确认handler回调0/1；初次before27张保留。实际查看after全部36张、隔离before代表6张（初次before另3张），覆盖八动作三尺寸、长中文/数字、原生hover/pressed/disabled；无新增裁切遮挡，静态中文字体可读。背景没有真实比赛manager/赛道数据，明确为受控生产UI夹具；声音监听只在夹具两按钮隔离，不改生产事件。
++- 新程序集6组原生RunFinished **77/77通过，失败/跳过/不确定0**，UTC2026-10-15T11:39:30.8703966Z；新增12项中含1项原生生命周期用例。2961仅发现数，本纯视觉有限包未再跑全量，历史2949不能冒称本轮结果。原生pointer/射线/禁用、有效文字对比、标签/mask/取消重开单次提交及Space相关测试已通过。
++- root最终MainMenu干净、未播放/编译/导入，ready/资源空闲与Free License可用；定向后Console实际0error/warning。改前已有no_such_track Error及来源未知的On demand scheduler protocol error Assert留基线记录，不声称已修复其根因。git diff --check退出0仅换行提示，HEAD仍58656899，未commit/push、未恢复暂停自动化。
++- 证据 production/qa/evidence/racing-tech-actions-2026-10-15/README.md。151项既有文件完整保留，仅本轮授权HUD/UX/清单/两continuity有明确增量；旧地图/音频、用户字体缓存和快进设置不清理。720p正文约12.7px舒适大字、完整自由赛/教程/生涯走查与其他页面仍未验收；本包完成不代表整个UI升级完成。下一有界包仍为原操作按钮/卡牌/其他弹窗，避免重做已验收modal。
++## 2026-10-15 UTC／本地10-16 五个比赛主操作按钮有限包（已接入）
++
++- RaceUILayoutController authored/fallback共用RacingTechActionButtonStyle，仅确认换挡/技能/重开/返回/出牌五Button平面化；原位置/字号/字体材质/引用/事件与交互门控保持，不改HUDUI、CardHandUI、gear1–4、赛果backToMenu或已完成确认modal。原出牌阶段PlayBtn覆盖禁用confirm的active/层级保持，不新增互斥规则。
++- 真实RaceCanvas经原Start/ApplyLayout受控PreviewScene：before36、after60，两manifest目标文字溢出均0；本人实际查看after40（六队720基本12+CN动态/原生态三尺寸24+CN大尺寸基本4）及before3。技能×1/2回合/Lv3与阶段禁用原因、单/多速/特技/弃牌/缺3→+3热由原formatter/ShowHand/选择接口生成，无新增裁切遮挡。inactive独占manager不运行GameLoop，inactive卡牌仅供动态标签读取、不显示卡面；背景不是完整比赛，不能据此验收整场或卡牌视觉。
++- 新程序集六组原生RunFinished **61/61通过，失败/跳过/不确定0**，UTC2026-10-15T17:05:32.1895263Z，3.2888873秒；新增8项中1原生。实际pointer/有效对比/禁用/回调取消单次提交/双布局与重复Apply覆盖。防双击只以自定义0.05秒测试真实恢复，生产默认0.25秒源码未改，不冒称实测默认延时。2969仅发现数，本纯视觉包未重跑全量，历史2949及前包77不计本轮通过。
++- root最终UTC17:06:12Z：MainMenu干净、未播放/编译/导入，资源idle/ready、测试结束、许可有效，Console0error/warning；中间一次MCP WebSocket未初始化warning保留事实，不称已修复工具。276项展开基线/原始diff与8份源码文档副本保留，HUD/CardHand/旧modal及旧地图/音频不覆盖；仅本轮布局主题、测试、证据及授权文档增量。HEAD仍58656899，未commit/push、未恢复暂停自动化。
++- 证据 production/qa/evidence/racing-tech-primary-actions-2026-10-15/README.md。selected仅原生状态测试、无专门截图；可能失控更长风险标签/其他队极端技能原因、720p舒适度及完整自由赛/教程/生涯/OS输入仍未验。整体UI尚未完成，下包优先风险标签/卡牌等有限切片，不无限美化已完成按钮。
++## 2026-10-16 牌桌四区域壳有限包（已接入）
++
++- 已保存411项展开基线、原始Git差异与相关源副本，HEAD58656899；overview39段全读、current-task-list由ui_impl完整分页、game-mechanics由UX完整分页，首尾SHA一致记录于本包continuity-read-audit.json。缺active/governance仅记录。
++- scope仅四区域底板/标题/统计和动态计数/空堆提示；原CardUI卡面、缩略牌/叠背、详情/输入/规则保持。新独立捕获helper初次字符串替换编译失败，整行修正后根任务才成功拍改前27张，未掩盖失败。
++- before真实六队三尺寸与CN空堆/原formatter失控风险/native selected，7张实例实际可见；本审查者实际看6张。54处原TMPoverflow全为HandTitle/DeckTableTitle高度不足，风险按钮原两行完整不溢出；仅两个标题获最小扩高授权，改前原图保留。
++- 证据production/qa/evidence/racing-tech-card-zones-2026-10-16/README.md；最终补记：after27/0overflow，根任务实看after9/before2；新程序集六组原生59/59通过，失败/跳过/不确定0，2.5227451秒（UTC17:47:34Z），2977仅发现数、未全量。最后UTC22:35:09Z MainMenu干净/idle/ready/许可有效，Console0error/warning；四区及两个标题最小补高已接入。协作额度限制留下独立改后审查缺口，根任务有限自审不冒称该门通过。受控UI不等于完整GameLoop，720p舒适度、完整模式和卡面/详情主题继续未验；不commit/push、不恢复自动化。
+diff --git a/docs/memory/project-overview.md b/docs/memory/project-overview.md
+index 5fb1ad5..c88e288 100644
+--- a/docs/memory/project-overview.md
++++ b/docs/memory/project-overview.md
+@@ -536,3 +536,36 @@ See [game-mechanics.md](game-mechanics.md) for current gameplay rules and
+ - 用户随后另行授权将12个换挡成品替换为可公开分发的CC0录音版本；旧含Sonniss文件保留本地、不随本次提交散发，独立试听WAV亦排除。该独立音频整改的最终回归与提交结果由根任务另记，不能用上述UI阶段全量代替。全部UI升级尚未完成；下一有限包仍为徽章/卡牌/操作/弹窗，不重复扩展已完成项。
+ 
+ 第三包最终补记（2026-10-15）：用户另行授权的CC0换挡整改已接入12个新资源名，旧12份WAV/meta及3份独立试听、12份暂存重复、字体缓存和EditorSettings均保留本地并排除提交。许可原文/来源与成品哈希归档；音频原生定向41/41，整改后最终原生RunFinished2932/2932，失败/跳过/不确定0（UTC2026-10-14T16:40:05.768Z）。MainMenu干净、未播放/编译/导入，resource idle/ready；Console仅no_such_track缺失赛道测试预期error，无warning。此时为待提交索引，不冒称已commit/push。最终证据见第三包README/final-hash-manifest.json；720p小字、完整模式视觉及剩余页面仍待后续有限包。
++
++## 2026-10-15 用户优先地图选择页与追加超车录音（最终组合回归中）
++
++- 用户明确优先地图选择页，现有TrackSelectionUI石墨面板/白字/细分隔接入；保留8条正式赛道ID/顺序/中文与国家美食副题、点击即启动原回调及返回关闭，不新增第9赛道或二次确认。当前选择有左细线+文字+底部摘要；不是EventSystem焦点标记。新增装饰不接收射线，原网格/字体/生命周期保持。
++- 真实生产Initialize/Show/原按钮入口隔离预览：三尺寸改前3张全部实际看，改后最终39张/0文字溢出，最终重审24张（9原生Selectable态+三尺寸默认/GP/勒芒/北环/关闭15张）；此前30张均已查看但不混报重拍数量。关闭画面是空独立宿主，非主菜单恢复；720p动作字约10px紧凑、全模式/其余页面仍待验。地图原生最终定向33/33，失败/跳过/不确定0。
++- 用户追加汽车掠过实录超车声音，沿原RaceEventFX实际超车表现槽启动单个0.760s CC0声音，不改变超车判定。专用声源master×SFX×0.85、pitch1、不叠声，跳过/禁用/销毁/场景退出/token保护；视觉原超车信息保持。经只读审查补自然完成与SFX0边界后，音频6组原生定向40/40通过，失败/跳过/不确定0；主观耳机/扬声器、完整赛事听验不能由数值/测试替代。
++- 地图首次全量由用户取消；1094项已完成均通过但原生Failed(Child)含Cancelled子项，不记全量通过。当前组合最终2949项正在运行，尚未以预期总数冒称结果。证据分别 production/qa/evidence/racing-tech-track-selection-2026-10-15/ 与超车音效包；最终RunFinished及Unity状态待后续补记。
++- 前包HEAD58656899已由根任务提交并推送，旧“此时待提交”属于当时快照而非当前Git状态。本轮仍为未提交工作；41项原有字体/快进设置/旧音频与暂存重复保留，不自动commit/push。用户本轮地图优先顺序覆盖之前常规迁移顺序；整个UI升级尚未完成。
++
++地图证据补充：加强中间轮次focused-attempt-2-native.json曾32/33通过、1失败，已保留，最终原生33/33复跑为权威；未描述成首次通过。
++
++地图/超车录音最终补记（2026-10-15）：组合原生RunFinished2949/2949全部通过，失败/跳过/不确定0，结束UTC2026-10-15T06:33:14.3194297Z，512.8688699秒；权威证据 production/qa/evidence/overtake-audio-2026-10-15/full-2949-native.json。此结果替代“组合回归中”临时状态，不把用户取消的1094轮次或地图预期2945误记通过。地图33/33、音频加强40/40仍按各自定向分别记录。最终MainMenu干净、未播放/编译/导入，resource idle/ready与Free License可用；Console仅1条no_such_track缺失赛道测试预期error（TrackDataLoaderTest:192），无warning/新增运行错误。地图证据README、验收清单与最终哈希已同步；41项原有文件全部存在且SHA与本包基线一致，HEAD仍58656899，本轮未commit/push。地图本包完成；完整开赛/教程/生涯视觉、720p舒适大字、其余页面和完整赛事主观听验仍保留未验收边界，不声称整个UI升级完成。
++
++## 2026-10-15 共享操作确认弹窗有限包（已接入）
++
++- 本轮仅HUDUI构造/复用共享确认层增加4行样式hook和独立RacingTechConfirmationStyle，620×300卡片/190×52双按钮、八动作原文案/标签/回调、逐项mask、Space普通确认及Reset/Menu保护不变；未改比赛规则、存档、卡牌或其他弹窗。石墨平面/白字/细分隔接入，无新资源、订阅或每帧重建。
++- 真实RaceCanvas/HUD.RequestInRaceAction隔离PreviewScene证据：最终before-isolated27张、after36张，两个manifest均0文字溢出，原取消/确认handler回调0/1；初次before27张保留。实际查看after全部36张、隔离before代表6张（初次before另3张），覆盖八动作三尺寸、长中文/数字、原生hover/pressed/disabled；无新增裁切遮挡，静态中文字体可读。背景没有真实比赛manager/赛道数据，明确为受控生产UI夹具；声音监听只在夹具两按钮隔离，不改生产事件。
++- 新程序集6组原生RunFinished **77/77通过，失败/跳过/不确定0**，UTC2026-10-15T11:39:30.8703966Z；新增12项中含1项原生生命周期用例。2961仅发现数，本纯视觉有限包未再跑全量，历史2949不能冒称本轮结果。原生pointer/射线/禁用、有效文字对比、标签/mask/取消重开单次提交及Space相关测试已通过。
++- root最终MainMenu干净、未播放/编译/导入，ready/资源空闲与Free License可用；定向后Console实际0error/warning。改前已有no_such_track Error及来源未知的On demand scheduler protocol error Assert留基线记录，不声称已修复其根因。git diff --check退出0仅换行提示，HEAD仍58656899，未commit/push、未恢复暂停自动化。
++- 证据 production/qa/evidence/racing-tech-actions-2026-10-15/README.md。151项既有文件完整保留，仅本轮授权HUD/UX/清单/两continuity有明确增量；旧地图/音频、用户字体缓存和快进设置不清理。720p正文约12.7px舒适大字、完整自由赛/教程/生涯走查与其他页面仍未验收；本包完成不代表整个UI升级完成。下一有界包仍为原操作按钮/卡牌/其他弹窗，避免重做已验收modal。
++## 2026-10-15 UTC／本地10-16 五个比赛主操作按钮有限包（已接入）
++
++- RaceUILayoutController authored/fallback共用RacingTechActionButtonStyle，仅确认换挡/技能/重开/返回/出牌五Button平面化；原位置/字号/字体材质/引用/事件与交互门控保持，不改HUDUI、CardHandUI、gear1–4、赛果backToMenu或已完成确认modal。原出牌阶段PlayBtn覆盖禁用confirm的active/层级保持，不新增互斥规则。
++- 真实RaceCanvas经原Start/ApplyLayout受控PreviewScene：before36、after60，两manifest目标文字溢出均0；本人实际查看after40（六队720基本12+CN动态/原生态三尺寸24+CN大尺寸基本4）及before3。技能×1/2回合/Lv3与阶段禁用原因、单/多速/特技/弃牌/缺3→+3热由原formatter/ShowHand/选择接口生成，无新增裁切遮挡。inactive独占manager不运行GameLoop，inactive卡牌仅供动态标签读取、不显示卡面；背景不是完整比赛，不能据此验收整场或卡牌视觉。
++- 新程序集六组原生RunFinished **61/61通过，失败/跳过/不确定0**，UTC2026-10-15T17:05:32.1895263Z，3.2888873秒；新增8项中1原生。实际pointer/有效对比/禁用/回调取消单次提交/双布局与重复Apply覆盖。防双击只以自定义0.05秒测试真实恢复，生产默认0.25秒源码未改，不冒称实测默认延时。2969仅发现数，本纯视觉包未重跑全量，历史2949及前包77不计本轮通过。
++- root最终UTC17:06:12Z：MainMenu干净、未播放/编译/导入，资源idle/ready、测试结束、许可有效，Console0error/warning；中间一次MCP WebSocket未初始化warning保留事实，不称已修复工具。276项展开基线/原始diff与8份源码文档副本保留，HUD/CardHand/旧modal及旧地图/音频不覆盖；仅本轮布局主题、测试、证据及授权文档增量。HEAD仍58656899，未commit/push、未恢复暂停自动化。
++- 证据 production/qa/evidence/racing-tech-primary-actions-2026-10-15/README.md。selected仅原生状态测试、无专门截图；可能失控更长风险标签/其他队极端技能原因、720p舒适度及完整自由赛/教程/生涯/OS输入仍未验。整体UI尚未完成，下包优先风险标签/卡牌等有限切片，不无限美化已完成按钮。
++## 2026-10-16 牌桌四区域壳有限包（已接入）
++
++- 已保存411项展开基线、原始Git差异与相关源副本，HEAD58656899；overview39段全读、current-task-list由ui_impl完整分页、game-mechanics由UX完整分页，首尾SHA一致记录于本包continuity-read-audit.json。缺active/governance仅记录。
++- scope仅四区域底板/标题/统计和动态计数/空堆提示；原CardUI卡面、缩略牌/叠背、详情/输入/规则保持。新独立捕获helper初次字符串替换编译失败，整行修正后根任务才成功拍改前27张，未掩盖失败。
++- before真实六队三尺寸与CN空堆/原formatter失控风险/native selected，7张实例实际可见；本审查者实际看6张。54处原TMPoverflow全为HandTitle/DeckTableTitle高度不足，风险按钮原两行完整不溢出；仅两个标题获最小扩高授权，改前原图保留。
++- 证据production/qa/evidence/racing-tech-card-zones-2026-10-16/README.md；最终补记：after27/0overflow，根任务实看after9/before2；新程序集六组原生59/59通过，失败/跳过/不确定0，2.5227451秒（UTC17:47:34Z），2977仅发现数、未全量。最后UTC22:35:09Z MainMenu干净/idle/ready/许可有效，Console0error/warning；四区及两个标题最小补高已接入。协作额度限制留下独立改后审查缺口，根任务有限自审不冒称该门通过。受控UI不等于完整GameLoop，720p舒适度、完整模式和卡面/详情主题继续未验；不commit/push、不恢复自动化。

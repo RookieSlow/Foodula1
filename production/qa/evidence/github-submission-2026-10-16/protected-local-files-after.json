@@ -1,0 +1,163 @@
+{
+  "phase": "After fresh native full2990, before commit",
+  "total": 26,
+  "unchanged": 26,
+  "files": [
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\TmpFont\\StreamingAssets\\Fonts & Materials\\Chinese\\SourceHanSansTC-Medium-HQ.asset",
+      "exists": true,
+      "sha256": "F7D82E76D855C4902653063D1FC4ADCEF16A145086EC6A106100E0B32618846A",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\ProjectSettings\\EditorSettings.asset",
+      "exists": true,
+      "sha256": "6AB19FE30172C763029B8F2E0616C6DC3DCFE480E845FC1AAAEF5975C948EEC0",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_cn_down.wav",
+      "exists": true,
+      "sha256": "7F964F4A9B11FEE8A80BB39E895078904D6F46A5F867FF7CCEA9675BBEE5FA86",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_cn_down.wav.meta",
+      "exists": true,
+      "sha256": "4B2E59C7E802FE89A86891F94345A625C363D744BB486DFC9CFCB5C665765635",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_cn_up.wav",
+      "exists": true,
+      "sha256": "D662327E2D9EBCF890AFD2AAAAA00AE3C91100E6E29EE36D73AD4D175CC7FAA6",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_cn_up.wav.meta",
+      "exists": true,
+      "sha256": "B24E84062CE25D51512DFF5D749F4667734C55E8C8FE6BAAECEF8B7DBE062923",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_de_down.wav",
+      "exists": true,
+      "sha256": "0F66F01AEED37367697E9DAE3053D78D8DF90E8872FFB252411137CCD20BFAB2",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_de_down.wav.meta",
+      "exists": true,
+      "sha256": "B8C3C623BA96921354F77A432A3F158F34A437639B8F145E000215679AE06BCD",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_de_up.wav",
+      "exists": true,
+      "sha256": "65DB7D98805FE2FD98AB650EB165D39FEE68E9F08094F4C97DA1286C8362AECC",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_de_up.wav.meta",
+      "exists": true,
+      "sha256": "8F091C39DCA4F1D74E1ABD6517BC9848BA8E122566CA1D7FD7F0A042FC8814F6",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_it_down.wav",
+      "exists": true,
+      "sha256": "C6160BAC8898CBFC83FF4BBC65D63F03ABDACDCA2FBC01D2CCCB8089F262C0A1",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_it_down.wav.meta",
+      "exists": true,
+      "sha256": "24F648517A6248D140452DC38B3BCB8124184C5C65AE04548A1E87A03D494171",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_it_up.wav",
+      "exists": true,
+      "sha256": "A57A7CCB4027D0B2933D3685C5BF1D96F6B853E1AA50151CC30F4D69A2B2255B",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_it_up.wav.meta",
+      "exists": true,
+      "sha256": "54DCC293F9D226B839C7422F4D862687852A6287EB878EAD3FA2F01D9445BCE4",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_jp_down.wav",
+      "exists": true,
+      "sha256": "193D3A359A45E3B7457A4EE191C90112F842EB738791C7E7DF6AB63086792E4C",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_jp_down.wav.meta",
+      "exists": true,
+      "sha256": "A309C3FD55C5BF607D13F93611B6646AB55BE9193392583DBE3B4938849452E5",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_jp_up.wav",
+      "exists": true,
+      "sha256": "E21F10C98297DD2B84D7E87479D0569E315726E54A615451FF839703B933F42A",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_jp_up.wav.meta",
+      "exists": true,
+      "sha256": "415F380BDE0E99EDBC6E629F9C9529FF552658919DC991B1FF460A86E70A3092",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_uk_down.wav",
+      "exists": true,
+      "sha256": "CAD1DC8CA916550E9D54EE638CE54B2C95A379ECAC0BA81596B3BDC0DC9E924D",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_uk_down.wav.meta",
+      "exists": true,
+      "sha256": "9B4B82E187F4E9669DA65B82220AE91CD03CB9137103A4FF6AEC89D034B58603",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_uk_up.wav",
+      "exists": true,
+      "sha256": "EE528C57586FDB43461CAC44323129268A04704423C91F58FDED3B7918838C3D",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_uk_up.wav.meta",
+      "exists": true,
+      "sha256": "2639281915628EDCA12E3DBC58686598AB5E45A8174FC937CC5CE37E89AF8A6C",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_us_down.wav",
+      "exists": true,
+      "sha256": "01960BCA2DAC910DB96605DCD1E356732A6006C98609D46E8D34C0111CCBBD8A",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_us_down.wav.meta",
+      "exists": true,
+      "sha256": "731FECF28A27687500FCF91EA281C40EF938FF51B18408D59D2367449D609129",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_us_up.wav",
+      "exists": true,
+      "sha256": "96A86665BD8DE86547ADC63DD965D0534528E0D22BAFB0542372E2756F18AF99",
+      "unchanged": true
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\Assets\\Resources\\Audio\\SFX\\team_shift_us_up.wav.meta",
+      "exists": true,
+      "sha256": "DC8B14CCCC6B7FF0063AEA2E07085EFD3E4C1C9294DC36ED039810C8FD6A7617",
+      "unchanged": true
+    }
+  ]
+}

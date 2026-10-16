@@ -16,6 +16,7 @@ public static class AudioEventNames
     public const string HeatPay = "heat_pay";
     public const string HeatCool = "heat_cool";
     public const string CarHop = "car_hop";
+    public const string OvertakePassby = "overtake_passby";
     public const string SlipstreamTrigger = "slipstream_trigger";
     public const string SlipstreamMove = "slipstream_move";
     public const string CornerSafe = "corner_safe";

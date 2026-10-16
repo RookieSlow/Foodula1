@@ -1,0 +1,76 @@
+{
+  "existingRuntime": "Only CardHandUI Ensure creation/reuse receives2theme calls; no formatter/Show/Hide/keyboard/rules/layout mutation.",
+  "newSource": [
+    "Assets/Scripts/UI/RacingTechSelectedEffectStyle.cs",
+    "Assets/Tests/Editor/racing_tech_selected_effect_test.cs",
+    "Assets/Scripts/Editor/RacingTechSelectedEffectCapture.cs"
+  ],
+  "sourceSnapshots": [
+    {
+      "path": "Assets/Scripts/UI/CardHandUI.cs",
+      "before": "5b58b9a86f8e6884d9fe876386e29b226be81ad7e934662489d0e2e31f32ff75",
+      "current": "796a8d4da10763b31cc468c4c184e2118f065404665e462393de958ccea9f7b3",
+      "unchanged": false
+    },
+    {
+      "path": "Assets/Scripts/UI/CardUI.cs",
+      "before": "b2464dd73bea8419700f9046c65774f0d4e8daf95c17d818eee0ef5395514d70",
+      "current": "b2464dd73bea8419700f9046c65774f0d4e8daf95c17d818eee0ef5395514d70",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/Scripts/UI/CardHandInteractionRules.cs",
+      "before": "d28fde5aa3d20c5d842f837e4f68a3c537078a5c96fb3c4a3094076cf32dc472",
+      "current": "d28fde5aa3d20c5d842f837e4f68a3c537078a5c96fb3c4a3094076cf32dc472",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/Scripts/UI/RaceUILayoutController.cs",
+      "before": "c621f76ed617b2cc8eae0b3e38766eb858d87c0f9121681d065720d29ff1709c",
+      "current": "c621f76ed617b2cc8eae0b3e38766eb858d87c0f9121681d065720d29ff1709c",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/Scripts/UI/RaceUIFactory.cs",
+      "before": "9447e87c4da2759919def5ee6f80540b56604f047d2c9c1a5bea3bb23a87e006",
+      "current": "9447e87c4da2759919def5ee6f80540b56604f047d2c9c1a5bea3bb23a87e006",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/Prefab/CardPrefab.prefab",
+      "before": "98605584cb869420c81c32c48071508f9cb22b81659e13fbb927939bf99e7fcd",
+      "current": "98605584cb869420c81c32c48071508f9cb22b81659e13fbb927939bf99e7fcd",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/Prefabs/UI/RaceCanvas.prefab",
+      "before": "3a8a028b5f7b88fb5b93fccef9fbb5de394e77dcf35390efde1266b527401efb",
+      "current": "3a8a028b5f7b88fb5b93fccef9fbb5de394e77dcf35390efde1266b527401efb",
+      "unchanged": true
+    },
+    {
+      "path": "design/ux/racing-tech-ui.md",
+      "before": "067cabf77cf17f91e713e4058b312acae0e859f64cf1dbb1b72cb4074dea234b",
+      "current": "236137df347863b2f749a464503fbd368b2d49a9df2dfed4e284abe005d1bff0",
+      "unchanged": false
+    },
+    {
+      "path": "design/ux/racing-tech-ui-checklist.md",
+      "before": "ac4d38b51d1f21a523cfadac2ec46d7344b74d90bc12160ae219077a50001d81",
+      "current": "981ee1fc6870e10ea70b43ad7bcbb95b2aab4b9c1cd8cd7bb3efccdf8a6e31c9",
+      "unchanged": false
+    },
+    {
+      "path": "docs/memory/project-overview.md",
+      "before": "7d7bab89dab0918c605239ee54a3e5dc1e1bbba6549b71dd39e10ec8cd35794f",
+      "current": "ec35ca5e120dca6d8e7c73b34e1a507158b484aa4ff039d7106e65037b3afa24",
+      "unchanged": false
+    },
+    {
+      "path": "docs/memory/current-task-list.md",
+      "before": "429b5376b65ed65c85d5f825c0874d54f70bb01f494c15f5553ccef7a8bf5ca0",
+      "current": "f3cbe7174d72f68cdc5d57a08fe97a9f5e719e3ddefce7f7784636a095564714",
+      "unchanged": false
+    }
+  ]
+}

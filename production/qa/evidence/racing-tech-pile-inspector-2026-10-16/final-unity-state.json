@@ -1,0 +1,19 @@
+{
+  "authority": "Root actual read-only Unity queries, not capture_review calling Unity",
+  "editorReadUtc": "2026-10-15T23:14:07.0566036Z",
+  "scene": "MainMenu",
+  "isDirty": false,
+  "isPlaying": false,
+  "isCompiling": false,
+  "isUpdating": false,
+  "hasFreeLicense": true,
+  "console": {
+    "error": 0,
+    "warning": 0
+  },
+  "resourceReadUtcApprox": "2026-10-15T23:14:37Z",
+  "resourceState": "idle",
+  "ready": true,
+  "testsRunning": false,
+  "intermediateOnly": "One MCP WebSocket uninitialized warning during domain reload; not a production error and no claim of fixing the tool."
+}

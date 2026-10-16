@@ -1,0 +1,21 @@
+{
+  "full": "production/qa/evidence/github-submission-2026-10-16/full-2990-native.json",
+  "unity": "production/qa/evidence/github-submission-2026-10-16/final-unity-state.json",
+  "fullPassed": 2990,
+  "failed": 0,
+  "skipped": 0,
+  "inconclusive": 0,
+  "durationSeconds": 710.7150231,
+  "endedUtc": "2026-10-16T04:19:55.0543520Z",
+  "resourceRootFinalRead": {
+    "idle": true,
+    "ready": true,
+    "testsRunning": false
+  },
+  "console": {
+    "expectedNegativeError": 1,
+    "warnings": 0,
+    "newRuntimeErrors": 0
+  },
+  "authority": "Actual root native/Unity files read by capture_review; no independent Unity operation."
+}

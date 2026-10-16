@@ -1,0 +1,28 @@
+{
+  "native": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-10-16T04:19:55.0543520Z",
+    "total": 2990,
+    "passed": 2990,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": "",
+    "stackTrace": ""
+  },
+  "scene": "Assets/Scenes/MainMenu.unity",
+  "dirty": false,
+  "playing": false,
+  "compiling": false,
+  "importing": false,
+  "license": true,
+  "durationSeconds": 710.7150231,
+  "console": {
+    "errors": 1,
+    "warnings": 0,
+    "expectedNegativeTest": "[TrackDataLoader] Track config not found: Resources/Configs/Tracks/no_such_track.json",
+    "newRuntimeErrors": 0
+  }
+}

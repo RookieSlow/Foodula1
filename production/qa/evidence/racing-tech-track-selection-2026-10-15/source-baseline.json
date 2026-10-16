@@ -1,0 +1,27 @@
+[
+  {
+    "path": "Assets/Scripts/UI/TrackSelectionUI.cs",
+    "copy": "TrackSelectionUI-source-before.cs.txt",
+    "sha256": "7935AEF0E08F945948B552653D0074870AC89339184C669FBDFDE551459852C0"
+  },
+  {
+    "path": "Assets/Scripts/Core/TrackSelectionState.cs",
+    "copy": "TrackSelectionState-source-before.cs.txt",
+    "sha256": "D7BCE001E2640675FF13FF25F5C3AAFC898259C302A68AD68ABE4E0A14E33759"
+  },
+  {
+    "path": "Assets/Scripts/Core/OfficialTrackCatalog.cs",
+    "copy": "OfficialTrackCatalog-source-before.cs.txt",
+    "sha256": "72F7A0E4071CAE1AE54FC4C0489297951801A7B7C533196C716FF697DD4ACF00"
+  },
+  {
+    "path": "Assets/Scripts/UI/MainMenuUI.cs",
+    "copy": "MainMenuUI-source-before.cs.txt",
+    "sha256": "A15317CA335428C325EB7D50B7404C81F4805AE662D17DF0FB1EBBB428026F65"
+  },
+  {
+    "path": "Assets/Scripts/UI/ModernUIStyle.cs",
+    "copy": "ModernUIStyle-source-before.cs.txt",
+    "sha256": "E9F860149D293DE5B04CBC6DAC0672D33DC41E7C964108B8B8CE2A4A2AB814D2"
+  }
+]

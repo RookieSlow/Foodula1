@@ -1,0 +1,39 @@
+{
+  "kind": "final_current_worktree_after_native_full2949",
+  "utc": "2026-10-15T06:34:20.0771342Z",
+  "head": "58656899b0bb426b3df90ef2a564de4dfe7faf85",
+  "files": [
+    {
+      "path": "Assets/Scripts/Audio/AudioService.cs",
+      "sha256": "7aa11ce092776190cc568033782338b63d16f2216dbc56ee0d36009a3719d59c"
+    },
+    {
+      "path": "Assets/Scripts/Audio/AudioRuntimeRules.cs",
+      "sha256": "37acefeb8e66836127f6ac8318db2f55cc335658d051a090f6d52999c9f8b82c"
+    },
+    {
+      "path": "Assets/Scripts/Audio/AudioEventNames.cs",
+      "sha256": "f42cacb0af1717f684bb2db45191ad6277a62a4f085b568b9fcf61e77beead24"
+    },
+    {
+      "path": "Assets/Scripts/Audio/OvertakeAudioPresentation.cs",
+      "sha256": "cb7bac6a9f36275ee51692497768e18a419847d87d95a87be3598646993132de"
+    },
+    {
+      "path": "Assets/Scripts/Gameplay/RaceEventFX.cs",
+      "sha256": "11edc88c2fe9cf9e98d960be8d836f64cf575f32ca531095990f9a3ae30a7c46"
+    },
+    {
+      "path": "Assets/Tests/Editor/overtake_audio_presentation_test.cs",
+      "sha256": "9c7610f7a76dad1f03e6430f23caa9fe51027566376dbd6899857722da08a292"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/overtake_passby.wav",
+      "sha256": "456af869f1b432c69530197f4aa0df57e74c6d315108e417133914618b976165"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/overtake_passby.wav.meta",
+      "sha256": "24f40de6741709a0f8dba60e378e393ef2049abca0ad5d7046f0f7199ce5cd76"
+    }
+  ]
+}

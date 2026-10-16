@@ -1,0 +1,60 @@
+{
+  "utc": "2026-10-15T23:09:25.265Z",
+  "overview": {
+    "reader": "capture_review",
+    "path": "docs/memory/project-overview.md",
+    "characters": 115694,
+    "pages": 39,
+    "actualRanges": "0..115693 sequential3000character bounded pages, final1694; no truncated output",
+    "sha256Before": "22DE44323E36FFFFC729D85EA41B19494587D6F444D4F2273C84B239EE70C06F",
+    "sha256After": "22DE44323E36FFFFC729D85EA41B19494587D6F444D4F2273C84B239EE70C06F",
+    "complete": true
+  },
+  "taskList": {
+    "reader": "ui_impl",
+    "lines": 1411,
+    "characters": 136312,
+    "pages": [
+      "1–80",
+      "81–160",
+      "161–260",
+      "261–380",
+      "381–500",
+      "501–710",
+      "711–960",
+      "961–1210",
+      "1211–1411"
+    ],
+    "sha256Before": "418BCB1F5CE64239E58EFD5C46D9A5BCE23A68D941CB0A507B5F3F0D0B21CC63",
+    "sha256After": "418BCB1F5CE64239E58EFD5C46D9A5BCE23A68D941CB0A507B5F3F0D0B21CC63",
+    "complete": true
+  },
+  "mechanics": {
+    "reader": "ux_visual",
+    "lines": "1–789",
+    "pages": [
+      "1–70",
+      "71–105",
+      "106–140",
+      "141–175",
+      "176–210",
+      "211–310",
+      "311–440",
+      "441–570",
+      "571–680",
+      "681–789"
+    ],
+    "sha256Before": "41CD6B1575D737671BD357307E52BD5E7EC04C580D9361BA899A0F454BD6A56D",
+    "sha256After": "41CD6B1575D737671BD357307E52BD5E7EC04C580D9361BA899A0F454BD6A56D",
+    "complete": true,
+    "note": "Initial71–140output truncated; both35lineparts reread successfully."
+  },
+  "missing": [
+    "production/session-state/active.md",
+    ".Codex/docs/directory-structure.md",
+    ".Codex/docs/technical-preferences.md",
+    ".Codex/docs/coordination-rules.md",
+    ".Codex/docs/coding-standards.md",
+    ".Codex/docs/context-management.md"
+  ]
+}

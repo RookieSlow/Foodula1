@@ -182,3 +182,315 @@ UX 规范审查：**APPROVED（仅第三包有界实现）**，设计阻塞 0；
 要求本轮实际验证：六队 × 1920×1080/2560×1440，另 1280×720 压力检查；正常/高温/critical/预计/预计关闭、当前与待选不同/锁定/禁用；CN 双模式、DE/JP 升降与 US 实际拖动/释放及原预估刷新。检查文字溢出/遮挡、实际/预计几何区分、装饰无射线与命中不退化；静态危险帧前后透明度相同；重复初始化不累积。已有小字号舒适可读性、完整自由赛/教程/生涯视觉与未迁移界面继续独立保留，不由定向测试替代。
 
 已复核 visual-style 第 301–565 行：旧过热闪烁由本任务明确静态化；旧数字字体候选不要求更换当前合适中文字体；比赛统一标准 UI 语义色与六队几何身份兼容。独立艺术/HUD/可访问性等级与治理规范缺失仍只记录，不创建占位。来源核验与失败边界见许可清单第三包记录。
+
+## 15. 第四包：自由赛事赛道选择页
+
+日期：2026-10-15。用户指出地图选择仍是旧 UI，本包优先迁移 `TrackSelectionUI` 这一现有页面。保持其完整流程、目录、中文字体及按钮事件；仅原创 uGUI 几何和已有主题 token，不增加缩略图或外部资源，也不改其他菜单。
+
+### 15.1 原流程与有界设计
+
+现有流程为自由赛事阵容确认 → 赛道选择覆盖层 → **点击赛道卡立即开始比赛**。`SelectTrack` 先调用 `TrackSelectionState.TrySelect`，成功后刷新选择并调用原 `onTrackSelected(trackId)`。没有独立“确认开赛”步骤，本包不新增它；保留“选择一条赛道后立即开始自由赛事”和“点击开始”的清晰行动说明。返回只调用原 Hide、不开始比赛、不清空阵容或已选赛道；Show 仍刷新并置于顶层。原覆盖层互斥由现有菜单入口管理，不改此规则。
+
+`TrackSelectionState.AvailableTracks` 与目录原顺序提供八条官方赛道，`fallback_42` 不进入菜单。标题、DisplayName、Subtitle、当前选择完整摘要保持；不重新编写赛道数据/圈数/天气。默认赛道解析继续会话选择 → 合法配置回退 → 目录首项的原规则，UI 原调用方式保持，不因换肤新增选择、存档或 GameConfigSO 写入。
+
+### 15.2 方案与视觉规格
+
+方案比较：全页重排或增加图片会扩大布局/加载影响；只替换彩底不能明确当前项。本包选择**保留四列两行结构的平面卡片**，石墨层级结合非颜色的当前项标记。覆盖层 Graphite、面板 Surface、普通卡 Raised；主标题与中文赛道名 Primary，副标题/说明 Secondary，分组只用细分隔线，去掉全卡多色底、粗 Outline、装饰 Sprite 和过量阴影。可沿用局部细边强调，不引入队徽或官方品牌图形。
+
+当前赛道以细青边加卡内“当前选择”文字/标记表达，保留底部完整“当前选择：名称　副标题”摘要。持续当前项由解析后的 trackId 决定，必须和 Button 的悬停/键盘焦点 selected 状态分开。悬停使用轻微提亮、按下使用克制深色填；白字在所有可用状态目标至少 4.5:1。若使用有色填则用既有深蓝 #174C63 配 Primary（8.61:1），亮青只用于细边。禁用不响应原点击回调，仍可读，不能仅靠灰色识别；本包不新增赛道锁定条件，禁用只呈现既有 Button.interactable 状态。
+
+### 15.3 布局与输入边界
+
+保持原 4×2 网格、标题/提示、底部摘要与固定返回位置，先按真实 CanvasScaler 与 Canvas 坐标验证。1360×820 为参考画布单位；1920×1080 的参考比例缩到 1280×720 不等于超出视口，不能用 raw 像素比较强行引入滚动或重排。本包默认不增加 ScrollRect。若真实截图/文字几何证明裁切，先局部调整现有边距、文本换行/容器或安全缩放，记录实际改变；不得通过极小字、删短中文、隐藏部分赛道来通过。
+
+既有鼠标点击和返回按钮路径保持；不新增手柄/键盘导航或新确认弹窗。标题、细线和选择标记 raycastTarget=false；覆盖层继续阻挡底层菜单，卡片的整块命中区域保持，不让装饰拦截点击。保持现有动效设置/按压反馈，不新增闪烁或播放循环。重复 Initialize/Show/Hide 不累积卡片、标记、监听器或资源加载。
+
+### 15.4 设计审查与实际验收要求
+
+UX 规范审查 **APPROVED（仅 TrackSelectionUI 有界迁移）**，设计阻塞 0；视觉规范审查 **APPROVED（石墨/白字/细分隔/非颜色当前项）**。已对照现有选择源码、交互模式、free-race 流程与 tracks 当前八图清单；旧艺术规范中缩略图是已有背景派生方向，本包未引入缩略图，不能声称该项美术制作完成。缺失规范继续仅记录。
+
+本轮须实际获取 1920×1080、2560×1440 与 1280×720 改前/后页面截图并查看：八条卡片、最长中文名称/副标题与数字、当前项、悬停/按下/禁用、底部摘要与返回无裁切遮挡。交互验证原八条 trackId/顺序、点击一次只回调一次且传原 ID、未知 ID 不触发、关闭不启动/不改原选择、重新打开显示当前项、覆盖层不穿透、字体引用及默认回退保持。若 Unity 正在用户播放，等待明确允许后才进行脚本导入/测试，不中断用户。设计 gate 不代替实际运行、测试或整套 UI 完成。
+
+## 16. 第五包：比赛共享操作确认弹窗
+
+日期：2026-10-15。状态：UX/视觉规范 **APPROVED（仅共享确认弹窗有界实现）**，实现及实际验收待本包证据。用户已预授权自主视觉选择；本轮按 team-ui lean 的设计→视觉→实现→交互/可访问性审查→打磨流程。平台为现有PC鼠标及已实现键盘路径，未承诺完整键盘独立操作/手柄或新增可访问性等级。
+
+### 16.1 玩家需要与最小范围
+
+玩家刚发出换挡、出牌或导航等原操作，希望辨认即将执行的动作及后果，并能安全返回原选择。弹窗位于原HUD操作和实际提交之间，不取代原输入门。本包比较全部操作按钮/明细弹窗统一与仅共享确认层：前者牵连卡牌、技能和多个独立构造入口，后者用一个模态层覆盖八类操作并保留既有空间记忆。因此只处理 `HUDUI.EnsureReturnToMenuConfirmationUI` 复用/构造的 `ReturnToMenuConfirmPanel`、其卡片、标题/正文及原两个按钮；通过独立主题适配器和少量接入完成，不重写HUDUI。
+
+卡牌/操作主按钮、弯道限速和位移明细、维修/换道选择面板、赛果、车身徽章均不在本包；不得修改通用 `CreateConfirmationButton` 来间接给这些界面换肤。数据、文案、回调、字体/材质、原按钮引用、锚点/尺寸/兄弟顺序及navigation配置保持。原运行时默认卡片620×300、按钮190×52作为基线，手工布局优先，不能为主题强制覆盖authored值。
+
+### 16.2 数据、入口与退出契约
+
+标题/正文由 `RequestInRaceAction(action,title,message,callback)` 原调用者提供；按钮文字由 `InRaceConfirmationRules` 原样提供。八种动作与以下标签保持，不把共同按钮固定写成“确定/取消”或把所有确认都当危险退出。
+
+| 动作 | 左侧取消 | 右侧确认 |
+|---|---|---|
+| 换挡选择 | 返回修改 | 选择档位 |
+| 确认换挡 | 返回修改 | 锁定档位 |
+| 出牌/弃牌 | 返回选牌 | 确认提交 |
+| 车手技能 | 暂不发动 | 发动技能 |
+| 重新开始 | 继续比赛 | 重新开始 |
+| 返回主菜单 | 留在比赛 | 返回主菜单 |
+| 维修区决定 | 返回决定 | 确认选择 |
+| 印地换道 | 返回选择 | 确认换道 |
+
+`inRaceConfirmationMask`逐动作控制：开关关闭仍直接执行原回调，不新增确认步骤；GearSelection默认关闭规则不改。正常路径仍保存同一pending动作/类型、设置原文、置顶并打开；取消清空pending并关闭，不改变牌/挡位/位置/热量/模式请求/阵容/存档；确认先清pending并关闭再调用原动作，重复点击不可再次执行。标题中的“当前比赛进度不会保存”等后果说明不得删减。
+
+空callback或明细占用时保留原拒绝；缺确认UI保留原状态提示，不改为静默提交。数据本地同步提供，无异步加载态、空列表或新增自动消失计时。关闭/禁用与重复Ensure不累积装饰或监听器，不复活旧回调；主题只显示，不拥有或写入比赛状态。
+
+### 16.3 视觉、状态与布局
+
+沿用§4主题：遮罩用石墨深色半透明，卡片Surface，标题Primary、正文Secondary；只在卡片顶部内缘放最多一条1参考像素Separator，不穿过手工标题/正文。去掉本卡片的厚Outline、Kenney装饰Sprite/粗框与多余渐变；不递归更改其他弹窗、HUD、车队或教程边框。
+
+取消按钮Raised `#222830`，确认按钮深蓝 `#174C63`，Primary `#F4F6F8`标签；主白在深蓝上约8.61:1、次灰在Raised上约8.05:1。确认可用Actual细边强调，取消保持克制；不强制红色填充或新增危险图标。真实normal/highlighted/pressed/selected/disabled的最终显示色都须测≥4.5:1，不能仅验ColorBlock字面值而忽略Image tint/alpha相乘。禁用仍可读并保持原interactable、无点击/按压反馈；不要只把白字刷成低对比灰来表示禁用。文字和明确左右动作位置提供非颜色区分，不以红蓝承担后果语义。
+
+仅对这两个既有确认/取消Button，若原transition=None导致ColorBlock状态色无法显示，允许改为ColorTint作为本包视觉状态接入；不改变navigation、焦点策略、事件监听器或interactable，也不把此调整扩散到其他按钮。ColorTint不新增缩放/位移动画，原ButtonClickAnimation及其减少动态设置继续保留。
+
+原字号/换行起点保留，不能缩字、截断、删“不会保存”等内容掩盖溢出；检查最长真实标题/正文/按钮标签，并用约40%扩展文字及多行中文/数字做压力夹具，不设会截掉真实文案的字符上限。默认和authored布局分别验证，若确有原有溢出先报告具体几何，不因换肤擅自改布局。1920×1080、2560×1440为规定尺寸，1280×720为压力检查；原CanvasScaler继续负责缩放，raw参考像素不直接当屏幕像素。
+
+### 16.4 交互、可访问性与预算
+
+保持全屏遮罩拦截底层点击、层级置顶，取消/确认仅原按钮命中，标题/正文/细线raycastTarget=false；不新增背景点击关闭、Escape处理、焦点抢占或默认确认。`TryConfirmKeyboardAction` 对普通原动作继续生效，ResetRace/ReturnToMenu继续拒绝Space确认；Space出牌旁路、牌数不足/空选择规则、必需pit/lane/tutorial决策门控不变。主题不得新增导航/监听器、声音、闪动或过渡；原ButtonClickAnimation与减少动态/动画速度设置保持。
+
+视觉预算为一个既有模态层、一个既有卡片、原两按钮、最多一条非交互细线；没有新材质/字体/纹理/第三方资源。样式在Ensure构造或复用时应用，不在Update逐帧扫描/重建/加载。全部状态保留原中文文本和清晰后果，静音不影响理解；文字对比及原输入路径可验证，不因此宣称缺失的完整可访问性规范已满足。
+
+### 16.5 审查与验收门槛
+
+UX审查 **APPROVED**、视觉规范审查 **APPROVED**，实施前阻塞0。相关需求为core-mechanics的局内误触保护/键盘安全、interaction-patterns的共享确认、visual-style的深底细线按钮以及本任务主题。独立player-journey/accessibility要求、技术偏好等缺失治理文件仍只记录，不造占位；本包没有新交互模式，不改模式库。game-mechanics本轮完整分页1–789行读完，首尾SHA256同为 `41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d`；其旧温度计pulsing描述与§14静态升级不一致，本包不借此回滚或扩改其他界面。
+
+本轮需改前/后真实生产UI或明确受控生产夹具截图：八动作各三尺寸，长中文/数字、悬停/按下/selected/禁用代表、覆盖背景与取消后状态。实际检查裁切遮挡、有效文字对比、射线穿透、原按钮引用和字体/材质、取消不执行/确认只一次/重复请求、mask关闭直达、Space普通动作与Reset/Menu保护、重复Ensure无新增对象/监听器及禁用/重开生命周期。本包仅纯视觉适配，不改核心规则、存档或赛事调度，必须实际运行必要定向测试；整体阶段收口或出现跨系统/核心风险时再安排一次全量，**阶段全量不等于每个样式包强制重跑**。编译通过不能代替截图/交互，上一轮2949不得充作本轮通过；完整自由赛/教程/生涯走查及全部UI升级仍保留未验收边界。
+
+### 16.6 本轮实现与审查结果
+
+2026-10-15，本包独立 `RacingTechConfirmationStyle` 已通过HUD.Ensure的一处接入应用到构造/复用路径。只改变共享遮罩、卡片及原两按钮视觉，源码审查未见Update扫描/每帧重建、新资源加载、监听器或导航更改；两Button的ColorTint为本节明确许可的视觉状态接入。布局/字体/材质/文本/事件与非目标弹窗的保持由本轮回归验证，不将背景静态HUD显示当完整赛事数据验收。
+
+实际读取本轮 `focused-77-native.json`：原生RunFinished **77/77**，失败/跳过/不确定均0，UTC `2026-10-15T11:39:30.8703966Z`。包含新增12个案例及五组既有相关回归：八动作文案/取消重开/单次提交/mask旁路、原普通键盘确认与Reset/Menu保护、真实射线阻挡和禁用无回调、Selectable正常/悬停/按下/selected/禁用最终色对比≥4.5、原生HUD.Start及原回调复用等。没有每个纯视觉包再跑全量；2961仅发现数，上一轮2949为历史记录，均非本轮全量通过。
+
+图像为真实RaceCanvas预制体在独立PreviewScene中经原HUD.Start/RequestInRaceAction生成的明确受控夹具，未运行比赛manager/导航/存储。隔离改前27张和改后36张分别保留，after manifest实际统计36记录、文字溢出0。UX审查者**实际查看改后16张、隔离改前3张**，未冒称36张全部目视审查；最初未隔离before的同3张另有查看但不作正式隔离对照计数。
+
+改后查看覆盖：1280×720八动作全部normal与合成长中文/数字样本（9张）；1920×1080返回菜单hover/pressed/disabled及压力样本（4张）；2560×1440维修区/返回菜单及压力样本（3张）。正式隔离改前对照为1080p返回菜单、720p压力、1440p维修区。所看弹窗无新增裁切/遮挡，原动作和“不保存”等后果完整；按下/禁用仍有清晰白字，装饰减少且标题层级清楚。720p正文沿原19参考字号缩放后约12.7屏幕像素，仍偏小，不能据零溢出宣布舒适可读性通过。
+
+本包UX/交互、视觉、引擎实现审查结论：**APPROVED（仅共享确认层与已测范围）**，新增阻塞0。可访问性结论限于已测对比、清晰语义标签、无新增闪烁和原输入/模态行为保持，不宣称完整键盘独立操作、手柄、完整可访问性等级或OS物理输入通过。完整自由赛/教程/生涯走查、720p舒适度、其他弹窗/主按钮/卡牌和用户主观终验仍待后续有限包。截图及实际最终Unity/Console/基线审计以 [本包证据](../../production/qa/evidence/racing-tech-actions-2026-10-15/README.md) 为准，不由此图审提前声称收尾状态。
+
+## 17. 第六包：比赛五个主操作按钮
+
+日期：2026-10-15开始，2026-10-16北京时间审查。状态：**五按钮已接入，已测范围UX/视觉/引擎审查APPROVED**；本轮定向61/61通过，完整模式及未覆盖状态边界见§17.5。基线由根任务保存后才写本节。用户预授权延续；不新增玩法、输入、确认步骤或外部资源。
+
+### 17.1 玩家需要与范围
+
+玩家在原操作区辨认当前可执行的提交、技能和导航动作，需要清晰文字与稳定位置，而非大片红黄绿紫底色。本包选择在原位置平面化五个既有Button：`HUDUI.confirmGearButton`、`driverSkillButton`、`resetButton`、`returnToMenuButton`及`CardHandUI.playCardsButton`。不同时迁移gear1–4、赛果backToMenu、六队机构、卡牌/牌堆、日志或其他弹窗；§16已完成共享确认主题保持。
+
+实际接入点是 `RaceUILayoutController.ApplyLayout` authored和默认fallback两条布局路径。现有方法名为 `ApplyAuthoredButtonStyles`，其中只移除本包五目标的旧ModernUIStyle刷色调用，避免旧Sprite加载后立即覆盖；gear1–4和backToMenu原调用不动。主题实现独立、只装饰原Button/Graphic/标签，在初始化布局时应用，不改布局控制器的锚点计算/原Apply幂等门控，不在Update逐帧重套皮肤。
+
+### 17.2 数据与状态契约
+
+| 对象/状态 | 原来源与必须保留的表达 |
+|---|---|
+| 确认换挡 | 原标签及阶段门控；待选/实际挡位仍由六队控件、状态提示和实时试算表达；不在换肤中提前提交或回写实际挡位 |
+| 车手技能可用 | `DriverSkillPresentationRules`原技能名＋“×剩余次数” |
+| 技能持续中 | 原“N回合”或“本场有效”；不把持续中误标为可再次发动 |
+| 技能不可用 | 原Lv3解锁、当前模式禁用、次数已用完、仅档位确认前、最后一圈、90%热量或身后3格需对手等真实原因；不删原因只留灰色 |
+| 选中速度牌/特技/弃牌 | `GearRequirementFeedbackRules.FormatActionButtonLabel`原“打出速度牌(n) / 打出特技牌 / 弃置所选牌”与适用的“[空格]” |
+| 未选牌/结束 | 原“结束出牌”，或“缺N→+N热 / 可能失控”；缺牌风险不等于新禁用条件，必须保留原允许主动结束的规则 |
+| 重开/返回 | 原“重新开始 / 返回主菜单”和其原确认偏好/后果文案；不靠红黄背景替代语义 |
+
+源码核对：CardHand.UpdateActionButtonLabel只写文字，HUD.RefreshDriverSkill只写文字和interactable，不覆盖颜色；无需为动态标签新增每帧主题刷新。实际阶段/显示隐藏仍由管理器与CardHand原路径控制；confirmGear由原SetGearControlsInteractable控制。CardHand原0.25秒WaitForSecondsRealtime防双击禁用及恢复、技能合法性/次数/热量规则、CN Go/Recover/六队特技和实时预测完全不变。
+
+真实RaceCanvas的 `CardHandUI.gearSelectionPanel=null`；原 `SetGearSelectionMode(false)` 显示playCardsButton时，不负责隐藏confirmGearButton，管理器只禁用confirmGear。两者沿用相同PrimaryAction锚点，出牌阶段由原顶层play按钮覆盖已禁用confirm按钮。此行为不是待修复的互斥开关，本包必须保留原active/interactable/兄弟层级和遮挡顺序，不为换肤新增互斥active规则。
+
+原pointer回调与逐动作 `inRaceConfirmationMask` 保持；Space选牌后直达提交、空选择不结束出牌、Reset/Menu不可被Space确认仍保持。主题不重绑/清理监听器、不写interactable/active、不自动抢焦点、不改变navigation/拖动/快捷键或玩家设置。缺可选引用安全跳过，不造替代Button或代提交。没有异步数据、加载/空列表或新增通知状态。
+
+### 17.3 视觉与可访问性
+
+confirmGear/playCards作为主提交用深蓝 `#174C63`，driverSkill/reset/return用Raised `#222830`，标签Primary `#F4F6F8`。使用平面原创uGUI、细边和现有主题状态色，移除仅五按钮自身的旧装饰Sprite/厚Shadow/Outline；不递归擦除车队或教程聚光边框，不给重开/返回固定大片红黄底。正常、hover/selected、pressed、disabled均保留可读白字；主蓝稍亮悬停、Graphite按下、Raised禁用均须测最终有效对比≥4.5:1，含Image色×CanvasRenderer色，避免暗底重复相乘或alpha减低文字对比。
+
+仅五目标允许ColorTint从旧None接入，fade=0或沿已批准静态颜色反馈；没有新缩放/位移动效。原ButtonClickAnimation和减少动态/动画速度设置保持。按钮功能、不可用原因和风险由原文字/位置表达，不只靠紫/绿/红状态。纯临时防双击禁用保留原行为，不为它增加玩法提示或重命名按钮。
+
+接入核对：旧 `ModernUIStyle.ApplyButton` 本来就调用 `ButtonClickAnimation.Attach`。五目标换用独立主题后保留该Attach是延续旧路径，并非新增动画模式；Attach须复用既有组件，重复样式应用不得添加重复监听器。此处只说明实现边界，尚未据代码核对勾选运行回归或改后视觉。
+
+原RectTransform、命中面积、sibling、字体/字号/材质、换行和引用保持。最长“结束出牌·缺N，可能失控”、技能名＋不可用原因可能受到现有操作区宽度限制，必须先看改前真实截图；不得缩字、删风险文案、硬塞短标签或强改authored布局掩盖溢出。若真实输出原已溢出，明确区分原有与新增并报告，不通过主题测试冒称整屏无问题。1920×1080和2560×1440为规定尺寸，1280×720为压力检查，720p舒适度仍独立保留。
+
+视觉预算为原五按钮，最多各一条细边，无新面板/图标/纹理/字体/音频/资源下载。无每帧遍历、资源重载、材质实例或监听器增长。布局主题不拥有比赛状态；不存在新交互模式，模式库无需新增占位。
+
+### 17.4 设计gate及验收要求
+
+UX规范审查 **APPROVED**、视觉规范审查 **APPROVED**，实施前新增阻塞0。对照当前interaction-patterns、core-mechanics误触保护/键盘安全和visual-style深底细线规定。缺失独立player-journey/accessibility等级/治理规范仍只记录；不为此新增输入或伪称全面可访问性通过。
+
+本轮重新完整分页读取game-mechanics1–789：1–35、36–70、71–105、106–140、141–175、176–210、211–280、281–410、411–540、541–670、671–789，所有输出无截断，首尾SHA256同为 `41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d`。历史温度计pulsing与后续静态主题差异不在本包回改。
+
+验收须通过真实ApplyLayout与HUD/CardHand原阶段方法生成动态标签，至少三尺寸改前/后图：确认换挡/原等待或阶段门控、速度牌单/多选、特技/弃牌/结束、缺牌热量/失控风险、技能可用/持续/不可用、hover/pressed/selected/disabled和防双击恢复；原active/interactable及上述play覆盖禁用confirm的顺序保持。可由夹具独占inactive管理器和纯状态调用真实formatter生成输出，必须明确标记为受控fixture，不能据此称整个GameLoop已走查。额外合成压力夹具须明确标注，不冒称实际规则输出；原四挡/赛果按钮/其他弹窗的颜色/引用保持。
+
+相关定向须实际运行：原图形/字体材质/布局/监听器/navigation/interactable保持、重复Apply无增长、有效对比、禁用不触发、原确认偏好及取消/单次提交、Space边界、短防双击恢复、authored/fallback均接入。编译不代替图审或交互；纯视觉包不强制再跑八分钟全量，阶段收口或核心/跨系统风险再安排。上一包77及历史2949不计本轮通过；完整模式、OS物理输入、720p舒适度及全部UI终验继续保留未验收边界。
+
+### 17.5 本轮实现与实际审查
+
+`RacingTechActionButtonStyle`已在authored/fallback两处接入；只五目标移除旧Modern样式，原gear1–4及赛果backToMenu调用保持。实际读过独立样式全文件和布局差异，无新Update/资源加载/状态写入或监听器重绑；旧Attach按§17.3保留。原主按钮叠放active/interactable/sibling关系未改，不把play覆盖禁用confirm误当待修复互斥问题。
+
+本轮实际读取 `focused-native.json`：原生RunFinished **61/61**，失败/跳过/不确定0，UTC `2026-10-15T17:05:32.1895263Z`；根任务记录六组相关定向耗时3.2888873秒。测试包括双布局五目标/排除项、原事件/几何/字体材质/导航、真实射线命中/原叠放和禁用拒绝、正常/hover/pressed/selected/disabled最终对比≥4.5、真实HUD/CardHand刷新不覆盖主题，以及原生重开确认/取消/重开等。防双击恢复用例**实际传入0.05秒**并等待恢复；生产默认0.25秒源码未改，不能称本轮测量了默认0.25秒延时。2969仅发现总数，本轮未全量，不挪用上一包77或历史2949。
+
+截图为真实RaceCanvas在独立预览场景经原ApplyLayout、HUD.Start、CardHand原模式/选牌和技能formatter生成；独占manager从未激活，纯Session/Player供数据，未运行Awake/Start/GameLoop、真实赛道或玩家存储。程序选择前关闭夹具CardUI以使用既有即时路径，不冒称物理卡牌点击/拖动或完整比赛。主矩阵空速度手牌实际生成“结束出牌·缺3→+3热”，不是“可能失控”状态；新增五组动态样本也使用真实原formatter，非编造规则结果。
+
+独立解析manifest：改前36、改后60张，文字溢出均0；UX审查者**实际查看改后20张和改前3张**，不宣称60张全部目视审查。改后覆盖六队720p gear各一（6张）、六队1440p card各一（6张）、CN1080p技能ready/单选/多选持续技能/特技/弃牌五组（5张）、CN720p hover/pressed/disabled（3张）。改前对照为CN720p gear、UK1080p card、JP1440p gear；完整图片位于 [本包证据](../../production/qa/evidence/racing-tech-primary-actions-2026-10-15/README.md) 的before/after。
+
+所看五按钮没有新增裁切或遮挡，重开/返回由原大片彩色装饰改为石墨白字，提交深蓝保持可读。六队技能长名/不可用原因沿原布局换成两行，次数/持续回合、选牌数量与“[空格]”保持；“缺3→+3热”较贴近原按钮边缘但未溢出，不通过缩字或删风险词冒称更优布局。周边状态/温度计仍有既有小字，720p整体舒适可读性未验收。
+
+UX/视觉/引擎实现gate **APPROVED（仅实际覆盖的五按钮切片）**，新增阻塞0；不新增资源、输入模式或视觉打磨扩域。selected由原生pointer/Selectable测试覆盖，**没有selected专门截图**；“可能失控”原formatter规则测试保持，**本轮未专门截图审查该风险标签**。完整自由赛/教程/生涯、OS物理输入、720p舒适度及其他UI仍待验，不把本包等同全状态视觉/整体可访问性通过。最终Console/Unity/基线审计由根任务和证据记录，不由此图审提前确认。
+
+## 18. 第七包：牌桌四区域壳与牌堆计数
+
+日期：2026-10-16。状态：UX/视觉设计gate **APPROVED（仅本节有界实现）**，实现、图审和本轮测试待证据。根任务已保存411项基线及11份相关源码快照后才写本节；原有修改保留。按team-ui lean推进，不新增输入、玩法、资源下载或确认步骤。
+
+### 18.1 玩家需要与选择
+
+玩家需要在原牌桌位置区分抽牌堆、引擎库、手牌和弃牌堆，并读取精确数量、空堆提示与当前选择。比较整套卡面重制和区域壳平面化，前者涉及真实卡面、车队特技、选择状态和动态刷新，本包选择后者：只迁移 `DrawPilePanel`、`EnginePanel`、`HandPanel`、`DiscardPilePanel` 自身底板、四个已有标题、现有统计文字，以及抽/弃牌堆的计数徽标、空堆/查看提示。已完成的DeckTablePanel外壳不重复改造；仅§18.5实证标题高度缺陷允许局部修复。
+
+真实CardUI和三张顶部实际缩略图继续显示；卡面、牌背叠放、图标/数字、选中/悬停/禁用状态机、所有权流转动画和检查器详情面板均不改。OperationPromptPanel、选中牌效果面板、其他弹窗/按钮与新屏幕不扩域。当前CardUI减少动态设置支持不足作为既有问题记录，不顺手改动画策略。
+
+### 18.2 视觉与数据契约
+
+| 目标 | 本包主题 | 必须保留 |
+|---|---|---|
+| 抽牌/引擎/弃牌区域底板 | Raised #222830 平面 | 原锚点、尺寸、sibling、射线和遮罩 |
+| 手牌区域底板 | Surface #171B20 平面 | 原7牌位置、cardSizeOverride、选择抬升空间与RectMask2D |
+| 四个已有标题/精确计数 | Primary #F4F6F8 | 原名称、完整数字、字体/字号/材质/对齐 |
+| 统计/查看与空堆提示 | Secondary #B6C0CA | 原字符串与动态显隐，不以灰色替代空/禁用文案 |
+| CountBadge底 | Graphite #101317 | 原矩形与精确count刷新，raycastTarget=false |
+
+只清除四底板自身装饰Sprite、厚Outline/Shadow，不递归删除卡面、选中牌/教程聚光等后代效果；最多各一条1参考像素Separator #46515E，装饰不接收射线。白/灰文字在最终有效背景上目标对比至少4.5:1，包含既有Button tint/alpha；不是只验静态token。没有新图标、字体、纹理、声音或动效，现有中文字体保留。
+
+`CardHandUI.UpdateDeckInfo` 与 `CardPilePreviewUI.Refresh` 原样提供数据。保留顶部3张实际缩略图、每3张增加1层且最多7层牌背、精确徽标数字；不把牌堆退化成纯文字。不更改抽牌检查器隐藏顺序/按种类汇总、弃牌最新顺序与原打开/关闭行为。当前生效实现的 `Engine\nN heat`、`空`、`点击查看/暂无卡牌` 等原字符串保留，不在换肤中顺手翻译或改写数据。
+
+### 18.3 引擎与交互约束
+
+四区域主题在原布局构造/复用入口适配authored与fallback；CountBadge/EmptyLabel/InspectHint由EnsurePilePreview→Configure运行时创建，故计数主题应在创建或复用点接入，不能仅在它们尚未存在的ApplyLayout时调用一次。Refresh只改计数、可见性和原牌面，不为主题增加每帧扫描/重建或资源加载。缺可选引用安全跳过，重复Apply/Configure不累积细线、组件或监听器。
+
+抽/弃区域父Image同时是既有检查Button的targetGraphic：原Button/ColorBlock/transition/navigation/interactable、targetGraphic引用、射线命中和ShowInspector回调保留；不能因换底板破坏点击或让新增装饰抢射线。原手牌点击/选择/拖动/Space、安全确认偏好、mandatory决策门与实时预测保持，主题不持有或写入比赛资源/顺序/状态。
+
+本包补拍由原formatter实际生成的 `结束出牌 · 缺N，可能失控` 长风险标签；先以原布局查看，不预设裁切。仅实际几何/截图证明需要时，才作该标签局部换行/容器安全调整并记录前后；不删字、缩字、不增加警告层，不改其主动结束允许规则。selected截图另作既有视觉状态补证，不由上一包pointer测试冒充。
+
+### 18.4 验收与设计审查
+
+本轮重新完整分页读取game-mechanics1–789，首尾SHA256同为 `41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d`；141–210初次合并输出截断后已分别重读，最终无未读段。当前UX1–339、清单1–125、interaction全文及core卡牌/误触保护、visual信息优先/牌堆/卡牌相关段落已对照。缺active.md、technical-preferences、player-journey、accessibility-requirements仅记录，不造占位。旧视觉规范的旋钮/温度计方向不回滚已获授权升级；无新交互模式需新增模式库条目。
+
+UX规范、视觉规范及引擎实现约束gate **APPROVED**，实施前新增阻塞0；该结论只允许上述切片，不代表运行或完整可访问性通过。需本轮真实三尺寸改前/后图，六队代表、真实可见手牌/特技/热量与选择、0/1/3/大量牌堆和大数字、空/可查看/hover/pressed/disabled、真实失控长风险及selected。实际查看数量须如实记录，受控fixture不当完整GameLoop。重点检查底板对比、标题/计数裁切、选中牌是否被遮、点击检查器无穿透和字体/原区域几何保持。
+
+必要定向实际验证双布局、计数动态创建/刷新/空堆/层数、原卡面/顺序/回调保持、射线/禁用/重复配置/有效对比及相关规则回归；纯视觉包不强制每次全量，阶段收口或跨系统/核心风险时再安排。上包61/61和历史全量不计本包通过。完整自由赛/教程/生涯、OS物理输入、720p舒适度、卡面/详情主题和用户最终主观验收继续保留。
+
+### 18.5 改前实证与两标题高度例外
+
+改前真实受控夹具27张，manifest每张仅报告两标题溢出，共54项；UX本次实际查看CN1920×1080七牌/非空牌堆和CN1280×720零引擎失控风险2张。前者7张牌及牌堆/计数真实可见；后者原formatter长标签自动完整换成两行，无按钮溢出，故本包**不修改风险按钮布局或文字**。原selectedCardEffectText不在本包修复范围。
+
+manifest首图记录HandTitle高度23.2243、preferredHeight24.6200；DeckTableTitle高度24.1920、preferredHeight27.5200，均tmpOverflow=true。为真实既有缺陷修正，允许独立adapter仅对这两个既有标题在高度不足时向下扩展：`offsetMin.y -= ceil(preferredHeight - rect.height) + 1`；本基线分别约补3与5参考单位。保留anchors、顶部边、水平矩形、字体/字号/材质/内容/对齐及其他几何，不添加空标题、不修改其他文字或复改外壳。需在当前TMP布局可测量后计算，确认有限有效高度，够高即不改，重复Apply不得持续增高；新文字变化不触发每帧轮询。
+
+改前图中标题与牌面之间有足够间距，修复仍需三尺寸改后实际确认，不以公式代替图审。定向应覆盖不足时补高、已足不改、重复应用幂等、anchors/top和非目标矩形保持、最终无溢出且不碰卡面/分隔线。UX/视觉最小修复gate **APPROVED**，不扩展为外层标题重新美化或整体布局重排；尚未据此勾选修复通过。
+### 18.6 接入与本轮有限自审结果
+
+四区域与动态计数/提示已接入，两个短标题只向下补高；before27图54项标题溢出，after27图0。根任务实际查看after9张（六队基准及CN空/风险/selected，覆盖三尺寸）、before2张；原两行失控文案完整，不改按钮。卡面/缩略牌/选择抬升保持，未见新增遮挡；720p提示仍小，舒适度不通过。
+
+本轮原生RunFinished59/59，失败/跳过/不确定0，2.5227451秒，新增8项；2977仅发现数，未全量。设计及实施前引擎约束gate已批准，改后独立UX/视觉代理因额度限制未完成；根任务接续有限自审，不将独立评审记为通过。特技卡、大数字及牌堆hover/pressed专门截图、完整GameLoop/物理输入和整体可访问性仍未验。证据见production/qa/evidence/racing-tech-card-zones-2026-10-16/README.md。
+## 19. 第八包：牌堆详情弹窗
+
+日期：2026-10-16。514项expanded基线READY后新增本节；用户预授权沿用team-ui lean。旧包冻结证据及§18结果不重写；本节独立补评与本包验收分开记录。
+
+### 19.1 上包独立图审补证
+
+本轮UX独立实际查看card-zones改后9张：CN/US1080p、UK/IT720p、DE/JP1440p六队七牌代表，以及CN720p空牌堆、CN720p失控风险、CN1080pselected。独立解析after manifest27记录/0溢出；两标题现为26.2243/29.1920参考高度，分别较改前补3/5。所看标题完整且未压卡面，四区域石墨/白标题与计数层级清楚；空/暂无卡牌/0数量同时表达空堆，原失控风险两行完整，selected卡保持抬升/边框且未被牌区遮挡。1440p图由工具缩为2048×1152预览，不称逐原始像素审查。上包独立UX/视觉有限gate **APPROVED（仅所看范围）**；特技、大数字、pile hover/pressed专门图、完整模式/物理输入及720p小提示舒适度仍未通过，不把9图说成27图全部查看，不新增上包测试结论。
+
+### 19.2 玩家需要、范围与既有流程
+
+玩家点击原抽/弃牌区域，只读查看种类、数量和实际效果后回到同一比赛。选择原尺寸上的平面主题，而非重排卡册或增加筛选，保留已知列表心智模型。本包仅 `CardPilePreviewUI.ShowInspector` 生成的Overlay、Panel、标题/顺序说明、Viewport、CardEntry底与标题/效果文字及原CloseButton；不重制MiniCard类型底/Glyph，不改牌桌、CardUI、其他弹窗或规则。
+
+非空pileSnapshot且Canvas存在才生成；标题仍为原pileTitle＋DisplayedPileCount张，`CardPileInspectorRules.BuildEntries` 原数据/排序/种类汇总/重复数量/实际效果全文保持：抽牌不泄露未来顺序，弃牌按最近弃入显示。空堆依原inspectButton禁用且ShowInspector拒绝；不新增空详情、异步加载、搜索或确认。原关闭Button与遮罩外点击销毁当前overlay，重新打开按当前快照生成；不引入Escape、焦点抢占、键盘/手柄导航或暂停比赛规则。
+
+### 19.3 主题、几何与引擎契约
+
+Overlay保留原黑色RGBA(0,0,0,0.72)及原dismiss Button/ColorBlock，Panel Surface，Viewport Graphite，行Raised；Title/Heading/Close标签Primary，OrderNote/Effect Secondary。Close仅底色Raised、文字Primary，原ColorBlock/transition（含None）、navigation/interactable和事件保持，最终有效白字对比≥4.5:1（包含Image与既有ColorTint相乘）。原Panel同根Outline改1参考像素Separator，不新增装饰射线目标；panel原Image保持raycast。MiniCard蓝/热橙/特技金及Glyph保持，正文/卡类型名称不只靠色识别。无新字体/材质/贴图/音效/动画或外部资源。
+
+原Panel居中940×650、标题760×44、说明760×30、Close110×42、Viewport870×500、row104高、padding14/spacing10与现有字体字号/材质/对齐保留。继续VerticalLayoutGroup/ContentSizeFitter、原纵ScrollRect（横向关闭、sensitivity28）和RectMask2D；不增加滚动条或新输入。需先看真实长特技效果/数量与三尺寸before；若48高效果或标题真有溢出，记录实例后另定最小修复，不缩字删字或凭raw参考尺寸预设响应式重排。大量行必须实际滚至末尾，不能用首屏无溢出代替全列表可达。
+
+独立静态适配器在当前构造结束处一次应用；复用既有层级/引用，样式不拥有牌组、不重算规则、不重绑回调，不新增Update扫描/重建/加载。Close不新增状态色/transition策略，不新增ButtonClickAnimation。装饰/静态文字无射线，现有panel/viewport/row Image仍保留必要命中与滚动路径。重复打开/关闭释放原overlay，不遗留重复主题对象或新监听器。
+
+### 19.4 内容点击路由待证项
+
+只读源码发现Panel仅Image/Outline，祖先Overlay有dismiss Button；因此不能仅凭Graphic命中Panel就声称内容不会关闭。before夹具须实际记录GraphicRaycaster目标及 `ExecuteEvents.GetEventHandler<IPointerClickHandler>` 对row/文字/viewport/panel空白的路由。当前仅为待核实风险，不先改代码或将推测当缺陷复现。
+
+若真实证据确认内容点击路由至Overlay并误关，则允许本包限定修复为Panel局部消费pointer click，继续让原ScrollRect接收拖动/滚轮；不改变原Close、遮罩外dismiss、关闭回调、布局或比赛输入。具体修复gate须根任务据before证据确认后记录；未证实则不扩改。不得用递归raycast=false或移除Overlay Button掩盖问题，避免引入底层穿透与丢失原关闭方式。
+
+### 19.5 规范审查与本包验收
+
+本轮game-mechanics完整分页1–70、71–105、106–140、141–175、176–210、211–310、311–440、441–570、571–680、681–789，首尾SHA256均 `41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d`。71–140初次合并输出截断，已分35行重读补足，最终无未读段。当前UX/清单全文、interaction全文、core卡牌数据与visual2.3/2.4逐项对照。active.md、technical-preferences、coding-standards、独立player-journey/accessibility等级规范缺失仅记录，不造占位，不因此新增未请求输入。
+
+UX/视觉主题规范gate **APPROVED（仅本详情切片）**；内容路由为实施前待证项，不据设计批准称已修复。三尺寸真实改前/后至少包含抽牌汇总、弃牌新旧顺序、含速度/热量/六队特技长效果、长数量与长列表底部、Close normal/hover/pressed/selected/disabled及遮罩/内容命中。有效文字对比、全部效果保留/无裁切/滚动可达、关闭及空堆/缺Canvas/重复打开生命周期须实际定向运行。固定数据受控fixture须明确标注，不当完整GameLoop或物理输入验收。
+
+测试与图审尚待本包实际证据，不借上包59或更早全量作本包通过。此纯视觉切片定向为必要门槛，阶段收口/核心跨系统风险再全量；720p舒适度、完整自由赛/教程/生涯、OS物理输入及整体可访问性独立保留。旧交互模式库无需新增占位；若路由缺陷修复获准，应在本节说明有界bugfix，不把它扩大成新关闭模式。
+
+### 19.6 改前路由证据与有界挡板修复gate
+
+真实before21张/manifest0文字溢出已保存。UX实际查看3张：1920×1080抽牌顶部、1280×720弃牌底部、2560×1440关闭禁用（1440图工具缩放预览）。所看原标题/说明/行文本无新裁切，底部列表完整末行可见；滚动视口边缘按遮罩截断经过边界的上一行是正常列表裁剪，不能误计文字容器溢出。720p效果文本小，未宣称舒适可读性通过；本包无需改行高/文字布局。
+
+独立读取首张1920抽牌顶部manifest原生路由：panel-empty topHit=Panel但clickHandler/directHandler=Overlay；viewport、row、text均topHit=CardEntry、handler=Overlay；close仅解析CloseButton。此为真实GraphicRaycaster及GetEventHandler只读证据，**没有派发Destroy或声称已经实际误关**；它已证明正文点击会交给dismiss处理，足以批准局部阻断这条路由。
+
+根任务与UX修复gate **APPROVED**：只在既有Panel上增加空Button挡板，targetGraphic复用原Panel Image，Transition.None、Navigation.None、无onClick监听器。它只消费内容pointer click，不触发动作、不抢默认焦点；保留Close独立handler、Overlay背景dismiss及ScrollRect滚轮/拖动原路径。不得添加新面板/新关闭入口、清空父回调、修改原Close或Overlay ColorBlock。重复适配复用同一挡板，原内容几何和文字不变。此为已证实路由缺陷的有界修复，改后实际点击保持打开、原关闭/背景关闭及滚动均须定向回归，不以设计gate冒称测试已通过。
+
+本包小卡Glyph/类型底明确不迁移；若特技金底白Glyph原对比不足，只记既有未验收边界，不扩大卡面调色。新主题正文、标题和Close必须验证有效对比≥4.5:1。
+### 19.7 本轮实现与独立实际审查
+
+已读独立 `RacingTechPileInspectorStyle` 全源码与本包ShowInspector一处接入差异：初始化一次装饰Panel、标题、说明、Close、Viewport及CardEntry；Panel复用原Image加单个空Button，Transition/Navigation均None、没有回调。没有Update、加载、牌序/状态修改、Close/Overlay事件重绑；MiniCard/Glyph和原几何/字体未递归改变。上包另两行preview主题hook为原有增量，本包不据git累计差异重算归属。引擎源码有界审查 **APPROVED**。
+
+独立解析改后manifest24记录/0文字溢出，改前21图保留。UX本次**实际查看改后10张、改前3张**：after为1080抽牌顶、1440抽牌底、720弃牌顶、1080弃牌底、三尺寸draw-longest-effect，以及720 Close hover、1080 pressed、1440 disabled；不宣称24张全部目视审查。1440图工具缩至2048×1152预览。所看标题/数量/排序说明与列表行层级清楚，最长原Go火锅效果全文完整（未改文案，只用原生滚动定位到中间），末行可见、视口边缘正常裁剪不当文本溢出；Close白字在hover/pressed/disabled仍清楚。没有新增闪动/装饰遮挡，原速度/热量/进攻防御文字和小卡身份保持。
+
+独立读取首张after路由：panel-empty/viewport/row/text全部handler与directHandler=Panel，Close=CloseButton，证明原正文到Overlay的解析已局部阻断。截图夹具只采样路由，没有派发销毁/关闭；交互执行证据来自本轮原生测试，不能由图替代。根任务报告四组原生RunFinished **39/39**，失败/跳过/不确定0，UTC `2026-10-15T23:13:44.9013542Z`、2.1340991秒，含新增7项与1原生用例：实际正文点击保留打开、底层回调0、滚轮达末行、Close关闭/重开与背景关闭。2984仅发现总数，未全量。已读相关测试断言覆盖原数据/实例、几何/字体、原Close/Overlay配置、小卡身份、幂等/滚动位置、空堆与有效Close对比；本处运行数量由根任务原生结果提供，证据归档以本包README/native文件为准。
+
+UX/视觉及引擎实现gate **APPROVED（已覆盖详情切片）**，新增阻塞0。可访问性限高对比正文/标题与已测Close各状态、原非颜色类型/效果文字、无新增动效及原输入保持；不宣称完整键盘/手柄、OS物理点击、完整模式或整体等级。未拍selected专门图和极端大数字，未逐张/逐行审全六队效果，小卡金底白Glyph为原有未迁移对比边界；720p15参考字号约10屏幕像素，舒适度未验收。根任务另报告最终MainMenu干净、idle/许可有效、Console0；最终基线与状态记录由capture归档，本包不扩大修复或反复美化。
+
+## 20. 第九包：选中牌效果面板（Quick Design / Tweak）
+
+2026-10-16。602文件基线READY后写入本节，沿用team-ui lean＋quick-design小scope；用户预授权，独立图审仍必要。本包只 `CardHandUI.selectedCardEffectPanel/Text`，不再打磨旧包，不因本包或Git提交宣称长期整套UI已完成。
+
+### 20.1 原流程与设计差异
+
+玩家选中或键盘聚焦牌时需要读到该牌实际效果，再按原方式选择/确认。原Ensure创建/复用窄条，字号15、居中、nowrap＋Ellipsis；Show原样显示BBQ特殊全文或CardSelectionEffectRules.Format（含原金色标题/加粗tag），置顶并激活。Refresh优先preferred选中，再逆序选中，最后有效keyboard焦点，否则Hide清空并隐藏；速度/普通热量/六队12特技、弃牌与清空路径均保持。不改显示文字、牌实例/数量/规则、确认偏好、Space旁路/空选择保护或焦点策略。
+
+选择原位置主题与证实后最小阅读修复，避免新弹窗/交互。底Surface、正文Primary、既有同根Outline改1参考像素Separator；保留原富文本标题金色和加粗、字体/材质/字号，不能把整条强制白字当清除tag的理由。Panel/Text皆raycast=false，无新按钮/Mask/滚动、声音、动画、字体或第三方资源，不遮七牌/原卡选中抬升/标题或赛道可交互信息。
+
+### 20.2 条件布局修复与引擎约束
+
+先捕获原输入路径真实三尺寸before及TMP实际字符/几何：源string完整不等于Ellipsis渲染完整。若证实高度不足/省略，则只本条允许wrap及完整Overflow显示，并按实际可用宽度计算preferredHeight，在原左右/底边不变的前提下向上补最小高度与必要内距；不缩字/截字/改文案/覆盖牌面，不重排整个牌桌。具体高度和与牌/标题/赛道安全区距离需before/after实证后确认，未测不承诺任意长文容纳。无法安全补高则报告有限边界再择局部方案，不强行溢出到赛道。
+
+独立主题适配器接原Ensure构造及已有引用早返回路径，Show赋原文本后仅更新本条所需阅读高度；布局就绪、引用缺失或零宽需安全处理，不能写NaN/猜大offset。重复Ensure/Show不持续累加高度、组件或监听器；不同短/长文及清空后重开稳定，保留原active/sibling/内容状态生命周期。无Update扫描/重建/资源加载，不给CardUI、主按钮、牌桌/牌堆或场景换肤，不修改玩法formatter。
+
+### 20.3 Gate及本轮验收
+
+UX/视觉/引擎约束gate **APPROVED（仅上述切片；布局例外待before实证）**。对应visual5.3的“选中动画不得被手牌区遮罩裁切，也不得挤动相邻卡牌”及core键盘/确认安全；Systems Index已有Race HUD/card presentation，不是新系统，不需新增GDD规则。quick-design规范并入当前UX，未新增quick-spec文件或输入模式。active.md、独立player-journey/accessibility及既有治理缺失只记录，不造占位。
+
+本轮完整分页重读game-mechanics1–789，首尾SHA256均 `41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d`；混合输出截断的311–340与721–724已单独补读，最终无未读段。当前UX1–446、清单1–158、interaction全文与相关visual/core/BBQ GDD、Systems Index及实际Ensure/Show/Refresh/Hide和formatter均核对。
+
+需原生入口受控fixture三尺寸改前/后，真实速度、普通heat、US BBQ、六队12trick、keyboard/discard/清空/重开；核对原文及可见字符、有效对比≥4.5（含richtext）、无ellipsis/裁切/遮牌或标题、Panel/Text无射线。必要定向实际运行原事件/字体材质/几何契约、选择/清空生命周期、BBQ资格与完整原文、重复样式和原确认/Space；未跑不勾，不复用39/59或历史全量。本包定向为必要门槛，阶段收口/核心跨系统风险再全量；完整赛事/物理输入/720p舒适度及长期其他页面继续未验。
+
+### 20.4 改前实证与最终范围锁定
+
+独立解析before45图：0overflow；sourceTextMatches、completeRenderedText、clearHidPanel、reopenMatchesText各45/45为true，textTruncated为0。首个CN火锅样本label宽901.888、高22.192、preferredHeight21.720，最后可见源字符索引与原文最后非空白索引同为86。parsedCharacters与visibleCharacters因空格/富文本可不同，不能只比两计数误判截断。
+
+UX实际查看before3张：CN1920×1080火锅底料、JP2560×1440关东慢煮、US1280×720真实合法BBQ热牌（1440图工具缩为2048预览）。三者原效果条全文显示，未压手牌区标题/七牌或现有交互区；720p文字仍小，不据此宣布舒适度通过。普通heat不可由原点击/keyboard选择，其样本仅调用原private Show的诊断显示，不能称新增可选热牌；BBQ另用实际科技/位置资格触发原分支。
+
+由于没有截断/高度不足实证，§20.2的条件布局例外**本轮不启用**。最终gate **APPROVED（仅主题）**：保持nowrap、Ellipsis、字号15、所有anchors/offset/高度/对齐；不改wrap、不扩高、不新算preferredHeight、不改正文/富文本。只效果条Surface/Primary与原同根1pxSeparator、Panel/Text raycast=false，原引用复用/Show/Hide不变。本结论允许接入，不提前勾选after图审或测试。
+
+### 20.5 接入与独立有限验收
+
+已实际读取 `RacingTechSelectedEffectStyle` 全源码与CardHandUI差异：Ensure新建结束与原已有引用早返回两处接入，只本条Image/同根效果/文字颜色；不改变Show/Hide/Refresh、原formatter/BBQ分支或输入。没有Update、加载/重建、事件重绑、几何/字号/wrap/Ellipsis修改。Panel/Text原射线关闭保持，原金色富文本标题未抹除。引擎实现审查 **APPROVED（本条）**。
+
+独立解析before/after各45图：均0overflow，原文匹配、完整渲染、clear隐藏、reopen原文各45/45，textTruncated均0；同team/fixture/尺寸对照rawText差异0。45图是12真实特技＋速度＋普通heat诊断＋实际合法US BBQ各三尺寸，并非45个新规则状态。普通heat样本只调用原private Show诊断，原规则仍不可点击/keyboard选中；BBQ使用原科技资格显示特殊文本。
+
+UX实际查看**after12张、before3张**，未称45张全部目视审：CN1080火锅、UK720司康、DE1440酸菜、IT1080帕尔马、JP1440关东、US1080可乐六队代表，另US720 BBQ、CN1080速度、CN1440普通heat诊断、CN720冰糕弃牌、JP1080鱼雷及US1440薯条。所看原效果全文完整，Surface细灰边替换亮蓝条，金色标题/白正文清晰；保留原位置、牌区标题与七牌/选中抬升，无新增裁切遮挡。1440图工具缩至2048预览。CN冰糕样本是真实discard显示，其他特技走原keyboard highlight，不冒称物理输入或已执行特技/弃牌结算；清空/重开由manifest和原生测试提供，无单独清空画面。
+
+实际读取本轮 `focused-56-native.json`：原生RunFinished **56/56**，失败/跳过/不确定0，UTC `2026-10-16T04:07:37.1394358Z`；根任务记录四组3.2094577秒，含新6项及1原生生命周期/射线用例。相关断言保留原几何/字体/材质/富文本、keyboard显示/切换不花牌、clear隐藏/reopen主题、普通heat与BBQ资格、无射线阻挡原下层点击及实例守恒。独立按实际不透明token计算Primary/Surface约15.97:1、原富文本金/Surface约12.15:1，与本轮对比测试一致。全量尚在本轮运行，未提前计通过，不使用旧39或历史全量替代。
+
+独立UX/视觉/引擎与有界可访问性gate **APPROVED（仅已测效果条）**，新增阻塞0。可访问性仅限实际完整语义文字、对比/位置、原输入保持及无新动效/射线；720p15参考字号约10屏幕像素仍小，舒适度未验收。未逐图目视全部12trick×三尺寸，完整赛事/OS物理输入/任意自定义长文、整体可访问性及其他未迁移屏幕仍未验。root报告新程序集已加载且无编译error；最终MainMenu/Console、全量、基线及提交审计以本包最终证据为准，不据本节提前宣称Git或整套UI完成。
+
+### 20.6 本轮收口状态
+
+实际读取本轮 [full-2990-native.json](../../production/qa/evidence/github-submission-2026-10-16/full-2990-native.json)：原生RunFinished **2990/2990 Passed**，失败/跳过/不确定均0，UTC `2026-10-16T04:19:55.0543520Z`；根任务记录710.7150231秒。本轮定向56/56与此新全量共同作为提交前自动回归证据，替代§20.5当时“全量运行中”的状态，不挪用历史通过数。
+
+根任务核验最终MainMenu干净、未播放/编译/更新，许可有效，资源idle/ready且test=false。Console唯一1条error是no_such_track负向测试预期日志，warning0，无新增运行错误；不称Console完全无error。基线/continuity及Git最终审计由根任务收口，本节不宣称已commit/push。第九包有界效果条已接入并通过上述自动与有限独立视觉验收；720p舒适度、完整模式/物理输入、未迁移屏幕和用户主观最终验收仍保留，不宣布整套UI升级完成。

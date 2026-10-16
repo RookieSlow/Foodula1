@@ -1,0 +1,636 @@
+{
+  "utc": "2026-10-15T11:43:21.2419241Z",
+  "head": "58656899b0bb426b3df90ef2a564de4dfe7faf85",
+  "gitMutation": false,
+  "diffCheckExit": 0,
+  "baselineCount": 151,
+  "baselineMissing": 0,
+  "baselineUnchanged": 147,
+  "authorizedBaselineDrift": 4,
+  "visualReviewedAfter": 36,
+  "visualReviewedBeforeIsolated": 6,
+  "testAuthority": "focused-77-native.json 77/77 pass, no full rerun",
+  "selfExcluded": true,
+  "files": [
+    {
+      "path": "Assets/Scripts/Editor/RacingTechConfirmationCapture.cs",
+      "bytes": 16057,
+      "sha256": "836B57BD234683109BBBA404C90DE89D9778995799E44D89BAD996F5A2F80C06"
+    },
+    {
+      "path": "Assets/Scripts/Editor/RacingTechConfirmationCapture.cs.meta",
+      "bytes": 241,
+      "sha256": "161A5E5EA4DB43058A8A11CB41EAA809D499368015869D6AE55EBDFDDC6BF314"
+    },
+    {
+      "path": "Assets/Scripts/UI/HUDUI.cs",
+      "bytes": 49841,
+      "sha256": "AD8E821826FD946A0FF31FE6FADD2DA83C7833F019EE6AD527ACE251A3ECBE1E"
+    },
+    {
+      "path": "Assets/Scripts/UI/RacingTechConfirmationStyle.cs",
+      "bytes": 4028,
+      "sha256": "9ABBE15D63C2151BAB531A2B1057BD93CECDE58A89B9DE25E50F9F8F64447366"
+    },
+    {
+      "path": "Assets/Scripts/UI/RacingTechConfirmationStyle.cs.meta",
+      "bytes": 251,
+      "sha256": "5B4380CE548DC65ED5DF7B648A63C592E3850F5A711FFE49A745475683B6DE92"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_confirmation_test.cs",
+      "bytes": 18573,
+      "sha256": "625A27C3F81A36FC16549C1B9FAAED9D049CC8B521718F6AF1DC56A7D5D63583"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_confirmation_test.cs.meta",
+      "bytes": 251,
+      "sha256": "D0B36802C13EBA1E0565D2B80D19807181EEA0804DCE5E5781F0BEAF463D41C6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1280x720-card-action-normal.png",
+      "bytes": 51659,
+      "sha256": "64F32ECA62245CBC3D9E17BF69730BBE49651A425F989A30C7336F68A3A6440F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1280x720-driver-skill-normal.png",
+      "bytes": 56173,
+      "sha256": "CF4585866672AC2A0498AFB948BDA01E97632C0BDC4C7FC6ACBC220C5320E198"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1280x720-gear-commit-normal.png",
+      "bytes": 54058,
+      "sha256": "B367292E51C89ACB218EB3EBAD1137B2BDC55BE12BC203589471095C6DD1570D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1280x720-gear-selection-normal.png",
+      "bytes": 51887,
+      "sha256": "190DDAE7D4AB65B6893A6D4947B57E47086CC123C910310AC24F51075A0EC5CD"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1280x720-lane-change-normal.png",
+      "bytes": 55098,
+      "sha256": "D8E005035A0A5E54E8DF94A5028712056D6559D0BA4C29043A0629358CE9932F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1280x720-pit-decision-normal.png",
+      "bytes": 58628,
+      "sha256": "FC30B9DDE0E22631FD4A30616A851829517317AC596E49AB83BE707919BECE75"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1280x720-reset-race-normal.png",
+      "bytes": 54133,
+      "sha256": "BF9DA4773367F41F6B667C3DD78C7E93873ABDC6F442C5AE4F430B714D9309C5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1280x720-return-menu-disabled.png",
+      "bytes": 56422,
+      "sha256": "D37A41E1A99B3176547D087CED52467F61B76759A7EF26DCAA76CEA70A39B0D0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1280x720-return-menu-hover.png",
+      "bytes": 56461,
+      "sha256": "4823615C0CCC257E8EE4E61F09E0A274F905DFF5744826349B494597659FCC37"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1280x720-return-menu-normal.png",
+      "bytes": 56483,
+      "sha256": "1373DB9BCD49AA1101BD33FCBB54E586C019B6E3D6F63C063A59AC17D364CFE4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1280x720-return-menu-pressed.png",
+      "bytes": 56441,
+      "sha256": "21652F3BD85A61E9D851E3A8323DC27D43BFFDB7FEA49EEAE58FB783237E8DCF"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1280x720-synthetic-long-copy-normal.png",
+      "bytes": 70548,
+      "sha256": "FBE696C42830676E3AA85C585715F1674B4B2E55D55E4CCBFD18F9DBB95C26F1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1920x1080-card-action-normal.png",
+      "bytes": 97914,
+      "sha256": "13766CC10F83D3126CC97CB868A6F9F76447EAF8A92DF1E3D7628FF455612F4C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1920x1080-driver-skill-normal.png",
+      "bytes": 106697,
+      "sha256": "A24401D50065C7BC40B8978B6EC60C2E35218C9B7FCBE11F1D0DEE5CDE5FF450"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1920x1080-gear-commit-normal.png",
+      "bytes": 102201,
+      "sha256": "7BB501FE99EF0C1A604A0B05C13D532D9A395D4979FA0EBB5EB2E99451EB4EC7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1920x1080-gear-selection-normal.png",
+      "bytes": 98764,
+      "sha256": "7DFA3331FFA526A9C102D0F9D57ADDF42088B430C7B5271526370E4D559BFBB9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1920x1080-lane-change-normal.png",
+      "bytes": 104560,
+      "sha256": "4F25BA7F2FC1C7CC0BA7D55005C6B28977CE7C38FEBCCF7A810E624B5DBAB0FC"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1920x1080-pit-decision-normal.png",
+      "bytes": 110417,
+      "sha256": "D32053FD3BAC01281C385644422B951B132A5BB4BCDA5C1EE0AEB4796BDA6555"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1920x1080-reset-race-normal.png",
+      "bytes": 103085,
+      "sha256": "B32C0861B8ABC6938A13793A35226862D90B3BFC3D63F81CA68CC466D37060B1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1920x1080-return-menu-disabled.png",
+      "bytes": 106124,
+      "sha256": "92727BDDFC11C8528DF9578637EE3B02C0D69F74A2CFD4DF2766D68C3557B54B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1920x1080-return-menu-hover.png",
+      "bytes": 106132,
+      "sha256": "B8E962CE7D298F3DE4EE4B8EBA16FBEAE6F86445560DBEB6EC4C0CF1A11DB363"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1920x1080-return-menu-normal.png",
+      "bytes": 106145,
+      "sha256": "7C697AF7A6ABFACCF256D0FDCA3C27E6F552AC0A1E1FA160BAD5662C50B74C48"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1920x1080-return-menu-pressed.png",
+      "bytes": 106148,
+      "sha256": "89354A65E4656BA04CB405A6320085C6A89469D34CCB22A0758C078EE8B47F74"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/1920x1080-synthetic-long-copy-normal.png",
+      "bytes": 133008,
+      "sha256": "299013BEBF1C62A2682DF2317F99DD338A44829E064DD067455D93D46F7C69F7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/2560x1440-card-action-normal.png",
+      "bytes": 151780,
+      "sha256": "3F65AEC2D593A7A28B9AF338DC05FCEFE9E00621C571F03F9671DE739CF43829"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/2560x1440-driver-skill-normal.png",
+      "bytes": 165812,
+      "sha256": "18FD09534501C3AF319CADD38631DD045B9F9D1B158CCA712D00E7AE0A6964B6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/2560x1440-gear-commit-normal.png",
+      "bytes": 158394,
+      "sha256": "89DD7CD83088BE1277470E755B7F3AFFF906C402AB6C7F824D8CCA07DA83B648"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/2560x1440-gear-selection-normal.png",
+      "bytes": 153251,
+      "sha256": "BE290A205A0B926EAB6D0D274B3B4262185BF78095EA8CB23E9538D11E72900C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/2560x1440-lane-change-normal.png",
+      "bytes": 161639,
+      "sha256": "CC0BA01E1992CCB8AE511C9E939E7D9EC66BD1E2F8E3C54361D4BC1602399194"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/2560x1440-pit-decision-normal.png",
+      "bytes": 170613,
+      "sha256": "26B0143BB96B84D1987BCA233E3FF4A7935F1AB5DC237A8F66EFC663C5AE936D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/2560x1440-reset-race-normal.png",
+      "bytes": 159095,
+      "sha256": "572DC3785558C6AE72E56C1741ED6CD5E041ABB6D114A74752751917F6150C61"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/2560x1440-return-menu-disabled.png",
+      "bytes": 164330,
+      "sha256": "A435ABAB19A5B38E219BA2306F38CA657DB9B678FE4C135C787390D71945B01B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/2560x1440-return-menu-hover.png",
+      "bytes": 164391,
+      "sha256": "1EDC1B541322940EF516B88B061B14AC2DE9C9FD1560FDDF37DAA54F7A71652C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/2560x1440-return-menu-normal.png",
+      "bytes": 164420,
+      "sha256": "6796FD5D1ACDD6ABE6AE38467469C55900CE0114B8AADD5B66D69638A09EC00E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/2560x1440-return-menu-pressed.png",
+      "bytes": 164409,
+      "sha256": "2EFCE8026AAB2E2F764E33CB7D07F8206FC1897A53547DFB632310381E98CF49"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/2560x1440-synthetic-long-copy-normal.png",
+      "bytes": 203992,
+      "sha256": "53B6135CD944CE03D410519369CE5D21FC452D640B5B454AA410DFF2EFCC223D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/after/manifest.json",
+      "bytes": 80875,
+      "sha256": "7909E228364A1393FD69291E6D63F5DAFD8900307A549E56973E8EF6E5DDC60E"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/baseline-diff.txt",
+      "bytes": 35668,
+      "sha256": "6AE0F2A9F6F95B9E91EFBEA670A7CDCEF6ADF3F7E2220AEACAC368F8708C76C7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/baseline-diffstat.txt",
+      "bytes": 770,
+      "sha256": "4B4ABF978DFA682188B344D52828B32369117AD74A976A57AB88DBDB1D9512ED"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/baseline-names.txt",
+      "bytes": 486,
+      "sha256": "E45691232945013ABBB88E9FA8668DE7F9972801051E2F7D15D7EBB6F59368B9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/baseline-preservation.json",
+      "bytes": 1286,
+      "sha256": "9B94301DAD7B4865C29BA0C6A16426075E306DB6AEF9049421D883290502F03A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/baseline-status.txt",
+      "bytes": 11495,
+      "sha256": "B3A92373AD28CB84A4EB1B862AEF03220FD7D2BC994B65AAE1CC81F7F6B18DAE"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/baseline-unity-state-reported-by-root.json",
+      "bytes": 710,
+      "sha256": "B1D069831D02DCE8D9448746F9092D2F60DD0E3B6F0D298B1581FBE916A2F4F4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/baseline.json",
+      "bytes": 45018,
+      "sha256": "2F5684C07F3E644B00970A83103A641F520BBCBC55B2E681786FD4B1A5DDB5B4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1280x720-card-action-normal.png",
+      "bytes": 50917,
+      "sha256": "BFA33BBF653A5FCD0735C7E14301D3751AFD878E310401B2AC9137546D48F791"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1280x720-driver-skill-normal.png",
+      "bytes": 55726,
+      "sha256": "73EA7E88A5461B46EAF12A5410A7EB694B69235A4F21276DFD5C0D616E0F0F55"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1280x720-gear-commit-normal.png",
+      "bytes": 53434,
+      "sha256": "0AE8AA502EB6FBCF039825611B3CB343EF20763129774C8174E3BC9C9A19C4F0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1280x720-gear-selection-normal.png",
+      "bytes": 51284,
+      "sha256": "8B2F9E4F412E288AD3AF9B1E801877BACEB762BCBAEC4754BA66E3548BF52D53"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1280x720-lane-change-normal.png",
+      "bytes": 54539,
+      "sha256": "6F16DF9608DA5DBB9398CD9A6C4BC3FF5E59E1789A7783BD1EB50B9128AE88D3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1280x720-pit-decision-normal.png",
+      "bytes": 58275,
+      "sha256": "AE6F3B4661C204236A1AAA0B68C5BDD8E81332CEA772ED735C92FB6FAA1D435D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1280x720-reset-race-normal.png",
+      "bytes": 53669,
+      "sha256": "A9875DBF6948C5C62EF8F177AB9AAC43AE150D74239EF01D294EFC1D2FA10E5A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1280x720-return-menu-normal.png",
+      "bytes": 55728,
+      "sha256": "F6A611089DB3817F052E5974274E9A72EC3E529081D15741287E8A31ED65B859"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1280x720-synthetic-long-copy-normal.png",
+      "bytes": 70482,
+      "sha256": "E8E1FDB3965273DE01206776367631D36B3ADE7E68EDAB4D337E2BA42FE68012"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1920x1080-card-action-normal.png",
+      "bytes": 95799,
+      "sha256": "2DB8008B7A61C21DF9ABF606DA80EEBEF03B3C88989B0FC335C719D822ACE194"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1920x1080-driver-skill-normal.png",
+      "bytes": 105549,
+      "sha256": "3132D3F73753618551623FFA4337FCDE89A56DF005C1D50125827B53D285C9C6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1920x1080-gear-commit-normal.png",
+      "bytes": 100523,
+      "sha256": "894654176E627B92661D72CC61ADA02F3CD17D2F428A7DCD992A84D92901C05B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1920x1080-gear-selection-normal.png",
+      "bytes": 96584,
+      "sha256": "2EEE3368CE173ECA9EECA102A5F8BAE80179569919E28EBD65DF0F1CAE36E298"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1920x1080-lane-change-normal.png",
+      "bytes": 102889,
+      "sha256": "D65A01C3BF8F9B5AC0E8BADC7F23D9E37C9BE86A693622DF61F02544BB7F478D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1920x1080-pit-decision-normal.png",
+      "bytes": 108943,
+      "sha256": "8B41278CB4FC2E8849253CD9C7D98FBBC3609DD9AC209C6517F9648CF8E22B31"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1920x1080-reset-race-normal.png",
+      "bytes": 101490,
+      "sha256": "23511F6C070E5EBED5F320BD2C6C4D662E92C98094F9CE15DEC679EDB67F50B3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1920x1080-return-menu-normal.png",
+      "bytes": 104914,
+      "sha256": "E3D85914F142454E6413642E5B8D5A252A3BCF353882A171B2482B09EC1E4A76"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/1920x1080-synthetic-long-copy-normal.png",
+      "bytes": 131800,
+      "sha256": "99129BF5E93D937E9B219D01D43784E1087D31D89382E1F3E6DB361CF84F750C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/2560x1440-card-action-normal.png",
+      "bytes": 148883,
+      "sha256": "215AD98A2674EF53C7C1251EC3CEC3E26EC768E03C8CF66D54FC60EE4B11FAD8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/2560x1440-driver-skill-normal.png",
+      "bytes": 162891,
+      "sha256": "01FE58C1FB1EDAEBFA60C26A634510EB70CED3556533762240560946D5504715"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/2560x1440-gear-commit-normal.png",
+      "bytes": 155466,
+      "sha256": "14EFAAF44D86EB435F11A0F92B39FD412712460404626EEF28854A721A6D9A63"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/2560x1440-gear-selection-normal.png",
+      "bytes": 150273,
+      "sha256": "51393E3535BC955752883F96F6962ED577EA72A30B5794EF3BC6F259C53CC6DA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/2560x1440-lane-change-normal.png",
+      "bytes": 158642,
+      "sha256": "5467F4A08C2F5644484DF179ADAF67BD1C28473630153D50B74FB1FA05785887"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/2560x1440-pit-decision-normal.png",
+      "bytes": 168027,
+      "sha256": "26BAB2B01A622D7F3F9D4D71F18CD3E4E0BA4ADCE2C4506A51A99E9622294B42"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/2560x1440-reset-race-normal.png",
+      "bytes": 156177,
+      "sha256": "905D07FD03C68033DC0008E2A3B6D2F5F07AE86E57246756CC4347E2064D3588"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/2560x1440-return-menu-normal.png",
+      "bytes": 161065,
+      "sha256": "02D1DEB687401D117FBB9545E2D31D2F2B4606E365BDE9CFD97EAE5C9E7FA53D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/2560x1440-synthetic-long-copy-normal.png",
+      "bytes": 201872,
+      "sha256": "953CA9039067B48FC11BD1C5F588D60B90F4939FEDC9C4AB5F7850AF17BE0C4F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before-isolated/manifest.json",
+      "bytes": 60986,
+      "sha256": "937E512D702BDFA5674F671F740D526774A983D92908E4D639CCFB779F853988"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1280x720-card-action-normal.png",
+      "bytes": 50917,
+      "sha256": "BFA33BBF653A5FCD0735C7E14301D3751AFD878E310401B2AC9137546D48F791"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1280x720-driver-skill-normal.png",
+      "bytes": 55726,
+      "sha256": "73EA7E88A5461B46EAF12A5410A7EB694B69235A4F21276DFD5C0D616E0F0F55"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1280x720-gear-commit-normal.png",
+      "bytes": 53434,
+      "sha256": "0AE8AA502EB6FBCF039825611B3CB343EF20763129774C8174E3BC9C9A19C4F0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1280x720-gear-selection-normal.png",
+      "bytes": 51284,
+      "sha256": "8B2F9E4F412E288AD3AF9B1E801877BACEB762BCBAEC4754BA66E3548BF52D53"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1280x720-lane-change-normal.png",
+      "bytes": 54539,
+      "sha256": "6F16DF9608DA5DBB9398CD9A6C4BC3FF5E59E1789A7783BD1EB50B9128AE88D3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1280x720-pit-decision-normal.png",
+      "bytes": 58275,
+      "sha256": "AE6F3B4661C204236A1AAA0B68C5BDD8E81332CEA772ED735C92FB6FAA1D435D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1280x720-reset-race-normal.png",
+      "bytes": 53669,
+      "sha256": "A9875DBF6948C5C62EF8F177AB9AAC43AE150D74239EF01D294EFC1D2FA10E5A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1280x720-return-menu-normal.png",
+      "bytes": 55728,
+      "sha256": "F6A611089DB3817F052E5974274E9A72EC3E529081D15741287E8A31ED65B859"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1280x720-synthetic-long-copy-normal.png",
+      "bytes": 70482,
+      "sha256": "E8E1FDB3965273DE01206776367631D36B3ADE7E68EDAB4D337E2BA42FE68012"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1920x1080-card-action-normal.png",
+      "bytes": 95799,
+      "sha256": "2DB8008B7A61C21DF9ABF606DA80EEBEF03B3C88989B0FC335C719D822ACE194"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1920x1080-driver-skill-normal.png",
+      "bytes": 105549,
+      "sha256": "3132D3F73753618551623FFA4337FCDE89A56DF005C1D50125827B53D285C9C6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1920x1080-gear-commit-normal.png",
+      "bytes": 100523,
+      "sha256": "894654176E627B92661D72CC61ADA02F3CD17D2F428A7DCD992A84D92901C05B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1920x1080-gear-selection-normal.png",
+      "bytes": 96584,
+      "sha256": "2EEE3368CE173ECA9EECA102A5F8BAE80179569919E28EBD65DF0F1CAE36E298"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1920x1080-lane-change-normal.png",
+      "bytes": 102889,
+      "sha256": "D65A01C3BF8F9B5AC0E8BADC7F23D9E37C9BE86A693622DF61F02544BB7F478D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1920x1080-pit-decision-normal.png",
+      "bytes": 108943,
+      "sha256": "8B41278CB4FC2E8849253CD9C7D98FBBC3609DD9AC209C6517F9648CF8E22B31"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1920x1080-reset-race-normal.png",
+      "bytes": 101490,
+      "sha256": "23511F6C070E5EBED5F320BD2C6C4D662E92C98094F9CE15DEC679EDB67F50B3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1920x1080-return-menu-normal.png",
+      "bytes": 104914,
+      "sha256": "E3D85914F142454E6413642E5B8D5A252A3BCF353882A171B2482B09EC1E4A76"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/1920x1080-synthetic-long-copy-normal.png",
+      "bytes": 131800,
+      "sha256": "99129BF5E93D937E9B219D01D43784E1087D31D89382E1F3E6DB361CF84F750C"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/2560x1440-card-action-normal.png",
+      "bytes": 148883,
+      "sha256": "215AD98A2674EF53C7C1251EC3CEC3E26EC768E03C8CF66D54FC60EE4B11FAD8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/2560x1440-driver-skill-normal.png",
+      "bytes": 162891,
+      "sha256": "01FE58C1FB1EDAEBFA60C26A634510EB70CED3556533762240560946D5504715"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/2560x1440-gear-commit-normal.png",
+      "bytes": 155466,
+      "sha256": "14EFAAF44D86EB435F11A0F92B39FD412712460404626EEF28854A721A6D9A63"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/2560x1440-gear-selection-normal.png",
+      "bytes": 150273,
+      "sha256": "51393E3535BC955752883F96F6962ED577EA72A30B5794EF3BC6F259C53CC6DA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/2560x1440-lane-change-normal.png",
+      "bytes": 158642,
+      "sha256": "5467F4A08C2F5644484DF179ADAF67BD1C28473630153D50B74FB1FA05785887"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/2560x1440-pit-decision-normal.png",
+      "bytes": 168027,
+      "sha256": "26BAB2B01A622D7F3F9D4D71F18CD3E4E0BA4ADCE2C4506A51A99E9622294B42"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/2560x1440-reset-race-normal.png",
+      "bytes": 156177,
+      "sha256": "905D07FD03C68033DC0008E2A3B6D2F5F07AE86E57246756CC4347E2064D3588"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/2560x1440-return-menu-normal.png",
+      "bytes": 161065,
+      "sha256": "02D1DEB687401D117FBB9545E2D31D2F2B4606E365BDE9CFD97EAE5C9E7FA53D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/2560x1440-synthetic-long-copy-normal.png",
+      "bytes": 201872,
+      "sha256": "953CA9039067B48FC11BD1C5F588D60B90F4939FEDC9C4AB5F7850AF17BE0C4F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/before/manifest.json",
+      "bytes": 60634,
+      "sha256": "2E542E18485A75D3EF7B6E2FBED00AD7B9D13236C1ADC4BCA5095A7787448CDA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/continuity-read-audit.json",
+      "bytes": 625,
+      "sha256": "AC63A8C82B47B19D62626B3599B7A0A88BB12F4A543CAF0011A0AFE6A69E3D59"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/current-task-list.md.source-before.txt",
+      "bytes": 254516,
+      "sha256": "CBDFC9FEB0E851583B5DA6AEC6DCC00A710F2926B1C8D158655CFDB0C00A2767"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/final-diff-check.txt",
+      "bytes": 1414,
+      "sha256": "22174D3A6FAD6114CCD55EE5C6A5B9983B91AC0445F2ED2A032BE956E79302B6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/final-status.txt",
+      "bytes": 4140,
+      "sha256": "D1B5CDBDBE7861E28C31D5F3A1DCFBC4E82D3EB5E765007E231DE7AC02AF49F3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/focused-77-native.json",
+      "bytes": 192,
+      "sha256": "7ADDBDBB5A94050F039869543AA0181E7B70B3593E168CA1872B736D6BEA66AD"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/HUDUI.cs.source-before.txt",
+      "bytes": 49628,
+      "sha256": "202E4BFD81381C498AB228B9423B112B6A955E98B7544182AE3FCB488C0A7F1D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/project-overview.md.source-before.txt",
+      "bytes": 152240,
+      "sha256": "9140DB9256350D2CF6A35ABB80DE7D7D0BDA45E20E541A1CD52F81FD1652C3F3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/racing-tech-ui-checklist.md.source-before.txt",
+      "bytes": 9336,
+      "sha256": "9FAD9DD92A168C4F1D912A5EBFA3C95154E10B91B1B3DE977DB0F71B8584CFE9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/racing-tech-ui.md.source-before.txt",
+      "bytes": 24109,
+      "sha256": "E5711E2CBC2E95B688E711B3090EFC8E031C13014926F28AA2BBD2A41E3FAB14"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/README.md",
+      "bytes": 5032,
+      "sha256": "76D3C19350ABCEF62B5A01E4ECE91533091C4B510FE084B1F5435B5AEBBA701F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/source-baseline.json",
+      "bytes": 974,
+      "sha256": "5C0D0DE7A2D828E0A8150FFAE0B45EAF080BE595B6D25A058DA7DA5129E24F9A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/source-review.json",
+      "bytes": 2055,
+      "sha256": "48A2670F10D1246568A1B61ACE1E751DD5B36B974BA326111924E4BDFBF7CA8A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-actions-2026-10-15/visual-engine-review.json",
+      "bytes": 760,
+      "sha256": "7E85373EB1E4B6E9607747260357C37D777B0A8AF75AF7AA84BF44B94A957E49"
+    },
+    {
+      "path": "design/ux/racing-tech-ui-checklist.md",
+      "bytes": 11474,
+      "sha256": "1547BF37575C57B41DCAF449948C41E1A411ACBE44B9AFD3B937A822BE9FD74B"
+    },
+    {
+      "path": "design/ux/racing-tech-ui.md",
+      "bytes": 34354,
+      "sha256": "5EE7B731EA2F07E5B654ECBDD8EAE136A7F8D61B22DB8C0BC1633E2C7BAC7B5D"
+    },
+    {
+      "path": "docs/memory/current-task-list.md",
+      "bytes": 256719,
+      "sha256": "AAC0A6CC948FBDA1E4684D5B8C92C366C1FD857C1A7CDDAB9ED858DC638DD256"
+    },
+    {
+      "path": "docs/memory/project-overview.md",
+      "bytes": 154443,
+      "sha256": "156FB45ADDED4B31F822B3DC62058416AB48149B78515BD92D48DEA549D772A8"
+    }
+  ]
+}

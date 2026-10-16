@@ -1,0 +1,806 @@
+{
+    "kind": "Controlled EditMode real TrackSelectionUI.Initialize/Show, original track buttons and Hide. No MainMenuUI.Start, gameplay manager, launch or authored scene changes.",
+    "lifecycle": "Isolated preview Canvas/camera; original localized font and material cloned static before production UI creation. Callback only records ID. Session selectedTrackId restored exactly in finally. Closed image intentionally shows empty preview host, not a fabricated main menu. No fake ninth track.",
+    "utc": "2026-10-15T05:04:38.5371207Z",
+    "stage": "before",
+    "records": [
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-track-selection-2026-10-15\\before\\1920x1080-default.png",
+            "fixture": "default",
+            "selectedTrack": "silverstone_afternoon_tea",
+            "callbackTrack": "",
+            "width": 1920,
+            "height": 1080,
+            "catalogCount": 8,
+            "visibleCards": 8,
+            "overlayActive": true,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "Title",
+                    "text": "自由赛事 · 选择赛道",
+                    "width": 900.0,
+                    "height": 70.0,
+                    "preferredWidth": 487.2099914550781,
+                    "preferredHeight": 69.51000213623047,
+                    "overflow": false
+                },
+                {
+                    "name": "Hint",
+                    "text": "选择一条赛道后立即开始自由赛事",
+                    "width": 900.0,
+                    "height": 40.0,
+                    "preferredWidth": 330.010009765625,
+                    "preferredHeight": 31.860000610351564,
+                    "overflow": false
+                },
+                {
+                    "name": "SelectedTrack",
+                    "text": "当前选择：银石赛道　英国 · 下午茶",
+                    "width": 900.0,
+                    "height": 36.0,
+                    "preferredWidth": 329.010009765625,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "银石赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 113.66999816894531,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "英国 · 下午茶",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 116.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "纽博格林大奖赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 229.22999572753907,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "德国 · 啤酒",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 98.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "蒙扎赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 113.66999816894531,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "意大利 · 意面",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 116.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "印第安纳波利斯",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 200.33999633789063,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "美国 · 汉堡",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 98.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "上海国际赛车场",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 200.33999633789063,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "中国 · 点心",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 98.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "铃鹿赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 113.66999816894531,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "日本 · 寿司",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 98.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "纽博格林北环",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 171.4499969482422,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "德国 · 绿色地狱",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 134.11000061035157,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "勒芒旧慕尚赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 200.33999633789063,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "法国 · 经典直道",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 134.11000061035157,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "Label",
+                    "text": "返回",
+                    "width": 210.0,
+                    "height": 56.0,
+                    "preferredWidth": 49.689998626708987,
+                    "preferredHeight": 34.7599983215332,
+                    "overflow": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-track-selection-2026-10-15\\before\\2560x1440-default.png",
+            "fixture": "default",
+            "selectedTrack": "silverstone_afternoon_tea",
+            "callbackTrack": "",
+            "width": 2560,
+            "height": 1440,
+            "catalogCount": 8,
+            "visibleCards": 8,
+            "overlayActive": true,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "Title",
+                    "text": "自由赛事 · 选择赛道",
+                    "width": 900.0,
+                    "height": 70.0,
+                    "preferredWidth": 487.2099914550781,
+                    "preferredHeight": 69.51000213623047,
+                    "overflow": false
+                },
+                {
+                    "name": "Hint",
+                    "text": "选择一条赛道后立即开始自由赛事",
+                    "width": 900.0,
+                    "height": 40.0,
+                    "preferredWidth": 330.010009765625,
+                    "preferredHeight": 31.860000610351564,
+                    "overflow": false
+                },
+                {
+                    "name": "SelectedTrack",
+                    "text": "当前选择：银石赛道　英国 · 下午茶",
+                    "width": 900.0,
+                    "height": 36.0,
+                    "preferredWidth": 329.010009765625,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "银石赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 113.66999816894531,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "英国 · 下午茶",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 116.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "纽博格林大奖赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 229.22999572753907,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "德国 · 啤酒",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 98.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "蒙扎赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 113.66999816894531,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "意大利 · 意面",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 116.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "印第安纳波利斯",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 200.33999633789063,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "美国 · 汉堡",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 98.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "上海国际赛车场",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 200.33999633789063,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "中国 · 点心",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 98.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "铃鹿赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 113.66999816894531,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "日本 · 寿司",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 98.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "纽博格林北环",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 171.4499969482422,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "德国 · 绿色地狱",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 134.11000061035157,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "勒芒旧慕尚赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 200.33999633789063,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "法国 · 经典直道",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 134.11000061035157,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "Label",
+                    "text": "返回",
+                    "width": 210.0,
+                    "height": 56.0,
+                    "preferredWidth": 49.689998626708987,
+                    "preferredHeight": 34.7599983215332,
+                    "overflow": false
+                }
+            ]
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\racing-tech-track-selection-2026-10-15\\before\\1280x720-default.png",
+            "fixture": "default",
+            "selectedTrack": "silverstone_afternoon_tea",
+            "callbackTrack": "",
+            "width": 1280,
+            "height": 720,
+            "catalogCount": 8,
+            "visibleCards": 8,
+            "overlayActive": true,
+            "overflows": [],
+            "labels": [
+                {
+                    "name": "Title",
+                    "text": "自由赛事 · 选择赛道",
+                    "width": 900.0,
+                    "height": 70.0,
+                    "preferredWidth": 487.2099914550781,
+                    "preferredHeight": 69.51000213623047,
+                    "overflow": false
+                },
+                {
+                    "name": "Hint",
+                    "text": "选择一条赛道后立即开始自由赛事",
+                    "width": 900.0,
+                    "height": 40.0,
+                    "preferredWidth": 330.010009765625,
+                    "preferredHeight": 31.860000610351564,
+                    "overflow": false
+                },
+                {
+                    "name": "SelectedTrack",
+                    "text": "当前选择：银石赛道　英国 · 下午茶",
+                    "width": 900.0,
+                    "height": 36.0,
+                    "preferredWidth": 329.010009765625,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "银石赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 113.66999816894531,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "英国 · 下午茶",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 116.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "纽博格林大奖赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 229.22999572753907,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "德国 · 啤酒",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 98.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "蒙扎赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 113.66999816894531,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "意大利 · 意面",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 116.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "印第安纳波利斯",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 200.33999633789063,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "美国 · 汉堡",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 98.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "上海国际赛车场",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 200.33999633789063,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "中国 · 点心",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 98.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "铃鹿赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 113.66999816894531,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "日本 · 寿司",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 98.11000061035156,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "纽博格林北环",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 171.4499969482422,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "德国 · 绿色地狱",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 134.11000061035157,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "TrackName",
+                    "text": "勒芒旧慕尚赛道",
+                    "width": 260.0,
+                    "height": 70.0,
+                    "preferredWidth": 200.33999633789063,
+                    "preferredHeight": 39.099998474121097,
+                    "overflow": false
+                },
+                {
+                    "name": "Subtitle",
+                    "text": "法国 · 经典直道",
+                    "width": 250.0,
+                    "height": 42.0,
+                    "preferredWidth": 134.11000061035157,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false
+                },
+                {
+                    "name": "Action",
+                    "text": "点击开始",
+                    "width": 220.0,
+                    "height": 28.0,
+                    "preferredWidth": 60.0099983215332,
+                    "preferredHeight": 21.719999313354493,
+                    "overflow": false
+                },
+                {
+                    "name": "Label",
+                    "text": "返回",
+                    "width": 210.0,
+                    "height": 56.0,
+                    "preferredWidth": 49.689998626708987,
+                    "preferredHeight": 34.7599983215332,
+                    "overflow": false
+                }
+            ]
+        }
+    ]
+}

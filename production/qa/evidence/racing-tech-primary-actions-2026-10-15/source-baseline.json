@@ -1,0 +1,42 @@
+[
+  {
+    "path": "Assets/Scripts/UI/RaceUILayoutController.cs",
+    "copy": "RaceUILayoutController.cs.source-before.txt",
+    "sha256": "73FC8EBE185104569CF3E8B7BEB13ABAF926E16AD4C1E93C8D53D8C0D85D093D"
+  },
+  {
+    "path": "Assets/Scripts/UI/HUDUI.cs",
+    "copy": "HUDUI.cs.source-before.txt",
+    "sha256": "AD8E821826FD946A0FF31FE6FADD2DA83C7833F019EE6AD527ACE251A3ECBE1E"
+  },
+  {
+    "path": "Assets/Scripts/UI/CardHandUI.cs",
+    "copy": "CardHandUI.cs.source-before.txt",
+    "sha256": "5B58B9A86F8E6884D9FE876386E29B226BE81AD7E934662489D0E2E31F32FF75"
+  },
+  {
+    "path": "Assets/Scripts/UI/RaceUIFactory.cs",
+    "copy": "RaceUIFactory.cs.source-before.txt",
+    "sha256": "9447E87C4DA2759919DEF5EE6F80540B56604F047D2C9C1A5BEA3BB23A87E006"
+  },
+  {
+    "path": "design/ux/racing-tech-ui.md",
+    "copy": "racing-tech-ui.md.source-before.txt",
+    "sha256": "5EE7B731EA2F07E5B654ECBDD8EAE136A7F8D61B22DB8C0BC1633E2C7BAC7B5D"
+  },
+  {
+    "path": "design/ux/racing-tech-ui-checklist.md",
+    "copy": "racing-tech-ui-checklist.md.source-before.txt",
+    "sha256": "1547BF37575C57B41DCAF449948C41E1A411ACBE44B9AFD3B937A822BE9FD74B"
+  },
+  {
+    "path": "docs/memory/project-overview.md",
+    "copy": "project-overview.md.source-before.txt",
+    "sha256": "156FB45ADDED4B31F822B3DC62058416AB48149B78515BD92D48DEA549D772A8"
+  },
+  {
+    "path": "docs/memory/current-task-list.md",
+    "copy": "current-task-list.md.source-before.txt",
+    "sha256": "AAC0A6CC948FBDA1E4684D5B8C92C366C1FD857C1A7CDDAB9ED858DC638DD256"
+  }
+]

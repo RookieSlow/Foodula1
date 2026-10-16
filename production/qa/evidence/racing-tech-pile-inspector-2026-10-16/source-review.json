@@ -1,0 +1,66 @@
+{
+  "existingRuntimeChange": "CardPilePreviewUI.ShowInspector: exactly one added RacingTechPileInspectorStyle.Apply call; prior card-zone lazy hooks retained.",
+  "newSourceFiles": [
+    "Assets/Scripts/UI/RacingTechPileInspectorStyle.cs",
+    "Assets/Tests/Editor/racing_tech_pile_inspector_test.cs",
+    "Assets/Scripts/Editor/RacingTechPileInspectorCapture.cs"
+  ],
+  "unchangedRelated": "CardHandUI/RaceUILayoutController/RacingTechCardZoneStyle/CardPrefab exact startup SHA retained; CardUI/HUD/Factory/old audio and previous evidence retained by514baseline.",
+  "nestedRules": "CardPileEntryRules.cs was a guessed standalone source path; actual CardPileEntry and CardPileInspectorRules are inside snapshotted CardPilePreviewUI.cs. No placeholder created.",
+  "sources": [
+    {
+      "path": "Assets/Scripts/UI/CardPilePreviewUI.cs",
+      "before": "87c9155c07020105b65ddab3096e42230f4d832dc14e74fb79f24d4f501626ee",
+      "current": "db64b440472900a2af9f756a184c8677dbbb8e665f386f2f343d121c01e21e8f",
+      "unchanged": false
+    },
+    {
+      "path": "Assets/Scripts/UI/CardHandUI.cs",
+      "before": "5b58b9a86f8e6884d9fe876386e29b226be81ad7e934662489d0e2e31f32ff75",
+      "current": "5b58b9a86f8e6884d9fe876386e29b226be81ad7e934662489d0e2e31f32ff75",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/Scripts/UI/RaceUILayoutController.cs",
+      "before": "c621f76ed617b2cc8eae0b3e38766eb858d87c0f9121681d065720d29ff1709c",
+      "current": "c621f76ed617b2cc8eae0b3e38766eb858d87c0f9121681d065720d29ff1709c",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/Scripts/UI/RacingTechCardZoneStyle.cs",
+      "before": "5267485deaed0563bdee9de0eba3ced61f1ac5f5af711a5c3a47dae830db2034",
+      "current": "5267485deaed0563bdee9de0eba3ced61f1ac5f5af711a5c3a47dae830db2034",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/Prefab/CardPrefab.prefab",
+      "before": "98605584cb869420c81c32c48071508f9cb22b81659e13fbb927939bf99e7fcd",
+      "current": "98605584cb869420c81c32c48071508f9cb22b81659e13fbb927939bf99e7fcd",
+      "unchanged": true
+    },
+    {
+      "path": "design/ux/racing-tech-ui.md",
+      "before": "91802f4315f806c0aef0e64f70f45c9761d2cb4fa560a60299996c198a7325b7",
+      "current": "067cabf77cf17f91e713e4058b312acae0e859f64cf1dbb1b72cb4074dea234b",
+      "unchanged": false
+    },
+    {
+      "path": "design/ux/racing-tech-ui-checklist.md",
+      "before": "f23f6b512ff5f7e88026b23f66b118620375990fec50283d3c44b9a55e1cf59c",
+      "current": "ac4d38b51d1f21a523cfadac2ec46d7344b74d90bc12160ae219077a50001d81",
+      "unchanged": false
+    },
+    {
+      "path": "docs/memory/project-overview.md",
+      "before": "22de44323e36ffffc729d85ea41b19494587d6f444d4f2273c84b239ee70c06f",
+      "current": "7d7bab89dab0918c605239ee54a3e5dc1e1bbba6549b71dd39e10ec8cd35794f",
+      "unchanged": false
+    },
+    {
+      "path": "docs/memory/current-task-list.md",
+      "before": "418bcb1f5ce64239e58efd5c46d9a5bce23a68d941cb0a507b5f3f0d0b21cc63",
+      "current": "429b5376b65ed65c85d5f825c0874d54f70bb01f494c15f5553ccef7a8bf5ca0",
+      "unchanged": false
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "readUtc": "2026-10-15T07:21:46.7384526Z",
+  "path": "docs/memory/project-overview.md",
+  "sha256": "9140DB9256350D2CF6A35ABB80DE7D7D0BDA45E20E541A1CD52F81FD1652C3F3",
+  "bytes": 152240,
+  "characters": 112540,
+  "complete": true,
+  "readMethod": "Sequential bounded 3000-character pages, all offsets 0 through 112539 inclusive, 38 pages; no truncated overview page.",
+  "otherContinuity": "game-mechanics/current-task-list read by root and other assigned agent; source before copies preserved",
+  "missingGovernance": "Missing active.md/.Codex governance recorded in baseline only; no placeholders created"
+}

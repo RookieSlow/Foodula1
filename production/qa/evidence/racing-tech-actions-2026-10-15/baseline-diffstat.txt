@@ -1,0 +1,12 @@
+ Assets/Scripts/Audio/AudioEventNames.cs            |  1 +
+ Assets/Scripts/Audio/AudioRuntimeRules.cs          |  2 +
+ Assets/Scripts/Audio/AudioService.cs               | 41 +++++++++++-
+ Assets/Scripts/Gameplay/RaceEventFX.cs             | 18 +++--
+ Assets/Scripts/UI/TrackSelectionUI.cs              | 76 ++++++++++++----------
+ .../Chinese/SourceHanSansTC-Medium-HQ.asset        |  4 +-
+ ProjectSettings/EditorSettings.asset               |  4 +-
+ design/ux/racing-tech-ui-checklist.md              | 15 ++++-
+ design/ux/racing-tech-ui.md                        | 28 ++++++++
+ docs/memory/current-task-list.md                   | 12 ++++
+ docs/memory/project-overview.md                    | 12 ++++
+ 11 files changed, 169 insertions(+), 44 deletions(-)

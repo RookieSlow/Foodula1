@@ -1,0 +1,44 @@
+{
+  "reviewer": "capture_review",
+  "beforeViewed": [
+    "CN-1280x720-cn-hotpot-base",
+    "US-1280x720-bbq-permanent-heat",
+    "IT-1920x1080-it-chianti",
+    "DE-2560x1440-de-schwarzbrot",
+    "UK-1920x1080-uk-english-breakfast-tea",
+    "JP-2560x1440-jp-torpedo-tempura"
+  ],
+  "afterViewed": [
+    "CN-1920x1080-cn-hotpot-base",
+    "UK-1280x720-uk-scone",
+    "US-2560x1440-us-fries",
+    "DE-1920x1080-de-schwarzbrot",
+    "IT-1280x720-it-chianti",
+    "JP-2560x1440-jp-kanto-oden",
+    "CN-1280x720-speed-selected",
+    "CN-2560x1440-ordinary-heat-diagnostic",
+    "US-1920x1080-bbq-permanent-heat"
+  ],
+  "beforeCount": 6,
+  "afterCount": 9,
+  "beforeRecords": 45,
+  "afterRecords": 45,
+  "overflowsBefore": 0,
+  "overflowsAfter": 0,
+  "parityMismatch": [],
+  "all45EachCompleteSourceMatchClearReopen": true,
+  "truncatedRecords": [
+    0,
+    0
+  ],
+  "verdict": "APPROVED for viewed bounded production effect strip",
+  "geometry": "Reference width901.888,height22.19199,preferredHeight21.72; no wrap/height mutation warranted.",
+  "notes": [
+    "Rich gold title and original effect text complete, graphite/white and1unitseparator replace oldblue.",
+    "Six teams and three sizes plus speed/normalheat diagnostic/real eligibleUSBBQ represented in actual viewed subset.",
+    "1440 images were resized by viewer to2048x1152; no fullresolution pixel audit claim.",
+    "72015reference text about10screenpixels; comfortable readability not accepted."
+  ],
+  "schemaBoundary": "Copied fixture schema includes unused legacy zone/button fields default0/empty. Only selected-effect raw/parsed/char/geometry/truncation/clear/reopen fields are measured here; do not treat legacy counts as deck evidence.",
+  "inputBoundary": "Tricks original MoveKeyboardHighlight, CNice discard; speed selected original refresh. Ordinary heat invokes original privateShow diagnostic because normal selection is illegal. BBQ uses actual eligibleUS tech/position/60nodefixture. No physical OS keys/mouse/GameLoop/storage."
+}

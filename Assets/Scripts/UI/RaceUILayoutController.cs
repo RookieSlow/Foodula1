@@ -75,6 +75,8 @@ public class RaceUILayoutController : MonoBehaviour
             cardHand?.EnsureSelectedCardEffectUI(deckPanel, FindFont(root));
             ApplyReadableTypography(hud, cardHand);
             ApplyTeamGearLayout(hud);
+            ApplyActionButtonTheme(hud, cardHand);
+            RacingTechCardZoneStyle.ApplyLayout(deckPanel, cardHand);
             RacingTechHudShellUI.Attach(root, hud);
             UsesAuthoredLayout = true;
             applied = true;
@@ -142,6 +144,8 @@ public class RaceUILayoutController : MonoBehaviour
         if (hud != null && hud.gameOverPanel != null)
             Dock(hud.gameOverPanel.transform, trackFrame, new Vector2(0.2f, 0.2f), new Vector2(0.8f, 0.8f));
 
+        ApplyActionButtonTheme(hud, cardHand);
+        RacingTechCardZoneStyle.ApplyLayout(deckPanel, cardHand);
         RacingTechHudShellUI.Attach(root, hud);
         applied = true;
     }
@@ -188,15 +192,20 @@ public class RaceUILayoutController : MonoBehaviour
             ModernUIStyle.ApplyButton(hud.gear2Button, ModernUIStyle.AccentCyan);
             ModernUIStyle.ApplyButton(hud.gear3Button, ModernUIStyle.AccentGold);
             ModernUIStyle.ApplyButton(hud.gear4Button, ModernUIStyle.AccentPurple);
-            ModernUIStyle.ApplyButton(hud.confirmGearButton, ModernUIStyle.AccentBlue, true);
-            ModernUIStyle.ApplyButton(hud.driverSkillButton, ModernUIStyle.AccentPurple);
-            ModernUIStyle.ApplyButton(hud.resetButton, ModernUIStyle.AccentGold);
-            ModernUIStyle.ApplyButton(hud.returnToMenuButton, ModernUIStyle.AccentRed);
             ModernUIStyle.ApplyButton(hud.backToMenuButton, ModernUIStyle.AccentRed);
         }
+    }
 
-        if (cardHand != null)
-            ModernUIStyle.ApplyButton(cardHand.playCardsButton, ModernUIStyle.AccentGreen, true);
+    private static void ApplyActionButtonTheme(HUDUI hud, CardHandUI cardHand)
+    {
+        if (hud != null)
+        {
+            RacingTechActionButtonStyle.Apply(hud.confirmGearButton, true);
+            RacingTechActionButtonStyle.Apply(hud.driverSkillButton, false);
+            RacingTechActionButtonStyle.Apply(hud.resetButton, false);
+            RacingTechActionButtonStyle.Apply(hud.returnToMenuButton, false);
+        }
+        if (cardHand != null) RacingTechActionButtonStyle.Apply(cardHand.playCardsButton, true);
     }
 
     private void BuildOperationPanel(HUDUI hud, CardHandUI cardHand, TMP_FontAsset font)

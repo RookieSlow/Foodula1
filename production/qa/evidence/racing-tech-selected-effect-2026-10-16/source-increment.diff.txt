@@ -1,0 +1,23 @@
+diff --git a/production/qa/evidence/racing-tech-selected-effect-2026-10-16/CardHandUI.cs.source-before.txt b/Assets/Scripts/UI/CardHandUI.cs
+index 1e3a82b..84ae5aa 100644
+--- a/production/qa/evidence/racing-tech-selected-effect-2026-10-16/CardHandUI.cs.source-before.txt
++++ b/Assets/Scripts/UI/CardHandUI.cs
+@@ -619,7 +619,10 @@ public class CardHandUI : MonoBehaviour
+     public void EnsureSelectedCardEffectUI(RectTransform deckTablePanel = null, TMP_FontAsset font = null)
+     {
+         if (selectedCardEffectPanel != null && selectedCardEffectText != null)
++        {
++            RacingTechSelectedEffectStyle.Apply(selectedCardEffectPanel, selectedCardEffectText);
+             return;
++        }
+ 
+         if (deckTablePanel == null)
+         {
+@@ -679,6 +682,7 @@ public class CardHandUI : MonoBehaviour
+         selectedCardEffectText.text = string.Empty;
+ 
+         selectedCardEffectPanel = panelObject;
++        RacingTechSelectedEffectStyle.Apply(selectedCardEffectPanel, selectedCardEffectText);
+         selectedCardEffectPanel.SetActive(false);
+     }
+ 

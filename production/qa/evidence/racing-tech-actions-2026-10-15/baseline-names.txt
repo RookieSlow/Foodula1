@@ -1,0 +1,11 @@
+M	Assets/Scripts/Audio/AudioEventNames.cs
+M	Assets/Scripts/Audio/AudioRuntimeRules.cs
+M	Assets/Scripts/Audio/AudioService.cs
+M	Assets/Scripts/Gameplay/RaceEventFX.cs
+M	Assets/Scripts/UI/TrackSelectionUI.cs
+M	Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset
+M	ProjectSettings/EditorSettings.asset
+M	design/ux/racing-tech-ui-checklist.md
+M	design/ux/racing-tech-ui.md
+M	docs/memory/current-task-list.md
+M	docs/memory/project-overview.md

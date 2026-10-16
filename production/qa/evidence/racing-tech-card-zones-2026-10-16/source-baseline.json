@@ -1,0 +1,56 @@
+[
+  {
+    "path": "Assets/Scripts/UI/CardUI.cs",
+    "copy": "CardUI.cs.source-before.txt",
+    "sha256": "B2464DD73BEA8419700F9046C65774F0D4E8DAF95C17D818EEE0EF5395514D70"
+  },
+  {
+    "path": "Assets/Scripts/UI/CardHandUI.cs",
+    "copy": "CardHandUI.cs.source-before.txt",
+    "sha256": "5B58B9A86F8E6884D9FE876386E29B226BE81AD7E934662489D0E2E31F32FF75"
+  },
+  {
+    "path": "Assets/Scripts/UI/CardPilePreviewUI.cs",
+    "copy": "CardPilePreviewUI.cs.source-before.txt",
+    "sha256": "7C8F3572BA46CEF9DBAFEDD232E2B82120A88A24B56275CBC798E013045008DC"
+  },
+  {
+    "path": "Assets/Scripts/UI/RaceUILayoutController.cs",
+    "copy": "RaceUILayoutController.cs.source-before.txt",
+    "sha256": "77F0F946550DEFA5B3D2960F12FC188D32793F20FD76B80E796246E2CF8CCE8F"
+  },
+  {
+    "path": "Assets/Scripts/UI/RaceUIFactory.cs",
+    "copy": "RaceUIFactory.cs.source-before.txt",
+    "sha256": "9447E87C4DA2759919DEF5EE6F80540B56604F047D2C9C1A5BEA3BB23A87E006"
+  },
+  {
+    "path": "Assets/Scripts/Core/GearRequirementFeedbackRules.cs",
+    "copy": "GearRequirementFeedbackRules.cs.source-before.txt",
+    "sha256": "B288D2F0D569557C2ADBBB81860C7F9DAAE4835BE0AC16CB45F1FD433C0EC818"
+  },
+  {
+    "path": "Assets/Prefabs/UI/CardPrefab.prefab",
+    "missing": true
+  },
+  {
+    "path": "design/ux/racing-tech-ui.md",
+    "copy": "racing-tech-ui.md.source-before.txt",
+    "sha256": "A17B336D0682D4FF0FC6B2AC7D9AD9199F10DE6D23717841A54441F1ECDF3086"
+  },
+  {
+    "path": "design/ux/racing-tech-ui-checklist.md",
+    "copy": "racing-tech-ui-checklist.md.source-before.txt",
+    "sha256": "A7DCF6F6B8C85EFBB046500201C84F5B11CB61D933B2F4565B2C554D4B5B69B9"
+  },
+  {
+    "path": "docs/memory/project-overview.md",
+    "copy": "project-overview.md.source-before.txt",
+    "sha256": "90F4DAB3AF577E6D3A82A04353AFA59638D79DB37789261DC73E01846D149A5C"
+  },
+  {
+    "path": "docs/memory/current-task-list.md",
+    "copy": "current-task-list.md.source-before.txt",
+    "sha256": "83723C62EDFCF434E9F102C907E5870282F80D4951D365D698433553A24860DD"
+  }
+]

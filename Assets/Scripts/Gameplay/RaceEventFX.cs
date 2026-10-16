@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Lightweight, asset-free race-event presentation layer.
+/// Lightweight race-event presentation layer with optional recorded audio.
 /// It keeps spectacle out of the rules and movement code while still working
 /// in both the authored RaceCanvas and the procedural fallback HUD.
 /// </summary>
@@ -36,6 +36,7 @@ public sealed class RaceEventFX : MonoBehaviour
     private TMP_FontAsset font;
     private bool initialized;
     private bool effectBusy;
+    private int overtakeAudioToken;
     private bool timeScaleOverrideActive;
 
     private const float GameplayTimeScale = 1f;
@@ -153,24 +154,27 @@ public sealed class RaceEventFX : MonoBehaviour
     /// </summary>
     public IEnumerator PlayOvertake(Transform car, int count, Func<bool> shouldSkip = null)
     {
-        if (!initialized || car == null)
+        if (!initialized || car == null || count <= 0 || !isActiveAndEnabled)
             yield break;
 
         yield return AcquireEffectSlot(shouldSkip);
-        if (ShouldSkip(shouldSkip))
+        if (ShouldSkip(shouldSkip) || !isActiveAndEnabled)
             yield break;
         SetMessage("OVERTAKE!", count > 1 ? $"超车 ×{count} · 领先车手抓住了机会" : "超车成功 · 领先车手抓住了机会", OvertakeColor);
         Vector3 originalScale = car.localScale;
         Quaternion originalRotation = car.rotation;
         BeginSlowMotion(0.28f);
+        int audioToken = 0;
 
         try
         {
+            audioToken = AudioService.BeginOvertake(this, count);
+            overtakeAudioToken = audioToken;
             float elapsed = 0f;
             const float duration = 0.78f;
             while (elapsed < duration)
             {
-                if (ShouldSkip(shouldSkip))
+                if (ShouldSkip(shouldSkip) || !isActiveAndEnabled)
                     yield break;
 
                 elapsed += Time.unscaledDeltaTime;
@@ -184,6 +188,8 @@ public sealed class RaceEventFX : MonoBehaviour
         }
         finally
         {
+            AudioService.EndOvertake(this, audioToken);
+            if (overtakeAudioToken == audioToken) overtakeAudioToken = 0;
             car.localScale = originalScale;
             car.rotation = originalRotation;
             EndSlowMotion();
@@ -443,6 +449,8 @@ public sealed class RaceEventFX : MonoBehaviour
 
     private void OnDisable()
     {
+        AudioService.EndOvertake(this, overtakeAudioToken);
+        overtakeAudioToken = 0;
         EndSlowMotion();
         // Safety net for a coroutine stopped before it could enter its
         // finally block. This project has no other gameplay time-scale owner.
@@ -452,6 +460,8 @@ public sealed class RaceEventFX : MonoBehaviour
 
     private void OnDestroy()
     {
+        AudioService.EndOvertake(this, overtakeAudioToken);
+        overtakeAudioToken = 0;
         EndSlowMotion();
         Time.timeScale = GameplayTimeScale;
     }

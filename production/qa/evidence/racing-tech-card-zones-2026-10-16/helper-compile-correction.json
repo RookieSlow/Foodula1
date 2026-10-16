@@ -1,0 +1,8 @@
+{
+  "stage": "before first successful capture",
+  "initialResult": "Unity compile failed CS1003/CS1002 in new helper string declarations44/47",
+  "cause": "Regex stopped at semicolon inside quoted text, leaving stale sentence tails after replacement.",
+  "fix": "Replaced each entire declaration line in new helper and its staging copy; no production UI modified.",
+  "correctedHelperSha256": "f046ba645d89b7da0e12bd6033aa92d51d18b941913ac827d6d4ece8a1494507",
+  "verifiedAfterFix": "Root fresh compile and Capture(before) completed27screenshots; original compile failure retained in this record."
+}

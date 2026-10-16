@@ -1,0 +1,12 @@
+{
+  "utc": "2026-10-15T11:42:28.6891079Z",
+  "kind": "Actual image review, not manifest-only acceptance",
+  "afterViewed": 36,
+  "beforeIsolatedViewed": 6,
+  "initialBeforeViewed": 3,
+  "matrix": "after all eight actions x3 sizes, synthetic long-copy x3, native hover/pressed/disabled x3",
+  "findings": "No new clipping/occlusion or missing Chinese glyphs. Original action labels/consequence copy retained. Static preview backdrop has no live race data.",
+  "boundary": "1280x720 inherited body font approximately12.7px; full live race/tutorial/career and comfort-scale acceptance unrun",
+  "engine": "Apply only, no Update/event subscriptions; idempotent divider; absolute ColorBlock with white base",
+  "nativeTests": "focused-77-native.json"
+}

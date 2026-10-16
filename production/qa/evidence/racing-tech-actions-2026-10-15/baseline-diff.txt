@@ -1,0 +1,495 @@
+diff --git a/Assets/Scripts/Audio/AudioEventNames.cs b/Assets/Scripts/Audio/AudioEventNames.cs
+index bb9fa9d..c6971ee 100644
+--- a/Assets/Scripts/Audio/AudioEventNames.cs
++++ b/Assets/Scripts/Audio/AudioEventNames.cs
+@@ -16,6 +16,7 @@ public static class AudioEventNames
+     public const string HeatPay = "heat_pay";
+     public const string HeatCool = "heat_cool";
+     public const string CarHop = "car_hop";
++    public const string OvertakePassby = "overtake_passby";
+     public const string SlipstreamTrigger = "slipstream_trigger";
+     public const string SlipstreamMove = "slipstream_move";
+     public const string CornerSafe = "corner_safe";
+diff --git a/Assets/Scripts/Audio/AudioRuntimeRules.cs b/Assets/Scripts/Audio/AudioRuntimeRules.cs
+index df4261b..1b67acf 100644
+--- a/Assets/Scripts/Audio/AudioRuntimeRules.cs
++++ b/Assets/Scripts/Audio/AudioRuntimeRules.cs
+@@ -43,6 +43,8 @@ public static class AudioRuntimeRules
+     {
+         switch (eventName)
+         {
++            case AudioEventNames.OvertakePassby:
++                return 0.12f;
+             case AudioEventNames.CarHop:
+                 return 0.09f;
+             case AudioEventNames.CardDraw:
+diff --git a/Assets/Scripts/Audio/AudioService.cs b/Assets/Scripts/Audio/AudioService.cs
+index 99f1b87..478182d 100644
+--- a/Assets/Scripts/Audio/AudioService.cs
++++ b/Assets/Scripts/Audio/AudioService.cs
+@@ -17,6 +17,7 @@ public sealed class AudioService : MonoBehaviour
+     private AudioSource[] musicSources;
+     private AudioSource sfxSource;
+     private AudioSource uiSource;
++    private OvertakeAudioPresentation overtakePresentation;
+     private AudioSource engineSource;
+     private AudioSource[] engineSources;
+     private MonoBehaviour engineOwner;
+@@ -95,6 +96,7 @@ public sealed class AudioService : MonoBehaviour
+         if (instance != this)
+             return;
+         StopVehicleEngine();
++        StopOvertake();
+         instance = null;
+     }
+ 
+@@ -104,7 +106,16 @@ public sealed class AudioService : MonoBehaviour
+         SceneManager.sceneUnloaded -= OnSceneUnloaded;
+     }
+ 
+-    private void OnDisable() => StopVehicleEngine();
++    private void OnDisable()
++    {
++        StopVehicleEngine();
++        StopOvertake();
++    }
++
++    private void StopOvertake()
++    {
++        if (overtakePresentation != null) overtakePresentation.Stop();
++    }
+ 
+     private void LateUpdate()
+     {
+@@ -141,6 +152,7 @@ public sealed class AudioService : MonoBehaviour
+         instance.sfxSource.volume = sfxVolume;
+         instance.uiSource.volume = sfxVolume;
+         instance.ApplyEngineVolume();
++        if (instance.overtakePresentation != null) instance.overtakePresentation.SetVolume(sfxVolume);
+ 
+         if (instance.musicFade == null && instance.musicSources != null)
+         {
+@@ -159,6 +171,31 @@ public sealed class AudioService : MonoBehaviour
+         instance?.PlayOneShot(eventName, instance.uiSource);
+     }
+ 
++    /// <summary>One recorded cue for a committed overtake presentation, irrespective of car count.</summary>
++    public static int BeginOvertake(MonoBehaviour owner, int count)
++    {
++        if (instance == null || !instance.isActiveAndEnabled || !Application.isPlaying ||
++            count <= 0 || owner == null || !owner.isActiveAndEnabled)
++            return 0;
++        AudioClip clip = instance.LoadClip(AudioRuntimeRules.GetSfxPath(AudioEventNames.OvertakePassby));
++        if (clip == null || !instance.throttle.ShouldPlay(AudioEventNames.OvertakePassby,
++                Time.unscaledTime, AudioRuntimeRules.GetCooldown(AudioEventNames.OvertakePassby)))
++            return 0;
++        if (instance.overtakePresentation == null)
++        {
++            var host = new GameObject("OvertakePassby");
++            host.transform.SetParent(instance.transform, false);
++            instance.overtakePresentation = host.AddComponent<OvertakeAudioPresentation>();
++        }
++        return instance.overtakePresentation.Begin(owner, clip, instance.sfxVolume);
++    }
++
++    public static void EndOvertake(MonoBehaviour owner, int token)
++    {
++        if (instance != null && instance.overtakePresentation != null)
++            instance.overtakePresentation.End(owner, token);
++    }
++
+     public static void BeginVehicleEngine(MonoBehaviour owner, TeamId team, int gear, float completedCells = 0f)
+     {
+         if (instance == null || owner == null || !owner.isActiveAndEnabled)
+@@ -353,6 +390,7 @@ public sealed class AudioService : MonoBehaviour
+             return;
+         }
+         StopVehicleEngine();
++        StopOvertake();
+         PlaySceneMusic(scene.name);
+     }
+ 
+@@ -363,6 +401,7 @@ public sealed class AudioService : MonoBehaviour
+             UnsubscribeSceneEvents();
+             return;
+         }
++        StopOvertake();
+         if (engineOwner == null || engineOwner.gameObject.scene == scene)
+             StopVehicleEngine();
+     }
+diff --git a/Assets/Scripts/Gameplay/RaceEventFX.cs b/Assets/Scripts/Gameplay/RaceEventFX.cs
+index 777b667..113bfdc 100644
+--- a/Assets/Scripts/Gameplay/RaceEventFX.cs
++++ b/Assets/Scripts/Gameplay/RaceEventFX.cs
+@@ -6,7 +6,7 @@ using UnityEngine;
+ using UnityEngine.UI;
+ 
+ /// <summary>
+-/// Lightweight, asset-free race-event presentation layer.
++/// Lightweight race-event presentation layer with optional recorded audio.
+ /// It keeps spectacle out of the rules and movement code while still working
+ /// in both the authored RaceCanvas and the procedural fallback HUD.
+ /// </summary>
+@@ -36,6 +36,7 @@ public sealed class RaceEventFX : MonoBehaviour
+     private TMP_FontAsset font;
+     private bool initialized;
+     private bool effectBusy;
++    private int overtakeAudioToken;
+     private bool timeScaleOverrideActive;
+ 
+     private const float GameplayTimeScale = 1f;
+@@ -153,24 +154,27 @@ public sealed class RaceEventFX : MonoBehaviour
+     /// </summary>
+     public IEnumerator PlayOvertake(Transform car, int count, Func<bool> shouldSkip = null)
+     {
+-        if (!initialized || car == null)
++        if (!initialized || car == null || count <= 0 || !isActiveAndEnabled)
+             yield break;
+ 
+         yield return AcquireEffectSlot(shouldSkip);
+-        if (ShouldSkip(shouldSkip))
++        if (ShouldSkip(shouldSkip) || !isActiveAndEnabled)
+             yield break;
+         SetMessage("OVERTAKE!", count > 1 ? $"超车 ×{count} · 领先车手抓住了机会" : "超车成功 · 领先车手抓住了机会", OvertakeColor);
+         Vector3 originalScale = car.localScale;
+         Quaternion originalRotation = car.rotation;
+         BeginSlowMotion(0.28f);
++        int audioToken = 0;
+ 
+         try
+         {
++            audioToken = AudioService.BeginOvertake(this, count);
++            overtakeAudioToken = audioToken;
+             float elapsed = 0f;
+             const float duration = 0.78f;
+             while (elapsed < duration)
+             {
+-                if (ShouldSkip(shouldSkip))
++                if (ShouldSkip(shouldSkip) || !isActiveAndEnabled)
+                     yield break;
+ 
+                 elapsed += Time.unscaledDeltaTime;
+@@ -184,6 +188,8 @@ public sealed class RaceEventFX : MonoBehaviour
+         }
+         finally
+         {
++            AudioService.EndOvertake(this, audioToken);
++            if (overtakeAudioToken == audioToken) overtakeAudioToken = 0;
+             car.localScale = originalScale;
+             car.rotation = originalRotation;
+             EndSlowMotion();
+@@ -443,6 +449,8 @@ public sealed class RaceEventFX : MonoBehaviour
+ 
+     private void OnDisable()
+     {
++        AudioService.EndOvertake(this, overtakeAudioToken);
++        overtakeAudioToken = 0;
+         EndSlowMotion();
+         // Safety net for a coroutine stopped before it could enter its
+         // finally block. This project has no other gameplay time-scale owner.
+@@ -452,6 +460,8 @@ public sealed class RaceEventFX : MonoBehaviour
+ 
+     private void OnDestroy()
+     {
++        AudioService.EndOvertake(this, overtakeAudioToken);
++        overtakeAudioToken = 0;
+         EndSlowMotion();
+         Time.timeScale = GameplayTimeScale;
+     }
+diff --git a/Assets/Scripts/UI/TrackSelectionUI.cs b/Assets/Scripts/UI/TrackSelectionUI.cs
+index 4c88d67..9d43854 100644
+--- a/Assets/Scripts/UI/TrackSelectionUI.cs
++++ b/Assets/Scripts/UI/TrackSelectionUI.cs
+@@ -22,6 +22,8 @@ public sealed class TrackSelectionUI : MonoBehaviour
+     };
+ 
+     private readonly Dictionary<string, Image> trackCardImages = new Dictionary<string, Image>();
++    private readonly Dictionary<string, Image> selectionEdges = new Dictionary<string, Image>();
++    private readonly Dictionary<string, TMP_Text> actionLabels = new Dictionary<string, TMP_Text>();
+     private Action<string> onTrackSelected;
+     private GameObject overlay;
+     private TMP_Text selectedTrackText;
+@@ -71,7 +73,8 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         overlay = CreateUIObject("TrackSelectionOverlay", transform);
+         StretchToParent(overlay.GetComponent<RectTransform>());
+         Image overlayImage = overlay.AddComponent<Image>();
+-        ModernUIStyle.ApplyOverlay(overlayImage);
++        overlayImage.color = new Color(RacingTechTheme.Graphite.r, RacingTechTheme.Graphite.g, RacingTechTheme.Graphite.b, 0.96f);
++        overlayImage.raycastTarget = true;
+ 
+         GameObject panel = CreateUIObject("TrackSelectionPanel", overlay.transform);
+         RectTransform panelRect = panel.GetComponent<RectTransform>();
+@@ -79,17 +82,19 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         panelRect.pivot = new Vector2(0.5f, 0.5f);
+         panelRect.sizeDelta = new Vector2(1360f, 820f);
+         panel.AddComponent<Image>();
+-        ModernUIStyle.ApplyPanel(panel, true);
++        RacingTechTheme.ApplySurface(panel.GetComponent<Image>());
++        panel.GetComponent<Image>().raycastTarget = true;
++        CreateLine(panel.transform, "HeaderSeparator", new Vector2(0.04f, 0.79f), new Vector2(0.96f, 0.79f), RacingTechTheme.Separator);
+ 
+         CreateText(panel.transform, "Title", MainMenuLabels.QuickRaceTrackTitle, 48f,
+             new Vector2(0f, 335f), new Vector2(900f, 70f), FontStyles.Bold);
+         CreateText(panel.transform, "Hint", "选择一条赛道后立即开始自由赛事", 22f,
+             new Vector2(0f, 285f), new Vector2(900f, 40f), FontStyles.Normal,
+-            new Color(0.62f, 0.72f, 0.84f));
++            RacingTechTheme.Secondary);
+ 
+         selectedTrackText = CreateText(panel.transform, "SelectedTrack", string.Empty, 20f,
+             new Vector2(0f, -320f), new Vector2(900f, 36f), FontStyles.Normal,
+-            new Color(0.45f, 0.82f, 1f));
++            RacingTechTheme.Primary);
+ 
+         GameObject grid = CreateUIObject("TrackGrid", panel.transform);
+         RectTransform gridRect = grid.GetComponent<RectTransform>();
+@@ -123,16 +128,18 @@ public sealed class TrackSelectionUI : MonoBehaviour
+     {
+         GameObject card = CreateUIObject($"Track_{option.TrackId}", parent);
+         Image background = card.AddComponent<Image>();
+-        background.color = TrackColors[index % TrackColors.Length];
++        background.color = RacingTechTheme.Raised;
++        CreateLine(card.transform, "TrackIdentity", new Vector2(0.06f, 0.98f), new Vector2(0.94f, 0.98f), TrackColors[index % TrackColors.Length]);
++        Image edge = CreateLine(card.transform, "SelectionEdge", new Vector2(0f, 0.06f), new Vector2(0f, 0.94f), RacingTechTheme.Actual);
++        edge.rectTransform.offsetMin = Vector2.zero;
++        edge.rectTransform.offsetMax = new Vector2(3f, 0f);
++        edge.gameObject.SetActive(false);
++        selectionEdges[option.TrackId] = edge;
+         trackCardImages[option.TrackId] = background;
+ 
+         Button button = card.AddComponent<Button>();
+         button.targetGraphic = background;
+-        ColorBlock colors = button.colors;
+-        colors.highlightedColor = Color.Lerp(background.color, Color.white, 0.18f);
+-        colors.pressedColor = Color.Lerp(background.color, Color.black, 0.18f);
+-        colors.selectedColor = colors.highlightedColor;
+-        button.colors = colors;
++        RacingTechTheme.ApplyTelemetryButton(button);
+ 
+         TrackSelectionOption capturedOption = option;
+         button.onClick.AddListener(() => SelectTrack(capturedOption.TrackId));
+@@ -141,10 +148,10 @@ public sealed class TrackSelectionUI : MonoBehaviour
+             new Vector2(0f, 26f), new Vector2(260f, 70f), FontStyles.Bold);
+         CreateText(card.transform, "Subtitle", option.Subtitle, 18f,
+             new Vector2(0f, -38f), new Vector2(250f, 42f), FontStyles.Normal,
+-            new Color(0.92f, 0.95f, 1f));
+-        CreateText(card.transform, "Action", "点击开始", 15f,
++            RacingTechTheme.Secondary);
++        actionLabels[option.TrackId] = CreateText(card.transform, "Action", "点击开始", 15f,
+             new Vector2(0f, -76f), new Vector2(220f, 28f), FontStyles.Normal,
+-            new Color(0.78f, 0.86f, 0.96f));
++            RacingTechTheme.Secondary);
+     }
+ 
+     private void SelectTrack(string trackId)
+@@ -164,11 +171,11 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         string resolvedTrackId = TrackSelectionState.ResolveTrackId(string.Empty);
+         foreach (KeyValuePair<string, Image> entry in trackCardImages)
+         {
+-            int optionIndex = FindTrackIndex(entry.Key);
+-            Color baseColor = TrackColors[Mathf.Max(0, optionIndex) % TrackColors.Length];
+-            entry.Value.color = entry.Key == resolvedTrackId
+-                ? Color.Lerp(baseColor, Color.white, 0.22f)
+-                : baseColor;
++            bool isSelected = entry.Key == resolvedTrackId;
++            entry.Value.color = isSelected ? RacingTechTheme.Surface : RacingTechTheme.Raised;
++            selectionEdges[entry.Key].gameObject.SetActive(isSelected);
++            actionLabels[entry.Key].text = isSelected ? "当前选择 · 点击开始" : "点击开始";
++            actionLabels[entry.Key].color = isSelected ? RacingTechTheme.Primary : RacingTechTheme.Secondary;
+         }
+ 
+         TrackSelectionOption selected = FindTrack(resolvedTrackId);
+@@ -178,20 +185,6 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         }
+     }
+ 
+-    private static int FindTrackIndex(string trackId)
+-    {
+-        IReadOnlyList<TrackSelectionOption> tracks = TrackSelectionState.AvailableTracks;
+-        for (int i = 0; i < tracks.Count; i++)
+-        {
+-            if (tracks[i].TrackId == trackId)
+-            {
+-                return i;
+-            }
+-        }
+-
+-        return 0;
+-    }
+-
+     private static TrackSelectionOption FindTrack(string trackId)
+     {
+         IReadOnlyList<TrackSelectionOption> tracks = TrackSelectionState.AvailableTracks;
+@@ -228,7 +221,7 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         text.fontSize = fontSize;
+         text.fontStyle = fontStyle;
+         text.alignment = TextAlignmentOptions.Center;
+-        text.color = color ?? Color.white;
++        text.color = color ?? RacingTechTheme.Primary;
+         text.raycastTarget = false;
+         if (font != null)
+         {
+@@ -257,7 +250,8 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         Image image = buttonObject.AddComponent<Image>();
+         Button button = buttonObject.AddComponent<Button>();
+         button.targetGraphic = image;
+-        ModernUIStyle.ApplyButton(button, color);
++        RacingTechTheme.ApplySurface(image, true);
++        RacingTechTheme.ApplyTelemetryButton(button);
+         ButtonClickAnimation.Attach(button);
+ 
+         TMP_Text buttonText = CreateText(buttonObject.transform, "Label", label, fontSize,
+@@ -267,6 +261,20 @@ public sealed class TrackSelectionUI : MonoBehaviour
+         return button;
+     }
+ 
++    private static Image CreateLine(Transform parent, string name, Vector2 min, Vector2 max, Color tint)
++    {
++        GameObject host = CreateUIObject(name, parent);
++        RectTransform rect = host.GetComponent<RectTransform>();
++        rect.anchorMin = min;
++        rect.anchorMax = max;
++        rect.offsetMin = new Vector2(0f, -1f);
++        rect.offsetMax = Vector2.zero;
++        Image image = host.AddComponent<Image>();
++        image.color = tint;
++        image.raycastTarget = false;
++        return image;
++    }
++
+     private static GameObject CreateUIObject(string objectName, Transform parent)
+     {
+         var gameObject = new GameObject(objectName, typeof(RectTransform));
+diff --git a/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset b/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset
+index ca2f2d6..b9b6726 100644
+--- a/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset	
++++ b/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset	
+@@ -1,3 +1,3 @@
+ version https://git-lfs.github.com/spec/v1
+-oid sha256:138eb727664c34cec3defb833ccd2d527aac13a6296e1e9b1475ea1a900e53ed
+-size 34155550
++oid sha256:f7d82e76d855c4902653063d1fc4adcef16a145086ec6a106100e0b32618846a
++size 34177075
+diff --git a/ProjectSettings/EditorSettings.asset b/ProjectSettings/EditorSettings.asset
+index ce486a2..cfda889 100644
+--- a/ProjectSettings/EditorSettings.asset
++++ b/ProjectSettings/EditorSettings.asset
+@@ -24,8 +24,8 @@ EditorSettings:
+   m_EnableEditorAsyncCPUTextureLoading: 0
+   m_AsyncShaderCompilation: 1
+   m_PrefabModeAllowAutoSave: 1
+-  m_EnterPlayModeOptionsEnabled: 0
+-  m_EnterPlayModeOptions: 3
++  m_EnterPlayModeOptionsEnabled: 1
++  m_EnterPlayModeOptions: 1
+   m_GameObjectNamingDigits: 1
+   m_GameObjectNamingScheme: 0
+   m_AssetNamingUsesSpace: 1
+diff --git a/design/ux/racing-tech-ui-checklist.md b/design/ux/racing-tech-ui-checklist.md
+index ef3bcce..f9c9cde 100644
+--- a/design/ux/racing-tech-ui-checklist.md
++++ b/design/ux/racing-tech-ui-checklist.md
+@@ -47,6 +47,19 @@
+ 
+ 证据：`production/qa/evidence/racing-tech-instruments-2026-10-14/README.md`。本包不声称完整模式或720p舒适可读性完成，剩余页面继续按有限顺序推进。
+ 
++## 用户优先包：地图选择页
++
++- [x] 保存HEAD58656899、41项原有改动和真实页面源码基线；用户原字体/快进设置/旧音频保留。
++- [x] 确认真实目录8条，点击即开始与返回关闭语义；未构造第9赛道或额外确认。
++- [x] 三尺寸改前真实生产入口预览3张已全部查看，8卡可见、0文字溢出；定向MCP completed20/20，非native。
++- [x] 首次30张全部查看；最终39张/0溢出，重审24张（9原生悬停/按下/禁用+三尺寸默认/GP/勒芒/北环/关闭），无新增裁切；closed active卡/标签0，不冒充主菜单恢复。
++- [x] 最终原生定向33/33，失败/跳过/不确定0，含原生点击/关闭/重开/禁用及有效文字对比检查。
++- [x] 原生交互/生命周期及组合最终全量2949/2949，失败/跳过/不确定0；中断轮次1094不是通过，未冒称地图2945已完成。
++- [x] MainMenu干净/idle/ready/Free License可用；Console仅缺失赛道测试预期error，无warning或新增运行错误。
++- [x] 最终哈希、许可与两份连续性同步；41原文件SHA不变，剩余页面/完整模式边界保留。
++
++证据：`production/qa/evidence/racing-tech-track-selection-2026-10-15/README.md`。关闭夹具为空独立宿主，不冒称完整主菜单画面。
++
+ ## 有限迁移顺序与现有屏幕
+ 
+ | 顺序 | 现有界面 / 责任脚本 | 接入 | 实际视觉验收 |
+@@ -60,7 +73,7 @@
+ | 3 | 明细、确认、维修区、车道弹窗：HUDUI 现有构造入口 | [ ] | [ ] |
+ | 4 | 主菜单：MainMenuUI | [ ] | [ ] |
+ | 4 | 车手/名单：DriverSelectionUI / FreeRaceRosterUI | [ ] | [ ] |
+-| 4 | 赛道：TrackSelectionUI | [ ] | [ ] |
++| 4 | 赛道：TrackSelectionUI | [x] 用户优先接入 | [x] 三尺寸受控39状态图；完整开赛模式待验 |
+ | 5 | 设置/百科：GameSettingsUI / GameEncyclopediaUI | [ ] | [ ] |
+ | 5 | 科技/生涯科技：TechTreeUI / CareerTechTreeUI | [ ] | [ ] |
+ | 5 | 生涯：CareerModeUI / CareerMenuPresentation | [ ] | [ ] |
+diff --git a/design/ux/racing-tech-ui.md b/design/ux/racing-tech-ui.md
+index 8ad2b7c..ffd474e 100644
+--- a/design/ux/racing-tech-ui.md
++++ b/design/ux/racing-tech-ui.md
+@@ -182,3 +182,31 @@ UX 规范审查：**APPROVED（仅第三包有界实现）**，设计阻塞 0；
+ 要求本轮实际验证：六队 × 1920×1080/2560×1440，另 1280×720 压力检查；正常/高温/critical/预计/预计关闭、当前与待选不同/锁定/禁用；CN 双模式、DE/JP 升降与 US 实际拖动/释放及原预估刷新。检查文字溢出/遮挡、实际/预计几何区分、装饰无射线与命中不退化；静态危险帧前后透明度相同；重复初始化不累积。已有小字号舒适可读性、完整自由赛/教程/生涯视觉与未迁移界面继续独立保留，不由定向测试替代。
+ 
+ 已复核 visual-style 第 301–565 行：旧过热闪烁由本任务明确静态化；旧数字字体候选不要求更换当前合适中文字体；比赛统一标准 UI 语义色与六队几何身份兼容。独立艺术/HUD/可访问性等级与治理规范缺失仍只记录，不创建占位。来源核验与失败边界见许可清单第三包记录。
++
++## 15. 第四包：自由赛事赛道选择页
++
++日期：2026-10-15。用户指出地图选择仍是旧 UI，本包优先迁移 `TrackSelectionUI` 这一现有页面。保持其完整流程、目录、中文字体及按钮事件；仅原创 uGUI 几何和已有主题 token，不增加缩略图或外部资源，也不改其他菜单。
++
++### 15.1 原流程与有界设计
++
++现有流程为自由赛事阵容确认 → 赛道选择覆盖层 → **点击赛道卡立即开始比赛**。`SelectTrack` 先调用 `TrackSelectionState.TrySelect`，成功后刷新选择并调用原 `onTrackSelected(trackId)`。没有独立“确认开赛”步骤，本包不新增它；保留“选择一条赛道后立即开始自由赛事”和“点击开始”的清晰行动说明。返回只调用原 Hide、不开始比赛、不清空阵容或已选赛道；Show 仍刷新并置于顶层。原覆盖层互斥由现有菜单入口管理，不改此规则。
++
++`TrackSelectionState.AvailableTracks` 与目录原顺序提供八条官方赛道，`fallback_42` 不进入菜单。标题、DisplayName、Subtitle、当前选择完整摘要保持；不重新编写赛道数据/圈数/天气。默认赛道解析继续会话选择 → 合法配置回退 → 目录首项的原规则，UI 原调用方式保持，不因换肤新增选择、存档或 GameConfigSO 写入。
++
++### 15.2 方案与视觉规格
++
++方案比较：全页重排或增加图片会扩大布局/加载影响；只替换彩底不能明确当前项。本包选择**保留四列两行结构的平面卡片**，石墨层级结合非颜色的当前项标记。覆盖层 Graphite、面板 Surface、普通卡 Raised；主标题与中文赛道名 Primary，副标题/说明 Secondary，分组只用细分隔线，去掉全卡多色底、粗 Outline、装饰 Sprite 和过量阴影。可沿用局部细边强调，不引入队徽或官方品牌图形。
++
++当前赛道以细青边加卡内“当前选择”文字/标记表达，保留底部完整“当前选择：名称　副标题”摘要。持续当前项由解析后的 trackId 决定，必须和 Button 的悬停/键盘焦点 selected 状态分开。悬停使用轻微提亮、按下使用克制深色填；白字在所有可用状态目标至少 4.5:1。若使用有色填则用既有深蓝 #174C63 配 Primary（8.61:1），亮青只用于细边。禁用不响应原点击回调，仍可读，不能仅靠灰色识别；本包不新增赛道锁定条件，禁用只呈现既有 Button.interactable 状态。
++
++### 15.3 布局与输入边界
++
++保持原 4×2 网格、标题/提示、底部摘要与固定返回位置，先按真实 CanvasScaler 与 Canvas 坐标验证。1360×820 为参考画布单位；1920×1080 的参考比例缩到 1280×720 不等于超出视口，不能用 raw 像素比较强行引入滚动或重排。本包默认不增加 ScrollRect。若真实截图/文字几何证明裁切，先局部调整现有边距、文本换行/容器或安全缩放，记录实际改变；不得通过极小字、删短中文、隐藏部分赛道来通过。
++
++既有鼠标点击和返回按钮路径保持；不新增手柄/键盘导航或新确认弹窗。标题、细线和选择标记 raycastTarget=false；覆盖层继续阻挡底层菜单，卡片的整块命中区域保持，不让装饰拦截点击。保持现有动效设置/按压反馈，不新增闪烁或播放循环。重复 Initialize/Show/Hide 不累积卡片、标记、监听器或资源加载。
++
++### 15.4 设计审查与实际验收要求
++
++UX 规范审查 **APPROVED（仅 TrackSelectionUI 有界迁移）**，设计阻塞 0；视觉规范审查 **APPROVED（石墨/白字/细分隔/非颜色当前项）**。已对照现有选择源码、交互模式、free-race 流程与 tracks 当前八图清单；旧艺术规范中缩略图是已有背景派生方向，本包未引入缩略图，不能声称该项美术制作完成。缺失规范继续仅记录。
++
++本轮须实际获取 1920×1080、2560×1440 与 1280×720 改前/后页面截图并查看：八条卡片、最长中文名称/副标题与数字、当前项、悬停/按下/禁用、底部摘要与返回无裁切遮挡。交互验证原八条 trackId/顺序、点击一次只回调一次且传原 ID、未知 ID 不触发、关闭不启动/不改原选择、重新打开显示当前项、覆盖层不穿透、字体引用及默认回退保持。若 Unity 正在用户播放，等待明确允许后才进行脚本导入/测试，不中断用户。设计 gate 不代替实际运行、测试或整套 UI 完成。
+diff --git a/docs/memory/current-task-list.md b/docs/memory/current-task-list.md
+index b88586b..e9cd6d2 100644
+--- a/docs/memory/current-task-list.md
++++ b/docs/memory/current-task-list.md
+@@ -1376,3 +1376,15 @@ maintained source for current work.
+ - 用户随后另行授权将12个换挡成品替换为可公开分发的CC0录音版本；旧含Sonniss文件保留本地、不随本次提交散发，独立试听WAV亦排除。该独立音频整改的最终回归与提交结果由根任务另记，不能用上述UI阶段全量代替。全部UI升级尚未完成；下一有限包仍为徽章/卡牌/操作/弹窗，不重复扩展已完成项。
+ 
+ 第三包最终补记（2026-10-15）：用户另行授权的CC0换挡整改已接入12个新资源名，旧12份WAV/meta及3份独立试听、12份暂存重复、字体缓存和EditorSettings均保留本地并排除提交。许可原文/来源与成品哈希归档；音频原生定向41/41，整改后最终原生RunFinished2932/2932，失败/跳过/不确定0（UTC2026-10-14T16:40:05.768Z）。MainMenu干净、未播放/编译/导入，resource idle/ready；Console仅no_such_track缺失赛道测试预期error，无warning。此时为待提交索引，不冒称已commit/push。最终证据见第三包README/final-hash-manifest.json；720p小字、完整模式视觉及剩余页面仍待后续有限包。
++
++## 2026-10-15 用户优先地图选择页与追加超车录音（最终组合回归中）
++
++- 用户明确优先地图选择页，现有TrackSelectionUI石墨面板/白字/细分隔接入；保留8条正式赛道ID/顺序/中文与国家美食副题、点击即启动原回调及返回关闭，不新增第9赛道或二次确认。当前选择有左细线+文字+底部摘要；不是EventSystem焦点标记。新增装饰不接收射线，原网格/字体/生命周期保持。
++- 真实生产Initialize/Show/原按钮入口隔离预览：三尺寸改前3张全部实际看，改后最终39张/0文字溢出，最终重审24张（9原生Selectable态+三尺寸默认/GP/勒芒/北环/关闭15张）；此前30张均已查看但不混报重拍数量。关闭画面是空独立宿主，非主菜单恢复；720p动作字约10px紧凑、全模式/其余页面仍待验。地图原生最终定向33/33，失败/跳过/不确定0。
++- 用户追加汽车掠过实录超车声音，沿原RaceEventFX实际超车表现槽启动单个0.760s CC0声音，不改变超车判定。专用声源master×SFX×0.85、pitch1、不叠声，跳过/禁用/销毁/场景退出/token保护；视觉原超车信息保持。经只读审查补自然完成与SFX0边界后，音频6组原生定向40/40通过，失败/跳过/不确定0；主观耳机/扬声器、完整赛事听验不能由数值/测试替代。
++- 地图首次全量由用户取消；1094项已完成均通过但原生Failed(Child)含Cancelled子项，不记全量通过。当前组合最终2949项正在运行，尚未以预期总数冒称结果。证据分别 production/qa/evidence/racing-tech-track-selection-2026-10-15/ 与超车音效包；最终RunFinished及Unity状态待后续补记。
++- 前包HEAD58656899已由根任务提交并推送，旧“此时待提交”属于当时快照而非当前Git状态。本轮仍为未提交工作；41项原有字体/快进设置/旧音频与暂存重复保留，不自动commit/push。用户本轮地图优先顺序覆盖之前常规迁移顺序；整个UI升级尚未完成。
++
++地图证据补充：加强中间轮次focused-attempt-2-native.json曾32/33通过、1失败，已保留，最终原生33/33复跑为权威；未描述成首次通过。
++
++地图/超车录音最终补记（2026-10-15）：组合原生RunFinished2949/2949全部通过，失败/跳过/不确定0，结束UTC2026-10-15T06:33:14.3194297Z，512.8688699秒；权威证据 production/qa/evidence/overtake-audio-2026-10-15/full-2949-native.json。此结果替代“组合回归中”临时状态，不把用户取消的1094轮次或地图预期2945误记通过。地图33/33、音频加强40/40仍按各自定向分别记录。最终MainMenu干净、未播放/编译/导入，resource idle/ready与Free License可用；Console仅1条no_such_track缺失赛道测试预期error（TrackDataLoaderTest:192），无warning/新增运行错误。地图证据README、验收清单与最终哈希已同步；41项原有文件全部存在且SHA与本包基线一致，HEAD仍58656899，本轮未commit/push。地图本包完成；完整开赛/教程/生涯视觉、720p舒适大字、其余页面和完整赛事主观听验仍保留未验收边界，不声称整个UI升级完成。
+diff --git a/docs/memory/project-overview.md b/docs/memory/project-overview.md
+index 5fb1ad5..888fbef 100644
+--- a/docs/memory/project-overview.md
++++ b/docs/memory/project-overview.md
+@@ -536,3 +536,15 @@ See [game-mechanics.md](game-mechanics.md) for current gameplay rules and
+ - 用户随后另行授权将12个换挡成品替换为可公开分发的CC0录音版本；旧含Sonniss文件保留本地、不随本次提交散发，独立试听WAV亦排除。该独立音频整改的最终回归与提交结果由根任务另记，不能用上述UI阶段全量代替。全部UI升级尚未完成；下一有限包仍为徽章/卡牌/操作/弹窗，不重复扩展已完成项。
+ 
+ 第三包最终补记（2026-10-15）：用户另行授权的CC0换挡整改已接入12个新资源名，旧12份WAV/meta及3份独立试听、12份暂存重复、字体缓存和EditorSettings均保留本地并排除提交。许可原文/来源与成品哈希归档；音频原生定向41/41，整改后最终原生RunFinished2932/2932，失败/跳过/不确定0（UTC2026-10-14T16:40:05.768Z）。MainMenu干净、未播放/编译/导入，resource idle/ready；Console仅no_such_track缺失赛道测试预期error，无warning。此时为待提交索引，不冒称已commit/push。最终证据见第三包README/final-hash-manifest.json；720p小字、完整模式视觉及剩余页面仍待后续有限包。
++
++## 2026-10-15 用户优先地图选择页与追加超车录音（最终组合回归中）
++
++- 用户明确优先地图选择页，现有TrackSelectionUI石墨面板/白字/细分隔接入；保留8条正式赛道ID/顺序/中文与国家美食副题、点击即启动原回调及返回关闭，不新增第9赛道或二次确认。当前选择有左细线+文字+底部摘要；不是EventSystem焦点标记。新增装饰不接收射线，原网格/字体/生命周期保持。
++- 真实生产Initialize/Show/原按钮入口隔离预览：三尺寸改前3张全部实际看，改后最终39张/0文字溢出，最终重审24张（9原生Selectable态+三尺寸默认/GP/勒芒/北环/关闭15张）；此前30张均已查看但不混报重拍数量。关闭画面是空独立宿主，非主菜单恢复；720p动作字约10px紧凑、全模式/其余页面仍待验。地图原生最终定向33/33，失败/跳过/不确定0。
++- 用户追加汽车掠过实录超车声音，沿原RaceEventFX实际超车表现槽启动单个0.760s CC0声音，不改变超车判定。专用声源master×SFX×0.85、pitch1、不叠声，跳过/禁用/销毁/场景退出/token保护；视觉原超车信息保持。经只读审查补自然完成与SFX0边界后，音频6组原生定向40/40通过，失败/跳过/不确定0；主观耳机/扬声器、完整赛事听验不能由数值/测试替代。
++- 地图首次全量由用户取消；1094项已完成均通过但原生Failed(Child)含Cancelled子项，不记全量通过。当前组合最终2949项正在运行，尚未以预期总数冒称结果。证据分别 production/qa/evidence/racing-tech-track-selection-2026-10-15/ 与超车音效包；最终RunFinished及Unity状态待后续补记。
++- 前包HEAD58656899已由根任务提交并推送，旧“此时待提交”属于当时快照而非当前Git状态。本轮仍为未提交工作；41项原有字体/快进设置/旧音频与暂存重复保留，不自动commit/push。用户本轮地图优先顺序覆盖之前常规迁移顺序；整个UI升级尚未完成。
++
++地图证据补充：加强中间轮次focused-attempt-2-native.json曾32/33通过、1失败，已保留，最终原生33/33复跑为权威；未描述成首次通过。
++
++地图/超车录音最终补记（2026-10-15）：组合原生RunFinished2949/2949全部通过，失败/跳过/不确定0，结束UTC2026-10-15T06:33:14.3194297Z，512.8688699秒；权威证据 production/qa/evidence/overtake-audio-2026-10-15/full-2949-native.json。此结果替代“组合回归中”临时状态，不把用户取消的1094轮次或地图预期2945误记通过。地图33/33、音频加强40/40仍按各自定向分别记录。最终MainMenu干净、未播放/编译/导入，resource idle/ready与Free License可用；Console仅1条no_such_track缺失赛道测试预期error（TrackDataLoaderTest:192），无warning/新增运行错误。地图证据README、验收清单与最终哈希已同步；41项原有文件全部存在且SHA与本包基线一致，HEAD仍58656899，本轮未commit/push。地图本包完成；完整开赛/教程/生涯视觉、720p舒适大字、其余页面和完整赛事主观听验仍保留未验收边界，不声称整个UI升级完成。

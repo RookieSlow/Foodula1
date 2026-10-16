@@ -17,6 +17,7 @@ public sealed class AudioService : MonoBehaviour
     private AudioSource[] musicSources;
     private AudioSource sfxSource;
     private AudioSource uiSource;
+    private OvertakeAudioPresentation overtakePresentation;
     private AudioSource engineSource;
     private AudioSource[] engineSources;
     private MonoBehaviour engineOwner;
@@ -95,6 +96,7 @@ public sealed class AudioService : MonoBehaviour
         if (instance != this)
             return;
         StopVehicleEngine();
+        StopOvertake();
         instance = null;
     }
 
@@ -104,7 +106,16 @@ public sealed class AudioService : MonoBehaviour
         SceneManager.sceneUnloaded -= OnSceneUnloaded;
     }
 
-    private void OnDisable() => StopVehicleEngine();
+    private void OnDisable()
+    {
+        StopVehicleEngine();
+        StopOvertake();
+    }
+
+    private void StopOvertake()
+    {
+        if (overtakePresentation != null) overtakePresentation.Stop();
+    }
 
     private void LateUpdate()
     {
@@ -141,6 +152,7 @@ public sealed class AudioService : MonoBehaviour
         instance.sfxSource.volume = sfxVolume;
         instance.uiSource.volume = sfxVolume;
         instance.ApplyEngineVolume();
+        if (instance.overtakePresentation != null) instance.overtakePresentation.SetVolume(sfxVolume);
 
         if (instance.musicFade == null && instance.musicSources != null)
         {
@@ -157,6 +169,31 @@ public sealed class AudioService : MonoBehaviour
     public static void PlayUi(string eventName)
     {
         instance?.PlayOneShot(eventName, instance.uiSource);
+    }
+
+    /// <summary>One recorded cue for a committed overtake presentation, irrespective of car count.</summary>
+    public static int BeginOvertake(MonoBehaviour owner, int count)
+    {
+        if (instance == null || !instance.isActiveAndEnabled || !Application.isPlaying ||
+            count <= 0 || owner == null || !owner.isActiveAndEnabled)
+            return 0;
+        AudioClip clip = instance.LoadClip(AudioRuntimeRules.GetSfxPath(AudioEventNames.OvertakePassby));
+        if (clip == null || !instance.throttle.ShouldPlay(AudioEventNames.OvertakePassby,
+                Time.unscaledTime, AudioRuntimeRules.GetCooldown(AudioEventNames.OvertakePassby)))
+            return 0;
+        if (instance.overtakePresentation == null)
+        {
+            var host = new GameObject("OvertakePassby");
+            host.transform.SetParent(instance.transform, false);
+            instance.overtakePresentation = host.AddComponent<OvertakeAudioPresentation>();
+        }
+        return instance.overtakePresentation.Begin(owner, clip, instance.sfxVolume);
+    }
+
+    public static void EndOvertake(MonoBehaviour owner, int token)
+    {
+        if (instance != null && instance.overtakePresentation != null)
+            instance.overtakePresentation.End(owner, token);
     }
 
     public static void BeginVehicleEngine(MonoBehaviour owner, TeamId team, int gear, float completedCells = 0f)
@@ -353,6 +390,7 @@ public sealed class AudioService : MonoBehaviour
             return;
         }
         StopVehicleEngine();
+        StopOvertake();
         PlaySceneMusic(scene.name);
     }
 
@@ -363,6 +401,7 @@ public sealed class AudioService : MonoBehaviour
             UnsubscribeSceneEvents();
             return;
         }
+        StopOvertake();
         if (engineOwner == null || engineOwner.gameObject.scene == scene)
             StopVehicleEngine();
     }

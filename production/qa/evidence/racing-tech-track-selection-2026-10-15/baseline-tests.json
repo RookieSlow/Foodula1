@@ -1,0 +1,11 @@
+{
+  "kind": "Root-reported MCP completed result; native RunFinished not armed",
+  "job": "c645f64d976c49eca6d9d482eaa42b9d",
+  "total": 20,
+  "passed": 20,
+  "failed": 0,
+  "skipped": 0,
+  "durationSeconds": 1.0218658,
+  "phase": "Before production TrackSelectionUI visual changes",
+  "provenance": "Root message after fresh helper compilation and before3 capture"
+}

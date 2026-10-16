@@ -22,6 +22,8 @@ public sealed class TrackSelectionUI : MonoBehaviour
     };
 
     private readonly Dictionary<string, Image> trackCardImages = new Dictionary<string, Image>();
+    private readonly Dictionary<string, Image> selectionEdges = new Dictionary<string, Image>();
+    private readonly Dictionary<string, TMP_Text> actionLabels = new Dictionary<string, TMP_Text>();
     private Action<string> onTrackSelected;
     private GameObject overlay;
     private TMP_Text selectedTrackText;
@@ -71,7 +73,8 @@ public sealed class TrackSelectionUI : MonoBehaviour
         overlay = CreateUIObject("TrackSelectionOverlay", transform);
         StretchToParent(overlay.GetComponent<RectTransform>());
         Image overlayImage = overlay.AddComponent<Image>();
-        ModernUIStyle.ApplyOverlay(overlayImage);
+        overlayImage.color = new Color(RacingTechTheme.Graphite.r, RacingTechTheme.Graphite.g, RacingTechTheme.Graphite.b, 0.96f);
+        overlayImage.raycastTarget = true;
 
         GameObject panel = CreateUIObject("TrackSelectionPanel", overlay.transform);
         RectTransform panelRect = panel.GetComponent<RectTransform>();
@@ -79,17 +82,19 @@ public sealed class TrackSelectionUI : MonoBehaviour
         panelRect.pivot = new Vector2(0.5f, 0.5f);
         panelRect.sizeDelta = new Vector2(1360f, 820f);
         panel.AddComponent<Image>();
-        ModernUIStyle.ApplyPanel(panel, true);
+        RacingTechTheme.ApplySurface(panel.GetComponent<Image>());
+        panel.GetComponent<Image>().raycastTarget = true;
+        CreateLine(panel.transform, "HeaderSeparator", new Vector2(0.04f, 0.79f), new Vector2(0.96f, 0.79f), RacingTechTheme.Separator);
 
         CreateText(panel.transform, "Title", MainMenuLabels.QuickRaceTrackTitle, 48f,
             new Vector2(0f, 335f), new Vector2(900f, 70f), FontStyles.Bold);
         CreateText(panel.transform, "Hint", "选择一条赛道后立即开始自由赛事", 22f,
             new Vector2(0f, 285f), new Vector2(900f, 40f), FontStyles.Normal,
-            new Color(0.62f, 0.72f, 0.84f));
+            RacingTechTheme.Secondary);
 
         selectedTrackText = CreateText(panel.transform, "SelectedTrack", string.Empty, 20f,
             new Vector2(0f, -320f), new Vector2(900f, 36f), FontStyles.Normal,
-            new Color(0.45f, 0.82f, 1f));
+            RacingTechTheme.Primary);
 
         GameObject grid = CreateUIObject("TrackGrid", panel.transform);
         RectTransform gridRect = grid.GetComponent<RectTransform>();
@@ -123,16 +128,18 @@ public sealed class TrackSelectionUI : MonoBehaviour
     {
         GameObject card = CreateUIObject($"Track_{option.TrackId}", parent);
         Image background = card.AddComponent<Image>();
-        background.color = TrackColors[index % TrackColors.Length];
+        background.color = RacingTechTheme.Raised;
+        CreateLine(card.transform, "TrackIdentity", new Vector2(0.06f, 0.98f), new Vector2(0.94f, 0.98f), TrackColors[index % TrackColors.Length]);
+        Image edge = CreateLine(card.transform, "SelectionEdge", new Vector2(0f, 0.06f), new Vector2(0f, 0.94f), RacingTechTheme.Actual);
+        edge.rectTransform.offsetMin = Vector2.zero;
+        edge.rectTransform.offsetMax = new Vector2(3f, 0f);
+        edge.gameObject.SetActive(false);
+        selectionEdges[option.TrackId] = edge;
         trackCardImages[option.TrackId] = background;
 
         Button button = card.AddComponent<Button>();
         button.targetGraphic = background;
-        ColorBlock colors = button.colors;
-        colors.highlightedColor = Color.Lerp(background.color, Color.white, 0.18f);
-        colors.pressedColor = Color.Lerp(background.color, Color.black, 0.18f);
-        colors.selectedColor = colors.highlightedColor;
-        button.colors = colors;
+        RacingTechTheme.ApplyTelemetryButton(button);
 
         TrackSelectionOption capturedOption = option;
         button.onClick.AddListener(() => SelectTrack(capturedOption.TrackId));
@@ -141,10 +148,10 @@ public sealed class TrackSelectionUI : MonoBehaviour
             new Vector2(0f, 26f), new Vector2(260f, 70f), FontStyles.Bold);
         CreateText(card.transform, "Subtitle", option.Subtitle, 18f,
             new Vector2(0f, -38f), new Vector2(250f, 42f), FontStyles.Normal,
-            new Color(0.92f, 0.95f, 1f));
-        CreateText(card.transform, "Action", "点击开始", 15f,
+            RacingTechTheme.Secondary);
+        actionLabels[option.TrackId] = CreateText(card.transform, "Action", "点击开始", 15f,
             new Vector2(0f, -76f), new Vector2(220f, 28f), FontStyles.Normal,
-            new Color(0.78f, 0.86f, 0.96f));
+            RacingTechTheme.Secondary);
     }
 
     private void SelectTrack(string trackId)
@@ -164,11 +171,11 @@ public sealed class TrackSelectionUI : MonoBehaviour
         string resolvedTrackId = TrackSelectionState.ResolveTrackId(string.Empty);
         foreach (KeyValuePair<string, Image> entry in trackCardImages)
         {
-            int optionIndex = FindTrackIndex(entry.Key);
-            Color baseColor = TrackColors[Mathf.Max(0, optionIndex) % TrackColors.Length];
-            entry.Value.color = entry.Key == resolvedTrackId
-                ? Color.Lerp(baseColor, Color.white, 0.22f)
-                : baseColor;
+            bool isSelected = entry.Key == resolvedTrackId;
+            entry.Value.color = isSelected ? RacingTechTheme.Surface : RacingTechTheme.Raised;
+            selectionEdges[entry.Key].gameObject.SetActive(isSelected);
+            actionLabels[entry.Key].text = isSelected ? "当前选择 · 点击开始" : "点击开始";
+            actionLabels[entry.Key].color = isSelected ? RacingTechTheme.Primary : RacingTechTheme.Secondary;
         }
 
         TrackSelectionOption selected = FindTrack(resolvedTrackId);
@@ -176,20 +183,6 @@ public sealed class TrackSelectionUI : MonoBehaviour
         {
             selectedTrackText.text = $"当前选择：{selected.DisplayName}　{selected.Subtitle}";
         }
-    }
-
-    private static int FindTrackIndex(string trackId)
-    {
-        IReadOnlyList<TrackSelectionOption> tracks = TrackSelectionState.AvailableTracks;
-        for (int i = 0; i < tracks.Count; i++)
-        {
-            if (tracks[i].TrackId == trackId)
-            {
-                return i;
-            }
-        }
-
-        return 0;
     }
 
     private static TrackSelectionOption FindTrack(string trackId)
@@ -228,7 +221,7 @@ public sealed class TrackSelectionUI : MonoBehaviour
         text.fontSize = fontSize;
         text.fontStyle = fontStyle;
         text.alignment = TextAlignmentOptions.Center;
-        text.color = color ?? Color.white;
+        text.color = color ?? RacingTechTheme.Primary;
         text.raycastTarget = false;
         if (font != null)
         {
@@ -257,7 +250,8 @@ public sealed class TrackSelectionUI : MonoBehaviour
         Image image = buttonObject.AddComponent<Image>();
         Button button = buttonObject.AddComponent<Button>();
         button.targetGraphic = image;
-        ModernUIStyle.ApplyButton(button, color);
+        RacingTechTheme.ApplySurface(image, true);
+        RacingTechTheme.ApplyTelemetryButton(button);
         ButtonClickAnimation.Attach(button);
 
         TMP_Text buttonText = CreateText(buttonObject.transform, "Label", label, fontSize,
@@ -265,6 +259,20 @@ public sealed class TrackSelectionUI : MonoBehaviour
         StretchToParent(buttonText.rectTransform);
 
         return button;
+    }
+
+    private static Image CreateLine(Transform parent, string name, Vector2 min, Vector2 max, Color tint)
+    {
+        GameObject host = CreateUIObject(name, parent);
+        RectTransform rect = host.GetComponent<RectTransform>();
+        rect.anchorMin = min;
+        rect.anchorMax = max;
+        rect.offsetMin = new Vector2(0f, -1f);
+        rect.offsetMax = Vector2.zero;
+        Image image = host.AddComponent<Image>();
+        image.color = tint;
+        image.raycastTarget = false;
+        return image;
     }
 
     private static GameObject CreateUIObject(string objectName, Transform parent)

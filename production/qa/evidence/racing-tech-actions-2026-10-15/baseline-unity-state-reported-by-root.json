@@ -1,0 +1,26 @@
+{
+  "source": "Root actual Unity read, reported to capture agent before source changes",
+  "scene": "MainMenu",
+  "isDirty": false,
+  "isPlaying": false,
+  "isCompiling": false,
+  "isUpdating": false,
+  "ready": true,
+  "resourceIdle": true,
+  "hasFreeLicense": true,
+  "baselineConsole": [
+    {
+      "message": "no_such_track",
+      "type": "Error",
+      "classification": "Expected existing missing-track negative test"
+    },
+    {
+      "message": "On demand scheduler protocol error",
+      "classification": "Preexisting; source unknown; do not attribute to UI or plugin",
+      "file": "",
+      "type": "Assert",
+      "stack": null
+    }
+  ],
+  "consoleCleared": false
+}

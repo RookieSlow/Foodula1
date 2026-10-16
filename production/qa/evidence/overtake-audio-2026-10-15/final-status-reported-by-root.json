@@ -1,0 +1,21 @@
+{
+  "source": "Parent root final Unity verification reported to documentation subagent",
+  "reportedUtc": "2026-10-15T06:34:19.8972311Z",
+  "nativeFinishedUtc": "2026-10-15T06:33:14.3194297Z",
+  "nativeDurationSeconds": 512.8688699,
+  "scene": "MainMenu",
+  "isDirty": false,
+  "isPlaying": false,
+  "isCompiling": false,
+  "isUpdating": false,
+  "ready": true,
+  "state": "idle",
+  "hasFreeLicense": true,
+  "console": {
+    "errorCount": 1,
+    "warningCount": 0,
+    "expectedError": "no_such_track missing configuration; TrackDataLoaderTest",
+    "newRuntimeErrors": 0
+  },
+  "limits": "No independent Unity query by this documentation subagent; no subjective listening or complete-race mix signoff"
+}

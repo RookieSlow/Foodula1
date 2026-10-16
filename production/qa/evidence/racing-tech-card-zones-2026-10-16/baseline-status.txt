@@ -1,0 +1,87 @@
+ M Assets/Scripts/Audio/AudioEventNames.cs
+ M Assets/Scripts/Audio/AudioRuntimeRules.cs
+ M Assets/Scripts/Audio/AudioService.cs
+ M Assets/Scripts/Gameplay/RaceEventFX.cs
+ M Assets/Scripts/UI/HUDUI.cs
+ M Assets/Scripts/UI/RaceUILayoutController.cs
+ M Assets/Scripts/UI/TrackSelectionUI.cs
+ M "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset"
+ M ProjectSettings/EditorSettings.asset
+ M design/ux/racing-tech-ui-checklist.md
+ M design/ux/racing-tech-ui.md
+ M docs/memory/current-task-list.md
+ M docs/memory/project-overview.md
+?? Assets/Resources/Audio/SFX/overtake_passby.wav
+?? Assets/Resources/Audio/SFX/overtake_passby.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_cn_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_cn_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_cn_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_cn_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_de_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_de_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_de_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_de_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_it_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_it_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_it_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_it_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_jp_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_jp_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_jp_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_jp_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_uk_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_uk_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_uk_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_uk_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_us_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_us_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_us_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_us_up.wav.meta
+?? Assets/Scripts/Audio/OvertakeAudioPresentation.cs
+?? Assets/Scripts/Audio/OvertakeAudioPresentation.cs.meta
+?? Assets/Scripts/Editor/RacingTechConfirmationCapture.cs
+?? Assets/Scripts/Editor/RacingTechConfirmationCapture.cs.meta
+?? Assets/Scripts/Editor/RacingTechPrimaryActionsCapture.cs
+?? Assets/Scripts/Editor/RacingTechPrimaryActionsCapture.cs.meta
+?? Assets/Scripts/Editor/RacingTechTrackSelectionCapture.cs
+?? Assets/Scripts/Editor/RacingTechTrackSelectionCapture.cs.meta
+?? Assets/Scripts/UI/RacingTechActionButtonStyle.cs
+?? Assets/Scripts/UI/RacingTechActionButtonStyle.cs.meta
+?? Assets/Scripts/UI/RacingTechConfirmationStyle.cs
+?? Assets/Scripts/UI/RacingTechConfirmationStyle.cs.meta
+?? Assets/Tests/Editor/overtake_audio_presentation_test.cs
+?? Assets/Tests/Editor/overtake_audio_presentation_test.cs.meta
+?? Assets/Tests/Editor/racing_tech_action_button_test.cs
+?? Assets/Tests/Editor/racing_tech_action_button_test.cs.meta
+?? Assets/Tests/Editor/racing_tech_confirmation_test.cs
+?? Assets/Tests/Editor/racing_tech_confirmation_test.cs.meta
+?? Assets/Tests/Editor/racing_tech_track_selection_test.cs
+?? Assets/Tests/Editor/racing_tech_track_selection_test.cs.meta
+?? design/audio/
+?? docs/audio/licenses/overtake/
+?? docs/audio/overtake-recordings-provenance.md
+?? production/qa/evidence/overtake-audio-2026-10-15/
+?? production/qa/evidence/racing-tech-actions-2026-10-15/
+?? production/qa/evidence/racing-tech-primary-actions-2026-10-15/
+?? production/qa/evidence/racing-tech-track-selection-2026-10-15/
+?? production/qa/evidence/team-audio-preview-2026-10-11.wav
+?? tools/Audio/build_overtake_audio.py
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_cn_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_cn_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_de_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_de_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_it_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_it_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_jp_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_jp_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_uk_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_uk_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_us_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_us_up.wav
+?? tools/Audio/overtake-staging/
+?? tools/Audio/team_vehicle_comparison.wav
+?? tools/Audio/team_vehicle_tuning_comparison.wav
+?? tools/audio-overtake-staging/
+?? tools/ui-action-buttons-staging/
+?? tools/ui-confirmation-staging/
+?? tools/ui-track-staging/

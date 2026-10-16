@@ -1,0 +1,18 @@
+{
+  "job": "16dd03b22afe42b3adf682c8f6edd4dd",
+  "groups": [
+    "RacingTechSelectedEffectTests",
+    "CardSelectionVisualTests",
+    "RaceUILayoutTests",
+    "BBQHeatCardLifecycleTests"
+  ],
+  "total": 56,
+  "passed": 56,
+  "failed": 0,
+  "skipped": 0,
+  "inconclusive": 0,
+  "newCases": 6,
+  "includingNative": 1,
+  "durationSeconds": 3.2094577,
+  "endedUtc": "2026-10-16T04:07:37.1394358Z"
+}

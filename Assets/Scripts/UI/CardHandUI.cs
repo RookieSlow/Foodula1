@@ -619,7 +619,10 @@ public class CardHandUI : MonoBehaviour
     public void EnsureSelectedCardEffectUI(RectTransform deckTablePanel = null, TMP_FontAsset font = null)
     {
         if (selectedCardEffectPanel != null && selectedCardEffectText != null)
+        {
+            RacingTechSelectedEffectStyle.Apply(selectedCardEffectPanel, selectedCardEffectText);
             return;
+        }
 
         if (deckTablePanel == null)
         {
@@ -679,6 +682,7 @@ public class CardHandUI : MonoBehaviour
         selectedCardEffectText.text = string.Empty;
 
         selectedCardEffectPanel = panelObject;
+        RacingTechSelectedEffectStyle.Apply(selectedCardEffectPanel, selectedCardEffectText);
         selectedCardEffectPanel.SetActive(false);
     }
 

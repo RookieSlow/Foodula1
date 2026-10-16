@@ -1,0 +1,27 @@
+[
+  {
+    "path": "Assets/Scripts/UI/HUDUI.cs",
+    "copy": "HUDUI.cs.source-before.txt",
+    "sha256": "202E4BFD81381C498AB228B9423B112B6A955E98B7544182AE3FCB488C0A7F1D"
+  },
+  {
+    "path": "design/ux/racing-tech-ui.md",
+    "copy": "racing-tech-ui.md.source-before.txt",
+    "sha256": "E5711E2CBC2E95B688E711B3090EFC8E031C13014926F28AA2BBD2A41E3FAB14"
+  },
+  {
+    "path": "design/ux/racing-tech-ui-checklist.md",
+    "copy": "racing-tech-ui-checklist.md.source-before.txt",
+    "sha256": "9FAD9DD92A168C4F1D912A5EBFA3C95154E10B91B1B3DE977DB0F71B8584CFE9"
+  },
+  {
+    "path": "docs/memory/project-overview.md",
+    "copy": "project-overview.md.source-before.txt",
+    "sha256": "9140DB9256350D2CF6A35ABB80DE7D7D0BDA45E20E541A1CD52F81FD1652C3F3"
+  },
+  {
+    "path": "docs/memory/current-task-list.md",
+    "copy": "current-task-list.md.source-before.txt",
+    "sha256": "CBDFC9FEB0E851583B5DA6AEC6DCC00A710F2926B1C8D158655CFDB0C00A2767"
+  }
+]

@@ -1,0 +1,40 @@
+{
+  "utc": "2026-10-15T22:36:49.6966017Z",
+  "head": "58656899b0bb426b3df90ef2a564de4dfe7faf85",
+  "baselineCount": 411,
+  "unchanged": 406,
+  "missing": [],
+  "drift": [
+    {
+      "path": "Assets/Scripts/UI/RaceUILayoutController.cs",
+      "before": "77F0F946550DEFA5B3D2960F12FC188D32793F20FD76B80E796246E2CF8CCE8F",
+      "after": "C621F76ED617B2CC8EAE0B3E38766EB858D87C0F9121681D065720D29FF1709C",
+      "expectedAuthorized": true
+    },
+    {
+      "path": "design/ux/racing-tech-ui-checklist.md",
+      "before": "A7DCF6F6B8C85EFBB046500201C84F5B11CB61D933B2F4565B2C554D4B5B69B9",
+      "after": "F23F6B512FF5F7E88026B23F66B118620375990FEC50283D3C44B9A55E1CF59C",
+      "expectedAuthorized": true
+    },
+    {
+      "path": "design/ux/racing-tech-ui.md",
+      "before": "A17B336D0682D4FF0FC6B2AC7D9AD9199F10DE6D23717841A54441F1ECDF3086",
+      "after": "91802F4315F806C0AEF0E64F70F45C9761D2CB4FA560A60299996C198A7325B7",
+      "expectedAuthorized": true
+    },
+    {
+      "path": "docs/memory/current-task-list.md",
+      "before": "83723C62EDFCF434E9F102C907E5870282F80D4951D365D698433553A24860DD",
+      "after": "418BCB1F5CE64239E58EFD5C46D9A5BCE23A68D941CB0A507B5F3F0D0B21CC63",
+      "expectedAuthorized": true
+    },
+    {
+      "path": "docs/memory/project-overview.md",
+      "before": "90F4DAB3AF577E6D3A82A04353AFA59638D79DB37789261DC73E01846D149A5C",
+      "after": "22DE44323E36FFFFC729D85EA41B19494587D6F444D4F2273C84B239EE70C06F",
+      "expectedAuthorized": true
+    }
+  ],
+  "unexpected": []
+}

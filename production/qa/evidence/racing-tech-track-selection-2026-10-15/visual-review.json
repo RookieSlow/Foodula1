@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-15T05:09:34.3047788Z",
+  "type": "Final recaptured39 actual image review",
+  "viewedCount": 24,
+  "viewed": [
+    "1920x1080-selectable-highlighted.png",
+    "1920x1080-selectable-pressed.png",
+    "1920x1080-selectable-disabled.png",
+    "1920x1080-default.png",
+    "1920x1080-selected-nurburgring_bier.png",
+    "1920x1080-selected-le_mans_old_mulsanne.png",
+    "1920x1080-selected-nurburgring_24h_endurance.png",
+    "1920x1080-closed.png",
+    "2560x1440-selectable-highlighted.png",
+    "2560x1440-selectable-pressed.png",
+    "2560x1440-selectable-disabled.png",
+    "2560x1440-default.png",
+    "2560x1440-selected-nurburgring_bier.png",
+    "2560x1440-selected-le_mans_old_mulsanne.png",
+    "2560x1440-selected-nurburgring_24h_endurance.png",
+    "2560x1440-closed.png",
+    "1280x720-selectable-highlighted.png",
+    "1280x720-selectable-pressed.png",
+    "1280x720-selectable-disabled.png",
+    "1280x720-default.png",
+    "1280x720-selected-nurburgring_bier.png",
+    "1280x720-selected-le_mans_old_mulsanne.png",
+    "1280x720-selected-nurburgring_24h_endurance.png",
+    "1280x720-closed.png"
+  ],
+  "manifestRecords": 39,
+  "overflows": 0,
+  "manifestProblems": [],
+  "closedCount": 3,
+  "findings": [
+    "All9 new native Selectable states viewed; highlight lighter,pressed darker,disabled dark with text retained",
+    "Current track marker and current label remain LeMans during first-card hover/press/disabled; marker not misreported as EventSystem focus",
+    "Default and longest GP,LeMans,Nordschleife selections reviewed again at all3sizes; no new crop or overlap",
+    "All3 closed images empty,overlayActive=false,visibleCards0,active labels0",
+    "Initial30 all viewed earlier; final39 replay review24 does not claim other15 re-read"
+  ],
+  "limits": [
+    "1280x720 action text about10pixels,not large text or whole-project accessibility acceptance",
+    "2560 screenshots tool-displayed2048x1152",
+    "Native selectable instant visual fixture; pointer click,modal blocking and launch callbacks require separate runtime tests",
+    "Closed fixture emptyhost not fullMainMenu recovery"
+  ]
+}

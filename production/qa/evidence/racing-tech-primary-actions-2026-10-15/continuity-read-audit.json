@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-15T12:17:27.9474658Z",
+  "path": "docs/memory/project-overview.md",
+  "bytes": 154443,
+  "characters": 113677,
+  "readRange": "0..113676",
+  "pages": 38,
+  "pageCharacters": 3000,
+  "lastPageCharacters": 2677,
+  "fullRead": true,
+  "shaBefore": "156FB45ADDED4B31F822B3DC62058416AB48149B78515BD92D48DEA549D772A8",
+  "shaAfter": "156FB45ADDED4B31F822B3DC62058416AB48149B78515BD92D48DEA549D772A8",
+  "method": "Sequential bounded pages, all visible without overview truncation. AGENTS fully re-read; other continuity owned by root/UX peer. Missing active/governance baseline recorded only."
+}

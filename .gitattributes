@@ -35,4 +35,8 @@
 "Assets/ttf/* SDF.asset" filter=lfs diff=lfs merge=lfs -text
 
 # Preserve exact source diffs captured as QA evidence, including original whitespace.
-production/qa/evidence/**/baseline-diff.txt -whitespace
+production/qa/evidence/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+production/qa/evidence/**/baseline-diff.txt -text -whitespace
+# Raw before snapshots and source diffs retain Unity YAML whitespace and hashed bytes.
+production/qa/evidence/**/*source-before.txt -text -whitespace
+production/qa/evidence/**/source-increment.diff.txt -text -whitespace

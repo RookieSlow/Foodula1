@@ -1,0 +1,21 @@
+{
+  "reader": "ui_impl; explicit task split coordinated with capture_review",
+  "file": "docs/memory/current-task-list.md",
+  "lines": 1405,
+  "dotNetCharacters": 135501,
+  "pages": [
+    "1–80",
+    "81–160",
+    "161–260",
+    "261–380",
+    "381–500",
+    "501–710",
+    "711–960",
+    "961–1210",
+    "1211–1405"
+  ],
+  "sha256Before": "83723C62EDFCF434E9F102C907E5870282F80D4951D365D698433553A24860DD",
+  "sha256After": "83723C62EDFCF434E9F102C907E5870282F80D4951D365D698433553A24860DD",
+  "complete": true,
+  "provenance": "Worker message confirming full bounded page reads; not a second read by capture_review."
+}

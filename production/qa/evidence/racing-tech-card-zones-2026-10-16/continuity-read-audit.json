@@ -1,0 +1,45 @@
+{
+  "utc": "2026-10-15T17:45:45.374Z",
+  "overview": {
+    "path": "docs/memory/project-overview.md",
+    "characters": 114883,
+    "pages": 39,
+    "range": "0..114882",
+    "fullRead": true,
+    "shaBefore": "90F4DAB3AF577E6D3A82A04353AFA59638D79DB37789261DC73E01846D149A5C",
+    "shaAfter": "90F4DAB3AF577E6D3A82A04353AFA59638D79DB37789261DC73E01846D149A5C",
+    "readMethod": "3000character sequential bounded pages, no output page truncated"
+  },
+  "taskList": {
+    "reader": "ui_impl; explicit task split coordinated with capture_review",
+    "file": "docs/memory/current-task-list.md",
+    "lines": 1405,
+    "dotNetCharacters": 135501,
+    "pages": [
+      "1–80",
+      "81–160",
+      "161–260",
+      "261–380",
+      "381–500",
+      "501–710",
+      "711–960",
+      "961–1210",
+      "1211–1405"
+    ],
+    "sha256Before": "83723C62EDFCF434E9F102C907E5870282F80D4951D365D698433553A24860DD",
+    "sha256After": "83723C62EDFCF434E9F102C907E5870282F80D4951D365D698433553A24860DD",
+    "complete": true,
+    "provenance": "Worker message confirming full bounded page reads; not a second read by capture_review."
+  },
+  "mechanics": {
+    "reader": "ux_visual",
+    "file": "docs/memory/game-mechanics.md",
+    "lines": "1–789",
+    "sha256Before": "41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d",
+    "sha256After": "41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d",
+    "complete": true,
+    "provenance": "Current design/ux/racing-tech-ui.md §18.4 records complete reread; initially truncated141–210 reread as separate pages. Not a second read by capture_review."
+  },
+  "agents": "AGENTS.md reread completely by capture_review",
+  "missing": "production/session-state/active.md and referenced missing .Codex governance files recorded only; no placeholders."
+}

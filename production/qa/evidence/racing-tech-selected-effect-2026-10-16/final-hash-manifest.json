@@ -1,0 +1,743 @@
+{
+  "utc": "2026-10-16T04:24:12.678Z",
+  "headAtAcceptance": "58656899b0bb426b3df90ef2a564de4dfe7faf85",
+  "scope": "Selected-effect source/meta/staging, source snapshots/UX/continuity, current QA and authoritative combined full/Unity evidence; excludes self. Git commit/push is root separate step.",
+  "count": 147,
+  "files": [
+    {
+      "path": "Assets/Prefab/CardPrefab.prefab",
+      "bytes": 8641,
+      "sha256": "98605584cb869420c81c32c48071508f9cb22b81659e13fbb927939bf99e7fcd"
+    },
+    {
+      "path": "Assets/Prefabs/UI/RaceCanvas.prefab",
+      "bytes": 261476,
+      "sha256": "3a8a028b5f7b88fb5b93fccef9fbb5de394e77dcf35390efde1266b527401efb"
+    },
+    {
+      "path": "Assets/Scripts/Editor/RacingTechSelectedEffectCapture.cs",
+      "bytes": 22045,
+      "sha256": "fb02a29cfa76a405bb0932cac047b397c333a70299c8c87e820fbccc3ec612c5"
+    },
+    {
+      "path": "Assets/Scripts/Editor/RacingTechSelectedEffectCapture.cs.meta",
+      "bytes": 240,
+      "sha256": "63328d663b5e4c1720fbad36bbf021ca0f231d4e0c4d4c6f4bac8444a7db5d57"
+    },
+    {
+      "path": "Assets/Scripts/UI/CardHandInteractionRules.cs",
+      "bytes": 1773,
+      "sha256": "d28fde5aa3d20c5d842f837e4f68a3c537078a5c96fb3c4a3094076cf32dc472"
+    },
+    {
+      "path": "Assets/Scripts/UI/CardHandUI.cs",
+      "bytes": 39231,
+      "sha256": "796a8d4da10763b31cc468c4c184e2118f065404665e462393de958ccea9f7b3"
+    },
+    {
+      "path": "Assets/Scripts/UI/CardUI.cs",
+      "bytes": 13040,
+      "sha256": "b2464dd73bea8419700f9046c65774f0d4e8daf95c17d818eee0ef5395514d70"
+    },
+    {
+      "path": "Assets/Scripts/UI/RaceUIFactory.cs",
+      "bytes": 10423,
+      "sha256": "9447e87c4da2759919def5ee6f80540b56604f047d2c9c1a5bea3bb23a87e006"
+    },
+    {
+      "path": "Assets/Scripts/UI/RaceUILayoutController.cs",
+      "bytes": 27776,
+      "sha256": "c621f76ed617b2cc8eae0b3e38766eb858d87c0f9121681d065720d29ff1709c"
+    },
+    {
+      "path": "Assets/Scripts/UI/RacingTechSelectedEffectStyle.cs",
+      "bytes": 915,
+      "sha256": "d7fbc5f1c6d2325e92601414ca9719a9294d7a8662974c6e53cb6f37c0e5149a"
+    },
+    {
+      "path": "Assets/Scripts/UI/RacingTechSelectedEffectStyle.cs.meta",
+      "bytes": 251,
+      "sha256": "1a438b7fdddaa4b862f9d500307e4500477e9ab6ff09f8841ec6cc5cb195e8dd"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_selected_effect_test.cs",
+      "bytes": 15519,
+      "sha256": "f4f2b200ac13ab9683f784b8d530d7eeaafeebf3cfef1da2ab7657fea9977041"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_selected_effect_test.cs.meta",
+      "bytes": 251,
+      "sha256": "4f956892094afd83eae4f87266d3dc02c9d79052188abd54a46aaa5caf455410"
+    },
+    {
+      "path": "design/ux/racing-tech-ui-checklist.md",
+      "bytes": 19545,
+      "sha256": "981ee1fc6870e10ea70b43ad7bcbb95b2aab4b9c1cd8cd7bb3efccdf8a6e31c9"
+    },
+    {
+      "path": "design/ux/racing-tech-ui.md",
+      "bytes": 73794,
+      "sha256": "236137df347863b2f749a464503fbd368b2d49a9df2dfed4e284abe005d1bff0"
+    },
+    {
+      "path": "docs/memory/current-task-list.md",
+      "bytes": 263679,
+      "sha256": "f3cbe7174d72f68cdc5d57a08fe97a9f5e719e3ddefce7f7784636a095564714"
+    },
+    {
+      "path": "docs/memory/project-overview.md",
+      "bytes": 161403,
+      "sha256": "ec35ca5e120dca6d8e7c73b34e1a507158b484aa4ff039d7106e65037b3afa24"
+    },
+    {
+      "path": "production/qa/evidence/github-submission-2026-10-16/final-unity-state.json",
+      "bytes": 659,
+      "sha256": "28a63246669e67319537840ff6be477258c46884b161883d33d9a5af9ee09087"
+    },
+    {
+      "path": "production/qa/evidence/github-submission-2026-10-16/full-2990-native.json",
+      "bytes": 197,
+      "sha256": "adaa21cc5a5b86c9d7fcc596f43fef63f7873bc72b3e0a62e24196d4d63a77b5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/CardHandInteractionRules.cs.source-before.txt",
+      "bytes": 1773,
+      "sha256": "d28fde5aa3d20c5d842f837e4f68a3c537078a5c96fb3c4a3094076cf32dc472"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/CardHandUI.cs.source-before.txt",
+      "bytes": 39019,
+      "sha256": "5b58b9a86f8e6884d9fe876386e29b226be81ad7e934662489d0e2e31f32ff75"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/CardPrefab.prefab.source-before.txt",
+      "bytes": 8641,
+      "sha256": "98605584cb869420c81c32c48071508f9cb22b81659e13fbb927939bf99e7fcd"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/CardUI.cs.source-before.txt",
+      "bytes": 13040,
+      "sha256": "b2464dd73bea8419700f9046c65774f0d4e8daf95c17d818eee0ef5395514d70"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/README.md",
+      "bytes": 3154,
+      "sha256": "b7f598ef910ab429f3259d664e6ac306bd476ff2d56d0381a0433304bc4e0a55"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/RaceCanvas.prefab.source-before.txt",
+      "bytes": 261476,
+      "sha256": "3a8a028b5f7b88fb5b93fccef9fbb5de394e77dcf35390efde1266b527401efb"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/RaceUIFactory.cs.source-before.txt",
+      "bytes": 10423,
+      "sha256": "9447e87c4da2759919def5ee6f80540b56604f047d2c9c1a5bea3bb23a87e006"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/RaceUILayoutController.cs.source-before.txt",
+      "bytes": 27776,
+      "sha256": "c621f76ed617b2cc8eae0b3e38766eb858d87c0f9121681d065720d29ff1709c"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/CN-1280x720-cn-hotpot-base.png",
+      "bytes": 139878,
+      "sha256": "d23be735199d82dccca8fba2d2504e970ae5e0da729ff7be57eb3259fef533ae"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/CN-1280x720-cn-ice-jelly.png",
+      "bytes": 133291,
+      "sha256": "d8f9c016cacceb6e041d33475b6a3ff3190c82094e2a38c998906427765c0721"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/CN-1280x720-ordinary-heat-diagnostic.png",
+      "bytes": 131630,
+      "sha256": "4776dec6dfebc14ac6c2916df5b2177f47a5d66576bc7ef2fbc5422babb4c8ae"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/CN-1280x720-speed-selected.png",
+      "bytes": 143873,
+      "sha256": "3eda817860c31719a4b935efa9f0b196b275f1e01c0edff1e18e217e7c001ce0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/CN-1920x1080-cn-hotpot-base.png",
+      "bytes": 215823,
+      "sha256": "24517831afc139a355262c8d437bc6f08bfe67581367bc88492bc1e5baca1c5c"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/CN-1920x1080-cn-ice-jelly.png",
+      "bytes": 200375,
+      "sha256": "bfb1f29d785610d687fc05ce1bbfd4c6eb7450407d82834cc1f4c72816ecd9ee"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/CN-1920x1080-ordinary-heat-diagnostic.png",
+      "bytes": 197136,
+      "sha256": "aae92868cf6fb8e45504c9ec1f85fb43e75d9654b0b15613492a25ad6b11137e"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/CN-1920x1080-speed-selected.png",
+      "bytes": 226608,
+      "sha256": "83089a1167310c26a9252bb7ffee222d2b4ac9d43d53411daf96ff08ac20e2b2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/CN-2560x1440-cn-hotpot-base.png",
+      "bytes": 456148,
+      "sha256": "44c8b5a920f83e7861abd82b03e669ab8252027443ef294889c694b283cf5d5f"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/CN-2560x1440-cn-ice-jelly.png",
+      "bytes": 434008,
+      "sha256": "f87b84fb9399be7ef0b0d5514576fee17cf3aaddd918f232718318317e18f35a"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/CN-2560x1440-ordinary-heat-diagnostic.png",
+      "bytes": 429866,
+      "sha256": "77b27238ec3c5e2fc6643dca50c75e0e550b4644ff70a433c97e124a348aa88a"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/CN-2560x1440-speed-selected.png",
+      "bytes": 474636,
+      "sha256": "8e9c9bc75eb65625a221a7669c55be764cbfd5a0904b96690133ae3d68cd137d"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/DE-1280x720-de-sauerkraut.png",
+      "bytes": 138295,
+      "sha256": "940de616df52b80d714fe26a01226634981a9662773b4995392990d99ff98035"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/DE-1280x720-de-schwarzbrot.png",
+      "bytes": 137992,
+      "sha256": "18e22d802d695fa5f74b6a0c97e65bd3ad180aec20edd95ed2e5cb23526ba4bc"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/DE-1920x1080-de-sauerkraut.png",
+      "bytes": 210838,
+      "sha256": "69c0f785f4869e4c172461dc1e4cbbe0c8b58c5e055534cf166d7c4eb5c0e705"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/DE-1920x1080-de-schwarzbrot.png",
+      "bytes": 209031,
+      "sha256": "fe4b452ba822b258789830e5f6dd88b77abb3dd30cac33bd8381367826b73caa"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/DE-2560x1440-de-sauerkraut.png",
+      "bytes": 447575,
+      "sha256": "e4bb6b0f72e29c882b9fd2668afa7648510ac532af61f7dd82bb1b5e91a20604"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/DE-2560x1440-de-schwarzbrot.png",
+      "bytes": 444423,
+      "sha256": "d32523d778cba1ebce3f8ce40f0bdeaced0f53dde333bcda87ba63b892e4408f"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/IT-1280x720-it-chianti.png",
+      "bytes": 136393,
+      "sha256": "479bedfa19ee7b56be14baf205a6eee0bf1c76ca38d947fca71d19ba20fb4393"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/IT-1280x720-it-parmigiano.png",
+      "bytes": 135498,
+      "sha256": "a211650ba21e88a39da02b0c8a1d8f2f5f0501f8545666511c7a31a13c2c5022"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/IT-1920x1080-it-chianti.png",
+      "bytes": 206266,
+      "sha256": "55bdb58e932d6894774cb9cb938ce993c1ad6f47acaf6206b829c05d5a93d58b"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/IT-1920x1080-it-parmigiano.png",
+      "bytes": 204184,
+      "sha256": "7c05cc6f0ae5c54298a97d6fd090cd21c45918d7cccb53297e16a8747c58c007"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/IT-2560x1440-it-chianti.png",
+      "bytes": 441265,
+      "sha256": "9d692ee9dd5cdaa6550b67331c004c1a7c538d8620cccadf00f06a73ea6f540f"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/IT-2560x1440-it-parmigiano.png",
+      "bytes": 438653,
+      "sha256": "5dfa8776d97fbac8643d42a1f3abe81571edc96367adc8112aa4b595ece42e51"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/JP-1280x720-jp-kanto-oden.png",
+      "bytes": 137374,
+      "sha256": "dd0c2b1495c54b1ec715cfd9891ba253235b60ee00952b648fc09f8e9024381a"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/JP-1280x720-jp-torpedo-tempura.png",
+      "bytes": 138773,
+      "sha256": "c1cf92ee058dc324d0c1eab8b9fbe79559701aef6faeb6aea9b92cee8ccc59eb"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/JP-1920x1080-jp-kanto-oden.png",
+      "bytes": 209346,
+      "sha256": "f6c0e9ec7118cf8ec2edcfbec6c359cea88a0bb5bb61b5a86aa40d8246dd1a92"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/JP-1920x1080-jp-torpedo-tempura.png",
+      "bytes": 212453,
+      "sha256": "5e9d212e8460b193798e41e16fa8d3d7c16c5230bb1f9f41de848b45c054915a"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/JP-2560x1440-jp-kanto-oden.png",
+      "bytes": 444708,
+      "sha256": "341a682ffe937c59b040fce68738c958fbd1622a5c5986fdbf96faf47f8597c7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/JP-2560x1440-jp-torpedo-tempura.png",
+      "bytes": 449649,
+      "sha256": "eedf1a30aef24f0998a1f93e0491a028d35ad1a92a49b7a070a64120a5faa8ba"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/UK-1280x720-uk-english-breakfast-tea.png",
+      "bytes": 135623,
+      "sha256": "eab82ac138f703cc30c1b514f65534eb993bb23e92172e98acf1b7c253d6e2d5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/UK-1280x720-uk-scone.png",
+      "bytes": 133564,
+      "sha256": "3d6fe531e4f4d5bc8c12ee244846764f4100c728453f661e89ab4ecbf250ad9b"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/UK-1920x1080-uk-english-breakfast-tea.png",
+      "bytes": 204166,
+      "sha256": "53a4e3b1a944fb76755286a35ca9446b4481f011f36d3ec3b14ad5f681e99055"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/UK-1920x1080-uk-scone.png",
+      "bytes": 200522,
+      "sha256": "a4bd0877c7964b99591037a10d4a5cc56f571d9d4a64fc5081ff1c01054fcd33"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/UK-2560x1440-uk-english-breakfast-tea.png",
+      "bytes": 439231,
+      "sha256": "a93dc5b132d7da84c135f2bc43323766f4a8f4ebfc95d694a4b3fe8158c36827"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/UK-2560x1440-uk-scone.png",
+      "bytes": 434365,
+      "sha256": "ddcbb298f80131b56a4e37e3ec4500258a9ecc0a547336bdd6eb9e2f0fbed4cc"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/US-1280x720-bbq-permanent-heat.png",
+      "bytes": 144094,
+      "sha256": "27ac278a33953b74011197f1ec89f2abff229a81b53bcda23b41bfb7716eb68d"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/US-1280x720-us-cola.png",
+      "bytes": 132253,
+      "sha256": "20653433bdfd68d559a8ad4c9a9d430c1ee472e63d0a1f0b3e98786945f24116"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/US-1280x720-us-fries.png",
+      "bytes": 135918,
+      "sha256": "e5d3f6dbbc13d4d1632a4c911b747f633aa79bf7f8f00a02eccfcd52120497b1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/US-1920x1080-bbq-permanent-heat.png",
+      "bytes": 246754,
+      "sha256": "b2eacb30d42c51fb279b403be78eedd841cadd13fe6077ac7af8756d4c522e4c"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/US-1920x1080-us-cola.png",
+      "bytes": 197840,
+      "sha256": "56ac0356ae9ff9dfd34a712d445b1c1b089501d4a74104be3e5b22ee4a0649b8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/US-1920x1080-us-fries.png",
+      "bytes": 206762,
+      "sha256": "06b65c5a21bb26bb6d073b858157d6d6e64e2ca31dc12a4fe66663c19b1038f9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/US-2560x1440-bbq-permanent-heat.png",
+      "bytes": 477475,
+      "sha256": "a1fce4f12c477a9dc611829bba3501763b1108862d76eee55ad923c29e7a59c0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/US-2560x1440-us-cola.png",
+      "bytes": 430524,
+      "sha256": "f9dcd95474ac9dae4235d0a0985b34a4e8b78eca5f86f0bf1db31bce80676859"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/US-2560x1440-us-fries.png",
+      "bytes": 440218,
+      "sha256": "26003e6afeaf24cecad56478509f89be1f549b70d93cfc3715952599f9d2b041"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/after/manifest.json",
+      "bytes": 75595,
+      "sha256": "5a8f139d357b6050d236c6555dce0964fad8803aa71b95cc1743751f84d8448e"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/baseline-diff-stderr.txt",
+      "bytes": 1670,
+      "sha256": "97fe27b61900395e5834299d8b867d9a8e038e8ac9776b7e492d3c4984d7701d"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/baseline-diff.txt",
+      "bytes": 104245,
+      "sha256": "e2e6989b64c276d0e016ada4b025b385f9a3b652124acf9b7a5b70a483634bb6"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/baseline-diffstat-stderr.txt",
+      "bytes": 1670,
+      "sha256": "97fe27b61900395e5834299d8b867d9a8e038e8ac9776b7e492d3c4984d7701d"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/baseline-diffstat.txt",
+      "bytes": 938,
+      "sha256": "d6dde31e446e2ada9fa29df5b763b91ba652df9045607256bb18c7334763549e"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/baseline-head.txt",
+      "bytes": 41,
+      "sha256": "f4d8ac26c61970449bb5a50c59b0876e6425fb0ab020fa4b26fc54389dc8ef99"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/baseline-names-stderr.txt",
+      "bytes": 1670,
+      "sha256": "97fe27b61900395e5834299d8b867d9a8e038e8ac9776b7e492d3c4984d7701d"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/baseline-names.txt",
+      "bytes": 591,
+      "sha256": "f33298a472f23eed966e39782b47bdb42e31435467bfb5d65a516f0db159b877"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/baseline-status.txt",
+      "bytes": 5513,
+      "sha256": "e9bd3f8f4bac4e9b5562f094df5d026eb25f3ab5c9af83cc0afa33f52159880f"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/baseline.json",
+      "bytes": 138877,
+      "sha256": "08ae57b28f2a602508ad10e898f1f8a47f9db924e98537235930df6c25c7d146"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/CN-1280x720-cn-hotpot-base.png",
+      "bytes": 139767,
+      "sha256": "92c88e166ea9ae118cd47cd1c399ddf896af1f6c1dc95f5d17308dd94fba7ca4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/CN-1280x720-cn-ice-jelly.png",
+      "bytes": 133320,
+      "sha256": "3143432edd7a3a68f181a02848ed8723c2b0ad9de4811c0639c0310cca1e7de9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/CN-1280x720-ordinary-heat-diagnostic.png",
+      "bytes": 131631,
+      "sha256": "9afee6990c01cd64a3940db5f61db961427062e59c43a92468284275e1b2f86e"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/CN-1280x720-speed-selected.png",
+      "bytes": 143899,
+      "sha256": "99a80175561a85841c4493eb8be180b565e7ff3c8a9335f8bac82d7c662c938b"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/CN-1920x1080-cn-hotpot-base.png",
+      "bytes": 215281,
+      "sha256": "487c502bb14858177fba9f903cd9569f1500e1f67702df445401cb5c9415cd39"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/CN-1920x1080-cn-ice-jelly.png",
+      "bytes": 200338,
+      "sha256": "8faf42fe70a9a524f01cb129820a6f29394607e4292eb8194f1fff31b980e43f"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/CN-1920x1080-ordinary-heat-diagnostic.png",
+      "bytes": 196996,
+      "sha256": "7691befd478a4e514889f96b348444c235e5e8df479ad4f2b12047acda23a0e0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/CN-1920x1080-speed-selected.png",
+      "bytes": 226477,
+      "sha256": "7749fa098100d9cee2a789620baa034d389968040bc6cd19205c18b913fbcae2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/CN-2560x1440-cn-hotpot-base.png",
+      "bytes": 455085,
+      "sha256": "1240af7e4d9c69c5443e9824a6b63a03d8fff160b699c645c965e17d10c9f7b7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/CN-2560x1440-cn-ice-jelly.png",
+      "bytes": 433877,
+      "sha256": "7609ceb34f0fc883cdafb63d20c9e694fd8ace2fcb858b01c23cad21af9b14ed"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/CN-2560x1440-ordinary-heat-diagnostic.png",
+      "bytes": 429161,
+      "sha256": "a0f0a3890259a34ac9cde23463d5b5f5898f9fe7ffa8f19395afbbc5886b4bd1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/CN-2560x1440-speed-selected.png",
+      "bytes": 474221,
+      "sha256": "619d647a782f092705192b17476dff385285d93dbe05ea291e5d124da7fe300e"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/DE-1280x720-de-sauerkraut.png",
+      "bytes": 138272,
+      "sha256": "e0c774689ba55e52f49963be1d17f837373cc7274ebeef1da43c9650eca59d29"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/DE-1280x720-de-schwarzbrot.png",
+      "bytes": 137952,
+      "sha256": "a64418088f1aece41cda975d54be1bc8a73406f807ce4cd01fcf615f52518bcb"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/DE-1920x1080-de-sauerkraut.png",
+      "bytes": 210601,
+      "sha256": "969519ff57360a4473e8638a309b078bdafe39ef6ded9ccfabb10af5b4ccaf31"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/DE-1920x1080-de-schwarzbrot.png",
+      "bytes": 208874,
+      "sha256": "11503e8518562599561e617223d9f0effb5eb2d99f26e4f80e96b817e2a58928"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/DE-2560x1440-de-sauerkraut.png",
+      "bytes": 447081,
+      "sha256": "032a95bee75408add2f52fea6d71c445c5106fe14661b742435d787643daea73"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/DE-2560x1440-de-schwarzbrot.png",
+      "bytes": 444254,
+      "sha256": "91963e7028d307b0ca30abfdb3e888a9404efca32e8065ab9ecefbb4c9e2c5a1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/IT-1280x720-it-chianti.png",
+      "bytes": 136365,
+      "sha256": "c7d86e4cc761f57e3dda5ebede85b3b161b6c39f74fbf6a59639379e0687f8f8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/IT-1280x720-it-parmigiano.png",
+      "bytes": 135530,
+      "sha256": "a687546466226d40c87c660de8b6151b490d1c3e0be329c2fe172faf6f422078"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/IT-1920x1080-it-chianti.png",
+      "bytes": 206060,
+      "sha256": "328862bd9fd1ff94daa9b4fa737a41d24d593ffa35b7098d02cec4c163df0431"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/IT-1920x1080-it-parmigiano.png",
+      "bytes": 204094,
+      "sha256": "0fd9d74ba6516bb9c746e9612b2b61400a6ccced0237f20062ef2ceaffc814e5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/IT-2560x1440-it-chianti.png",
+      "bytes": 441173,
+      "sha256": "bb5dcd36a59496b04ae8ae7a0dfe821190ff1cfca2d9a66688f752706d0f822b"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/IT-2560x1440-it-parmigiano.png",
+      "bytes": 438569,
+      "sha256": "c7d396ab5c0655624a0c774c9d935c495a001227f6571f1a9daa8bef15bff5c4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/JP-1280x720-jp-kanto-oden.png",
+      "bytes": 137337,
+      "sha256": "fca7069c1f97d020e249ec557d6d4ae6ac1fd356a535be6cada515385fb25481"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/JP-1280x720-jp-torpedo-tempura.png",
+      "bytes": 138778,
+      "sha256": "2333467f2b50896a8fa5122569e4d6355c1caf058369ab38f522a5e310b71298"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/JP-1920x1080-jp-kanto-oden.png",
+      "bytes": 209151,
+      "sha256": "361cce950da605844b3d8461e17c0fcc0fad94c5a2033c890bc87355924347ca"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/JP-1920x1080-jp-torpedo-tempura.png",
+      "bytes": 212332,
+      "sha256": "2a162d69f2857fdc81f0d0ecde22f29a5ca5ddc7c1a20b79a9d06541ded86f7d"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/JP-2560x1440-jp-kanto-oden.png",
+      "bytes": 444019,
+      "sha256": "dcebbd6fb8c93a39675d26536f0db2952abf0c6e4d9d8d6097892a1cbd003424"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/JP-2560x1440-jp-torpedo-tempura.png",
+      "bytes": 449232,
+      "sha256": "b028697361de2b74c4429b16ea5b67d95a7c1bdd9bf4bf986094802776d7f449"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/UK-1280x720-uk-english-breakfast-tea.png",
+      "bytes": 135619,
+      "sha256": "d1f1a436cee56cade1efffb9bf38d64ac019814b2150a633290b9f9258de2cef"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/UK-1280x720-uk-scone.png",
+      "bytes": 133536,
+      "sha256": "7202ff25c502de921fbc42eb00b46b31960db25c8052a5a3bb335558c15ce5c2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/UK-1920x1080-uk-english-breakfast-tea.png",
+      "bytes": 204191,
+      "sha256": "616a4a7d3682240f123f97723b0f4b755359e28593c70b6041056a94c9783878"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/UK-1920x1080-uk-scone.png",
+      "bytes": 200468,
+      "sha256": "d704ad3f55f2ad30406cb8fc738b27a7672603db8202bb90824509fb2a5f3768"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/UK-2560x1440-uk-english-breakfast-tea.png",
+      "bytes": 439205,
+      "sha256": "3a0241656c910fcd2b2ecef26703561f19d89e5284ef13efd9e252c326660f57"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/UK-2560x1440-uk-scone.png",
+      "bytes": 434362,
+      "sha256": "d14086347af2154cb4950b10b08b941fc666e5b3eceb9b55fe0fd0a5b47ee8e2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/US-1280x720-bbq-permanent-heat.png",
+      "bytes": 143925,
+      "sha256": "b2c752b6898df23c6fc0a57834fb6751572f0261ee878e15c78793b932d0f0ee"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/US-1280x720-us-cola.png",
+      "bytes": 132294,
+      "sha256": "9b38714dc68c876b30f4ad0af76f729c9252a3eb33bfe0b205cbe1dd9e6840f5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/US-1280x720-us-fries.png",
+      "bytes": 135842,
+      "sha256": "a5e6a5b9e9cf7d58d0503a025d89fc976ac242e5c87f92f82b6f8129e553e83c"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/US-1920x1080-bbq-permanent-heat.png",
+      "bytes": 246242,
+      "sha256": "e2fef71d3024e4dddf02e288338111e986f1fdd3e34c7222fcd98750204769b9"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/US-1920x1080-us-cola.png",
+      "bytes": 197797,
+      "sha256": "ad8ac3653daaa249c848cc9a5336f108dea40125970499ab322c1ae6f21765f7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/US-1920x1080-us-fries.png",
+      "bytes": 206252,
+      "sha256": "8bbcb41e075b0340e9603933ce99b4472a9214a4b41d874c8e4fb62ede06e85e"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/US-2560x1440-bbq-permanent-heat.png",
+      "bytes": 476270,
+      "sha256": "33217cf9d9eeedd34f186f059cc5789b547aa5e84a2a47aec797c0567894616a"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/US-2560x1440-us-cola.png",
+      "bytes": 430395,
+      "sha256": "67cf3d1cfc808cf00aebff77305ad0b6847a61d72e7f8b4091d1ccc1d4014c7c"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/US-2560x1440-us-fries.png",
+      "bytes": 439524,
+      "sha256": "f5c0e1a5a21f8a81ad2266add15deabd4988f10fa646db2e1781b767f777be9e"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/before/manifest.json",
+      "bytes": 75641,
+      "sha256": "a5e2a64e3fc9a7d66ad8c7477927cd1a6f201618c16efba86ae60159214c4c89"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/continuity-read-audit.json",
+      "bytes": 1564,
+      "sha256": "e2ad1a072133d221725af1ea9f017c48ca1636ee3862b1d766ec9e9c55aa62a8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/current-task-list.md.source-before.txt",
+      "bytes": 262017,
+      "sha256": "429b5376b65ed65c85d5f825c0874d54f70bb01f494c15f5553ccef7a8bf5ca0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/final-diff-check.json",
+      "bytes": 685,
+      "sha256": "976dcd092808aa6bb6503cf35c77919f3bc2a26eb3b4eb4393973a733f5fb66a"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/final-state-reference.json",
+      "bytes": 632,
+      "sha256": "afe319f5bf806a04bf78a190c8fed769e9f3b7dc9ec5417ba39f61fcc4d69744"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/final-status.txt",
+      "bytes": 64543,
+      "sha256": "589aa10bffe48fe89488245486c8098f92de0d012b0d549ecbb9cc4e14b066a5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/focused-56-native.json",
+      "bytes": 193,
+      "sha256": "481f514809b5c96643453d4b17f5ce8098e7ae3ddbfcf3e47cffe3e7b6689d1b"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/focused-summary.json",
+      "bytes": 395,
+      "sha256": "a6b4dedb7e66c15cf1b5ed0b4ee5282b6489847a2181c1de9ac7bf8cec1db0b8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/preservation-audit.json",
+      "bytes": 188800,
+      "sha256": "cc2d579cdd650602ce62528027c3ee2bec05e1f77e1af98c08bad3dc081125a5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/project-overview.md.source-before.txt",
+      "bytes": 159741,
+      "sha256": "7d7bab89dab0918c605239ee54a3e5dc1e1bbba6549b71dd39e10ec8cd35794f"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/racing-tech-ui-checklist.md.source-before.txt",
+      "bytes": 17697,
+      "sha256": "ac4d38b51d1f21a523cfadac2ec46d7344b74d90bc12160ae219077a50001d81"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/racing-tech-ui.md.source-before.txt",
+      "bytes": 64575,
+      "sha256": "067cabf77cf17f91e713e4058b312acae0e859f64cf1dbb1b72cb4074dea234b"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/source-baseline.json",
+      "bytes": 2344,
+      "sha256": "e2244c49b0d40e80d7b5323722da45896f2cbd25b97c7cceca38ca30fbe0951f"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/source-increment.diff.txt",
+      "bytes": 1075,
+      "sha256": "89930921e7688fd3b332d0f3128f4fe6bc662a0f477c5eca14c257006e4c6325"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/source-review.json",
+      "bytes": 3217,
+      "sha256": "1a132043de745f902ccc32aa3fcbf1aded0b49633091b6d588709a6f884761c2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-selected-effect-2026-10-16/visual-review.json",
+      "bytes": 2010,
+      "sha256": "b70850f377a974ad8d238b2b19f925d12499e45104a260dcd9c5c7c6de0013eb"
+    },
+    {
+      "path": "tools/ui-selected-effect-staging/CardHandUI.cs.txt",
+      "bytes": 40299,
+      "sha256": "44e06a643e90894550ab61a9874a8b2ccfabf2af4456c76679aabff50e976ec7"
+    },
+    {
+      "path": "tools/ui-selected-effect-staging/RacingTechSelectedEffectCapture.cs.txt",
+      "bytes": 22045,
+      "sha256": "fb02a29cfa76a405bb0932cac047b397c333a70299c8c87e820fbccc3ec612c5"
+    },
+    {
+      "path": "tools/ui-selected-effect-staging/RacingTechSelectedEffectStyle.cs.txt",
+      "bytes": 915,
+      "sha256": "d7fbc5f1c6d2325e92601414ca9719a9294d7a8662974c6e53cb6f37c0e5149a"
+    },
+    {
+      "path": "tools/ui-selected-effect-staging/racing_tech_selected_effect_test.cs.txt",
+      "bytes": 15519,
+      "sha256": "f4f2b200ac13ab9683f784b8d530d7eeaafeebf3cfef1da2ab7657fea9977041"
+    }
+  ]
+}

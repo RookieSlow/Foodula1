@@ -1,0 +1,74 @@
+{
+  "reviewer": "capture_review",
+  "beforeViewed": [
+    "1280x720-draw-top",
+    "1920x1080-draw-bottom",
+    "2560x1440-discard-top",
+    "1280x720-discard-bottom",
+    "1920x1080-close-hover",
+    "2560x1440-close-disabled"
+  ],
+  "afterViewed": [
+    "1280x720-draw-longest-effect",
+    "1920x1080-draw-longest-effect",
+    "2560x1440-draw-longest-effect",
+    "1280x720-draw-top",
+    "1920x1080-draw-bottom",
+    "2560x1440-discard-top",
+    "1280x720-close-hover",
+    "1280x720-close-pressed",
+    "1280x720-close-disabled",
+    "1920x1080-close-hover",
+    "1920x1080-close-pressed",
+    "1920x1080-close-disabled",
+    "2560x1440-close-hover",
+    "2560x1440-close-pressed",
+    "2560x1440-close-disabled",
+    "1280x720-discard-bottom",
+    "1920x1080-discard-top",
+    "2560x1440-draw-top"
+  ],
+  "beforeCount": 6,
+  "afterCount": 18,
+  "manifestChecks": [
+    {
+      "stage": "before",
+      "screenshots": 21,
+      "overflows": 0,
+      "routeCounts": {
+        "panel-empty -> CardPileInspectorOverlay": 21,
+        "viewport -> CardPileInspectorOverlay": 21,
+        "row -> CardPileInspectorOverlay": 21,
+        "text -> CardPileInspectorOverlay": 15,
+        "close -> CloseButton": 21
+      }
+    },
+    {
+      "stage": "after",
+      "screenshots": 24,
+      "overflows": 0,
+      "routeCounts": {
+        "panel-empty -> CardPileInspectorPanel": 24,
+        "viewport -> CardPileInspectorPanel": 24,
+        "row -> CardPileInspectorPanel": 24,
+        "text -> CardPileInspectorPanel": 18,
+        "close -> CloseButton": 24
+      }
+    }
+  ],
+  "verdict": "APPROVED limited viewed production inspector fixture",
+  "notes": [
+    "Longest original Go ATTACK description fully visible at all three sizes, no deletion or reduced font.",
+    "Draw grouped speed×2 and hidden-order note, discard newest-first heat rows and reachable oldest speed1 remain.",
+    "Blue/orange/gold MiniCard and glyph identity retained; black maskRGBA(0,0,0,.72) unchanged.",
+    "White heading/secondary body and flat graphite panels replace blue frame/red close.",
+    "Viewport masking partial edge rows is scrolling, not truncated TMP content; all manifest TMPoverflows0.",
+    "1440 screenshots were displayed by image tool at2048x1152, not a full-resolution pixel inspection."
+  ],
+  "boundaries": [
+    "Diagnostic default catalog inventory, not a legal normal-race deck/GameLoop.",
+    "No physical OS pointer/drag or full free-race/tutorial/career walkthrough.",
+    "Selected close has tests but no dedicated screenshot; extreme numbers and every team effect not individually reviewed.",
+    "720p body about10px remains compact; comfortable reading/accessibility overall not accepted."
+  ]
+}

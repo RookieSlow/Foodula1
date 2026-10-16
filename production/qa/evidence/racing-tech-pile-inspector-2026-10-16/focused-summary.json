@@ -1,0 +1,20 @@
+{
+  "authority": "Native Test Runner RunFinished JSON supplied directly by root; copied unchanged in focused-native.json",
+  "job": "aeb7a46dc49542b38f23cc50fda56e3e",
+  "groups": [
+    "RacingTechPileInspectorTests",
+    "CardPilePreviewTests",
+    "RacingTechCardZoneTests",
+    "RaceInputStateTests"
+  ],
+  "total": 39,
+  "passed": 39,
+  "failed": 0,
+  "skipped": 0,
+  "inconclusive": 0,
+  "durationSeconds": 2.1340991,
+  "newCases": 7,
+  "newNativeCases": 1,
+  "discoveredOnly": 2984,
+  "fullSuiteRun": false
+}

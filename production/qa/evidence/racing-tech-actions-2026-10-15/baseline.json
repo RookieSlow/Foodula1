@@ -1,0 +1,923 @@
+{
+  "utc": "2026-10-15T07:10:09.5062408Z",
+  "workspace": "D:\\UnityProject\\Foodula1",
+  "head": "58656899b0bb426b3df90ef2a564de4dfe7faf85",
+  "status": [
+    " M Assets/Scripts/Audio/AudioEventNames.cs",
+    " M Assets/Scripts/Audio/AudioRuntimeRules.cs",
+    " M Assets/Scripts/Audio/AudioService.cs",
+    " M Assets/Scripts/Gameplay/RaceEventFX.cs",
+    " M Assets/Scripts/UI/TrackSelectionUI.cs",
+    " M \"Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset\"",
+    " M ProjectSettings/EditorSettings.asset",
+    " M design/ux/racing-tech-ui-checklist.md",
+    " M design/ux/racing-tech-ui.md",
+    " M docs/memory/current-task-list.md",
+    " M docs/memory/project-overview.md",
+    "?? Assets/Resources/Audio/SFX/overtake_passby.wav",
+    "?? Assets/Resources/Audio/SFX/overtake_passby.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_cn_down.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_cn_down.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_cn_up.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_cn_up.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_de_down.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_de_down.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_de_up.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_de_up.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_it_down.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_it_down.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_it_up.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_it_up.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_jp_down.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_jp_down.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_jp_up.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_jp_up.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_uk_down.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_uk_down.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_uk_up.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_uk_up.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_us_down.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_us_down.wav.meta",
+    "?? Assets/Resources/Audio/SFX/team_shift_us_up.wav",
+    "?? Assets/Resources/Audio/SFX/team_shift_us_up.wav.meta",
+    "?? Assets/Scripts/Audio/OvertakeAudioPresentation.cs",
+    "?? Assets/Scripts/Audio/OvertakeAudioPresentation.cs.meta",
+    "?? Assets/Scripts/Editor/RacingTechTrackSelectionCapture.cs",
+    "?? Assets/Scripts/Editor/RacingTechTrackSelectionCapture.cs.meta",
+    "?? Assets/Tests/Editor/overtake_audio_presentation_test.cs",
+    "?? Assets/Tests/Editor/overtake_audio_presentation_test.cs.meta",
+    "?? Assets/Tests/Editor/racing_tech_track_selection_test.cs",
+    "?? Assets/Tests/Editor/racing_tech_track_selection_test.cs.meta",
+    "?? design/audio/audio-overtake.md",
+    "?? docs/audio/licenses/overtake/BigSoundBank-s0556-source.html",
+    "?? docs/audio/overtake-recordings-provenance.md",
+    "?? production/qa/evidence/overtake-audio-2026-10-15/README.md",
+    "?? production/qa/evidence/overtake-audio-2026-10-15/final-source-hashes.json",
+    "?? production/qa/evidence/overtake-audio-2026-10-15/final-status-reported-by-root.json",
+    "?? production/qa/evidence/overtake-audio-2026-10-15/focused-13-native.json",
+    "?? production/qa/evidence/overtake-audio-2026-10-15/focused-40-native.json",
+    "?? production/qa/evidence/overtake-audio-2026-10-15/full-2949-native.json",
+    "?? production/qa/evidence/overtake-audio-2026-10-15/integrated-source-hashes.json",
+    "?? production/qa/evidence/overtake-audio-2026-10-15/strengthened-test-source-hashes.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/MainMenuUI-source-before.cs.txt",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/ModernUIStyle-source-before.cs.txt",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/OfficialTrackCatalog-source-before.cs.txt",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/README.md",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/TrackSelectionState-source-before.cs.txt",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/TrackSelectionUI-source-before.cs.txt",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-closed.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-default.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selectable-disabled.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selectable-highlighted.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selectable-pressed.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-indianapolis_burger.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-le_mans_old_mulsanne.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-monza_pasta.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-nurburgring_24h_endurance.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-nurburgring_bier.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-shanghai_dim_sum.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-silverstone_afternoon_tea.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-suzuka_sushi.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-closed.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-default.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selectable-disabled.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selectable-highlighted.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selectable-pressed.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-indianapolis_burger.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-le_mans_old_mulsanne.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-monza_pasta.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-nurburgring_24h_endurance.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-nurburgring_bier.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-shanghai_dim_sum.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-silverstone_afternoon_tea.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-suzuka_sushi.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-closed.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-default.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selectable-disabled.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selectable-highlighted.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selectable-pressed.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-indianapolis_burger.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-le_mans_old_mulsanne.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-monza_pasta.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-nurburgring_24h_endurance.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-nurburgring_bier.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-shanghai_dim_sum.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-silverstone_afternoon_tea.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-suzuka_sushi.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/after/manifest.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/baseline-diff.txt",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/baseline-tests.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/baseline.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/before-live/current-user-gameview.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/before/1280x720-default.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/before/1920x1080-default.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/before/2560x1440-default.png",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/before/manifest.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/continuity-read-audit.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/final-hash-manifest.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/focused-31-native.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/focused-33-native.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/focused-attempt-2-native.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/full-interrupted-native.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/source-baseline.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/visual-review-initial30.json",
+    "?? production/qa/evidence/racing-tech-track-selection-2026-10-15/visual-review.json",
+    "?? production/qa/evidence/team-audio-preview-2026-10-11.wav",
+    "?? tools/Audio/build_overtake_audio.py",
+    "?? tools/Audio/cc0-shift-staging/team_shift_cc0_cn_down.wav",
+    "?? tools/Audio/cc0-shift-staging/team_shift_cc0_cn_up.wav",
+    "?? tools/Audio/cc0-shift-staging/team_shift_cc0_de_down.wav",
+    "?? tools/Audio/cc0-shift-staging/team_shift_cc0_de_up.wav",
+    "?? tools/Audio/cc0-shift-staging/team_shift_cc0_it_down.wav",
+    "?? tools/Audio/cc0-shift-staging/team_shift_cc0_it_up.wav",
+    "?? tools/Audio/cc0-shift-staging/team_shift_cc0_jp_down.wav",
+    "?? tools/Audio/cc0-shift-staging/team_shift_cc0_jp_up.wav",
+    "?? tools/Audio/cc0-shift-staging/team_shift_cc0_uk_down.wav",
+    "?? tools/Audio/cc0-shift-staging/team_shift_cc0_uk_up.wav",
+    "?? tools/Audio/cc0-shift-staging/team_shift_cc0_us_down.wav",
+    "?? tools/Audio/cc0-shift-staging/team_shift_cc0_us_up.wav",
+    "?? tools/Audio/overtake-staging/manifest.json",
+    "?? tools/Audio/overtake-staging/overtake_cc0.wav",
+    "?? tools/Audio/overtake-staging/overtake_source_then_cue.wav",
+    "?? tools/Audio/overtake-staging/source/bigsoundbank_0556_bwf.wav",
+    "?? tools/Audio/team_vehicle_comparison.wav",
+    "?? tools/Audio/team_vehicle_tuning_comparison.wav",
+    "?? tools/audio-overtake-staging/AudioEventNames.cs.txt",
+    "?? tools/audio-overtake-staging/AudioRuntimeRules.cs.txt",
+    "?? tools/audio-overtake-staging/AudioService.cs.txt",
+    "?? tools/audio-overtake-staging/OvertakeAudioPresentation.cs.txt",
+    "?? tools/audio-overtake-staging/RaceEventFX.cs.txt",
+    "?? tools/audio-overtake-staging/baseline-hashes.json",
+    "?? tools/audio-overtake-staging/compile.rsp",
+    "?? tools/audio-overtake-staging/overtake_audio_presentation_test.cs.txt",
+    "?? tools/ui-track-staging/RacingTechTrackSelectionCapture.cs.txt",
+    "?? tools/ui-track-staging/TrackSelectionUI.cs.txt",
+    "?? tools/ui-track-staging/compile.rsp",
+    "?? tools/ui-track-staging/racing_tech_track_selection_test.cs.txt"
+  ],
+  "files": [
+    {
+      "path": "Assets/Resources/Audio/SFX/overtake_passby.wav",
+      "bytes": 73004,
+      "sha256": "456AF869F1B432C69530197F4AA0DF57E74C6D315108E417133914618B976165"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/overtake_passby.wav.meta",
+      "bytes": 505,
+      "sha256": "24F40DE6741709A0F8DBA60E378E393EF2049ABCA0AD5D7046F0F7199CE5CD76"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_down.wav",
+      "bytes": 31724,
+      "sha256": "7F964F4A9B11FEE8A80BB39E895078904D6F46A5F867FF7CCEA9675BBEE5FA86"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_down.wav.meta",
+      "bytes": 505,
+      "sha256": "4B2E59C7E802FE89A86891F94345A625C363D744BB486DFC9CFCB5C665765635"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_up.wav",
+      "bytes": 25964,
+      "sha256": "D662327E2D9EBCF890AFD2AAAAA00AE3C91100E6E29EE36D73AD4D175CC7FAA6"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_cn_up.wav.meta",
+      "bytes": 505,
+      "sha256": "B24E84062CE25D51512DFF5D749F4667734C55E8C8FE6BAAECEF8B7DBE062923"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_down.wav",
+      "bytes": 31724,
+      "sha256": "0F66F01AEED37367697E9DAE3053D78D8DF90E8872FFB252411137CCD20BFAB2"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_down.wav.meta",
+      "bytes": 505,
+      "sha256": "B8C3C623BA96921354F77A432A3F158F34A437639B8F145E000215679AE06BCD"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_up.wav",
+      "bytes": 25964,
+      "sha256": "65DB7D98805FE2FD98AB650EB165D39FEE68E9F08094F4C97DA1286C8362AECC"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_de_up.wav.meta",
+      "bytes": 505,
+      "sha256": "8F091C39DCA4F1D74E1ABD6517BC9848BA8E122566CA1D7FD7F0A042FC8814F6"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_down.wav",
+      "bytes": 31724,
+      "sha256": "C6160BAC8898CBFC83FF4BBC65D63F03ABDACDCA2FBC01D2CCCB8089F262C0A1"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_down.wav.meta",
+      "bytes": 505,
+      "sha256": "24F648517A6248D140452DC38B3BCB8124184C5C65AE04548A1E87A03D494171"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_up.wav",
+      "bytes": 25964,
+      "sha256": "A57A7CCB4027D0B2933D3685C5BF1D96F6B853E1AA50151CC30F4D69A2B2255B"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_it_up.wav.meta",
+      "bytes": 505,
+      "sha256": "54DCC293F9D226B839C7422F4D862687852A6287EB878EAD3FA2F01D9445BCE4"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_down.wav",
+      "bytes": 31724,
+      "sha256": "193D3A359A45E3B7457A4EE191C90112F842EB738791C7E7DF6AB63086792E4C"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_down.wav.meta",
+      "bytes": 505,
+      "sha256": "A309C3FD55C5BF607D13F93611B6646AB55BE9193392583DBE3B4938849452E5"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_up.wav",
+      "bytes": 25964,
+      "sha256": "E21F10C98297DD2B84D7E87479D0569E315726E54A615451FF839703B933F42A"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_jp_up.wav.meta",
+      "bytes": 505,
+      "sha256": "415F380BDE0E99EDBC6E629F9C9529FF552658919DC991B1FF460A86E70A3092"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_down.wav",
+      "bytes": 31724,
+      "sha256": "CAD1DC8CA916550E9D54EE638CE54B2C95A379ECAC0BA81596B3BDC0DC9E924D"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_down.wav.meta",
+      "bytes": 505,
+      "sha256": "9B4B82E187F4E9669DA65B82220AE91CD03CB9137103A4FF6AEC89D034B58603"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_up.wav",
+      "bytes": 25964,
+      "sha256": "EE528C57586FDB43461CAC44323129268A04704423C91F58FDED3B7918838C3D"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_uk_up.wav.meta",
+      "bytes": 505,
+      "sha256": "2639281915628EDCA12E3DBC58686598AB5E45A8174FC937CC5CE37E89AF8A6C"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_down.wav",
+      "bytes": 31724,
+      "sha256": "01960BCA2DAC910DB96605DCD1E356732A6006C98609D46E8D34C0111CCBBD8A"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_down.wav.meta",
+      "bytes": 505,
+      "sha256": "731FECF28A27687500FCF91EA281C40EF938FF51B18408D59D2367449D609129"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_up.wav",
+      "bytes": 25964,
+      "sha256": "96A86665BD8DE86547ADC63DD965D0534528E0D22BAFB0542372E2756F18AF99"
+    },
+    {
+      "path": "Assets/Resources/Audio/SFX/team_shift_us_up.wav.meta",
+      "bytes": 505,
+      "sha256": "DC8B14CCCC6B7FF0063AEA2E07085EFD3E4C1C9294DC36ED039810C8FD6A7617"
+    },
+    {
+      "path": "Assets/Scripts/Audio/OvertakeAudioPresentation.cs",
+      "bytes": 2401,
+      "sha256": "CB7BAC6A9F36275EE51692497768E18A419847D87D95A87BE3598646993132DE"
+    },
+    {
+      "path": "Assets/Scripts/Audio/OvertakeAudioPresentation.cs.meta",
+      "bytes": 251,
+      "sha256": "ECFBCB8C97A519E741D9AA8C8F1E395F5B91F6448507FEB52C12D83926B3E4B5"
+    },
+    {
+      "path": "Assets/Scripts/Editor/RacingTechTrackSelectionCapture.cs",
+      "bytes": 12861,
+      "sha256": "E7EFB1D2D7EA18B00373BCD991A13F840DE1E1921B50E2F3D8FEA5578E80D732"
+    },
+    {
+      "path": "Assets/Scripts/Editor/RacingTechTrackSelectionCapture.cs.meta",
+      "bytes": 251,
+      "sha256": "AC1EE4FC035CB1EBDED8082D9EB5D75FECCD2249F5811FD2374B2BC9AE500F2A"
+    },
+    {
+      "path": "Assets/Tests/Editor/overtake_audio_presentation_test.cs",
+      "bytes": 11863,
+      "sha256": "9C7610F7A76DAD1F03E6430F23CAA9FE51027566376DBD6899857722DA08A292"
+    },
+    {
+      "path": "Assets/Tests/Editor/overtake_audio_presentation_test.cs.meta",
+      "bytes": 251,
+      "sha256": "8296CBABFCFFE1B5974CC9DFD3467A60AB4A2C95025EF01E5D6D43779882EB92"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_track_selection_test.cs",
+      "bytes": 15586,
+      "sha256": "187A9D16099E21D2ED06EAF9294FE73DF41E3522EABC294B24107D772A0F3A19"
+    },
+    {
+      "path": "Assets/Tests/Editor/racing_tech_track_selection_test.cs.meta",
+      "bytes": 241,
+      "sha256": "494DF7BEB14AF56D2CD36477D3A16FFA3D571C57BF329DBF808DB216586EC7F9"
+    },
+    {
+      "path": "design/audio/audio-overtake.md",
+      "bytes": 6431,
+      "sha256": "7D0B8B662C3261DD8E4E75D88A60DDCDDADEC29C7931C61C5BD55DEF5803B47F"
+    },
+    {
+      "path": "docs/audio/licenses/overtake/BigSoundBank-s0556-source.html",
+      "bytes": 44178,
+      "sha256": "91987D90CDD728690E2FC2FCF776059FC884F6222AB11006B90E91EF6B3F80D4"
+    },
+    {
+      "path": "docs/audio/overtake-recordings-provenance.md",
+      "bytes": 4403,
+      "sha256": "78EBDA207B0C83F1120C030B8DF8CFEE241FD6F12EE4C24C3149CC2C630D6CE8"
+    },
+    {
+      "path": "production/qa/evidence/overtake-audio-2026-10-15/README.md",
+      "bytes": 4475,
+      "sha256": "CD97A48D12AAB709AAD7E65F3AE831A961836694D86C0CC6716B1847C5393209"
+    },
+    {
+      "path": "production/qa/evidence/overtake-audio-2026-10-15/final-source-hashes.json",
+      "bytes": 1479,
+      "sha256": "1AE9B2D18E115A26F86B8E99A57312E4085F8FFFBF7593A250E68D0069F706DF"
+    },
+    {
+      "path": "production/qa/evidence/overtake-audio-2026-10-15/final-status-reported-by-root.json",
+      "bytes": 727,
+      "sha256": "3EB1F7EE37766C43CA8CEF7A21F211F279DFF16ADC17667C2368F4EEF044A963"
+    },
+    {
+      "path": "production/qa/evidence/overtake-audio-2026-10-15/focused-13-native.json",
+      "bytes": 192,
+      "sha256": "705470BC88C1D4741397F43A1785F1ECF7AD8E59CFC82F1A4C2FBE236810DC11"
+    },
+    {
+      "path": "production/qa/evidence/overtake-audio-2026-10-15/focused-40-native.json",
+      "bytes": 192,
+      "sha256": "E6CD602824F84C1D10BDA68FA646E34D6CDD543470470F7E4F8459E6876D7DCD"
+    },
+    {
+      "path": "production/qa/evidence/overtake-audio-2026-10-15/full-2949-native.json",
+      "bytes": 196,
+      "sha256": "69A1CD9182E97656B6AB10DB46EAEE4C442B1E07B53B80AF9AE4B0D99C125541"
+    },
+    {
+      "path": "production/qa/evidence/overtake-audio-2026-10-15/integrated-source-hashes.json",
+      "bytes": 1475,
+      "sha256": "B51E049474CBBE2D7EE55FB0576BB17BA26FDBBA788E9E5ACA50441352D206FD"
+    },
+    {
+      "path": "production/qa/evidence/overtake-audio-2026-10-15/strengthened-test-source-hashes.json",
+      "bytes": 352,
+      "sha256": "5CAE5B4BF8D549FDDF89902EB30FD6131F6FE09CD2FBBB166E28AB46B4969062"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/MainMenuUI-source-before.cs.txt",
+      "bytes": 25089,
+      "sha256": "A15317CA335428C325EB7D50B7404C81F4805AE662D17DF0FB1EBBB428026F65"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/ModernUIStyle-source-before.cs.txt",
+      "bytes": 5974,
+      "sha256": "E9F860149D293DE5B04CBC6DAC0672D33DC41E7C964108B8B8CE2A4A2AB814D2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/OfficialTrackCatalog-source-before.cs.txt",
+      "bytes": 2975,
+      "sha256": "72F7A0E4071CAE1AE54FC4C0489297951801A7B7C533196C716FF697DD4ACF00"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/README.md",
+      "bytes": 4915,
+      "sha256": "362416852E31D35E6F912989E49BF79D99226E3962924C74A682BEA178717F94"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/TrackSelectionState-source-before.cs.txt",
+      "bytes": 1746,
+      "sha256": "D7BCE001E2640675FF13FF25F5C3AAFC898259C302A68AD68ABE4E0A14E33759"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/TrackSelectionUI-source-before.cs.txt",
+      "bytes": 10100,
+      "sha256": "7935AEF0E08F945948B552653D0074870AC89339184C669FBDFDE551459852C0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-closed.png",
+      "bytes": 13558,
+      "sha256": "982918B981030569F8641293E48B29FEAAEAA08227F8D3A2228C0472A5180842"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-default.png",
+      "bytes": 84744,
+      "sha256": "5E3B98DD9DF0DF319879D68D58A0CA8B893CF0C2E3595B609FEAEA5399172D72"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selectable-disabled.png",
+      "bytes": 87205,
+      "sha256": "4AD6E07A6D7C2689B495E4314AE143B98573F3EF0C43F4476637EBF06FD8A3D1"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selectable-highlighted.png",
+      "bytes": 87064,
+      "sha256": "B0697F8CE339CAD05BE5C9BEC226636B688450FA3C90E9514D932DFCC42CFCAD"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selectable-pressed.png",
+      "bytes": 87132,
+      "sha256": "54103684683635F6CBBCBEEAD6149FFB9A6A3A03DCC7015AA370549E43CA6037"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-indianapolis_burger.png",
+      "bytes": 85855,
+      "sha256": "F97BF41D8952CC089C6D454610081957A6A4B8A59743A53E5BA94D9806726B9D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-le_mans_old_mulsanne.png",
+      "bytes": 86635,
+      "sha256": "5C1C96F8D155AC88B259D841EDFBA31ACFC27F251D069F92DA7BD65CBAFFB43D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-monza_pasta.png",
+      "bytes": 84613,
+      "sha256": "17E31670BFF195EB01D069DF874A56D152C524CEB3BF95D3A35E7CC0721E384B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-nurburgring_24h_endurance.png",
+      "bytes": 86113,
+      "sha256": "1F057F77B4FCA5B371EA55F0317BB956F57A412DFF0309877EBFC5C2981D036F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-nurburgring_bier.png",
+      "bytes": 86150,
+      "sha256": "3D4700D7A7A365CE7136B2F100344E4BF9F6BA7CB62B323517202CE85F19C790"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-shanghai_dim_sum.png",
+      "bytes": 85296,
+      "sha256": "8EE1A70DA5EDC66B7AAA45E3CCE62503E0D580376A64E7DE004324480A3B1D18"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-silverstone_afternoon_tea.png",
+      "bytes": 84744,
+      "sha256": "5E3B98DD9DF0DF319879D68D58A0CA8B893CF0C2E3595B609FEAEA5399172D72"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1280x720-selected-suzuka_sushi.png",
+      "bytes": 84365,
+      "sha256": "3C569A0DE0B04990F0B85D567A3AD7CB1593DEBC9E3994CAD269905262FEF5AA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-closed.png",
+      "bytes": 29689,
+      "sha256": "82C7A20D6485EC69532FA4CD057E1B4DD2516F5893946394EC2D0FB119C4D7FC"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-default.png",
+      "bytes": 147292,
+      "sha256": "DA5FD2F6380E49314A3597B70B40FEB17CA567CF7C783832CD692C62A406F565"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selectable-disabled.png",
+      "bytes": 151047,
+      "sha256": "D7CDFFFC01C24749F0756E6E1693657C0C6E3D1C88BF37D353A9056E9443DEF3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selectable-highlighted.png",
+      "bytes": 150857,
+      "sha256": "9A365BEB53C87B26747B2B3460FE0CDFD516495EE26A311939B18D429B107C67"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selectable-pressed.png",
+      "bytes": 150926,
+      "sha256": "12224B3162812D91C4621C1CDF2B8EB9A63A988A34EAA419E4A2EC4A9E4D22E7"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-indianapolis_burger.png",
+      "bytes": 148837,
+      "sha256": "6377B9AB21AC56E7FF35837E6BF7929D3595A745FD95FF206349B6B2930AB277"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-le_mans_old_mulsanne.png",
+      "bytes": 150400,
+      "sha256": "D0E055F2E876B66712DB6909ABEE34F868E4E2D6DCAB907DEDBC59ECB934F524"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-monza_pasta.png",
+      "bytes": 147841,
+      "sha256": "7124283F5B35BB7D3753B8A15C28D2DF811C8D27D519694F9D8D28CDC7FA4049"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-nurburgring_24h_endurance.png",
+      "bytes": 150201,
+      "sha256": "B6F97E60E904687B63BEDCF27A622DD1CDF0107B1F4D0D7B079BB7422E7B9A14"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-nurburgring_bier.png",
+      "bytes": 150478,
+      "sha256": "82DED56414313EB42D7E6239D28051C2E27AD7ED4728E574360D8EB1420592B4"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-shanghai_dim_sum.png",
+      "bytes": 147757,
+      "sha256": "9D8ABDEEBCD73A5936691C9CC4A5F2EE6F8440C993BDD3F5A887D5004E70FE38"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-silverstone_afternoon_tea.png",
+      "bytes": 147292,
+      "sha256": "DA5FD2F6380E49314A3597B70B40FEB17CA567CF7C783832CD692C62A406F565"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/1920x1080-selected-suzuka_sushi.png",
+      "bytes": 147230,
+      "sha256": "BE1B8B29B06F7BEC797B6CF3908282C4FF2B6DC3CFC26ADF2E66C73BBAC0DF2F"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-closed.png",
+      "bytes": 51532,
+      "sha256": "E2FA3EF38BD1960AB772F0874F5EB0ABBBB171E956A08E71FF679817F31A01DB"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-default.png",
+      "bytes": 215576,
+      "sha256": "AAA14CBA0D26D6DB989AFE519F9AB619B21FBC366B706F3F5F447D447DDFFDAA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selectable-disabled.png",
+      "bytes": 220011,
+      "sha256": "A01031B9A5B27F443D6345847967BE23AC0C099A9BF85D336608CF5558369643"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selectable-highlighted.png",
+      "bytes": 219509,
+      "sha256": "825A3379252126432E369EB71AD6927CD4BA33F38D3153B41B891BF8DE673CB8"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selectable-pressed.png",
+      "bytes": 219712,
+      "sha256": "9CC191951F18DF5D0CB2F598E5DE29DB87B7CE8EF768BDC6A1F7D05D6DB7B73D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-indianapolis_burger.png",
+      "bytes": 218690,
+      "sha256": "1B1B4403F8DCE9A494A4494B11A08C8E2609A94C46B88734CA2CF1EA29EE1AA5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-le_mans_old_mulsanne.png",
+      "bytes": 219245,
+      "sha256": "8B520A508F10AE573E379B45604FD94AD943AE150C79AFB2FF2011B550F44817"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-monza_pasta.png",
+      "bytes": 215997,
+      "sha256": "2E03C41EDBD180A4271C77AAE151C462C9E05726D556121501CDD8F1F6121B9D"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-nurburgring_24h_endurance.png",
+      "bytes": 218660,
+      "sha256": "C94D21BB678CFB9A4F0BEFFDE2BD102AC6E0E2F0BD55E460C3EB560A0FD4D6DA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-nurburgring_bier.png",
+      "bytes": 219932,
+      "sha256": "35AAC39E80E884EF98DCA23A505A57E62E8DBF074F61DDAA9C9674D41967B072"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-shanghai_dim_sum.png",
+      "bytes": 215504,
+      "sha256": "358E576364841F75756455F3A0041B208FA7684D1BC1CB279556CCD3E6C3653A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-silverstone_afternoon_tea.png",
+      "bytes": 215576,
+      "sha256": "AAA14CBA0D26D6DB989AFE519F9AB619B21FBC366B706F3F5F447D447DDFFDAA"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/2560x1440-selected-suzuka_sushi.png",
+      "bytes": 213724,
+      "sha256": "AAE73E744699FAE95484BE2BB41C667876319D1710F170096AF5AD79DCB21B50"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/after/manifest.json",
+      "bytes": 382116,
+      "sha256": "78E237E4A2D94AD60492E96F145F8F495403B51924FB43593E3BA79D4EAA05EC"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/baseline-diff.txt",
+      "bytes": 1250,
+      "sha256": "4934B10C7B1F56D6D6BACC4960389965AFC2FBA82BAC472610273FD02A895681"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/baseline-tests.json",
+      "bytes": 378,
+      "sha256": "864829A6967905D0331A28F60180B8C12CF752D8E02F7F2A232E967085FCE7E5"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/baseline.json",
+      "bytes": 10035,
+      "sha256": "F5F2CE15AEB338AC7588EFFB5736A4572C5A5B969AE6DDEB95E022ADF405B441"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/before-live/current-user-gameview.png",
+      "bytes": 1227758,
+      "sha256": "15FEBC2DFD24E3478E0AB96F3C97A6314871BDF72D649832249F11A8AAC4C383"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/before/1280x720-default.png",
+      "bytes": 84651,
+      "sha256": "2EBE1732E7831A54DF051AEF176E521A18387D03E1BFAB125B54F5FB6A937304"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/before/1920x1080-default.png",
+      "bytes": 147073,
+      "sha256": "A798661C88E42363A468AFD1EFC694CEAA3D28E9B222EAE6D64CA37F47069C7B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/before/2560x1440-default.png",
+      "bytes": 213346,
+      "sha256": "7B776DF3392FCA4F5B39E0D8B56F18DCD216352F10908973C1E4E4B90084B004"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/before/manifest.json",
+      "bytes": 31742,
+      "sha256": "E82B1C900F4CB59DABEC31D276C21F75DB20FDCFD202DDC09F0CF843F7B82731"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/continuity-read-audit.json",
+      "bytes": 810,
+      "sha256": "D81870113D237B50D8DE021E72C26426A885069447417F09EBF6AB0EF13DBBA3"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/final-hash-manifest.json",
+      "bytes": 31957,
+      "sha256": "88BE57AB8356DDD75AC4B0838D2C16FA347DA7EE62B0909FF7558D37D38D0122"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/focused-31-native.json",
+      "bytes": 192,
+      "sha256": "1D34FB2999B261A32AB1C482668A7808A97B367405331C5D1508037A832660E0"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/focused-33-native.json",
+      "bytes": 192,
+      "sha256": "5C4C0929CDE5E58348B1403982E3044F4C9AA80954E4BBE864249D2884D8659B"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/focused-attempt-2-native.json",
+      "bytes": 233,
+      "sha256": "946632682C5A52EB7EC2067C9628FA291B296DCC8AA74D301C6B0A3B12EAFA13"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/full-interrupted-native.json",
+      "bytes": 237,
+      "sha256": "4ACFB5F419DC4A2AF7F6C164422EC937D4CACCA876D5FAED3285621EA3F7FAC2"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/source-baseline.json",
+      "bytes": 1010,
+      "sha256": "34E2B94B56D224AE12179BA48AA77E07A798C3AD69B613BA9A65EBEA42C86420"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/visual-review-initial30.json",
+      "bytes": 2937,
+      "sha256": "A72D00B62A2D4A2ED576329B68A15F69B75AFDB53EA712BE79F654630433D85A"
+    },
+    {
+      "path": "production/qa/evidence/racing-tech-track-selection-2026-10-15/visual-review.json",
+      "bytes": 2190,
+      "sha256": "9F0717A5B60EC4DAF178F628DEF9D60801E67758DDB24395A9764CA27BC95425"
+    },
+    {
+      "path": "production/qa/evidence/team-audio-preview-2026-10-11.wav",
+      "bytes": 2472044,
+      "sha256": "317D934F0FFB694307C0140871D917FBA2AF61E151FB2A420BDB65CB3FE8836A"
+    },
+    {
+      "path": "tools/Audio/build_overtake_audio.py",
+      "bytes": 5821,
+      "sha256": "9EF51C00ACD974B9C77BF5B0FEA5543A18BDA77C80E4128FA4BC9681E52A5A20"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_cn_down.wav",
+      "bytes": 15404,
+      "sha256": "94E83E7EC58D01E0158BE34B008E09677440232CB9100879EC108B0C8F438233"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_cn_up.wav",
+      "bytes": 15404,
+      "sha256": "498F966F3CDD0796300D15A3BDB206C52454E4E9FB3F4FD54052D7C0C12686FB"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_de_down.wav",
+      "bytes": 17324,
+      "sha256": "84DA130C536BD46B7270E8EA4BEFB2ACF0B0692DACA89B1C36ED66EB4BACC996"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_de_up.wav",
+      "bytes": 17324,
+      "sha256": "E107AFC86DDF9B19CEC68ED8677153FB633BED7FD4DA983CD72BE5ED2A0B8742"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_it_down.wav",
+      "bytes": 19244,
+      "sha256": "038A7527E6D63C89709B7582E03CC32D53F6A51822F815863DA06A637F1616DE"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_it_up.wav",
+      "bytes": 19244,
+      "sha256": "1682D7B8AC26C2236A93EC453B207439EFF822DC7EBDB7EED15F796E8B143EEC"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_jp_down.wav",
+      "bytes": 17324,
+      "sha256": "75EE13ACE7AD6EE73109D56E0D6C687FBE3831AFC437763277475C81B2492060"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_jp_up.wav",
+      "bytes": 17324,
+      "sha256": "E85EF5A574DCCB95AC0A6A105ADAADF943EA51A5CD234196FE4CB9F0C954692F"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_uk_down.wav",
+      "bytes": 21164,
+      "sha256": "3DABB7AF5402024734462ABBFBB80FCE818C160743851EEB523CBAA79D89E7D9"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_uk_up.wav",
+      "bytes": 21164,
+      "sha256": "7BD98DD221F8DD5D800F13909C3937D127F16BF62FA7250963970499577E143C"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_us_down.wav",
+      "bytes": 23084,
+      "sha256": "5EB01C3B78C99EB95A0D21CB188AB34C0CC47B79FB071968967BEF2FA44D8FD3"
+    },
+    {
+      "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_us_up.wav",
+      "bytes": 23084,
+      "sha256": "1CF6E277D4133976BF15798C28061B23AD15F532B7A3CDA4629A6DDBF6282DB0"
+    },
+    {
+      "path": "tools/Audio/overtake-staging/manifest.json",
+      "bytes": 4692,
+      "sha256": "3E93A1C51D4DD1C060763764849935D03E1C6CA3889CA655AD71075222D65905"
+    },
+    {
+      "path": "tools/Audio/overtake-staging/overtake_cc0.wav",
+      "bytes": 73004,
+      "sha256": "456AF869F1B432C69530197F4AA0DF57E74C6D315108E417133914618B976165"
+    },
+    {
+      "path": "tools/Audio/overtake-staging/overtake_source_then_cue.wav",
+      "bytes": 817964,
+      "sha256": "43970E1B0B9EC94EF092CBD1EC17F9D505F417C11464FB37E6BD3EDEBCA19C26"
+    },
+    {
+      "path": "tools/Audio/overtake-staging/source/bigsoundbank_0556_bwf.wav",
+      "bytes": 13539544,
+      "sha256": "6AFEE85DF5E2F3C417A7E743FC14006EA3A0A1FDFB0B74BA01EE3CE8DB8B5703"
+    },
+    {
+      "path": "tools/Audio/team_vehicle_comparison.wav",
+      "bytes": 2217644,
+      "sha256": "4993A0FD1933888A6ED71725D4634D54BBD061B953BDC5DDB42374140A33AA44"
+    },
+    {
+      "path": "tools/Audio/team_vehicle_tuning_comparison.wav",
+      "bytes": 3225644,
+      "sha256": "9F94DC1043B874D6434F8BF25B917223F9BAADAFC3A612B51C36081E99417975"
+    },
+    {
+      "path": "tools/audio-overtake-staging/AudioEventNames.cs.txt",
+      "bytes": 1283,
+      "sha256": "DC50A4FFE88EF90CA91C65BB8A72370C4E4B4A4F4A2D5C540967B24EA10643EC"
+    },
+    {
+      "path": "tools/audio-overtake-staging/AudioRuntimeRules.cs.txt",
+      "bytes": 3156,
+      "sha256": "8231DB8F18C5180DACB2ED4CD1CE49C3C9129F04A0106E5467D86AEF2F820E84"
+    },
+    {
+      "path": "tools/audio-overtake-staging/AudioService.cs.txt",
+      "bytes": 18828,
+      "sha256": "8E95B9DA5C07F7FF69C9F357FA4A0AFA0D11EB175B5CF4F52A3287BEE4A0CF93"
+    },
+    {
+      "path": "tools/audio-overtake-staging/OvertakeAudioPresentation.cs.txt",
+      "bytes": 2481,
+      "sha256": "85F5902BB39D4D3EFEC3573F2995EA436280EB6BEAE17765AB77C3859E44E2A7"
+    },
+    {
+      "path": "tools/audio-overtake-staging/RaceEventFX.cs.txt",
+      "bytes": 23587,
+      "sha256": "C4404326AD529C0B85288C90833AAB01F78774E5567CAD75C68600785C0F55AC"
+    },
+    {
+      "path": "tools/audio-overtake-staging/baseline-hashes.json",
+      "bytes": 372,
+      "sha256": "110D263ED8E105ACC3A1096E4E7557678BEB8394FD2073C01B04D03CA127DDC0"
+    },
+    {
+      "path": "tools/audio-overtake-staging/compile.rsp",
+      "bytes": 37282,
+      "sha256": "6BCBAF77377EF98676BE47C34F0C60D3A690A24E2E9CACDB0CDCA4B5872C4679"
+    },
+    {
+      "path": "tools/audio-overtake-staging/overtake_audio_presentation_test.cs.txt",
+      "bytes": 11194,
+      "sha256": "EC1A758523F6310E6B3266BA1C4BE5CC42C3C43E34CE5B47C151BA3BAD1194F4"
+    },
+    {
+      "path": "tools/ui-track-staging/RacingTechTrackSelectionCapture.cs.txt",
+      "bytes": 12861,
+      "sha256": "E7EFB1D2D7EA18B00373BCD991A13F840DE1E1921B50E2F3D8FEA5578E80D732"
+    },
+    {
+      "path": "tools/ui-track-staging/TrackSelectionUI.cs.txt",
+      "bytes": 11272,
+      "sha256": "432BFDA6AA4FE0E9F4950463BDEA8A84F9137475055894C909271232945D40C2"
+    },
+    {
+      "path": "tools/ui-track-staging/compile.rsp",
+      "bytes": 37101,
+      "sha256": "E00034FE857D96B75DFFFE63A375891D2FA20AFD03825D609A6121C90FC9A89C"
+    },
+    {
+      "path": "tools/ui-track-staging/racing_tech_track_selection_test.cs.txt",
+      "bytes": 7323,
+      "sha256": "F49B22E7C4F308D0795ED2C154E681E3A0E33A0F4B9D93569FC9D4B07847FAC7"
+    },
+    {
+      "path": "Assets/Scripts/Audio/AudioEventNames.cs",
+      "bytes": 1256,
+      "sha256": "F42CACB0AF1717F684BB2DB45191AD6277A62A4F085B568B9FCF61E77BEEAD24"
+    },
+    {
+      "path": "Assets/Scripts/Audio/AudioRuntimeRules.cs",
+      "bytes": 3056,
+      "sha256": "37ACEFEB8E66836127F6AC8318DB2F55CC335658D051A090F6D52999C9F8B82C"
+    },
+    {
+      "path": "Assets/Scripts/Audio/AudioService.cs",
+      "bytes": 18343,
+      "sha256": "7AA11CE092776190CC568033782338B63D16F2216DBC56EE0D36009A3719D59C"
+    },
+    {
+      "path": "Assets/Scripts/Gameplay/RaceEventFX.cs",
+      "bytes": 22972,
+      "sha256": "11EDC88C2FE9CF9E98D960BE8D836F64CF575F32CA531095990F9A3AE30A7C46"
+    },
+    {
+      "path": "Assets/Scripts/UI/TrackSelectionUI.cs",
+      "bytes": 11272,
+      "sha256": "432BFDA6AA4FE0E9F4950463BDEA8A84F9137475055894C909271232945D40C2"
+    },
+    {
+      "path": "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset",
+      "bytes": 34177075,
+      "sha256": "F7D82E76D855C4902653063D1FC4ADCEF16A145086EC6A106100E0B32618846A"
+    },
+    {
+      "path": "ProjectSettings/EditorSettings.asset",
+      "bytes": 1484,
+      "sha256": "6AB19FE30172C763029B8F2E0616C6DC3DCFE480E845FC1AAAEF5975C948EEC0"
+    },
+    {
+      "path": "design/ux/racing-tech-ui-checklist.md",
+      "bytes": 9336,
+      "sha256": "9FAD9DD92A168C4F1D912A5EBFA3C95154E10B91B1B3DE977DB0F71B8584CFE9"
+    },
+    {
+      "path": "design/ux/racing-tech-ui.md",
+      "bytes": 24109,
+      "sha256": "E5711E2CBC2E95B688E711B3090EFC8E031C13014926F28AA2BBD2A41E3FAB14"
+    },
+    {
+      "path": "docs/memory/current-task-list.md",
+      "bytes": 254516,
+      "sha256": "CBDFC9FEB0E851583B5DA6AEC6DCC00A710F2926B1C8D158655CFDB0C00A2767"
+    },
+    {
+      "path": "docs/memory/project-overview.md",
+      "bytes": 152240,
+      "sha256": "9140DB9256350D2CF6A35ABB80DE7D7D0BDA45E20E541A1CD52F81FD1652C3F3"
+    }
+  ],
+  "missingGovernance": [
+    "production/session-state/active.md",
+    ".Codex/docs/directory-structure.md",
+    ".Codex/docs/technical-preferences.md",
+    ".Codex/docs/coordination-rules.md",
+    ".Codex/docs/coding-standards.md",
+    ".Codex/docs/context-management.md"
+  ]
+}

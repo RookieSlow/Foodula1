@@ -1,0 +1,41 @@
+{
+  "utc": "2026-10-15T11:43:08.7902384Z",
+  "hudDiff": "4 insertions / 0 deletions; visual Apply hook only",
+  "sources": [
+    {
+      "path": "Assets/Scripts/UI/HUDUI.cs",
+      "before": "202E4BFD81381C498AB228B9423B112B6A955E98B7544182AE3FCB488C0A7F1D",
+      "after": "AD8E821826FD946A0FF31FE6FADD2DA83C7833F019EE6AD527ACE251A3ECBE1E",
+      "beforeCopy": "HUDUI.cs.source-before.txt",
+      "scope": "Authorized current package source/doc increment; before text preserved"
+    },
+    {
+      "path": "design/ux/racing-tech-ui.md",
+      "before": "E5711E2CBC2E95B688E711B3090EFC8E031C13014926F28AA2BBD2A41E3FAB14",
+      "after": "5EE7B731EA2F07E5B654ECBDD8EAE136A7F8D61B22DB8C0BC1633E2C7BAC7B5D",
+      "beforeCopy": "racing-tech-ui.md.source-before.txt",
+      "scope": "Authorized current package source/doc increment; before text preserved"
+    },
+    {
+      "path": "design/ux/racing-tech-ui-checklist.md",
+      "before": "9FAD9DD92A168C4F1D912A5EBFA3C95154E10B91B1B3DE977DB0F71B8584CFE9",
+      "after": "1547BF37575C57B41DCAF449948C41E1A411ACBE44B9AFD3B937A822BE9FD74B",
+      "beforeCopy": "racing-tech-ui-checklist.md.source-before.txt",
+      "scope": "Authorized current package source/doc increment; before text preserved"
+    },
+    {
+      "path": "docs/memory/project-overview.md",
+      "before": "9140DB9256350D2CF6A35ABB80DE7D7D0BDA45E20E541A1CD52F81FD1652C3F3",
+      "after": "156FB45ADDED4B31F822B3DC62058416AB48149B78515BD92D48DEA549D772A8",
+      "beforeCopy": "project-overview.md.source-before.txt",
+      "scope": "Authorized current package source/doc increment; before text preserved"
+    },
+    {
+      "path": "docs/memory/current-task-list.md",
+      "before": "CBDFC9FEB0E851583B5DA6AEC6DCC00A710F2926B1C8D158655CFDB0C00A2767",
+      "after": "AAC0A6CC948FBDA1E4684D5B8C92C366C1FD857C1A7CDDAB9ED858DC638DD256",
+      "beforeCopy": "current-task-list.md.source-before.txt",
+      "scope": "Authorized current package source/doc increment; before text preserved"
+    }
+  ]
+}

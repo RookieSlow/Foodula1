@@ -1,0 +1,53 @@
+{
+  "overview": {
+    "reader": "capture_review",
+    "characters": 116503,
+    "pages": 39,
+    "ranges": "0..116502 sequential bounded3000character pages; final2503",
+    "shaBefore": "7D7BAB89DAB0918C605239EE54A3E5DC1E1BBBA6549B71DD39E10EC8CD35794F",
+    "shaAfter": "7D7BAB89DAB0918C605239EE54A3E5DC1E1BBBA6549B71DD39E10EC8CD35794F",
+    "complete": true
+  },
+  "taskList": {
+    "reader": "ui_impl",
+    "lines": 1418,
+    "characters": 137121,
+    "pages": [
+      "1–80",
+      "81–160",
+      "161–260",
+      "261–380",
+      "381–500",
+      "501–710",
+      "711–960",
+      "961–1210",
+      "1211–1418"
+    ],
+    "shaBefore": "429B5376B65ED65C85D5F825C0874D54F70BB01F494C15F5553CCEF7A8BF5CA0",
+    "shaAfter": "429B5376B65ED65C85D5F825C0874D54F70BB01F494C15F5553CCEF7A8BF5CA0",
+    "complete": true
+  },
+  "mechanics": {
+    "reader": "ux_visual",
+    "lines": "1–789",
+    "shaBefore": "41CD6B1575D737671BD357307E52BD5E7EC04C580D9361BA899A0F454BD6A56D",
+    "shaAfter": "41CD6B1575D737671BD357307E52BD5E7EC04C580D9361BA899A0F454BD6A56D",
+    "complete": true,
+    "pages": [
+      "1–35",
+      "36–70",
+      "71–105",
+      "106–175",
+      "176–310",
+      "311–440",
+      "441–570",
+      "571–789"
+    ],
+    "rereads": [
+      "311–340 independent reread after mixed-skill output truncated",
+      "721–724 independent reread of13truncatedtokens"
+    ]
+  },
+  "agents": "Fully reread actual AGENTS.md",
+  "missing": "active.md and missing .Codex governance documents recorded only, never fabricated"
+}

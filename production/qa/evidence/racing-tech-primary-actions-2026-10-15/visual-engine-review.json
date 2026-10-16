@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-15T17:09:11.4811459Z",
+  "afterActualViewed": 40,
+  "beforeActualViewed": 3,
+  "afterMatrix": "six teams 720 gear/card12; CN dynamic/native-state3sizes24; CN1080/1440 gear/card4",
+  "beforeMatrix": "CN three sizes card3",
+  "verdict": "No new clipping/occlusion in scoped action labels; Chinese glyphs readable; inherited small text and two-line skill wrap retained",
+  "boundaries": [
+    "Inactive card clones drive real labels only; hand/card visual acceptance not performed",
+    "No live track/GameLoop/cars/roster",
+    "No dedicated selected screenshot; no possible-spin long-risk screenshot",
+    "720 comfort/full modes/OS pointer input unaccepted"
+  ],
+  "native": "focused-native.json 61/61 passed, 0fail/skip/inconclusive",
+  "cooldown": "custom0.05s recovery actually tested; default0.25s only source preservation"
+}

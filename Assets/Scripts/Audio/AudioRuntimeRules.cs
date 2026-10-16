@@ -43,6 +43,8 @@ public static class AudioRuntimeRules
     {
         switch (eventName)
         {
+            case AudioEventNames.OvertakePassby:
+                return 0.12f;
             case AudioEventNames.CarHop:
                 return 0.09f;
             case AudioEventNames.CardDraw:

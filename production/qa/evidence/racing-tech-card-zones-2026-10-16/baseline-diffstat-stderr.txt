@@ -1,0 +1,12 @@
+warning: in the working copy of 'Assets/Scripts/Audio/AudioEventNames.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/Scripts/Audio/AudioRuntimeRules.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/Scripts/Audio/AudioService.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/Scripts/Gameplay/RaceEventFX.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/Scripts/UI/HUDUI.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/Scripts/UI/RaceUILayoutController.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/Scripts/UI/TrackSelectionUI.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ProjectSettings/EditorSettings.asset', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'design/ux/racing-tech-ui-checklist.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'design/ux/racing-tech-ui.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/memory/current-task-list.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/memory/project-overview.md', LF will be replaced by CRLF the next time Git touches it

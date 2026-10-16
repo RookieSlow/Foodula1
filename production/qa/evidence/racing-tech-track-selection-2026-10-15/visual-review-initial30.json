@@ -1,0 +1,63 @@
+{
+  "utc": "2026-10-15T05:06:27.9935177Z",
+  "kind": "Actual view_image review of all33 true production-entry controlled preview images",
+  "beforeViewed": [
+    "1280x720-default.png",
+    "1920x1080-default.png",
+    "2560x1440-default.png"
+  ],
+  "afterViewed": [
+    "1280x720-closed.png",
+    "1280x720-default.png",
+    "1280x720-selected-indianapolis_burger.png",
+    "1280x720-selected-le_mans_old_mulsanne.png",
+    "1280x720-selected-monza_pasta.png",
+    "1280x720-selected-nurburgring_24h_endurance.png",
+    "1280x720-selected-nurburgring_bier.png",
+    "1280x720-selected-shanghai_dim_sum.png",
+    "1280x720-selected-silverstone_afternoon_tea.png",
+    "1280x720-selected-suzuka_sushi.png",
+    "1920x1080-closed.png",
+    "1920x1080-default.png",
+    "1920x1080-selected-indianapolis_burger.png",
+    "1920x1080-selected-le_mans_old_mulsanne.png",
+    "1920x1080-selected-monza_pasta.png",
+    "1920x1080-selected-nurburgring_24h_endurance.png",
+    "1920x1080-selected-nurburgring_bier.png",
+    "1920x1080-selected-shanghai_dim_sum.png",
+    "1920x1080-selected-silverstone_afternoon_tea.png",
+    "1920x1080-selected-suzuka_sushi.png",
+    "2560x1440-closed.png",
+    "2560x1440-default.png",
+    "2560x1440-selected-indianapolis_burger.png",
+    "2560x1440-selected-le_mans_old_mulsanne.png",
+    "2560x1440-selected-monza_pasta.png",
+    "2560x1440-selected-nurburgring_24h_endurance.png",
+    "2560x1440-selected-nurburgring_bier.png",
+    "2560x1440-selected-shanghai_dim_sum.png",
+    "2560x1440-selected-silverstone_afternoon_tea.png",
+    "2560x1440-selected-suzuka_sushi.png"
+  ],
+  "afterViewedCount": 30,
+  "beforeViewedCount": 3,
+  "manifestRecords": 30,
+  "overflowCount": 0,
+  "manifestProblems": [],
+  "findings": [
+    "All eight track selections have matching current label,left edge and footer summary",
+    "Longest GP,Indianapolis,LeMans Chinese names and food/country subtitles fit",
+    "Return label visible; no new crop or overlapping text in reviewed images",
+    "All three closed captures are empty preview hosts and not main menu recovery evidence"
+  ],
+  "engine": [
+    "No new Update,global event subscriptions or asset loads",
+    "Existing grid dimensions,font size,input callbacks and selected state rules unchanged",
+    "New decoration images raycastTarget=false; overlay/panel remain blockers"
+  ],
+  "limits": [
+    "1280x720 action text about10screen pixels; no claim comfortable large text accessibility",
+    "2560 images read displayed as2048x1152 by tool",
+    "Still preview does not prove actual scene launch,modal pointer blocking or all mode visuals"
+  ],
+  "initialManifestCaveat": "Initial30 manifest counted inactive descendant components under closed overlay. All3 closed images empty and overlayActive=false; helper corrected to activeInHierarchy for final39 recapture. This review is initial30 only."
+}
