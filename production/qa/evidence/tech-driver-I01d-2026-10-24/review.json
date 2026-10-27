@@ -1,0 +1,20 @@
+{
+  "reviewer": "i01_flow_review",
+  "kind": "read-only static QA review",
+  "initial": "No static must-fix; native run later exposed pre-disable selection loss not caught statically.",
+  "after_fix": "Approved: capture selected arrow before changing interactable, then fallback if disabled; inactive test host owns TrackManager and20nodes, production A1/clock assertions retained.",
+  "native_run_by_root": {
+    "total": 2363,
+    "passed": 2363,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 12.1640629
+  },
+  "source_hashes": {
+    "Assets/Scripts/UI/DriverSkillCardChoiceUI.cs": "36d09ec635648b7787ee72eec1d67727272478e474355555ef9f597f66a4d946",
+    "Assets/Scripts/UI/HUDUI.cs": "5ea848b351d0626c91b9e1173f9205b2f8d406de865c6e2de84e4c3c1492d44b",
+    "Assets/Tests/Editor/hunter_skill_card_choice_ui_test.cs": "46570e50d7a491c6bf5edfed238a6255674836b19e3bfaed788cacff0f7e97a5",
+    "Assets/Tests/Editor/race_turn_boundary_integration_test.cs": "77805cde5bfda87ee5bc840cbc7b992230b9e5a27449baf0e2d3bea8d29b3052"
+  },
+  "limits": "Static review is not native/visual acceptance; actual race traversal and modes remain pending."
+}

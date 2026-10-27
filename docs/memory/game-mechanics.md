@@ -787,3 +787,197 @@ prototype and is no longer the authoritative model.
 
 See [project-overview.md](project-overview.md) for architecture context and
 [current-task-list.md](current-task-list.md) for remaining work.
+
+
+## 2026-10-22 UK driver clock migration I00a
+
+- UK FinalLap/AngryCharge runtime windows now advance once at the owner's eligible A1 gear-input start through RaceSession.BeginDriverSkillInput, not PlayerState global cleanup. UK pending passive preparation follows that same input boundary.
+- Scheduled pit, recovery/skip and terminal starts interrupt the UK window without refunding uses; terminal/skip cleanup also clears it. Initialize resets the new scalar counter and deduplication flag. The other ten skills retain their legacy clock until their own migration packages.
+- This is only the I00a foundation: new UK costs/targets and P5 effect formulas are still pending. Native targeted 1329/1329 in 17.031282 s; no Play Mode, complete-race, full-suite or new UI acceptance is claimed. See [I00a evidence](../../production/qa/evidence/tech-driver-I00a-2026-10-22/README.md).
+
+## 2026-10-22 Hart active migration I00b
+
+- Hart keeps stable FinalLap/id/XP identity, but its active is now 决胜抉择. The nearest still-racing opponent must be 1–5 cells truly ahead in absolute course progress. Requires two ordinary speed cards; discard exactly one original instance to ordinary discard, leaving enough originally playable cards for the pending gear. Borrowed regional BBQ heat may meet the existing gear requirement but never pay this fixed discard. A two-speed G2 input must select G1 first, with no automatic shift or change to normal missing-card penalties.
+- Tier 1/2/3 gives one whole-movement +2/+3/+3 contribution and unchanged UK 2/2/3 uses. Old per-card and heat multiplier are removed. Duration retains I00a owner-input clock; extra movement uses the original forecast/path/corner settlement.
+- HunterSkillActivationPlan freezes session, participant/deck/runtime identity, initialization/input/round/request versions, gear, target and exact hand sources/values. Confirmation revalidates all gates before discard+use; cancel, stale target/hand, gear change-and-back, disable or restart cannot spend or replay an old callback. HUD selection is mandatory even when optional confirmation is off, with one combined commit and focus return to an available control.
+- Native targeted 2009/2009 in 22.5163197s; 98 new cases, including owned Play Mode lifecycle/focus. Fifteen reviewed three-size controlled production-HUD screenshots have zero overflow. Complete race/mode, physical dragging and balance are unverified. UK prep-meal old permanent-heat recovery, breakfast and Hart passive remain I01; other teams/driver redesigns are not yet implemented. See [I00b](../../production/qa/evidence/tech-driver-I00b-2026-10-22/README.md).
+
+
+## 2026-10-23 I01a 英国预备餐：生产接入与有限回归
+
+- [x] UK L1 稳定节点 ID 下改为每车每圈弃1普通速度，旧永久热 H优先/D其次最多1、UK/GB+L3最多2；退役与净回分开，取消/过期不扣，旧不足免单移除。A2早餐后冻结，A4首次正式出牌前使用；保留原A1→A2顺序。
+- [x] 独立科技按钮与车手按钮在A4/A1互斥使用动作槽；真实按钮→选择→确认/取消通过4项受控pointer测试，mask0/All一致。新规则21例，合计25新增。
+- [x] 本轮原生2034/2034，失败0/跳过0，21.3845409s；首轮2030例有5失败（旧预期4、夹具缺config1），已保留失败证据并修正。非全量、非完整比赛。
+- [ ] 成功退役净回、多UK与Hart费用组合、完整A2/A4实跑、focus/drag及独立复审待补；I01整体未完成，后续Hart被动/早餐矩阵仍未提前标完成。
+- 证据 production/qa/evidence/tech-driver-I01a-2026-10-22/README.md。Unity最终MainMenu干净/idle，Console0error、既有cardPrefab测试警告1；Word原件和草案未改，未提交推送。
+
+I01a 后续独立代码复审已 APPROVED、无必须修复项；视觉/QA与上列残余场景仍未验收，见 evidence/tech-driver-I01a-2026-10-22/review.json。
+
+
+### 2026-10-23 I01a 补验收；哈特上限待回答
+
+本轮新增8项预备餐来源/成功退役净回/双UK独立/早餐四矩阵/Hart两张费用生产规则测试。原生995/995、失败0跳过0，14.5479979s；非全量/非完整比赛，无生产规则/UI/音频变更。Console1个既有无效科技快照负面测试error、1个CN开局测试warning，原生通过。证据 production/qa/evidence/tech-driver-I01a-followup-2026-10-23/README.md。
+
+哈特Word“原总上限”与代码只有两次原生尾流、无格数总上限不一致，异步询问两段原生尾流后是否仍+1，等待用户明确后才接新规则；不提前标I01b完成。已通过的8项残余测试不重复审计。完整流程/焦点拖动/模式仍未验。
+
+
+### 2026-10-24 I01c 实装边界
+
+预备餐正式速度提交后的按钮刷新已补；非法提交不关旧热窗口。新增2项回归只独立编译，原生未运行。哈特按用户直接答复：保留两次原生尾流，再额外+1且不再次找车；此答复已锁定执行依据，尚未实现被动。没有新增倍率、费用、ID、XP或存档改动。见 tech-driver-I01c-2026-10-24 证据。
+
+
+### 2026-10-24 I01b 狩猎本能实际来源
+
+哈特被动不再是逐张速度+1：输入锁定最近前车，三级范围3/4/5。对同原实例的合法原生尾流从正gap追近（可追平/超过）才预留奖励，完整真实原生移动后独立1格，实际移动后记原输入圈已用。保留原生两段，不递归找车；目标/输入/初始化/会话版本冻结。支持非0终点、旧receipt不清新输入，地标位移不冒充原生收据；预测新对象不消费真实机会。当前下一回合进站预约不等于实际停站，停站输入仍禁开。已源码接线与独立生产C#89/89验证；Unity运行/模式/视觉未验，平衡及benchmark未据此宣称通过。
+
+
+### 2026-10-24 I01d：费用模态焦点隔离与原生补验
+
+费用选择打开后移焦取消，四按钮使用窗内Explicit导航；翻页禁用当前箭头前保存焦点，处理Unity自动清空选择，关闭恢复原Navigation及合法原焦点。新增8项真实EventSystem Move/Submit回归；沿用既有ui/core夹具登记，无新夹具。首轮2363总/2360过/3失败/0跳过、12.8776254s：焦点1项、缺TrackManager的旧GameLoop时钟夹具2项。生产修复焦点，夹具补20节点，未弱化玩法断言。
+
+刷新并核对新runtime/editor MVID后，ui/tech/drivers/cards-heat/core/tracks-weather-pit原生RunFinished 2363/2363、0失败/跳过/不确定、12.1640629s，selectionMatches=true；包含I01b36项与I01c2项。本轮只定向，不是全量、完整赛事或模式验收。生产受控RaceCanvas三尺寸15张新after图/0溢出，root实际查看6张；没有本轮改前新图，不把历史I00b图冒充新before，也不据静态图验收真实拖动、六队/参赛车数/模式。
+
+Unity最后MainMenu/全部loaded scene干净、未播放/编译/导入/测试占用；许可证为Personal。Console一个no_such_track预期负面测试error（LogAssert.Expect），无编译错误；未清Console。editor/state资源仍stale_status，记录直接实时查询与原生防护，不伪称ready缓存为true。I01仍进行中。证据 production/qa/evidence/tech-driver-I01d-2026-10-24/README.md；下一包I01e为真实Manager尾流协程与A2/A4环路及剩余输入/视觉证据，不重复已过模块。
+
+
+### 2026-10-24 I01e：哈特新增位移的真实弯心费用
+
+按Word共用路径边界补生产接线：主动只纳入去掉Hart后到不了的尾端弯心，角速仍为原速度牌总值；与原card角同一次普通结算，物理弯段去重、跨圈再经过仍收费。新增弯心在最终线前时，以本次协程局部状态延后最终完赛登记，费用不足仍部分支付/失控、不退技能次数，也不能凭失控前计划路径预约进站/领地标。被动保留两原生段后独立实际1格，真实格数先消耗原圈额度，再按原角速付新增弯心费用；原生尾流及其他车手既有路径不扩大角判。主动预测使用同范围/副本支付，不花真实牌/热/次数。
+
+新增16项：12规则/预测参数案例，4真实原生协程案例。首轮2168/2168、0失败/跳过、285.8493526s，含19长流程，但在最后失控路线门控前，保留版本边界。最后修订MVID已确认，五个受影响模块加5个精确原生案例（4新+既有六队两回合）RunFinished2154/2154、0失败/跳过/不确定、10.3944555s，selectionMatches=true。不是全量，也不是最后版本重新跑19长流程。新增partial沿用RaceGameLoopCoroutineTests既有long-races归属，无新增fixture、无清单漂移。
+
+真实GameLoop验证A2早餐后冻旧永久热、A4主场回2且保留早餐临时热、正式速度提交关窗；主动完整A1/A4→移动→角费→finish/pit；被动是生产尾流结算适配器协程，非完整回合；中断项是局部finish-gate生命周期，不冒充完整Hart GameLoop退出。Unity最终MainMenu/loaded scenes无dirty、未播放/编译/导入/测试占用、Personal；Console仅no_such_track预期负面测试error。ready资源仍stale_status，以直接实时查询/原生安全门和RunFinished为据。初次编译3个Action缺using错误已改全限定名，未在旧程序集上跑通过；MCP会话404重新初始化，无配置/服务安装修改。
+
+无新UI布局或截图；新角费风险提示、真实改前后三尺寸操作仍待I01f，不复用历史图冒充本轮视觉验收。I01仍进行中，I02-I13不提前勾选；下一包有限补提示及操作，通过后推进I02。证据 production/qa/evidence/tech-driver-I01e-2026-10-24/README.md。
+
+### 2026-10-25 I01f：实际确认窗风险提示及 UK 有界操作交接
+
+哈特必选弃牌确认现显示真实目标/距离、普通速度牌费用、本次移动收益和余次，并明确“新增弯心仍按原速度付热，热量不足会失控”；沿用原一次确认，不改变费用、角速、次数或共享 CardData。新增 HunterSkillProductionUiTests 36例，登记 ui；三尺寸×六种目标/操作夹具×mask0/All，实际 HUD按钮→MVP计划→确认/取消，核对同值第二实例、无额外扣热、重复确认、遮罩射线及合法焦点返回。
+
+最终新runtime/editor程序集已加载；ui/drivers/tech/gears/cards-heat 原生 RunFinished **1394/1394，失败0/跳过0/不确定0，10.1942977s，selectionMatches=true**，含36新增及7项既有拖动回归，非全量/完整比赛。改前18图与最终改后18图在1920×1080、2560×1440、1280×720逐张查看，0溢出；独立UX/静态复审有限APPROVED。夹具是真实生产弹窗与Manager计划，背景入口/挡位为自有控件，非完整RaceCanvas；EventSystem/GraphicRaycaster事件不冒称硬件输入。六队目标身份、2/4/6/12参赛车数及长中文数字覆盖不等于其他队技能或完整模式已接入。
+
+Unity最终MainMenu干净、未播放/编译/导入/测试占用，Personal许可；Console error0，既有缺cardPrefab测试warning1，未清Console；ready资源仍stale_status，直接查询/原生安全门/RunFinished为据。保留初次夹具射线失败及中间文案截图，最终文案“本次移动+3格”有独立新图。I01仅源码及有界操作交接，完整RaceCanvas/硬件输入/全模式/存档兼容/720p舒适度继续未验；执行指针进入I02曼森两段同目标追近，不在I01无限重复审计。证据 production/qa/evidence/tech-driver-I01f-2026-10-24/README.md。无提交推送、无Word/场景/音频/字体/快速播放设置写入。
+
+
+### 2026-10-26 I02b：曼森连续追近被动有界接入
+
+接续既有 I02a 未验收源码，现已核验本人 A1 两次观察→A2 抽牌/早餐后冷却→预备餐来源冻结的生产顺序。同最近前车原实例/ID、正差距严格缩小，三级终差距 2/3/4；每圈首次合格回旧手永久热最多1，无热过期。弃区付款、新抽热和临时热不得补源，退役与净回分开；原超车赠位移/回热已撤销。修正“预约进站前车被错误排除”，冻结热池身份；未改主动、ID/XP/等级/UK次数或普通热支付。
+
+新增48项 MansellPursuitTests 登记 drivers，另加1项真实 GameLoop A2 协程（沿原long-races夹具归属）。首轮六模块1824总/1822过/2失败/0跳过、26.4781307秒：重复热夹具使用拒绝永久热的公开API，及遗漏旧位移奖励断言；原件保留，修正夹具/旧预期并补真正负赛程差/双UK独立/初始化重赛案例。最终新程序集 drivers/core/tools 原生RunFinished790/790、0失败/跳过/不确定、14.0069824秒，selectionMatches=true；精确GameLoop案例1/1、1.9035575秒，原生RunFinished交叉确认。此前未变tech/cards-heat/tutorial结果保留，不冒称最后版本重新全量。首次协程断言误用NUnit字符串Contain造成1个编译错误，修复并确认新editor程序集后才运行，未用旧程序集测试冒充通过。
+
+最终MainMenu及全部loaded scene干净，未播放/编译/导入/原生测试占用，ready=true且非stale，Console0错误/0警告；许可日志entitlement解析成功。无新UI、截图或三尺寸验收；旧技能面板名称/说明、两段主动、完整模式/存档组合仍未完成，I02保持进行中。证据 production/qa/evidence/tech-driver-I02b-2026-10-26/README.md。下一有界包I02c接固定费用首段与同目标下一输入第二段。未提交推送，Word原件、InitTestScene和其他既有改动保留。
+
+
+### 2026-10-26 I02c：曼森两段主动事务与移动适配（玩家按钮未迁移）
+
+生产新增MansellChargeRuntime/ActivationPlan及CardDeck整笔费用：首段锁最近原车1–6格，弃普通速度原实例1并付引擎永久热1到弃区，三级首段+1/2/2；下一本人A1同最近车正差距严格缩小且有热1才开放可选续段+2/3/3，仅付热1、不再扣场次数。最后一次首段仍能续；取消/过期/资源不足/跳过/进站/终态结束，不延期等A2回热。计划绑定会话/本人/目标/ID/牌组/热池/输入/轮/挡位/请求及发行版本/全手牌，重发与外部会话隔离；预测复制独立，普通罚热的部分支付/失控保持。
+
+新路径已接Session A1、实际移动及新增尾端弯心费用，原角速不增加、不叠旧超车奖励；管理器退出统一清曼森激活态，不退款。旧玩家按钮尚未迁移，新付费序列与旧激活互斥；只把规则/API/有界GameLoop标通过，玩家可操作/三尺寸/全模式仍未完成。
+
+新增61项纯规则/生命周期适配器案例登记drivers、2项真实GameLoop协程沿原long-races夹具。首轮1972/1971/1失败、32.9891449秒是换牌组夹具Context空池，已修；中间1984/1984、31.8671046秒在最后外部会话/退出修正前，保留版本边界。独立审查发现并补来源/计划重发/退出清理及fallback/外部会话缺口。最终新runtime b825ebc4-d36e-4855-bace-c69939a2b42b，drivers/core/cards-heat/tools原生RunFinished1152/1152、0失败/跳过/不确定、18.154035秒，selectionMatches=true。随后仅修协程夹具，原runtime不变：两协程最终2/2、0失败/跳过、3.3132155秒，SessionState原生RunFinished交叉确认。三次中间协程1过/1失败分别是无效0限速弯心、名称映射未配、失控分支误等弃牌；未弱化实际费/次数/守恒断言，原件保留。
+
+最终MainMenu全部loaded scene干净，未播放/编译/导入/测试占用，ready=true且非stale，Console0错误/警告；32个场景文件SHA保持，Word采用源SHA未变。无UI/文案布局变更或新截图，旧按钮仍待I02d按新事务迁移，并完成真实改前后三尺寸；完整模式/存档组合留I13。证据 production/qa/evidence/tech-driver-I02c-2026-10-26/README.md。I02保持进行中，I03未开始，无提交推送/清理/自动任务恢复。
+
+
+### 2026-10-27 I02d：曼森玩家入口源码接线，Unity 验收待续
+
+真实 HUD 与 Manager 两处技能入口已在源码中转入 MansellChargeActivationPlan：首段必须选择普通速度牌原实例，即使关闭额外确认仍不可绕过；续段只付1张引擎永久热，不弃速度牌、不再扣场次，遵既有确认开关。复用单一模态、取消/改挡/退出清理及焦点返回；续段取消关闭窗口。名称/说明改为“蓄势追近”“雄狮追击”，ID、XP键、解锁及UK2/2/3次数不变。末次续段按钮明确“不扣次”，不显示歧义×0。
+
+新增 MansellSkillProductionUiTests 登记 ui，共72个参数组合（3尺寸×12夹具×mask0/All），包含原实例、重复入口、末次场次续段、键盘、遮罩、改挡/退出取消和目标过期；mask0部分续段场景直接提交，不是72种独立行为。静态QA发现禁用按钮不能用强制可交互Click helper，已改为断言禁用后派发事件。本轮真实测试运行0、通过0、失败0、跳过0、测试耗时0秒，72例未执行。
+
+最终使用当前全部runtime/editor源码及新runtime引用离线Roslyn编译成功，分别1.328/1.547秒、合计2.875秒，日志和源码SHA已保存；不是Unity导入/加载/原生RunFinished。Unity进程存在，许可证日志解析成功，但MCP8080拒绝连接，窗口抓取未能可靠返回Unity；不再操控编辑器、不进入播放、不保存场景，当前isDirty/播放/编译导入/Console/ready无法完整实查。无有效改前/改后三尺寸截图；捕获器禁止把当前新源码标成before。四行文案和续段两行按钮仍待实际测量，不能宣称零溢出或玩家可操作通过。
+
+I02继续进行中，I03不开始；下一包仅恢复安全只读连接并完成新程序集、定向模块与三尺寸操作验收。完整RaceCanvas/硬件/模式/存档留I13。证据 production/qa/evidence/tech-driver-I02d-2026-10-26/README.md。未提交推送、未清理，Word及32场景原件保留。
+
+
+### 2026-10-27 I02e：曼森玩家入口有界原生/三尺寸验收，交接I03
+
+Unity连接恢复后，实查MainMenu及全部loaded scenes干净、未播放/编译/导入/测试占用、许可证日志有效、Console初始0错误/警告、ready初始true且非stale；已确认I02d新API/夹具实际载入。首轮72参数组合运行后报告正文overflow失败，原MCP仅有completed72与封顶失败样例、缺原生根汇总，保留原件而不虚填精确过/失败/耗时。实际捕获修复前36图。生产仅把共享选择窗正文高度92调至120，保留字号19、字形位置、按钮、费用/规则和原布局恢复。
+
+确认新runtime 1dad8c6c-b187-451c-81be-3974948136fe加载后，原生ui/drivers/tech/gears/cards-heat/core RunFinished **2076/2076，失败0/跳过0/不确定0，22.5495703秒，selectionMatches=true**；含曼森72个UI参数组合、9项既有拖动相关案例。验证首段原实例弃牌+热/次数，续段只付热/最后一次仍可续、关闭额外确认、重复入口、同值牌保留、键盘/焦点、遮罩、取消重开、改挡/生命周期/目标过期无费用。72是参数组合，不是72种独立行为。未跑全量或长比赛；另在当前新程序集定向重跑3项真实GameLoop，3/3、0失败/跳过、3.1201921秒，原生RunFinished确认。覆盖真实两段续追与其他车动作、尾端弯心普通部分支付/失控、A2旧手永久热来源；I02b/c旧原件仍是历史，本轮这3项为新执行通过。
+
+1920×1080、2560×1440、1280×720修复前36/后36均实际逐张查看；修复前33条正文overflow，后0条。**36对PNG SHA完全相同**：本修复矫正容器边界/溢出标记，保留本已可见的字形，不能称为字体变大或视觉排版改观。原I02d旧UI改前图仍缺；本轮图片只是I02d新UI与I02e修复前/后，不回填伪造。背景入口/挡位是拥有控件，确认面板/Manager为生产，EventSystem事件不冒称硬件或完整RaceCanvas。
+
+最终MainMenu干净、未播放/编译/导入/测试；模块后Console0错误/1条既有cardPrefab夹具警告，三协程后Console0错误/0警告，未主动清Console。ready资源变为stale_status，以直接实时查询与原生RunFinished记录当前状态，未声称最终ready资源新鲜。I02规则/生产/有界玩家操作通过；完整RaceCanvas、硬件、所有模式/存档组合、720p舒适度仍I13。执行指针进入I03德国有限爆发，不在I02重复审计。证据 production/qa/evidence/tech-driver-I02e-2026-10-27/README.md；截图目录 D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I02d-2026-10-26/after/run-20261026-180113728 与 run-20261026-180515665。无提交推送/清理，Word和场景原件保留。
+
+
+### 2026-10-27 I03a：德国黑啤固定费用生产接线（有限爆发未完成）
+
+黑啤现在经CardDeck.TryPayFixedPermanentHeatToDiscard和Session.TryCommitSchwarzbierFuel，只有实付1张永久引擎热到弃牌区才获得+2；记录同一原实例到本车本回合收据与真实付热计数，成功才记每圈使用。生产ComputeMovements和预测共用提交规则，预测只改深复制deck/tech状态，不动真实资源、牌值、收据或次数；复制终态标记防止终态副本凭空触发。
+
+经源码核对，旧问题确切是舒马赫被动可把黑啤1热折到0、黑啤会误耗黑面包次数；当前主动PerfectLap仅免角费，通用热倍率已为恒等，不能把旧问题说成主动免单/倍率现仍造成免费黑啤。固定费用保留普通折费/黑面包供后续普通费用使用，普通罚热部分支付与失控路径未改。
+
+新增SchwarzbierFixedPaymentTests20例登记tech，既有RacePitTurnBoundaryTests新增8个真实MVP移动适配器参数，沿tracks-weather-pit归属。初始新测试两处Does.Not.Contain误选字符串重载导致2条CS1503，已改CollectionAssert并确认新editor载入后才运行；另在静态审查中纠正免角费前置和终态未入手选牌的假通过风险。最终runtime2f6be9ac-e642-4a6b-a4ae-d9e3429edeea、editor561035bf-5f01-4907-aa0d-0fb7cf3d95c9实际加载；原生tech/drivers/cards-heat/core/tracks-weather-pit **2286/2286，失败0/跳过0/不确定0，27.771329秒，selectionMatches=true**。非全量、非本轮GameLoop/PlayMode或长比赛验收。两独立审查完成初步反馈后遇额度限制，最终复审未完成；父任务修正测试并完成原生验证，不伪称独立全审通过。
+
+最终MainMenu及全部loaded scene干净，未播放/编译/导入/测试占用，许可日志有效；Console仅1条no_such_track预期缺配置负面夹具日志、0警告、无编译错误，未清Console。ready资源为stale_status，保留直接实时状态与原生RunFinished，不当新鲜ready。没有新UI布局/文案/入口或截图，三尺寸手动交互未验。L1仍沿旧自动时机，L3仍是旧自动收尾；手动声明、三次合计预算、首笔实付锁一次机会、开窗后收据冻结返还及全模式都未完成。I03保持进行中，不进入I04。下一I03b接上述有限窗口/实际支付链，随后单独完成手动UI。证据 production/qa/evidence/tech-driver-I03a-2026-10-27/README.md。Word/32场景与其他脏改动保留，无提交推送/清理。
+
+
+### 2026-10-27 I03b：德国有限爆发运行时与生产适配（手动入口待接）
+
+已接入每赛车/会话/牌组/热池/回合绑定的L3声明API：确认挡位前免费声明，首笔开窗后的真实永久热付款才锁本场机会；取消仅可在未实付且版本匹配时进行。黑啤本回合成功合计最多3次含声明前常规次数，跨线/冷却/重复BeginTurn不刷新，圈标记冻结声明时圈。实际移动聚合已付+2/次，重复计算不再扣费或丢收益。普通罚热部分支付/失控规则保持，Mansell固定付款也登记同一永久热收据。
+
+窗口排除全部旧实例，仅返开窗后仍在本人手/弃区的原收据；先前已冷却不替换，净回引擎与容量退役分别计数。预测深复制收据和旧来源排除集合，隔离真实热池；替换牌组/热池使旧窗口失效。回合重置、退出与收尾finally清引用，技能/科技回调异常也关闭窗口，已锁场次机会不退。
+
+真实验证：新runtime 1355eddf-9d2a-4dae-8a1d-19ecc171d10e、final editor a0cab66d-67cb-488c-aee8-cb227b684d94。8模块tech/drivers/cards-heat/core/tracks-weather-pit/gears/ui/tutorial原生RunFinished **2990/2990，0失败/跳过/不确定，19.5448375秒，selectionMatches=true**；新增29运行时+5真实MVP参数案例登记模块。首轮2988过/2失败/0跳过，18.717076秒；旧夹具误要求重复计算丢已付位移，改为保留+2且仍只扣1后重跑。另3条实际Mansell GameLoop **3/3，0失败/跳过，3.3656232秒**，native root确认；发生于仅测试预期修订前，生产runtime未再改变，不冒充完整德国手动比赛。引擎与QA最终只读有界复审均通过。
+
+MainMenu全部loaded scene干净，停止播放/编译/导入/测试；许可已解析。Console error1（预期no_such_track负面夹具）、warning1（UI回归后CardHandUI未设cardPrefab），未清除；无项目编译错误。ready资源stale_status，使用新鲜直接状态和原生结果。一次诊断查询误用IsTestRunActive导致CodeDOM查询编译失败，已改查询，不是项目脚本失败。
+
+**I03仍进行中：真实玩家手动L1/L3按钮、固定费版本化确认、取消/禁用/剩余次数/返还与退役提示、手动完整GameLoop尚未接入；未声明的新窗口之外仍保留旧自动兼容路径。** 本包没有UI布局/文案修改或新截图，三尺寸视觉/交互未验；终态/跳过/进站完整比赛、完整模式/存档仍待I13。下一I03c接手动入口及确认后迁移旧自动选择，不进入I04。详见production/qa/evidence/tech-driver-I03b-2026-10-27/README.md。Word原件、场景和全部既有脏改保留，无提交推送、清理或系统设置修改。
+
+
+### 2026-10-27 I03c：黑啤固定费用请求与Manager生产API（HUD未接）
+
+新增GermanFuelActivationPlan：免费创建/取消；确认前冻结并复核session/本人/回合/请求版本、科技与运行态版本、牌组/热池身份、圈/位置/挡位/车队/借用目标/有效节点集合、引擎/待退役和手牌/抽牌/弃牌/实付收据四区原实例及type/value/temp/trick。全部有效后只调用一次既有固定永久热提交，失败或重复回调无新增扣费；不弃速度牌，空手仍可实付，不自动为后续角费保留资源。空科技集合拒绝但不修写原数据。
+
+Manager新增TryPrepare/TryConfirm/CancelGermanFuelRequest及pending引用/请求版本；重发取消旧请求，旧取消/确认不能触及新请求，改挡/确认挡位/关输入/生命周期沿既有取消钩子释放。仅本人真实A4输入开放且科技开、非教程时有效；实际换配置/切教程在确认前重新检查。取消燃料请求不撤销L3声明或其他真实付款造成的场次锁。
+
+最终新runtime c33b40ad-fc92-429a-8fb8-28cfd734fafe、editor ab0c90c2-2b5e-48ad-93bc-300585596ee7实际加载；tech/drivers/cards-heat/core/gears/tracks-weather-pit/tutorial **2712总/2712过/0失败/0跳过/0不确定，8.0673993秒，selectionMatches=true**，含新增56参数案例（已登记tech）。初次测试清单未导入触发inventory安全拒绝，执行0；刷新后才跑，不算通过。中间2702/2702与2706/2706分别在空集合修复和额外QA案例前，最终以2712为准。三条实际Mansell GameLoop在最终程序集重跑 **3/3，0失败/跳过，3.3701701秒**，native root确认，不算德国手动GameLoop/长赛/全量。引擎与QA只读复审有界通过，QA人工数52已由原生56校正。
+
+最终MainMenu全部loaded scene干净，未播放/编译/导入/测试，许可成功解析，Console0错误/0警告，未清Console；ready资源stale_status，直接实时查询/native RunFinished为据。Word草案与已记录原件SHA未变，本包新扩充3份正式Word到只读清单，共8份，并非用户修改；32场景与其他既有改动保留。
+
+**本包仅生产计划/Manager API接线，尚无HUD按钮或弹窗绑定，不算玩家可操作。** 取消/过期请求当下不扣费，但继续走旧ComputeMovements仍可能独立自动付黑啤；不能据本包宣称“完整取消后移动不扣”。新UI几何/文案未改，截图绝对路径无，三尺寸未验。下一I03d实际接L1/L3操作、确认/禁用/焦点和旧自动路径迁移，并补取消→正式出牌→移动不扣费回归。I03保持进行中，I04待办，完整模式/存档仍I13。证据 production/qa/evidence/tech-driver-I03c-2026-10-27/README.md；无commit/push/reset/checkout/rebase/清理或系统设置修改。
+
+
+### 2026-10-27 I03d：真人黑啤L1实际HUD与取消→出牌→移动（L3仍待）
+
+A4新增GermanFuelActionUI，沿阶段独占的原driver action slot，按钮显示本圈余次、费用/收益、缺热/已用/待确认文字。HUD直接路由Manager版本化固定费计划；沿CardAction确认开关，开启时共用一次可取消确认、关闭时直接提交。确认正文包含本人长名、永久引擎热→弃牌、+2与后续普通角费/失控风险，不弃速度牌；专用无牌文案不误写第二段。支付后焦点可回有效出牌按钮，模态/详情阻止底层点击，显式回调/退出取消旧请求。
+
+真人ComputeMovements与预测不再自动购买黑啤，只汇总已确认付款的+2；普通AI科技自动策略保留，不顺带启用AI车手技能。取消/过期后，经真实ConfirmPlayerSpeedCards和ComputeMovements不再扣热。已付黑啤但尚未选速度牌时也显示预测+2，并以复制的skip/kanto/terminal标志防止重新激活跳过或终态；实际缺牌罚热沿旧普通支付，不退款。
+
+最终新runtime be928c88-1478-48b7-b060-8cf4cb7beeb2、editor b3999214-a847-40c7-b71b-207be910dba6实际加载。tech/drivers/cards-heat/core/gears/ui/tutorial/tracks-weather-pit原生 **3087总/3087过/0失败/0跳过/0不确定，32.6400771秒，selectionMatches=true**。新增36 HUD参数（3尺寸、mask0/All、两德国现有车手、六队周边/2/4/6/12参赛车、长中文数字、pointer/Submit、取消/重开/禁用/失效/显式OnDisable、遮罩/焦点、真实出牌→移动）登记ui；5新增空选择已付燃料预测/缺牌付款/实际移动对照沿原tracks-weather-pit。既有拖动随模块回归通过，非本包新增拖动机制。另最终程序集实际Mansell GameLoop3/3，0失败/跳过，4.1799126秒，native root确认；不是德国完整手动GameLoop、长赛或全量。
+
+原生首轮3082总/3062过/20失败/0跳过，32.5160696秒，暴露A4焦点返回缺失、EditMode未触发原生OnDisable及旧auto预期；修复焦点/明确调用生产回调/校正人机策略断言后3082/3082，随后强化真实正式出牌、修复独立审查发现的已付空选择预测，最终3087为准。初始CS0103已改System.Math，未拿旧程序集通过。引擎最终只读有界批准；并行UI/QA代理早期额度失败未写文件，父任务实作与实际验收，不声称独立UX/QA全审通过。
+
+三尺寸有效改前24图（run-20261027-040534023）与改后24图（run-20261027-041640341），已查看所有动作/模态区域，另查看三张最终全帧，前后均0溢出。真实HUD.Start/生产widget/Manager计划置于自有预览Canvas，操作位沿生产归一化尺寸；周边自有背景，非完整RaceCanvas或硬件键盘。初次错误GearButtons夹具产生216个标签溢出记录的旧图完整保留但不验收；修好夹具后在生产改动前重拍。改后加入自有出牌焦点目标，背景差异不当生产布局变更。详见production/qa/evidence/tech-driver-I03d-2026-10-27/README.md及绝对截图目录。
+
+最终MainMenu全部loaded scene干净、未播放/编译/导入/测试，许可证已解析，Console0错误/0警告未清；ready资源stale_status，以直接实时状态/原生RunFinished为据。8 Word/32场景、所有既有改动/未跟踪/排除文件保留，无提交推送、清理或系统/快速播放设置修改。
+
+**I03仍进行中：L3声明/取消实际按钮、与A1车手技能同屏共存、三次合计操作、真人旧自动L3返热迁移及净回/退役反馈待I03e。** 本包只接完真人L1有界操作，不提前进I04；完整RaceCanvas、硬件输入、完整比赛/模式/存档与720p主观舒适度留I13。
+
+
+### 2026-10-27 I03e：德国有限爆发声明、实际收据返还与有界交付
+
+A1新增烤肉爆发免费声明/取消，与原车手按钮分槽共存；未付款A4仍可取消，取消隐藏前保存焦点并返燃料按钮。首笔真实永久热付费锁本场机会，声明回合黑啤合计最多3次；实际L1沿既有CardAction确认，无额外声明确认。取消后普通付款不获L3返还。旧未声明自动L3返还已对人/AI移除；AI先在挡位前声明，随后只保持原有一次自动燃料选择，不启用普通AI车手技能。收尾只移除尚存开窗原收据，已在反应阶段回收的不重复；日志区分净回引擎与容量退役，回引擎动画只计净回。
+
+最终新runtime `04d6d765-0f64-4a05-b432-1a7ab98409f2`、editor `4a2d3c31-aa91-4d25-915e-b439e65de2e0`实际载入。十模块原生 **3403/3403，0失败/跳过/不确定，43.9000283秒，selectionMatches=true**；新增48 UI参数与8 Manager案例分别登记ui/tech。另2条新增真实两回合GameLoop **2/2，0失败/跳过，2.9225509秒**，原生RunFinished确认；覆盖三次黑啤、实际出牌/移动、反应/弃牌/下一轮、AI声明及取消后缺牌付款；不是完整长比赛。新增partial归原long-races夹具，不另重复登记。
+
+首轮3378过/25失败，42.5208608秒；修复焦点、旧测试声明前置与自然冷却后重复退款预期后，定向56中40过/16失败。剩余为同步EditMode透视RT矩形检测异常（同中心局部还原为0但native contains=false），新自有摄影机改正交后保留真实Raycaster顶层接收者断言，最终十模块通过。诊断未改生产几何、共享指针夹具或项目摄影机。独立引擎有界只读通过；QA指出截图时点后明确标注，未冒称完整独立UX验收。
+
+三尺寸改前24图由捕获代理实际查看、后24动作/确认/状态区域及4张全帧由父任务查看，均0正文溢出。前目录 `D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I03e-2026-10-27/before/run-20261027-043617806`，后目录 `D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I03e-2026-10-27/after/run-20261027-094346842`。前A1自有白底白字的旧driver标签不算可读验收；后仅给自有背景应用既有生产样式，且正交摄影机不同，不冒称同摄影机像素比较。terminal/exit图片为清理前确认界面、资源字段为清理后断言，不算终态后截图；前engineAfter=0未测量。净回/退役日志有实际适配器断言，未在这些图中渲染。完整RaceCanvas、硬件、模式/存档/完整比赛及720p主观舒适度仍I13。
+
+最终MainMenu全部loaded scene干净，未播放/编译/导入/测试，许可正常，Console0错误/0警告未清，ready新鲜true。模块运行后曾有预期no_such_track错误与cardPrefab夹具警告，最终记录清楚区分。8 Word/32场景及既有改动保留；git diff --check通过，无提交推送、清理或系统/快速播放设置修改。I03仅有界交付，执行指针进入I04舒马赫/维特尔真实来源与本人输入窗口；全模式未完成。详见production/qa/evidence/tech-driver-I03e-2026-10-27/README.md。
+
+
+### 2026-10-27 I04a：舒马赫真实弯道付款调校（主动/维特尔仍待）
+
+工程师调校已替换旧定时通用减费：一级同本人输入实际普通弯道永久热付满2、二三级满1，准备下一次普通弯道费-1；仅下1/1/2个合格本人输入的首笔正费用有效。每圈最多授予一次、旧标记不叠/不续，同一输入不可兑现。新费用来源枚举仅由ResolveCornerSet传入，按实际Drawn的新永久原收据去重，重复回调/旧前缀/临时热不积累。普通罚热部分支付/失控保留，免到零无付款收据；换挡、黑啤、固定车手费均不触发或消耗调校。普通AI车手技能未启用。
+
+被动有独立本人输入计数，全球轮、其他车输入不扣期限；未顺带迁移PerfectLap旧主动时钟/免角费。真实失控先清、scheduled进站/跳过/终态/退出清理；仅request未scheduled不误禁用。正常cleanup保留未来标记，重开初始化清空；深复制三套集合并给预测显式重绑定，补pitStopScheduled复制，预测不改真实牌值/热池/标记或每圈记录。
+
+最终实际新runtime dec425bf-2fe1-41d6-8ebc-7936e91615a1、editor9da3c2ed-2d23-466f-9492-c89d2dd74ae7。11模块原生 **3484/3484，失败0/跳过0/不确定0，40.2925337秒，selectionMatches=true**；新增42规则+24真实适配器+3车手页参数。另原生真实GameLoop **3/3，失败0/跳过0，4.2840327秒**：新增舒马赫三输入实际过弯付2→下输入付1、旧标记一次兑现/同圈不再授予，以及2条已有德国声明流程；非完整长赛/全量。新增partial沿既有long-races，其他新夹具登记drivers/ui。
+
+首轮3472中3469过/3失败，40.2716347秒，均为新摘要在三尺寸溢出；仅D03被动文字启用12..14字号适配后新程序集全部通过。独立引擎审查指出pit预测copy遗漏后已修并加2例；复审代理随后额度受限，最终父任务核查/原生验证，不冒称独立全审。主菜单车手页的被动摘要已更新，旧主动摘要仍真实反映未迁移行为。
+
+受控生产DriverSelectionUI在1920×1080、2560×1440、1280×720改前/后各3全帧实际查看；新D03被动overflow前后0，每尺寸全页既有14条其他文字/姓名overflow保留，不算全页可读验收；UK拥挤与姓名重叠未扩修。真实Raycaster选12车手/六队、Submit、遮罩、返回均通过；正交自有Canvas不算实际菜单启动/硬件/完整比赛模式，720p舒适度仍I13。前绝对目录 D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04a-2026-10-27/before/run-20261027-100904358；后 D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04a-2026-10-27/after/run-20261027-152526369。
+
+最终MainMenu干净、未播放/编译/导入/测试，Console0错误/0警告未清，许可正常；ready记录见证据。8 Word/32场景及既有排除文件保留，未改快速播放设置。I04仍进行中，下一I04b舒马赫弃牌低挡准备/两段逐付热主动，再接维特尔；完整模式/存档仍I13。用户随后明确授权“将改动提交到github”，按相关范围核对并提交/推送，其他钩子/音频暂存/字体缓存/编辑器设置不纳入。证据 production/qa/evidence/tech-driver-I04a-2026-10-27/README.md。

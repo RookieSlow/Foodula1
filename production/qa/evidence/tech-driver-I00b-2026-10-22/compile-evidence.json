@@ -1,0 +1,12 @@
+{
+  "project_compile_error_observed": "Assets/Tests/Editor/hunter_skill_activation_plan_test.cs(270,52): error CS1503: Argument 1: cannot convert from CardData to string",
+  "repair": "Use NUnit collection Has.No.Member(heat), then confirm fresh assemblies before running. The compile-error state was not treated as a passing test run.",
+  "tool_snippet_diagnostics": [
+    "TestRunnerApi.IsTestRunActive does not exist; use the already verified native IsRunActive wrapper.",
+    "HunterSkillCommitCapture was not loaded until explicit safe AssetDatabase.Refresh. Tool snippet compilation failure is distinct from production source compilation."
+  ],
+  "prior_runtime_mvid": "a5f6b157-de12-4b7a-864c-f5b9910f5f96",
+  "first_i00b_runtime_mvid": "77d951e8-eff9-40db-82b0-a706dd6e3531",
+  "final_runtime_mvid": "a3e1bebc-ca62-4c3a-98d5-4fd1d28cf564",
+  "final_editor_mvid": "ee0383d1-87ce-4287-8942-29c07e554116"
+}

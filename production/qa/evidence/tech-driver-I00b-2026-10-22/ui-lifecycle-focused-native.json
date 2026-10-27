@@ -1,0 +1,1727 @@
+{
+    "startedUtc": "2026-10-22T15:03:50.6674322Z",
+    "endedUtc": "2026-10-22T15:04:00.7946696Z",
+    "state": "Passed",
+    "nativeState": "Passed",
+    "seconds": 9.189481,
+    "total": 212,
+    "passed": 212,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "selectionMatches": true,
+    "plan": {
+        "modules": [
+            "ui"
+        ],
+        "testNames": [
+            "BrandArtResourcesTests.EveryTeamLogoLoadsFromResources(CN)",
+            "BrandArtResourcesTests.EveryTeamLogoLoadsFromResources(DE)",
+            "BrandArtResourcesTests.EveryTeamLogoLoadsFromResources(IT)",
+            "BrandArtResourcesTests.EveryTeamLogoLoadsFromResources(JP)",
+            "BrandArtResourcesTests.EveryTeamLogoLoadsFromResources(UK)",
+            "BrandArtResourcesTests.EveryTeamLogoLoadsFromResources(US)",
+            "BrandArtResourcesTests.EveryTeamUsesStableResourcePath(CN,\"Brand/team_cn\")",
+            "BrandArtResourcesTests.EveryTeamUsesStableResourcePath(DE,\"Brand/team_de\")",
+            "BrandArtResourcesTests.EveryTeamUsesStableResourcePath(IT,\"Brand/team_it\")",
+            "BrandArtResourcesTests.EveryTeamUsesStableResourcePath(JP,\"Brand/team_jp\")",
+            "BrandArtResourcesTests.EveryTeamUsesStableResourcePath(UK,\"Brand/team_uk\")",
+            "BrandArtResourcesTests.EveryTeamUsesStableResourcePath(US,\"Brand/team_us\")",
+            "BrandArtResourcesTests.MenuBrandSpritesLoadFromResources",
+            "BrandArtResourcesTests.UnknownTeamHasNoBrandPath",
+            "CardSelectionVisualTests.BBQHeatButtonAndLabelRestoreOnAvailabilityChange(False)",
+            "CardSelectionVisualTests.BBQHeatButtonAndLabelRestoreOnAvailabilityChange(True)",
+            "CardSelectionVisualTests.DeselectRestoresTheOriginalCardTransform",
+            "CardSelectionVisualTests.SelectedCardScalesAndLiftsWithoutChangingLayoutSlot",
+            "CardSelectionVisualTests.SelectedCardUsesShadowWithoutChangingItsLayoutSize",
+            "EncyclopediaCatalogTests.ConfirmationEntryTracesEveryCurrentGateAndManualLogExport",
+            "EncyclopediaCatalogTests.DefaultCatalogLoadsAndCoversEveryRequiredTopic",
+            "EncyclopediaCatalogTests.DriverEntryTracesAllRuntimeDriverDefinitions",
+            "EncyclopediaCatalogTests.EveryEntryHasStableUniqueIdAndReadableContent",
+            "EncyclopediaCatalogTests.InputEntryExplainsActualKeyboardPhaseBehavior",
+            "EncyclopediaCatalogTests.SpecialCardEntryTracesAllRuntimeTrickDefinitions",
+            "EncyclopediaCatalogTests.ValidationRejectsDuplicateAndMissingRequiredTopics",
+            "EncyclopediaCatalogTests.WeatherEntryTracesEveryCurrentWeatherProfile",
+            "HeatGaugeRulesTests.ExpiredRegionalHeatDoesNotInflateCapacityGauge",
+            "HeatGaugeRulesTests.GaugeCountsEveryZoneButTemporaryHeatDoesNotIncreaseCapacity",
+            "HeatGaugeRulesTests.GaugeIncludesCommittedHeatWithoutChangingItsCardType",
+            "HeatGaugeRulesTests.GaugeUsesSeventyPercentCriticalThresholdAndDropsAfterCooling",
+            "HeatGaugeRulesTests.HudRefreshesAuthoredThermometerWhenHeatLabelReferenceIsMissing",
+            "HeatGaugeRulesTests.RegionalCapacityReentryReactivatesOutstandingHeatWithoutStacking",
+            "HeatGaugeRulesTests.ThermometerBuildsTenSegmentsAndReflectsRuleState",
+            "HunterSkillCardChoiceNativeLifecycleTests.NativeHideDisableAndDestroyCancelEachPendingSelectionOnce",
+            "HunterSkillCardChoiceUITests.CancelPointerReopensAtFirstCardWithoutSpendingOrLeakingOldCallbacks",
+            "HunterSkillCardChoiceUITests.ChoiceTakesReferenceSnapshotWithoutOwningOrMutatingCallerCollection",
+            "HunterSkillCardChoiceUITests.DisabledHudDoesNotSelectAnInvalidSourceOrKeepHiddenChoiceFocus",
+            "HunterSkillCardChoiceUITests.EmptyOrNullChoicesDisableCommitAndKeepCancelAvailable(False)",
+            "HunterSkillCardChoiceUITests.EmptyOrNullChoicesDisableCommitAndKeepCancelAvailable(True)",
+            "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"ensure-called\")",
+            "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"hud-destroyed\")",
+            "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"hud-disabled\")",
+            "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"panel-destroyed\")",
+            "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"panel-hidden\")",
+            "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"root-hidden\")",
+            "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"row-hidden\")",
+            "HunterSkillCardChoiceUITests.FailedCommitStillConsumesOnlyUiCallbackAndCannotFallBackToMenuNavigation",
+            "HunterSkillCardChoiceUITests.InvalidOpeningFocusFallsBackToAvailableDriverAfterCallback(False)",
+            "HunterSkillCardChoiceUITests.InvalidOpeningFocusFallsBackToAvailableDriverAfterCallback(True)",
+            "HunterSkillCardChoiceUITests.NormalRequestCancelsChoiceAndRestoresOriginalLayoutEvenWithMaskBypass(0)",
+            "HunterSkillCardChoiceUITests.NormalRequestCancelsChoiceAndRestoresOriginalLayoutEvenWithMaskBypass(255)",
+            "HunterSkillCardChoiceUITests.NullConfirmCannotCommitButCanCancel",
+            "HunterSkillCardChoiceUITests.OverlayIsTopRaycastAndUnderlyingButtonOnlyReceivesPointerAfterCancel",
+            "HunterSkillCardChoiceUITests.PreviousNextStayBoundedAndSpaceSubmitsOnlyCurrentChoice",
+            "HunterSkillCardChoiceUITests.RealEventSystemRestoresOpeningFocusAfterChoiceNavigationAndCancelOrConfirm(\"driver\",False)",
+            "HunterSkillCardChoiceUITests.RealEventSystemRestoresOpeningFocusAfterChoiceNavigationAndCancelOrConfirm(\"driver\",True)",
+            "HunterSkillCardChoiceUITests.RealEventSystemRestoresOpeningFocusAfterChoiceNavigationAndCancelOrConfirm(\"gear\",False)",
+            "HunterSkillCardChoiceUITests.RealEventSystemRestoresOpeningFocusAfterChoiceNavigationAndCancelOrConfirm(\"gear\",True)",
+            "HunterSkillCardChoiceUITests.RebindingManagerCancelsOldUiIntentWithoutConfirming",
+            "HunterSkillCardChoiceUITests.ReplacingChoiceCancelsOnlyOldRequestAndDoesNotGrowUiOrListeners",
+            "HunterSkillCardChoiceUITests.ReplacingChoiceWithNormalRequestRestoresOpeningFocus",
+            "HunterSkillCardChoiceUITests.RequiredChoiceCannotBeBypassedAndPointerConfirmsExactEqualValueInstanceOnce(0)",
+            "HunterSkillCardChoiceUITests.RequiredChoiceCannotBeBypassedAndPointerConfirmsExactEqualValueInstanceOnce(255)",
+            "HunterSkillCardChoiceUITests.SuccessfulActivationReturnsToLegalGearWhenSkillButtonBecomesDisabled",
+            "HunterSkillCardChoiceUITests.TemporaryChoiceLayoutRestoresAuthoredGeometryFontsMaterialsAndButtonSize",
+            "LiveTurnTelemetryRuntimeTests.AuthoredHudRefreshesBeforeConfirmAndRestoresRealHeatAfterInputCloses",
+            "MenuOverlayNavigationTests.driver_labels_refresh_after_selection_and_reopening",
+            "MenuOverlayNavigationTests.late_career_button_and_other_entries_stay_below_driver_overlay",
+            "MenuOverlayNavigationTests.navigation_closes_career_and_return_does_not_reveal_previous_surface(\"GarageBtn\",\"DriverSelectionOverlay\")",
+            "MenuOverlayNavigationTests.navigation_closes_career_and_return_does_not_reveal_previous_surface(\"SettingsBtn\",\"SettingsOverlay\")",
+            "MenuOverlayNavigationTests.navigation_closes_career_and_return_does_not_reveal_previous_surface(\"StartRaceBtn\",\"FreeRaceRosterOverlay\")",
+            "MenuOverlayNavigationTests.navigation_hides_summer_tech_without_consuming_gate(\"GarageBtn\",\"DriverSelectionOverlay\")",
+            "MenuOverlayNavigationTests.navigation_hides_summer_tech_without_consuming_gate(\"SettingsBtn\",\"SettingsOverlay\")",
+            "MenuOverlayNavigationTests.navigation_hides_summer_tech_without_consuming_gate(\"StartRaceBtn\",\"FreeRaceRosterOverlay\")",
+            "MenuOverlayNavigationTests.quick_race_roster_confirmation_opens_track_selection",
+            "MenuOverlayNavigationTests.quick_race_thunderstorm_button_toggles_the_full_twelve_car_field",
+            "MenuOverlayNavigationTests.reopening_career_clears_confirmation_and_replacement_view",
+            "ModernUIStyleTests.ApplyButton_UsesSharedInteractiveStatePalette",
+            "ModernUIStyleTests.ApplyPanel_AddsReadableAccentOutline",
+            "ModernUIStyleTests.ApplyText_UsesFontAssetMaterialInsteadOfLegacyOverride",
+            "RaceEventFXTests.FadeEnvelopeClampsProgressAndInvalidTimingWindow",
+            "RaceEventFXTests.FadeEnvelopePreservesOvertakeAndSlipstreamTiming",
+            "RaceEventFXTests.SlowMotionScopeRestoresNormalGameplaySpeed",
+            "RaceEventFXTests.SpinOutDefaultsMatchVisualDesign",
+            "RaceEventFXTests.SpinProgressClampsToEffectWindow",
+            "RaceEventFXTests.SpinRotationStartsAtZeroAndCompletesConfiguredAngle",
+            "RaceEventFXTests.TailwindBonusMovementUsesItsOwnScopedSlowMotion",
+            "RaceHudTextRulesTests.ActiveAiShowsGearEngineLapAndWrappedCell",
+            "RaceHudTextRulesTests.BlownAiStatusTakesPriorityOverFinishAndResourceText",
+            "RaceHudTextRulesTests.FinishedAiUsesTheFinishedLabel",
+            "RaceHudTextRulesTests.LapLabelKeepsTheCurrentAndRequiredLap",
+            "RaceHudTextRulesTests.PositionWithRosterIncludesRankingWithoutChangingRosterOrder",
+            "RaceHudTextRulesTests.PositionWithoutRosterKeepsTheTrackCellOnly",
+            "RaceHudTextRulesTests.StandingsKeepRankOrderLapCellAndSelfMarker",
+            "RaceHudTextRulesTests.StandingsWithoutTrackSizeUseQuestionMarkAndNoSelfMarker",
+            "RacePresentationSkipTests.CarMovementAnimatorSnapsToTargetWhenPresentationIsSkipped",
+            "RacePresentationSkipTests.SkipRequestOnlyAppliesInsideAnActivePresentationWindow",
+            "RacePresentationSkipTests.TailwindVisualStopsAndRestoresStateWhenSkipped",
+            "RaceResultPresentationTests.game_over_panel_builds_masked_scroll_list_for_large_field",
+            "RaceResultPresentationTests.podium_places_use_color_and_text_labels",
+            "RaceResultPresentationTests.real_ranking_formats_only_standings_and_preserves_mode_copy(\"career\")",
+            "RaceResultPresentationTests.real_ranking_formats_only_standings_and_preserves_mode_copy(\"normal\")",
+            "RaceResultPresentationTests.real_ranking_formats_only_standings_and_preserves_mode_copy(\"tutorial\")",
+            "RaceResultPresentationTests.reused_result_panel_replaces_long_short_empty_content_without_duplicate_controls(2)",
+            "RaceResultPresentationTests.reused_result_panel_replaces_long_short_empty_content_without_duplicate_controls(4)",
+            "RaceUILayoutTests.authored_layout_preserves_custom_rects_and_card_size",
+            "RaceUILayoutTests.fallback_layout_wraps_log_text_in_a_fixed_scroll_view",
+            "RaceUILayoutTests.operation_controls_follow_safe_top_to_bottom_order",
+            "RaceUILayoutTests.race_hud_uses_readable_runtime_font_sizes",
+            "RaceUILayoutTests.return_to_menu_button_is_docked_in_operation_action_stack",
+            "RacingTechActionButtonTests.ActionThemeDoesNotRestyleFourGearButtonsOrResultReturnButton",
+            "RacingTechActionButtonTests.BothLayoutEntrypointsStyleExactlyFiveTargetsAndKeepListeners(False)",
+            "RacingTechActionButtonTests.BothLayoutEntrypointsStyleExactlyFiveTargetsAndKeepListeners(True)",
+            "RacingTechActionButtonTests.NativeActionClickStillUsesExistingResetConfirmationAndCancellation",
+            "RacingTechActionButtonTests.OriginalHandAndSkillRefreshChangeTextAndAvailabilityWithoutReplacingTheme",
+            "RacingTechActionButtonTests.PointerStatesKeepEffectiveContrastAndDisabledButtonRejectsClick(False)",
+            "RacingTechActionButtonTests.PointerStatesKeepEffectiveContrastAndDisabledButtonRejectsClick(True)",
+            "RacingTechActionButtonTests.RepeatedStylePreservesGeometryFontsMaterialsNavigationAndLegacyText",
+            "RacingTechCardZoneTests.BothLayoutPathsThemeFourZonesAndKeepCountBinding(False)",
+            "RacingTechCardZoneTests.BothLayoutPathsThemeFourZonesAndKeepCountBinding(True)",
+            "RacingTechCardZoneTests.IndependentStatisticsAreSecondaryButAliasedExactCountsWin",
+            "RacingTechCardZoneTests.LazyLabelsStayThemedAcrossRepeatedConfigureRefreshAndEmptyPile",
+            "RacingTechCardZoneTests.OnlyTwoShortTitlesGrowDownwardOnceAndUnresolvedRectsAreSkipped",
+            "RacingTechCardZoneTests.PilePointerTintStatesKeepEffectiveTextContrast",
+            "RacingTechCardZoneTests.RealPilePointerOpensOneOriginalInspectorAndEmptyDisabledRejectsClick",
+            "RacingTechCardZoneTests.RepeatedShellStylePreservesAuthoredGeometryFontInputAndNestedCardArt",
+            "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(CardAction)",
+            "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(DriverSkill)",
+            "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(GearCommit)",
+            "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(GearSelection)",
+            "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(LaneChange)",
+            "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(PitDecision)",
+            "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(ResetRace)",
+            "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(ReturnToMenu)",
+            "RacingTechConfirmationTests.ExistingModalKeepsAuthoredGeometryFontsMaterialCallbacksAndInputConfiguration",
+            "RacingTechConfirmationTests.MissingModalBuildsThroughProductionHookAndRepeatedEnsureHasNoGrowth",
+            "RacingTechConfirmationTests.NativeHudStartReusesStyledModalAndDispatchesOneOriginalCallback",
+            "RacingTechConfirmationTests.RealPointerStatesStayReadableDisabledClickDoesNothingAndOverlayBlocksUnderlay",
+            "RacingTechHudShellTests.AttachPreservesBindingsFontsButtonsOuterAnchorsAndEntireTrackAppearance",
+            "RacingTechHudShellTests.ExplicitLifecycleSimulationUnsubscribesAndRebindsWithoutUpdateLoop",
+            "RacingTechHudShellTests.NativeLifecycleResizesOnTextChangeAndReenableWithoutMutatingSourceFont",
+            "RacingTechHudShellTests.ReattachReusesTreeAndKeepsReaderPositionAndButtonGeometry",
+            "RacingTechHudShellTests.RenderedWheelAndScrollbarDragReachLastRowAndPreserveOriginalButtonClick",
+            "RacingTechHudShellTests.StandingsBindingKeepsProductionOrderingAndDoesNotChangeAnyRacer",
+            "RacingTechHudShellTests.TextNotificationGrowsTwelveRowsShrinksShortTextAndRespondsToViewportHeight",
+            "RacingTechInstrumentsTests.AuthoredAndFallbackHeatKeepTenSegmentsFontTextAndNonInteractiveTheme(False)",
+            "RacingTechInstrumentsTests.AuthoredAndFallbackHeatKeepTenSegmentsFontTextAndNonInteractiveTheme(True)",
+            "RacingTechInstrumentsTests.CriticalHeatIsStaticAndDoesNotIntroduceAFrameLoopOrTouchGameplayDeck",
+            "RacingTechInstrumentsTests.ForecastRemovalAndRepeatedRefreshPoolGeometryAndKeepHalfWidthForecast",
+            "RacingTechInstrumentsTests.StateFaceColorsMeetTextContrastAndRetainBothActualAndPendingOnOverlap",
+            "RacingTechInstrumentsTests.TeamControlThemeKeepsInputsFontsActualPendingAndIdempotentGeometry(CN)",
+            "RacingTechInstrumentsTests.TeamControlThemeKeepsInputsFontsActualPendingAndIdempotentGeometry(DE)",
+            "RacingTechInstrumentsTests.TeamControlThemeKeepsInputsFontsActualPendingAndIdempotentGeometry(IT)",
+            "RacingTechInstrumentsTests.TeamControlThemeKeepsInputsFontsActualPendingAndIdempotentGeometry(JP)",
+            "RacingTechInstrumentsTests.TeamControlThemeKeepsInputsFontsActualPendingAndIdempotentGeometry(UK)",
+            "RacingTechInstrumentsTests.TeamControlThemeKeepsInputsFontsActualPendingAndIdempotentGeometry(US)",
+            "RacingTechPileInspectorTests.ActualInspectorKeepsExactDrawGroupingOrDiscardOrderAndSourceInstances(False)",
+            "RacingTechPileInspectorTests.ActualInspectorKeepsExactDrawGroupingOrDiscardOrderAndSourceInstances(True)",
+            "RacingTechPileInspectorTests.ClosePointerStatesStayReadableWithoutChangingExistingTintOrDisabledGate",
+            "RacingTechPileInspectorTests.EmptyPileCannotOpenInspectorAndMissingOptionalStyleReferencesAreSafe",
+            "RacingTechPileInspectorTests.NativeInspectorWheelReachesLastRowAndOriginalCloseMaskReopenLifecycleWorks",
+            "RacingTechPileInspectorTests.RepeatedStyleKeepsGeometryFontsMaskScrollButtonsAndMiniCardIdentity",
+            "RacingTechPileInspectorTests.RestylingPreservesExistingScrollPositionAndLayoutConfiguration",
+            "RacingTechSelectedEffectTests.EnsureThemesCreatedAndReferencedPanelWithoutReplacingCopyFontOrVisibility(False)",
+            "RacingTechSelectedEffectTests.EnsureThemesCreatedAndReferencedPanelWithoutReplacingCopyFontOrVisibility(True)",
+            "RacingTechSelectedEffectTests.ExplanationHasReadablePrimaryAndOriginalRichTitleOnSurface",
+            "RacingTechSelectedEffectTests.NativeShowSwitchHideReopenKeepsThemeAndEffectStripDoesNotBlockExistingPointer",
+            "RacingTechSelectedEffectTests.OriginalKeyboardFocusSelectionAndClearKeepExactCardsAndFormattedExplanation",
+            "RacingTechSelectedEffectTests.ThemePreservesAuthoredRectsRichTextMaterialAndDoesNotRecolorNestedCardArt",
+            "RacingTechThemeTests.ReattachAndRefreshReuseGeometryAndKeepActualMovementAndClickTarget",
+            "RacingTechThemeTests.StylingPreservesInputOwnershipTextAndExistingFont(False)",
+            "RacingTechThemeTests.StylingPreservesInputOwnershipTextAndExistingFont(True)",
+            "RacingTechThemeTests.TextAndDataColorsKeepReadableContrastOnBothSurfaces",
+            "ReturnToMenuConfirmationTests.cancel_closes_modal_and_second_return_click_can_reopen_it",
+            "ReturnToMenuConfirmationTests.game_over_return_button_uses_the_same_confirmation_gate",
+            "ReturnToMenuConfirmationTests.race_return_button_opens_modal_without_loading_scene",
+            "ReturnToMenuConfirmationTests.space_adapter_never_confirms_destructive_return_prompt",
+            "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(CN,False)",
+            "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(CN,True)",
+            "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(DE,False)",
+            "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(DE,True)",
+            "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(IT,False)",
+            "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(IT,True)",
+            "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(JP,False)",
+            "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(JP,True)",
+            "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(UK,False)",
+            "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(UK,True)",
+            "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(US,False)",
+            "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(US,True)",
+            "ReturnToMenuLifecycleAdapterTests.DestructivePromptReplacementAndFailure_DoNotReplayConsumedCallback(ResetRace)",
+            "ReturnToMenuLifecycleAdapterTests.DestructivePromptReplacementAndFailure_DoNotReplayConsumedCallback(ReturnToMenu)",
+            "ReturnToMenuLifecycleAdapterTests.DisabledReturnGate_UsesSameCleanupWithoutOpeningModal",
+            "ReturnToMenuLifecycleAdapterTests.FailedSceneIO_StillClearsSessionRequestsAsBefore",
+            "TeamCarPresentationTests.BadgeUsesStableTeamCode(CN,\"CN\")",
+            "TeamCarPresentationTests.BadgeUsesStableTeamCode(DE,\"DE\")",
+            "TeamCarPresentationTests.BadgeUsesStableTeamCode(IT,\"IT\")",
+            "TeamCarPresentationTests.BadgeUsesStableTeamCode(JP,\"JP\")",
+            "TeamCarPresentationTests.BadgeUsesStableTeamCode(UK,\"UK\")",
+            "TeamCarPresentationTests.BadgeUsesStableTeamCode(US,\"US\")",
+            "TeamCarPresentationTests.BrightBadgesUseDarkText",
+            "TeamCarPresentationTests.ConfiguredSpriteResolvesFromTeamSlot",
+            "TeamCarPresentationTests.EveryTeamUsesItsStableSpriteSlot(CN,4)",
+            "TeamCarPresentationTests.EveryTeamUsesItsStableSpriteSlot(DE,1)",
+            "TeamCarPresentationTests.EveryTeamUsesItsStableSpriteSlot(IT,2)",
+            "TeamCarPresentationTests.EveryTeamUsesItsStableSpriteSlot(JP,5)",
+            "TeamCarPresentationTests.EveryTeamUsesItsStableSpriteSlot(UK,0)",
+            "TeamCarPresentationTests.EveryTeamUsesItsStableSpriteSlot(US,3)",
+            "TeamCarPresentationTests.MissingSpriteFallsBackWithoutThrowing",
+            "TeamCarPresentationTests.ShortSpriteArrayFallsBackWithoutThrowing",
+            "TeamCarPresentationTests.UnknownTeamUsesNeutralBadgeCodeAndOpaqueFill",
+            "TeamCarPresentationTests.UnknownTeamUsesNeutralFallbackColor"
+        ],
+        "missingFixtures": [],
+        "staleFixtures": [],
+        "discovered": 3143,
+        "selected": 212,
+        "excluded": 2931,
+        "longSelected": 0,
+        "full": false
+    },
+    "cases": [
+        {
+            "name": "BrandArtResourcesTests.EveryTeamLogoLoadsFromResources(UK)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0091517
+        },
+        {
+            "name": "BrandArtResourcesTests.EveryTeamLogoLoadsFromResources(DE)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0018867
+        },
+        {
+            "name": "BrandArtResourcesTests.EveryTeamLogoLoadsFromResources(IT)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0036518
+        },
+        {
+            "name": "BrandArtResourcesTests.EveryTeamLogoLoadsFromResources(US)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0030258
+        },
+        {
+            "name": "BrandArtResourcesTests.EveryTeamLogoLoadsFromResources(CN)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.003392
+        },
+        {
+            "name": "BrandArtResourcesTests.EveryTeamLogoLoadsFromResources(JP)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0040569
+        },
+        {
+            "name": "BrandArtResourcesTests.EveryTeamUsesStableResourcePath(UK,\"Brand/team_uk\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.00362
+        },
+        {
+            "name": "BrandArtResourcesTests.EveryTeamUsesStableResourcePath(DE,\"Brand/team_de\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0001905
+        },
+        {
+            "name": "BrandArtResourcesTests.EveryTeamUsesStableResourcePath(IT,\"Brand/team_it\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0000471
+        },
+        {
+            "name": "BrandArtResourcesTests.EveryTeamUsesStableResourcePath(US,\"Brand/team_us\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0000323
+        },
+        {
+            "name": "BrandArtResourcesTests.EveryTeamUsesStableResourcePath(CN,\"Brand/team_cn\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0001265
+        },
+        {
+            "name": "BrandArtResourcesTests.EveryTeamUsesStableResourcePath(JP,\"Brand/team_jp\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0000344
+        },
+        {
+            "name": "BrandArtResourcesTests.MenuBrandSpritesLoadFromResources",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0047553
+        },
+        {
+            "name": "BrandArtResourcesTests.UnknownTeamHasNoBrandPath",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0010593
+        },
+        {
+            "name": "CardSelectionVisualTests.BBQHeatButtonAndLabelRestoreOnAvailabilityChange(False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0197032
+        },
+        {
+            "name": "CardSelectionVisualTests.BBQHeatButtonAndLabelRestoreOnAvailabilityChange(True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0010595
+        },
+        {
+            "name": "CardSelectionVisualTests.DeselectRestoresTheOriginalCardTransform",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0076287
+        },
+        {
+            "name": "CardSelectionVisualTests.SelectedCardScalesAndLiftsWithoutChangingLayoutSlot",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0021464
+        },
+        {
+            "name": "CardSelectionVisualTests.SelectedCardUsesShadowWithoutChangingItsLayoutSize",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0033158
+        },
+        {
+            "name": "EncyclopediaCatalogTests.ConfirmationEntryTracesEveryCurrentGateAndManualLogExport",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0046548
+        },
+        {
+            "name": "EncyclopediaCatalogTests.DefaultCatalogLoadsAndCoversEveryRequiredTopic",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0014129
+        },
+        {
+            "name": "EncyclopediaCatalogTests.DriverEntryTracesAllRuntimeDriverDefinitions",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0011697
+        },
+        {
+            "name": "EncyclopediaCatalogTests.EveryEntryHasStableUniqueIdAndReadableContent",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0008121
+        },
+        {
+            "name": "EncyclopediaCatalogTests.InputEntryExplainsActualKeyboardPhaseBehavior",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0005041
+        },
+        {
+            "name": "EncyclopediaCatalogTests.SpecialCardEntryTracesAllRuntimeTrickDefinitions",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0028283
+        },
+        {
+            "name": "EncyclopediaCatalogTests.ValidationRejectsDuplicateAndMissingRequiredTopics",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0007071
+        },
+        {
+            "name": "EncyclopediaCatalogTests.WeatherEntryTracesEveryCurrentWeatherProfile",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0004215
+        },
+        {
+            "name": "HeatGaugeRulesTests.ExpiredRegionalHeatDoesNotInflateCapacityGauge",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0022175
+        },
+        {
+            "name": "HeatGaugeRulesTests.GaugeCountsEveryZoneButTemporaryHeatDoesNotIncreaseCapacity",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0024138
+        },
+        {
+            "name": "HeatGaugeRulesTests.GaugeIncludesCommittedHeatWithoutChangingItsCardType",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0018606
+        },
+        {
+            "name": "HeatGaugeRulesTests.GaugeUsesSeventyPercentCriticalThresholdAndDropsAfterCooling",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0004953
+        },
+        {
+            "name": "HeatGaugeRulesTests.HudRefreshesAuthoredThermometerWhenHeatLabelReferenceIsMissing",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0049351
+        },
+        {
+            "name": "HeatGaugeRulesTests.RegionalCapacityReentryReactivatesOutstandingHeatWithoutStacking",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0002977
+        },
+        {
+            "name": "HeatGaugeRulesTests.ThermometerBuildsTenSegmentsAndReflectsRuleState",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0048493
+        },
+        {
+            "name": "HunterSkillCardChoiceNativeLifecycleTests.NativeHideDisableAndDestroyCancelEachPendingSelectionOnce",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 1.1675107
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.CancelPointerReopensAtFirstCardWithoutSpendingOrLeakingOldCallbacks",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0196954
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.ChoiceTakesReferenceSnapshotWithoutOwningOrMutatingCallerCollection",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0110549
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.DisabledHudDoesNotSelectAnInvalidSourceOrKeepHiddenChoiceFocus",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.008872
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.EmptyOrNullChoicesDisableCommitAndKeepCancelAvailable(False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.012114
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.EmptyOrNullChoicesDisableCommitAndKeepCancelAvailable(True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0086006
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"panel-hidden\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0093248
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"row-hidden\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0077366
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"hud-disabled\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0065681
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"root-hidden\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0097078
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"ensure-called\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0086277
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"hud-destroyed\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.008372
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.ExplicitEditModeLifecycleHooksCancelOnceWithoutCallingConfirm(\"panel-destroyed\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0080206
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.FailedCommitStillConsumesOnlyUiCallbackAndCannotFallBackToMenuNavigation",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0103181
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.InvalidOpeningFocusFallsBackToAvailableDriverAfterCallback(False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0100297
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.InvalidOpeningFocusFallsBackToAvailableDriverAfterCallback(True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0091951
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.NormalRequestCancelsChoiceAndRestoresOriginalLayoutEvenWithMaskBypass(0)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0111971
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.NormalRequestCancelsChoiceAndRestoresOriginalLayoutEvenWithMaskBypass(255)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0109398
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.NullConfirmCannotCommitButCanCancel",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0093623
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.OverlayIsTopRaycastAndUnderlyingButtonOnlyReceivesPointerAfterCancel",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0107398
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.PreviousNextStayBoundedAndSpaceSubmitsOnlyCurrentChoice",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0123688
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.RealEventSystemRestoresOpeningFocusAfterChoiceNavigationAndCancelOrConfirm(\"driver\",False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0115102
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.RealEventSystemRestoresOpeningFocusAfterChoiceNavigationAndCancelOrConfirm(\"gear\",False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0097012
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.RealEventSystemRestoresOpeningFocusAfterChoiceNavigationAndCancelOrConfirm(\"driver\",True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0122172
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.RealEventSystemRestoresOpeningFocusAfterChoiceNavigationAndCancelOrConfirm(\"gear\",True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0119649
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.RebindingManagerCancelsOldUiIntentWithoutConfirming",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0090981
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.ReplacingChoiceCancelsOnlyOldRequestAndDoesNotGrowUiOrListeners",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0131271
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.ReplacingChoiceWithNormalRequestRestoresOpeningFocus",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0089464
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.RequiredChoiceCannotBeBypassedAndPointerConfirmsExactEqualValueInstanceOnce(0)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0103332
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.RequiredChoiceCannotBeBypassedAndPointerConfirmsExactEqualValueInstanceOnce(255)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0087324
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.SuccessfulActivationReturnsToLegalGearWhenSkillButtonBecomesDisabled",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0308925
+        },
+        {
+            "name": "HunterSkillCardChoiceUITests.TemporaryChoiceLayoutRestoresAuthoredGeometryFontsMaterialsAndButtonSize",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0088731
+        },
+        {
+            "name": "LiveTurnTelemetryRuntimeTests.AuthoredHudRefreshesBeforeConfirmAndRestoresRealHeatAfterInputCloses",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.9209598
+        },
+        {
+            "name": "MenuOverlayNavigationTests.driver_labels_refresh_after_selection_and_reopening",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.200282
+        },
+        {
+            "name": "MenuOverlayNavigationTests.late_career_button_and_other_entries_stay_below_driver_overlay",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0488558
+        },
+        {
+            "name": "MenuOverlayNavigationTests.navigation_closes_career_and_return_does_not_reveal_previous_surface(\"GarageBtn\",\"DriverSelectionOverlay\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0484632
+        },
+        {
+            "name": "MenuOverlayNavigationTests.navigation_closes_career_and_return_does_not_reveal_previous_surface(\"StartRaceBtn\",\"FreeRaceRosterOverlay\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0557409
+        },
+        {
+            "name": "MenuOverlayNavigationTests.navigation_closes_career_and_return_does_not_reveal_previous_surface(\"SettingsBtn\",\"SettingsOverlay\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0548344
+        },
+        {
+            "name": "MenuOverlayNavigationTests.navigation_hides_summer_tech_without_consuming_gate(\"GarageBtn\",\"DriverSelectionOverlay\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0760135
+        },
+        {
+            "name": "MenuOverlayNavigationTests.navigation_hides_summer_tech_without_consuming_gate(\"StartRaceBtn\",\"FreeRaceRosterOverlay\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.062301
+        },
+        {
+            "name": "MenuOverlayNavigationTests.navigation_hides_summer_tech_without_consuming_gate(\"SettingsBtn\",\"SettingsOverlay\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0551378
+        },
+        {
+            "name": "MenuOverlayNavigationTests.quick_race_roster_confirmation_opens_track_selection",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0526004
+        },
+        {
+            "name": "MenuOverlayNavigationTests.quick_race_thunderstorm_button_toggles_the_full_twelve_car_field",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0529704
+        },
+        {
+            "name": "MenuOverlayNavigationTests.reopening_career_clears_confirmation_and_replacement_view",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0543806
+        },
+        {
+            "name": "ModernUIStyleTests.ApplyButton_UsesSharedInteractiveStatePalette",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0010238
+        },
+        {
+            "name": "ModernUIStyleTests.ApplyPanel_AddsReadableAccentOutline",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0006047
+        },
+        {
+            "name": "ModernUIStyleTests.ApplyText_UsesFontAssetMaterialInsteadOfLegacyOverride",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0011735
+        },
+        {
+            "name": "RaceEventFXTests.FadeEnvelopeClampsProgressAndInvalidTimingWindow",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0003771
+        },
+        {
+            "name": "RaceEventFXTests.FadeEnvelopePreservesOvertakeAndSlipstreamTiming",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0002792
+        },
+        {
+            "name": "RaceEventFXTests.SlowMotionScopeRestoresNormalGameplaySpeed",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.000895
+        },
+        {
+            "name": "RaceEventFXTests.SpinOutDefaultsMatchVisualDesign",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0003103
+        },
+        {
+            "name": "RaceEventFXTests.SpinProgressClampsToEffectWindow",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0002303
+        },
+        {
+            "name": "RaceEventFXTests.SpinRotationStartsAtZeroAndCompletesConfiguredAngle",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0002015
+        },
+        {
+            "name": "RaceEventFXTests.TailwindBonusMovementUsesItsOwnScopedSlowMotion",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0003292
+        },
+        {
+            "name": "RaceHudTextRulesTests.ActiveAiShowsGearEngineLapAndWrappedCell",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0005134
+        },
+        {
+            "name": "RaceHudTextRulesTests.BlownAiStatusTakesPriorityOverFinishAndResourceText",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0001785
+        },
+        {
+            "name": "RaceHudTextRulesTests.FinishedAiUsesTheFinishedLabel",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0001112
+        },
+        {
+            "name": "RaceHudTextRulesTests.LapLabelKeepsTheCurrentAndRequiredLap",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.00016
+        },
+        {
+            "name": "RaceHudTextRulesTests.PositionWithoutRosterKeepsTheTrackCellOnly",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0003443
+        },
+        {
+            "name": "RaceHudTextRulesTests.PositionWithRosterIncludesRankingWithoutChangingRosterOrder",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0005887
+        },
+        {
+            "name": "RaceHudTextRulesTests.StandingsKeepRankOrderLapCellAndSelfMarker",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0014217
+        },
+        {
+            "name": "RaceHudTextRulesTests.StandingsWithoutTrackSizeUseQuestionMarkAndNoSelfMarker",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0004052
+        },
+        {
+            "name": "RacePresentationSkipTests.CarMovementAnimatorSnapsToTargetWhenPresentationIsSkipped",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0021339
+        },
+        {
+            "name": "RacePresentationSkipTests.SkipRequestOnlyAppliesInsideAnActivePresentationWindow",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0003038
+        },
+        {
+            "name": "RacePresentationSkipTests.TailwindVisualStopsAndRestoresStateWhenSkipped",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0040471
+        },
+        {
+            "name": "RaceResultPresentationTests.game_over_panel_builds_masked_scroll_list_for_large_field",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0062755
+        },
+        {
+            "name": "RaceResultPresentationTests.podium_places_use_color_and_text_labels",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0003419
+        },
+        {
+            "name": "RaceResultPresentationTests.real_ranking_formats_only_standings_and_preserves_mode_copy(\"normal\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0016136
+        },
+        {
+            "name": "RaceResultPresentationTests.real_ranking_formats_only_standings_and_preserves_mode_copy(\"tutorial\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0004442
+        },
+        {
+            "name": "RaceResultPresentationTests.real_ranking_formats_only_standings_and_preserves_mode_copy(\"career\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0003613
+        },
+        {
+            "name": "RaceResultPresentationTests.reused_result_panel_replaces_long_short_empty_content_without_duplicate_controls(2)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0099263
+        },
+        {
+            "name": "RaceResultPresentationTests.reused_result_panel_replaces_long_short_empty_content_without_duplicate_controls(4)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0098129
+        },
+        {
+            "name": "RaceUILayoutTests.authored_layout_preserves_custom_rects_and_card_size",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0022961
+        },
+        {
+            "name": "RaceUILayoutTests.fallback_layout_wraps_log_text_in_a_fixed_scroll_view",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0086949
+        },
+        {
+            "name": "RaceUILayoutTests.operation_controls_follow_safe_top_to_bottom_order",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.000424
+        },
+        {
+            "name": "RaceUILayoutTests.race_hud_uses_readable_runtime_font_sizes",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0071949
+        },
+        {
+            "name": "RaceUILayoutTests.return_to_menu_button_is_docked_in_operation_action_stack",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0058335
+        },
+        {
+            "name": "RacingTechActionButtonTests.ActionThemeDoesNotRestyleFourGearButtonsOrResultReturnButton",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0084322
+        },
+        {
+            "name": "RacingTechActionButtonTests.BothLayoutEntrypointsStyleExactlyFiveTargetsAndKeepListeners(False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0218683
+        },
+        {
+            "name": "RacingTechActionButtonTests.BothLayoutEntrypointsStyleExactlyFiveTargetsAndKeepListeners(True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0107653
+        },
+        {
+            "name": "RacingTechActionButtonTests.NativeActionClickStillUsesExistingResetConfirmationAndCancellation",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.9031121
+        },
+        {
+            "name": "RacingTechActionButtonTests.OriginalHandAndSkillRefreshChangeTextAndAvailabilityWithoutReplacingTheme",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0058453
+        },
+        {
+            "name": "RacingTechActionButtonTests.PointerStatesKeepEffectiveContrastAndDisabledButtonRejectsClick(False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0070421
+        },
+        {
+            "name": "RacingTechActionButtonTests.PointerStatesKeepEffectiveContrastAndDisabledButtonRejectsClick(True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0054279
+        },
+        {
+            "name": "RacingTechActionButtonTests.RepeatedStylePreservesGeometryFontsMaterialsNavigationAndLegacyText",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0107291
+        },
+        {
+            "name": "RacingTechCardZoneTests.BothLayoutPathsThemeFourZonesAndKeepCountBinding(False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0092613
+        },
+        {
+            "name": "RacingTechCardZoneTests.BothLayoutPathsThemeFourZonesAndKeepCountBinding(True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0063865
+        },
+        {
+            "name": "RacingTechCardZoneTests.IndependentStatisticsAreSecondaryButAliasedExactCountsWin",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0042761
+        },
+        {
+            "name": "RacingTechCardZoneTests.LazyLabelsStayThemedAcrossRepeatedConfigureRefreshAndEmptyPile",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0147847
+        },
+        {
+            "name": "RacingTechCardZoneTests.OnlyTwoShortTitlesGrowDownwardOnceAndUnresolvedRectsAreSkipped",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0061478
+        },
+        {
+            "name": "RacingTechCardZoneTests.PilePointerTintStatesKeepEffectiveTextContrast",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0076003
+        },
+        {
+            "name": "RacingTechCardZoneTests.RealPilePointerOpensOneOriginalInspectorAndEmptyDisabledRejectsClick",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0192275
+        },
+        {
+            "name": "RacingTechCardZoneTests.RepeatedShellStylePreservesAuthoredGeometryFontInputAndNestedCardArt",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0069207
+        },
+        {
+            "name": "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(GearSelection)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0105306
+        },
+        {
+            "name": "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(GearCommit)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0101267
+        },
+        {
+            "name": "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(CardAction)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0087551
+        },
+        {
+            "name": "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(DriverSkill)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0085121
+        },
+        {
+            "name": "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(ResetRace)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0090401
+        },
+        {
+            "name": "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(ReturnToMenu)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.008782
+        },
+        {
+            "name": "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(PitDecision)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0093777
+        },
+        {
+            "name": "RacingTechConfirmationTests.AllActionsKeepSemanticLabelsCancelReopenSingleCommitAndMaskBypass(LaneChange)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0105788
+        },
+        {
+            "name": "RacingTechConfirmationTests.ExistingModalKeepsAuthoredGeometryFontsMaterialCallbacksAndInputConfiguration",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0092784
+        },
+        {
+            "name": "RacingTechConfirmationTests.MissingModalBuildsThroughProductionHookAndRepeatedEnsureHasNoGrowth",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0102783
+        },
+        {
+            "name": "RacingTechConfirmationTests.NativeHudStartReusesStyledModalAndDispatchesOneOriginalCallback",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.8300129
+        },
+        {
+            "name": "RacingTechConfirmationTests.RealPointerStatesStayReadableDisabledClickDoesNothingAndOverlayBlocksUnderlay",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0119301
+        },
+        {
+            "name": "RacingTechHudShellTests.AttachPreservesBindingsFontsButtonsOuterAnchorsAndEntireTrackAppearance",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0105886
+        },
+        {
+            "name": "RacingTechHudShellTests.ExplicitLifecycleSimulationUnsubscribesAndRebindsWithoutUpdateLoop",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0104472
+        },
+        {
+            "name": "RacingTechHudShellTests.NativeLifecycleResizesOnTextChangeAndReenableWithoutMutatingSourceFont",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.8347853
+        },
+        {
+            "name": "RacingTechHudShellTests.ReattachReusesTreeAndKeepsReaderPositionAndButtonGeometry",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0159745
+        },
+        {
+            "name": "RacingTechHudShellTests.RenderedWheelAndScrollbarDragReachLastRowAndPreserveOriginalButtonClick",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0172631
+        },
+        {
+            "name": "RacingTechHudShellTests.StandingsBindingKeepsProductionOrderingAndDoesNotChangeAnyRacer",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0115358
+        },
+        {
+            "name": "RacingTechHudShellTests.TextNotificationGrowsTwelveRowsShrinksShortTextAndRespondsToViewportHeight",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0101829
+        },
+        {
+            "name": "RacingTechInstrumentsTests.AuthoredAndFallbackHeatKeepTenSegmentsFontTextAndNonInteractiveTheme(False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.007877
+        },
+        {
+            "name": "RacingTechInstrumentsTests.AuthoredAndFallbackHeatKeepTenSegmentsFontTextAndNonInteractiveTheme(True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0065861
+        },
+        {
+            "name": "RacingTechInstrumentsTests.CriticalHeatIsStaticAndDoesNotIntroduceAFrameLoopOrTouchGameplayDeck",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0059125
+        },
+        {
+            "name": "RacingTechInstrumentsTests.ForecastRemovalAndRepeatedRefreshPoolGeometryAndKeepHalfWidthForecast",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0086464
+        },
+        {
+            "name": "RacingTechInstrumentsTests.StateFaceColorsMeetTextContrastAndRetainBothActualAndPendingOnOverlap",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0035014
+        },
+        {
+            "name": "RacingTechInstrumentsTests.TeamControlThemeKeepsInputsFontsActualPendingAndIdempotentGeometry(UK)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.013197
+        },
+        {
+            "name": "RacingTechInstrumentsTests.TeamControlThemeKeepsInputsFontsActualPendingAndIdempotentGeometry(DE)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0117016
+        },
+        {
+            "name": "RacingTechInstrumentsTests.TeamControlThemeKeepsInputsFontsActualPendingAndIdempotentGeometry(IT)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.008986
+        },
+        {
+            "name": "RacingTechInstrumentsTests.TeamControlThemeKeepsInputsFontsActualPendingAndIdempotentGeometry(US)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0128926
+        },
+        {
+            "name": "RacingTechInstrumentsTests.TeamControlThemeKeepsInputsFontsActualPendingAndIdempotentGeometry(CN)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0132908
+        },
+        {
+            "name": "RacingTechInstrumentsTests.TeamControlThemeKeepsInputsFontsActualPendingAndIdempotentGeometry(JP)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0118933
+        },
+        {
+            "name": "RacingTechPileInspectorTests.ActualInspectorKeepsExactDrawGroupingOrDiscardOrderAndSourceInstances(False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.016029
+        },
+        {
+            "name": "RacingTechPileInspectorTests.ActualInspectorKeepsExactDrawGroupingOrDiscardOrderAndSourceInstances(True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0134508
+        },
+        {
+            "name": "RacingTechPileInspectorTests.ClosePointerStatesStayReadableWithoutChangingExistingTintOrDisabledGate",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0107713
+        },
+        {
+            "name": "RacingTechPileInspectorTests.EmptyPileCannotOpenInspectorAndMissingOptionalStyleReferencesAreSafe",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0074288
+        },
+        {
+            "name": "RacingTechPileInspectorTests.NativeInspectorWheelReachesLastRowAndOriginalCloseMaskReopenLifecycleWorks",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.8600008
+        },
+        {
+            "name": "RacingTechPileInspectorTests.RepeatedStyleKeepsGeometryFontsMaskScrollButtonsAndMiniCardIdentity",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0171735
+        },
+        {
+            "name": "RacingTechPileInspectorTests.RestylingPreservesExistingScrollPositionAndLayoutConfiguration",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0211878
+        },
+        {
+            "name": "RacingTechSelectedEffectTests.EnsureThemesCreatedAndReferencedPanelWithoutReplacingCopyFontOrVisibility(False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0058408
+        },
+        {
+            "name": "RacingTechSelectedEffectTests.EnsureThemesCreatedAndReferencedPanelWithoutReplacingCopyFontOrVisibility(True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0052509
+        },
+        {
+            "name": "RacingTechSelectedEffectTests.ExplanationHasReadablePrimaryAndOriginalRichTitleOnSurface",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0006987
+        },
+        {
+            "name": "RacingTechSelectedEffectTests.NativeShowSwitchHideReopenKeepsThemeAndEffectStripDoesNotBlockExistingPointer",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.8465058
+        },
+        {
+            "name": "RacingTechSelectedEffectTests.OriginalKeyboardFocusSelectionAndClearKeepExactCardsAndFormattedExplanation",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0075536
+        },
+        {
+            "name": "RacingTechSelectedEffectTests.ThemePreservesAuthoredRectsRichTextMaterialAndDoesNotRecolorNestedCardArt",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0064513
+        },
+        {
+            "name": "RacingTechThemeTests.ReattachAndRefreshReuseGeometryAndKeepActualMovementAndClickTarget",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0040631
+        },
+        {
+            "name": "RacingTechThemeTests.StylingPreservesInputOwnershipTextAndExistingFont(False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0013297
+        },
+        {
+            "name": "RacingTechThemeTests.StylingPreservesInputOwnershipTextAndExistingFont(True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0005896
+        },
+        {
+            "name": "RacingTechThemeTests.TextAndDataColorsKeepReadableContrastOnBothSurfaces",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0006273
+        },
+        {
+            "name": "ReturnToMenuConfirmationTests.cancel_closes_modal_and_second_return_click_can_reopen_it",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0056285
+        },
+        {
+            "name": "ReturnToMenuConfirmationTests.game_over_return_button_uses_the_same_confirmation_gate",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0040542
+        },
+        {
+            "name": "ReturnToMenuConfirmationTests.race_return_button_opens_modal_without_loading_scene",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0040292
+        },
+        {
+            "name": "ReturnToMenuConfirmationTests.space_adapter_never_confirms_destructive_return_prompt",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0036238
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(UK,False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0181732
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(UK,True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0031075
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(DE,False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0041145
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(DE,True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0031574
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(IT,False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0043941
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(IT,True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0030669
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(US,False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0035578
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(US,True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0029565
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(CN,False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0025718
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(CN,True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0035588
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(JP,False)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0043796
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.CancelPreservesRequests_ConfirmConsumesOnceAndClearsBeforeSceneIO(JP,True)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0044605
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.DestructivePromptReplacementAndFailure_DoNotReplayConsumedCallback(ReturnToMenu)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0031119
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.DestructivePromptReplacementAndFailure_DoNotReplayConsumedCallback(ResetRace)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.002065
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.DisabledReturnGate_UsesSameCleanupWithoutOpeningModal",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0029066
+        },
+        {
+            "name": "ReturnToMenuLifecycleAdapterTests.FailedSceneIO_StillClearsSessionRequestsAsBefore",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0034743
+        },
+        {
+            "name": "TeamCarPresentationTests.BadgeUsesStableTeamCode(UK,\"UK\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0003088
+        },
+        {
+            "name": "TeamCarPresentationTests.BadgeUsesStableTeamCode(DE,\"DE\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0000658
+        },
+        {
+            "name": "TeamCarPresentationTests.BadgeUsesStableTeamCode(IT,\"IT\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0000336
+        },
+        {
+            "name": "TeamCarPresentationTests.BadgeUsesStableTeamCode(US,\"US\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0000283
+        },
+        {
+            "name": "TeamCarPresentationTests.BadgeUsesStableTeamCode(CN,\"CN\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0000281
+        },
+        {
+            "name": "TeamCarPresentationTests.BadgeUsesStableTeamCode(JP,\"JP\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.000028
+        },
+        {
+            "name": "TeamCarPresentationTests.BrightBadgesUseDarkText",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.000231
+        },
+        {
+            "name": "TeamCarPresentationTests.ConfiguredSpriteResolvesFromTeamSlot",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0009564
+        },
+        {
+            "name": "TeamCarPresentationTests.EveryTeamUsesItsStableSpriteSlot(UK,0)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0004546
+        },
+        {
+            "name": "TeamCarPresentationTests.EveryTeamUsesItsStableSpriteSlot(DE,1)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0001128
+        },
+        {
+            "name": "TeamCarPresentationTests.EveryTeamUsesItsStableSpriteSlot(IT,2)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0000377
+        },
+        {
+            "name": "TeamCarPresentationTests.EveryTeamUsesItsStableSpriteSlot(US,3)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0000472
+        },
+        {
+            "name": "TeamCarPresentationTests.EveryTeamUsesItsStableSpriteSlot(CN,4)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0000527
+        },
+        {
+            "name": "TeamCarPresentationTests.EveryTeamUsesItsStableSpriteSlot(JP,5)",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0000398
+        },
+        {
+            "name": "TeamCarPresentationTests.MissingSpriteFallsBackWithoutThrowing",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0002328
+        },
+        {
+            "name": "TeamCarPresentationTests.ShortSpriteArrayFallsBackWithoutThrowing",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.000196
+        },
+        {
+            "name": "TeamCarPresentationTests.UnknownTeamUsesNeutralBadgeCodeAndOpaqueFill",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0002422
+        },
+        {
+            "name": "TeamCarPresentationTests.UnknownTeamUsesNeutralFallbackColor",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0001963
+        }
+    ],
+    "unexpected": [],
+    "missing": []
+}

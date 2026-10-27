@@ -1,0 +1,22 @@
+{
+  "status": "APPROVED_bounded_production_modal_only",
+  "reviewer": "i00b_ux",
+  "static": "Actual HUD entry to MVP plan, exact-instance cost, cancel/no-spend, raycast blocking, focus restoration, owned fixture cleanup; no must-fix.",
+  "before_viewed": {
+    "root": 9,
+    "reviewer": 9,
+    "union": 18
+  },
+  "final_after_viewed": {
+    "root": 6,
+    "reviewer": 12,
+    "union": 18
+  },
+  "final_copy": "本次移动+3格；新增弯心仍按原速度付热，热量不足会失控",
+  "bounds": [
+    "EventSystem/GraphicRaycaster dispatch, not hardware input",
+    "Owned preview Canvas, not complete RaceCanvas layout",
+    "No full race or career/tutorial mode acceptance",
+    "720p comfort not accepted from absence of overflow"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "jsonrpc": "2.0",
+  "id": 22,
+  "result": {
+    "_meta": {
+      "fastmcp": {
+        "wrap_result": true
+      }
+    },
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Test job status retrieved.\",\"error\":null,\"data\":{\"job_id\":\"8e53b536d91245f7999bcbd876946754\",\"status\":\"failed\",\"mode\":\"EditMode\",\"started_unix_ms\":1793000030812,\"finished_unix_ms\":1793000045319,\"last_update_unix_ms\":1793000045319,\"progress\":{\"completed\":2,\"total\":3386,\"current_test_full_name\":null,\"current_test_started_unix_ms\":1793000043728,\"last_finished_test_full_name\":\"RaceGameLoopCoroutineTests.MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse\",\"last_finished_unix_ms\":1793000045021,\"stuck_suspected\":false,\"editor_is_focused\":false,\"blocked_reason\":null,\"failures_so_far\":[{\"full_name\":\"RaceGameLoopCoroutineTests.MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin\",\"message\":\"  Bounded GameLoop watchdog: discard confirmation\\r\\n  Expected: less than 11.0214329f\\r\\n  But was:  11.0226688f\\r\\n\"}],\"failures_capped\":false},\"error\":null,\"result\":null},\"hint\":null}"
+      }
+    ],
+    "structuredContent": {
+      "result": {
+        "success": true,
+        "message": "Test job status retrieved.",
+        "error": null,
+        "data": {
+          "job_id": "8e53b536d91245f7999bcbd876946754",
+          "status": "failed",
+          "mode": "EditMode",
+          "started_unix_ms": 1793000030812,
+          "finished_unix_ms": 1793000045319,
+          "last_update_unix_ms": 1793000045319,
+          "progress": {
+            "completed": 2,
+            "total": 3386,
+            "current_test_full_name": null,
+            "current_test_started_unix_ms": 1793000043728,
+            "last_finished_test_full_name": "RaceGameLoopCoroutineTests.MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+            "last_finished_unix_ms": 1793000045021,
+            "stuck_suspected": false,
+            "editor_is_focused": false,
+            "blocked_reason": null,
+            "failures_so_far": [
+              {
+                "full_name": "RaceGameLoopCoroutineTests.MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+                "message": "  Bounded GameLoop watchdog: discard confirmation\r\n  Expected: less than 11.0214329f\r\n  But was:  11.0226688f\r\n"
+              }
+            ],
+            "failures_capped": false
+          },
+          "error": null,
+          "result": null
+        },
+        "hint": null
+      }
+    },
+    "isError": false
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "kind": "independent_design_candidate_not_production_rules",
+  "version": 1,
+  "drivers": {
+    "hunt": {"team": "UK", "discard_speed": 1, "target_range": 5, "active_bonus": [2, 3, 3], "passive_range": [3, 4, 5]},
+    "mansell": {"team": "UK", "discard_speed": 1, "target_range": 6, "first_bonus": [1, 2, 2], "second_bonus": [2, 3, 3], "heat_each_step": 1, "passive_range": [2, 3, 4]},
+    "schumacher": {"team": "DE", "discard_speed": 1, "preparation_gear_max": 2, "execution_gear_min": 3, "execution_steps": 2, "heat_each_step": 1, "step_bonus": [2, 3, 3], "passive_paid_threshold": [2, 1, 1], "passive_valid_next_turns": [1, 1, 2]},
+    "vettel": {"team": "DE", "activation_heat_to_discard": 1, "duration": [1, 2, 2], "boost_per_native_event": 2, "events_per_own_turn": 1, "passive_sources": [["cruise"], ["cruise", "beer"], ["cruise", "beer", "corner_exit"]]}
+  },
+  "uses": {"ordinary_by_active_tier": [1, 1, 2], "uk_extra": 1},
+  "scope": "检查提交、取消、目标连续性、个人回合窗口、固定来源、永久热牌身份及返还上限。未模拟牌堆、天气、真实路径、AI、胜率、Unity 或存档。"
+}

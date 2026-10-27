@@ -1,0 +1,31 @@
+{
+  "jsonrpc": "2.0",
+  "id": 10,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Code executed successfully.\",\"data\":{\"result\":{\"runtime\":\"6c8c3586-de04-4d92-b2c8-5603486e8a98\",\"editor\":\"cf76e26f-bdad-4fd0-b702-491f73561dc6\",\"compiling\":false,\"updating\":false,\"playing\":false,\"scene\":\"Assets/Scenes/MainMenu.unity\",\"dirty\":false,\"nativeBusy\":false,\"busy\":false},\"compiler\":\"codedom\"}}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "message": "Code executed successfully.",
+      "data": {
+        "result": {
+          "runtime": "6c8c3586-de04-4d92-b2c8-5603486e8a98",
+          "editor": "cf76e26f-bdad-4fd0-b702-491f73561dc6",
+          "compiling": false,
+          "updating": false,
+          "playing": false,
+          "scene": "Assets/Scenes/MainMenu.unity",
+          "dirty": false,
+          "nativeBusy": false,
+          "busy": false
+        },
+        "compiler": "codedom"
+      }
+    },
+    "isError": false
+  }
+}

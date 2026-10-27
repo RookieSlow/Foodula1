@@ -13,18 +13,21 @@ public static class RaceTurnTechnologyCleanup
         Action<PlayerState> reportCombo,
         Action<PlayerState, int> applyGrillCooldown)
     {
-        applyYinYang(player, session.ResolveEndOfTurn(player));
-        if (TechTreeRules.CheckDimSumCombo(player.techState, session.TechDb))
+        try
         {
-            reportCombo(player);
             applyYinYang(player, session.ResolveEndOfTurn(player));
+            if (TechTreeRules.CheckDimSumCombo(player.techState, session.TechDb))
+            {
+                reportCombo(player);
+                applyYinYang(player, session.ResolveEndOfTurn(player));
+            }
+            int cooldown = session.GetGrillSpezialCooldown(player);
+            if (cooldown > 0)
+            {
+                session.ActivateGrillSpezial(player);
+                applyGrillCooldown(player, cooldown);
+            }
         }
-
-        int cooldown = session.GetGrillSpezialCooldown(player);
-        if (cooldown > 0)
-        {
-            session.ActivateGrillSpezial(player);
-            applyGrillCooldown(player, cooldown);
-        }
+        finally { player.techState?.germanBurst.CloseWindow(); }
     }
 }

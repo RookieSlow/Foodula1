@@ -1,0 +1,579 @@
+diff --git a/Assets/Scripts/UI/HUDUI.cs b/Assets/Scripts/UI/HUDUI.cs
+index 5ebb01f..6f61d65 100644
+--- a/Assets/Scripts/UI/HUDUI.cs
++++ b/Assets/Scripts/UI/HUDUI.cs
+@@ -1,7 +1,9 @@
+ using System;
++using System.Collections.Generic;
+ using UnityEngine;
+ using TMPro;
+ using UnityEngine.UI;
++using UnityEngine.EventSystems;
+ 
+ /// <summary>
+ /// HUD UI 管理器 — 显示比赛状态（档位、热量池、圈数、位置），
+@@ -64,6 +66,16 @@ public class HUDUI : MonoBehaviour
+     private Action pendingConfirmationAction;
+     private InRaceConfirmationAction? pendingConfirmationType;
+     private TMP_Text returnToMenuConfirmTitle;
++    private DriverSkillCardChoiceUI driverSkillCardChoice;
++    private UnityEngine.Events.UnityAction<CardData> pendingDriverSkillCardConfirm;
++    private UnityEngine.Events.UnityAction pendingDriverSkillCardCancel;
++    private bool driverSkillCardChoicePending;
++    private CanvasGroup confirmationVisibility;
++    private bool confirmationHiddenByLifecycle;
++    private float confirmationPreviousAlpha;
++    private bool confirmationPreviousInteraction, confirmationPreviousRaycasts;
++    private DriverSkillChoiceFocus driverSkillChoiceFocus;
++    private UkPrepMealActionUI ukPrepMealAction;
+     [SerializeField] private HeatThermometerUI heatThermometer;
+     [SerializeField] private GearDialPresentationUI gearDialPresentation;
+     [SerializeField] private TeamGearPresentationUI teamGearPresentation;
+@@ -76,10 +88,11 @@ public class HUDUI : MonoBehaviour
+     public HeatThermometerUI HeatThermometer => heatThermometer;
+     public GearDialPresentationUI GearDialPresentation => gearDialPresentation;
+     public TeamGearPresentationUI TeamGearPresentation => teamGearPresentation;
++    public Button UkPrepMealButton => ukPrepMealAction != null ? ukPrepMealAction.Button : null;
+     public bool IsTelemetryDetailsOpen => telemetryDetailsPanel != null && telemetryDetailsPanel.activeSelf;
+     public GameConfigSO GameConfigForPresentation => gameManager != null ? gameManager.Config : null;
+     public bool IsReturnToMenuConfirmationVisible =>
+-        returnToMenuConfirmPanel != null && returnToMenuConfirmPanel.activeSelf;
++        returnToMenuConfirmPanel != null && returnToMenuConfirmPanel.activeSelf && !confirmationHiddenByLifecycle;
+ 
+     void Start()
+     {
+@@ -167,6 +180,7 @@ public class HUDUI : MonoBehaviour
+     /// <summary>在游戏初始化后设置引用。</summary>
+     public void SetGameManager(MVPGameManager gm)
+     {
++        if (gameManager != gm && driverSkillCardChoicePending) DismissConfirmation(false, true);
+         if (gameManager != gm && telemetryDetailsPanel != null) telemetryDetailsPanel.SetActive(false);
+         gameManager = gm;
+         if (gm != null && gm.Player != null) RefreshTurnTelemetry(gm.Player);
+@@ -194,6 +208,7 @@ public class HUDUI : MonoBehaviour
+     /// </summary>
+     public void Refresh(MVPGameManager gm, PlayerState player, PlayerState ai, System.Collections.Generic.IReadOnlyList<PlayerState> allPlayers)
+     {
++        if (gameManager != gm && driverSkillCardChoicePending) DismissConfirmation(false, true);
+         gameManager = gm;
+ 
+         RefreshPlayerResources(player);
+@@ -290,6 +305,7 @@ public class HUDUI : MonoBehaviour
+     /// </summary>
+     public void EnsureReturnToMenuConfirmationUI()
+     {
++        if (driverSkillCardChoicePending) DismissConfirmation(false, true);
+         Transform canvasRoot = transform.root != null ? transform.root : transform;
+ 
+         if (returnToMenuConfirmPanel == null)
+@@ -316,6 +332,19 @@ public class HUDUI : MonoBehaviour
+ 
+         if (returnToMenuConfirmPanel != null)
+         {
++            if (confirmationVisibility == null)
++            {
++                confirmationVisibility = returnToMenuConfirmPanel.GetComponent<CanvasGroup>();
++                if (confirmationVisibility == null)
++                    confirmationVisibility = returnToMenuConfirmPanel.AddComponent<CanvasGroup>();
++            }
++            if (confirmationHiddenByLifecycle)
++            {
++                confirmationVisibility.alpha = confirmationPreviousAlpha;
++                confirmationVisibility.interactable = confirmationPreviousInteraction;
++                confirmationVisibility.blocksRaycasts = confirmationPreviousRaycasts;
++                confirmationHiddenByLifecycle = false;
++            }
+             RacingTechConfirmationStyle.Apply(returnToMenuConfirmPanel, returnToMenuConfirmTitle,
+                 returnToMenuConfirmText, cancelReturnToMenuButton, confirmReturnToMenuButton);
+             returnToMenuConfirmPanel.SetActive(false);
+@@ -340,11 +369,46 @@ public class HUDUI : MonoBehaviour
+     /// <summary>Dismisses the modal and leaves the race untouched.</summary>
+     public void CancelReturnToMenu()
+     {
++        DismissConfirmation(true, true);
++    }
++
++    private void DismissConfirmation(bool refresh, bool notifyCancel)
++    {
++        UnityEngine.Events.UnityAction cancel = ClearDriverSkillCardChoice(out DriverSkillChoiceFocus focus);
+         pendingConfirmationAction = null;
+         pendingConfirmationType = null;
+         if (returnToMenuConfirmPanel != null)
+             returnToMenuConfirmPanel.SetActive(false);
+-        RefreshTeamGearPresentation();
++        try
++        {
++            if (refresh) RefreshTeamGearPresentation();
++            if (notifyCancel) cancel?.Invoke();
++        }
++        finally { RestoreDriverSkillChoiceFocus(focus); }
++    }
++
++    /// <summary>
++    /// Native OnDisable may run inside a child or ancestor's SetActive operation.
++    /// Clear the intent and hide/block the surface without re-entering that hierarchy transition.
++    /// The next ordinary Ensure restores its original CanvasGroup values.
++    /// </summary>
++    public void CancelDriverSkillChoiceForLifecycle()
++    {
++        UnityEngine.Events.UnityAction cancel = ClearDriverSkillCardChoice(out DriverSkillChoiceFocus focus, false);
++        pendingConfirmationAction = null;
++        pendingConfirmationType = null;
++        if (confirmationVisibility != null && !confirmationHiddenByLifecycle)
++        {
++            confirmationPreviousAlpha = confirmationVisibility.alpha;
++            confirmationPreviousInteraction = confirmationVisibility.interactable;
++            confirmationPreviousRaycasts = confirmationVisibility.blocksRaycasts;
++            confirmationHiddenByLifecycle = true;
++            confirmationVisibility.alpha = 0f;
++            confirmationVisibility.interactable = false;
++            confirmationVisibility.blocksRaycasts = false;
++        }
++        try { cancel?.Invoke(); }
++        finally { RestoreDriverSkillChoiceFocus(focus); }
+     }
+ 
+     /// <summary>Confirms the destructive navigation action.</summary>
+@@ -354,14 +418,149 @@ public class HUDUI : MonoBehaviour
+             return;
+ 
+         Action action = pendingConfirmationAction;
++        DriverSkillChoiceFocus focus = null;
++        if (driverSkillCardChoicePending)
++        {
++            CardData selected = driverSkillCardChoice != null ? driverSkillCardChoice.Selected : null;
++            if (selected == null || pendingDriverSkillCardConfirm == null ||
++                confirmReturnToMenuButton == null || !confirmReturnToMenuButton.interactable)
++                return;
++            UnityEngine.Events.UnityAction<CardData> confirm = pendingDriverSkillCardConfirm;
++            action = () => confirm.Invoke(selected);
++            ClearDriverSkillCardChoice(out focus);
++        }
+         pendingConfirmationAction = null;
+         pendingConfirmationType = null;
+         returnToMenuConfirmPanel.SetActive(false);
+-        if (action != null)
+-            action.Invoke();
++        if (focus == null)
++        {
++            action?.Invoke();
++            RefreshTeamGearPresentation();
++        }
+         else
+-            SceneLoader.LoadMainMenu();
++        {
++            try { action?.Invoke(); }
++            finally
++            {
++                RefreshTeamGearPresentation();
++                RestoreDriverSkillChoiceFocus(focus);
++            }
++        }
++    }
++
++    /// <summary>A required cost choice shares the existing single confirmation surface.</summary>
++    public void ShowDriverSkillCardChoice(string title, string message, IReadOnlyList<CardData> choices,
++        UnityEngine.Events.UnityAction<CardData> confirm, UnityEngine.Events.UnityAction cancel)
++    {
++        ShowRequiredCardChoice(title, message, choices, confirm, cancel,
++            InRaceConfirmationAction.DriverSkill, "弃置并发动", null);
++    }
++
++    /// <summary>A technology cost choice uses the same required selection and lifecycle surface.</summary>
++    public void ShowTechnologyCardChoice(string title, string message, IReadOnlyList<CardData> choices,
++        UnityEngine.Events.UnityAction<CardData> confirm, UnityEngine.Events.UnityAction cancel)
++    {
++        CardHandUI hand = transform.root.GetComponentInChildren<CardHandUI>(true);
++        GameObject continuation = hand != null && hand.playCardsButton != null ? hand.playCardsButton.gameObject : null;
++        ShowRequiredCardChoice(title, message, choices, confirm, cancel,
++            InRaceConfirmationAction.CardAction, "弃牌并回热", continuation);
++    }
++
++    private void ShowRequiredCardChoice(string title, string message, IReadOnlyList<CardData> choices,
++        UnityEngine.Events.UnityAction<CardData> confirm, UnityEngine.Events.UnityAction cancel,
++        InRaceConfirmationAction confirmationType, string confirmLabel, GameObject continuationFocus)
++    {
++        DismissConfirmation(false, true);
++        if (IsTelemetryDetailsOpen)
++        {
++            cancel?.Invoke();
++            return;
++        }
++        EnsureReturnToMenuConfirmationUI();
++        Transform card = returnToMenuConfirmPanel != null
++            ? returnToMenuConfirmPanel.transform.Find("ReturnToMenuConfirmCard") : null;
++        if (card == null || confirmReturnToMenuButton == null || cancelReturnToMenuButton == null)
++        {
++            cancel?.Invoke();
++            return;
++        }
++        driverSkillCardChoice = DriverSkillCardChoiceUI.Attach(card, FindReferenceFont(card));
++        EventSystem eventSystem = EventSystem.current;
++        GameObject selected = eventSystem != null ? eventSystem.currentSelectedGameObject : null;
++        driverSkillChoiceFocus = new DriverSkillChoiceFocus(eventSystem,
++            IsAvailableFocus(selected) ? selected : null, driverSkillCardChoice.gameObject, continuationFocus);
++        if (returnToMenuConfirmTitle != null) returnToMenuConfirmTitle.text = title;
++        if (returnToMenuConfirmText != null) returnToMenuConfirmText.text = message;
++        SetConfirmationButtonLabels(confirmationType);
++        TMP_Text commitLabel = confirmReturnToMenuButton.GetComponentInChildren<TMP_Text>(true);
++        if (commitLabel != null) commitLabel.text = confirmLabel;
++        pendingDriverSkillCardConfirm = confirm;
++        pendingDriverSkillCardCancel = cancel;
++        driverSkillCardChoicePending = true;
++        pendingConfirmationType = confirmationType;
++        driverSkillCardChoice.Show(choices, returnToMenuConfirmTitle, returnToMenuConfirmText,
++            cancelReturnToMenuButton, confirmReturnToMenuButton, confirm != null,
++            CancelDriverSkillChoiceForLifecycle);
++        returnToMenuConfirmPanel.transform.SetAsLastSibling();
++        returnToMenuConfirmPanel.SetActive(true);
+         RefreshTeamGearPresentation();
++        driverSkillCardChoice.FocusWithinModal();
++    }
++
++    private UnityEngine.Events.UnityAction ClearDriverSkillCardChoice(out DriverSkillChoiceFocus focus, bool hideRow = true)
++    {
++        focus = driverSkillChoiceFocus;
++        driverSkillChoiceFocus = null;
++        UnityEngine.Events.UnityAction cancel = pendingDriverSkillCardCancel;
++        driverSkillCardChoicePending = false;
++        pendingDriverSkillCardConfirm = null;
++        pendingDriverSkillCardCancel = null;
++        if (driverSkillCardChoice != null) driverSkillCardChoice.HideAndClear(hideRow);
++        return cancel;
++    }
++
++    private sealed class DriverSkillChoiceFocus
++    {
++        internal readonly EventSystem EventSystem;
++        internal readonly GameObject Previous, Row, Continuation;
++        internal DriverSkillChoiceFocus(EventSystem eventSystem, GameObject previous, GameObject row, GameObject continuation)
++        { EventSystem = eventSystem; Previous = previous; Row = row; Continuation = continuation; }
++    }
++
++    private static bool IsAvailableFocus(GameObject target)
++    {
++        if (target == null || !target.activeInHierarchy) return false;
++        Selectable selectable = target.GetComponent<Selectable>();
++        return selectable != null && selectable.isActiveAndEnabled && selectable.IsInteractable();
++    }
++
++    private void RestoreDriverSkillChoiceFocus(DriverSkillChoiceFocus focus)
++    {
++        if (focus == null || focus.EventSystem == null || !focus.EventSystem.isActiveAndEnabled ||
++            EventSystem.current != focus.EventSystem)
++            return;
++        GameObject target = null;
++        if (this != null && isActiveAndEnabled)
++        {
++            if (IsAvailableFocus(focus.Previous)) target = focus.Previous;
++            else if (IsAvailableFocus(focus.Continuation)) target = focus.Continuation;
++            else if (UkPrepMealButton != null && IsAvailableFocus(UkPrepMealButton.gameObject)) target = UkPrepMealButton.gameObject;
++            else if (driverSkillButton != null && IsAvailableFocus(driverSkillButton.gameObject)) target = driverSkillButton.gameObject;
++            else if (gear1Button != null && IsAvailableFocus(gear1Button.gameObject)) target = gear1Button.gameObject;
++            else if (gear2Button != null && IsAvailableFocus(gear2Button.gameObject)) target = gear2Button.gameObject;
++            else if (gear3Button != null && IsAvailableFocus(gear3Button.gameObject)) target = gear3Button.gameObject;
++            else if (gear4Button != null && IsAvailableFocus(gear4Button.gameObject)) target = gear4Button.gameObject;
++            else if (confirmGearButton != null && IsAvailableFocus(confirmGearButton.gameObject)) target = confirmGearButton.gameObject;
++        }
++        if (target != null)
++            focus.EventSystem.SetSelectedGameObject(target);
++        else
++        {
++            GameObject selected = focus.EventSystem.currentSelectedGameObject;
++            if (selected != null && ((focus.Row != null && selected.transform.IsChildOf(focus.Row.transform)) ||
++                (returnToMenuConfirmPanel != null && selected.transform.IsChildOf(returnToMenuConfirmPanel.transform))))
++                focus.EventSystem.SetSelectedGameObject(null);
++        }
+     }
+ 
+     /// <summary>
+@@ -377,6 +576,8 @@ public class HUDUI : MonoBehaviour
+         if (callback == null || IsTelemetryDetailsOpen)
+             return;
+ 
++        if (driverSkillCardChoicePending) DismissConfirmation(false, true);
++
+         if (!InRaceConfirmationRules.IsEnabled(
+                 GameSettingsRuntime.Current.inRaceConfirmationMask,
+                 action))
+@@ -709,6 +910,7 @@ public class HUDUI : MonoBehaviour
+     public void RefreshTeamGearPresentation()
+     {
+         EnsurePresentation();
++        RefreshUkPrepMeal(gameManager, gameManager != null ? gameManager.Player : null);
+         if (gameManager == null || gameManager.Player == null || teamGearPresentation == null)
+             return;
+         bool modal = IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
+@@ -832,11 +1034,14 @@ public class HUDUI : MonoBehaviour
+ 
+     private void OnDisable()
+     {
++        if (ukPrepMealAction != null) ukPrepMealAction.SuspendInteraction();
++        CancelDriverSkillChoiceForLifecycle();
+         if (telemetryDetailsPanel != null) telemetryDetailsPanel.SetActive(false);
+     }
+ 
+     private void OnDestroy()
+     {
++        CancelDriverSkillChoiceForLifecycle();
+         if (telemetryDetailsPanel == null || telemetryDetailsPanel.transform.IsChildOf(transform)) return;
+         // A HUD nested below its canvas owns a sibling overlay; clean that up too.
+         if (Application.isPlaying) Destroy(telemetryDetailsPanel);
+@@ -850,6 +1055,7 @@ public class HUDUI : MonoBehaviour
+ 
+     public void RefreshDriverSkill(MVPGameManager gm, PlayerState player)
+     {
++        RefreshUkPrepMeal(gm, player);
+         if (driverSkillButton == null) return;
+         bool interactable = false;
+         string label = gm != null ? gm.GetDriverSkillButtonLabel(player, out interactable) : "车手技能";
+@@ -860,6 +1066,29 @@ public class HUDUI : MonoBehaviour
+         if (target != null) target.text = label;
+     }
+ 
++    /// <summary>Displays manager-owned availability; A4 technology and A1 driver share space only.</summary>
++    public void RefreshUkPrepMeal(MVPGameManager gm, PlayerState player)
++    {
++        bool visible = gm != null && gm.IsUkPrepMealVisible(player);
++        if (ukPrepMealAction == null && !visible) return;
++        if (ukPrepMealAction == null) ukPrepMealAction = UkPrepMealActionUI.Attach(this, OnUkPrepMealClicked);
++        if (ukPrepMealAction == null) return;
++        bool interactable = false;
++        string label = gm != null ? gm.GetUkPrepMealButtonLabel(player, out interactable) : "科技·预备餐";
++        bool modal = IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
++            (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf);
++        ukPrepMealAction.Refresh(visible, interactable && !modal && isActiveAndEnabled, label);
++    }
++
++    private void OnUkPrepMealClicked()
++    {
++        if (!isActiveAndEnabled || gameManager == null || UkPrepMealButton == null ||
++            !UkPrepMealButton.isActiveAndEnabled || !UkPrepMealButton.IsInteractable() ||
++            IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen)
++            return;
++        gameManager.OnUkPrepMealButtonClicked();
++    }
++
+     public void SetStatus(string msg)
+     {
+         if (statusText != null)
+@@ -1115,6 +1344,7 @@ public class HUDUI : MonoBehaviour
+ 
+     private void OnDriverSkillClicked()
+     {
++        if (gameManager != null && gameManager.TryRequestHunterSkillSelection()) return;
+         RequestInRaceAction(
+             InRaceConfirmationAction.DriverSkill,
+             "确认发动技能",
+diff --git a/Assets/Tests/Editor/race_turn_boundary_integration_test.cs b/Assets/Tests/Editor/race_turn_boundary_integration_test.cs
+index d752dfa..927aed4 100644
+--- a/Assets/Tests/Editor/race_turn_boundary_integration_test.cs
++++ b/Assets/Tests/Editor/race_turn_boundary_integration_test.cs
+@@ -1,3 +1,4 @@
++using System.Collections;
+ using System.Collections.Generic;
+ using System.Reflection;
+ using NUnit.Framework;
+@@ -49,6 +50,152 @@ public class RaceTurnBoundaryIntegrationTests
+         return player;
+     }
+ 
++    private PlayerState CreateUkClockPlayer(string id)
++    {
++        Assert.That(DriverCatalog.TryGet(id, out DriverProfile profile), Is.True);
++        var player = new PlayerState("UK input clock", false, 8, 1)
++        { driverId = id, teamId = TeamId.UK, lap = 2 };
++        player.deck.InitializeExactOrder(new[] { new CardData(CardType.Speed, 2) }, new HeatPool(6));
++        player.deck.DrawToHand(1);
++        player.driverSkill.Initialize(profile, 7, true);
++        session.Players.Add(player);
++        session.BeginTurn(player);
++        Assert.That(session.BeginDriverSkillInput(player), Is.True);
++        Assert.That(player.driverSkill.TryActivate(profile,
++            new DriverSkillActivationContext(true, 2, 3, 6, 6, 0), out _), Is.True);
++        return player;
++    }
++
++    [TestCase("uk_hunter_hart", "pit")]
++    [TestCase("uk_hunter_hart", "recovery")]
++    [TestCase("uk_hunter_hart", "skip")]
++    [TestCase("uk_hunter_hart", "finished")]
++    [TestCase("uk_hunter_hart", "blown")]
++    [TestCase("uk_nigel_mansell", "pit")]
++    [TestCase("uk_nigel_mansell", "recovery")]
++    [TestCase("uk_nigel_mansell", "skip")]
++    [TestCase("uk_nigel_mansell", "finished")]
++    [TestCase("uk_nigel_mansell", "blown")]
++    public void SessionClearsBlockedUkWindowWithoutSpendingAnotherInput(string id, string blocked)
++    {
++        PlayerState player = CreateUkClockPlayer(id);
++        int uses = player.driverSkill.UsesRemaining;
++        CardData handCard = player.deck.Hand[0];
++        session.BeginTurn(player);
++        switch (blocked)
++        {
++            case "pit": player.pitStopScheduled = true; break;
++            case "recovery": player.skipNextTurn = true; break;
++            case "skip": player.kantoOdenSkipThisTurn = true; break;
++            case "finished": player.hasFinished = true; break;
++            case "blown": player.isBlown = true; break;
++        }
++        RaceTurnStartAction action = RaceTurnRules.GetStartAction(player);
++
++        Assert.That(session.BeginDriverSkillInput(player), Is.False);
++        Assert.That(session.BeginDriverSkillInput(player), Is.False);
++        Assert.That(player.driverSkill.IsActive, Is.False);
++        Assert.That(player.driverSkill.DrivingInputsStarted, Is.EqualTo(1));
++        Assert.That(player.driverSkill.UsesRemaining, Is.EqualTo(uses));
++        Assert.That(RaceTurnRules.GetStartAction(player), Is.EqualTo(action));
++        Assert.That(player.deck.Hand[0], Is.SameAs(handCard));
++        Assert.That(player.deck.heatPool.remaining, Is.EqualTo(6));
++    }
++
++    [TestCase("uk_hunter_hart", false)]
++    [TestCase("uk_hunter_hart", true)]
++    [TestCase("uk_nigel_mansell", false)]
++    [TestCase("uk_nigel_mansell", true)]
++    public void ActualCleanupClearsUkWindowOnTerminalOrRecoveryWithoutRefund(string id, bool terminal)
++    {
++        PlayerState player = CreateUkClockPlayer(id);
++        int uses = player.driverSkill.UsesRemaining;
++        player.hasFinished = terminal;
++        player.skipNextTurn = !terminal;
++        Cleanup(player);
++        Assert.That(player.driverSkill.IsActive, Is.False);
++        Assert.That(player.driverSkill.UsesRemaining, Is.EqualTo(uses));
++        Assert.That(player.driverSkill.BeginDrivingInput(), Is.False);
++    }
++
++    [Test]
++    public void TwoUkParticipantsAdvanceOnlyTheirOwnClock()
++    {
++        PlayerState first = CreateUkClockPlayer("uk_hunter_hart");
++        PlayerState second = CreateUkClockPlayer("uk_nigel_mansell");
++        session.BeginTurn(first);
++        session.BeginTurn(second);
++        Assert.That(session.BeginDriverSkillInput(first), Is.True);
++        Assert.That(first.driverSkill.IsActive, Is.False);
++        Assert.That(second.driverSkill.IsActive, Is.True);
++        Assert.That(second.driverSkill.DrivingInputsStarted, Is.EqualTo(1));
++        Assert.That(session.BeginDriverSkillInput(first), Is.False);
++        Assert.That(session.BeginDriverSkillInput(second), Is.True);
++        Assert.That(second.driverSkill.IsActive, Is.False);
++        Assert.That(first.driverSkill.UsesRemaining, Is.EqualTo(2));
++        Assert.That(second.driverSkill.UsesRemaining, Is.EqualTo(2));
++    }
++
++    [TestCase(false)]
++    [TestCase(true)]
++    public void MansellPendingPassiveResolvesAtOwnerInputOrExpiresWhenSkipped(bool skipped)
++    {
++        PlayerState player = CreateUkClockPlayer("uk_nigel_mansell");
++        player.driverSkill.ResolvePassiveTurnEnd(1);
++        session.BeginTurn(player);
++        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
++        player.skipNextTurn = skipped;
++        Assert.That(session.BeginDriverSkillInput(player), Is.EqualTo(!skipped));
++        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.EqualTo(skipped ? 0 : 2));
++        Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.EqualTo(skipped ? 0 : 1));
++
++        player.skipNextTurn = false;
++        session.BeginTurn(player);
++        Assert.That(session.BeginDriverSkillInput(player), Is.True);
++        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
++        Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.Zero);
++    }
++
++    [TestCase("uk_hunter_hart")]
++    [TestCase("uk_nigel_mansell")]
++    public void RealGameLoopAdvancesUkClockBeforeOpeningOwnerGearInput(string id)
++    {
++        PlayerState player = CreateUkClockPlayer(id);
++        var config = ScriptableObject.CreateInstance<GameConfigSO>();
++        config.enableTechTree = false;
++        manager.config = config;
++        // Production A1 passes the actual track boundary to the driver's target lock.
++        // This iterator-prefix fixture must supply that dependency without scene startup.
++        manager.trackManager = host.AddComponent<TrackManager>();
++        var nodes = new List<TrackNode>();
++        for (int i = 0; i < 20; i++) nodes.Add(new TrackNode(i, 99));
++        typeof(TrackManager).GetField("nodes", PrivateInstance).SetValue(manager.trackManager, nodes);
++        var phase = (RacePhaseState)typeof(MVPGameManager).GetField("phaseState", PrivateInstance).GetValue(manager);
++        var input = (RaceInputState)typeof(MVPGameManager).GetField("inputState", PrivateInstance).GetValue(manager);
++        phase.ResetForRace();
++        var loop = (IEnumerator)typeof(MVPGameManager).GetMethod("GameLoop", PrivateInstance).Invoke(manager, null);
++        var stack = new Stack<IEnumerator>();
++        stack.Push(loop);
++        try
++        {
++            for (int i = 0; i < 12 && !input.WaitingForGear && stack.Count > 0; i++)
++            {
++                IEnumerator current = stack.Peek();
++                if (!current.MoveNext()) { stack.Pop(); continue; }
++                if (current.Current is IEnumerator nested) stack.Push(nested);
++            }
++            Assert.That(input.WaitingForGear, Is.True, "Pump only the real iterator's A1 prefix, not a whole race.");
++            Assert.That(player.driverSkill.DrivingInputsStarted, Is.EqualTo(2));
++            Assert.That(player.driverSkill.IsActive, Is.False);
++            Assert.That(player.driverSkill.UsesRemaining, Is.EqualTo(2));
++        }
++        finally
++        {
++            while (stack.Count > 0) (stack.Pop() as System.IDisposable)?.Dispose();
++            Object.DestroyImmediate(config);
++        }
++    }
++
+     private void Cleanup(PlayerState player)
+     {
+         MethodInfo method = typeof(MVPGameManager).GetMethod("CleanupTurn", PrivateInstance);
+@@ -147,18 +294,21 @@ public class RaceTurnBoundaryIntegrationTests
+     }
+ 
+     [Test]
+-    public void RealPartialPaymentRetainsFishAndChipsRescueAndActualReceipt()
++    public void RealPartialPaymentRetainsReceiptAndSpinsWithoutLegacyRescue()
+     {
+         var player = CreatePlayer(TeamId.UK);
+         session.TechDb = TechTreeDatabaseFactory.CreateDefault();
+         player.techState.activeNodeIds.Add("uk-l1-fish-and-chips");
+-        player.deck.DrawHeatFromPool(3); // Only one engine heat remains.
+-        Assert.IsTrue(manager.TryPayHeat(player, 2, 8, "short engine"));
+-        Assert.IsTrue(player.techState.fishAndChipsUsed);
++        player.deck.DrawHeatFromPool(3);
++        var spinConfig = ScriptableObject.CreateInstance<GameConfigSO>();
++        manager.config = spinConfig;
++        try { Assert.IsFalse(manager.TryPayHeat(player, 2, 8, "short engine")); }
++        finally { Object.DestroyImmediate(spinConfig); manager.config = null; }
++        Assert.IsFalse(player.techState.fishAndChipsUsed);
+         Assert.AreEqual(1, player.heatPaidCardsThisTurn.Count);
+-        Assert.AreEqual(1, player.deck.heatPool.remaining);
+         Assert.AreEqual(6, player.deck.heatPool.remaining + player.deck.CountPermanentHeatOutsideEngine());
+-        Assert.AreEqual(0, player.spinCounter);
++        Assert.AreEqual(1, player.spinCounter);
++        Assert.IsTrue(player.skipNextTurn);
+     }
+ 
+     [TestCase(false)]
+@@ -330,7 +480,7 @@ public class RaceTurnBoundaryIntegrationTests
+ 
+     [TestCase(0)]
+     [TestCase(1)]
+-    public void RealCleanupRegistersCurrentOvertakesForNextTurnOnly(int overtakes)
++    public void RealCleanupRegistersCurrentOvertakesForNextOwnerInputOnly(int overtakes)
+     {
+         var player = CreatePlayer(TeamId.UK);
+         Assert.That(DriverCatalog.TryGet("uk_nigel_mansell", out DriverProfile profile), Is.True);
+@@ -343,9 +493,12 @@ public class RaceTurnBoundaryIntegrationTests
+ 
+         Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
+         session.BeginTurn(player);
++        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
++        Assert.That(session.BeginDriverSkillInput(player), Is.True);
+         Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.EqualTo(overtakes > 0 ? 2 : 0));
+         Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.EqualTo(overtakes > 0 ? 1 : 0));
+         session.BeginTurn(player);
++        Assert.That(session.BeginDriverSkillInput(player), Is.True);
+         Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
+         Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.Zero);
+     }

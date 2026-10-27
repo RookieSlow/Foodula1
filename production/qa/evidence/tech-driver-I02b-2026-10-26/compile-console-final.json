@@ -1,0 +1,26 @@
+{
+  "jsonrpc": "2.0",
+  "id": 22,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Retrieved 1 log entries.\",\"data\":[{\"type\":\"Error\",\"message\":\"Assets\\\\Tests\\\\Editor\\\\race_uk_skill_coroutine_test.cs(223,80): error CS1503: Argument 1: cannot convert from 'CardData' to 'string'\\n\",\"file\":\"Assets\\\\Tests\\\\Editor\\\\race_uk_skill_coroutine_test.cs\",\"line\":223,\"stackTrace\":null}]}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "message": "Retrieved 1 log entries.",
+      "data": [
+        {
+          "type": "Error",
+          "message": "Assets\\Tests\\Editor\\race_uk_skill_coroutine_test.cs(223,80): error CS1503: Argument 1: cannot convert from 'CardData' to 'string'\n",
+          "file": "Assets\\Tests\\Editor\\race_uk_skill_coroutine_test.cs",
+          "line": 223,
+          "stackTrace": null
+        }
+      ]
+    },
+    "isError": false
+  }
+}

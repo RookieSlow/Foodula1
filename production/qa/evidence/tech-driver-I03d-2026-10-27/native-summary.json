@@ -1,0 +1,127 @@
+{
+  "final_native": {
+    "startedUtc": "2026-10-27T04:15:33.4910635Z",
+    "endedUtc": "2026-10-27T04:16:11.3011672Z",
+    "state": "Passed",
+    "nativeState": "Passed",
+    "total": 3087,
+    "passed": 3087,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 32.6400771,
+    "selectionMatches": true
+  },
+  "modules": [
+    "cards-heat",
+    "core",
+    "drivers",
+    "gears",
+    "tech",
+    "tracks-weather-pit",
+    "tutorial",
+    "ui"
+  ],
+  "new_ui_cases": 36,
+  "new_empty_selection_adapter_cases": 5,
+  "gameloop": {
+    "mode": "EditMode",
+    "summary": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 4.1799126,
+      "resultState": "Passed"
+    },
+    "results": [
+      {
+        "name": "MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+        "fullName": "RaceGameLoopCoroutineTests.MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+        "state": "Passed",
+        "durationSeconds": 1.3845022,
+        "message": null,
+        "stackTrace": null,
+        "output": "[PlayEntry] 0.575s; domainReloadDisabled=True\r\n"
+      },
+      {
+        "name": "MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+        "fullName": "RaceGameLoopCoroutineTests.MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+        "state": "Passed",
+        "durationSeconds": 1.352796,
+        "message": null,
+        "stackTrace": null,
+        "output": "[PlayEntry] 0.564s; domainReloadDisabled=True\r\n"
+      },
+      {
+        "name": "MansellRealA2CoolsOnlyFrozenOldHandBeforePreparationSnapshot",
+        "fullName": "RaceGameLoopCoroutineTests.MansellRealA2CoolsOnlyFrozenOldHandBeforePreparationSnapshot",
+        "state": "Passed",
+        "durationSeconds": 1.225683,
+        "message": null,
+        "stackTrace": null,
+        "output": "[PlayEntry] 0.537s; domainReloadDisabled=True\r\n"
+      }
+    ]
+  },
+  "native_GameLoop_RunFinished": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-10-27T04:17:36.6657473Z",
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": "",
+    "stackTrace": ""
+  },
+  "runtime_mvid": "be928c88-1478-48b7-b060-8cf4cb7beeb2",
+  "editor_mvid": "b3999214-a847-40c7-b71b-207be910dba6",
+  "first_native": {
+    "startedUtc": "2026-10-27T04:07:31.9569632Z",
+    "endedUtc": "2026-10-27T04:08:11.1493573Z",
+    "state": "Failed(Child)",
+    "nativeState": "Failed(Child)",
+    "total": 3082,
+    "passed": 3062,
+    "failed": 20,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 32.5160696,
+    "selectionMatches": true
+  },
+  "second_native": {
+    "startedUtc": "2026-10-27T04:10:53.2115217Z",
+    "endedUtc": "2026-10-27T04:11:30.4482866Z",
+    "state": "Passed",
+    "nativeState": "Passed",
+    "total": 3082,
+    "passed": 3082,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 32.310474,
+    "selectionMatches": true
+  },
+  "visual": {
+    "before": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I03d-2026-10-27/before/run-20261027-040534023",
+    "after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I03d-2026-10-27/after/run-20261027-041640341",
+    "before_count": 24,
+    "after_count": 24,
+    "before_overflows": 0,
+    "after_overflows": 0,
+    "root_viewed_action_or_modal_crops_before": 24,
+    "root_viewed_action_or_modal_crops_after": 24,
+    "root_viewed_full_after": 3,
+    "sizes": [
+      "1920x1080",
+      "2560x1440",
+      "1280x720"
+    ],
+    "kind": "Owned preview Canvas with real HUD.Start/phase-exclusive widget/Manager plan, production-normalized action slot, owned backgrounds. Real GraphicRaycaster and ExecuteEvents; not full RaceCanvas or OS keyboard.",
+    "boundary": "Initial before run040349 had undersized owned GearButtons (216 aggregate label-overflow records); preserved but not accepted. Fixed fixture and captured valid before while old production API still absent. After adds owned card-action focus target needed to model the actual production destination; background controls not a full-RaceCanvas layout comparison. Explicit HUD.OnDisable invocation is a callback fixture, not native SetActive runtime acceptance."
+  },
+  "native_result_path": "D:/UnityProject/Foodula1/Library/Foodula1/RegressionRuns/20261027T041533485Z-3093bb26/result.json"
+}

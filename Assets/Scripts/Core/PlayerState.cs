@@ -157,6 +157,6 @@ public class PlayerState
         slipstreamRangeBonusThisTurn = 0;
         italyCornerExitBonusAppliedThisTurn = false;
         positionAtTurnStart = position;
-        driverSkill?.BeginTurn();
+        driverSkill?.BeginGlobalTurn();
     }
 }

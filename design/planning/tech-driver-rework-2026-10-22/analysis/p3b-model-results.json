@@ -1,0 +1,223 @@
+{
+  "package": "P3b",
+  "kind": "independent_design_model_not_unity",
+  "total": 46,
+  "passed": 46,
+  "failed": 0,
+  "skipped": 0,
+  "parameter_cases": 1587,
+  "elapsed_seconds": 0.0073,
+  "input_sha256": "c74506aa8fcf2e73ff7980a3d1e3880d0e346d2147995206c0e281504506b817",
+  "script_sha256": "25f8bde70f40592198874fef20a54182c5d7a17826fd78b1f85259d562afed9e",
+  "checks": [
+    {
+      "name": "Ascari sacrifices one before safe apex and gains two after it",
+      "passed": true
+    },
+    {
+      "name": "Ascari extra movement still requests lower-limit second-apex heat",
+      "passed": true
+    },
+    {
+      "name": "Ascari cannot use unearned bonus to reach first apex",
+      "passed": true
+    },
+    {
+      "name": "Ascari same physical speed card cannot also take IT L3 reduction",
+      "passed": true
+    },
+    {
+      "name": "Ascari different-card IT L3 reduction changes movement and apex speed",
+      "passed": true
+    },
+    {
+      "name": "Ascari no safe first apex means no post-apex reward",
+      "passed": true
+    },
+    {
+      "name": "Ascari value one cannot be reduced below one",
+      "passed": true
+    },
+    {
+      "name": "Ascari cancel or terminal state consumes no activation",
+      "passed": true
+    },
+    {
+      "name": "Ascari returns only one old hand heat, not newly paid heat",
+      "passed": true
+    },
+    {
+      "name": "Ascari passive has repeated-apex, spin and per-lap gates",
+      "passed": true
+    },
+    {
+      "name": "Ascari tier three opens margin two, not more than two rewards per lap",
+      "passed": true
+    },
+    {
+      "name": "Old IT six-card 90 percent threshold requires empty engine",
+      "passed": true
+    },
+    {
+      "name": "Nova candidate allows low but nonempty engine without changing heat capacity",
+      "passed": true
+    },
+    {
+      "name": "Nova precommits one spin tolerance",
+      "passed": true
+    },
+    {
+      "name": "Nova cannot spend last remaining survival tolerance",
+      "passed": true
+    },
+    {
+      "name": "Nova ignores first apex only, including a zero-fee first apex",
+      "passed": true
+    },
+    {
+      "name": "Nova tiers one and two recover next input, tier three still pays spin",
+      "passed": true
+    },
+    {
+      "name": "Nova cancel does not spend, committed finish cannot refund spin",
+      "passed": true
+    },
+    {
+      "name": "Nova risky ordinary corner can return two old heat at tier three",
+      "passed": true
+    },
+    {
+      "name": "Nova forced spin, no actual fee, or repeated lap blocks passive refund",
+      "passed": true
+    },
+    {
+      "name": "Stewart straight boost pays real heat into hand after chosen cards close",
+      "passed": true
+    },
+    {
+      "name": "Stewart duplicate submit cannot pay or boost twice",
+      "passed": true
+    },
+    {
+      "name": "Stewart extra movement cannot classify itself as a free straight",
+      "passed": true
+    },
+    {
+      "name": "Stewart preview and cancel preserve duration and resources",
+      "passed": true
+    },
+    {
+      "name": "Stewart skip or pit ends window without new fee",
+      "passed": true
+    },
+    {
+      "name": "Stewart empty engine ends duration without granting a free later boost",
+      "passed": true
+    },
+    {
+      "name": "Stewart finish clears remaining duration but retains paid heat",
+      "passed": true
+    },
+    {
+      "name": "Stewart passive reacts only to an actual prior overtake once per lap",
+      "passed": true
+    },
+    {
+      "name": "Stewart tier three safe straight can return one old hand heat",
+      "passed": true
+    },
+    {
+      "name": "Busch prediction alone cannot create a pressure mark",
+      "passed": true
+    },
+    {
+      "name": "Busch only actual ordinary overtake of locked nearest target qualifies",
+      "passed": true
+    },
+    {
+      "name": "Busch active and passive share per-lap cap and cannot stack across laps",
+      "passed": true
+    },
+    {
+      "name": "Busch target may refuse follow with or without smoke and has no fee or forced spin",
+      "passed": true
+    },
+    {
+      "name": "Busch voluntary positive slip pays one target-owned heat only",
+      "passed": true
+    },
+    {
+      "name": "Busch repeated resolution has no second fee",
+      "passed": true
+    },
+    {
+      "name": "Busch empty target engine declines this source rather than manufacturing heat",
+      "passed": true
+    },
+    {
+      "name": "BBQ smoke has priority and cannot also charge driver pressure",
+      "passed": true
+    },
+    {
+      "name": "Busch zero or blocked slip gives no fee",
+      "passed": true
+    },
+    {
+      "name": "Busch cannot retarget another car or consume window on unrelated input",
+      "passed": true
+    },
+    {
+      "name": "Busch active cost is real and requires rear target or survives no activation",
+      "passed": true
+    },
+    {
+      "name": "Busch dead target expires mark without heat fee",
+      "passed": true
+    },
+    {
+      "name": "US combo pays driver heat, BBQ card stays discarded, net revival at most three",
+      "passed": true
+    },
+    {
+      "name": "US combo cannot recover or BBQ the already spent physical card again",
+      "passed": true
+    },
+    {
+      "name": "Enumerated permanent-heat identities remain unique and conserved",
+      "passed": true
+    },
+    {
+      "name": "Stewart duration envelope is bounded by paid personal turns",
+      "passed": true
+    },
+    {
+      "name": "Busch single-target fee stays bounded for all follow and smoke options",
+      "passed": true
+    }
+  ],
+  "example_ascari_linear_fixture": {
+    "used": 1,
+    "speed": 5,
+    "base_movement": 5,
+    "reward": 2,
+    "movement": 7,
+    "fee_requests": [
+      0,
+      2
+    ]
+  },
+  "example_us_combo": {
+    "engine": 7,
+    "hand": 0,
+    "discard": 1,
+    "bbq_card_returned": false,
+    "revival_actual_return": 3
+  },
+  "limits": [
+    "No production C# execution",
+    "No full board route, deck or random draw",
+    "No weather, hidden AI, career save or win-rate simulation",
+    "Linear apex fixture only checks candidate ordering and fee requests",
+    "No Unity or player feel acceptance"
+  ]
+}

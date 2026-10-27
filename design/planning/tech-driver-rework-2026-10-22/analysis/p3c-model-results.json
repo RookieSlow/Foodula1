@@ -1,0 +1,241 @@
+{
+  "package": "P3c",
+  "kind": "independent_design_model_not_unity",
+  "total": 55,
+  "passed": 55,
+  "failed": 0,
+  "skipped": 0,
+  "parameter_cases": 2052,
+  "elapsed_seconds": 0.0167,
+  "input_sha256": "aeb3be6bffec6da61df13053bf3ea3f3390eecfc94127daa9eabab56faabafa2",
+  "script_sha256": "8184215082dda6c60dd10025357450dd88595a51eb697e706842653809d16649",
+  "checks": [
+    {
+      "name": "Native China Go remains three then four cards and 0/1/2/3 fee",
+      "passed": true
+    },
+    {
+      "name": "Native China Recover remains one card and 3/2/1/0 cooling",
+      "passed": true
+    },
+    {
+      "name": "Zhou passive is not weather-dependent or a voluntary tech-fee rebate",
+      "passed": true
+    },
+    {
+      "name": "Zhou higher tiers accept ordinary Go corner costs, never preview or Recover",
+      "passed": true
+    },
+    {
+      "name": "Zhou native three then at most two old-heat returns conserve seven",
+      "passed": true
+    },
+    {
+      "name": "Zhou full basic cooling leaves no fictitious extra heat",
+      "passed": true
+    },
+    {
+      "name": "Zhou lap quota blocks extra cooling",
+      "passed": true
+    },
+    {
+      "name": "Zhou active pays one speed and returns at most two old hand heat",
+      "passed": true
+    },
+    {
+      "name": "Zhou active cannot discard the last required speed slot",
+      "passed": true
+    },
+    {
+      "name": "Zhou active cancellation or terminal state pays nothing",
+      "passed": true
+    },
+    {
+      "name": "Zhou cannot promise old-hand cooling from discard only",
+      "passed": true
+    },
+    {
+      "name": "Zhou guard restores only one legitimate slipstream step",
+      "passed": true
+    },
+    {
+      "name": "Zhou guard cannot repeatedly puncture a blocked chain",
+      "passed": true
+    },
+    {
+      "name": "Zhou guard never bypasses Busch voluntary fee or own costs",
+      "passed": true
+    },
+    {
+      "name": "Zhou guard cannot create a source, override refusal or act after terminal",
+      "passed": true
+    },
+    {
+      "name": "Zhou guard duration expires by own input, with no new token",
+      "passed": true
+    },
+    {
+      "name": "Zhou guard is cleared by pit, recovery skip or terminal input",
+      "passed": true
+    },
+    {
+      "name": "Ma passive requires completed Recover then Go, not startup gear or second apex",
+      "passed": true
+    },
+    {
+      "name": "Ma passive does not consume a second transition at tier one",
+      "passed": true
+    },
+    {
+      "name": "Ma replay cannot reapply first-apex relief",
+      "passed": true
+    },
+    {
+      "name": "Ma prep really forgoes one native cooling opportunity",
+      "passed": true
+    },
+    {
+      "name": "Other CN cooling sources cannot reclaim the reserved heat in same Recover",
+      "passed": true
+    },
+    {
+      "name": "Ma reservation ends after Recover and never changes heat ownership",
+      "passed": true
+    },
+    {
+      "name": "Ma follow-up Go gives one finite bonus then closes",
+      "passed": true
+    },
+    {
+      "name": "Ma no-cooling or Go-mode prep cannot generate a free window",
+      "passed": true
+    },
+    {
+      "name": "Ma no old heat source cannot pay opportunity cost",
+      "passed": true
+    },
+    {
+      "name": "Ma preview does not consume next Go window",
+      "passed": true
+    },
+    {
+      "name": "Ma interrupted, short-card or unpaid Go expires instead of extending",
+      "passed": true
+    },
+    {
+      "name": "Ma omitted cooling creates no payment receipt or Go overclock reduction",
+      "passed": true
+    },
+    {
+      "name": "Tsuchiya tier two discounts first positive apex, tier three first two",
+      "passed": true
+    },
+    {
+      "name": "Tsuchiya repeated apex cannot take another discount",
+      "passed": true
+    },
+    {
+      "name": "Tsuchiya safe completed apex prepares one first-card bonus, not per-apex stacks",
+      "passed": true
+    },
+    {
+      "name": "Tsuchiya smoke rear range remains two then three, excludes ties",
+      "passed": true
+    },
+    {
+      "name": "Tsuchiya smoke blocks only own eligible source and expires",
+      "passed": true
+    },
+    {
+      "name": "Zhou protection gives a narrow counter to Tsuchiya without restoring all bonuses",
+      "passed": true
+    },
+    {
+      "name": "Takumi familiarity is locked before first draw and accepts only map IDs",
+      "passed": true
+    },
+    {
+      "name": "Takumi first lap can retain one played low card before refilling",
+      "passed": true
+    },
+    {
+      "name": "Takumi retained card is not also in discard or draw",
+      "passed": true
+    },
+    {
+      "name": "Takumi uses original printed threshold, not effective bonus",
+      "passed": true
+    },
+    {
+      "name": "Takumi tier two expands choice without extra hand size",
+      "passed": true
+    },
+    {
+      "name": "Takumi ignored familiar apex, wrong corner, spin or used lap cannot retain",
+      "passed": true
+    },
+    {
+      "name": "Takumi cannot retain ATTACK, heat or trick cards as ordinary speed",
+      "passed": true
+    },
+    {
+      "name": "Takumi full hand causes no extra slot or forced discard",
+      "passed": true
+    },
+    {
+      "name": "Takumi tiers distinguish first apex, chosen of first two, and two apexes",
+      "passed": true
+    },
+    {
+      "name": "Gutter exemption does not turn overspeed into Japanese exact-speed equality",
+      "passed": true
+    },
+    {
+      "name": "Takahashi tier one cannot pull from old discard but tier two may",
+      "passed": true
+    },
+    {
+      "name": "Takahashi defense must actually commit, no preview or duplicate reward",
+      "passed": true
+    },
+    {
+      "name": "Takahashi relinquishes entire positive slipstream to recover at most two old discard",
+      "passed": true
+    },
+    {
+      "name": "Takahashi zero or absent legal slip cannot become free cooling or movement",
+      "passed": true
+    },
+    {
+      "name": "Takahashi needs real old discard and cannot cool nonexistent source",
+      "passed": true
+    },
+    {
+      "name": "Takahashi preview and terminal preserve resources and uses",
+      "passed": true
+    },
+    {
+      "name": "All legal CN heat partitions conserve seven and Ma cannot recover reserved cost",
+      "passed": true
+    },
+    {
+      "name": "Retained ordinary-card identities and original hand limits survive all combinations",
+      "passed": true
+    },
+    {
+      "name": "Smoke range and lifecycle remain bounded without global opponent debuff",
+      "passed": true
+    },
+    {
+      "name": "Replacement option never cools without forfeiting a positive slip request",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "Receipt IDs are conceptual model ledgers; production engine is a count pool",
+    "No production C# or Unity execution",
+    "No full track routing, deck randomness, AI, weather performance or save migration",
+    "Takahashi is one optional replacement, never an extra driver or approved ID change",
+    "UI, full mode integration and balance remain unverified"
+  ]
+}

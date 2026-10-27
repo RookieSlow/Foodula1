@@ -1,0 +1,17 @@
+{
+  "scope": "I02c fixed-cost production API and bounded GameLoop only",
+  "unity_specialist": "APPROVED after five lifecycle/source/version isolation corrections",
+  "qa_tester": "Current source review passed; real OnDisable method invocation is not physical window-exit acceptance",
+  "resolved": [
+    "pending lifecycle sequence and fee plans on OnDisable",
+    "second-observation source/ID/init/input freezing before plan issue",
+    "dedicated issue version blocks stale cancel closing a newer plan",
+    "paid activation cleanup cannot fall back to legacy movement/overtake bonus",
+    "foreign session failed preparation cannot decline the real second window"
+  ],
+  "not_accepted": [
+    "new player button and confirmation UI",
+    "three-resolution visuals/physical input",
+    "complete race/career/tutorial/save combinations"
+  ]
+}

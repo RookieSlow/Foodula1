@@ -1,0 +1,807 @@
+diff --git a/Assets/Scripts/Core/MVPGameManager.cs b/Assets/Scripts/Core/MVPGameManager.cs
+index 32132fd..0b54906 100644
+--- a/Assets/Scripts/Core/MVPGameManager.cs
++++ b/Assets/Scripts/Core/MVPGameManager.cs
+@@ -72,6 +72,10 @@ public class MVPGameManager : MonoBehaviour
+     private readonly RacePhaseState phaseState = new RacePhaseState();
+     private RaceTestLogWriter raceLogWriter;
+     private int raceTurnNumber;
++    private int driverSkillPlanVersion;
++    private HunterSkillActivationPlan pendingHunterSkillPlan;
++    private UkPrepMealActivationPlan pendingPrepMealPlan;
++    private int prepMealPlanVersion;
+     // Storage/display defaults stay at the coordinator boundary; startup/coroutine
+     // regressions replace these dependencies without touching player profiles or resolution.
+     private System.Action<TechTreeState> saveRaceTechState = TechTreeProfileStore.Save;
+@@ -255,6 +259,9 @@ public class MVPGameManager : MonoBehaviour
+ 
+     void OnDestroy()
+     {
++        CancelPrepMealPlan(true);
++        ClosePrepMealInputs();
++        CancelHunterSkillPlan(true);
+         StopMovementAudio(true);
+         presentationSkipState.End();
+         if (raceLogWriter != null && raceLogWriter.IsActive)
+@@ -263,6 +270,9 @@ public class MVPGameManager : MonoBehaviour
+ 
+     void OnDisable()
+     {
++        CancelPrepMealPlan(true);
++        ClosePrepMealInputs();
++        CancelHunterSkillPlan(true);
+         StopMovementAudio(true);
+     }
+ 
+@@ -1599,6 +1609,7 @@ public class MVPGameManager : MonoBehaviour
+             foreach (var p in turnOrder)
+             {
+                 RaceTurnStartAction startAction = RaceTurnRules.GetStartAction(p);
++                session.BeginDriverSkillInput(p, trackManager.TotalNodes, trackManager.StartFinishNodeIndex);
+                 // 已完赛或已爆缸的赛车不再参与后续回合；否则在玩家 DNF
+                 // 后比赛继续时，A1 仍会向玩家请求档位输入。
+                 if (startAction == RaceTurnStartAction.ExcludeTerminal)
+@@ -1719,6 +1730,7 @@ public class MVPGameManager : MonoBehaviour
+                         p, trackManager?.LoadedTrackConfig?.country);
+                     if (triggers > 0 && hudUI != null)
+                         hudUI.AppendLog($"{p.name} 英式全餐：尾流距离+{triggers}，获得 {triggers} 张限时热量牌。");
++                    session.BeginPrepMealInput(p, raceTurnNumber);
+                 }
+             }
+ 
+@@ -1726,7 +1738,10 @@ public class MVPGameManager : MonoBehaviour
+             foreach (var p in turnOrder)
+             {
+                 if (p.isAI && !turnSkipped.Contains(p))
++                {
++                    TryUseAiPrepMeal(p);
+                     DecideAITrick(p);
++                }
+             }
+ 
+             // ====== PHASE A4: 速度牌可多选确认，特技牌单张即时确认 ======
+@@ -1753,6 +1768,7 @@ public class MVPGameManager : MonoBehaviour
+                     if (hudUI != null)
+                     {
+                         hudUI.RefreshPlayerResources(p);
++                        hudUI.RefreshUkPrepMeal(this, p);
+                         hudUI.SetStatus($"{GetSpeedCardRequirementLabel(p)} - 可多选速度牌后确认（最多 {GetMaxSpeedCardsThisTurn(p)} 张；特技牌单张确认）");
+                     }
+                     if (cardHandUI != null)
+@@ -1810,10 +1826,19 @@ public class MVPGameManager : MonoBehaviour
+                 int rawEnd = oldPos + p.cornerTotalThisTurn;
+ 
+                 // 移动 → 反应(冷却) → 弯道判定
+-                yield return StartCoroutine(AnimateMovement(p, GetCarIndex(p)));
++                int lapBeforeMovement = p.lap;
++                bool finishDeferred = false;
++                bool hasHunterExtraCorners = HunterActiveCornerIds(p, oldPos, rawEnd, lapBeforeMovement).Count > 0;
++                System.Action deferFinish = hasHunterExtraCorners
++                    ? (System.Action)(() => finishDeferred = true) : null;
++                yield return StartCoroutine(AnimateBaseMovementWithFinishGate(p, GetCarIndex(p), deferFinish));
+                 ReactStep(p);
+                 int engineBeforeCorners = p.deck.heatPool.remaining;
+-                bool completedCorner = ResolveCorners(p, oldPos, rawEnd);
++                bool completedCorner = ResolveBaseMovementCorners(p, oldPos, rawEnd, lapBeforeMovement);
++                // A newly reached Hart apex before the final line must settle its
++                // ordinary fee before the line can assign an irreversible finish.
++                if (finishDeferred && !RaceTurnRules.IsTerminal(p) && !RaceTurnRules.ShouldSkip(p))
++                    RegisterStartFinishCrossing(p);
+                 session.ArmItalyCornerExitBonus(p, completedCorner);
+ 
+                 if (!p.isAI)
+@@ -1873,8 +1898,13 @@ public class MVPGameManager : MonoBehaviour
+                     }
+                 }
+ 
+-                ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
+-                RegisterPitEntryCrossing(p, oldPos, oldPos + p.totalMovementThisTurn);
++                // Only the newly introduced Hart path is gated here. A failed
++                // extra-apex payment cannot claim its abandoned planned route.
++                if (!hasHunterExtraCorners || (!RaceTurnRules.IsTerminal(p) && !RaceTurnRules.ShouldSkip(p)))
++                {
++                    ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
++                    RegisterPitEntryCrossing(p, oldPos, oldPos + p.totalMovementThisTurn);
++                }
+                 yield return WaitForTutorialNavigation();
+             }
+             raceLogWriter?.Append("[MOVE_PHASE] end");
+@@ -2037,7 +2067,7 @@ public class MVPGameManager : MonoBehaviour
+     /// 尝试从引擎支付热量。若引擎不足 → 触发失控。
+     /// 默认将支付的永久热量放入手牌，让热量实际占用手牌；明确指定弃牌堆的效果
+     /// （例如中国队阴阳茶 Go）仍可使用 Discard 目的地。
+-    /// 支持特技牌黑面包垫底（-1，最少 1）与英国 L1 炸鱼薯条（每场 1 次免单）。
++    /// 支持原车手与特技减免；英国预备餐不免除不足判定。
+     /// 返回 true 表示支付成功，false 表示已触发失控。
+     /// </summary>
+     public bool TryPayHeat(
+@@ -2057,15 +2087,6 @@ public class MVPGameManager : MonoBehaviour
+         int drawn = payment.Drawn;
+         if (!payment.Sufficient)
+         {
+-            // UK L1 炸鱼薯条：每场限 1 次 — 忽略本次热量判定，回收 1 张热量牌至引擎
+-            if (payment.UsedFishAndChips)
+-            {
+-                RefreshHumanHeatPresentation(p);
+-                if (hudUI != null)
+-                    hudUI.AppendLog($"<color=green>{p.name} 炸鱼薯条！忽略本次热量判定，回收 1 张热量牌至引擎。</color>");
+-                return true;
+-            }
+-
+             HandleSpin(p, rewindPos, reason);
+             return false;
+         }
+@@ -2207,19 +2228,19 @@ public class MVPGameManager : MonoBehaviour
+     // ====== 移动动画（含圈数检测） ======
+ 
+     private IEnumerator AnimateMovement(PlayerState p, int carIndex)
++        => AnimateBaseMovementWithFinishGate(p, carIndex, null);
++
++    private IEnumerator AnimateBaseMovementWithFinishGate(PlayerState p, int carIndex, System.Action deferFinalFinish)
+     {
+-        yield return StartCoroutine(AnimateMovementByAmount(
+-            p,
+-            carIndex,
+-            p != null ? p.totalMovementThisTurn : 0,
+-            true));
++        yield return StartCoroutine(AnimateMovementWithFinishGate(
++            p, carIndex, p != null ? p.totalMovementThisTurn : 0, true, deferFinalFinish));
+     }
+ 
+-    private IEnumerator AnimateMovementByAmount(
+-        PlayerState p,
+-        int carIndex,
+-        int totalMove,
+-        bool playOvertake)
++    private IEnumerator AnimateMovementByAmount(PlayerState p, int carIndex, int totalMove, bool playOvertake)
++        => AnimateMovementWithFinishGate(p, carIndex, totalMove, playOvertake, null);
++
++    private IEnumerator AnimateMovementWithFinishGate(
++        PlayerState p, int carIndex, int totalMove, bool playOvertake, System.Action deferFinalFinish)
+     {
+         if (p == null || trackManager == null || trackManager.TotalNodes <= 0)
+             yield break;
+@@ -2233,7 +2254,7 @@ public class MVPGameManager : MonoBehaviour
+             // Missing visuals must not suppress lap/weather/finish or lane gates.
+             // Reuse the same ordered node traversal, omitting only car animation.
+             int rawEnd = p.position + totalMove;
+-            yield return TraverseMovementNodes(p, null, rawEnd, GetVisualLaneIndex(p));
++            yield return TraverseMovementNodesWithFinishGate(p, null, rawEnd, GetVisualLaneIndex(p), deferFinalFinish);
+             p.position = rawEnd % trackManager.TotalNodes;
+             SyncRegionalHeatCapacity(p);
+             yield break;
+@@ -2263,7 +2284,7 @@ public class MVPGameManager : MonoBehaviour
+         }
+         try
+         {
+-            yield return StartCoroutine(TraverseMovementNodes(p, car, targetPos, laneIndex));
++            yield return StartCoroutine(TraverseMovementNodesWithFinishGate(p, car, targetPos, laneIndex, deferFinalFinish));
+         }
+         finally
+         {
+@@ -2299,6 +2320,10 @@ public class MVPGameManager : MonoBehaviour
+ 
+     /// <summary>Visits movement nodes in order, settling each crossing before continuing.</summary>
+     private IEnumerator TraverseMovementNodes(PlayerState p, GameObject car, int targetPos, int laneIndex)
++        => TraverseMovementNodesWithFinishGate(p, car, targetPos, laneIndex, null);
++
++    private IEnumerator TraverseMovementNodesWithFinishGate(PlayerState p, GameObject car,
++        int targetPos, int laneIndex, System.Action deferFinalFinish)
+     {
+         int totalNodes = trackManager.TotalNodes;
+         for (int i = p.position + 1; i <= targetPos; i++)
+@@ -2318,7 +2343,10 @@ public class MVPGameManager : MonoBehaviour
+             p.turnMovement.Advance(1);
+             if (p == Player) hudUI?.RefreshTurnTelemetry(p);
+ 
+-            if (trackManager.GetNode(nodeIdx).isStartFinish && RegisterStartFinishCrossing(p))
++            bool atFinish = trackManager.GetNode(nodeIdx).isStartFinish;
++            bool defer = atFinish && deferFinalFinish != null && p.lap + 1 >= config.totalLaps;
++            if (defer) deferFinalFinish();
++            if (atFinish && !defer && RegisterStartFinishCrossing(p))
+             {
+                 // A lane decision may wait indefinitely; a stationary car must
+                 // not keep its previous high-rev loop running underneath it.
+@@ -2615,14 +2643,17 @@ public class MVPGameManager : MonoBehaviour
+ 
+                 int oldPos = follower.position;
+                 int tailwindMovement = chain.TotalBonus;
++                int traversedBefore = follower.turnMovement.ActualCells;
+                 raceLogWriter?.Append(
+                     $"[SLIPSTREAM_MOVE] {follower.name} from={oldPos} " +
+                     $"bonus={tailwindMovement} to={(oldPos + tailwindMovement) % trackManager.TotalNodes}");
+                 yield return StartCoroutine(AnimateMovementByAmount(
+                     follower, GetCarIndex(follower), tailwindMovement, false));
++                int actualNativeCells = follower.turnMovement.ActualCells - traversedBefore;
+ 
+                 ResolveLandmarkPasses(follower, oldPos, oldPos + tailwindMovement);
+                 RegisterPitEntryCrossing(follower, oldPos, oldPos + tailwindMovement);
++                yield return StartCoroutine(ApplyHunterSlipstreamReward(follower, actualNativeCells));
+             }
+         }
+         finally
+@@ -2636,6 +2667,42 @@ public class MVPGameManager : MonoBehaviour
+             hudUI.SetStatus("尾流加成已执行 · 正在弃牌");
+     }
+ 
++    private IEnumerator ApplyHunterSlipstreamReward(PlayerState follower, int actualNativeCells)
++    {
++        int totalNodes = trackManager.TotalNodes;
++        HunterSlipstreamRuntime.Reward reward = follower.driverSkill?.Hunting.BeginReward(
++            session, follower, totalNodes, actualNativeCells);
++        if (reward == null) yield break;
++        int before = follower.turnMovement.ActualCells;
++        int oldPos = follower.position;
++        int actual = 0;
++        follower.turnMovement.AddPlan("车手：狩猎本能", 1, TurnMovementKind.Driver);
++        try
++        {
++            yield return StartCoroutine(AnimateMovementByAmount(follower, GetCarIndex(follower), 1, false));
++        }
++        finally
++        {
++            actual = follower.turnMovement.ActualCells - before;
++            if (reward.Complete(actual))
++            {
++                follower.totalMovementThisTurn++;
++                if (hudUI != null)
++                    hudUI.AppendLog($"{follower.name} 狩猎本能：实际追近锁定前车，额外 +1 格（本圈已用）。");
++                raceLogWriter?.Append($"[HUNTING_INSTINCT] {follower.name} actual_bonus=1");
++            }
++        }
++        if (actual <= 0 || RaceTurnRules.IsTerminal(follower) || RaceTurnRules.ShouldSkip(follower)) yield break;
++        // Native slipstream keeps its original exemption. Hart's separate actual
++        // cell must pay for its newly crossed apex at the original card speed.
++        var newCorners = trackManager.GetUniqueCornersCrossed(oldPos, oldPos + actual);
++        if (newCorners.Count > 0 && !ResolveCornerSet(follower, oldPos, newCorners)) yield break;
++        if (RaceTurnRules.IsTerminal(follower) || RaceTurnRules.ShouldSkip(follower)) yield break;
++        ResolveLandmarkPasses(follower, oldPos, oldPos + actual);
++        RegisterPitEntryCrossing(follower, oldPos, oldPos + actual);
++        if (hudUI != null) hudUI.RefreshTurnTelemetry(Player);
++    }
++
+     private void ResolveLandmarkPasses(PlayerState p, int oldPos, int rawMovementEnd)
+     {
+         if (p == null || p.hasFinished || p.techState == null ||
+@@ -2766,6 +2833,25 @@ public class MVPGameManager : MonoBehaviour
+ 
+     // ====== 弯道判定（per-corner-segment，含天气/科技修正） ======
+ 
++    /// <summary>Original card apexes plus only the tail newly reached by Hart's active reward.</summary>
++    private bool ResolveBaseMovementCorners(PlayerState p, int oldPos, int rawEndPos, int startingLap)
++    {
++        if (p.cornerTotalThisTurn <= 0 || p.isBlown) return false;
++        var corners = new List<int>(trackManager.GetUniqueCornersCrossed(oldPos, rawEndPos));
++        corners.AddRange(HunterActiveCornerIds(p, oldPos, rawEndPos, startingLap));
++        // Deduplicate the same physical segment, while a later lap is a new pass.
++        return corners.Count > 0 && ResolveCornerSet(p, oldPos, corners);
++    }
++
++    private List<int> HunterActiveCornerIds(PlayerState p, int oldPos, int rawEndPos, int startingLap)
++    {
++        var tail = RaceMovementRules.GetHunterActiveCornerTail(p, oldPos);
++        int end = TrackRules.EndBeforeFinalFinish(trackManager.Nodes, oldPos,
++            tail.end, config.totalLaps - startingLap);
++        return TrackRules.GetAdditionalApexCornersCrossed(trackManager.Nodes,
++            oldPos, rawEndPos, tail.start, end);
++    }
++
+     private bool ResolveCorners(PlayerState p, int oldPos, int rawEndPos)
+     {
+         if (p.cornerTotalThisTurn <= 0) return false;
+@@ -2773,6 +2859,11 @@ public class MVPGameManager : MonoBehaviour
+ 
+         HashSet<int> corners = trackManager.GetUniqueCornersCrossed(oldPos, rawEndPos);
+         if (corners.Count == 0) return false;
++        return ResolveCornerSet(p, oldPos, corners);
++    }
++
++    private bool ResolveCornerSet(PlayerState p, int rewindPosition, IEnumerable<int> corners)
++    {
+         int laneIndex = GetLane(p);
+         var result = RaceCornerResolver.Resolve(
+             p, laneIndex, corners,
+@@ -2780,7 +2871,7 @@ public class MVPGameManager : MonoBehaviour
+                 p, trackManager.GetCornerSpeedLimit(cornerId, laneIndex)),
+             trackManager.GetCornerName,
+             overspeed => session.ResolveOverspeedHeatCost(p, overspeed),
+-            (heat, reason) => TryPayHeat(p, heat, oldPos, reason),
++            (heat, reason) => TryPayHeat(p, heat, rewindPosition, reason),
+             over => AudioService.PlaySfx(over ? AudioEventNames.CornerOver : AudioEventNames.CornerSafe));
+         if (hudUI != null) hudUI.AppendLog(result.log);
+         return result.completed;
+@@ -3679,7 +3770,129 @@ public class MVPGameManager : MonoBehaviour
+             (copy, corner, end) => trackManager != null ? GetNigiriBonus(copy, corner, end, GetLane(player)) : 0,
+             trackManager != null ? trackManager.TotalNodes : 0,
+             (start, end) => trackManager != null ? trackManager.GetUniqueCornersCrossed(start, end) : new HashSet<int>(),
+-            id => trackManager != null ? trackManager.GetCornerSpeedLimit(id, GetLane(player)) : 99);
++            id => trackManager != null ? trackManager.GetCornerSpeedLimit(id, GetLane(player)) : 99,
++            trackManager != null ? trackManager.Nodes : null);
++    }
++
++    /// <summary>Technology and driver actions occupy the same visual slot in separate input phases.</summary>
++    public bool IsUkPrepMealVisible(PlayerState player) => player != null && player == Player && !player.isAI &&
++        config != null && config.enableTechTree && tutorialScenario == null &&
++        phaseState.CanAcceptCards(inputState) && player.teamId == TeamId.UK && player.techState != null &&
++        session != null && session.GetModifiers(player).hasFishAndChips;
++
++    public string GetUkPrepMealButtonLabel(PlayerState player, out bool interactable)
++    {
++        interactable = UkPrepMealRules.CanPrepare(session, player, raceTurnNumber,
++            trackManager?.LoadedTrackConfig?.country, IsUkPrepMealVisible(player),
++            config != null && config.enableTechTree && tutorialScenario == null, out string reason);
++        int remaining = player?.techState != null && player.techState.prepMeal.LastUsedLap == player.lap ? 0 : 1;
++        return $"科技·预备餐  {remaining}/1\n" + (interactable ? "弃1速度 · 选择回热" : reason);
++    }
++
++    /// <summary>Open the mandatory exact-card cost choice; optional confirmation settings add no extra step.</summary>
++    public void OnUkPrepMealButtonClicked()
++    {
++        if (IsTutorialActionInputBlocked || (hudUI != null && hudUI.IsReturnToMenuConfirmationVisible)) return;
++        CancelPrepMealPlan();
++        PlayerState player = Player;
++        if (!UkPrepMealActivationPlan.TryCreate(session, player, raceTurnNumber, prepMealPlanVersion,
++                trackManager?.LoadedTrackConfig?.country, IsUkPrepMealVisible(player),
++                config != null && config.enableTechTree && tutorialScenario == null,
++                out UkPrepMealActivationPlan plan, out string reason))
++        {
++            hudUI?.SetStatus(reason);
++            hudUI?.RefreshUkPrepMeal(this, player);
++            return;
++        }
++        if (hudUI == null) { plan.Cancel(); return; }
++        pendingPrepMealPlan = plan;
++        int required = GetRequiredSpeedCardsThisTurn(player);
++        string message = $"弃1张普通速度；本圈剩余 1/1。\n" +
++            $"预计手牌{plan.PreviewSources.FromHand}、弃牌{plan.PreviewSources.FromDiscard}；退役{plan.PreviewRetired}、净回{plan.PreviewRestored}。\n" +
++            $"弃后速度{player.deck.CountSpeedInHand() - 1}/所需{required}；取消不扣牌或次数。";
++        hudUI.ShowTechnologyCardChoice("科技·预备餐 · 选择弃牌", message, plan.Choices,
++            cost => CommitPrepMealSelection(plan, cost),
++            () => { plan.Cancel(); if (ReferenceEquals(pendingPrepMealPlan, plan)) pendingPrepMealPlan = null; });
++    }
++
++    private void CommitPrepMealSelection(UkPrepMealActivationPlan plan, CardData cost)
++    {
++        if (!ReferenceEquals(pendingPrepMealPlan, plan)) return;
++        pendingPrepMealPlan = null;
++        PlayerState player = Player;
++        if (!plan.TryCommit(session, player, raceTurnNumber, prepMealPlanVersion,
++                trackManager?.LoadedTrackConfig?.country, IsUkPrepMealVisible(player),
++                config != null && config.enableTechTree && tutorialScenario == null, cost,
++                out HeatCoolingResult removed, out int retired, out int restored, out string reason))
++        {
++            plan.Cancel();
++            hudUI?.SetStatus(reason);
++            hudUI?.RefreshUkPrepMeal(this, player);
++            return;
++        }
++        PresentPrepMeal(player, cost, removed, retired, restored);
++    }
++
++    private void PresentPrepMeal(PlayerState player, CardData cost, HeatCoolingResult removed, int retired, int restored)
++    {
++        if (!player.isAI)
++        {
++            cardHandUI?.PlayCardTransitions(new List<CardData> { cost },
++                CardVisualZone.Hand, CardVisualZone.DiscardPile, AudioEventNames.CardPlay);
++            int fromHand = System.Math.Max(0, removed.FromHand - retired);
++            cardHandUI?.PlayHeatTransitions(fromHand, CardVisualZone.Hand, CardVisualZone.Engine);
++            cardHandUI?.PlayHeatTransitions(restored - fromHand, CardVisualZone.DiscardPile, CardVisualZone.Engine);
++            RefreshHumanHand(player);
++            AudioService.PlayUi(AudioEventNames.UiConfirm);
++        }
++        string message = $"预备餐：弃1速度；移除旧永久热{removed.Total}（手{removed.FromHand}/弃{removed.FromDiscard}），退役{retired}，净回引擎{restored}；本圈0/1。";
++        hudUI?.AppendLog(message);
++        if (!player.isAI)
++        {
++            hudUI?.SetStatus($"预备餐净回{restored}；已弃1速度，请核对当前挡位所需张数。");
++            hudUI?.RefreshPlayerResources(player);
++            hudUI?.RefreshUkPrepMeal(this, player);
++        }
++        raceLogWriter?.Append($"[PREP_MEAL] racer={session.Players.IndexOf(player)} turn={raceTurnNumber} lap={player.lap} removed={removed.Total} retired={retired} restored={restored}");
++    }
++
++    private void TryUseAiPrepMeal(PlayerState player)
++    {
++        // A conservative existing-resource choice: keep the mandatory speed cards,
++        // and discard the lowest face value. This does not activate an AI driver skill.
++        int required = CardPlayRules.GetSpeedCardRequirement(player).RequiredCardCount;
++        if (player.deck.CountSpeedInHand() <= required) return;
++        if (!UkPrepMealActivationPlan.TryCreate(session, player, raceTurnNumber, raceTurnNumber,
++                trackManager?.LoadedTrackConfig?.country, true,
++                config.enableTechTree && tutorialScenario == null,
++                out UkPrepMealActivationPlan plan, out _)) return;
++        CardData cost = null;
++        foreach (CardData card in plan.Choices) if (cost == null || card.value < cost.value) cost = card;
++        if (plan.TryCommit(session, player, raceTurnNumber, raceTurnNumber,
++                trackManager?.LoadedTrackConfig?.country, true, config.enableTechTree, cost,
++                out HeatCoolingResult removed, out int retired, out int restored, out _))
++            PresentPrepMeal(player, cost, removed, retired, restored);
++    }
++
++    private void CancelPrepMealPlan(bool fromLifecycle = false)
++    {
++        prepMealPlanVersion++;
++        if (pendingPrepMealPlan == null) return;
++        pendingPrepMealPlan.Cancel();
++        pendingPrepMealPlan = null;
++        if (hudUI == null) return;
++        if (fromLifecycle) hudUI.CancelDriverSkillChoiceForLifecycle();
++        else hudUI.CancelReturnToMenu();
++    }
++
++    private void ClosePrepMealInputs()
++    {
++        if (session?.Players == null) return;
++        foreach (PlayerState player in session.Players)
++        {
++            player?.techState?.prepMeal.CloseInput();
++            player?.driverSkill?.Hunting.CloseInput();
++        }
+     }
+ 
+     public void OnGearButtonClicked(int gear)
+@@ -3696,6 +3909,7 @@ public class MVPGameManager : MonoBehaviour
+             AudioService.PlayUi(AudioEventNames.GearFailure);
+             return;
+         }
++        CancelHunterSkillPlan();
+         // 高亮选中的档位按钮
+         hudUI?.SelectGearPresentation(gear);
+         tutorialGuideUI?.DismissOperationCallout(TutorialFocusOperation.Gear);
+@@ -3708,12 +3922,14 @@ public class MVPGameManager : MonoBehaviour
+         if (IsTutorialActionInputBlocked) return;
+         if (!phaseState.CanAcceptGear(inputState)) return;
+         if (!inputState.ConfirmGear()) return;
++        CancelHunterSkillPlan();
+         SetGearControlsInteractable(false);
+         hudUI?.RefreshDriverSkill(this, Player);
+     }
+ 
+     public void OnDriverSkillButtonClicked()
+     {
++        if (TryRequestHunterSkillSelection()) return;
+         PlayerState player = Player;
+         if (player == null || player.driverSkill == null) return;
+ 
+@@ -3725,6 +3941,77 @@ public class MVPGameManager : MonoBehaviour
+             return;
+         }
+ 
++        PresentDriverSkillActivation(player);
++    }
++
++    /// <summary>The required discard selection is independent of optional extra confirmations.</summary>
++    public bool TryRequestHunterSkillSelection()
++    {
++        PlayerState player = Player;
++        if (player?.driverSkill == null || player.driverSkill.Skill != DriverActiveSkillId.FinalLap)
++            return false;
++
++        CancelHunterSkillPlan();
++        if (!HunterSkillActivationPlan.TryCreate(session, player,
++                trackManager != null ? trackManager.TotalNodes : 0,
++                raceTurnNumber, inputState.PendingGear, driverSkillPlanVersion,
++                BuildDriverSkillActivationContext(player), out HunterSkillActivationPlan plan, out string reason))
++        {
++            hudUI?.SetStatus($"<color=orange>{reason}</color>");
++            hudUI?.RefreshDriverSkill(this, player);
++            return true;
++        }
++        if (hudUI == null)
++        {
++            plan.Cancel();
++            return true;
++        }
++
++        pendingHunterSkillPlan = plan;
++        string targetName = plan.Target.name ?? plan.Target.DriverProfile.ShortName;
++        // Target names are data, not TMP rich-text instructions.
++        targetName = targetName.Replace("<", "＜").Replace(">", "＞");
++        string message = $"目标：{targetName} · 前方 {plan.TargetDistance} 格\n" +
++            $"弃置 1 张普通速度牌，本次驾驶移动 +{plan.MovementBonus}；剩余 {player.driverSkill.UsesRemaining} 次";
++        hudUI.ShowDriverSkillCardChoice(player.DriverProfile.ActiveName, message, plan.Choices,
++            cost => CommitHunterSkillSelection(plan, cost),
++            () => { plan.Cancel(); if (ReferenceEquals(pendingHunterSkillPlan, plan)) pendingHunterSkillPlan = null; });
++        return true;
++    }
++
++    private void CommitHunterSkillSelection(HunterSkillActivationPlan plan, CardData cost)
++    {
++        if (!ReferenceEquals(pendingHunterSkillPlan, plan)) return;
++        pendingHunterSkillPlan = null;
++        PlayerState player = Player;
++        if (!plan.TryCommit(session, player, raceTurnNumber, inputState.PendingGear,
++                driverSkillPlanVersion, BuildDriverSkillActivationContext(player), cost, out string reason))
++        {
++            plan.Cancel();
++            hudUI?.SetStatus($"<color=orange>{reason}</color>");
++            hudUI?.RefreshDriverSkill(this, player);
++            return;
++        }
++        RefreshHumanHand(player);
++        hudUI?.RefreshPlayerResources(player);
++        PresentDriverSkillActivation(player);
++    }
++
++    private void CancelHunterSkillPlan(bool fromLifecycle = false)
++    {
++        driverSkillPlanVersion++;
++        if (pendingHunterSkillPlan == null) return;
++        pendingHunterSkillPlan.Cancel();
++        pendingHunterSkillPlan = null;
++        if (hudUI != null)
++        {
++            if (fromLifecycle) hudUI.CancelDriverSkillChoiceForLifecycle();
++            else hudUI.CancelReturnToMenu();
++        }
++    }
++
++    private void PresentDriverSkillActivation(PlayerState player)
++    {
+         AudioService.PlayUi(AudioEventNames.UiConfirm);
+         string message = $"{player.DriverProfile.ActiveName} 已发动（剩余 {player.driverSkill.UsesRemaining} 次）";
+         hudUI?.AppendLog($"<color=#D9A7FF>{message}</color>");
+@@ -3742,6 +4029,14 @@ public class MVPGameManager : MonoBehaviour
+     {
+         interactable = false;
+         if (player == null || player.driverSkill == null) return "车手技能";
++        if (player.driverSkill.Skill == DriverActiveSkillId.FinalLap && !player.driverSkill.IsActive)
++        {
++            interactable = HunterSkillActivationPlan.CanPrepare(session, player,
++                trackManager != null ? trackManager.TotalNodes : 0,
++                inputState.PendingGear, BuildDriverSkillActivationContext(player), out string reason);
++            return interactable ? $"{player.DriverProfile.ActiveName}  ×{player.driverSkill.UsesRemaining}"
++                : $"{player.DriverProfile.ActiveName}  {reason}";
++        }
+         return DriverSkillPresentationRules.GetButtonLabel(
+             player.DriverProfile, player.driverSkill,
+             BuildDriverSkillActivationContext(player), out interactable);
+@@ -3895,6 +4190,8 @@ public class MVPGameManager : MonoBehaviour
+         }
+         LogPlayedCards(player, "PLAYER");
+         RefreshHumanHand(player);
++        // A successful formal card closes the preparation window immediately.
++        hudUI?.RefreshUkPrepMeal(this, player);
+         cardHandUI.BlockActionButtonBriefly();
+         return true;
+     }
+@@ -3905,6 +4202,9 @@ public class MVPGameManager : MonoBehaviour
+         if (!ValidateTutorialSpecialtySpeedCompletion(player))
+             return;
+ 
++        CancelPrepMealPlan();
++        player.techState?.prepMeal.CloseInput();
++
+         int speedCount = player.playedSpeedCardsThisTurn.Count;
+ 
+         // 引擎故障：速度牌不足时，每缺 1 张 → +1 热量入手牌。引擎不足 → 失控
+@@ -4076,6 +4376,9 @@ public class MVPGameManager : MonoBehaviour
+         System.Action initializeGuide,
+         System.Action startLoop)
+     {
++        CancelPrepMealPlan();
++        ClosePrepMealInputs();
++        CancelHunterSkillPlan();
+         StopMovementAudio(true);
+         StopAllCoroutines();
+         foreach (var c in GetComponents<AIController>())
+diff --git a/Assets/Scripts/Core/RaceMovementRules.cs b/Assets/Scripts/Core/RaceMovementRules.cs
+index dba270a..96960b7 100644
+--- a/Assets/Scripts/Core/RaceMovementRules.cs
++++ b/Assets/Scripts/Core/RaceMovementRules.cs
+@@ -95,6 +95,24 @@ public static class RaceMovementRules
+             ledger.AddPlan("车手：" + passiveName, player.driverSkill.PassiveMovementBonusThisTurn, TurnMovementKind.Driver);
+     }
+ 
++    /// <summary>
++    /// Hart's whole-movement reward checks only newly reached tail cells. Ordinary
++    /// card corners retain their original range and speed; unrelated bonuses retain
++    /// their existing behavior. Absolute endpoints preserve a new pass after a lap.
++    /// </summary>
++    public static (int start, int end) GetHunterActiveCornerTail(PlayerState player, int startPosition)
++    {
++        DriverSkillRuntimeState skill = player?.driverSkill;
++        if (skill == null || skill.Skill != DriverActiveSkillId.FinalLap || !skill.IsActive)
++            return (startPosition, startPosition);
++        int movement = Math.Max(0, player.totalMovementThisTurn);
++        int reward = Math.Max(0, DriverSkillRules.GetMovementBonus(skill, false));
++        int withoutReward = Math.Max(0, movement - reward);
++        int alreadyCovered = Math.Max(Math.Max(0, player.cornerTotalThisTurn), withoutReward);
++        int start = startPosition + Math.Min(movement, alreadyCovered);
++        return (start, startPosition + movement);
++    }
++
+     /// <summary>
+     /// Keep the original order: clamp base movement, apply the authored leader
+     /// movement, then remove that leader's corner speed for corner resolution.
+diff --git a/Assets/Scripts/Core/RaceTurnPreviewRules.cs b/Assets/Scripts/Core/RaceTurnPreviewRules.cs
+index a6a71fc..82d4ade 100644
+--- a/Assets/Scripts/Core/RaceTurnPreviewRules.cs
++++ b/Assets/Scripts/Core/RaceTurnPreviewRules.cs
+@@ -26,7 +26,7 @@ public static class RaceTurnPreviewRules
+         IReadOnlyList<CardData> selected, bool gearTrial, int requestedGear,
+         Func<int, int, bool> crossesCorner = null, Func<PlayerState, bool, int, int> nigiriBonus = null,
+         int totalCells = 0, Func<int, int, IEnumerable<int>> crossedCorners = null,
+-        Func<int, int> cornerBaseLimit = null)
++        Func<int, int> cornerBaseLimit = null, IReadOnlyList<TrackNode> trackNodes = null)
+     {
+         if (player == null || player.deck == null || config == null) return null;
+         var copy = new PlayerState(player.name, player.isAI, player.position, player.gear) {
+@@ -185,8 +185,17 @@ public static class RaceTurnPreviewRules
+             copy.cornerTotalThisTurn > 0 && crossedCorners != null && cornerBaseLimit != null)
+         {
+             int beforeCorners = result.HeatPaid;
++            var corners = new List<int>(crossedCorners(player.position, player.position + copy.cornerTotalThisTurn));
++            var tail = RaceMovementRules.GetHunterActiveCornerTail(copy, player.position);
++            int tailEnd = TrackRules.EndBeforeFinalFinish(trackNodes, player.position,
++                tail.end, config.totalLaps - player.lap);
++            if (tailEnd > tail.start)
++                corners.AddRange(trackNodes != null
++                    ? TrackRules.GetAdditionalApexCornersCrossed(trackNodes, player.position,
++                        player.position + copy.cornerTotalThisTurn, tail.start, tailEnd)
++                    : crossedCorners(tail.start, tailEnd));
+             RaceCornerResolver.Resolve(copy, 0,
+-                crossedCorners(player.position, player.position + copy.cornerTotalThisTurn),
++                corners,
+                 id => session.EffectiveCornerLimit(copy, cornerBaseLimit(id)),
+                 id => "弯道 " + id, overspeed => session.ResolveOverspeedHeatCost(copy, overspeed),
+                 (amount, reason) => pay(amount, HeatPaymentDestination.Hand), _ => { });
+diff --git a/Assets/Scripts/Gameplay/TrackRules.cs b/Assets/Scripts/Gameplay/TrackRules.cs
+index 0ac62f2..6928fb1 100644
+--- a/Assets/Scripts/Gameplay/TrackRules.cs
++++ b/Assets/Scripts/Gameplay/TrackRules.cs
+@@ -24,6 +24,53 @@ public static class TrackRules
+         return corners;
+     }
+ 
++    /// <summary>New physical apex passes only; a later lap is a new pass of the same corner.</summary>
++    public static List<int> GetAdditionalApexCornersCrossed(IReadOnlyList<TrackNode> nodes,
++        int originalStart, int originalEnd, int extraStart, int extraEnd)
++    {
++        var result = new List<int>();
++        if (nodes == null || nodes.Count == 0 || extraEnd <= extraStart) return result;
++        var seen = new HashSet<(int corner, int segmentStart)>();
++        for (int position = originalStart + 1; position <= originalEnd; position++)
++        {
++            TrackNode node = nodes[NormalizeIndex(position, nodes.Count)];
++            if (node.cornerId > 0 && node.isApex)
++                seen.Add((node.cornerId, ApexSegmentStart(nodes, position, node.cornerId)));
++        }
++        for (int position = extraStart + 1; position <= extraEnd; position++)
++        {
++            TrackNode node = nodes[NormalizeIndex(position, nodes.Count)];
++            if (node.cornerId > 0 && node.isApex &&
++                seen.Add((node.cornerId, ApexSegmentStart(nodes, position, node.cornerId))))
++                result.Add(node.cornerId);
++        }
++        return result;
++    }
++
++    private static int ApexSegmentStart(IReadOnlyList<TrackNode> nodes, int position, int corner)
++    {
++        int start = position;
++        for (int count = 1; count < nodes.Count; count++)
++        {
++            if (nodes[NormalizeIndex(start - 1, nodes.Count)].cornerId != corner) return start;
++            start--;
++        }
++        // A track made entirely of one corner has no entry boundary; one array
++        // cycle is its pass. This also keeps the search bounded for malformed data.
++        return position - NormalizeIndex(position, nodes.Count);
++    }
++
++    /// <summary>End of a newly added path before the crossing that finishes this racer.</summary>
++    public static int EndBeforeFinalFinish(IReadOnlyList<TrackNode> nodes, int from, int to, int lapsRemaining)
++    {
++        if (lapsRemaining <= 0) return from;
++        if (nodes == null || nodes.Count == 0) return to;
++        for (int position = from + 1; position <= to; position++)
++            if (nodes[NormalizeIndex(position, nodes.Count)].isStartFinish && --lapsRemaining == 0)
++                return position - 1;
++        return to;
++    }
++
+     public static bool CrossesStartFinish(
+         IReadOnlyList<TrackNode> nodes,
+         int fromPosition,
+diff --git a/Assets/Tests/Editor/race_movement_rules_test.cs b/Assets/Tests/Editor/race_movement_rules_test.cs
+index 167f526..09159db 100644
+--- a/Assets/Tests/Editor/race_movement_rules_test.cs
++++ b/Assets/Tests/Editor/race_movement_rules_test.cs
+@@ -4,6 +4,21 @@ using NUnit.Framework;
+ 
+ public class RaceMovementRulesTests
+ {
++    [TestCase(4, 9, 7, 9)]
++    [TestCase(4, 6, 4, 6)]
++    [TestCase(4, 3, 3, 3)]
++    [TestCase(4, 0, 0, 0)]
++    public void HartActiveOnlyAddsTheCounterfactualTailWithoutChangingCornerSpeed(int cardSpeed, int total, int from, int to)
++    {
++        var player = new PlayerState("Hart", false, 10, 1) { driverId = "uk_hunter_hart",
++            cornerTotalThisTurn = cardSpeed, totalMovementThisTurn = total };
++        player.driverSkill.Initialize(player.DriverProfile, 3, true);
++        Assert.IsTrue(player.driverSkill.TryActivate(player.DriverProfile,
++            new DriverSkillActivationContext(true, 1, 2, 6, 6, 0), out _));
++        Assert.That(RaceMovementRules.GetHunterActiveCornerTail(player, 10), Is.EqualTo((10 + from, 10 + to)));
++        Assert.That(player.cornerTotalThisTurn, Is.EqualTo(cardSpeed));
++    }
++
+     private static IEnumerable<TestCaseData> CardDriverBonusCases()
+     {
+         foreach (DriverProfile driver in DriverCatalog.All)
+diff --git a/Assets/Tests/Editor/race_turn_preview_test.cs b/Assets/Tests/Editor/race_turn_preview_test.cs
+index 3f59e85..cbd41e8 100644
+--- a/Assets/Tests/Editor/race_turn_preview_test.cs
++++ b/Assets/Tests/Editor/race_turn_preview_test.cs
+@@ -23,6 +23,36 @@ public class RaceTurnPreviewTests
+     }
+     [TearDown] public void TearDown() => Object.DestroyImmediate(config);
+ 
++    [TestCase(6, 2, true)] [TestCase(1, 1, false)]
++    public void HartNewApexOrdinaryHeatForecastNeverPaysOrConsumesTheRealDriver(int available, int heat, bool canPay)
++    {
++        config.gearOneCooldown = 0;
++        player.gear = 1; player.driverId = "uk_hunter_hart";
++        player.deck = new CardDeck(); player.deck.heatPool = new HeatPool(available);
++        player.deck.AddCardsToHand(new[] { four });
++        player.driverSkill.Initialize(player.DriverProfile, 3, true);
++        Assert.That(player.driverSkill.TryActivate(player.DriverProfile,
++            new DriverSkillActivationContext(true, 1, 2, available, 6, 0), out _), Is.True);
++        int uses = player.driverSkill.UsesRemaining;
++        var nodes = new List<TrackNode>();
++        for (int i = 0; i < 20; i++) nodes.Add(new TrackNode(i, 99));
++        nodes[5] = new TrackNode(5, 2, cornerId: 1, isApex: true);
++        for (int i = 0; i < 3; i++)
++        {
++            RaceTurnPreview forecast = RaceTurnPreviewRules.Evaluate(player, session, config, new[] { four }, false, 1,
++                null, null, 20, (start, end) => TrackRules.GetUniqueApexCornersCrossed(nodes, start, end), _ => 2, nodes);
++            Assert.That(forecast.Movement.TotalCells, Is.EqualTo(6));
++            Assert.That(forecast.CornerHeat, Is.EqualTo(heat));
++            Assert.That(forecast.CanPay, Is.EqualTo(canPay));
++        }
++        Assert.That(player.deck.heatPool.remaining, Is.EqualTo(available));
++        Assert.That(player.deck.Hand, Has.Member(four));
++        Assert.That(four.value, Is.EqualTo(4));
++        Assert.That(player.driverSkill.UsesRemaining, Is.EqualTo(uses));
++        Assert.That(player.driverSkill.IsActive, Is.True);
++        Assert.That(player.spinCounter, Is.Zero);
++    }
++
+     [Test]
+     public void SelectedCardsAddAndCancelImmediatelyWithKnownCoolingAndNoCommit()
+     {
+diff --git a/Assets/Tests/Editor/track_rules_test.cs b/Assets/Tests/Editor/track_rules_test.cs
+index 0695549..d076083 100644
+--- a/Assets/Tests/Editor/track_rules_test.cs
++++ b/Assets/Tests/Editor/track_rules_test.cs
+@@ -3,6 +3,28 @@ using NUnit.Framework;
+ 
+ public class TrackRulesTests
+ {
++    [TestCase(0, 2, 2, 3, 0)]
++    [TestCase(0, 2, 7, 9, 1)]
++    [TestCase(0, 0, 1, 3, 1)]
++    public void AdditionalApexesDeduplicatePhysicalSegmentButLaterLapPaysAgain(int from, int to, int extraFrom, int extraTo, int expected)
++    {
++        var nodes = new List<TrackNode>();
++        for (int i = 0; i < 6; i++) nodes.Add(new TrackNode(i, 2));
++        nodes[2] = new TrackNode(2, 2, cornerId: 7, isApex: true);
++        nodes[3] = new TrackNode(3, 2, cornerId: 7, isApex: true);
++        List<int> added = TrackRules.GetAdditionalApexCornersCrossed(nodes, from, to, extraFrom, extraTo);
++        Assert.That(added.Count, Is.EqualTo(expected));
++        foreach (int corner in added) Assert.That(corner, Is.EqualTo(7));
++    }
++
++    [TestCase(1, 5)] [TestCase(2, 9)] [TestCase(0, 0)]
++    public void NewDriverPathStopsBeforeFinalFinishButNotAnEarlierLap(int remaining, int expected)
++    {
++        var nodes = new List<TrackNode>();
++        for (int i = 0; i < 10; i++) nodes.Add(new TrackNode(i, 99, isStartFinish: i == 6));
++        Assert.That(TrackRules.EndBeforeFinalFinish(nodes, 0, 9, remaining), Is.EqualTo(expected));
++    }
++
+     [Test]
+     public void ConfigToNodes_PreservesApexAndStartFinishFlags()
+     {

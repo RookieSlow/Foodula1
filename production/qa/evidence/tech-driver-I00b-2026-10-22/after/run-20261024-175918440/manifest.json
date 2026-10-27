@@ -1,0 +1,1193 @@
+{
+    "utc": "2026-10-24T17:59:18.4414860Z",
+    "stage": "after",
+    "kind": "Controlled EditMode production RaceCanvas fixture, not a running match.",
+    "lifecycle": "Owned preview scene and prefab clone; disabled project behaviours; explicit HUD.Start. Settings current/repository restored exactly. Font/material clones are static and destroyed. Callback counters exercise original HUD cancel/confirm handlers; no gameplay state or navigation callback. After fixtures call ShowDriverSkillCardChoice through reflection so this helper compiles before that API exists.",
+    "records": [
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\1920x1080-choice-normal.png",
+            "fixture": "choice-normal",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbacks": 1,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "目标：英国队 · 前方 3 格\n弃置所选普通速度牌，本回合移动 +2。\n剩余 2 / 2 次；取消不扣牌或次数。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "普通速度牌 2\n1 / 3",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\1920x1080-choice-second-card.png",
+            "fixture": "choice-second-card",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbacks": 0,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "目标：英国队 · 前方 3 格\n弃置所选普通速度牌，本回合移动 +2。\n剩余 2 / 2 次；取消不扣牌或次数。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "普通速度牌 2\n2 / 3",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\1920x1080-choice-long-copy.png",
+            "fixture": "choice-long-copy",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbacks": 1,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择弃牌费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "目标：英国队 · 长中文车手名称 1234567890\n前方距离 5 格；弃置所选普通速度牌。\n本回合移动 +3；剩余 3 / 3 次。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "普通速度牌 2\n1 / 3",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\1920x1080-choice-disabled.png",
+            "fixture": "choice-disabled",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbacks": 1,
+            "confirmCallbacks": 0,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": false,
+            "selectedExactInstance": false,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "没有可选的普通速度牌，请取消并继续比赛。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "没有可选速度牌\n0 / 0",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\1920x1080-choice-cancel-reopen.png",
+            "fixture": "choice-cancel-reopen",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbacks": 2,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "目标：英国队 · 前方 3 格\n弃置所选普通速度牌，本回合移动 +2。\n剩余 2 / 2 次；取消不扣牌或次数。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "普通速度牌 2\n1 / 3",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\2560x1440-choice-normal.png",
+            "fixture": "choice-normal",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbacks": 1,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "目标：英国队 · 前方 3 格\n弃置所选普通速度牌，本回合移动 +2。\n剩余 2 / 2 次；取消不扣牌或次数。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "普通速度牌 2\n1 / 3",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\2560x1440-choice-second-card.png",
+            "fixture": "choice-second-card",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbacks": 0,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "目标：英国队 · 前方 3 格\n弃置所选普通速度牌，本回合移动 +2。\n剩余 2 / 2 次；取消不扣牌或次数。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "普通速度牌 2\n2 / 3",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\2560x1440-choice-long-copy.png",
+            "fixture": "choice-long-copy",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbacks": 1,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择弃牌费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "目标：英国队 · 长中文车手名称 1234567890\n前方距离 5 格；弃置所选普通速度牌。\n本回合移动 +3；剩余 3 / 3 次。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "普通速度牌 2\n1 / 3",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\2560x1440-choice-disabled.png",
+            "fixture": "choice-disabled",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbacks": 1,
+            "confirmCallbacks": 0,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": false,
+            "selectedExactInstance": false,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "没有可选的普通速度牌，请取消并继续比赛。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "没有可选速度牌\n0 / 0",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\2560x1440-choice-cancel-reopen.png",
+            "fixture": "choice-cancel-reopen",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbacks": 2,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "目标：英国队 · 前方 3 格\n弃置所选普通速度牌，本回合移动 +2。\n剩余 2 / 2 次；取消不扣牌或次数。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "普通速度牌 2\n1 / 3",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\1280x720-choice-normal.png",
+            "fixture": "choice-normal",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbacks": 1,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "目标：英国队 · 前方 3 格\n弃置所选普通速度牌，本回合移动 +2。\n剩余 2 / 2 次；取消不扣牌或次数。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "普通速度牌 2\n1 / 3",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\1280x720-choice-second-card.png",
+            "fixture": "choice-second-card",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbacks": 0,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "目标：英国队 · 前方 3 格\n弃置所选普通速度牌，本回合移动 +2。\n剩余 2 / 2 次；取消不扣牌或次数。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "普通速度牌 2\n2 / 3",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\1280x720-choice-long-copy.png",
+            "fixture": "choice-long-copy",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbacks": 1,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择弃牌费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "目标：英国队 · 长中文车手名称 1234567890\n前方距离 5 格；弃置所选普通速度牌。\n本回合移动 +3；剩余 3 / 3 次。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "普通速度牌 2\n1 / 3",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\1280x720-choice-disabled.png",
+            "fixture": "choice-disabled",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbacks": 1,
+            "confirmCallbacks": 0,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": false,
+            "selectedExactInstance": false,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "没有可选的普通速度牌，请取消并继续比赛。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "没有可选速度牌\n0 / 0",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\after\\run-20261024-175918440\\1280x720-choice-cancel-reopen.png",
+            "fixture": "choice-cancel-reopen",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbacks": 2,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 390.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "决胜抉择 · 选择费用",
+                    "width": 520.0,
+                    "height": 50.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "目标：英国队 · 前方 3 格\n弃置所选普通速度牌，本回合移动 +2。\n剩余 2 / 2 次；取消不扣牌或次数。",
+                    "width": 496.0,
+                    "height": 92.0,
+                    "preferredHeight": 82.54000091552735,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "弃置并发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "上一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "下一张",
+                    "width": 80.0,
+                    "height": 48.0,
+                    "preferredHeight": 26.06999969482422,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "DriverSkillChoiceLabel",
+                    "text": "普通速度牌 2\n1 / 3",
+                    "width": 360.0,
+                    "height": 72.0,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        }
+    ]
+}

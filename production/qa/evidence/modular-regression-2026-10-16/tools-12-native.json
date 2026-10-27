@@ -1,0 +1,126 @@
+{
+    "startedUtc": "2026-10-16T16:04:44.9830155Z",
+    "endedUtc": "2026-10-16T16:04:47.7832770Z",
+    "state": "Passed",
+    "seconds": 0.409484,
+    "total": 12,
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "selectionMatches": true,
+    "plan": {
+        "modules": [
+            "tools"
+        ],
+        "testNames": [
+            "ModularRegressionCatalogTests.AggregateModesCannotBeMixedWithIndividualModules(\"fast-all\")",
+            "ModularRegressionCatalogTests.AggregateModesCannotBeMixedWithIndividualModules(\"full\")",
+            "ModularRegressionCatalogTests.DuplicateFixtureOwnershipFailsValidation",
+            "ModularRegressionCatalogTests.FastAndLongPartitionsHaveNoOverlapAndTheirUnionIsFull",
+            "ModularRegressionCatalogTests.FixtureMatchingUsesExactBoundaryAndSupportsNamespaces",
+            "ModularRegressionCatalogTests.NewUnmappedFixtureBlocksFocusedRunButFullStillIncludesIt",
+            "ModularRegressionCatalogTests.RealCatalogHasExclusiveLongRaceFixtureAndCriticalModules",
+            "ModularRegressionCatalogTests.SelectedModulesIncludeDependenciesAndDeduplicateParameterizedCases",
+            "ModularRegressionCatalogTests.StaleConfiguredFixtureCannotSilentlyShrinkAFocusedRun",
+            "ModularRegressionCatalogTests.UnknownDependenciesAndAccidentalLongFastDependencyFailClosed",
+            "ModularRegressionCatalogTests.UnknownOrEmptySelectionNeverBecomesRunAll(\"\")",
+            "ModularRegressionCatalogTests.UnknownOrEmptySelectionNeverBecomesRunAll(\"unknown\")"
+        ],
+        "missingFixtures": [],
+        "staleFixtures": [],
+        "discovered": 3002,
+        "selected": 12,
+        "excluded": 2990,
+        "longSelected": 0,
+        "full": false
+    },
+    "cases": [
+        {
+            "name": "ModularRegressionCatalogTests.AggregateModesCannotBeMixedWithIndividualModules(\"full\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0072591
+        },
+        {
+            "name": "ModularRegressionCatalogTests.AggregateModesCannotBeMixedWithIndividualModules(\"fast-all\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0001692
+        },
+        {
+            "name": "ModularRegressionCatalogTests.DuplicateFixtureOwnershipFailsValidation",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0003262
+        },
+        {
+            "name": "ModularRegressionCatalogTests.FastAndLongPartitionsHaveNoOverlapAndTheirUnionIsFull",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0055085
+        },
+        {
+            "name": "ModularRegressionCatalogTests.FixtureMatchingUsesExactBoundaryAndSupportsNamespaces",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0003399
+        },
+        {
+            "name": "ModularRegressionCatalogTests.NewUnmappedFixtureBlocksFocusedRunButFullStillIncludesIt",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0009668
+        },
+        {
+            "name": "ModularRegressionCatalogTests.RealCatalogHasExclusiveLongRaceFixtureAndCriticalModules",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0041859
+        },
+        {
+            "name": "ModularRegressionCatalogTests.SelectedModulesIncludeDependenciesAndDeduplicateParameterizedCases",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0004188
+        },
+        {
+            "name": "ModularRegressionCatalogTests.StaleConfiguredFixtureCannotSilentlyShrinkAFocusedRun",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0004784
+        },
+        {
+            "name": "ModularRegressionCatalogTests.UnknownDependenciesAndAccidentalLongFastDependencyFailClosed",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0003483
+        },
+        {
+            "name": "ModularRegressionCatalogTests.UnknownOrEmptySelectionNeverBecomesRunAll(\"unknown\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0005621
+        },
+        {
+            "name": "ModularRegressionCatalogTests.UnknownOrEmptySelectionNeverBecomesRunAll(\"\")",
+            "state": "Passed",
+            "message": "",
+            "stackTrace": "",
+            "seconds": 0.0001775
+        }
+    ],
+    "unexpected": [],
+    "missing": []
+}

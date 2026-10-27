@@ -1,0 +1,34 @@
+[
+  {
+    "path": "Assets/Scripts/Editor/ModularRegressionCatalog.cs",
+    "sha256": "03A835E89450B20568AB85DC514444CA13AC85F5DCC6277FD6A421E130B8A240"
+  },
+  {
+    "path": "Assets/Scripts/Editor/ModularRegressionRunner.cs",
+    "sha256": "B0A809B220761EE2AB7F376FD72A02C2706569E6A3FBF1CCFA642BF2B0E05311"
+  },
+  {
+    "path": "Assets/Scripts/Editor/ModularRegressionWindow.cs",
+    "sha256": "2B12D29D6A5F3AB8763B0FAB669AD3CEECCE0725798EC332E7BEE3C28CB78AC1"
+  },
+  {
+    "path": "Assets/Tests/Editor/modular_regression_catalog_test.cs",
+    "sha256": "88D755E6289619EFD4F0A04A312675AFF79385064490E800DE4AB4F5E63F060F"
+  },
+  {
+    "path": "Assets/Tests/Editor/RegressionModules.json",
+    "sha256": "83C9478D5F0C5CC60F9C3E85C80F2BB855516ECE3F994E1B2E3C069A4FCECE59"
+  },
+  {
+    "path": "tests/regression-suite.md",
+    "sha256": "5A8EDC05808FF857E09F2D3CB079CD059871983BD95E118096124DD0422C9E7B"
+  },
+  {
+    "path": "docs/memory/project-overview.md",
+    "sha256": "A589DA808BE7082950527C5FBCAE2510AF626DEF1B2B13C320AC6BA1744C00E3"
+  },
+  {
+    "path": "docs/memory/current-task-list.md",
+    "sha256": "C6B2A346916B65491BC4127074242E2377290E215AFC381E1038F0E23C423098"
+  }
+]

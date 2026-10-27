@@ -1,0 +1,307 @@
+{
+  "version": 1,
+  "modules": [
+    {
+      "id": "core",
+      "label": "比赛基础与结算",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "CarMovementTests",
+        "CarOrientationTests",
+        "FreeRaceRosterRulesTests",
+        "GameSettingsTests",
+        "NormalRaceRewardBoundaryTests",
+        "NormalRaceRewardSettlementTest",
+        "PlayerStateTest",
+        "RaceEndCoordinatorTests",
+        "RaceInputStateTests",
+        "RaceMovementRulesTests",
+        "RaceOvertakeResolutionTests",
+        "RaceParticipantPlanBuilderTests",
+        "RacePhaseStateTests",
+        "RaceRankingTests",
+        "RaceRecoverySkipAdapterTests",
+        "RaceRulesTests",
+        "RaceSessionRemainingFinishTests",
+        "RaceSessionTest",
+        "RaceSimulationTest",
+        "RaceSpinBoundaryIntegrationTests",
+        "RaceSpinRulesTests",
+        "RaceTurnBoundaryIntegrationTests",
+        "RaceTurnCleanupTests",
+        "RaceTurnPreviewTests",
+        "RaceTurnRulesTests",
+        "RuntimeSessionResetTests",
+        "TurnMovementBreakdownTests"
+      ]
+    },
+    {
+      "id": "cards-heat",
+      "label": "卡牌与热量",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "BBQHeatCardLifecycleTests",
+        "CardDeckTest",
+        "CardPilePreviewTests",
+        "CardPlayRulesTest",
+        "CardZoneTransitionTests",
+        "HeatCoolingSourcesTests",
+        "HeatPaymentCostTests",
+        "HeatRecoveryBoundaryIntegrationTests",
+        "HeatRecoverySourcesTests",
+        "RaceDeckSetupTests",
+        "RaceDiscardStepAdapterTests",
+        "RacePlayerCardPhaseAdapterTests",
+        "RaceReactionCooldownTests",
+        "RaceTrickEffectExecutorTests",
+        "SpeedCardRequirementBoundaryTests",
+        "TrickCardRulesTests"
+      ]
+    },
+    {
+      "id": "gears",
+      "label": "挡位与仪表交互",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "ChinaGearRulesTests",
+        "GearDialPresentationTests",
+        "GearRequirementFeedbackTests",
+        "RaceGearSelectionAdapterTests",
+        "RaceGearShiftResolverTests",
+        "TeamGearPresentationTests"
+      ]
+    },
+    {
+      "id": "tech",
+      "label": "科技树",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "BankuruwaseTurnRulesTests",
+        "BBQEligibilityBoundaryTests",
+        "CareerTechTreeDraftTests",
+        "DemoTechnologyProfileTests",
+        "GrillPaymentSettlementTests",
+        "InstantTechnologyMovementPlanTests",
+        "MotherRoadDeclineBoundaryTests",
+        "RaceBankuruwaseAdapterTests",
+        "RaceBBQHumanCommitAdapterTests",
+        "RaceMotherRoadExecutionTests",
+        "RaceParticipantTechnologySetupTests",
+        "RaceSessionBankuruwaseTests",
+        "RaceTechnologySetupTests",
+        "RaceTurnTechnologyCleanupTests",
+        "TechTreeProfileCodecTests",
+        "TechTreeProfileStoreTests",
+        "TechTreeRulesTests",
+        "UkPrepMealTests",
+        "SchwarzbierFixedPaymentTests",
+        "GermanBurstRuntimeTests",
+        "GermanBurstManagerTests",
+        "GermanFuelActivationPlanTests"
+      ]
+    },
+    {
+      "id": "drivers",
+      "label": "车手技能",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "DriverBalanceBenchmarkTests",
+        "DriverRulesTests",
+        "DriverSkillPresentationRulesTests",
+        "DriverSkillRaceContextRulesTests",
+        "DriverSkillRulesTests",
+        "DriverSkillRuntimeTests",
+        "FinalSprintTurnEndTests",
+        "HunterSkillActivationPlanTests",
+        "HunterSlipstreamTests",
+        "MansellChargePlanTests",
+        "MansellPursuitTests",
+        "RaceDriverSkillActivationAdapterTests",
+        "RaceTurnSkillCleanupTests",
+        "SchumacherTuningIntegrationTests",
+        "SchumacherTuningTests",
+        "TrackTeamBalanceCornerHeatTests"
+      ]
+    },
+    {
+      "id": "ai",
+      "label": "AI",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "AIControllerTests",
+        "AIPlannerTests",
+        "AITrickSelectionRulesTests",
+        "RandomSourceTests"
+      ]
+    },
+    {
+      "id": "tracks-weather-pit",
+      "label": "赛道、天气与维修区",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "LaneChoiceBoundaryIntegrationTests",
+        "LaneChoicePresentationTests",
+        "LaneChoiceRulesTests",
+        "OfficialTrackCatalogTests",
+        "PitApproachChoiceBoundaryTests",
+        "PitApproachChoiceRulesTests",
+        "PitLaneRulesTests",
+        "RaceCameraPointerDragStateTests",
+        "RaceCornerResolverTests",
+        "RaceLaneRulesTests",
+        "RaceLapCrossingAdapterTests",
+        "RaceLapCrossingExecutionTests",
+        "RaceLapRulesTests",
+        "RaceLapWeatherRulesTests",
+        "RacePitStopBoundaryIntegrationTests",
+        "RacePitStopExecutionTests",
+        "RacePitTurnBoundaryTests",
+        "RaceResultSettlementAdapterTests",
+        "RaceSettledSlipstreamResolutionTests",
+        "RaceVisualLaneAdapterTests",
+        "RaceWeatherStateTests",
+        "RacingTechTrackSelectionTests",
+        "ThunderstormGridManagerAdapterTests",
+        "ThunderstormGridRulesTests",
+        "TrackCameraRulesTests",
+        "TrackDataLoaderTest",
+        "TrackPresentationRulesTests",
+        "TrackRulesTests",
+        "TrackSelectionStateTests",
+        "WeatherRulesTests"
+      ]
+    },
+    {
+      "id": "career",
+      "label": "生涯",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "CareerCompletedMenuPointerTests",
+        "CareerMenuPresentationTests",
+        "CareerModeRulesTests",
+        "CareerPersistenceTests",
+        "CareerRaceIntegrationTests",
+        "CareerRaceLaunchValidationTests",
+        "CareerRaceResultPresentationTests",
+        "CareerUiPointerTestScopeTests",
+        "CavallinoDriverRewardTests",
+        "RaceLaunchLifecycleAdapterTests",
+        "RaceRestartAdapterTests"
+      ]
+    },
+    {
+      "id": "tutorial",
+      "label": "教程",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "TeamTutorialCatalogTests",
+        "TutorialHeatFeedbackIntegrationTests",
+        "TutorialHeatFeedbackTests",
+        "TutorialPitFeedbackIntegrationTests",
+        "TutorialRaceResultPresentationTests",
+        "TutorialScenarioTests",
+        "TutorialSpeedCompletionGateTests",
+        "TutorialSpeedSelectionGateTests"
+      ]
+    },
+    {
+      "id": "ui",
+      "label": "UI与呈现",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "BrandArtResourcesTests",
+        "CardSelectionVisualTests",
+        "EncyclopediaCatalogTests",
+        "GermanBurstProductionUiTests",
+        "GermanFuelProductionUiTests",
+        "HeatGaugeRulesTests",
+        "HunterSkillCardChoiceNativeLifecycleTests",
+        "HunterSkillCardChoiceUITests",
+        "HunterSkillProductionUiTests",
+        "LiveTurnTelemetryRuntimeTests",
+        "MansellSkillProductionUiTests",
+        "MenuOverlayNavigationTests",
+        "ModernUIStyleTests",
+        "RaceEventFXTests",
+        "RaceHudTextRulesTests",
+        "RacePresentationSkipTests",
+        "RaceResultPresentationTests",
+        "RaceUILayoutTests",
+        "RacingTechActionButtonTests",
+        "RacingTechCardZoneTests",
+        "RacingTechConfirmationTests",
+        "RacingTechHudShellTests",
+        "RacingTechInstrumentsTests",
+        "RacingTechPileInspectorTests",
+        "RacingTechSelectedEffectTests",
+        "RacingTechThemeTests",
+        "ReturnToMenuConfirmationTests",
+        "ReturnToMenuLifecycleAdapterTests",
+        "SchumacherPassiveProfileUiTests",
+        "TeamCarPresentationTests",
+        "UkPrepMealManagerTests"
+      ]
+    },
+    {
+      "id": "audio",
+      "label": "音频",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "AudioRuntimeRulesTests",
+        "OvertakeAudioPresentationTests",
+        "RacingTechAudioTeardownTests",
+        "TeamShiftCc0RuntimeTests",
+        "TeamVehicleAudioTests",
+        "TeamVehicleMovementAudioTests",
+        "TeamVehicleRuntimeAudioTests"
+      ]
+    },
+    {
+      "id": "diagnostics",
+      "label": "日志与测试证据",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "PlaytestLoggingTests",
+        "PlaytestTelemetryTestIsolationTests",
+        "RaceCoroutineEvidenceRegistryTests",
+        "RaceLogAnalyzerTests",
+        "RaceLogClosureIntegrationTests",
+        "RaceLogFileSelectorTests",
+        "RaceLogStartupRulesTests",
+        "RaceStateLogFormatterCommittedHeatTests",
+        "RaceStateLogFormatterTests",
+        "RaceTestLogWriterTests"
+      ]
+    },
+    {
+      "id": "long-races",
+      "label": "完整比赛与生涯长流程",
+      "longRunning": true,
+      "dependencies": [],
+      "fixtures": [
+        "RaceGameLoopCoroutineTests"
+      ]
+    },
+    {
+      "id": "tools",
+      "label": "测试工具自身",
+      "longRunning": false,
+      "dependencies": [],
+      "fixtures": [
+        "ModularRegressionCatalogTests"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,227 @@
+{
+  "package": "P4",
+  "kind": "independent_candidate_transaction_model_not_unity",
+  "total": 46,
+  "passed": 46,
+  "failed": 0,
+  "skipped": 0,
+  "parameter_cases": 1180,
+  "parameter_breakdown": {
+    "tailwind_priority_and_ownership": 1152,
+    "native_bonus_weather_cooling_attribution": 24,
+    "old_permanent_hand_traversal_fixtures": 4
+  },
+  "elapsed_seconds": 0.0071,
+  "input_sha256": "a98924a2e46fe020692b2192ba04635a7010474394ebfc7441f2afe2eaa847d1",
+  "script_sha256": "10c55bd24519d132f6755058b537e15c92e3af798be929fe3ea3cf760c082b68",
+  "source_sha256": {
+    "Assets/Scripts/Core/RaceTurnCleanup.cs": "7471e83828b73862ea519fa6147cb005539f49b5b65d2eac8c75c48233159f9b",
+    "Assets/Scripts/Core/RaceHeatPaymentExecution.cs": "63022e8da125a72157f4380d8b28ecf9f9e283ee095b56428dbcd44dccfc8dd8",
+    "Assets/Scripts/Core/RaceTurnPreviewRules.cs": "ae7ab1740b64f8bdd585f05d0ad2752caeb7254f1b7e6816c38eb6bd2a9079cb",
+    "Assets/Scripts/Core/RaceSettledSlipstreamResolution.cs": "c2fc56ae897cb415d078b8bb10d1e2106b5227199dfe74bd1758e614d9a3c6b5",
+    "Assets/Scripts/Core/RaceParticipantTechnologySetup.cs": "4d3761bda7d2f308db8e9840696780c6f7d20a47a8ceca645883cd9843a5752d",
+    "Assets/Scripts/Core/CardDeck.cs": "f5bdc0e2720e008c57a08757dc19e5c95e69c9a93c35d6858c2da900aed8c488",
+    "Assets/Scripts/Core/MVPGameManager.cs": "e94c64e1986a8b04f672c41309644346720538af69db58480c0792974f74d530",
+    "Assets/Scripts/Core/PlayerState.cs": "d92593e61dd73d90a23dfbd0033ecb9c1aebb3f0cd587d8e6d65e8aea0ebe867",
+    "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "69cf5948dc663dd5146a312441d8068c786f3c749ac55636b71bfcb8a1e857dd",
+    "Assets/Scripts/Drivers/DriverSkillRaceContextRules.cs": "e51a401897d2421601ce14a63ba83ec2ce16572fc9cb3a7b0c25c3e69f7e9923",
+    "Assets/Scripts/TechTree/TechTreeData.cs": "1a9654e5155074d575bd26f2f66d141afef42626d68e0b403be9b970bdaf4f10",
+    "Assets/Scripts/TechTree/TechTreeProfileCodec.cs": "95e7913891e67d47e87912cbecda98cfa2fd7c3424cc978ab0aa1d2704864952",
+    "Assets/Scripts/Career/CareerPersistence.cs": "e3d79a42028a8947d04c46610cbbbc56c5441b68195ce2701b91657a6cb59b46",
+    "Assets/Tests/Editor/RegressionModules.json": "83c9478d5f0c5cc60f9c3e85c80f2bb855516ece3f994e1b2e3c069a4fcece59"
+  },
+  "checks": [
+    {
+      "name": "Preview owns mutable sets and does not consume real payment, uses or reservations",
+      "passed": true
+    },
+    {
+      "name": "Adversarial shallow copy exposes why future mutable fields need isolation",
+      "passed": true
+    },
+    {
+      "name": "Repeated committed event cannot charge or grant a second time",
+      "passed": true
+    },
+    {
+      "name": "Old race, other participant, old turn and stale plan version reject atomically",
+      "passed": true
+    },
+    {
+      "name": "A missing selected card invalidates the whole pending action",
+      "passed": true
+    },
+    {
+      "name": "Cancel before commitment leaves physical zones, uses and event dedupe unchanged",
+      "passed": true
+    },
+    {
+      "name": "Cancel after commitment does not refund a successfully paid action",
+      "passed": true
+    },
+    {
+      "name": "New fixed-cost action preflights complete resources instead of partial skill payment",
+      "passed": true
+    },
+    {
+      "name": "Ordinary penalty still partially pays and signals spin rather than rolling back",
+      "passed": true
+    },
+    {
+      "name": "A DE window sees actual partial payment before later failure",
+      "passed": true
+    },
+    {
+      "name": "Returned card count distinguishes regional retirement from net engine recovery",
+      "passed": true
+    },
+    {
+      "name": "A second recovery cannot reuse a card that already left its source",
+      "passed": true
+    },
+    {
+      "name": "US terminal recovery cap is three NET engine units after capacity debt",
+      "passed": true
+    },
+    {
+      "name": "Ma foregone native cooling stays withheld from other cooling sources this input",
+      "passed": true
+    },
+    {
+      "name": "Releasing Ma reservation does not itself return heat",
+      "passed": true
+    },
+    {
+      "name": "Ma opportunity cost uses weather-adjusted native cooling and never substitutes bonus cooling",
+      "passed": true
+    },
+    {
+      "name": "Ma reservation must be an old permanent hand card inside the real native traversal prefix, after temporary heat consumes budget",
+      "passed": true
+    },
+    {
+      "name": "Takumi retention is intercepted before normal discard and replaces a refill slot",
+      "passed": true
+    },
+    {
+      "name": "Terminal reached before a deferred effect blocks its later payment",
+      "passed": true
+    },
+    {
+      "name": "Twelve-car same-team participants own separate effect quotas",
+      "passed": true
+    },
+    {
+      "name": "JP R2 duration is three global rounds for field=2, not three car callbacks",
+      "passed": true
+    },
+    {
+      "name": "JP R2 duration is three global rounds for field=4, not three car callbacks",
+      "passed": true
+    },
+    {
+      "name": "JP R2 duration is three global rounds for field=6, not three car callbacks",
+      "passed": true
+    },
+    {
+      "name": "JP R2 duration is three global rounds for field=12, not three car callbacks",
+      "passed": true
+    },
+    {
+      "name": "Pit/skip clears driver intent while consuming, not pausing, JP global duration",
+      "passed": true
+    },
+    {
+      "name": "Refusing Busch follow neither charges nor moves",
+      "passed": true
+    },
+    {
+      "name": "Blocked native tailwind cannot charge a voluntary follow fee",
+      "passed": true
+    },
+    {
+      "name": "BBQ reduction suppresses Busch fee for the same request",
+      "passed": true
+    },
+    {
+      "name": "Whole tailwind forfeiture happens before follow payment and creates no actual-slip event",
+      "passed": true
+    },
+    {
+      "name": "No recoverable old discard cannot turn refusal into free forfeiture cooling",
+      "passed": true
+    },
+    {
+      "name": "New same-input discard payment cannot substitute for Takahashi old-discard source",
+      "passed": true
+    },
+    {
+      "name": "Zhou guarded tailwind keeps at most one basic step, never full source bonuses",
+      "passed": true
+    },
+    {
+      "name": "Zero actual movement after independent reduction does not consume finite guard",
+      "passed": true
+    },
+    {
+      "name": "Missing follow fee rejects the tailwind without forced spin or new heat",
+      "passed": true
+    },
+    {
+      "name": "Failed injected wallet save grants neither spend nor launch authorization",
+      "passed": true
+    },
+    {
+      "name": "Retrying the same authorized launch cannot deduct RP twice",
+      "passed": true
+    },
+    {
+      "name": "Explicit pre-start compensation is once only",
+      "passed": true
+    },
+    {
+      "name": "A refunded launch token cannot be reused to start without paying",
+      "passed": true
+    },
+    {
+      "name": "An order for one participant team cannot authorize another team",
+      "passed": true
+    },
+    {
+      "name": "Launch authorization starts at most one race",
+      "passed": true
+    },
+    {
+      "name": "A started race exit cannot refund the RP order",
+      "passed": true
+    },
+    {
+      "name": "Normal RP purchase is unavailable in career",
+      "passed": true
+    },
+    {
+      "name": "Normal RP purchase is unavailable in tutorial",
+      "passed": true
+    },
+    {
+      "name": "Comparing replacement identities preserves original XP bytes and gives no silent alias",
+      "passed": true
+    },
+    {
+      "name": "Unaccepted future save schema keeps original payload and never reaches write adapter",
+      "passed": true
+    },
+    {
+      "name": "Cross-effect enumeration preserves resource ownership, fee priority and event truth",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "Conceptual runtime tokens are not existing production fields",
+    "Synthetic event sequences do not run original C# or track routing",
+    "No Unity, real UI, storage, AI race, weather or balance acceptance",
+    "Atomic wallet writes are injected model fixtures; current PlayerPrefs adapter does not provide that transaction",
+    "Design alternatives, driver identity and new save fields remain unapproved",
+    "Three-zone model excludes heat in draw and in-flight zones; full production conservation must include every physical permanent-heat zone and count receipt references only once."
+  ]
+}

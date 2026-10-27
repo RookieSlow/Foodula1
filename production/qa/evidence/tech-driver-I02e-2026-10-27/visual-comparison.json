@@ -1,0 +1,10 @@
+{
+  "before": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\manifest.json",
+  "after": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180515665\\manifest.json",
+  "before_count": 36,
+  "after_count": 36,
+  "before_overflow_records": 33,
+  "after_overflow_records": 0,
+  "identical_image_pairs": 36,
+  "kind": "I02e container-boundary fix; original I02d pre-change capture missing; raw PNGs not edited"
+}

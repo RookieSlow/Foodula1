@@ -1,0 +1,141 @@
+{
+  "package": "P2a",
+  "scope": "IT L2/RP 与 US BBQ/短赛程候选；设计推演，未批准生产规则",
+  "local_time": "2026-10-22T01:41:25+08:00",
+  "head": "f0a12b01e181d1ae9cf3009bc446da003f7c6c56",
+  "read_only_sources": {
+    "AGENTS.md": "620757473b1af13289691b8455e97dc3bb8d722c8f952a85520402642a757156",
+    "docs/memory/project-overview.md": "a589da808be7082950527c5fbcae2510af626def1b2b13c320ac6ba1744c00e3",
+    "docs/memory/game-mechanics.md": "41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d",
+    "docs/memory/current-task-list.md": "c6b2a346916b65491bc4127074242e2377290e215afc381e1038f0e23c423098",
+    "design/gdd/foodula-1-tech-tree.md": "61b286ba29a641bdebae0f7a60b34f35f69c27b22377bce1854bd9bb41402ce9",
+    "design/gdd/foodula-1-teams-cars.md": "951874e9240553b7ceed592dec6d4f1f2aec86234898557600d0fd8a590f85ee",
+    "design/gdd/foodula-1-core-mechanics.md": "00a8a85e1ddcf8f8babd8341abc6617a1922861b624c328a745678a06fbb12a8",
+    "design/ux/racing-tech-ui.md": "236137df347863b2f749a464503fbd368b2d49a9df2dfed4e284abe005d1bff0",
+    "docs/architecture/adr-002-layered-pure-function-architecture.md": "b5b74343e02a341d693fab9bbd891637d046d93fa34db7bb2ceeaac0c2ee2687",
+    "Assets/Scripts/TechTree/TechTreeRules.cs": "8bb3bb2edc42eb83501ba3887f6dbab53a9b3cedafad3e7a776d44af822bf3c8",
+    "Assets/Scripts/TechTree/TechTreeDatabase.cs": "5fa98d2da6c25d23becca19901409e685caf0ebf4063a6ba85a900d9a662d0de",
+    "Assets/Scripts/Core/RaceSession.cs": "cfa587a0e2d71b06825a7465c458a6887567e0ca4fb04af336873453f78b6ab3",
+    "Assets/Scripts/Core/RaceHeatPaymentExecution.cs": "63022e8da125a72157f4380d8b28ecf9f9e283ee095b56428dbcd44dccfc8dd8",
+    "Assets/Scripts/Core/CardDeck.cs": "f5bdc0e2720e008c57a08757dc19e5c95e69c9a93c35d6858c2da900aed8c488",
+    "Assets/Scripts/Core/MVPGameManager.cs": "e94c64e1986a8b04f672c41309644346720538af69db58480c0792974f74d530",
+    "Assets/Scripts/Core/RaceTurnTechnologyCleanup.cs": "1f4472619f0f6da7765bdea6ddba5f90a01a62774738b4382e1989437c2d3530",
+    "design/planning/tech-driver-rework-2026-10-22/research.json": "ccf8e5562bf2742541616fb342adda5e6a1cb2fa664e2f98b9b9157644f20750",
+    "design/planning/tech-driver-rework-2026-10-22/feedback.json": "9bf842dabd10396bc8991b5f576a2374abf1ae999d2d1b0bb2f255402fd4a964",
+    "design/gdd/foodula-1-career-mode.md": "0e93277856cf45ea646e7f7f9c19174c9c4773d28497eccbbe9a2b496fb22600",
+    "Assets/Scripts/TechTree/RaceMotherRoadExecution.cs": "6ac144d0dd9df6dd36db44fee8698856495d64795e85e8116ba5e3a41a66e696",
+    "Assets/Scripts/Core/CardPlayRules.cs": "4d60e92a90b1c06673b63fc9b77e7f465c0d45133aad93b775814ce3dd6ee5b0",
+    "Assets/Scripts/Core/TeamVehicleRules.cs": "59e98c8e7c17d41e07c374689f8446ab463f026975a2aefb3467b1c5255cc1e0",
+    "Assets/Scripts/Core/NormalRaceRewardSettlement.cs": "7ad6fb8cf97103c1f34ad3bf40c9d1bf0c17f2a795f54738e14234667f5ceefe",
+    "Assets/Scripts/Core/OfficialTrackCatalog.cs": "72f7a0e4071cae1ae54fc4c0489297951801a7b7c533196c716ff697dd4acf00",
+    "Assets/Scripts/Config/MVPGameConfig.asset": "907174049445e092eb1f3fb35a7a3bf5732831a76a38ad9b0c89b44419027bfe",
+    "Assets/Scripts/Config/GameConfigSO.cs": "c7c9ec2e809769a57b88f4955e955f4ea5fe13e9ef5e4ebee4c4604f9e97f4c5",
+    "Assets/Scripts/TrickCards/TrickCardRules.cs": "267e986b56071497898273d15a1948b668a2966b061a62299451b48621ce474c",
+    "Assets/Resources/Configs/Tracks/silverstone_afternoon_tea.json": "876417a93bcba4a058989c7e3698976daf4336f6036b0b3ce11e68b4ac742b1e",
+    "Assets/Resources/Configs/Tracks/nurburgring_bier.json": "fb5bf64e7eb99959ed2701fcb7f02fa9dc97d1f269dda9774ec72c845decf454",
+    "Assets/Resources/Configs/Tracks/monza_pasta.json": "56e266a053aebaedce93c5a6feb54fbdbbd11594b09b92ad76d59334f3aec326",
+    "Assets/Resources/Configs/Tracks/indianapolis_burger.json": "4a5db201a0b037ffed5f1d6d1a5c2884f838f69d951abd47ba996ed95caca80d",
+    "Assets/Resources/Configs/Tracks/shanghai_dim_sum.json": "34902f95ec0afa451a58923221ad9a9de59a5be6f74d2b72381cc741f8f93403",
+    "Assets/Resources/Configs/Tracks/suzuka_sushi.json": "1554d4d0d4c6d491a3201fd4206a5781cf9ac0f8a6d21aaae8a011de1a2962c3",
+    "Assets/Resources/Configs/Tracks/nurburgring_24h_endurance.json": "5db42e012b4039f6f7e4af6afc5754e8d3430fd935a8238440a8639cdf45ed75",
+    "Assets/Resources/Configs/Tracks/le_mans_old_mulsanne.json": "b7d96deeb254a02ecf1f65eadec3228332f82446272299da5fc83fa569c34267"
+  },
+  "start_baseline_verified_sources": [
+    "AGENTS.md",
+    "docs/memory/project-overview.md",
+    "docs/memory/game-mechanics.md",
+    "docs/memory/current-task-list.md",
+    "design/gdd/foodula-1-tech-tree.md",
+    "design/gdd/foodula-1-teams-cars.md",
+    "design/ux/racing-tech-ui.md",
+    "docs/architecture/adr-002-layered-pure-function-architecture.md",
+    "Assets/Scripts/TechTree/TechTreeRules.cs",
+    "Assets/Scripts/TechTree/TechTreeDatabase.cs",
+    "Assets/Scripts/Core/RaceSession.cs",
+    "Assets/Scripts/Core/CardDeck.cs",
+    "Assets/Scripts/Core/MVPGameManager.cs",
+    "design/planning/tech-driver-rework-2026-10-22/research.json",
+    "design/planning/tech-driver-rework-2026-10-22/feedback.json",
+    "design/gdd/foodula-1-career-mode.md",
+    "Assets/Scripts/TechTree/RaceMotherRoadExecution.cs"
+  ],
+  "inputs": {
+    "inputs/Foodula1_科技树设计.docx": "c8996c17fc0aa44d6ea25ef58d9659956063be2e839913a51bde462f370c108f",
+    "inputs/Foodula1_车手技能设计.docx": "d4def8c0b1e31774c861ea75f23343ef06afecc8ccea166aa2f4becc1c45a201"
+  },
+  "outputs": {
+    "Foodula1_科技树调整草案.docx": "8132bb8e90a65cdcbd0846081da62847051e87f7246e1d236a2a5decf9034162",
+    "analysis/p2a_it_us_model.py": "dd57ebf0800688f85c5ac3ecbfbcf7f6d830658fa00e44d77f0b8e45713868c7",
+    "analysis/p2a-model-results.json": "d95f940d83412f3b5859e10c28ad917c72e54fb4d37b676a1f46142455913bbd"
+  },
+  "checks": {
+    "checks_total": 36,
+    "checks_passed": 36,
+    "checks_failed": 0,
+    "checks_skipped": 0,
+    "parameter_cases": 2802,
+    "elapsed_seconds": 0.088
+  },
+  "limitations": [
+    "Timing assumes sufficient repair fuel; ready is not actual activation or win.",
+    "Steps are design fixtures, not sampled Unity turn speeds or AI play.",
+    "No lane, corner, rival, draw retention, spin rewind or actual extra-movement simulation.",
+    "BBQ visit model accepts forward movement only; rewind integration needs later acceptance.",
+    "RP protocol is an in-memory candidate, not PlayerPrefs or career save validation.",
+    "No Unity, real input, audio, UI, complete-race or balance acceptance."
+  ],
+  "visual_review": {
+    "pages": 16,
+    "pages_viewed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "method": "Word COM read-only PDF export; PDFium rasterization at scale 1.6; actual PNG inspection",
+    "render_directory": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P2a-it-us\\render-final",
+    "qa_pdf": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P2a-it-us\\p2a-final.pdf",
+    "qa_pdf_sha256": "26649e896140ae8bf0d82ce4b4cf8609591d74733b2cd49d4112bc0937e4e271",
+    "packaged_renderer_failure": "Bundled renderer cannot resolve soffice.exe; logged renderer.log; no installation or system settings changed",
+    "cache_path_refresh": "Old 26.1013.11914 marker path missing after cache refresh; current 26.1020.11127 helper ran successfully once before review repairs",
+    "review_repairs": "Shortened dense pages 10 and 14, clarified empty-hand prosperity opportunity accounting on page 13; re-exported and viewed all changed pages; unchanged page PNGs matched byte-for-byte",
+    "blank_or_clipped_pages": false
+  },
+  "prior_P1_preservation": {
+    "non_body_word_parts_unchanged": true,
+    "edited_paragraph_indices": [
+      1,
+      2,
+      67
+    ],
+    "existing_status_table_updated": true,
+    "candidate_rules_changed": false
+  },
+  "feedback_ids_covered": [
+    "T05",
+    "T06",
+    "T07",
+    "T08"
+  ],
+  "missing_governance": [
+    ".Codex/docs",
+    "production/session-state/active.md"
+  ],
+  "new_external_sources": 0,
+  "existing_research_sources": 16,
+  "unity_operations": 0,
+  "unity_tests": 0,
+  "gameplay_changed": false
+}

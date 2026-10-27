@@ -1,0 +1,18 @@
+{
+  "Assets\\Scripts\\Core\\MVPGameManager.cs": "d599d1818d4bd86df4c2c1497f6433ae0aba22c596e931ecdbdcd015613ef390",
+  "Assets\\Scripts\\Core\\PlayerState.cs": "85be43d7561455aeb2ae5b42e4b4304b91d98b61f4098d267cfe07bc70915269",
+  "Assets\\Scripts\\Core\\RaceSession.cs": "56339c6fa9576290c0660934070b9424683a4b6381fe51acba6dc1daa2237346",
+  "Assets\\Scripts\\Core\\RaceTurnSkillCleanup.cs": "aa2c641713a2b2ac8e3ad0771b6f567e0fa8a304c0b79a8f5648fa73c9b84841",
+  "Assets\\Scripts\\Drivers\\DriverSkillRules.cs": "fddc830a200e06aa1febf4d7edc74357475b80c91897d0b8cde446577c3971dd",
+  "Assets\\Scripts\\Drivers\\DriverSkillRuntime.cs": "db96b4151a298f6c4fcf0ec83c657f320937c5a446a226867114e5a5cff5c8d3",
+  "Assets\\Scripts\\Editor\\DriverBalanceBenchmark.cs": "6bd9c2b8f7387b49ffb044ef8d95ada65f6fe2309656b05a7e1eb3df44d50cca",
+  "Assets\\Tests\\Editor\\driver_skill_runtime_test.cs": "b036cce343bd1ed1efa4ea09090be49673f97b64a932cd3826f95dc45d946974",
+  "Assets\\Tests\\Editor\\race_turn_boundary_integration_test.cs": "c241600b78becf21c2b3065e199270886b0b1e972e0c6ea4f87f07c896f20823",
+  "design\\gdd\\foodula-1-drivers.md": "baa6f4258a13c52cdbeea59db920db71376eddd56f35730d535bc61ed4cc4b81",
+  "design\\planning\\tech-driver-rework-2026-10-22\\implementation-plan.json": "7ae16fb6c5da537c10da5f924dc71fcc25bc7b50f9c1a1898f7e57f4cc8214be",
+  "design\\planning\\tech-driver-rework-2026-10-22\\progress.json": "1a52204335814fe056159f28dae52fd2a02e646df8fb9e79ce4655ea09c5cd4a",
+  "docs\\memory\\current-task-list.md": "a772dab6cc2ad157cde341fe1c86d0cbd72b7b6de99531bdbc7f0ba3a1b12e8d",
+  "docs\\memory\\game-mechanics.md": "ef58012b5ea822873ec71f987d67c6d33b635c0a5c55cb74c46513245e8785e6",
+  "docs\\memory\\project-overview.md": "7d2a61e70a213c86dd561f326fcf25f999526b6f015604a2ab72c670c751e51b",
+  "tests\\regression-suite.md": "6354381ffddd0e38db388324d604c6f0f4a616069a7c9339a879d5993b9970f9"
+}

@@ -1,0 +1,13 @@
+{
+  "code_review": "APPROVED - no must-fix found",
+  "reviewer": "/root/i00_clock_review",
+  "scope": "read-only runtime/plan/deck/session/manager/HUD architecture and lifecycle; did not run Unity",
+  "pending": [
+    "successful retirement/net return",
+    "two UK / Hart cost interaction",
+    "real A2/A4 complete loop",
+    "focus/drag",
+    "independent final visual/QA review",
+    "complete modes"
+  ]
+}

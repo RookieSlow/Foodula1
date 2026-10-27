@@ -1,0 +1,18 @@
+{
+  "Assets/Scripts/UI/DriverSkillCardChoiceUI.cs": "36d09ec635648b7787ee72eec1d67727272478e474355555ef9f597f66a4d946",
+  "Assets/Tests/Editor/hunter_skill_card_choice_ui_test.cs": "46570e50d7a491c6bf5edfed238a6255674836b19e3bfaed788cacff0f7e97a5",
+  "design/planning/tech-driver-rework-2026-10-22/implementation-plan.json": "064e70a7f77f356c76e74f5e51cf08909eb3afb941ae001c3b5c816fe060a5ee",
+  "design/planning/tech-driver-rework-2026-10-22/progress.json": "0f9753abc5bb2d80690858e883b58977359d295a6da6e1231d1e67fa3b3ea5d4",
+  "tests/regression-suite.md": "9fa2e826a63cac4d80d540eedc01c16cbbc46f3f6166b57146c400fbee532213",
+  "Assets/Scripts/UI/HUDUI.cs": "5ea848b351d0626c91b9e1173f9205b2f8d406de865c6e2de84e4c3c1492d44b",
+  "Assets/Tests/Editor/race_turn_boundary_integration_test.cs": "77805cde5bfda87ee5bc840cbc7b992230b9e5a27449baf0e2d3bea8d29b3052",
+  "design/gdd/foodula-1-drivers.md": "cd80d49e5ae2874876767dcd0330539c0b353fccf6526058b55e06cf4284989a",
+  "design/gdd/foodula-1-tech-tree.md": "25d8e7a0e1f6df0b176acd11d25b70d933965676cc2c66910922d8c23c9c2f30",
+  "design/ux/racing-tech-ui-checklist.md": "b31d47b569a305ad4d6946ab8937ecd443222442233b4672a8d423427b9b9928",
+  "design/ux/racing-tech-ui.md": "6c60fc2d548a28f8631a8d8bde0235ac2935539c6fae042e268a931067d5db6c",
+  "docs/memory/current-task-list.md": "13519891a4d60a297e19b28ab3a5d79b8a99837cd90ba5cc3188a515a8647656",
+  "docs/memory/game-mechanics.md": "88d61b8690d94233fa175252f62cd1006d714a71edcd23ba33508b4adae63ed0",
+  "docs/memory/project-overview.md": "ae03f6506a1a19974211a6c752d2dc1f72dd4bcbd54c25a61f4a10ea005fce92",
+  "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技树调整草案.docx": "281e077813344ab1e3627bb075dcc28d361a0626c8c39b3492f016a9f62d7bb3",
+  "design/planning/tech-driver-rework-2026-10-22/Foodula1_车手技能调整草案.docx": "94eb7763825f777d477b3fcb8fee92bad27e6353e42d8b2cdeb98f3889914f46"
+}

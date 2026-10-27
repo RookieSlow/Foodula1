@@ -1,0 +1,130 @@
+{
+  "id": "I04a",
+  "utc": "2026-10-27T23:26:59.042602+08:00",
+  "status": "schumacher_passive_production_and_bounded_native_verified_active_and_vettel_pending",
+  "scope": "D03 passive only: typed actual ordinary-corner permanent receipts, 2/1/1 threshold, next1/1/2 owner inputs first positive corner -1, perlap1/no stack/renew. Legacy active remains untouched.",
+  "new_cases": 70,
+  "new_pure_cases": 42,
+  "new_manager_adapter_cases": 24,
+  "new_profile_ui_cases": 3,
+  "new_actual_GameLoop_cases": 1,
+  "final_native": {
+    "startedUtc": "2026-10-27T15:23:40.8040673Z",
+    "endedUtc": "2026-10-27T15:24:26.5063447Z",
+    "state": "Passed",
+    "nativeState": "Passed",
+    "total": 3484,
+    "passed": 3484,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 40.2925337,
+    "selectionMatches": true
+  },
+  "modules": [
+    "ai",
+    "cards-heat",
+    "career",
+    "core",
+    "drivers",
+    "gears",
+    "tech",
+    "tools",
+    "tracks-weather-pit",
+    "tutorial",
+    "ui"
+  ],
+  "gameloop": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 4.2840327,
+    "resultState": "Passed"
+  },
+  "native_GameLoop_RunFinished": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-10-27T15:25:06.3374913Z",
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": "",
+    "stackTrace": ""
+  },
+  "gameloop_boundary": "One new actual Schumacher three-input test and two existing German declaration tests; separate selection, not all long-races or full modes.",
+  "runtime_mvid": "dec425bf-2fe1-41d6-8ebc-7936e91615a1",
+  "editor_mvid": "9da3c2ed-2d23-466f-9492-c89d2dd74ae7",
+  "new_assemblies_loaded": true,
+  "first_native": {
+    "total": 3472,
+    "passed": 3469,
+    "failed": 3,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 40.2716347,
+    "selectionMatches": true
+  },
+  "failure_resolution": "Only new passive profile summary overflowed in all3 resolutions. Added12..14 autosizing to D03 passive field alone, then new runtime loaded and final11modules passed.",
+  "source_review": "Independent engine review found missing pitStopScheduled forecast copy; copied field and added2 requested/scheduled cases before native runs. Final independent re-review unavailable due agent quota; root inspected advice/fix and ran native.",
+  "visual": {
+    "before": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04a-2026-10-27/before/run-20261027-100904358",
+    "after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04a-2026-10-27/after/run-20261027-152526369",
+    "before_count": 3,
+    "after_count": 3,
+    "root_viewed_full_before": 3,
+    "root_viewed_full_after": 3,
+    "changed_passive_overflows_before": 0,
+    "changed_passive_overflows_after": 0,
+    "all_page_preexisting_overflows_per_size_before": 14,
+    "all_page_overflows_per_size_after": 14,
+    "sizes": [
+      "1920x1080",
+      "2560x1440",
+      "1280x720"
+    ],
+    "kind": "Real production DriverSelectionUI on owned orthographic preview Canvas; all12 cards/six teams pointer, Submit, overlay mask and Back callbacks. Not real main-menu launch/hardware/race-mode acceptance.",
+    "boundary": "Other fourteen existing text/name overflow records per size and visible UK text crowding/name overlap remain unaccepted; no unrelated UI rewrite. 720p subjective readability remains I13. No new cost confirmation/action geometry or drag behavior added."
+  },
+  "acceptance": {
+    "pure_rules": true,
+    "production_wiring": true,
+    "passive_observed_through_actual_GameLoop": true,
+    "profile_text_and_controlled_operation": true,
+    "schumacher_active": false,
+    "vettel": false,
+    "complete_modes": false
+  },
+  "unity_final": {
+    "scene": "Assets/Scenes/MainMenu.unity",
+    "dirty": false,
+    "playing": false,
+    "compiling": false,
+    "updating": false,
+    "tests": false,
+    "console_errors": 0,
+    "console_warnings": 0,
+    "console_not_cleared": true,
+    "license": "Successfully resolved entitlement details",
+    "ready": {
+      "ready_for_tools": true,
+      "blocking_reasons": [],
+      "recommended_retry_after_ms": 0,
+      "recommended_next_action": "none"
+    }
+  },
+  "evidence": "../../../production/qa/evidence/tech-driver-I04a-2026-10-27/README.md",
+  "submission_authorization": "User directly requested 将改动提交到github after heartbeat work began; commit/push authorized for reviewed related changes. Other local settings/audio/font/staging excluded.",
+  "submission_format_followup": {
+    "kind": "Only .meta trailing whitespace and test EOF blank line; gameplay source unchanged",
+    "runtime_mvid": "dec425bf-2fe1-41d6-8ebc-7936e91615a1",
+    "editor_mvid": "b60d7ab3-e318-4d64-afcd-6bd9f7073c66",
+    "new_editor_compiled": true,
+    "additional_test": "UkPrepMealTests started; Unity closed before result retrieved; zero credited",
+    "unity_current": "Editor closed after last clean MainMenu and Console0/0; not restarted",
+    "cached_diff_check": 0
+  }
+}

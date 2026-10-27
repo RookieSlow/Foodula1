@@ -1,0 +1,114 @@
+[
+  {
+    "name": "RaceGameLoopCoroutineTests.HartActiveNewApexSettlesBeforeFinishOrPitReservation",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 1.2236365
+  },
+  {
+    "name": "RaceGameLoopCoroutineTests.HartNativeTwoLegsThenOneCellPaysOnlyTheNewApexAndKeepsPartialPaymentSpin",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.9183582
+  },
+  {
+    "name": "RaceGameLoopCoroutineTests.InterruptedHartFinalCrossingDoesNotCommitOrLeakIntoNextRace",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.8988837
+  },
+  {
+    "name": "RaceGameLoopCoroutineTests.UkBreakfastThenPreparationUsesOldHeatAtRealA2A4AndClosesOnFormalCard",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.8874225
+  },
+  {
+    "name": "RaceMovementRulesTests.HartActiveOnlyAddsTheCounterfactualTailWithoutChangingCornerSpeed(4,9,7,9)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.0005107
+  },
+  {
+    "name": "RaceMovementRulesTests.HartActiveOnlyAddsTheCounterfactualTailWithoutChangingCornerSpeed(4,6,4,6)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 7.45e-05
+  },
+  {
+    "name": "RaceMovementRulesTests.HartActiveOnlyAddsTheCounterfactualTailWithoutChangingCornerSpeed(4,3,3,3)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 4.43e-05
+  },
+  {
+    "name": "RaceMovementRulesTests.HartActiveOnlyAddsTheCounterfactualTailWithoutChangingCornerSpeed(4,0,0,0)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 4.09e-05
+  },
+  {
+    "name": "RaceTurnPreviewTests.HartNewApexOrdinaryHeatForecastNeverPaysOrConsumesTheRealDriver(6,2,True)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.0014138
+  },
+  {
+    "name": "RaceTurnPreviewTests.HartNewApexOrdinaryHeatForecastNeverPaysOrConsumesTheRealDriver(1,1,False)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.0002276
+  },
+  {
+    "name": "TrackRulesTests.AdditionalApexesDeduplicatePhysicalSegmentButLaterLapPaysAgain(0,2,2,3,0)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.0005847
+  },
+  {
+    "name": "TrackRulesTests.AdditionalApexesDeduplicatePhysicalSegmentButLaterLapPaysAgain(0,2,7,9,1)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 8.43e-05
+  },
+  {
+    "name": "TrackRulesTests.AdditionalApexesDeduplicatePhysicalSegmentButLaterLapPaysAgain(0,0,1,3,1)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 3.62e-05
+  },
+  {
+    "name": "TrackRulesTests.NewDriverPathStopsBeforeFinalFinishButNotAnEarlierLap(1,5)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.0003257
+  },
+  {
+    "name": "TrackRulesTests.NewDriverPathStopsBeforeFinalFinishButNotAnEarlierLap(2,9)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 5.73e-05
+  },
+  {
+    "name": "TrackRulesTests.NewDriverPathStopsBeforeFinalFinishButNotAnEarlierLap(0,0)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 3.05e-05
+  }
+]

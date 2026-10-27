@@ -304,6 +304,7 @@ public static class DriverBalanceBenchmark
             List<PlayerState> turnOrder = session.GetTurnOrder();
             foreach (PlayerState player in turnOrder)
             {
+                session.BeginDriverSkillInput(player);
                 if (player.hasFinished || player.isBlown)
                     continue;
                 if (player.skipNextTurn)
@@ -317,7 +318,7 @@ public static class DriverBalanceBenchmark
                     continue;
                 }
 
-                TryActivateTargetSkill(session, player, targetProfile, enabled, track.laps, nodes.Count);
+                TryActivateTargetSkill(session, player, targetProfile, enabled, track.laps, nodes.Count, turn);
                 int requestedGear = ChooseGear(
                     session, player, nodes, cornerLimits, cfg, out _);
                 TeamGearRules.Resolution shift = TeamGearRules.Resolve(
@@ -541,7 +542,8 @@ public static class DriverBalanceBenchmark
         DriverProfile targetProfile,
         bool enabled,
         int totalLaps,
-        int totalNodes)
+        int totalNodes,
+        int turn)
     {
         if (!enabled || player.driverId != targetProfile.Id)
             return;
@@ -555,6 +557,18 @@ public static class DriverBalanceBenchmark
             gauge.EngineRemaining,
             gauge.Capacity,
             nearby);
+        if (player.driverSkill.Skill == DriverActiveSkillId.FinalLap)
+        {
+            if (HunterSkillActivationPlan.TryCreate(session, player, totalNodes, turn, player.gear,
+                    turn, context, out HunterSkillActivationPlan plan, out _))
+            {
+                CardData cost = null;
+                foreach (CardData card in plan.Choices)
+                    if (cost == null || card.value < cost.value) cost = card;
+                plan.TryCommit(session, player, turn, player.gear, turn, context, cost, out _);
+            }
+            return;
+        }
         player.driverSkill.TryActivate(targetProfile, context, out _);
     }
 

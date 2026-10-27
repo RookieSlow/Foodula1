@@ -163,6 +163,7 @@ public static class CardPlayRules
             player.hotpotAttackAppliedThisTurn = true;
             player.hotpotAttackCardValueThisTurn = GetCommittedSpeedCardValue(cards[0]);
         }
+        player.techState?.prepMeal.CloseInput();
         return SpeedCardCommitResult.Success;
     }
 

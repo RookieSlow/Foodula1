@@ -610,16 +610,16 @@ public class TechTreeRulesTests
     // ═══════════════════════════════════════════════════════════════════
 
     [Test]
-    public void test_uk_l1_fish_and_chips_once_per_race()
+    public void test_uk_l1_keeps_profile_id_and_uses_explicit_prep_meal_runtime()
     {
         UnlockL1TierGate(state);
         TechTreeRules.UnlockNode(state, "uk-l1-fish-and-chips", db);
         TechTreeRules.SelectActiveNodes(state, new[] { "uk-l1-fish-and-chips" }, db);
 
-        Assert.That(TechTreeRules.CanUseFishAndChips(state, db), Is.True);
-
-        TechTreeRules.UseFishAndChips(state);
-        Assert.That(TechTreeRules.CanUseFishAndChips(state, db), Is.False);
+        Assert.That(TechTreeRules.HasEffect(state, db, TechEffectType.FishAndChips), Is.True);
+        Assert.That(state.prepMeal.LastUsedLap, Is.EqualTo(-1));
+        Assert.That(state.prepMeal.IsOpen, Is.False);
+        Assert.That(db.Get("uk-l1-fish-and-chips").name, Is.EqualTo("预备餐"));
     }
 
     [Test]

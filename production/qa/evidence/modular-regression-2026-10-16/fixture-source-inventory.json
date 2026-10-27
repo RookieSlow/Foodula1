@@ -1,0 +1,1028 @@
+[
+  {
+    "fixture": "AIControllerTests",
+    "files": "ai_planner_test.cs",
+    "module": "ai",
+    "cases": 6
+  },
+  {
+    "fixture": "AIPlannerTests",
+    "files": "ai_planner_test.cs",
+    "module": "ai",
+    "cases": 13
+  },
+  {
+    "fixture": "AITrickSelectionRulesTests",
+    "files": "ai_trick_selection_rules_test.cs",
+    "module": "ai",
+    "cases": 9
+  },
+  {
+    "fixture": "AudioRuntimeRulesTests",
+    "files": "audio_runtime_rules_test.cs",
+    "module": "audio",
+    "cases": 9
+  },
+  {
+    "fixture": "BankuruwaseTurnRulesTests",
+    "files": "bankuruwase_turn_rules_test.cs",
+    "module": "tech",
+    "cases": 5
+  },
+  {
+    "fixture": "BBQEligibilityBoundaryTests",
+    "files": "race_session_test.cs",
+    "module": "tech",
+    "cases": 37
+  },
+  {
+    "fixture": "BBQHeatCardLifecycleTests",
+    "files": "card_play_rules_test.cs",
+    "module": "cards-heat",
+    "cases": 40
+  },
+  {
+    "fixture": "BrandArtResourcesTests",
+    "files": "brand_art_resources_test.cs",
+    "module": "ui",
+    "cases": 14
+  },
+  {
+    "fixture": "CardDeckTest",
+    "files": "card_deck_test.cs",
+    "module": "cards-heat",
+    "cases": 39
+  },
+  {
+    "fixture": "CardPilePreviewTests",
+    "files": "card_pile_preview_test.cs",
+    "module": "cards-heat",
+    "cases": 14
+  },
+  {
+    "fixture": "CardPlayRulesTest",
+    "files": "card_play_rules_test.cs",
+    "module": "cards-heat",
+    "cases": 11
+  },
+  {
+    "fixture": "CardSelectionVisualTests",
+    "files": "card_selection_visual_test.cs",
+    "module": "ui",
+    "cases": 5
+  },
+  {
+    "fixture": "CardZoneTransitionTests",
+    "files": "card_zone_transition_test.cs",
+    "module": "cards-heat",
+    "cases": 15
+  },
+  {
+    "fixture": "CareerCompletedMenuPointerTests",
+    "files": "career_completed_menu_pointer_test.cs,career_summer_menu_pointer_test.cs",
+    "module": "career",
+    "cases": 30
+  },
+  {
+    "fixture": "CareerMenuPresentationTests",
+    "files": "career_menu_presentation_test.cs",
+    "module": "career",
+    "cases": 5
+  },
+  {
+    "fixture": "CareerModeRulesTests",
+    "files": "career_mode_rules_test.cs",
+    "module": "career",
+    "cases": 16
+  },
+  {
+    "fixture": "CareerPersistenceTests",
+    "files": "career_persistence_test.cs",
+    "module": "career",
+    "cases": 17
+  },
+  {
+    "fixture": "CareerRaceIntegrationTests",
+    "files": "career_race_integration_test.cs",
+    "module": "career",
+    "cases": 27
+  },
+  {
+    "fixture": "CareerRaceLaunchValidationTests",
+    "files": "career_race_launch_validation_test.cs",
+    "module": "career",
+    "cases": 7
+  },
+  {
+    "fixture": "CareerRaceResultPresentationTests",
+    "files": "career_race_result_presentation_test.cs",
+    "module": "career",
+    "cases": 13
+  },
+  {
+    "fixture": "CareerTechTreeDraftTests",
+    "files": "career_tech_tree_draft_test.cs",
+    "module": "tech",
+    "cases": 6
+  },
+  {
+    "fixture": "CareerUiPointerTestScopeTests",
+    "files": "career_ui_pointer_test_scope.cs",
+    "module": "career",
+    "cases": 4
+  },
+  {
+    "fixture": "CarMovementTests",
+    "files": "car_movement_test.cs",
+    "module": "core",
+    "cases": 3
+  },
+  {
+    "fixture": "CarOrientationTests",
+    "files": "car_orientation_test.cs",
+    "module": "core",
+    "cases": 11
+  },
+  {
+    "fixture": "CavallinoDriverRewardTests",
+    "files": "normal_race_reward_settlement_test.cs",
+    "module": "career",
+    "cases": 37
+  },
+  {
+    "fixture": "ChinaGearRulesTests",
+    "files": "china_gear_rules_test.cs",
+    "module": "gears",
+    "cases": 11
+  },
+  {
+    "fixture": "DemoTechnologyProfileTests",
+    "files": "demo_technology_profile_test.cs",
+    "module": "tech",
+    "cases": 32
+  },
+  {
+    "fixture": "DriverBalanceBenchmarkTests",
+    "files": "driver_balance_benchmark_test.cs",
+    "module": "drivers",
+    "cases": 10
+  },
+  {
+    "fixture": "DriverRulesTests",
+    "files": "driver_rules_test.cs",
+    "module": "drivers",
+    "cases": 12
+  },
+  {
+    "fixture": "DriverSkillPresentationRulesTests",
+    "files": "driver_skill_presentation_test.cs",
+    "module": "drivers",
+    "cases": 7
+  },
+  {
+    "fixture": "DriverSkillRaceContextRulesTests",
+    "files": "driver_skill_presentation_test.cs",
+    "module": "drivers",
+    "cases": 7
+  },
+  {
+    "fixture": "DriverSkillRulesTests",
+    "files": "driver_skill_rules_test.cs",
+    "module": "drivers",
+    "cases": 15
+  },
+  {
+    "fixture": "DriverSkillRuntimeTests",
+    "files": "driver_skill_runtime_test.cs",
+    "module": "drivers",
+    "cases": 10
+  },
+  {
+    "fixture": "EncyclopediaCatalogTests",
+    "files": "encyclopedia_catalog_test.cs",
+    "module": "ui",
+    "cases": 8
+  },
+  {
+    "fixture": "FinalSprintTurnEndTests",
+    "files": "final_sprint_turn_end_test.cs",
+    "module": "drivers",
+    "cases": 9
+  },
+  {
+    "fixture": "FreeRaceRosterRulesTests",
+    "files": "free_race_roster_test.cs",
+    "module": "core",
+    "cases": 9
+  },
+  {
+    "fixture": "GameSettingsTests",
+    "files": "game_settings_test.cs",
+    "module": "core",
+    "cases": 9
+  },
+  {
+    "fixture": "GearDialPresentationTests",
+    "files": "gear_dial_presentation_test.cs",
+    "module": "gears",
+    "cases": 2
+  },
+  {
+    "fixture": "GearRequirementFeedbackTests",
+    "files": "gear_requirement_feedback_test.cs",
+    "module": "gears",
+    "cases": 19
+  },
+  {
+    "fixture": "GrillPaymentSettlementTests",
+    "files": "grill_payment_settlement_test.cs",
+    "module": "tech",
+    "cases": 7
+  },
+  {
+    "fixture": "HeatCoolingSourcesTests",
+    "files": "heat_cooling_sources_test.cs",
+    "module": "cards-heat",
+    "cases": 9
+  },
+  {
+    "fixture": "HeatGaugeRulesTests",
+    "files": "heat_gauge_rules_test.cs",
+    "module": "ui",
+    "cases": 7
+  },
+  {
+    "fixture": "HeatPaymentCostTests",
+    "files": "heat_payment_cost_test.cs",
+    "module": "cards-heat",
+    "cases": 22
+  },
+  {
+    "fixture": "HeatRecoveryBoundaryIntegrationTests",
+    "files": "heat_recovery_sources_test.cs",
+    "module": "cards-heat",
+    "cases": 6
+  },
+  {
+    "fixture": "HeatRecoverySourcesTests",
+    "files": "heat_recovery_sources_test.cs",
+    "module": "cards-heat",
+    "cases": 8
+  },
+  {
+    "fixture": "InstantTechnologyMovementPlanTests",
+    "files": "race_movement_rules_test.cs",
+    "module": "tech",
+    "cases": 27
+  },
+  {
+    "fixture": "LaneChoiceBoundaryIntegrationTests",
+    "files": "lane_choice_boundary_test.cs,race_instant_lane_adapter_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 111
+  },
+  {
+    "fixture": "LaneChoicePresentationTests",
+    "files": "lane_choice_boundary_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 10
+  },
+  {
+    "fixture": "LaneChoiceRulesTests",
+    "files": "lane_choice_boundary_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 14
+  },
+  {
+    "fixture": "LiveTurnTelemetryRuntimeTests",
+    "files": "live_turn_telemetry_runtime_test.cs",
+    "module": "ui",
+    "cases": 1
+  },
+  {
+    "fixture": "MenuOverlayNavigationTests",
+    "files": "menu_overlay_navigation_test.cs",
+    "module": "ui",
+    "cases": 11
+  },
+  {
+    "fixture": "ModernUIStyleTests",
+    "files": "modern_ui_style_test.cs",
+    "module": "ui",
+    "cases": 3
+  },
+  {
+    "fixture": "MotherRoadDeclineBoundaryTests",
+    "files": "tech_tree_rules_test.cs",
+    "module": "tech",
+    "cases": 15
+  },
+  {
+    "fixture": "NormalRaceRewardBoundaryTests",
+    "files": "normal_race_reward_settlement_test.cs",
+    "module": "core",
+    "cases": 29
+  },
+  {
+    "fixture": "NormalRaceRewardSettlementTest",
+    "files": "normal_race_reward_settlement_test.cs",
+    "module": "core",
+    "cases": 16
+  },
+  {
+    "fixture": "OfficialTrackCatalogTests",
+    "files": "official_track_catalog_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 3
+  },
+  {
+    "fixture": "OvertakeAudioPresentationTests",
+    "files": "overtake_audio_presentation_test.cs",
+    "module": "audio",
+    "cases": 4
+  },
+  {
+    "fixture": "PitApproachChoiceBoundaryTests",
+    "files": "pit_approach_choice_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 26
+  },
+  {
+    "fixture": "PitApproachChoiceRulesTests",
+    "files": "pit_approach_choice_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 24
+  },
+  {
+    "fixture": "PitLaneRulesTests",
+    "files": "pit_lane_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 27
+  },
+  {
+    "fixture": "PlayerStateTest",
+    "files": "player_state_test.cs",
+    "module": "core",
+    "cases": 11
+  },
+  {
+    "fixture": "PlaytestLoggingTests",
+    "files": "playtest_logging_test.cs",
+    "module": "diagnostics",
+    "cases": 3
+  },
+  {
+    "fixture": "PlaytestTelemetryTestIsolationTests",
+    "files": "playtest_telemetry_test_isolation_test.cs",
+    "module": "diagnostics",
+    "cases": 7
+  },
+  {
+    "fixture": "RaceBankuruwaseAdapterTests",
+    "files": "bankuruwase_turn_rules_test.cs",
+    "module": "tech",
+    "cases": 8
+  },
+  {
+    "fixture": "RaceBBQHumanCommitAdapterTests",
+    "files": "race_bbq_human_commit_adapter_test.cs",
+    "module": "tech",
+    "cases": 18
+  },
+  {
+    "fixture": "RaceCameraPointerDragStateTests",
+    "files": "track_camera_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 3
+  },
+  {
+    "fixture": "RaceCornerResolverTests",
+    "files": "race_corner_resolver_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 5
+  },
+  {
+    "fixture": "RaceCoroutineEvidenceRegistryTests",
+    "files": "race_coroutine_test_evidence.cs",
+    "module": "diagnostics",
+    "cases": 43
+  },
+  {
+    "fixture": "RaceDeckSetupTests",
+    "files": "race_deck_setup_test.cs",
+    "module": "cards-heat",
+    "cases": 22
+  },
+  {
+    "fixture": "RaceDiscardStepAdapterTests",
+    "files": "race_discard_step_adapter_test.cs",
+    "module": "cards-heat",
+    "cases": 8
+  },
+  {
+    "fixture": "RaceDriverSkillActivationAdapterTests",
+    "files": "race_driver_skill_activation_adapter_test.cs",
+    "module": "drivers",
+    "cases": 14
+  },
+  {
+    "fixture": "RaceEndCoordinatorTests",
+    "files": "race_ranking_test.cs",
+    "module": "core",
+    "cases": 7
+  },
+  {
+    "fixture": "RaceEventFXTests",
+    "files": "race_event_fx_test.cs",
+    "module": "ui",
+    "cases": 7
+  },
+  {
+    "fixture": "RaceGameLoopCoroutineTests",
+    "files": "race_career_completion_coroutine_test.cs,race_career_completion_recovery_coroutine_test.cs,race_career_fifth_completion_coroutine_test.cs,race_career_finale_coroutine_test.cs,race_career_startup_gate_coroutine_test.cs,race_career_summer_checkpoint_coroutine_test.cs,race_full_completion_coroutine_test.cs,race_game_loop_coroutine_test.cs,race_startup_deck_completion_coroutine_test.cs",
+    "module": "long-races",
+    "cases": 16
+  },
+  {
+    "fixture": "RaceGearSelectionAdapterTests",
+    "files": "race_gear_selection_adapter_test.cs",
+    "module": "gears",
+    "cases": 11
+  },
+  {
+    "fixture": "RaceGearShiftResolverTests",
+    "files": "race_gear_shift_resolver_test.cs",
+    "module": "gears",
+    "cases": 6
+  },
+  {
+    "fixture": "RaceHudTextRulesTests",
+    "files": "race_hud_text_rules_test.cs",
+    "module": "ui",
+    "cases": 8
+  },
+  {
+    "fixture": "RaceInputStateTests",
+    "files": "race_input_state_test.cs",
+    "module": "core",
+    "cases": 10
+  },
+  {
+    "fixture": "RaceLaneRulesTests",
+    "files": "race_lane_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 15
+  },
+  {
+    "fixture": "RaceLapCrossingAdapterTests",
+    "files": "race_lap_weather_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 6
+  },
+  {
+    "fixture": "RaceLapCrossingExecutionTests",
+    "files": "race_lap_weather_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 5
+  },
+  {
+    "fixture": "RaceLapRulesTests",
+    "files": "race_lap_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 5
+  },
+  {
+    "fixture": "RaceLapWeatherRulesTests",
+    "files": "race_lap_weather_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 10
+  },
+  {
+    "fixture": "RaceLaunchLifecycleAdapterTests",
+    "files": "career_race_integration_test.cs",
+    "module": "career",
+    "cases": 25
+  },
+  {
+    "fixture": "RaceLogAnalyzerTests",
+    "files": "race_log_analyzer_test.cs",
+    "module": "diagnostics",
+    "cases": 38
+  },
+  {
+    "fixture": "RaceLogClosureIntegrationTests",
+    "files": "race_test_log_writer_test.cs",
+    "module": "diagnostics",
+    "cases": 29
+  },
+  {
+    "fixture": "RaceLogFileSelectorTests",
+    "files": "race_log_file_selector_test.cs",
+    "module": "diagnostics",
+    "cases": 8
+  },
+  {
+    "fixture": "RaceLogStartupRulesTests",
+    "files": "race_log_startup_rules_test.cs",
+    "module": "diagnostics",
+    "cases": 13
+  },
+  {
+    "fixture": "RaceMotherRoadExecutionTests",
+    "files": "race_mother_road_execution_test.cs",
+    "module": "tech",
+    "cases": 12
+  },
+  {
+    "fixture": "RaceMovementRulesTests",
+    "files": "race_movement_rules_test.cs",
+    "module": "core",
+    "cases": 46
+  },
+  {
+    "fixture": "RaceOvertakeResolutionTests",
+    "files": "race_movement_rules_test.cs",
+    "module": "core",
+    "cases": 6
+  },
+  {
+    "fixture": "RaceParticipantPlanBuilderTests",
+    "files": "race_participant_plan_builder_test.cs",
+    "module": "core",
+    "cases": 4
+  },
+  {
+    "fixture": "RaceParticipantTechnologySetupTests",
+    "files": "race_technology_setup_test.cs",
+    "module": "tech",
+    "cases": 8
+  },
+  {
+    "fixture": "RacePhaseStateTests",
+    "files": "race_phase_state_test.cs",
+    "module": "core",
+    "cases": 20
+  },
+  {
+    "fixture": "RacePitStopBoundaryIntegrationTests",
+    "files": "race_pit_stop_execution_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 7
+  },
+  {
+    "fixture": "RacePitStopExecutionTests",
+    "files": "race_pit_stop_execution_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 13
+  },
+  {
+    "fixture": "RacePitTurnBoundaryTests",
+    "files": "race_pit_turn_boundary_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 79
+  },
+  {
+    "fixture": "RacePlayerCardPhaseAdapterTests",
+    "files": "race_player_card_phase_adapter_test.cs",
+    "module": "cards-heat",
+    "cases": 37
+  },
+  {
+    "fixture": "RacePresentationSkipTests",
+    "files": "race_presentation_skip_test.cs",
+    "module": "ui",
+    "cases": 3
+  },
+  {
+    "fixture": "RaceRankingTests",
+    "files": "race_ranking_test.cs",
+    "module": "core",
+    "cases": 17
+  },
+  {
+    "fixture": "RaceReactionCooldownTests",
+    "files": "race_reaction_cooldown_test.cs",
+    "module": "cards-heat",
+    "cases": 7
+  },
+  {
+    "fixture": "RaceRecoverySkipAdapterTests",
+    "files": "race_recovery_skip_adapter_test.cs",
+    "module": "core",
+    "cases": 9
+  },
+  {
+    "fixture": "RaceRestartAdapterTests",
+    "files": "career_race_integration_test.cs",
+    "module": "career",
+    "cases": 49
+  },
+  {
+    "fixture": "RaceResultPresentationTests",
+    "files": "race_result_presentation_test.cs",
+    "module": "ui",
+    "cases": 7
+  },
+  {
+    "fixture": "RaceResultSettlementAdapterTests",
+    "files": "race_movement_settlement_adapter_test.cs,race_result_settlement_adapter_test.cs,race_result_settlement_log_adapter_test.cs,race_startup_adapter_test.cs,race_weather_settlement_adapter_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 104
+  },
+  {
+    "fixture": "RaceRulesTests",
+    "files": "race_rules_test.cs",
+    "module": "core",
+    "cases": 9
+  },
+  {
+    "fixture": "RaceSessionBankuruwaseTests",
+    "files": "bankuruwase_turn_rules_test.cs",
+    "module": "tech",
+    "cases": 4
+  },
+  {
+    "fixture": "RaceSessionRemainingFinishTests",
+    "files": "race_ranking_test.cs",
+    "module": "core",
+    "cases": 4
+  },
+  {
+    "fixture": "RaceSessionTest",
+    "files": "race_session_test.cs",
+    "module": "core",
+    "cases": 101
+  },
+  {
+    "fixture": "RaceSettledSlipstreamResolutionTests",
+    "files": "race_pit_turn_boundary_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 7
+  },
+  {
+    "fixture": "RaceSimulationTest",
+    "files": "race_simulation_test.cs",
+    "module": "core",
+    "cases": 1
+  },
+  {
+    "fixture": "RaceSpinBoundaryIntegrationTests",
+    "files": "race_spin_boundary_test.cs",
+    "module": "core",
+    "cases": 14
+  },
+  {
+    "fixture": "RaceSpinRulesTests",
+    "files": "race_spin_boundary_test.cs",
+    "module": "core",
+    "cases": 13
+  },
+  {
+    "fixture": "RaceStateLogFormatterCommittedHeatTests",
+    "files": "race_state_log_formatter_committed_heat_test.cs",
+    "module": "diagnostics",
+    "cases": 6
+  },
+  {
+    "fixture": "RaceStateLogFormatterTests",
+    "files": "race_state_log_formatter_test.cs",
+    "module": "diagnostics",
+    "cases": 26
+  },
+  {
+    "fixture": "RaceTechnologySetupTests",
+    "files": "race_technology_setup_test.cs",
+    "module": "tech",
+    "cases": 87
+  },
+  {
+    "fixture": "RaceTestLogWriterTests",
+    "files": "race_test_log_writer_test.cs",
+    "module": "diagnostics",
+    "cases": 8
+  },
+  {
+    "fixture": "RaceTrickEffectExecutorTests",
+    "files": "race_trick_effect_executor_test.cs",
+    "module": "cards-heat",
+    "cases": 11
+  },
+  {
+    "fixture": "RaceTurnBoundaryIntegrationTests",
+    "files": "race_turn_boundary_integration_test.cs",
+    "module": "core",
+    "cases": 43
+  },
+  {
+    "fixture": "RaceTurnCleanupTests",
+    "files": "race_turn_cleanup_test.cs",
+    "module": "core",
+    "cases": 9
+  },
+  {
+    "fixture": "RaceTurnPreviewTests",
+    "files": "race_turn_preview_test.cs",
+    "module": "core",
+    "cases": 12
+  },
+  {
+    "fixture": "RaceTurnRulesTests",
+    "files": "race_turn_rules_test.cs",
+    "module": "core",
+    "cases": 39
+  },
+  {
+    "fixture": "RaceTurnSkillCleanupTests",
+    "files": "final_sprint_turn_end_test.cs",
+    "module": "drivers",
+    "cases": 16
+  },
+  {
+    "fixture": "RaceTurnTechnologyCleanupTests",
+    "files": "race_turn_technology_cleanup_test.cs",
+    "module": "tech",
+    "cases": 8
+  },
+  {
+    "fixture": "RaceUILayoutTests",
+    "files": "race_ui_layout_test.cs",
+    "module": "ui",
+    "cases": 5
+  },
+  {
+    "fixture": "RaceVisualLaneAdapterTests",
+    "files": "race_visual_lane_adapter_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 14
+  },
+  {
+    "fixture": "RaceWeatherStateTests",
+    "files": "race_weather_state_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 3
+  },
+  {
+    "fixture": "RacingTechActionButtonTests",
+    "files": "racing_tech_action_button_test.cs",
+    "module": "ui",
+    "cases": 8
+  },
+  {
+    "fixture": "RacingTechAudioTeardownTests",
+    "files": "racing_tech_audio_teardown_test.cs",
+    "module": "audio",
+    "cases": 5
+  },
+  {
+    "fixture": "RacingTechCardZoneTests",
+    "files": "racing_tech_card_zone_test.cs",
+    "module": "ui",
+    "cases": 8
+  },
+  {
+    "fixture": "RacingTechConfirmationTests",
+    "files": "racing_tech_confirmation_test.cs",
+    "module": "ui",
+    "cases": 12
+  },
+  {
+    "fixture": "RacingTechHudShellTests",
+    "files": "racing_tech_hud_shell_test.cs",
+    "module": "ui",
+    "cases": 7
+  },
+  {
+    "fixture": "RacingTechInstrumentsTests",
+    "files": "racing_tech_instruments_test.cs",
+    "module": "ui",
+    "cases": 11
+  },
+  {
+    "fixture": "RacingTechPileInspectorTests",
+    "files": "racing_tech_pile_inspector_test.cs",
+    "module": "ui",
+    "cases": 7
+  },
+  {
+    "fixture": "RacingTechSelectedEffectTests",
+    "files": "racing_tech_selected_effect_test.cs",
+    "module": "ui",
+    "cases": 6
+  },
+  {
+    "fixture": "RacingTechThemeTests",
+    "files": "racing_tech_theme_test.cs",
+    "module": "ui",
+    "cases": 4
+  },
+  {
+    "fixture": "RacingTechTrackSelectionTests",
+    "files": "racing_tech_track_selection_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 13
+  },
+  {
+    "fixture": "RandomSourceTests",
+    "files": "ai_planner_test.cs",
+    "module": "ai",
+    "cases": 2
+  },
+  {
+    "fixture": "ReturnToMenuConfirmationTests",
+    "files": "return_to_menu_confirmation_test.cs",
+    "module": "ui",
+    "cases": 4
+  },
+  {
+    "fixture": "ReturnToMenuLifecycleAdapterTests",
+    "files": "return_to_menu_confirmation_test.cs",
+    "module": "ui",
+    "cases": 16
+  },
+  {
+    "fixture": "RuntimeSessionResetTests",
+    "files": "runtime_session_reset_test.cs",
+    "module": "core",
+    "cases": 2
+  },
+  {
+    "fixture": "SpeedCardRequirementBoundaryTests",
+    "files": "speed_card_requirement_boundary_test.cs",
+    "module": "cards-heat",
+    "cases": 13
+  },
+  {
+    "fixture": "TeamCarPresentationTests",
+    "files": "team_car_presentation_test.cs",
+    "module": "ui",
+    "cases": 18
+  },
+  {
+    "fixture": "TeamGearPresentationTests",
+    "files": "team_gear_live_telemetry_test.cs,team_gear_presentation_test.cs,team_gear_telemetry_drag_test.cs",
+    "module": "gears",
+    "cases": 52
+  },
+  {
+    "fixture": "TeamShiftCc0RuntimeTests",
+    "files": "team_shift_cc0_runtime_test.cs",
+    "module": "audio",
+    "cases": 1
+  },
+  {
+    "fixture": "TeamTutorialCatalogTests",
+    "files": "team_tutorial_catalog_test.cs",
+    "module": "tutorial",
+    "cases": 70
+  },
+  {
+    "fixture": "TeamVehicleAudioTests",
+    "files": "team_vehicle_audio_test.cs",
+    "module": "audio",
+    "cases": 20
+  },
+  {
+    "fixture": "TeamVehicleMovementAudioTests",
+    "files": "team_vehicle_movement_audio_test.cs",
+    "module": "audio",
+    "cases": 12
+  },
+  {
+    "fixture": "TeamVehicleRuntimeAudioTests",
+    "files": "team_vehicle_runtime_audio_test.cs",
+    "module": "audio",
+    "cases": 3
+  },
+  {
+    "fixture": "TechTreeProfileCodecTests",
+    "files": "tech_tree_profile_codec_test.cs",
+    "module": "tech",
+    "cases": 9
+  },
+  {
+    "fixture": "TechTreeProfileStoreTests",
+    "files": "tech_tree_profile_store_test.cs",
+    "module": "tech",
+    "cases": 6
+  },
+  {
+    "fixture": "TechTreeRulesTests",
+    "files": "tech_tree_rules_test.cs",
+    "module": "tech",
+    "cases": 183
+  },
+  {
+    "fixture": "ThunderstormGridManagerAdapterTests",
+    "files": "thunderstorm_grid_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 6
+  },
+  {
+    "fixture": "ThunderstormGridRulesTests",
+    "files": "thunderstorm_grid_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 12
+  },
+  {
+    "fixture": "TrackCameraRulesTests",
+    "files": "track_camera_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 10
+  },
+  {
+    "fixture": "TrackDataLoaderTest",
+    "files": "track_data_loader_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 25
+  },
+  {
+    "fixture": "TrackPresentationRulesTests",
+    "files": "track_presentation_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 17
+  },
+  {
+    "fixture": "TrackRulesTests",
+    "files": "track_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 8
+  },
+  {
+    "fixture": "TrackSelectionStateTests",
+    "files": "track_selection_state_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 6
+  },
+  {
+    "fixture": "TrackTeamBalanceCornerHeatTests",
+    "files": "driver_balance_benchmark_test.cs",
+    "module": "drivers",
+    "cases": 3
+  },
+  {
+    "fixture": "TrickCardRulesTests",
+    "files": "trick_card_rules_test.cs",
+    "module": "cards-heat",
+    "cases": 39
+  },
+  {
+    "fixture": "TurnMovementBreakdownTests",
+    "files": "turn_movement_breakdown_test.cs",
+    "module": "core",
+    "cases": 22
+  },
+  {
+    "fixture": "TutorialHeatFeedbackIntegrationTests",
+    "files": "tutorial_heat_feedback_test.cs",
+    "module": "tutorial",
+    "cases": 21
+  },
+  {
+    "fixture": "TutorialHeatFeedbackTests",
+    "files": "tutorial_heat_feedback_test.cs",
+    "module": "tutorial",
+    "cases": 13
+  },
+  {
+    "fixture": "TutorialPitFeedbackIntegrationTests",
+    "files": "tutorial_pit_feedback_test.cs",
+    "module": "tutorial",
+    "cases": 12
+  },
+  {
+    "fixture": "TutorialRaceResultPresentationTests",
+    "files": "tutorial_race_result_presentation_test.cs",
+    "module": "tutorial",
+    "cases": 6
+  },
+  {
+    "fixture": "TutorialScenarioTests",
+    "files": "tutorial_scenario_test.cs",
+    "module": "tutorial",
+    "cases": 71
+  },
+  {
+    "fixture": "TutorialSpeedCompletionGateTests",
+    "files": "tutorial_speed_completion_gate_test.cs",
+    "module": "tutorial",
+    "cases": 24
+  },
+  {
+    "fixture": "TutorialSpeedSelectionGateTests",
+    "files": "tutorial_speed_selection_gate_test.cs",
+    "module": "tutorial",
+    "cases": 18
+  },
+  {
+    "fixture": "WeatherRulesTests",
+    "files": "weather_rules_test.cs",
+    "module": "tracks-weather-pit",
+    "cases": 23
+  },
+  {
+    "fixture": "ModularRegressionCatalogTests",
+    "files": "modular_regression_catalog_test.cs",
+    "module": "tools",
+    "cases": 12
+  }
+]

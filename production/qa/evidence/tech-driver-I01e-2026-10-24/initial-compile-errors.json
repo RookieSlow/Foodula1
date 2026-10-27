@@ -1,0 +1,40 @@
+{
+  "jsonrpc": "2.0",
+  "id": 10,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Retrieved 3 log entries.\",\"data\":[{\"type\":\"Error\",\"message\":\"Assets\\\\Scripts\\\\Core\\\\MVPGameManager.cs(2224,70): error CS0246: The type or namespace name 'Action' could not be found (are you missing a using directive or an assembly reference?)\\n\",\"file\":\"Assets\\\\Scripts\\\\Core\\\\MVPGameManager.cs\",\"line\":2224,\"stackTrace\":null},{\"type\":\"Error\",\"message\":\"Assets\\\\Scripts\\\\Core\\\\MVPGameManager.cs(2234,72): error CS0246: The type or namespace name 'Action' could not be found (are you missing a using directive or an assembly reference?)\\n\",\"file\":\"Assets\\\\Scripts\\\\Core\\\\MVPGameManager.cs\",\"line\":2234,\"stackTrace\":null},{\"type\":\"Error\",\"message\":\"Assets\\\\Scripts\\\\Core\\\\MVPGameManager.cs(2314,9): error CS0246: The type or namespace name 'Action' could not be found (are you missing a using directive or an assembly reference?)\\n\",\"file\":\"Assets\\\\Scripts\\\\Core\\\\MVPGameManager.cs\",\"line\":2314,\"stackTrace\":null}]}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "message": "Retrieved 3 log entries.",
+      "data": [
+        {
+          "type": "Error",
+          "message": "Assets\\Scripts\\Core\\MVPGameManager.cs(2224,70): error CS0246: The type or namespace name 'Action' could not be found (are you missing a using directive or an assembly reference?)\n",
+          "file": "Assets\\Scripts\\Core\\MVPGameManager.cs",
+          "line": 2224,
+          "stackTrace": null
+        },
+        {
+          "type": "Error",
+          "message": "Assets\\Scripts\\Core\\MVPGameManager.cs(2234,72): error CS0246: The type or namespace name 'Action' could not be found (are you missing a using directive or an assembly reference?)\n",
+          "file": "Assets\\Scripts\\Core\\MVPGameManager.cs",
+          "line": 2234,
+          "stackTrace": null
+        },
+        {
+          "type": "Error",
+          "message": "Assets\\Scripts\\Core\\MVPGameManager.cs(2314,9): error CS0246: The type or namespace name 'Action' could not be found (are you missing a using directive or an assembly reference?)\n",
+          "file": "Assets\\Scripts\\Core\\MVPGameManager.cs",
+          "line": 2314,
+          "stackTrace": null
+        }
+      ]
+    },
+    "isError": false
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "baseline_count": 4137,
+  "missing": [],
+  "changed_baseline_files": [
+    "docs/memory/current-task-list.md",
+    "design/gdd/foodula-1-drivers.md",
+    "design/planning/tech-driver-rework-2026-10-22/progress.json",
+    "Assets/Scripts/Drivers/DriverData.cs",
+    "docs/memory/project-overview.md",
+    "Assets/Scripts/Core/RaceSession.cs",
+    "Assets/Scripts/Core/RaceTurnSkillCleanup.cs",
+    "tests/regression-suite.md",
+    "Assets/Tests/Editor/RegressionModules.json",
+    "Assets/Scripts/Core/RaceSettledSlipstreamResolution.cs",
+    "Assets/Scripts/Drivers/DriverSkillRuntime.cs",
+    "docs/memory/game-mechanics.md",
+    "Assets/Scripts/Core/MVPGameManager.cs",
+    "design/planning/tech-driver-rework-2026-10-22/implementation-plan.json"
+  ],
+  "added_paths": [
+    "Assets/Scripts/Drivers/HunterSlipstreamRuntime.cs",
+    "Assets/Scripts/Drivers/HunterSlipstreamRuntime.cs.meta",
+    "Assets/Tests/Editor/hunter_slipstream_test.cs",
+    "Assets/Tests/Editor/hunter_slipstream_test.cs.meta",
+    "production/qa/evidence/tech-driver-I01b-2026-10-24/IndependentPureRunner.cs",
+    "production/qa/evidence/tech-driver-I01b-2026-10-24/README.md",
+    "production/qa/evidence/tech-driver-I01b-2026-10-24/final-pure-result.json",
+    "production/qa/evidence/tech-driver-I01b-2026-10-24/first-pure-result.json",
+    "production/qa/evidence/tech-driver-I01b-2026-10-24/preservation.json",
+    "production/qa/evidence/tech-driver-I01b-2026-10-24/source-hashes.json",
+    "production/qa/evidence/tech-driver-I01b-2026-10-24/verification.json"
+  ],
+  "head": "f0a12b01e181d1ae9cf3009bc446da003f7c6c56",
+  "protected_scene_font_settings_changed": [],
+  "baseline_hash_limit": "Initial PowerShell git path enumeration did not hash quoted Chinese paths. They are not reported as new when already present in before-status. Both draft Word hashes separately reverified unchanged. No claim of per-file prehash for those omitted paths.",
+  "preexisting_status_paths_without_hash": [
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技与车手调整简报.docx",
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技树调整草案.docx",
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_车手技能调整草案.docx",
+    "design/planning/tech-driver-rework-2026-10-22/inputs/Foodula1_科技树设计.docx",
+    "design/planning/tech-driver-rework-2026-10-22/inputs/Foodula1_车手技能设计.docx",
+    "design/word/Foodula1_科技树设计.docx",
+    "design/word/Foodula1_车手技能设计.docx",
+    "design/word/Foodula1_车队与赛车设计.docx"
+  ],
+  "draft_hashes": {
+    "Foodula1_科技树调整草案.docx": "281e077813344ab1e3627bb075dcc28d361a0626c8c39b3492f016a9f62d7bb3",
+    "Foodula1_车手技能调整草案.docx": "94eb7763825f777d477b3fcb8fee92bad27e6353e42d8b2cdeb98f3889914f46"
+  }
+}

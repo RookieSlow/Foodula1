@@ -23,6 +23,36 @@ public class RaceTurnPreviewTests
     }
     [TearDown] public void TearDown() => Object.DestroyImmediate(config);
 
+    [TestCase(6, 2, true)] [TestCase(1, 1, false)]
+    public void HartNewApexOrdinaryHeatForecastNeverPaysOrConsumesTheRealDriver(int available, int heat, bool canPay)
+    {
+        config.gearOneCooldown = 0;
+        player.gear = 1; player.driverId = "uk_hunter_hart";
+        player.deck = new CardDeck(); player.deck.heatPool = new HeatPool(available);
+        player.deck.AddCardsToHand(new[] { four });
+        player.driverSkill.Initialize(player.DriverProfile, 3, true);
+        Assert.That(player.driverSkill.TryActivate(player.DriverProfile,
+            new DriverSkillActivationContext(true, 1, 2, available, 6, 0), out _), Is.True);
+        int uses = player.driverSkill.UsesRemaining;
+        var nodes = new List<TrackNode>();
+        for (int i = 0; i < 20; i++) nodes.Add(new TrackNode(i, 99));
+        nodes[5] = new TrackNode(5, 2, cornerId: 1, isApex: true);
+        for (int i = 0; i < 3; i++)
+        {
+            RaceTurnPreview forecast = RaceTurnPreviewRules.Evaluate(player, session, config, new[] { four }, false, 1,
+                null, null, 20, (start, end) => TrackRules.GetUniqueApexCornersCrossed(nodes, start, end), _ => 2, nodes);
+            Assert.That(forecast.Movement.TotalCells, Is.EqualTo(6));
+            Assert.That(forecast.CornerHeat, Is.EqualTo(heat));
+            Assert.That(forecast.CanPay, Is.EqualTo(canPay));
+        }
+        Assert.That(player.deck.heatPool.remaining, Is.EqualTo(available));
+        Assert.That(player.deck.Hand, Has.Member(four));
+        Assert.That(four.value, Is.EqualTo(4));
+        Assert.That(player.driverSkill.UsesRemaining, Is.EqualTo(uses));
+        Assert.That(player.driverSkill.IsActive, Is.True);
+        Assert.That(player.spinCounter, Is.Zero);
+    }
+
     [Test]
     public void SelectedCardsAddAndCancelImmediatelyWithKnownCoolingAndNoCommit()
     {

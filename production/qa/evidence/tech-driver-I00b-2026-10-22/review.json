@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-22",
+  "skills": [
+    "team-ui",
+    "code-review",
+    "regression-suite"
+  ],
+  "preflight_ux": "APPROVED with modal geometry/selection/focus/cleanup conditions",
+  "code_review": {
+    "reviewer": "i00_clock_review",
+    "verdict": "APPROVED, limited static code review",
+    "initial_required": [
+      "Preserve pending gear mandatory playable count after fixed discard, including native BBQ heat eligibility",
+      "Cancel on gear changes even if switched back; stale delegate cannot commit",
+      "Restore only a currently available focus after callbacks"
+    ],
+    "resolved": true,
+    "lifecycle": "No recursive SetActive inside native disable/destruction; immediate intent clear plus restored CanvasGroup hide/raycast/interaction state. Explicit Unity-null check for missing component was corrected after a real native test failure."
+  },
+  "qa_review": {
+    "reviewer": "i00_clock_qa",
+    "verdict": "TESTABLE with specific adapter/registration gaps, subsequently covered",
+    "closed_gaps": [
+      "New fixture module registration",
+      "Actual bound Button pointer entry with confirmation masks 0/All",
+      "Captured stale UnityAction<CardData> replay after cancel, gear changes, runtime rebuild and session replacement",
+      "Real Canvas top-hit block and subsequent underlying click",
+      "Focus and natural PlayMode lifecycle distinguished from explicit EditMode hooks"
+    ]
+  },
+  "visual_review": {
+    "reviewer": "i00b_ux",
+    "verdict": "APPROVED, limited controlled production UI",
+    "before_viewed": 3,
+    "final_after_viewed": 10,
+    "selection": "normal/long-copy/disabled at all three sizes plus 720p second-card",
+    "root_before_viewed": 3,
+    "root_first_after_viewed": 2,
+    "root_final_after_viewed": 15,
+    "overflow_before": 0,
+    "overflow_first_after": 15,
+    "overflow_final_after": 0,
+    "limits": [
+      "Not a running full match",
+      "720p comfort unverified",
+      "Physical pointer/dragging and hover/pressed unverified",
+      "All-mode and full six-team new-effect combinations pending I13"
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "jsonrpc": "2.0",
+  "id": 10,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Retrieved 1 log entries.\",\"data\":[{\"type\":\"Warning\",\"message\":\"CardHandUI: cardPrefab is not set. Drag CardPrefab into the Inspector.\",\"file\":\"Assets/Scripts/UI/CardHandUI.cs\",\"line\":139,\"stackTrace\":\"UnityEngine.Debug:LogWarning (object)\\nCardHandUI:ShowHand (MVPGameManager,PlayerState) (at Assets/Scripts/UI/CardHandUI.cs:139)\\nMVPGameManager:RefreshHumanHand (PlayerState) (at Assets/Scripts/Core/MVPGameManager.cs:4304)\\nMVPGameManager:ConfirmPlayerSpeedCards (PlayerState,System.Collections.Generic.IReadOnlyList`1<CardData>) (at Assets/Scripts/Core/MVPGameManager.cs:4193)\\nMVPGameManager:OnPlayCardsButtonClicked () (at Assets/Scripts/Core/MVPGameManager.cs:4081)\\nTeamGearPresentationTests:CommittingSelectedCardsKeepsTheForecastAndAuthoritativePlanRemovesPreview () (at Assets/Tests/Editor/team_gear_live_telemetry_test.cs:64)\\nSystem.Reflection.MethodBase:Invoke (object,object[])\\nNUnit.Framework.Internal.Reflect:InvokeMethod (System.Reflection.MethodInfo,object,object[])\\nNUnit.Framework.Internal.MethodWrapper:Invoke (object,object[])\\nNUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod (NUnit.Framework.Internal.ITestExecutionContext)\\nNUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod (NUnit.Framework.Internal.ITestExecutionContext)\\nNUnit.Framework.Internal.Commands.TestMethodCommand:Execute (NUnit.Framework.Internal.ITestExecutionContext)\\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\\n\"}]}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "message": "Retrieved 1 log entries.",
+      "data": [
+        {
+          "type": "Warning",
+          "message": "CardHandUI: cardPrefab is not set. Drag CardPrefab into the Inspector.",
+          "file": "Assets/Scripts/UI/CardHandUI.cs",
+          "line": 139,
+          "stackTrace": "UnityEngine.Debug:LogWarning (object)\nCardHandUI:ShowHand (MVPGameManager,PlayerState) (at Assets/Scripts/UI/CardHandUI.cs:139)\nMVPGameManager:RefreshHumanHand (PlayerState) (at Assets/Scripts/Core/MVPGameManager.cs:4304)\nMVPGameManager:ConfirmPlayerSpeedCards (PlayerState,System.Collections.Generic.IReadOnlyList`1<CardData>) (at Assets/Scripts/Core/MVPGameManager.cs:4193)\nMVPGameManager:OnPlayCardsButtonClicked () (at Assets/Scripts/Core/MVPGameManager.cs:4081)\nTeamGearPresentationTests:CommittingSelectedCardsKeepsTheForecastAndAuthoritativePlanRemovesPreview () (at Assets/Tests/Editor/team_gear_live_telemetry_test.cs:64)\nSystem.Reflection.MethodBase:Invoke (object,object[])\nNUnit.Framework.Internal.Reflect:InvokeMethod (System.Reflection.MethodInfo,object,object[])\nNUnit.Framework.Internal.MethodWrapper:Invoke (object,object[])\nNUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod (NUnit.Framework.Internal.ITestExecutionContext)\nNUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod (NUnit.Framework.Internal.ITestExecutionContext)\nNUnit.Framework.Internal.Commands.TestMethodCommand:Execute (NUnit.Framework.Internal.ITestExecutionContext)\nUnityEditor.EditorApplication:Internal_CallUpdateFunctions ()\n"
+        }
+      ]
+    },
+    "isError": false
+  }
+}

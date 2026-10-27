@@ -172,13 +172,6 @@ public static class DriverSkillRules
 
         switch (state.Skill)
         {
-            case DriverActiveSkillId.FinalLap:
-                if (context.TotalLaps <= 0 || context.Lap < context.TotalLaps - 1)
-                {
-                    reason = "仅限最后一圈";
-                    return false;
-                }
-                break;
             case DriverActiveSkillId.FinalSprint:
                 if (!IsEngineAtCriticalHeat(context.EngineRemaining, context.EngineCapacity))
                 {
@@ -219,6 +212,12 @@ public static class DriverSkillRules
         }
     }
 
+    /// <summary>Only migrated UK skills advance on their owner's driving inputs.</summary>
+    public static bool UsesDrivingInputClock(DriverActiveSkillId skill)
+    {
+        return skill == DriverActiveSkillId.FinalLap || skill == DriverActiveSkillId.AngryCharge;
+    }
+
     /// <summary>
     /// Returns the turn cadence for a passive that prepares a concrete effect.
     /// Event-driven passives return zero and are armed by their event instead.
@@ -228,7 +227,7 @@ public static class DriverSkillRules
         int t = Math.Max(1, Math.Min(3, tier));
         switch (skill)
         {
-            case DriverPassiveSkillId.EngineersTune: return t == 1 ? 3 : 2;
+            case DriverPassiveSkillId.EngineersTune: return 0; // D03 is armed only by actual ordinary-corner receipts.
             case DriverPassiveSkillId.InformationSponge: return t == 1 ? 4 : t == 2 ? 3 : 2;
             default: return 0;
         }
@@ -236,8 +235,17 @@ public static class DriverSkillRules
 
     public static int GetPassiveHeatDiscount(DriverPassiveSkillId skill, int tier)
     {
-        return skill == DriverPassiveSkillId.EngineersTune && tier > 0 ? 1 : 0;
+        return 0; // D03 no longer discounts generic heat: its token is consumed at ordinary corners only.
     }
+
+    /// <summary>D03 actual permanent ordinary-corner heat required in a single owner input.</summary>
+    public static int GetSchumacherTuningPaymentThreshold(int tier) => tier <= 0 ? int.MaxValue : tier == 1 ? 2 : 1;
+
+    /// <summary>D03 pending mark validity, measured only in subsequent owner driving inputs.</summary>
+    public static int GetSchumacherTuningInputLifetime(int tier) => tier <= 0 ? 0 : tier >= 3 ? 2 : 1;
+
+    /// <summary>D03 reduces only the first positive ordinary-corner cost, never fixed skill/fuel/gear costs.</summary>
+    public static int GetSchumacherTuningReduction(int tier) => tier > 0 ? 1 : 0;
 
     public static int GetPassiveDeckLookahead(DriverPassiveSkillId skill, int tier)
     {
@@ -246,14 +254,16 @@ public static class DriverSkillRules
 
     public static int GetPassiveOvertakeMovementBonus(DriverPassiveSkillId skill, int tier)
     {
-        if (skill != DriverPassiveSkillId.LionsHeart || tier <= 0) return 0;
-        return tier >= 3 ? 2 : 1;
+        return 0; // D02 replaces this legacy overtake reward with same-target owner-input pursuit.
     }
 
     public static int GetPassiveOvertakeCoolingBonus(DriverPassiveSkillId skill, int tier)
     {
-        return skill == DriverPassiveSkillId.LionsHeart && tier >= 2 ? 1 : 0;
+        return 0;
     }
+
+    /// <summary>D02 passive tier ranges; the first observation itself has no active-skill six-cell cap.</summary>
+    public static int GetMansellPursuitRange(int tier) => tier <= 0 ? 0 : Math.Min(3, tier) + 1;
 
     public static int GetPassiveWeatherPenaltyReduction(DriverPassiveSkillId skill, int tier)
     {
@@ -272,11 +282,14 @@ public static class DriverSkillRules
 
     public static int GetSpeedPerCardBonus(DriverSkillRuntimeState state)
     {
-        return Active(state, DriverActiveSkillId.FinalLap) ? (state.Tier >= 2 ? 2 : 1) : 0;
+        return 0;
     }
 
     public static int GetMovementBonus(DriverSkillRuntimeState state, bool crossedCorner)
     {
+        if (Active(state, DriverActiveSkillId.FinalLap)) return state.Tier >= 2 ? 3 : 2;
+        if (state != null && state.Skill == DriverActiveSkillId.AngryCharge && state.Charge.CommittedThisInput)
+            return state.Charge.MovementBonusThisInput;
         if (Active(state, DriverActiveSkillId.AngryCharge)) return state.Tier >= 2 ? 2 : 1;
         if (Active(state, DriverActiveSkillId.FinalSprint)) return state.Tier >= 2 ? 3 : 2;
         if (Active(state, DriverActiveSkillId.TrueSelf) && !crossedCorner) return state.Tier >= 3 ? 3 : 2;
@@ -292,7 +305,8 @@ public static class DriverSkillRules
 
     public static int GetOvertakeBonus(DriverSkillRuntimeState state, int overtakes)
     {
-        return Active(state, DriverActiveSkillId.AngryCharge) && state.Tier >= 2 && overtakes > 0 ? 1 : 0;
+        return Active(state, DriverActiveSkillId.AngryCharge) && !state.Charge.CommittedThisInput &&
+            state.Tier >= 2 && overtakes > 0 ? 1 : 0;
     }
 
     public static int GetCornerLimitBonus(DriverSkillRuntimeState state)
@@ -313,10 +327,7 @@ public static class DriverSkillRules
 
     public static int ApplyHeatMultiplier(DriverSkillRuntimeState state, int heat)
     {
-        if (!Active(state, DriverActiveSkillId.FinalLap)) return Math.Max(0, heat);
-        return state.Tier >= 3
-            ? (int)Math.Ceiling(Math.Max(0, heat) * 1.5)
-            : Math.Max(0, heat) * 2;
+        return Math.Max(0, heat);
     }
 
     public static int ApplyGearHeatCost(DriverSkillRuntimeState state, int heatCost, bool isChinaAdditionalHeat)

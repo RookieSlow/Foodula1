@@ -1,0 +1,128 @@
+{
+  "id": "I03e",
+  "utc": "2026-10-27T09:47:11.349646+00:00",
+  "status": "declared_burst_hud_receipt_cleanup_and_bounded_GameLoop_passed_full_modes_pending",
+  "scope": "A1 free declare/cancel beside driver; unpaid A4 cancel beside fuel; first actual permanent payment locks race opportunity; three total paid fuel uses; remove undeclared legacy refund, AI pre-gear declaration with unchanged one-fuel choice; exact net/retirement feedback.",
+  "new_cases": 58,
+  "new_ui_parameter_cases": 48,
+  "new_manager_cases": 8,
+  "new_actual_GameLoop_cases": 2,
+  "final_native": {
+    "startedUtc": "2026-10-27T09:42:00.8950376Z",
+    "endedUtc": "2026-10-27T09:42:49.9903456Z",
+    "state": "Passed",
+    "nativeState": "Passed",
+    "total": 3403,
+    "passed": 3403,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 43.9000283,
+    "selectionMatches": true
+  },
+  "modules": [
+    "ai",
+    "cards-heat",
+    "career",
+    "core",
+    "drivers",
+    "gears",
+    "tech",
+    "tracks-weather-pit",
+    "tutorial",
+    "ui"
+  ],
+  "runtime_mvid": "04d6d765-0f64-4a05-b432-1a7ab98409f2",
+  "editor_mvid": "4a2d3c31-aa91-4d25-915e-b439e65de2e0",
+  "new_assemblies_loaded": true,
+  "gameloop": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 2.9225509,
+    "resultState": "Passed"
+  },
+  "native_GameLoop_RunFinished": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-10-27T09:43:21.3142254Z",
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": "",
+    "stackTrace": ""
+  },
+  "first_native": {
+    "total": 3403,
+    "passed": 3378,
+    "failed": 25,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 42.5208608,
+    "selectionMatches": true
+  },
+  "focused_intermediate": {
+    "total": 56,
+    "passed": 40,
+    "failed": 16,
+    "skipped": 0,
+    "duration": "Not reported as native duration; job wall elapsed 3.107s"
+  },
+  "failure_resolution": "Selected L3 button must capture focus before interactable=false. UI expected refund double-counted receipts already returned by ReactStep; now counts surviving exact receipts. Old cleanup fixture now declares before actual payment. Native perspective RT containment was false although screen->local returned rect center; own new UI fixture uses orthographic camera, real GraphicRaycaster/top receiver retained. ForceUpdateRectTransforms/active RT diagnostic attempts did not solve it and were removed.",
+  "visual": {
+    "before": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I03e-2026-10-27/before/run-20261027-043617806",
+    "after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I03e-2026-10-27/after/run-20261027-094346842",
+    "before_count": 24,
+    "after_count": 24,
+    "before_overflows": 0,
+    "after_overflows": 0,
+    "before_viewed_by_capture_agent": 24,
+    "after_action_modal_status_regions_viewed_by_root": 24,
+    "after_full_frames_viewed_by_root": 4,
+    "sizes": [
+      "1920x1080",
+      "2560x1440",
+      "1280x720"
+    ],
+    "kind": "Owned production HUD/MVP/Canvas fixture, real GraphicRaycaster/Move/Submit; AFTER owned camera orthographic. Not complete RaceCanvas or physical input.",
+    "boundary": "Before A1 source has inherited white backdrop/white label: old driver readability NOT accepted. After alone applies existing production action style to owned backdrop. Before perspective versus after orthographic prevents claiming a pixel-identical camera comparison. Terminal/exit screenshots are BEFORE cleanup, manifest resource fields AFTER assertions; no terminal/exit-after visual claim. Before engineAfter=0 is not measured resource evidence. Net/retirement log functional adapter tested, not rendered by this UI capture."
+  },
+  "reviews": {
+    "engine": "Bounded readonly approved on production declaration/payment/refund/lifecycle source.",
+    "qa": "Bounded static review found screenshot timing mismatch; explicitly labelled. Root native failures and projection diagnostic retained; no independent complete-mode or hardware approval."
+  },
+  "acceptance": {
+    "pure_rules": true,
+    "production_wiring": true,
+    "player_operable_in_owned_fixture": true,
+    "actual_two_turn_GameLoop": true,
+    "complete_modes": false
+  },
+  "unity_final": {
+    "scenes": [
+      {
+        "path": "Assets/Scenes/MainMenu.unity",
+        "dirty": false
+      }
+    ],
+    "playing": false,
+    "compiling": false,
+    "updating": false,
+    "tests": false,
+    "console_errors": 0,
+    "console_warnings": 0,
+    "console_not_cleared": true,
+    "license": "Successfully resolved entitlement details",
+    "ready": {
+      "ready_for_tools": true,
+      "blocking_reasons": [],
+      "recommended_retry_after_ms": 0,
+      "recommended_next_action": "none"
+    }
+  },
+  "evidence": "../../../production/qa/evidence/tech-driver-I03e-2026-10-27/README.md"
+}

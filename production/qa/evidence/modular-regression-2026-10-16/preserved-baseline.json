@@ -1,0 +1,318 @@
+[
+  {
+    "path": "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset",
+    "sha256": "927E137E888C54CB2C54B5FD250CEAB43E43BE3B47B4C6487EE650D563A992B7"
+  },
+  {
+    "path": "ProjectSettings/EditorSettings.asset",
+    "sha256": "6AB19FE30172C763029B8F2E0616C6DC3DCFE480E845FC1AAAEF5975C948EEC0"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_cn_down.wav",
+    "sha256": "7F964F4A9B11FEE8A80BB39E895078904D6F46A5F867FF7CCEA9675BBEE5FA86"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_cn_down.wav.meta",
+    "sha256": "4B2E59C7E802FE89A86891F94345A625C363D744BB486DFC9CFCB5C665765635"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_cn_up.wav",
+    "sha256": "D662327E2D9EBCF890AFD2AAAAA00AE3C91100E6E29EE36D73AD4D175CC7FAA6"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_cn_up.wav.meta",
+    "sha256": "B24E84062CE25D51512DFF5D749F4667734C55E8C8FE6BAAECEF8B7DBE062923"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_de_down.wav",
+    "sha256": "0F66F01AEED37367697E9DAE3053D78D8DF90E8872FFB252411137CCD20BFAB2"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_de_down.wav.meta",
+    "sha256": "B8C3C623BA96921354F77A432A3F158F34A437639B8F145E000215679AE06BCD"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_de_up.wav",
+    "sha256": "65DB7D98805FE2FD98AB650EB165D39FEE68E9F08094F4C97DA1286C8362AECC"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_de_up.wav.meta",
+    "sha256": "8F091C39DCA4F1D74E1ABD6517BC9848BA8E122566CA1D7FD7F0A042FC8814F6"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_it_down.wav",
+    "sha256": "C6160BAC8898CBFC83FF4BBC65D63F03ABDACDCA2FBC01D2CCCB8089F262C0A1"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_it_down.wav.meta",
+    "sha256": "24F648517A6248D140452DC38B3BCB8124184C5C65AE04548A1E87A03D494171"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_it_up.wav",
+    "sha256": "A57A7CCB4027D0B2933D3685C5BF1D96F6B853E1AA50151CC30F4D69A2B2255B"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_it_up.wav.meta",
+    "sha256": "54DCC293F9D226B839C7422F4D862687852A6287EB878EAD3FA2F01D9445BCE4"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_jp_down.wav",
+    "sha256": "193D3A359A45E3B7457A4EE191C90112F842EB738791C7E7DF6AB63086792E4C"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_jp_down.wav.meta",
+    "sha256": "A309C3FD55C5BF607D13F93611B6646AB55BE9193392583DBE3B4938849452E5"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_jp_up.wav",
+    "sha256": "E21F10C98297DD2B84D7E87479D0569E315726E54A615451FF839703B933F42A"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_jp_up.wav.meta",
+    "sha256": "415F380BDE0E99EDBC6E629F9C9529FF552658919DC991B1FF460A86E70A3092"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_uk_down.wav",
+    "sha256": "CAD1DC8CA916550E9D54EE638CE54B2C95A379ECAC0BA81596B3BDC0DC9E924D"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_uk_down.wav.meta",
+    "sha256": "9B4B82E187F4E9669DA65B82220AE91CD03CB9137103A4FF6AEC89D034B58603"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_uk_up.wav",
+    "sha256": "EE528C57586FDB43461CAC44323129268A04704423C91F58FDED3B7918838C3D"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_uk_up.wav.meta",
+    "sha256": "2639281915628EDCA12E3DBC58686598AB5E45A8174FC937CC5CE37E89AF8A6C"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_us_down.wav",
+    "sha256": "01960BCA2DAC910DB96605DCD1E356732A6006C98609D46E8D34C0111CCBBD8A"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_us_down.wav.meta",
+    "sha256": "731FECF28A27687500FCF91EA281C40EF938FF51B18408D59D2367449D609129"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_us_up.wav",
+    "sha256": "96A86665BD8DE86547ADC63DD965D0534528E0D22BAFB0542372E2756F18AF99"
+  },
+  {
+    "path": "Assets/Resources/Audio/SFX/team_shift_us_up.wav.meta",
+    "sha256": "DC8B14CCCC6B7FF0063AEA2E07085EFD3E4C1C9294DC36ED039810C8FD6A7617"
+  },
+  {
+    "path": "docs/audio/licenses/overtake/BigSoundBank-s0556-source.html",
+    "sha256": "91987D90CDD728690E2FC2FCF776059FC884F6222AB11006B90E91EF6B3F80D4"
+  },
+  {
+    "path": "production/qa/evidence/team-audio-preview-2026-10-11.wav",
+    "sha256": "317D934F0FFB694307C0140871D917FBA2AF61E151FB2A420BDB65CB3FE8836A"
+  },
+  {
+    "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_cn_down.wav",
+    "sha256": "94E83E7EC58D01E0158BE34B008E09677440232CB9100879EC108B0C8F438233"
+  },
+  {
+    "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_cn_up.wav",
+    "sha256": "498F966F3CDD0796300D15A3BDB206C52454E4E9FB3F4FD54052D7C0C12686FB"
+  },
+  {
+    "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_de_down.wav",
+    "sha256": "84DA130C536BD46B7270E8EA4BEFB2ACF0B0692DACA89B1C36ED66EB4BACC996"
+  },
+  {
+    "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_de_up.wav",
+    "sha256": "E107AFC86DDF9B19CEC68ED8677153FB633BED7FD4DA983CD72BE5ED2A0B8742"
+  },
+  {
+    "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_it_down.wav",
+    "sha256": "038A7527E6D63C89709B7582E03CC32D53F6A51822F815863DA06A637F1616DE"
+  },
+  {
+    "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_it_up.wav",
+    "sha256": "1682D7B8AC26C2236A93EC453B207439EFF822DC7EBDB7EED15F796E8B143EEC"
+  },
+  {
+    "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_jp_down.wav",
+    "sha256": "75EE13ACE7AD6EE73109D56E0D6C687FBE3831AFC437763277475C81B2492060"
+  },
+  {
+    "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_jp_up.wav",
+    "sha256": "E85EF5A574DCCB95AC0A6A105ADAADF943EA51A5CD234196FE4CB9F0C954692F"
+  },
+  {
+    "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_uk_down.wav",
+    "sha256": "3DABB7AF5402024734462ABBFBB80FCE818C160743851EEB523CBAA79D89E7D9"
+  },
+  {
+    "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_uk_up.wav",
+    "sha256": "7BD98DD221F8DD5D800F13909C3937D127F16BF62FA7250963970499577E143C"
+  },
+  {
+    "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_us_down.wav",
+    "sha256": "5EB01C3B78C99EB95A0D21CB188AB34C0CC47B79FB071968967BEF2FA44D8FD3"
+  },
+  {
+    "path": "tools/Audio/cc0-shift-staging/team_shift_cc0_us_up.wav",
+    "sha256": "1CF6E277D4133976BF15798C28061B23AD15F532B7A3CDA4629A6DDBF6282DB0"
+  },
+  {
+    "path": "tools/Audio/overtake-staging/overtake_cc0.wav",
+    "sha256": "456AF869F1B432C69530197F4AA0DF57E74C6D315108E417133914618B976165"
+  },
+  {
+    "path": "tools/Audio/overtake-staging/overtake_source_then_cue.wav",
+    "sha256": "43970E1B0B9EC94EF092CBD1EC17F9D505F417C11464FB37E6BD3EDEBCA19C26"
+  },
+  {
+    "path": "tools/Audio/team_vehicle_comparison.wav",
+    "sha256": "4993A0FD1933888A6ED71725D4634D54BBD061B953BDC5DDB42374140A33AA44"
+  },
+  {
+    "path": "tools/Audio/team_vehicle_tuning_comparison.wav",
+    "sha256": "9F94DC1043B874D6434F8BF25B917223F9BAADAFC3A612B51C36081E99417975"
+  },
+  {
+    "path": "tools/audio-overtake-staging/AudioEventNames.cs.txt",
+    "sha256": "DC50A4FFE88EF90CA91C65BB8A72370C4E4B4A4F4A2D5C540967B24EA10643EC"
+  },
+  {
+    "path": "tools/audio-overtake-staging/AudioRuntimeRules.cs.txt",
+    "sha256": "8231DB8F18C5180DACB2ED4CD1CE49C3C9129F04A0106E5467D86AEF2F820E84"
+  },
+  {
+    "path": "tools/audio-overtake-staging/AudioService.cs.txt",
+    "sha256": "8E95B9DA5C07F7FF69C9F357FA4A0AFA0D11EB175B5CF4F52A3287BEE4A0CF93"
+  },
+  {
+    "path": "tools/audio-overtake-staging/OvertakeAudioPresentation.cs.txt",
+    "sha256": "85F5902BB39D4D3EFEC3573F2995EA436280EB6BEAE17765AB77C3859E44E2A7"
+  },
+  {
+    "path": "tools/audio-overtake-staging/RaceEventFX.cs.txt",
+    "sha256": "C4404326AD529C0B85288C90833AAB01F78774E5567CAD75C68600785C0F55AC"
+  },
+  {
+    "path": "tools/audio-overtake-staging/baseline-hashes.json",
+    "sha256": "110D263ED8E105ACC3A1096E4E7557678BEB8394FD2073C01B04D03CA127DDC0"
+  },
+  {
+    "path": "tools/audio-overtake-staging/compile.rsp",
+    "sha256": "6BCBAF77377EF98676BE47C34F0C60D3A690A24E2E9CACDB0CDCA4B5872C4679"
+  },
+  {
+    "path": "tools/audio-overtake-staging/overtake_audio_presentation_test.cs.txt",
+    "sha256": "EC1A758523F6310E6B3266BA1C4BE5CC42C3C43E34CE5B47C151BA3BAD1194F4"
+  },
+  {
+    "path": "tools/ui-action-buttons-staging/RaceUILayoutController.cs.txt",
+    "sha256": "DF3C3DAB3A069464848892833FFC9255F43E148269618E153675C2311F05FB31"
+  },
+  {
+    "path": "tools/ui-action-buttons-staging/RacingTechActionButtonStyle.cs.txt",
+    "sha256": "41B7C9F273BD684FCD30A52E296535E4451FF807AD7EC5192E686E8A6B16D0E5"
+  },
+  {
+    "path": "tools/ui-action-buttons-staging/compile.rsp",
+    "sha256": "82CBA4EFEEA969C2AB137D726E1936654C5ABD4E4851CF8873C68304DDB9F514"
+  },
+  {
+    "path": "tools/ui-action-buttons-staging/racing_tech_action_button_test.cs.txt",
+    "sha256": "08F8330BD91536F3D57396CF6F9B8BDF696DB56B49EA1752B78623105F8473DF"
+  },
+  {
+    "path": "tools/ui-card-zone-staging/CardPilePreviewUI.cs.txt",
+    "sha256": "CC8EEE41FB34ACDD856F55638E1093A85C2525441F7286D5D4DD64AC3494A7FA"
+  },
+  {
+    "path": "tools/ui-card-zone-staging/RaceUILayoutController.cs.txt",
+    "sha256": "CC079F68C2F1B493A9BCA16B6C5E9D0C7D79FA3D7F710F3B5E331BE513073962"
+  },
+  {
+    "path": "tools/ui-card-zone-staging/RacingTechCardZoneStyle.cs.txt",
+    "sha256": "5267485DEAED0563BDEE9DE0EBA3CED61F1AC5F5AF711A5C3A47DAE830DB2034"
+  },
+  {
+    "path": "tools/ui-card-zone-staging/racing_tech_card_zone_test.cs.txt",
+    "sha256": "CAF3B5C5D33F5823038691F95D391D6CF8E646ED5EBC7D2FB917A8BC80C365BF"
+  },
+  {
+    "path": "tools/ui-card-zones-staging/RacingTechCardZonesCapture.cs.txt",
+    "sha256": "F046BA645D89B7DA0E12BD6033AA92D51D18B941913AC827D6D4ECE8A1494507"
+  },
+  {
+    "path": "tools/ui-card-zones-staging/audit-evidence.ps1",
+    "sha256": "43E889BA5C8A54A21714CF605BBFA47EA8A52E1D9DE9D422AA14C096DDE921D1"
+  },
+  {
+    "path": "tools/ui-card-zones-staging/finalize-evidence.ps1",
+    "sha256": "9EC1C47F90E219C2E24826A6A3A5307D1EA3BD8104408322C496F9334732118D"
+  },
+  {
+    "path": "tools/ui-confirmation-staging/HUDUI.cs.txt",
+    "sha256": "1E71DCADF1AF811E761259DD66D7E010863C2FF62C6B684199D13185362D3982"
+  },
+  {
+    "path": "tools/ui-confirmation-staging/RacingTechConfirmationStyle.cs.txt",
+    "sha256": "6018E40BC7798989982DC9940E0ECA7F52B96A78C1E754C63DF356EFE888F278"
+  },
+  {
+    "path": "tools/ui-confirmation-staging/compile.rsp",
+    "sha256": "B57D88E8D5F4C45C77539977D88691DD0E37206DC3FCF76078A67A0713A80247"
+  },
+  {
+    "path": "tools/ui-confirmation-staging/racing_tech_confirmation_test.cs.txt",
+    "sha256": "7D704B3FA301B1DB2339AAB41D82E029FCA8E7283014F69587699F74950005CB"
+  },
+  {
+    "path": "tools/ui-pile-inspector-staging/CardPilePreviewUI.cs.txt",
+    "sha256": "AA8FD71B5FCA147385A2FC6C613F44D977532106991760F4AC2E57EB690B42CB"
+  },
+  {
+    "path": "tools/ui-pile-inspector-staging/RacingTechPileInspectorCapture.cs.txt",
+    "sha256": "DB36F939BC28B0D2FE52CE9E6770ECBB0906375D084CCE1A2EF78015133DD18E"
+  },
+  {
+    "path": "tools/ui-pile-inspector-staging/RacingTechPileInspectorStyle.cs.txt",
+    "sha256": "45ABB46BEAF52A350B745EC738AF29AB58EED41D6932CEF42AF12644204FDA72"
+  },
+  {
+    "path": "tools/ui-pile-inspector-staging/racing_tech_pile_inspector_test.cs.txt",
+    "sha256": "96661825D15184EC361B97E6CDCC836E326704EED90B5174862D896A098B1EEB"
+  },
+  {
+    "path": "tools/ui-selected-effect-staging/CardHandUI.cs.txt",
+    "sha256": "44E06A643E90894550AB61A9874A8B2CCFABF2AF4456C76679AABFF50E976EC7"
+  },
+  {
+    "path": "tools/ui-selected-effect-staging/RacingTechSelectedEffectCapture.cs.txt",
+    "sha256": "FB02A29CFA76A405BB0932CAC047B397C333A70299C8C87E820FBCCC3EC612C5"
+  },
+  {
+    "path": "tools/ui-selected-effect-staging/RacingTechSelectedEffectStyle.cs.txt",
+    "sha256": "D7FBC5F1C6D2325E92601414CA9719A9294D7A8662974C6E53CB6F37C0E5149A"
+  },
+  {
+    "path": "tools/ui-selected-effect-staging/racing_tech_selected_effect_test.cs.txt",
+    "sha256": "F4F2B200AC13AB9683F784B8D530D7EEAAFEEBF3CFEF1DA2AB7657FEA9977041"
+  },
+  {
+    "path": "tools/ui-track-staging/RacingTechTrackSelectionCapture.cs.txt",
+    "sha256": "E7EFB1D2D7EA18B00373BCD991A13F840DE1E1921B50E2F3D8FEA5578E80D732"
+  },
+  {
+    "path": "tools/ui-track-staging/TrackSelectionUI.cs.txt",
+    "sha256": "432BFDA6AA4FE0E9F4950463BDEA8A84F9137475055894C909271232945D40C2"
+  },
+  {
+    "path": "tools/ui-track-staging/compile.rsp",
+    "sha256": "E00034FE857D96B75DFFFE63A375891D2FA20AFD03825D609A6121C90FC9A89C"
+  },
+  {
+    "path": "tools/ui-track-staging/racing_tech_track_selection_test.cs.txt",
+    "sha256": "F49B22E7C4F308D0795ED2C154E681E3A0E33A0F4B9D93569FC9D4B07847FAC7"
+  }
+]

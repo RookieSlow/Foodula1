@@ -1,0 +1,163 @@
+{
+  "kind": "independent_design_model_not_unity",
+  "total": 37,
+  "passed": 37,
+  "failed": 0,
+  "skipped": 0,
+  "parameter_cases": 1080,
+  "elapsed_seconds": 0.1501,
+  "input_sha256": "e5f5d40d372933e81b6b7a3108417d25d8dea8551f82ee179bab0cc7ecaef71a",
+  "script_sha256": "fc683377d8510d6974c92c8c676ab76653280a6f46205a62a86c9ca06a82c5a7",
+  "checks": [
+    {
+      "name": "英国次数为2/2/3 德国为1/1/2",
+      "passed": true
+    },
+    {
+      "name": "枚举启动与付款守恒",
+      "passed": true
+    },
+    {
+      "name": "预览不提交或消费",
+      "passed": true
+    },
+    {
+      "name": "输入关闭拒绝",
+      "passed": true
+    },
+    {
+      "name": "终态拒绝启动",
+      "passed": true
+    },
+    {
+      "name": "启动只扣一次次数及原速度牌",
+      "passed": true
+    },
+    {
+      "name": "重复启动不会再次支付",
+      "passed": true
+    },
+    {
+      "name": "教程不启动 生涯候选可运行但不写存档",
+      "passed": true
+    },
+    {
+      "name": "不足两张速度牌时不半笔扣费",
+      "passed": true
+    },
+    {
+      "name": "亨特上限是整次2/3/3而非每张牌加成",
+      "passed": true
+    },
+    {
+      "name": "环线跨终点按绝对进度而非取模伪造套圈目标",
+      "passed": true
+    },
+    {
+      "name": "曼森实际追近后才兑现",
+      "passed": true
+    },
+    {
+      "name": "曼森换目标 不追近 已超越 均停止",
+      "passed": true
+    },
+    {
+      "name": "曼森过期或恢复不延长窗口",
+      "passed": true
+    },
+    {
+      "name": "曼森二次兑现不能同回合刷取",
+      "passed": true
+    },
+    {
+      "name": "曼森第二笔不足不赠送移动",
+      "passed": true
+    },
+    {
+      "name": "舒马赫需要准备然后两笔真实付款",
+      "passed": true
+    },
+    {
+      "name": "舒马赫不能高挡准备",
+      "passed": true
+    },
+    {
+      "name": "舒马赫准备挡位也需要足够原速度牌",
+      "passed": true
+    },
+    {
+      "name": "舒马赫低挡执行会失效",
+      "passed": true
+    },
+    {
+      "name": "舒马赫失败或跳过后不能第三回合补领",
+      "passed": true
+    },
+    {
+      "name": "舒马赫没有永久免弯道热或无限重放",
+      "passed": true
+    },
+    {
+      "name": "跨个人回合的旧真实付款不进入本回合返还",
+      "passed": true
+    },
+    {
+      "name": "维特尔两回合封顶4格并锁来源",
+      "passed": true
+    },
+    {
+      "name": "同回合三次黑啤仅增幅一次",
+      "passed": true
+    },
+    {
+      "name": "未结算 空值 他人 非原生都不增幅",
+      "passed": true
+    },
+    {
+      "name": "维特尔窗口不因未触发而顺延",
+      "passed": true
+    },
+    {
+      "name": "无科技仍可选基础巡航 未解锁来源拒绝",
+      "passed": true
+    },
+    {
+      "name": "旧热不能冒充当前付款返还",
+      "passed": true
+    },
+    {
+      "name": "德国返还当前付款收据后不能再次增加热牌",
+      "passed": true
+    },
+    {
+      "name": "德国三次黑啤加维特尔增幅为8格而非12格",
+      "passed": true
+    },
+    {
+      "name": "回热不重置车手次数或事件计数",
+      "passed": true
+    },
+    {
+      "name": "过期后第二次发动另扣次数 不刷新旧窗口",
+      "passed": true
+    },
+    {
+      "name": "四类被动的每圈已用门控",
+      "passed": true
+    },
+    {
+      "name": "被动冷却只搬真实手牌热且预览不搬",
+      "passed": true
+    },
+    {
+      "name": "维特尔被动三级只扩大合法来源集合",
+      "passed": true
+    },
+    {
+      "name": "调校折扣需达到真实弯道付款门槛",
+      "passed": true
+    }
+  ],
+  "limits": "检查提交、取消、目标连续性、个人回合窗口、固定来源、永久热牌身份及返还上限。未模拟牌堆、天气、真实路径、AI、胜率、Unity 或存档。",
+  "unity_tests_run": 0
+}

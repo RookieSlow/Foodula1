@@ -1,0 +1,157 @@
+{
+  "package": "P5",
+  "finalized_at": "2026-10-22T16:00:21.858012+08:00",
+  "head": "f0a12b01e181d1ae9cf3009bc446da003f7c6c56",
+  "git_operations_performed": [],
+  "baseline_file_count": 560,
+  "existing_files_changed": [
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技树调整草案.docx",
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_车手技能调整草案.docx",
+    "design/planning/tech-driver-rework-2026-10-22/progress.json"
+  ],
+  "new_task_files": [
+    "design\\planning\\tech-driver-rework-2026-10-22\\analysis\\p5-feedback-responses.json",
+    "design\\planning\\tech-driver-rework-2026-10-22\\analysis\\p5-source-manifest.json"
+  ],
+  "outputs": {
+    "technology_draft": {
+      "path": "D:\\UnityProject\\Foodula1\\design\\planning\\tech-driver-rework-2026-10-22\\Foodula1_科技树调整草案.docx",
+      "sha256": "281e077813344ab1e3627bb075dcc28d361a0626c8c39b3492f016a9f62d7bb3",
+      "pages": 28,
+      "state": "design_draft_complete_awaiting_user_confirmation",
+      "scope": "P5 final candidate recommendations, individual feedback responses, historical evidence labels, implementation boundaries and verification plan; not approved or implemented",
+      "changed_ooxml_parts": [
+        "word/document.xml"
+      ],
+      "native_hyperlinks": 1,
+      "render_path": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P5-consolidation\\tech-render-delivery"
+    },
+    "driver_draft": {
+      "path": "D:\\UnityProject\\Foodula1\\design\\planning\\tech-driver-rework-2026-10-22\\Foodula1_车手技能调整草案.docx",
+      "sha256": "94eb7763825f777d477b3fcb8fee92bad27e6353e42d8b2cdeb98f3889914f46",
+      "pages": 42,
+      "state": "design_draft_complete_awaiting_user_confirmation",
+      "scope": "P5 final candidate recommendations, individual feedback responses, historical evidence labels, implementation boundaries and verification plan; not approved or implemented",
+      "changed_ooxml_parts": [
+        "word/document.xml"
+      ],
+      "native_hyperlinks": 21,
+      "render_path": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P5-consolidation\\driver-render-pass1"
+    }
+  },
+  "record_hashes": {
+    "design\\planning\\tech-driver-rework-2026-10-22\\Foodula1_科技树调整草案.docx": "281e077813344ab1e3627bb075dcc28d361a0626c8c39b3492f016a9f62d7bb3",
+    "design\\planning\\tech-driver-rework-2026-10-22\\Foodula1_车手技能调整草案.docx": "94eb7763825f777d477b3fcb8fee92bad27e6353e42d8b2cdeb98f3889914f46",
+    "design\\planning\\tech-driver-rework-2026-10-22\\progress.json": "9ff72aaf89bc7745ac4d4c71657bb1e5d6fb00b46c02ad26e6a77c02e4277613",
+    "design\\planning\\tech-driver-rework-2026-10-22\\analysis\\p5-feedback-responses.json": "6eda251af9b95b3a167542692444a49f828950f4183167df903b844f1759fb38"
+  },
+  "feedback_sha256": "9bf842dabd10396bc8991b5f576a2374abf1ae999d2d1b0bb2f255402fd4a964",
+  "research_sha256": "6f4fd54a055cc14026369c0a1bc0cef8e1372794e7062c2a4f4b6970be0e7db3",
+  "all_prior_worktree_entries_preserved": true,
+  "tracked_diff_unchanged": true,
+  "unrelated_baseline_hash_changes": [],
+  "deleted_files": [],
+  "source_and_original_docx_parts_preserved": true,
+  "source_parts_changed_only": [
+    "word/document.xml"
+  ],
+  "document_validation": {
+    "feedback_responses": {
+      "total": 24,
+      "verified": 24,
+      "failed": 0
+    },
+    "distinct_driver_cards": 12,
+    "pages_viewed": 70,
+    "layout": "28 technology plus 42 driver pages; no clipping, split response rows, missing glyphs or accidental spill pages in final render.",
+    "final_corrected_technology_pages": [
+      11,
+      24,
+      25
+    ],
+    "all_other_technology_rasters_identical": true,
+    "packaged_audits": [
+      {
+        "doc": "driver",
+        "audit": "section_audit",
+        "exit_code": 0,
+        "log": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P5-consolidation\\driver-section_audit.txt"
+      },
+      {
+        "doc": "driver",
+        "audit": "heading_audit",
+        "exit_code": 0,
+        "log": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P5-consolidation\\driver-heading_audit.txt"
+      },
+      {
+        "doc": "driver",
+        "audit": "style_lint",
+        "exit_code": 0,
+        "log": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P5-consolidation\\driver-style_lint.txt"
+      },
+      {
+        "doc": "tech",
+        "audit": "section_audit",
+        "exit_code": 0,
+        "log": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P5-consolidation\\tech-delivery-section_audit.txt"
+      },
+      {
+        "doc": "tech",
+        "audit": "heading_audit",
+        "exit_code": 0,
+        "log": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P5-consolidation\\tech-delivery-heading_audit.txt"
+      },
+      {
+        "doc": "tech",
+        "audit": "style_lint",
+        "exit_code": 0,
+        "log": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P5-consolidation\\tech-delivery-style_lint.txt"
+      }
+    ],
+    "elapsed_seconds_for_script_checks": 2.4727,
+    "not_game_tests": true
+  },
+  "design_review": {
+    "depth": "solo",
+    "agents_spawned": 0,
+    "verdict": "READY_FOR_USER_DESIGN_DECISION",
+    "before_implementation": [
+      "UK L1 A/B、早餐独立L3是否双份、主场L1最多回2及不暗乘旧1.25口径；全部待确认。",
+      "DE L3 A固定3次或B冻结E0；开窗、真实支付锁定与收尾返还仅为候选。",
+      "IT L2 A手牌或B二选一；L3 B科研投资附带或A单场1000RP；目标须有实际减1空间，RP交易若采用需实现开赛凭据。",
+      "US BBQ A路段每圈或B连续穿越双限；L3进度A或压缩B，净回与区域退役、烟幕互斥均待接入。",
+      "CN L2温杯A或换盏B；普通Recover生产全牌区与旧GDD手牌限定差异需确认，不顺带改核心规则。",
+      "JP只选汤底A或含特技配比B；R2主动有限窗口或R1自动，生涯锁定范围和字段待确认。",
+      "十二位车手的被动/主动及三级数值逐卡待确认；D12建议优先比较高桥方向，拓海保留案完整留存，人物及XP方案尚未决定。"
+    ],
+    "candidate_findings_resolved": [
+      "Legacy cross-driver references synchronized",
+      "IT precision adjustment requires positive reducible contribution; no same-card stacking",
+      "DE L3 once-per-race burst distinguished from ordinary L1 frequency"
+    ],
+    "historical_model_results_reused_as_history_only": true,
+    "future_validation_groups": 10
+  },
+  "unity_tests": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "elapsed_seconds": null,
+    "status": "not_run"
+  },
+  "console": "not_checked",
+  "missing_governance": [
+    "production/session-state/active.md",
+    ".Codex/docs/directory-structure.md",
+    ".Codex/docs/technical-preferences.md",
+    ".Codex/docs/coordination-rules.md",
+    ".Codex/docs/coding-standards.md",
+    ".Codex/docs/context-management.md"
+  ],
+  "notes": [
+    "No production rules, GDDs, user feedback originals, IDs, XP, RP, saves or assets modified.",
+    "User separately requested default Word file associations while this package was being closed; that OS request is outside gameplay scope and is not implementation approval.",
+    "Windows picker was opened, but native picker is not a targetable automation window; .doc/.docx are not claimed changed without verified UserChoice."
+  ]
+}

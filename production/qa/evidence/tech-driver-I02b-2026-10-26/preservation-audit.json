@@ -1,0 +1,46 @@
+{
+  "changed_from_turn_baseline": [
+    "Assets\\Scripts\\Drivers\\DriverSkillRuntime.cs",
+    "Assets\\Scripts\\Drivers\\MansellPursuitRuntime.cs",
+    "Assets\\Tests\\Editor\\driver_skill_rules_test.cs",
+    "Assets\\Tests\\Editor\\driver_skill_runtime_test.cs",
+    "Assets\\Tests\\Editor\\final_sprint_turn_end_test.cs",
+    "Assets\\Tests\\Editor\\race_movement_rules_test.cs",
+    "Assets\\Tests\\Editor\\race_turn_boundary_integration_test.cs",
+    "Assets\\Tests\\Editor\\race_uk_skill_coroutine_test.cs",
+    "design\\planning\\tech-driver-rework-2026-10-22\\implementation-plan.json",
+    "design\\planning\\tech-driver-rework-2026-10-22\\progress.json"
+  ],
+  "unexpected_source_changes": [],
+  "missing_baseline_files": [],
+  "missing_existing_status_paths": [],
+  "protected_InitTestScene_unchanged": "No InitTestScene*.unity files currently found under Assets; no scene files written by this package. All pre-existing status paths remain present.",
+  "word_sha256": {
+    "design\\planning\\tech-driver-rework-2026-10-22\\Foodula1_科技与车手调整简报.docx": "afc1c1e33b1edef7a547a68e2df34e4879c55e1e5f87f9988a579ae10b11d01b",
+    "design\\planning\\tech-driver-rework-2026-10-22\\Foodula1_科技树调整草案.docx": "281e077813344ab1e3627bb075dcc28d361a0626c8c39b3492f016a9f62d7bb3",
+    "design\\planning\\tech-driver-rework-2026-10-22\\Foodula1_车手技能调整草案.docx": "94eb7763825f777d477b3fcb8fee92bad27e6353e42d8b2cdeb98f3889914f46"
+  },
+  "git_diff_check_exit": 0,
+  "relevant_sha256": {
+    "Assets\\Scripts\\Drivers\\DriverSkillRuntime.cs": "e4072f7a66b3a8fa4c4ce032a761940bbf150fdb995dcd3d7541d2161aa0217c",
+    "Assets\\Scripts\\Drivers\\MansellPursuitRuntime.cs": "3dd33750ec0cff661c9846e87dbcf0232052c0cf026530efd20ce85dc384fa44",
+    "Assets\\Tests\\Editor\\driver_skill_rules_test.cs": "5387afc1cf8cf04295edd4c486e4585f7dde128770dd13b58e0aceaeefa30348",
+    "Assets\\Tests\\Editor\\driver_skill_runtime_test.cs": "ffc461e32114440e198ea999093cff38733b95e8bc9269426083815e5f5efc9c",
+    "Assets\\Tests\\Editor\\final_sprint_turn_end_test.cs": "24de3c9d233a8998383c52a244cb4af41ccffc39586919b01e1ace9aa1b38f41",
+    "Assets\\Tests\\Editor\\race_movement_rules_test.cs": "f5129655c2c02d5060e01afd52d701928cc55d3b38b90c7e1652111357ba63f5",
+    "Assets\\Tests\\Editor\\race_turn_boundary_integration_test.cs": "e237d60764bb326e0ee0d36fb6984176f92875b423067f59e2ad2a9ead644706",
+    "Assets\\Tests\\Editor\\race_uk_skill_coroutine_test.cs": "b73fbe9761e5374d1946b4bb31d0aeb068c086247f7a843f09401609af6ee602",
+    "design\\planning\\tech-driver-rework-2026-10-22\\implementation-plan.json": "a820ab953d8aab341bfde8b357838c8f77512d51e2579a58f84fdbe15cfa6293",
+    "design\\planning\\tech-driver-rework-2026-10-22\\progress.json": "bbe09ac3e78c400b2d353d57178159f386fa6832c78dbaafe877bc736d88d5f2",
+    "Assets/Tests/Editor/mansell_pursuit_test.cs": "2deb94a2338fcf03a98d92c96b6ab19d346e202a69cf9c6d2540ae73d074e5a0",
+    "Assets/Tests/Editor/RegressionModules.json": "d184a54d27ed2f5059d256cdc70d1c45c7431427d472da83d9d141aaeb7d3812",
+    "design/gdd/foodula-1-drivers.md": "0f9a87415efb624b22f868aa5e70c368b535c86049f91708bcc3f905dabe25b6",
+    "tests/regression-suite.md": "84b1927f9cbe8a25705132e293344f92e34e12645e78346ab8b0673aeca37093"
+  },
+  "known_missing_governance": [
+    "production/session-state/active.md",
+    ".Codex/docs/technical-preferences.md",
+    ".Codex/docs/coding-standards.md"
+  ],
+  "InitTestScene_audit": []
+}

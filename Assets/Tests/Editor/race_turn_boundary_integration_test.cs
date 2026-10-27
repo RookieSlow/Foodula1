@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework;
@@ -47,6 +48,152 @@ public class RaceTurnBoundaryIntegrationTests
         player.deck.AddCardsToHand(new[] { CardData.CreateTempHeat() });
         session.Players.Add(player);
         return player;
+    }
+
+    private PlayerState CreateUkClockPlayer(string id)
+    {
+        Assert.That(DriverCatalog.TryGet(id, out DriverProfile profile), Is.True);
+        var player = new PlayerState("UK input clock", false, 8, 1)
+        { driverId = id, teamId = TeamId.UK, lap = 2 };
+        player.deck.InitializeExactOrder(new[] { new CardData(CardType.Speed, 2) }, new HeatPool(6));
+        player.deck.DrawToHand(1);
+        player.driverSkill.Initialize(profile, 7, true);
+        session.Players.Add(player);
+        session.BeginTurn(player);
+        Assert.That(session.BeginDriverSkillInput(player), Is.True);
+        Assert.That(player.driverSkill.TryActivate(profile,
+            new DriverSkillActivationContext(true, 2, 3, 6, 6, 0), out _), Is.True);
+        return player;
+    }
+
+    [TestCase("uk_hunter_hart", "pit")]
+    [TestCase("uk_hunter_hart", "recovery")]
+    [TestCase("uk_hunter_hart", "skip")]
+    [TestCase("uk_hunter_hart", "finished")]
+    [TestCase("uk_hunter_hart", "blown")]
+    [TestCase("uk_nigel_mansell", "pit")]
+    [TestCase("uk_nigel_mansell", "recovery")]
+    [TestCase("uk_nigel_mansell", "skip")]
+    [TestCase("uk_nigel_mansell", "finished")]
+    [TestCase("uk_nigel_mansell", "blown")]
+    public void SessionClearsBlockedUkWindowWithoutSpendingAnotherInput(string id, string blocked)
+    {
+        PlayerState player = CreateUkClockPlayer(id);
+        int uses = player.driverSkill.UsesRemaining;
+        CardData handCard = player.deck.Hand[0];
+        session.BeginTurn(player);
+        switch (blocked)
+        {
+            case "pit": player.pitStopScheduled = true; break;
+            case "recovery": player.skipNextTurn = true; break;
+            case "skip": player.kantoOdenSkipThisTurn = true; break;
+            case "finished": player.hasFinished = true; break;
+            case "blown": player.isBlown = true; break;
+        }
+        RaceTurnStartAction action = RaceTurnRules.GetStartAction(player);
+
+        Assert.That(session.BeginDriverSkillInput(player), Is.False);
+        Assert.That(session.BeginDriverSkillInput(player), Is.False);
+        Assert.That(player.driverSkill.IsActive, Is.False);
+        Assert.That(player.driverSkill.DrivingInputsStarted, Is.EqualTo(1));
+        Assert.That(player.driverSkill.UsesRemaining, Is.EqualTo(uses));
+        Assert.That(RaceTurnRules.GetStartAction(player), Is.EqualTo(action));
+        Assert.That(player.deck.Hand[0], Is.SameAs(handCard));
+        Assert.That(player.deck.heatPool.remaining, Is.EqualTo(6));
+    }
+
+    [TestCase("uk_hunter_hart", false)]
+    [TestCase("uk_hunter_hart", true)]
+    [TestCase("uk_nigel_mansell", false)]
+    [TestCase("uk_nigel_mansell", true)]
+    public void ActualCleanupClearsUkWindowOnTerminalOrRecoveryWithoutRefund(string id, bool terminal)
+    {
+        PlayerState player = CreateUkClockPlayer(id);
+        int uses = player.driverSkill.UsesRemaining;
+        player.hasFinished = terminal;
+        player.skipNextTurn = !terminal;
+        Cleanup(player);
+        Assert.That(player.driverSkill.IsActive, Is.False);
+        Assert.That(player.driverSkill.UsesRemaining, Is.EqualTo(uses));
+        Assert.That(player.driverSkill.BeginDrivingInput(), Is.False);
+    }
+
+    [Test]
+    public void TwoUkParticipantsAdvanceOnlyTheirOwnClock()
+    {
+        PlayerState first = CreateUkClockPlayer("uk_hunter_hart");
+        PlayerState second = CreateUkClockPlayer("uk_nigel_mansell");
+        session.BeginTurn(first);
+        session.BeginTurn(second);
+        Assert.That(session.BeginDriverSkillInput(first), Is.True);
+        Assert.That(first.driverSkill.IsActive, Is.False);
+        Assert.That(second.driverSkill.IsActive, Is.True);
+        Assert.That(second.driverSkill.DrivingInputsStarted, Is.EqualTo(1));
+        Assert.That(session.BeginDriverSkillInput(first), Is.False);
+        Assert.That(session.BeginDriverSkillInput(second), Is.True);
+        Assert.That(second.driverSkill.IsActive, Is.False);
+        Assert.That(first.driverSkill.UsesRemaining, Is.EqualTo(2));
+        Assert.That(second.driverSkill.UsesRemaining, Is.EqualTo(2));
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void MansellLegacyOvertakeHookCannotSurviveOrRewardOwnerInput(bool skipped)
+    {
+        PlayerState player = CreateUkClockPlayer("uk_nigel_mansell");
+        player.driverSkill.ResolvePassiveTurnEnd(1);
+        session.BeginTurn(player);
+        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
+        player.skipNextTurn = skipped;
+        Assert.That(session.BeginDriverSkillInput(player), Is.EqualTo(!skipped));
+        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
+        Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.Zero);
+
+        player.skipNextTurn = false;
+        session.BeginTurn(player);
+        Assert.That(session.BeginDriverSkillInput(player), Is.True);
+        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
+        Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.Zero);
+    }
+
+    [TestCase("uk_hunter_hart")]
+    [TestCase("uk_nigel_mansell")]
+    public void RealGameLoopAdvancesUkClockBeforeOpeningOwnerGearInput(string id)
+    {
+        PlayerState player = CreateUkClockPlayer(id);
+        var config = ScriptableObject.CreateInstance<GameConfigSO>();
+        config.enableTechTree = false;
+        manager.config = config;
+        // Production A1 passes the actual track boundary to the driver's target lock.
+        // This iterator-prefix fixture must supply that dependency without scene startup.
+        manager.trackManager = host.AddComponent<TrackManager>();
+        var nodes = new List<TrackNode>();
+        for (int i = 0; i < 20; i++) nodes.Add(new TrackNode(i, 99));
+        typeof(TrackManager).GetField("nodes", PrivateInstance).SetValue(manager.trackManager, nodes);
+        var phase = (RacePhaseState)typeof(MVPGameManager).GetField("phaseState", PrivateInstance).GetValue(manager);
+        var input = (RaceInputState)typeof(MVPGameManager).GetField("inputState", PrivateInstance).GetValue(manager);
+        phase.ResetForRace();
+        var loop = (IEnumerator)typeof(MVPGameManager).GetMethod("GameLoop", PrivateInstance).Invoke(manager, null);
+        var stack = new Stack<IEnumerator>();
+        stack.Push(loop);
+        try
+        {
+            for (int i = 0; i < 12 && !input.WaitingForGear && stack.Count > 0; i++)
+            {
+                IEnumerator current = stack.Peek();
+                if (!current.MoveNext()) { stack.Pop(); continue; }
+                if (current.Current is IEnumerator nested) stack.Push(nested);
+            }
+            Assert.That(input.WaitingForGear, Is.True, "Pump only the real iterator's A1 prefix, not a whole race.");
+            Assert.That(player.driverSkill.DrivingInputsStarted, Is.EqualTo(2));
+            Assert.That(player.driverSkill.IsActive, Is.False);
+            Assert.That(player.driverSkill.UsesRemaining, Is.EqualTo(2));
+        }
+        finally
+        {
+            while (stack.Count > 0) (stack.Pop() as System.IDisposable)?.Dispose();
+            Object.DestroyImmediate(config);
+        }
     }
 
     private void Cleanup(PlayerState player)
@@ -128,37 +275,46 @@ public class RaceTurnBoundaryIntegrationTests
     }
 
     [Test]
-    public void RealPassiveFreePaymentLeavesBreadArmedForNextPayment()
+    public void RealPreparedCornerZeroCostLeavesBreadForNextOrdinaryPayment()
     {
-        var player = CreatePlayer(TeamId.DE);
-        DriverCatalog.TryGet("de_michael_schumacher", out var driver);
+        session.TeamVehicleBonusesEnabled = false;
+        var player = CreatePlayer(TeamId.DE); player.driverId = "de_michael_schumacher";
+        DriverCatalog.TryGet(player.driverId, out var driver);
         player.driverSkill.Initialize(driver, 2, true);
-        for (int i = 0; i < 3; i++) player.driverSkill.BeginTurn();
-        player.trickState.schwarzbrotActive = true;
-        player.trickState.schwarzbrotRemaining = 1;
-        Assert.IsTrue(manager.TryPayHeat(player, 1, 8, "discount"));
+        session.BeginTurn(player); Assert.IsTrue(session.BeginDriverSkillInput(player));
+        Assert.IsTrue(manager.TryPayHeat(player, 2, 8, "overspeed", HeatPaymentDestination.Hand, HeatPaymentSource.OrdinaryCorner));
+        Assert.IsTrue(player.driverSkill.Tuning.HasPending);
+        player.deck.CoolHeat(2);
+        session.BeginTurn(player); Assert.IsTrue(session.BeginDriverSkillInput(player));
+        player.trickState.schwarzbrotActive = true; player.trickState.schwarzbrotRemaining = 1;
+        int cost = session.ResolveOverspeedHeatCost(player, 1);
+        Assert.AreEqual(0, cost);
+        Assert.IsTrue(manager.TryPayHeat(player, cost, 8, "overspeed", HeatPaymentDestination.Hand, HeatPaymentSource.OrdinaryCorner));
         Assert.IsEmpty(player.heatPaidCardsThisTurn);
         Assert.AreEqual(4, player.deck.heatPool.remaining);
         Assert.IsTrue(player.trickState.schwarzbrotActive);
-        Assert.IsTrue(manager.TryPayHeat(player, 2, 8, "next payment"));
+        Assert.IsTrue(manager.TryPayHeat(player, 2, 8, "next ordinary payment"));
         Assert.AreEqual(1, player.heatPaidCardsThisTurn.Count);
         Assert.AreEqual(3, player.deck.heatPool.remaining);
         Assert.IsFalse(player.trickState.schwarzbrotActive);
     }
 
     [Test]
-    public void RealPartialPaymentRetainsFishAndChipsRescueAndActualReceipt()
+    public void RealPartialPaymentRetainsReceiptAndSpinsWithoutLegacyRescue()
     {
         var player = CreatePlayer(TeamId.UK);
         session.TechDb = TechTreeDatabaseFactory.CreateDefault();
         player.techState.activeNodeIds.Add("uk-l1-fish-and-chips");
-        player.deck.DrawHeatFromPool(3); // Only one engine heat remains.
-        Assert.IsTrue(manager.TryPayHeat(player, 2, 8, "short engine"));
-        Assert.IsTrue(player.techState.fishAndChipsUsed);
+        player.deck.DrawHeatFromPool(3);
+        var spinConfig = ScriptableObject.CreateInstance<GameConfigSO>();
+        manager.config = spinConfig;
+        try { Assert.IsFalse(manager.TryPayHeat(player, 2, 8, "short engine")); }
+        finally { Object.DestroyImmediate(spinConfig); manager.config = null; }
+        Assert.IsFalse(player.techState.fishAndChipsUsed);
         Assert.AreEqual(1, player.heatPaidCardsThisTurn.Count);
-        Assert.AreEqual(1, player.deck.heatPool.remaining);
         Assert.AreEqual(6, player.deck.heatPool.remaining + player.deck.CountPermanentHeatOutsideEngine());
-        Assert.AreEqual(0, player.spinCounter);
+        Assert.AreEqual(1, player.spinCounter);
+        Assert.IsTrue(player.skipNextTurn);
     }
 
     [TestCase(false)]
@@ -180,13 +336,19 @@ public class RaceTurnBoundaryIntegrationTests
 
     [TestCase(false)]
     [TestCase(true)]
-    public void RealGrillPaymentAndCleanupPreserveOldHeatAndOnlyTriggerOnce(bool ai)
+    public void RealDeclaredGrillPaymentAndCleanupPreserveOldHeatAndOnlyTriggerOnce(bool ai)
     {
-        var player = CreatePlayer(TeamId.DE);
-        player.isAI = ai;
+        var player = new PlayerState("declared driver", ai, 8, 1) { teamId = TeamId.DE, techState = new TechTreeState(TeamId.DE) };
+        player.deck.InitializeExactOrder(new[] { new CardData(CardType.Speed, 3), new CardData(CardType.Speed, 1),
+            new CardData(CardType.Speed, 2) }, new HeatPool(6));
+        player.deck.DrawToHand(2); player.deck.DrawHeatFromPoolToHand(2); player.deck.AddCardsToHand(new[] { CardData.CreateTempHeat() });
+        session.Players.Add(player); session.BeginTurn(player, 1);
         session.TechDb = TechTreeDatabaseFactory.CreateDefault();
         player.techState.activeNodeIds.Add("de-l3-grill-spezial");
-        player.deck.DrawHeatFromPool(1); // Previous-turn discard heat is not a receipt.
+        player.deck.DrawHeatFromPool(1); // Old discard heat is not a window receipt.
+        Assert.IsTrue(session.TryDeclareGermanBurst(player, true, 1));
+        CardData played = player.deck.Hand[0];
+        player.playedSpeedCardsThisTurn.AddRange(player.deck.RemoveFromHand(new List<CardData> { played }));
         Assert.IsTrue(manager.TryPayHeat(player, 2, 8, "regression"));
         Assert.AreEqual(2, player.heatPaidCardsThisTurn.Count);
         Cleanup(player);
@@ -330,7 +492,7 @@ public class RaceTurnBoundaryIntegrationTests
 
     [TestCase(0)]
     [TestCase(1)]
-    public void RealCleanupRegistersCurrentOvertakesForNextTurnOnly(int overtakes)
+    public void RealCleanupCannotGrantReplacedMansellOvertakeReward(int overtakes)
     {
         var player = CreatePlayer(TeamId.UK);
         Assert.That(DriverCatalog.TryGet("uk_nigel_mansell", out DriverProfile profile), Is.True);
@@ -343,9 +505,12 @@ public class RaceTurnBoundaryIntegrationTests
 
         Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
         session.BeginTurn(player);
-        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.EqualTo(overtakes > 0 ? 2 : 0));
-        Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.EqualTo(overtakes > 0 ? 1 : 0));
+        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
+        Assert.That(session.BeginDriverSkillInput(player), Is.True);
+        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
+        Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.Zero);
         session.BeginTurn(player);
+        Assert.That(session.BeginDriverSkillInput(player), Is.True);
         Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
         Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.Zero);
     }

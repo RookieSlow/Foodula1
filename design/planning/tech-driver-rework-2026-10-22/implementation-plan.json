@@ -1,0 +1,1509 @@
+{
+  "schema_version": 1,
+  "created_date": "2026-10-22",
+  "status": "implementation_in_progress",
+  "authorization": {
+    "user_request": "现在调整自动化任务，用修改后的技能效果来修改游戏内的效果",
+    "scope": "将已完成的科技树与车手技能修改方案分批接入现有 Demo 的生产规则、实际执行、操作 UI、文案与相关验证。该请求取代研究阶段不得实装的限制，无需再次逐文件或逐阶段审批。",
+    "selection_basis": "当前两份 Word 的推荐主方案作为执行默认；这是本轮为落实用户请求确定的默认配置，不声称用户曾逐项选择所有 A/B 或逐项确认平衡数值。",
+    "explicit_exclusions": [
+      "不选择高桥替换，不变更十二名现有车手身份、ID、XP 键或成长解锁等级。",
+      "不启用备选单场 RP 消费、JP 攻防配比或 DE 无预算无限支付。",
+      "不顺带重做普通 Recover、基础挡位、普通罚热、基础牌组或其他未请求的玩法。",
+      "不自动提交、推送或执行 reset、checkout、rebase，不恢复其他暂停自动任务。"
+    ]
+  },
+  "source_documents": [
+    {
+      "path": "Foodula1_科技树调整草案.docx",
+      "sha256": "281e077813344ab1e3627bb075dcc28d361a0626c8c39b3492f016a9f62d7bb3",
+      "pages": 28
+    },
+    {
+      "path": "Foodula1_车手技能调整草案.docx",
+      "sha256": "94eb7763825f777d477b3fcb8fee92bad27e6353e42d8b2cdeb98f3889914f46",
+      "pages": 42
+    }
+  ],
+  "source_handling": "Word 是详细规则依据，本文件锁定采用的分支与例外。每轮先比 SHA256，存在用户新编辑时读取正文、表格和相邻锚点并保留原件；不能把旧导出写回覆盖用户修改。P5 响应表中的 not_approved 与草案末尾待确认描述是研究阶段历史状态；本次用户实装授权及本文件控制当前范围。",
+  "technology_defaults": {
+    "UK": {
+      "selected": "L1 A 预备餐；主场 L1 回收上限 2",
+      "details": "另弃普通速度牌，回收旧永久热；早餐按草案矩阵：仅 L2 一份、仅 L3 主场一份、L2 加 L3 主场两份；不暗乘旧 1.25。不采用独立 L3 直接双份的额外备选。借用外队科技仍校验实际前置、次数与费用。"
+    },
+    "DE": {
+      "selected": "L3 A 固定有限爆发",
+      "details": "每场一次开窗，真实支付后锁定；本爆发回合黑啤 L1 总计最多 3 次，包含已用常规次数。每次永久热实付，不因返热重置预算；收尾只返还本车仍持有的已付热实例。"
+    },
+    "IT": {
+      "selected": "L2 A 手牌上限；L3 B 既有解锁投资附带一次精调",
+      "details": "不加入单场 RP 交易。精调目标有效贡献至少 2，减 1 后至少为 1；与阿斯卡里不能选择同一牌，不减普通弯道罚热。"
+    },
+    "US": {
+      "selected": "L2 B 连续穿越双限；L3 A 按赛程进度",
+      "details": "每圈且每次连续穿越一次，区域借额加 1，无 BBQ 烟幕；选牌封账后新热不能回填。短中长维修实际付热次数 1/2/3；终极每场一次，先处理借额退役，净回最多 3 且移动最多 3。"
+    },
+    "CN": {
+      "selected": "L2 A 温杯",
+      "details": "可控引擎永久热到手牌换加 1；每次输入共用一次门控，普通冷却后、原 L1 和三连前重验。保持生产 Recover 全牌区来源及顺序，不借本轮改成旧 GDD 的手牌限定。"
+    },
+    "JP": {
+      "selected": "A 仅选择四汤底；R2 主动有限追击",
+      "details": "原攻防牌 2/2 不变；每场一次、三全局回合、非首轮、实际落后且处于后两名的草案门控。汤底按模式锁定；生涯走实际启动快照，不误用 demoBroth。"
+    }
+  },
+  "driver_defaults": {
+    "selection": "采用草案十二位现有车手的被动、主动及三级参数，D12 采用拓海保留案；高桥仅保留研究对照。",
+    "roster": [
+      "Hunter Hart",
+      "Nigel Mansell",
+      "Michael Schumacher",
+      "Sebastian Vettel",
+      "Alberto Ascari",
+      "Tazio Nuvolari",
+      "Tony Stewart",
+      "Kyle Busch",
+      "Zhou Guanyu",
+      "Ma Qinghua",
+      "Keiichi Tsuchiya",
+      "Takumi Fujiwara"
+    ],
+    "identity_policy": "以上英文用于识别草案卡，不是新 ID。读取生产 DriverData 后按原有稳定 ID 对照，禁止重命名键或迁移用户 XP。",
+    "mechanic_focus": {
+      "UK": "哈特近车追猎；曼森同一目标两段实际追近，不共用弃牌或费用。",
+      "DE": "舒马赫准备后两个本人高挡输入；维特尔选择真实非零原生来源有限增幅。",
+      "IT": "阿斯卡里留余量与牌值减一；诺瓦低引擎预付失控容错，不能免费跳罚热。",
+      "US": "斯图尔特受超越后的有限本人输入窗口；布什近车可拒绝支付，不强制部分扣费。",
+      "CN": "周真实 Go 后旧热整备及有限护航；马在真实原生 Recover 冷却中留置旧热，下一已提交输入转 Go 兑现。",
+      "JP": "土屋保留弯后首牌和烟幕主体并明确次数与清理；拓海先选熟悉弯，合格普通低牌在弃牌与补手前保留同一实例。"
+    }
+  },
+  "invariants": [
+    "遵循 ADR-002，规则纯函数、运行时状态、管理器适配和 UI 表现分层；不重写大管理器或建立泛化新框架。",
+    "新固定费用先校验再一次提交，取消和过期不扣费；普通罚热既有部分支付与失控语义不被替换。",
+    "计划绑定 session、参赛车实例、回合和版本；次数按参赛车隔离，不能按 teamId 共用。",
+    "车手持续时间按本人合格驾驶输入，日本 R2 按全局回合；进站、跳过、退赛、完赛、退出和重赛正确清理。",
+    "永久热实例与临时热分开记账；旧来源在输入前冻结，不能重用同一张牌或用新增热伪造返还。",
+    "预测独立复制新集合且不改共享 CardData.value，不消费真实资源和次数；最终实际结算单独呈现。",
+    "沿用现有确认开关与合并确认窗、点击、拖动、键盘和焦点；可用、选目标、待确认、禁用原因、取消及剩余次数不能只靠颜色。",
+    "教程继续禁用科技与车手；生涯八站快照、四站夏休、普通 RP/XP 隔离保持。普通 AI 当前未启用车手技能，不自动扩大为 AI 新玩法。",
+    "保留现有存档、未知未来字段与旧版本兼容；仅为已选汤底或运行态所需的最小兼容字段可以新增并验证，禁止删档或静默清零。"
+  ],
+  "current_package": "I04",
+  "packages": [
+    {
+      "id": "I00",
+      "status": "completed",
+      "scope": "以英国首个动作需求建立最小的计划提交、目标/旧来源与本人输入时钟接线；已有结构正确则复用并直接推进 I01，不能只交审计或空测试辅助。",
+      "completed_slices": [
+        "I00a",
+        "I00b"
+      ],
+      "acceptance": [
+        {
+          "id": "uk-owner-input-clock",
+          "done": true,
+          "evidence": "../../../production/qa/evidence/tech-driver-I00a-2026-10-22/README.md"
+        },
+        {
+          "id": "bound-plan-commit-target-and-old-source",
+          "done": true,
+          "evidence": "../../../production/qa/evidence/tech-driver-I00b-2026-10-22/README.md",
+          "source_scope": "Exact ordinary-speed instances frozen for Hart; UK prep-meal permanent-heat sources remain I01, not claimed here."
+        }
+      ],
+      "verification": {
+        "pure_rules": true,
+        "production_wiring": true,
+        "player_operable": true,
+        "focused_automatic_verification": true,
+        "complete_modes": false,
+        "complete_modes_package": "I13"
+      }
+    },
+    {
+      "id": "I01",
+      "status": "implemented_bounded_acceptance_passed_full_modes_pending",
+      "scope": "UK 科技 A 与哈特修改，接真实费用、预测、操作入口和文案。",
+      "completed_components": [
+        "Hart active decision/discard/whole movement in I00b",
+        "I01a UK prep-meal production transaction and phase-exclusive HUD, 25 added tests; bounded targeted acceptance only",
+        "I01b Hart target/native movement/independent reward receipt production wiring; 36 new standalone pure tests pass. Native coordinator/modes not accepted.",
+        "I01d fee modal focus confinement, pre-disable paging focus repair, original Navigation restoration; 8 new cases and 2363/2363 native selected module pass. Full race/three-size interaction not accepted.",
+        "I01e Hart-only new-apex ordinary corner payments and isolated active preview; scoped final crossing gate and no phantom route rewards after spin. Sixteen new cases and final 2154/2154 native selection passed. Actual A2/A4 and production reward coroutine verified in bounded fixtures; new risk copy/visual operation still pending.",
+        "I01f actual required-confirmation risk copy and 36 new three-size production manager/HUD operation cases; final selected native1394/1394 passed. Before18/finalafter18 viewed; limited owned Canvas acceptance only."
+      ],
+      "next_slice": "I02: implement Mansell same-target two-leg pursuit using locked draft parameters; verify failed pursuit, second-leg cost and owner-input cleanup. Preserve I01 bounded evidence; remaining full RaceCanvas/hardware/mode/save acceptance stays I13.",
+      "verification": {
+        "pure_rules": true,
+        "production_wiring": true,
+        "focused_automatic_verification": true,
+        "player_operable": true,
+        "player_operable_pending": "Full RaceCanvas layout and physical input plus all complete-mode combinations remain I13; not marked accepted.",
+        "complete_modes": false,
+        "complete_modes_package": "I13",
+        "player_operable_scope": "Bounded real production manager/HUD modal on owned preview Canvas; pointer geometry, keyboard Move/Submit, cancel/reopen, same-value exact instance, mask0/All and return focus. Existing gear drag regression passed."
+      },
+      "acceptance_pending_I13": [
+        "full RaceCanvas and hardware input",
+        "complete race/career/tutorial combinations",
+        "save compatibility with all locked tech/driver migrations",
+        "720p subjective comfort"
+      ]
+    },
+    {
+      "id": "I02",
+      "status": "implemented_bounded_acceptance_passed_full_modes_pending",
+      "scope": "曼森两段同目标追近，验证落空、第二段成本和跨输入清理。",
+      "passive_slice": {
+        "id": "I02b",
+        "date": "2026-10-26",
+        "status": "mansell_passive_source_wiring_and_native_A2_verified_active_UI_modes_pending",
+        "scope": "D02 passive only: same-target two owner-input observations and frozen old hand permanent heat settlement. Existing I02a sources completed and validated, not a claim of two-leg active implementation.",
+        "new_tests": 49,
+        "new_pure_cases": 48,
+        "new_native_coroutine_cases": 1,
+        "first_native": {
+          "total": 1824,
+          "passed": 1822,
+          "failed": 2,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 26.4781307,
+          "selectionMatches": true
+        },
+        "corrected_native": {
+          "total": 790,
+          "passed": 790,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 14.0069824,
+          "selectionMatches": true
+        },
+        "corrected_modules": [
+          "drivers",
+          "core",
+          "tools"
+        ],
+        "earlier_unchanged_modules": [
+          "tech",
+          "cards-heat",
+          "tutorial"
+        ],
+        "native_A2": {
+          "total": 1,
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "seconds": 1.9035575,
+          "native_RunFinished": {
+            "fullName": "Foodula1",
+            "resultState": "Passed",
+            "endedUtc": "2026-10-26T06:39:16.6081387Z",
+            "total": 1,
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0,
+            "inconclusive": 0,
+            "message": "",
+            "output": "",
+            "stackTrace": ""
+          }
+        },
+        "runtime_mvid": "b9a158f7-eea3-454b-897f-e88fbdd3b667",
+        "editor_mvid": "06b50765-73af-46c8-8c60-7f55bb2fc9f7",
+        "new_assemblies_loaded": true,
+        "acceptance": {
+          "pure_rules": true,
+          "production_wiring": true,
+          "bounded_A2_automatic_execution": true,
+          "player_operable": false,
+          "active_two_legs": false,
+          "complete_modes": false
+        },
+        "screenshots": null,
+        "visual_boundary": "No UI source/copy/layout changes or screenshot captures. Old skill labels/descriptions and three-resolution acceptance remain pending with I02 presentation.",
+        "review": {
+          "unity_specialist": "static bounded APPROVED; nearest pending-pit exclusion fixed",
+          "qa_tester": "bounded coverage acceptable; true negative-gap case added after review"
+        },
+        "evidence": "../../../production/qa/evidence/tech-driver-I02b-2026-10-26/README.md"
+      },
+      "active_transaction_slice": {
+        "id": "I02c",
+        "date": "2026-10-26",
+        "status": "paid_two_leg_API_owner_clock_and_native_movement_verified_player_button_pending",
+        "trigger_utc": "2026-10-26T06:53:01.011Z",
+        "continued_heartbeat_utc": "2026-10-26T07:23:01.461Z",
+        "new_tests": 63,
+        "new_pure_or_adapter_cases": 61,
+        "new_native_coroutine_cases": 2,
+        "production_scope": "Exact speed discard + fixed engine heat first leg, paid optional continuation observed at next owner A1, finite lifecycle/request/source identity, real movement and new apex ordinary penalty adapters.",
+        "first_native": {
+          "total": 1972,
+          "passed": 1971,
+          "failed": 1,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 32.9891449,
+          "selectionMatches": true
+        },
+        "intermediate_native_before_final_scope_exit_fixes": {
+          "total": 1984,
+          "passed": 1984,
+          "failed": 0,
+          "skipped": 0,
+          "seconds": 31.8671046,
+          "selectionMatches": true
+        },
+        "final_native_modules": [
+          "drivers",
+          "core",
+          "cards-heat",
+          "tools"
+        ],
+        "final_native": {
+          "total": 1152,
+          "passed": 1152,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 18.154035,
+          "selectionMatches": true
+        },
+        "final_native_coroutines": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0,
+          "durationSeconds": 3.3132155,
+          "resultState": "Passed"
+        },
+        "coroutine_cases": [
+          {
+            "name": "MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+            "fullName": "RaceGameLoopCoroutineTests.MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+            "state": "Passed",
+            "durationSeconds": 1.6620071,
+            "message": null,
+            "stackTrace": null,
+            "output": "[PlayEntry] 0.786s; domainReloadDisabled=True\r\n"
+          },
+          {
+            "name": "MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+            "fullName": "RaceGameLoopCoroutineTests.MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+            "state": "Passed",
+            "durationSeconds": 1.4210412,
+            "message": null,
+            "stackTrace": null,
+            "output": "[PlayEntry] 0.627s; domainReloadDisabled=True\r\n"
+          }
+        ],
+        "native_RunFinished": {
+          "fullName": "Foodula1",
+          "resultState": "Passed",
+          "endedUtc": "2026-10-26T07:36:23.4943425Z",
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "message": "",
+          "output": "",
+          "stackTrace": ""
+        },
+        "runtime_mvid": "b825ebc4-d36e-4855-bace-c69939a2b42b",
+        "modules_editor_mvid": "0c5fe9d5-d696-4047-8a13-192942072fcc",
+        "coroutine_editor_mvid": "f7783e3a-4051-42a4-89fe-4f22311ac19f",
+        "new_assemblies_loaded": true,
+        "acceptance": {
+          "pure_rules": true,
+          "production_API_wiring": true,
+          "bounded_real_GameLoop_execution": true,
+          "player_operable": false,
+          "complete_modes": false
+        },
+        "player_boundary": "Existing player skill button still uses legacy activation outside paid sequences. New API sequences block interleaving. I02d must migrate button and merged confirmations before marking new active player-operable.",
+        "screenshots": null,
+        "visual_boundary": "No UI layout, label or modal changes; no screenshots or three-resolution acceptance in I02c.",
+        "evidence": "../../../production/qa/evidence/tech-driver-I02c-2026-10-26/README.md"
+      },
+      "player_entry_slice": {
+        "id": "I02d",
+        "utc": "2026-10-27T01:17:48.321499+08:00",
+        "status": "player_entry_source_wired_offline_compiled_unity_acceptance_pending",
+        "scope": "Mansell player HUD/manager routes into paid first and second plans; required first card choice; optional second heat confirmation; shared cancel, focus, disabled/remaining copy and catalog descriptions.",
+        "offline_compile": {
+          "runtime": {
+            "assembly": "Assembly-CSharp",
+            "exit": 0,
+            "seconds": 1.3280000000013388,
+            "sha256": "78679a68c54f196dbe5e57e9d4ea859e29855e9f3dd4853cce223cd16408b3ae"
+          },
+          "editor": {
+            "assembly": "Assembly-CSharp-Editor",
+            "exit": 0,
+            "seconds": 1.5469999999986612,
+            "sha256": "b3ad1e0726264a144c64aca3ce1f5e2404df20d0f11f3f90990beb54d6624c4a"
+          },
+          "seconds": 2.875,
+          "result": "success",
+          "kind": "Offline Roslyn compile only; not Unity compile/import/load or native tests"
+        },
+        "native_tests": {
+          "executed": 0,
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0,
+          "seconds": 0,
+          "not_executed_new_parameter_cases": 72,
+          "reason": "Unity MCP localhost:8080 connection refused; safe live state/Console/ready and assembly load could not be obtained."
+        },
+        "acceptance": {
+          "production_wiring_source": true,
+          "offline_compilation": true,
+          "unity_compilation_and_new_assembly_loaded": false,
+          "focused_automatic_verification": false,
+          "player_operable": false,
+          "three_size_visual": false,
+          "complete_modes": false
+        },
+        "screenshots": null,
+        "visual_boundary": "No valid pre-change or post-change screenshots. Capture(before) is rejected to prevent labeling migrated source as baseline. Long-name body/button fit and real EventSystem tests pending. Future controlled fixture is not full RaceCanvas/hardware.",
+        "review": {
+          "unity_ui": "No source transaction blocker; long-name fit pending, compact fee/second label suggestions applied.",
+          "unity_specialist": "No static lifecycle/ADR-002 blocker.",
+          "qa": "Disabled-button Click helper precondition fixed before any execution; 72 parameter combinations, not 72 independent behaviors."
+        },
+        "evidence": "../../../production/qa/evidence/tech-driver-I02d-2026-10-26/README.md",
+        "verified_by": "I02e"
+      },
+      "next_slice": "I03: DE L3 A limited burst, manual once-per-race window, this-turn black-beer total budget <=3 including ordinary uses, frozen real paid-instance return. Keep I02 full RaceCanvas/hardware/modes/save and 720p comfort pending I13.",
+      "player_verification_slice": {
+        "id": "I02e",
+        "utc": "2026-10-27T02:09:10.461685+08:00",
+        "status": "mansell_player_entry_bounded_native_and_visual_verified_full_modes_pending",
+        "production_change": "DriverSkillCardChoiceUI body rect height92->120; font19, visible glyph placement, buttons, costs and runtime rules unchanged. Existing SaveLayout restores generic dialog.",
+        "final_native": {
+          "startedUtc": "2026-10-26T18:03:53.7159283Z",
+          "endedUtc": "2026-10-26T18:04:21.0775403Z",
+          "state": "Passed",
+          "nativeState": "Passed",
+          "total": 2076,
+          "passed": 2076,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 22.5495703,
+          "selectionMatches": true,
+          "modules": [
+            "cards-heat",
+            "core",
+            "drivers",
+            "gears",
+            "tech",
+            "ui"
+          ],
+          "mansell_ui_cases_passed": 72,
+          "existing_drag_cases_passed": 9
+        },
+        "runtime_mvid": "1dad8c6c-b187-451c-81be-3974948136fe",
+        "editor_mvid": "b8ed24b3-860f-4ef3-8e8d-b38d188a7c6c",
+        "new_assemblies_loaded": true,
+        "initial_ui_failure": {
+          "job_state": "failed",
+          "reported_completed": 72,
+          "native_root_summary_available": false,
+          "reported_failure_samples_capped": true,
+          "failure": "body text isTextOverflowing at height92; raw MCP progress retained, no invented native pass/fail totals or duration"
+        },
+        "acceptance": {
+          "pure_rules": true,
+          "production_wiring": true,
+          "focused_automatic_verification": true,
+          "player_operable": true,
+          "player_operable_scope": "Owned preview Canvas with real HUD.Start/button/manager plan, exact fee commit, cancel, EventSystem Move/Submit and GraphicRaycaster. 72 parameter combinations; existing drag cases also passed.",
+          "complete_modes": false
+        },
+        "visual": {
+          "before": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\manifest.json",
+          "after": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180515665\\manifest.json",
+          "before_count": 36,
+          "after_count": 36,
+          "before_overflow_records": 33,
+          "after_overflow_records": 0,
+          "identical_image_pairs": 36,
+          "kind": "I02e container-boundary fix; original I02d pre-change capture missing; raw PNGs not edited",
+          "union_viewed_before": 36,
+          "union_viewed_after": 36,
+          "original_I02d_before_available": false
+        },
+        "unity_final": {
+          "scene": "MainMenu",
+          "all_loaded_scenes_dirty": false,
+          "playing": false,
+          "compiling": false,
+          "updating": false,
+          "native_or_modular_tests": false,
+          "console_errors": 0,
+          "console_warnings": 0,
+          "warning": "Module run had one existing cardPrefab fixture warning; post-coroutine Console has0 errors/0 warnings; no explicit Console clear.",
+          "ready_resource": "stale_status after long capture; direct state query and native RunFinished authoritative current observations"
+        },
+        "evidence": "../../../production/qa/evidence/tech-driver-I02e-2026-10-27/README.md",
+        "final_native_coroutines": {
+          "total": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "durationSeconds": 3.1201921,
+          "resultState": "Passed"
+        },
+        "final_coroutine_cases": [
+          {
+            "name": "MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+            "fullName": "RaceGameLoopCoroutineTests.MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+            "state": "Passed",
+            "durationSeconds": 1.0738765,
+            "message": null,
+            "stackTrace": null,
+            "output": "[PlayEntry] 0.456s; domainReloadDisabled=True\r\n"
+          },
+          {
+            "name": "MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+            "fullName": "RaceGameLoopCoroutineTests.MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+            "state": "Passed",
+            "durationSeconds": 1.0098119,
+            "message": null,
+            "stackTrace": null,
+            "output": "[PlayEntry] 0.437s; domainReloadDisabled=True\r\n"
+          },
+          {
+            "name": "MansellRealA2CoolsOnlyFrozenOldHandBeforePreparationSnapshot",
+            "fullName": "RaceGameLoopCoroutineTests.MansellRealA2CoolsOnlyFrozenOldHandBeforePreparationSnapshot",
+            "state": "Passed",
+            "durationSeconds": 1.0088911,
+            "message": null,
+            "stackTrace": null,
+            "output": "[PlayEntry] 0.468s; domainReloadDisabled=True\r\n"
+          }
+        ],
+        "native_RunFinished": {
+          "fullName": "Foodula1",
+          "resultState": "Passed",
+          "endedUtc": "2026-10-26T18:10:56.1478575Z",
+          "total": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "message": "",
+          "output": "",
+          "stackTrace": ""
+        }
+      },
+      "verification": {
+        "pure_rules": true,
+        "production_wiring": true,
+        "focused_automatic_verification": true,
+        "player_operable": true,
+        "player_operable_scope": "Owned preview Canvas with real HUD.Start/button/manager plan, exact fee commit, cancel, EventSystem Move/Submit and GraphicRaycaster. 72 parameter combinations; existing drag cases also passed.",
+        "complete_modes": false,
+        "complete_modes_package": "I13"
+      },
+      "acceptance_pending_I13": [
+        "full RaceCanvas and physical input",
+        "complete race/career/tutorial combinations",
+        "save compatibility across all locked migrations",
+        "720p subjective comfort"
+      ]
+    },
+    {
+      "id": "I03",
+      "status": "implemented_bounded_acceptance_passed_full_modes_pending",
+      "scope": "DE 科技有限爆发 A，接手动窗口、三次总预算及真实实例返还。",
+      "fixed_payment_slice": {
+        "id": "I03a",
+        "utc": "2026-10-27T06:35:40.769322+08:00",
+        "status": "fixed_fuel_payment_and_forecast_production_verified_manual_burst_pending",
+        "scope": "DE L1 exact one permanent engine heat to discard, original receipt tracking, successful-use lap marker; real movement and isolated forecast share the fixed commit.",
+        "correction": "Confirmed old bug is passive discount folding fuel to zero and consuming bread charges. Current PerfectLap only reduces corner cost; generic multiplier currently identity. No claim that those currently grant free fuel.",
+        "new_cases": 28,
+        "final_native": {
+          "startedUtc": "2026-10-26T22:31:37.0225526Z",
+          "endedUtc": "2026-10-26T22:32:09.8025374Z",
+          "state": "Passed",
+          "nativeState": "Passed",
+          "total": 2286,
+          "passed": 2286,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 27.771329,
+          "selectionMatches": true,
+          "modules": [
+            "cards-heat",
+            "core",
+            "drivers",
+            "tech",
+            "tracks-weather-pit"
+          ],
+          "new_fixed_payment_cases": 20,
+          "new_production_movement_cases": 8
+        },
+        "runtime_mvid": "2f6be9ac-e642-4a6b-a4ae-d9e3429edeea",
+        "editor_mvid": "561035bf-5f01-4907-aa0d-0fb7cf3d95c9",
+        "new_assemblies_loaded": true,
+        "compile_failure": {
+          "count": 2,
+          "kind": "CS1503 in new collection assertions, fixed to CollectionAssert.DoesNotContain before any native run; retained console-before-refresh.json"
+        },
+        "acceptance": {
+          "fixed_payment_rules": true,
+          "production_movement_and_forecast_wiring": true,
+          "focused_automatic_verification": true,
+          "new_manual_player_operation": false,
+          "finite_L3_window_and_three_use_budget": false,
+          "frozen_window_receipts_return": false,
+          "complete_modes": false
+        },
+        "legacy_boundary": "Automatic L1 timing and old automatic L3 cleanup still retained. This slice is not the locked manual finite-burst implementation. Ordinary partial heat payments/spin rules unchanged.",
+        "screenshots": null,
+        "visual_boundary": "No HUD layout/label/entry changes and no new screenshots. Manual controls and three-resolution operation acceptance remain in later I03 slices.",
+        "review": {
+          "engine": "Preliminary static review found no production payment/forecast blocker; final independent review unavailable when agent hit usage limit.",
+          "qa": "Detected false immunity precondition and unowned terminal forecast card; both fixed. Final primary review/native tests completed; independent final review did not complete due agent quota."
+        },
+        "unity_final": {
+          "scene": "MainMenu",
+          "all_loaded_scenes_dirty": false,
+          "playing": false,
+          "compiling": false,
+          "updating": false,
+          "tests": false,
+          "console_errors": 1,
+          "console_warnings": 0,
+          "error": "Expected no_such_track negative fixture log; no compiler errors; Console not cleared",
+          "ready_resource": "stale_status; direct state and native RunFinished retained"
+        },
+        "evidence": "../../../production/qa/evidence/tech-driver-I03a-2026-10-27/README.md"
+      },
+      "next_slice": "I04: 舒马赫真实普通过弯付款调校与低挡准备/本人输入执行窗口，随后维特尔固定来源增幅；按草案现有ID/XP/次数接线。I03有界规则/生产/HUD与两回合验证通过，完整RaceCanvas/硬件/比赛/模式/存档组合留I13。",
+      "burst_runtime_slice": {
+        "id": "I03b",
+        "utc": "2026-10-27T07:28:10.01317+08:00",
+        "status": "de_burst_runtime_and_production_adapters_verified_manual_ui_pending",
+        "scope": "Per-racer pre-gear declaration API, first actual permanent payment lock, shared three-use turn budget, frozen exact receipts and net restoration/retirement; live movement, forecast and cleanup wiring.",
+        "new_cases": 34,
+        "final_native": {
+          "startedUtc": "2026-10-26T23:26:04.7098536Z",
+          "endedUtc": "2026-10-26T23:26:28.6384319Z",
+          "state": "Passed",
+          "nativeState": "Passed",
+          "total": 2990,
+          "passed": 2990,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 19.5448375,
+          "selectionMatches": true
+        },
+        "first_native": {
+          "startedUtc": "2026-10-26T23:24:36.4426774Z",
+          "endedUtc": "2026-10-26T23:24:59.1433626Z",
+          "state": "Failed(Child)",
+          "nativeState": "Failed(Child)",
+          "total": 2990,
+          "passed": 2988,
+          "failed": 2,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 18.717076,
+          "selectionMatches": true
+        },
+        "modules": [
+          "cards-heat",
+          "core",
+          "drivers",
+          "gears",
+          "tech",
+          "tracks-weather-pit",
+          "tutorial",
+          "ui"
+        ],
+        "new_runtime_cases": 29,
+        "new_production_adapter_cases": 5,
+        "runtime_mvid": "1355eddf-9d2a-4dae-8a1d-19ecc171d10e",
+        "editor_mvid": "a0cab66d-67cb-488c-aee8-cb227b684d94",
+        "new_assemblies_loaded": true,
+        "gameloop": {
+          "total": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "durationSeconds": 3.3656232,
+          "resultState": "Passed"
+        },
+        "gameloop_boundary": "Three existing actual Mansell GameLoop cases on unchanged final runtime; ran before test-only correction and editor rebuild. No complete German manual GameLoop/full race.",
+        "acceptance": {
+          "runtime_rules": true,
+          "production_adapters": true,
+          "focused_native_regression": true,
+          "manual_player_operation": false,
+          "complete_modes": false
+        },
+        "legacy_boundary": "Automatic L1 timing and automatic L3 outside ManualPathThisTurn retained until I03c HUD migration; API is not an available player button. Versioned manual fuel confirmation not yet wired.",
+        "screenshots": null,
+        "visual_boundary": "No HUD layout/labels changed; no new screenshot or three-size manual interaction acceptance.",
+        "review": {
+          "engine": "Final readonly bounded source review passed after pool binding and whole-cleanup finally fix.",
+          "qa": "Final readonly bounded QA passed; tests executed by parent only."
+        },
+        "unity_final": {
+          "scene": "MainMenu",
+          "all_loaded_scenes_dirty": false,
+          "playing": false,
+          "compiling": false,
+          "updating": false,
+          "module_runner_busy": false,
+          "resource_tests_running": false,
+          "console_errors": 1,
+          "console_warnings": 1,
+          "console_boundary": "no_such_track expected negative fixture error; CardHandUI cardPrefab unset warning observed after UI-module run, no compiler errors. No Console clearing.",
+          "ready_resource": "stale_status; direct fresh state/native RunFinished used",
+          "license": "Successfully resolved entitlement details"
+        },
+        "first_failure_correction": "Two old repeated ComputeMovements assertions expected lost paid bonus 0; corrected to idempotent +2 and one discarded payment. Production runtime unchanged.",
+        "diagnostic_query_error": "One execute_code query used unsupported IsTestRunActive API and failed CodeDOM compilation; query corrected, project assemblies unaffected.",
+        "evidence": "../../../production/qa/evidence/tech-driver-I03b-2026-10-27/README.md"
+      },
+      "fixed_fuel_request_slice": {
+        "id": "I03c",
+        "utc": "2026-10-27T07:42:28.985032+08:00",
+        "status": "versioned_fixed_fuel_plan_and_manager_api_verified_hud_unwired",
+        "scope": "Atomic fixed1 permanent-heat request with exact live snapshots and manager pending authority; lifecycle cancellation, tutorial/technology and actual card-input gates. No new HUD controls or confirmation modal wiring.",
+        "new_cases": 56,
+        "final_native": {
+          "startedUtc": "2026-10-26T23:40:18.9050508Z",
+          "endedUtc": "2026-10-26T23:40:30.8215197Z",
+          "state": "Passed",
+          "nativeState": "Passed",
+          "total": 2712,
+          "passed": 2712,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 8.0673993,
+          "selectionMatches": true
+        },
+        "modules": [
+          "cards-heat",
+          "core",
+          "drivers",
+          "gears",
+          "tech",
+          "tracks-weather-pit",
+          "tutorial"
+        ],
+        "runtime_mvid": "c33b40ad-fc92-429a-8fb8-28cfd734fafe",
+        "editor_mvid": "ab0c90c2-2b5e-48ad-93bc-300585596ee7",
+        "new_assemblies_loaded": true,
+        "gameloop": {
+          "total": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "durationSeconds": 3.3701701,
+          "resultState": "Passed"
+        },
+        "native_GameLoop_RunFinished": {
+          "fullName": "Foodula1",
+          "resultState": "Passed",
+          "endedUtc": "2026-10-26T23:40:51.2936617Z",
+          "total": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "message": "",
+          "output": "",
+          "stackTrace": ""
+        },
+        "gameloop_boundary": "Three existing actual Mansell GameLoop cases on final source assemblies; German manual full loop not connected.",
+        "intermediate_runs": [
+          {
+            "startedUtc": "2026-10-26T23:36:23.6962078Z",
+            "endedUtc": "2026-10-26T23:36:35.6617784Z",
+            "state": "Passed",
+            "nativeState": "Passed",
+            "total": 2702,
+            "passed": 2702,
+            "failed": 0,
+            "skipped": 0,
+            "inconclusive": 0,
+            "seconds": 8.1302243,
+            "selectionMatches": true
+          },
+          {
+            "startedUtc": "2026-10-26T23:38:23.2382978Z",
+            "endedUtc": "2026-10-26T23:38:35.3744149Z",
+            "state": "Passed",
+            "nativeState": "Passed",
+            "total": 2706,
+            "passed": 2706,
+            "failed": 0,
+            "skipped": 0,
+            "inconclusive": 0,
+            "seconds": 8.3303345,
+            "selectionMatches": true
+          }
+        ],
+        "catalog_refusal": "Before initial catalog import, runner rejected inventory drift for46 new cases, completed0. Manifest already on disk; force import then catalogText contains fixture. Not a test pass or failed case.",
+        "acceptance": {
+          "fixed_fuel_transaction_rules": true,
+          "production_manager_request_and_lifecycle_apis": true,
+          "focused_native_regression": true,
+          "hud_button_and_modal_wiring": false,
+          "manual_player_operation": false,
+          "complete_modes": false
+        },
+        "cancellation_boundary": "Cancel/stale callback itself pays nothing. Existing ComputeMovements automatic fuel remains and may independently pay later if no fuel use committed. This is NOT full player cancel->movement acceptance; remove/migrate auto path with actual HUD and regression in I03d.",
+        "screenshots": null,
+        "visual_boundary": "No HUD geometry/text/modal changed; no new screenshots. Real manual operation and three-size visual acceptance remain open.",
+        "reviews": {
+          "engine": "Final bounded readonly approved after null activeNodeIds guard.",
+          "qa": "No source/testability blocker after discard-only metadata and actual manager tutorial/disabled-tech coverage. Reviewer manual case count52 was stale; native discovered/passed56 is authoritative."
+        },
+        "unity_final": {
+          "scenes": [
+            {
+              "path": "Assets/Scenes/MainMenu.unity",
+              "dirty": false
+            }
+          ],
+          "playing": false,
+          "compiling": false,
+          "updating": false,
+          "module_runner_busy": false,
+          "resource_tests_running": false,
+          "console_errors": 0,
+          "console_warnings": 0,
+          "console_not_cleared": true,
+          "license": "Successfully resolved entitlement details",
+          "ready": {
+            "ready_for_tools": false,
+            "blocking_reasons": [
+              "stale_status"
+            ],
+            "recommended_retry_after_ms": 500,
+            "recommended_next_action": "retry_later"
+          }
+        },
+        "evidence": "../../../production/qa/evidence/tech-driver-I03c-2026-10-27/README.md"
+      },
+      "human_fuel_ui_slice": {
+        "id": "I03d",
+        "utc": "2026-10-27T12:20:12.544277+08:00",
+        "status": "human_L1_manual_hud_and_no_auto_charge_bounded_acceptance_passed_L3_ui_pending",
+        "scope": "A4 real human L1 HUD/optional CardAction confirmation, exact fixed fee/cancel/focus/count/disabled reason; remove automatic human fuel in movement and forecast, retain existing AI technology policy.",
+        "new_cases": 41,
+        "new_ui_cases": 36,
+        "new_empty_selection_adapter_cases": 5,
+        "final_native": {
+          "startedUtc": "2026-10-27T04:15:33.4910635Z",
+          "endedUtc": "2026-10-27T04:16:11.3011672Z",
+          "state": "Passed",
+          "nativeState": "Passed",
+          "total": 3087,
+          "passed": 3087,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 32.6400771,
+          "selectionMatches": true
+        },
+        "modules": [
+          "cards-heat",
+          "core",
+          "drivers",
+          "gears",
+          "tech",
+          "tracks-weather-pit",
+          "tutorial",
+          "ui"
+        ],
+        "runtime_mvid": "be928c88-1478-48b7-b060-8cf4cb7beeb2",
+        "editor_mvid": "b3999214-a847-40c7-b71b-207be910dba6",
+        "new_assemblies_loaded": true,
+        "gameloop": {
+          "total": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "durationSeconds": 4.1799126,
+          "resultState": "Passed"
+        },
+        "native_GameLoop_RunFinished": {
+          "fullName": "Foodula1",
+          "resultState": "Passed",
+          "endedUtc": "2026-10-27T04:17:36.6657473Z",
+          "total": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "message": "",
+          "output": "",
+          "stackTrace": ""
+        },
+        "gameloop_boundary": "Three existing actual Mansell GameLoop cases on final runtime verify shared cancel hooks/continuation/heat; not a complete German manual GameLoop. New German tests use actual HUD callbacks->ConfirmPlayerSpeedCards->ComputeMovements and five actual prediction/missing-payment/movement adapters.",
+        "visual": {
+          "before": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I03d-2026-10-27/before/run-20261027-040534023",
+          "after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I03d-2026-10-27/after/run-20261027-041640341",
+          "before_count": 24,
+          "after_count": 24,
+          "before_overflows": 0,
+          "after_overflows": 0,
+          "root_viewed_action_or_modal_crops_before": 24,
+          "root_viewed_action_or_modal_crops_after": 24,
+          "root_viewed_full_after": 3,
+          "sizes": [
+            "1920x1080",
+            "2560x1440",
+            "1280x720"
+          ],
+          "kind": "Owned preview Canvas with real HUD.Start/phase-exclusive widget/Manager plan, production-normalized action slot, owned backgrounds. Real GraphicRaycaster and ExecuteEvents; not full RaceCanvas or OS keyboard.",
+          "boundary": "Initial before run040349 had undersized owned GearButtons (216 aggregate label-overflow records); preserved but not accepted. Fixed fixture and captured valid before while old production API still absent. After adds owned card-action focus target needed to model the actual production destination; background controls not a full-RaceCanvas layout comparison. Explicit HUD.OnDisable invocation is a callback fixture, not native SetActive runtime acceptance."
+        },
+        "intermediate_runs": [
+          {
+            "startedUtc": "2026-10-27T04:07:31.9569632Z",
+            "endedUtc": "2026-10-27T04:08:11.1493573Z",
+            "state": "Failed(Child)",
+            "nativeState": "Failed(Child)",
+            "total": 3082,
+            "passed": 3062,
+            "failed": 20,
+            "skipped": 0,
+            "inconclusive": 0,
+            "seconds": 32.5160696,
+            "selectionMatches": true
+          },
+          {
+            "startedUtc": "2026-10-27T04:10:53.2115217Z",
+            "endedUtc": "2026-10-27T04:11:30.4482866Z",
+            "state": "Passed",
+            "nativeState": "Passed",
+            "total": 3082,
+            "passed": 3082,
+            "failed": 0,
+            "skipped": 0,
+            "inconclusive": 0,
+            "seconds": 32.310474,
+            "selectionMatches": true
+          }
+        ],
+        "compile_failure": "One observed CS0103 unqualified Math, fixed System.Math before current assembly loaded/tests. New test payment result member corrected to Sufficient before final run. No old assembly result counted.",
+        "review": {
+          "engine": "Final readonly bounded approved after P2 empty-selection paid fuel forecast fix and P3 German-only no-card copy.",
+          "ui_implementation_agent": "Failed on quota before files written; parent implemented UI/capture.",
+          "independent_qa_ux": "Not completed this slice; parent native+visual verification retained. No claim of independent UX approval."
+        },
+        "acceptance": {
+          "pure_rules": true,
+          "production_wiring": true,
+          "human_L1_player_operation_in_owned_fixture": true,
+          "human_L3_player_operation": false,
+          "complete_modes": false
+        },
+        "remaining_compatibility": "Old automatic human L3 refund still retained until I03e; normal AI L1 technology policy unchanged. No ordinary AI driver skills enabled.",
+        "unity_final": {
+          "scenes": [
+            {
+              "path": "Assets/Scenes/MainMenu.unity",
+              "dirty": false
+            }
+          ],
+          "playing": false,
+          "compiling": false,
+          "updating": false,
+          "module_runner_busy": false,
+          "resource_tests_running": false,
+          "console_errors": 0,
+          "console_warnings": 0,
+          "console_not_cleared": true,
+          "ready": {
+            "ready_for_tools": true,
+            "blocking_reasons": [],
+            "recommended_retry_after_ms": 0,
+            "recommended_next_action": "none"
+          },
+          "license": "Successfully resolved entitlement details"
+        },
+        "evidence": "../../../production/qa/evidence/tech-driver-I03d-2026-10-27/README.md"
+      },
+      "burst_hud_cleanup_slice": {
+        "id": "I03e",
+        "utc": "2026-10-27T17:47:11.349646+08:00",
+        "status": "declared_burst_hud_receipt_cleanup_and_bounded_GameLoop_passed_full_modes_pending",
+        "scope": "A1 free declare/cancel beside driver; unpaid A4 cancel beside fuel; first actual permanent payment locks race opportunity; three total paid fuel uses; remove undeclared legacy refund, AI pre-gear declaration with unchanged one-fuel choice; exact net/retirement feedback.",
+        "new_cases": 58,
+        "new_ui_parameter_cases": 48,
+        "new_manager_cases": 8,
+        "new_actual_GameLoop_cases": 2,
+        "final_native": {
+          "startedUtc": "2026-10-27T09:42:00.8950376Z",
+          "endedUtc": "2026-10-27T09:42:49.9903456Z",
+          "state": "Passed",
+          "nativeState": "Passed",
+          "total": 3403,
+          "passed": 3403,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 43.9000283,
+          "selectionMatches": true
+        },
+        "modules": [
+          "ai",
+          "cards-heat",
+          "career",
+          "core",
+          "drivers",
+          "gears",
+          "tech",
+          "tracks-weather-pit",
+          "tutorial",
+          "ui"
+        ],
+        "runtime_mvid": "04d6d765-0f64-4a05-b432-1a7ab98409f2",
+        "editor_mvid": "4a2d3c31-aa91-4d25-915e-b439e65de2e0",
+        "new_assemblies_loaded": true,
+        "gameloop": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0,
+          "durationSeconds": 2.9225509,
+          "resultState": "Passed"
+        },
+        "native_GameLoop_RunFinished": {
+          "fullName": "Foodula1",
+          "resultState": "Passed",
+          "endedUtc": "2026-10-27T09:43:21.3142254Z",
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "message": "",
+          "output": "",
+          "stackTrace": ""
+        },
+        "first_native": {
+          "total": 3403,
+          "passed": 3378,
+          "failed": 25,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 42.5208608,
+          "selectionMatches": true
+        },
+        "focused_intermediate": {
+          "total": 56,
+          "passed": 40,
+          "failed": 16,
+          "skipped": 0,
+          "duration": "Not reported as native duration; job wall elapsed 3.107s"
+        },
+        "failure_resolution": "Selected L3 button must capture focus before interactable=false. UI expected refund double-counted receipts already returned by ReactStep; now counts surviving exact receipts. Old cleanup fixture now declares before actual payment. Native perspective RT containment was false although screen->local returned rect center; own new UI fixture uses orthographic camera, real GraphicRaycaster/top receiver retained. ForceUpdateRectTransforms/active RT diagnostic attempts did not solve it and were removed.",
+        "visual": {
+          "before": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I03e-2026-10-27/before/run-20261027-043617806",
+          "after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I03e-2026-10-27/after/run-20261027-094346842",
+          "before_count": 24,
+          "after_count": 24,
+          "before_overflows": 0,
+          "after_overflows": 0,
+          "before_viewed_by_capture_agent": 24,
+          "after_action_modal_status_regions_viewed_by_root": 24,
+          "after_full_frames_viewed_by_root": 4,
+          "sizes": [
+            "1920x1080",
+            "2560x1440",
+            "1280x720"
+          ],
+          "kind": "Owned production HUD/MVP/Canvas fixture, real GraphicRaycaster/Move/Submit; AFTER owned camera orthographic. Not complete RaceCanvas or physical input.",
+          "boundary": "Before A1 source has inherited white backdrop/white label: old driver readability NOT accepted. After alone applies existing production action style to owned backdrop. Before perspective versus after orthographic prevents claiming a pixel-identical camera comparison. Terminal/exit screenshots are BEFORE cleanup, manifest resource fields AFTER assertions; no terminal/exit-after visual claim. Before engineAfter=0 is not measured resource evidence. Net/retirement log functional adapter tested, not rendered by this UI capture."
+        },
+        "reviews": {
+          "engine": "Bounded readonly approved on production declaration/payment/refund/lifecycle source.",
+          "qa": "Bounded static review found screenshot timing mismatch; explicitly labelled. Root native failures and projection diagnostic retained; no independent complete-mode or hardware approval."
+        },
+        "acceptance": {
+          "pure_rules": true,
+          "production_wiring": true,
+          "player_operable_in_owned_fixture": true,
+          "actual_two_turn_GameLoop": true,
+          "complete_modes": false
+        },
+        "unity_final": {
+          "scenes": [
+            {
+              "path": "Assets/Scenes/MainMenu.unity",
+              "dirty": false
+            }
+          ],
+          "playing": false,
+          "compiling": false,
+          "updating": false,
+          "tests": false,
+          "console_errors": 0,
+          "console_warnings": 0,
+          "console_not_cleared": true,
+          "license": "Successfully resolved entitlement details",
+          "ready": {
+            "ready_for_tools": true,
+            "blocking_reasons": [],
+            "recommended_retry_after_ms": 0,
+            "recommended_next_action": "none"
+          }
+        },
+        "evidence": "../../../production/qa/evidence/tech-driver-I03e-2026-10-27/README.md"
+      },
+      "verification": {
+        "pure_rules": true,
+        "production_wiring": true,
+        "player_operable": true,
+        "player_operable_scope": "Owned three-size HUD/Manager operation with real pointer geometry and Move/Submit; actual two-turn GameLoop separately verified",
+        "focused_automatic_verification": true,
+        "complete_modes": false,
+        "complete_modes_package": "I13"
+      },
+      "acceptance_pending_I13": [
+        "full RaceCanvas and physical input",
+        "complete race/pit/terminal/tutorial/career combinations",
+        "combined save compatibility",
+        "720p subjective comfort",
+        "rendered cleanup log/animation visual review"
+      ]
+    },
+    {
+      "id": "I04",
+      "status": "in_progress",
+      "scope": "舒马赫与维特尔真实来源、本人输入窗口及与黑啤联动。",
+      "schumacher_passive_slice": {
+        "id": "I04a",
+        "utc": "2026-10-27T23:26:59.042602+08:00",
+        "status": "schumacher_passive_production_and_bounded_native_verified_active_and_vettel_pending",
+        "scope": "D03 passive only: typed actual ordinary-corner permanent receipts, 2/1/1 threshold, next1/1/2 owner inputs first positive corner -1, perlap1/no stack/renew. Legacy active remains untouched.",
+        "new_cases": 70,
+        "new_pure_cases": 42,
+        "new_manager_adapter_cases": 24,
+        "new_profile_ui_cases": 3,
+        "new_actual_GameLoop_cases": 1,
+        "final_native": {
+          "startedUtc": "2026-10-27T15:23:40.8040673Z",
+          "endedUtc": "2026-10-27T15:24:26.5063447Z",
+          "state": "Passed",
+          "nativeState": "Passed",
+          "total": 3484,
+          "passed": 3484,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 40.2925337,
+          "selectionMatches": true
+        },
+        "modules": [
+          "ai",
+          "cards-heat",
+          "career",
+          "core",
+          "drivers",
+          "gears",
+          "tech",
+          "tools",
+          "tracks-weather-pit",
+          "tutorial",
+          "ui"
+        ],
+        "gameloop": {
+          "total": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "durationSeconds": 4.2840327,
+          "resultState": "Passed"
+        },
+        "native_GameLoop_RunFinished": {
+          "fullName": "Foodula1",
+          "resultState": "Passed",
+          "endedUtc": "2026-10-27T15:25:06.3374913Z",
+          "total": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "inconclusive": 0,
+          "message": "",
+          "output": "",
+          "stackTrace": ""
+        },
+        "gameloop_boundary": "One new actual Schumacher three-input test and two existing German declaration tests; separate selection, not all long-races or full modes.",
+        "runtime_mvid": "dec425bf-2fe1-41d6-8ebc-7936e91615a1",
+        "editor_mvid": "9da3c2ed-2d23-466f-9492-c89d2dd74ae7",
+        "new_assemblies_loaded": true,
+        "first_native": {
+          "total": 3472,
+          "passed": 3469,
+          "failed": 3,
+          "skipped": 0,
+          "inconclusive": 0,
+          "seconds": 40.2716347,
+          "selectionMatches": true
+        },
+        "failure_resolution": "Only new passive profile summary overflowed in all3 resolutions. Added12..14 autosizing to D03 passive field alone, then new runtime loaded and final11modules passed.",
+        "source_review": "Independent engine review found missing pitStopScheduled forecast copy; copied field and added2 requested/scheduled cases before native runs. Final independent re-review unavailable due agent quota; root inspected advice/fix and ran native.",
+        "visual": {
+          "before": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04a-2026-10-27/before/run-20261027-100904358",
+          "after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04a-2026-10-27/after/run-20261027-152526369",
+          "before_count": 3,
+          "after_count": 3,
+          "root_viewed_full_before": 3,
+          "root_viewed_full_after": 3,
+          "changed_passive_overflows_before": 0,
+          "changed_passive_overflows_after": 0,
+          "all_page_preexisting_overflows_per_size_before": 14,
+          "all_page_overflows_per_size_after": 14,
+          "sizes": [
+            "1920x1080",
+            "2560x1440",
+            "1280x720"
+          ],
+          "kind": "Real production DriverSelectionUI on owned orthographic preview Canvas; all12 cards/six teams pointer, Submit, overlay mask and Back callbacks. Not real main-menu launch/hardware/race-mode acceptance.",
+          "boundary": "Other fourteen existing text/name overflow records per size and visible UK text crowding/name overlap remain unaccepted; no unrelated UI rewrite. 720p subjective readability remains I13. No new cost confirmation/action geometry or drag behavior added."
+        },
+        "acceptance": {
+          "pure_rules": true,
+          "production_wiring": true,
+          "passive_observed_through_actual_GameLoop": true,
+          "profile_text_and_controlled_operation": true,
+          "schumacher_active": false,
+          "vettel": false,
+          "complete_modes": false
+        },
+        "unity_final": {
+          "scene": "Assets/Scenes/MainMenu.unity",
+          "dirty": false,
+          "playing": false,
+          "compiling": false,
+          "updating": false,
+          "tests": false,
+          "console_errors": 0,
+          "console_warnings": 0,
+          "console_not_cleared": true,
+          "license": "Successfully resolved entitlement details",
+          "ready": {
+            "ready_for_tools": true,
+            "blocking_reasons": [],
+            "recommended_retry_after_ms": 0,
+            "recommended_next_action": "none"
+          }
+        },
+        "evidence": "../../../production/qa/evidence/tech-driver-I04a-2026-10-27/README.md",
+        "submission_authorization": "User directly requested 将改动提交到github after heartbeat work began; commit/push authorized for reviewed related changes. Other local settings/audio/font/staging excluded.",
+        "submission_format_followup": {
+          "kind": "Only .meta trailing whitespace and test EOF blank line; gameplay source unchanged",
+          "runtime_mvid": "dec425bf-2fe1-41d6-8ebc-7936e91615a1",
+          "editor_mvid": "b60d7ab3-e318-4d64-afcd-6bd9f7073c66",
+          "new_editor_compiled": true,
+          "additional_test": "UkPrepMealTests started; Unity closed before result retrieved; zero credited",
+          "unity_current": "Editor closed after last clean MainMenu and Console0/0; not restarted",
+          "cached_diff_check": 0
+        }
+      },
+      "next_slice": "I04b：舒马赫三段战术主动，真实弃速度牌、低挡准备、后两个本人高挡输入逐段付1永久热；现有主动未迁移。随后I04c维特尔固定来源联动；完整模式留I13。",
+      "verification": {
+        "schumacher_passive_pure_rules": true,
+        "schumacher_passive_production_wiring": true,
+        "schumacher_passive_actual_owner_inputs": true,
+        "schumacher_active": false,
+        "vettel": false,
+        "complete_modes": false
+      }
+    },
+    {
+      "id": "I05",
+      "status": "pending",
+      "scope": "IT 科技主案及阿斯卡里，处理同牌互斥、正贡献与安全弯心。"
+    },
+    {
+      "id": "I06",
+      "status": "pending",
+      "scope": "诺瓦预付容错与有限低引擎联动，验证普通罚热不被免除。"
+    },
+    {
+      "id": "I07",
+      "status": "pending",
+      "scope": "US BBQ B、维修进度 A 与净回上限，核验区域退役和短赛程可达性。"
+    },
+    {
+      "id": "I08",
+      "status": "pending",
+      "scope": "斯图尔特与布什有限窗口、实际跟车、付费与拒绝入口。"
+    },
+    {
+      "id": "I09",
+      "status": "pending",
+      "scope": "CN 温杯与周冠宇旧热整备及一次护航，保持 Go/Recover。"
+    },
+    {
+      "id": "I10",
+      "status": "pending",
+      "scope": "马青骅留置真实原生冷却机会并在下一 Go 兑现，不用赠冷或临时热冒充。"
+    },
+    {
+      "id": "I11",
+      "status": "pending",
+      "scope": "JP 汤底选择 A 与 R2 全局三回合窗口，接自由赛和生涯实际启动快照。"
+    },
+    {
+      "id": "I12",
+      "status": "pending",
+      "scope": "土屋烟幕与拓海熟路保牌，验证实例唯一、补手先后及尾流反制。"
+    },
+    {
+      "id": "I13",
+      "status": "pending",
+      "scope": "六队科技、十二车手与模式组合收口；必要长流程、原生总回归、实际三尺寸交互和文档一致性。"
+    }
+  ],
+  "package_acceptance": [
+    "每包有实际规则或生产适配增量，并分别记录规则、接线、玩家可操作与完整模式验收状态。",
+    "记录新程序集编译证据，按影响选择 tech、drivers 及 cards-heat、gears、core、career、ai、ui、tutorial、tracks-weather-pit。新夹具维护 RegressionModules.json，不反复无变化全量。",
+    "原生 Test Runner RunFinished 优先，真实记录总数、通过、失败、跳过与耗时；模型、历史结果、未运行和中止不能记本轮通过。",
+    "UI 有改动时保留并查看真实运行或明确生产受控夹具的改前后 1920×1080、2560×1440、1280×720，核对长中文、数字、遮罩、焦点、取消、拖动和禁用。",
+    "结束核对基线与相关文件 SHA256、保留其他既有改动，按已接入范围同步正式 GDD、技能文案、项目连续性与本清单。"
+  ],
+  "completed_implementation_packages": [
+    "I00a",
+    "I00b",
+    "I00"
+  ],
+  "tests_executed_for_implementation": 3484,
+  "note": "I04a passive only accepted in bounded production/GameLoop/profile fixtures; I04 remains in progress. Final selected11modules3484/3484 + separateGameLoop3/3; no full-suite/mode claim.",
+  "last_implementation_package": "I04a",
+  "tests_count_semantics": "Latest authoritative selected native run, not cumulative unique coverage or full-suite pass.",
+  "uk_hunting_cap_question": {
+    "status": "answered_by_user",
+    "source": "driver draft paragraph 102 and direct async user reply in this chat",
+    "existing_cap": "two native slipstream triggers; no movement-total cap",
+    "selected": "reward +1 after either or both native slipstreams; preserve both native triggers; no recursive leader search",
+    "user_answer": "仍额外+1，保留两次原生尾流，不因奖励再次找车（推荐）",
+    "production_not_changed": false,
+    "pending_implementation": "Production source and bounded native coordinator/UI verification now present (I01b/I01e/I01f); complete modes remain I13."
+  },
+  "prep_meal_followup_verification": {
+    "new_tests": 8,
+    "native": {
+      "total": 995,
+      "passed": 995,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 14.5479979,
+      "selectionMatches": true
+    },
+    "evidence": "../../../production/qa/evidence/tech-driver-I01a-followup-2026-10-23/README.md"
+  },
+  "prep_meal_ui_followup": {
+    "id": "I01c",
+    "date": "2026-10-24",
+    "status": "production_refresh_fix_independently_compiled_native_verification_pending",
+    "production_change": "Successful ConfirmPlayerSpeedCards now refreshes UK preparation action immediately after closing input; invalid commits retain input. No technology numeric or Hart passive change.",
+    "new_tests": 2,
+    "native_tests": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": null,
+      "status": "not_executed_unity_mcp_unavailable"
+    },
+    "independent_compile": {
+      "runtime_exit": 0,
+      "editor_exit": 0,
+      "kind": "Unity bundled Roslyn with copied current Bee response files; outputs in Library/AutomationReview only; not editor import or loaded new assemblies"
+    },
+    "evidence": "../../../production/qa/evidence/tech-driver-I01c-2026-10-24/README.md",
+    "screenshots": "none; new UI state screenshots pending"
+  },
+  "hart_passive_implementation": {
+    "id": "I01b",
+    "date": "2026-10-24",
+    "status": "production_sources_wired_independently_compiled_and_pure_tests_passed_unity_acceptance_pending",
+    "new_tests": 36,
+    "independent_pure_tests": {
+      "kind": "standalone_bundled_mono_production_pure_tests_not_Unity_TestRunner",
+      "total": 89,
+      "passed": 89,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0.1381324
+    },
+    "first_attempt": {
+      "total": 123,
+      "passed": 122,
+      "failed": 1,
+      "skipped": 0,
+      "seconds": 0.1554573,
+      "reason": "Selected DriverSkillRuntime UI AssetDatabase test cannot execute in standalone Mono; failure retained, not counted as Unity failure or repaired game bug."
+    },
+    "compile": {
+      "runtime_exit": 0,
+      "runtime_seconds": 1.3886653,
+      "editor_exit": 0,
+      "editor_seconds": 1.7039298,
+      "kind": "Bundled Roslyn with current Bee response copies; newly created source paths appended explicitly; outputs kept in isolated Library review directory"
+    },
+    "native_unity_tests": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": null,
+      "reason": "Unity MCP unavailable; no live safe editor state or RunFinished"
+    },
+    "evidence": "../../../production/qa/evidence/tech-driver-I01b-2026-10-24/README.md",
+    "unity_loaded_new_assembly": false,
+    "full_modes": false,
+    "screenshots": null,
+    "independent_static_reviews": {
+      "unity_specialist": "APPROVED, no must-fix after three corrections",
+      "qa_tester": "APPROVED WITH SUGGESTIONS; actual coordinator traversal not executed"
+    }
+  },
+  "fee_modal_focus_followup": {
+    "id": "I01d",
+    "date_utc": "2026-10-24",
+    "new_test_cases": 8,
+    "native": {
+      "total": 2363,
+      "passed": 2363,
+      "failed": 0,
+      "skipped": 0,
+      "inconclusive": 0,
+      "seconds": 12.1640629,
+      "selectionMatches": true
+    },
+    "first_native": {
+      "total": 2363,
+      "passed": 2360,
+      "failed": 3,
+      "skipped": 0,
+      "inconclusive": 0,
+      "seconds": 12.8776254,
+      "selectionMatches": true
+    },
+    "unity_loaded_new_assemblies": true,
+    "runtime_mvid": "de3963f6-f8d6-44a8-ae5f-11d15906f580",
+    "editor_mvid": "2f97f193-8dd9-4c61-a1b1-9fc5ddc5b474",
+    "modules": [
+      "ui",
+      "tech",
+      "drivers",
+      "cards-heat",
+      "core",
+      "tracks-weather-pit"
+    ],
+    "full_modes": false,
+    "screenshots": {
+      "count": 15,
+      "overflows": 0,
+      "root_viewed": 6,
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I00b-2026-10-22/after/run-20261024-175918440",
+      "kind": "controlled production RaceCanvas fixture; not a race",
+      "new_before_screenshots": 0,
+      "before_boundary": "Historical I00b before images remain only historical references; no new pre-change screenshots taken for I01d, so before/after interaction acceptance remains open."
+    },
+    "review": "QA static approved after native-discovered fixes; static review alone missed selected-button disable side effect",
+    "console": "one expected TrackDataLoader no_such_track error via LogAssert.Expect; no compile errors",
+    "resource_ready": "cached editor/state remains stale_status; fresh direct queries confirmed idle/clean and native guard checked all loaded scenes"
+  },
+  "hart_extra_path_followup": {
+    "id": "I01e",
+    "date_utc": "2026-10-24",
+    "new_cases": 16,
+    "new_pure_cases": 12,
+    "new_native_coroutine_cases": 4,
+    "final_native": {
+      "total": 2154,
+      "passed": 2154,
+      "failed": 0,
+      "skipped": 0,
+      "inconclusive": 0,
+      "seconds": 10.3944555,
+      "selectionMatches": true
+    },
+    "final_selection": "tech/drivers/cards-heat/core/tracks-weather-pit module fixtures plus five exact long-races cases (four new plus existing six-team two-turn); not whole long-races module or full suite",
+    "first_native_before_post_failure_guard": {
+      "total": 2168,
+      "passed": 2168,
+      "failed": 0,
+      "skipped": 0,
+      "inconclusive": 0,
+      "seconds": 285.8493526,
+      "selectionMatches": true
+    },
+    "first_long_cases": 19,
+    "first_long_boundary": "passed before the final Hart route gate and expanded pit/interruption cases; not a final-version rerun of all nineteen",
+    "runtime_mvid": "fd9e07a1-6993-4142-b257-2dabd92808df",
+    "editor_mvid": "eb04cd14-4479-4b92-8ce2-43c55f6a344f",
+    "new_assemblies_loaded": true,
+    "complete_modes": false,
+    "screenshots": null,
+    "ui_boundary": "No UI geometry changes or new screenshots. New corner-fee risk copy and real before/after three-resolution operation remain I01f; historical I01d screenshots not counted for this source revision."
+  },
+  "hart_risk_prompt_followup": {
+    "id": "I01f",
+    "date": "2026-10-25",
+    "status": "production_risk_prompt_and_bounded_ui_acceptance_passed_modes_pending",
+    "new_tests": 36,
+    "native_unity_tests": {
+      "total": 1394,
+      "passed": 1394,
+      "failed": 0,
+      "skipped": 0,
+      "inconclusive": 0,
+      "seconds": 10.1942977,
+      "selectionMatches": true
+    },
+    "modules": [
+      "ui",
+      "drivers",
+      "tech",
+      "gears",
+      "cards-heat"
+    ],
+    "unity_loaded_new_assembly": true,
+    "runtime_mvid": "6c8c3586-de04-4d92-b2c8-5603486e8a98",
+    "editor_mvid": "cf76e26f-bdad-4fd0-b702-491f73561dc6",
+    "screenshots": {
+      "before": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I01f-2026-10-24/before/run-20261024-235938537",
+      "after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I01f-2026-10-24/after/run-20261025-000512846",
+      "before_count": 18,
+      "after_count": 18,
+      "union_viewed_before": 18,
+      "union_viewed_after": 18,
+      "overflows": 0,
+      "kind": "Owned preview Canvas using real production HUD.Start/driver button/MVP plan; real EventSystem pointer and Move/Submit dispatch; not hardware input or complete RaceCanvas"
+    },
+    "full_modes": false,
+    "evidence": "../../../production/qa/evidence/tech-driver-I01f-2026-10-24/README.md",
+    "boundary": "Bounded I01 source/operation handoff to I02. Full RaceCanvas, physical input, complete races, mode/save combinations remain I13. No claim that six-team target fixtures implement their skills."
+  },
+  "bounded_implementation_handoffs": [
+    "I01",
+    "I02",
+    "I03"
+  ]
+}

@@ -477,18 +477,6 @@ public static class TechTreeRules
     // UK Unique Tech Logic
     // ═══════════════════════════════════════════════════════════════════
 
-    /// <summary>UK L1: Can FishAndChips be used this race? (once per race, not yet used)</summary>
-    public static bool CanUseFishAndChips(TechTreeState state, TechTreeDatabase db)
-    {
-        return HasEffect(state, db, TechEffectType.FishAndChips) && !state.fishAndChipsUsed;
-    }
-
-    /// <summary>Mark FishAndChips as used for this race.</summary>
-    public static void UseFishAndChips(TechTreeState state)
-    {
-        state.fishAndChipsUsed = true;
-    }
-
     /// <summary>
     /// UK L2: Check if FullEnglish should trigger.
     /// Hand must contain at least one heat card, one speed card, and one trick card.
@@ -921,8 +909,10 @@ public static class TechTreeRules
 
         state.heatReductionUsedThisLap = false;
         state.fishAndChipsUsed = false;
+        state.prepMeal.ResetForRace();
         state.schwarzbierFuelLastLap = -1;
         state.grillSpezialUsed = false;
+        state.germanBurst.ResetForRace();
         state.grillSpezialHeatPaidThisTurn = 0;
         state.brothSelection = BrothType.None;
         state.bankuruwaseActive = false;
@@ -937,11 +927,13 @@ public static class TechTreeRules
     }
 
     /// <summary>
-    /// Reset per-turn tracking. Call at the start of each turn.
+    /// Reset legacy per-turn tracking and close declarations. RaceSession.BeginTurn also opens/deduplicates the DE clock.
     /// </summary>
     public static void ResetPerTurnState(TechTreeState state)
     {
         if (state == null) return;
+        state.prepMeal.CloseInput();
+        state.germanBurst.CloseWindow();
         state.grillSpezialHeatPaidThisTurn = 0;
         ResetDimSumCombo(state);
     }

@@ -1,0 +1,23 @@
+{
+  "docs/memory/current-task-list.md": "f80d55b3f18b4d26ba2b60dbafd2a03ce13d99df8bb14da3c7a00d5bdacf713a",
+  "design/planning/tech-driver-rework-2026-10-22/progress.json": "0c7ca3f86aab06def145b6ecb4b586ddf072e9cbedcd757366e149d3de572593",
+  "Assets/Scripts/Core/MVPGameManager.cs": "6e2adeea843463d5a60ae635b3fa60517ce33472cc09f9a524f3fd1f580b79f6",
+  "design/gdd/foodula-1-tech-tree.md": "5452ed2ed9d849dfd96f856038fab325a302745967535fc2b4d77517b4d4b175",
+  "docs/memory/project-overview.md": "3f6d0450c091fcc7e7cb31fd9156b3e35a957592423c3ae14a703abeba010c9e",
+  "tests/regression-suite.md": "aee64b65b1f890924f78d1dca1a6d877d1fca1137e7931ec0c17b32d698b6c46",
+  "Assets/Tests/Editor/uk_prep_meal_manager_test.cs": "ae996b8b3c2be35d35f0f41a371a3275600f4f6014364e4b5ddc7c242b032573",
+  "design/ux/racing-tech-ui.md": "ae3e1dd3aea3d49cc3fb9d360ab300acdaf3cb139075b91df3aa615ba35868b4",
+  "docs/memory/game-mechanics.md": "835217e81eeb5cccb09ab2aedd139edfa13fc3f93ff2a05218a9488add503586",
+  "design/planning/tech-driver-rework-2026-10-22/implementation-plan.json": "619d96cf38dc0f7479b482de141b75be347e81a621770388fd9e27ce56915a21",
+  "design/ux/racing-tech-ui-checklist.md": "5ddd780412b2deb6858ba243e1843ec37101681bdf330da0b89cecd740192668",
+  "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技树调整草案.docx": "281e077813344ab1e3627bb075dcc28d361a0626c8c39b3492f016a9f62d7bb3",
+  "design/planning/tech-driver-rework-2026-10-22/Foodula1_车手技能调整草案.docx": "94eb7763825f777d477b3fcb8fee92bad27e6353e42d8b2cdeb98f3889914f46",
+  "Library\\AutomationReview\\tech-driver-I01c-resume-20261024-194842\\Assembly-CSharp-Editor.dll": "70f5c2cb8448dd86d10936b59c729e66f0c58d8d2cc2d14da2fc43b34ab98af5",
+  "Library\\AutomationReview\\tech-driver-I01c-resume-20261024-194842\\Assembly-CSharp-Editor.pdb": "587ff4beedd7dbbe5ea41d882da316276fdbd6b1d8719be85b02b970af543dad",
+  "Library\\AutomationReview\\tech-driver-I01c-resume-20261024-194842\\Assembly-CSharp-Editor.ref.dll": "b8beebb39e2150f2bf05447254c7595e16d2ea2cc62cfc4daa7507762051e52a",
+  "Library\\AutomationReview\\tech-driver-I01c-resume-20261024-194842\\Assembly-CSharp-Editor.rsp": "060801a1074f27f3189a024c499c2a8912ec651e60f33d16e6be2d6535425d59",
+  "Library\\AutomationReview\\tech-driver-I01c-resume-20261024-194842\\Assembly-CSharp.dll": "5ce338cf0f0622dabbe02390243c2c1864c5b9c9301565c3742b1e588d6760a1",
+  "Library\\AutomationReview\\tech-driver-I01c-resume-20261024-194842\\Assembly-CSharp.pdb": "984c152f4f767a7060aa69d6e3435cb93f1dc4e7d40b311270ebd96f09fa5870",
+  "Library\\AutomationReview\\tech-driver-I01c-resume-20261024-194842\\Assembly-CSharp.ref.dll": "c7d729119ad84cea40773e76eaea50d4bcf7755bc2700a8535b7f9e21d92ae3d",
+  "Library\\AutomationReview\\tech-driver-I01c-resume-20261024-194842\\Assembly-CSharp.rsp": "f44fc5a54f9dd8dad8bb71a0d26cf5ed301b5d0e7049247c1217e8e6146f1c42"
+}

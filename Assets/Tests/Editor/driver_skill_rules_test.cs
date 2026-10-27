@@ -68,7 +68,7 @@ public class DriverSkillRulesTests
         Assert.That(disabled, Does.Contain("禁用"));
     }
 
-    [TestCase("uk_hunter_hart", 1, 3, 8, 10, 0, false)]
+    [TestCase("uk_hunter_hart", 1, 3, 8, 10, 0, true)]
     [TestCase("uk_hunter_hart", 2, 3, 8, 10, 0, true)]
     [TestCase("it_tazio_nuvolari", 0, 3, 2, 20, 0, true)]
     [TestCase("it_tazio_nuvolari", 0, 3, 3, 20, 0, false)]
@@ -107,11 +107,11 @@ public class DriverSkillRulesTests
         Assert.That(DriverSkillRules.GetPassiveSkill("de_michael_schumacher"),
             Is.EqualTo(DriverPassiveSkillId.EngineersTune));
         Assert.That(DriverSkillRules.GetPassiveTriggerInterval(
-            DriverPassiveSkillId.EngineersTune, 1), Is.EqualTo(3));
+            DriverPassiveSkillId.EngineersTune, 1), Is.Zero);
         Assert.That(DriverSkillRules.GetPassiveTriggerInterval(
-            DriverPassiveSkillId.EngineersTune, 3), Is.EqualTo(2));
+            DriverPassiveSkillId.EngineersTune, 3), Is.Zero);
         Assert.That(DriverSkillRules.GetPassiveHeatDiscount(
-            DriverPassiveSkillId.EngineersTune, 1), Is.EqualTo(1));
+            DriverPassiveSkillId.EngineersTune, 1), Is.Zero);
 
         Assert.That(DriverSkillRules.GetPassiveDeckLookahead(
             DriverPassiveSkillId.InformationSponge, 1), Is.EqualTo(3));
@@ -119,11 +119,11 @@ public class DriverSkillRulesTests
             DriverPassiveSkillId.InformationSponge, 3), Is.EqualTo(2));
 
         Assert.That(DriverSkillRules.GetPassiveOvertakeMovementBonus(
-            DriverPassiveSkillId.LionsHeart, 1), Is.EqualTo(1));
+            DriverPassiveSkillId.LionsHeart, 1), Is.Zero);
         Assert.That(DriverSkillRules.GetPassiveOvertakeMovementBonus(
-            DriverPassiveSkillId.LionsHeart, 3), Is.EqualTo(2));
+            DriverPassiveSkillId.LionsHeart, 3), Is.Zero);
         Assert.That(DriverSkillRules.GetPassiveOvertakeCoolingBonus(
-            DriverPassiveSkillId.LionsHeart, 2), Is.EqualTo(1));
+            DriverPassiveSkillId.LionsHeart, 2), Is.Zero);
 
         Assert.That(DriverSkillRules.GetPassiveWeatherPenaltyReduction(
             DriverPassiveSkillId.SteadyHeart, 1), Is.EqualTo(1));
@@ -138,8 +138,10 @@ public class DriverSkillRulesTests
     {
         DriverSkillRuntimeState hunter = Activate("uk_hunter_hart", 7,
             new DriverSkillActivationContext(true, 2, 3, 10, 10, 0));
-        Assert.That(DriverSkillRules.GetSpeedPerCardBonus(hunter), Is.EqualTo(2));
-        Assert.That(DriverSkillRules.ApplyHeatMultiplier(hunter, 2), Is.EqualTo(3));
+        Assert.That(DriverSkillRules.GetSpeedPerCardBonus(hunter), Is.Zero);
+        Assert.That(DriverSkillRules.GetMovementBonus(hunter, false), Is.EqualTo(3));
+        Assert.That(DriverSkillRules.GetMovementBonus(hunter, true), Is.EqualTo(3));
+        Assert.That(DriverSkillRules.ApplyHeatMultiplier(hunter, 2), Is.EqualTo(2));
 
         DriverSkillRuntimeState schumacher = Activate("de_michael_schumacher", 5);
         Assert.That(DriverSkillRules.ReduceCornerHeat(schumacher, 4), Is.Zero);

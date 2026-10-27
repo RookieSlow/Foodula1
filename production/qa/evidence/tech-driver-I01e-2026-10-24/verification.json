@@ -1,0 +1,34 @@
+{
+  "id": "I01e",
+  "date_utc": "2026-10-24",
+  "new_cases": 16,
+  "new_pure_cases": 12,
+  "new_native_coroutine_cases": 4,
+  "final_native": {
+    "total": 2154,
+    "passed": 2154,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 10.3944555,
+    "selectionMatches": true
+  },
+  "final_selection": "tech/drivers/cards-heat/core/tracks-weather-pit module fixtures plus five exact long-races cases (four new plus existing six-team two-turn); not whole long-races module or full suite",
+  "first_native_before_post_failure_guard": {
+    "total": 2168,
+    "passed": 2168,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 285.8493526,
+    "selectionMatches": true
+  },
+  "first_long_cases": 19,
+  "first_long_boundary": "passed before the final Hart route gate and expanded pit/interruption cases; not a final-version rerun of all nineteen",
+  "runtime_mvid": "fd9e07a1-6993-4142-b257-2dabd92808df",
+  "editor_mvid": "eb04cd14-4479-4b92-8ce2-43c55f6a344f",
+  "new_assemblies_loaded": true,
+  "complete_modes": false,
+  "screenshots": null,
+  "ui_boundary": "No UI geometry changes or new screenshots. New corner-fee risk copy and real before/after three-resolution operation remain I01f; historical I01d screenshots not counted for this source revision."
+}

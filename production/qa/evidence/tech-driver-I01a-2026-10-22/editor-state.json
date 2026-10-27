@@ -1,0 +1,16 @@
+{
+  "scene": "Assets/Scenes/MainMenu.unity",
+  "isDirty": false,
+  "playing": false,
+  "compiling": false,
+  "importing": false,
+  "ready": true,
+  "licenseFree": true,
+  "nativeTests": false,
+  "runtimeMvid": "b6b8eb52-8e0d-4a58-83ea-f95795846022",
+  "editorMvid": "f5986d9e-4059-4728-9fa2-e61d00d7ef6c",
+  "consoleErrors": 0,
+  "consoleWarnings": [
+    "CardHandUI: cardPrefab is not set. Drag CardPrefab into the Inspector."
+  ]
+}

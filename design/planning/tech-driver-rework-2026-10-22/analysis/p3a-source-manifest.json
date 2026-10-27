@@ -1,0 +1,118 @@
+{
+  "package": "P3a",
+  "head": "f0a12b01e181d1ae9cf3009bc446da003f7c6c56",
+  "time": "2026-10-22T02:41:05",
+  "kind": "design_research_and_independent_model_no_production_integration",
+  "input_sha256": {
+    "AGENTS.md": "620757473b1af13289691b8455e97dc3bb8d722c8f952a85520402642a757156",
+    "docs/memory/project-overview.md": "a589da808be7082950527c5fbcae2510af626def1b2b13c320ac6ba1744c00e3",
+    "docs/memory/game-mechanics.md": "41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d",
+    "docs/memory/current-task-list.md": "c6b2a346916b65491bc4127074242e2377290e215afc381e1038f0e23c423098",
+    "docs/architecture/adr-002-layered-pure-function-architecture.md": "b5b74343e02a341d693fab9bbd891637d046d93fa34db7bb2ceeaac0c2ee2687",
+    "design/ux/racing-tech-ui.md": "236137df347863b2f749a464503fbd368b2d49a9df2dfed4e284abe005d1bff0",
+    "design/gdd/foodula-1-drivers.md": "e08341852a10e97a659bff69e5fca966ac794b033cb00175365e05b9d0794973",
+    "design/gdd/foodula-1-tech-tree.md": "61b286ba29a641bdebae0f7a60b34f35f69c27b22377bce1854bd9bb41402ce9",
+    "design/gdd/foodula-1-teams-cars.md": "951874e9240553b7ceed592dec6d4f1f2aec86234898557600d0fd8a590f85ee",
+    "design/gdd/foodula-1-core-mechanics.md": "00a8a85e1ddcf8f8babd8341abc6617a1922861b624c328a745678a06fbb12a8",
+    "design/gdd/foodula-1-career-mode.md": "0e93277856cf45ea646e7f7f9c19174c9c4773d28497eccbbe9a2b496fb22600",
+    "Assets/Scripts/Drivers/DriverData.cs": "7df2af0a45a4a4e2c07b45961a1af9d9b84c555282eef7f550a62d961ae1f76f",
+    "Assets/Scripts/Drivers/DriverSkillRules.cs": "1eaf5c3e54b7f25e1930f9eb7f0f2b33984b89d3a45a41b0401e58e00a5ba175",
+    "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "69cf5948dc663dd5146a312441d8068c786f3c749ac55636b71bfcb8a1e857dd",
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技与车手调整简报.docx": "afc1c1e33b1edef7a547a68e2df34e4879c55e1e5f87f9988a579ae10b11d01b",
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技树调整草案.docx": "aca6e940ea67e7144ee01464aab3eb06e7139b85663a6b16bd723e8806f34202",
+    "design/planning/tech-driver-rework-2026-10-22/inputs/Foodula1_科技树设计.docx": "c8996c17fc0aa44d6ea25ef58d9659956063be2e839913a51bde462f370c108f",
+    "design/planning/tech-driver-rework-2026-10-22/inputs/Foodula1_车手技能设计.docx": "d4def8c0b1e31774c861ea75f23343ef06afecc8ccea166aa2f4becc1c45a201",
+    "design/planning/tech-driver-rework-2026-10-22/feedback.json": "9bf842dabd10396bc8991b5f576a2374abf1ae999d2d1b0bb2f255402fd4a964"
+  },
+  "original_feedback_sha256": {
+    "C:\\Users\\Admin\\AppData\\Roaming\\dragfile_file\\Foodula1_科技树设计.docx": "c8996c17fc0aa44d6ea25ef58d9659956063be2e839913a51bde462f370c108f",
+    "C:\\Users\\Admin\\AppData\\Roaming\\dragfile_file\\Foodula1_车手技能设计.docx": "d4def8c0b1e31774c861ea75f23343ef06afecc8ccea166aa2f4becc1c45a201"
+  },
+  "output_sha256": "86ddc092544ad17f8434ae23acabffec01ad9d7471e5c12b77d736c0fa416362",
+  "model_files": {
+    "p3a-driver-model-inputs.json": "e5f5d40d372933e81b6b7a3108417d25d8dea8551f82ee179bab0cc7ecaef71a",
+    "p3a_driver_window_model.py": "fc683377d8510d6974c92c8c676ab76653280a6f46205a62a86c9ca06a82c5a7",
+    "p3a-model-results.json": "70965916de537576c9348a864b4f0d8bfac70faacb905eee991cc6192c47a4aa"
+  },
+  "research_sha256": "95327b034b3d6fb93ce8e1097c3c57c9084e3b562eeb6b848cd842e0f5b32f72",
+  "verified_sources": [
+    {
+      "id": "S01",
+      "url": "https://www.formula1.com/en/information/drivers-hall-of-fame-james-hunt.4vRKjActuXEjrFBR9hzo2A"
+    },
+    {
+      "id": "S02",
+      "url": "https://www.formula1.com/en/information/drivers-hall-of-fame-nigel-mansell.3mLYxotFMTyLgIRxilGObS"
+    },
+    {
+      "id": "S03",
+      "url": "https://www.formula1.com/en/information/drivers-hall-of-fame-michael-schumacher.7KdX5nJlTG55vR5JQSbZ21"
+    },
+    {
+      "id": "S04",
+      "url": "https://www.formula1.com/en/latest/article/hungary-1998-how-a-classic-schumacher-brawn-gamble-snatched-victory-from.6RIv63NqY0wBnDYlrdJCiC"
+    },
+    {
+      "id": "S05",
+      "url": "https://www.formula1.com/en/information/drivers-hall-of-fame-sebastian-vettel.GBy6vPkxKOKUV89QOhZe5"
+    },
+    {
+      "id": "S17",
+      "url": "https://www.formula1.com/en/latest/article/formula-one-racings-greatest-title-showdowns.73LmegYX1AuPDL9cnWR1no"
+    },
+    {
+      "id": "S18",
+      "url": "https://www.formula1.com/en/latest/article/moments-in-time-the-british-grand-prix.75fZYfjfQvbAofkfSAOvLe"
+    },
+    {
+      "id": "S19",
+      "url": "https://www.formula1.com/en/latest/article/insight-a-closer-look-at-the-12-constructors-title-winning-cars-adrian-newey.1QAwEdYMG8hAz76kEHGefF"
+    }
+  ],
+  "unused_source_attempts": [
+    {
+      "url": "https://www.mclaren.com/racing/heritage/formula-1/drivers/james-hunt/fuji-finale-james-1976-championship-part-4-2147777/",
+      "reason": "初次返回页面元数据，正文定点读取超时；未采用细节，改用S17"
+    },
+    {
+      "url": "https://www.williamsf1.com/articles/64a2c4d5-3f6a-48c8-a74d-cf7a799b38d9/our-british-gp-wins-70s-and-80s",
+      "reason": "正文定点读取超时；未采用精确28/29秒数字，改用S18"
+    }
+  ],
+  "qa": {
+    "directory": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P3a-uk-de",
+    "pdf": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P3a-uk-de\\driver-final.pdf",
+    "render": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P3a-uk-de\\render-final",
+    "pages_reviewed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "last_repair_rechecked_pages": [
+      4,
+      6
+    ],
+    "other_pages_pixel_identical": true,
+    "native_word_read_only_export": true,
+    "template_preserve_only_parts_unchanged": true,
+    "editable_tables": 14,
+    "source_hyperlinks": 8
+  },
+  "missing_governance": [
+    ".Codex/docs",
+    "production/session-state/active.md"
+  ],
+  "unity_tests_run": 0,
+  "unity_and_console_checked": false,
+  "gameplay_changed": false,
+  "limits": "检查提交、取消、目标连续性、个人回合窗口、固定来源、永久热牌身份及返还上限。未模拟牌堆、天气、真实路径、AI、胜率、Unity 或存档。"
+}

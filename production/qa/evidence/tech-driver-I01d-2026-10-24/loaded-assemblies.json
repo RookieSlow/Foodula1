@@ -1,0 +1,30 @@
+{
+  "jsonrpc": "2.0",
+  "id": 10,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Code executed successfully.\",\"data\":{\"result\":{\"runtimeMvid\":\"de3963f6-f8d6-44a8-ae5f-11d15906f580\",\"editorMvid\":\"2f97f193-8dd9-4c61-a1b1-9fc5ddc5b474\",\"compiling\":false,\"updating\":false,\"playing\":false,\"native\":false,\"busy\":false,\"dirty\":false},\"compiler\":\"codedom\"}}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "message": "Code executed successfully.",
+      "data": {
+        "result": {
+          "runtimeMvid": "de3963f6-f8d6-44a8-ae5f-11d15906f580",
+          "editorMvid": "2f97f193-8dd9-4c61-a1b1-9fc5ddc5b474",
+          "compiling": false,
+          "updating": false,
+          "playing": false,
+          "native": false,
+          "busy": false,
+          "dirty": false
+        },
+        "compiler": "codedom"
+      }
+    },
+    "isError": false
+  }
+}

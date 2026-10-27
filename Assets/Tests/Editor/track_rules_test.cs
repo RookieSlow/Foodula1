@@ -3,6 +3,28 @@ using NUnit.Framework;
 
 public class TrackRulesTests
 {
+    [TestCase(0, 2, 2, 3, 0)]
+    [TestCase(0, 2, 7, 9, 1)]
+    [TestCase(0, 0, 1, 3, 1)]
+    public void AdditionalApexesDeduplicatePhysicalSegmentButLaterLapPaysAgain(int from, int to, int extraFrom, int extraTo, int expected)
+    {
+        var nodes = new List<TrackNode>();
+        for (int i = 0; i < 6; i++) nodes.Add(new TrackNode(i, 2));
+        nodes[2] = new TrackNode(2, 2, cornerId: 7, isApex: true);
+        nodes[3] = new TrackNode(3, 2, cornerId: 7, isApex: true);
+        List<int> added = TrackRules.GetAdditionalApexCornersCrossed(nodes, from, to, extraFrom, extraTo);
+        Assert.That(added.Count, Is.EqualTo(expected));
+        foreach (int corner in added) Assert.That(corner, Is.EqualTo(7));
+    }
+
+    [TestCase(1, 5)] [TestCase(2, 9)] [TestCase(0, 0)]
+    public void NewDriverPathStopsBeforeFinalFinishButNotAnEarlierLap(int remaining, int expected)
+    {
+        var nodes = new List<TrackNode>();
+        for (int i = 0; i < 10; i++) nodes.Add(new TrackNode(i, 99, isStartFinish: i == 6));
+        Assert.That(TrackRules.EndBeforeFinalFinish(nodes, 0, 9, remaining), Is.EqualTo(expected));
+    }
+
     [Test]
     public void ConfigToNodes_PreservesApexAndStartFinishFlags()
     {

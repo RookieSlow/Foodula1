@@ -1,0 +1,13 @@
+{
+  "package": "P3b",
+  "kind": "independent_candidate_design_model_not_production",
+  "driver_ids_unchanged": true,
+  "italy_engine_capacities": [6, 7],
+  "us_permanent_heat_count": 8,
+  "ascari": {"passive_margin": [1, 1, 2], "passive_per_lap": [1, 2, 2], "active_after_corner_movement": [2, 3, 3], "active_uses": [1, 1, 2]},
+  "nuvolari": {"passive_entry_engine_max": [2, 3, 3], "passive_old_hand_return": [1, 1, 2], "active_entry_engine_max": 2, "active_movement": [2, 3, 3], "active_uses": [1, 1, 2], "active_ignored_apex_count": 1, "spin_limit": 3, "committed_spin_cost": 1},
+  "stewart": {"passive_first_speed_bonus": [1, 2, 2], "passive_per_lap": 1, "active_duration_personal_turns": [2, 3, 3], "active_straight_movement": [2, 2, 3], "active_heat_to_hand_per_turn": 1, "active_uses": [1, 1, 2]},
+  "busch": {"passive_pre_overtake_gap": [2, 3, 4], "pressure_per_lap": 1, "active_rear_gap_max": 3, "active_self_heat_to_discard": 1, "active_straight_movement": [2, 3, 3], "active_uses": [1, 1, 2], "target_optional_heat_to_hand": 1, "bbq_smoke_priority": true},
+  "linear_fixture": {"apex_distances": [4, 6], "corner_limits": [5, 3], "selected_card_values_after_native_effects": [2, 4]},
+  "limits": ["No production C# execution", "No full board route, deck or random draw", "No weather, hidden AI, career save or win-rate simulation", "Linear apex fixture only checks candidate ordering and fee requests", "No Unity or player feel acceptance"]
+}

@@ -1,0 +1,22 @@
+{
+  "startedUtc": "2026-10-26T22:31:37.0225526Z",
+  "endedUtc": "2026-10-26T22:32:09.8025374Z",
+  "state": "Passed",
+  "nativeState": "Passed",
+  "total": 2286,
+  "passed": 2286,
+  "failed": 0,
+  "skipped": 0,
+  "inconclusive": 0,
+  "seconds": 27.771329,
+  "selectionMatches": true,
+  "modules": [
+    "cards-heat",
+    "core",
+    "drivers",
+    "tech",
+    "tracks-weather-pit"
+  ],
+  "new_fixed_payment_cases": 20,
+  "new_production_movement_cases": 8
+}

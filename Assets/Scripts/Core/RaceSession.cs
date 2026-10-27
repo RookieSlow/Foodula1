@@ -132,17 +132,59 @@ public class RaceSession
     /// 重置玩家的每回合状态，并把关东慢煮累积的出牌槽转入新回合。
     /// 特技牌结算不依赖科技树是否启用。
     /// </summary>
-    public void BeginTurn(PlayerState player)
+    public void BeginTurn(PlayerState player, int globalTurn = -1)
     {
         if (player == null) return;
+        if (globalTurn >= 0 && player.techState?.germanBurst.TurnId == globalTurn) return;
 
         player.heatPaidCardsThisTurn.Clear();
         player.ClearTurnState();
         player.trickState?.ResetPerTurn();
         if (player.techState != null)
+        {
             TechTreeRules.ResetPerTurnState(player.techState);
+            player.techState.germanBurst.BeginTurn(globalTurn);
+        }
         if (player.trickState != null)
             player.extraCardSlotsThisTurn += TrickCardRules.ConsumeKantoOden(player.trickState);
+    }
+
+    /// <summary>Starts only the eligible owner's input clocks; D03 passive does not migrate its legacy active clock.</summary>
+    public bool BeginDriverSkillInput(PlayerState player, int totalNodes = 0, int startFinishIndex = 0)
+    {
+        var skill = player?.driverSkill;
+        if (skill == null || (!skill.UsesDrivingInputClock && !skill.UsesPassiveDrivingInputClock))
+            return false;
+        if (RaceTurnRules.GetStartAction(player) != RaceTurnStartAction.SelectGear)
+        {
+            skill.InterruptDrivingInput();
+            return false;
+        }
+        bool passiveStarted = skill.UsesPassiveDrivingInputClock && skill.Tuning.BeginInput(this, player);
+        if (!skill.BeginDrivingInput()) return passiveStarted;
+        skill.Hunting.BeginInput(this, player, totalNodes, startFinishIndex);
+        skill.Pursuit.BeginInput(this, player, totalNodes, startFinishIndex);
+        skill.Charge.BeginInput(this, player, totalNodes, startFinishIndex);
+        return true;
+    }
+
+    /// <summary>D02 fixed-cost entry; I02d separately connects the human confirmation UI.</summary>
+    public bool TryPrepareMansellCharge(PlayerState player, int totalNodes, int startFinishIndex,
+        int globalTurn, int pendingGear, int requestVersion, DriverSkillActivationContext context,
+        out MansellChargeActivationPlan plan, out string reason)
+        => MansellChargeActivationPlan.TryCreate(this, player, totalNodes, startFinishIndex,
+            globalTurn, pendingGear, requestVersion, context, out plan, out reason);
+
+    /// <summary>D02 A2 settlement, after ordinary draw/breakfast, from the owner's frozen old hand heat only.</summary>
+    public MansellPursuitCoolingResult ResolveMansellPursuitAfterDraw(PlayerState player)
+        => player?.driverSkill?.Pursuit.ConsumeAfterDraw(this, player) ?? default;
+
+    /// <summary>Called once after ordinary draw and breakfast, before any card is formally played.</summary>
+    public bool BeginPrepMealInput(PlayerState player, int globalTurn)
+    {
+        if (player?.techState == null || RaceTurnRules.GetStartAction(player) != RaceTurnStartAction.SelectGear ||
+            player.teamId != TeamId.UK || !GetModifiers(player).hasFishAndChips) return false;
+        return player.techState.prepMeal.BeginInput(player.deck, globalTurn);
     }
 
     /// <summary>Consumes the recovery/pit skip after A1 has chosen that action; presentation stays in the coordinator.</summary>
@@ -305,9 +347,61 @@ public class RaceSession
     /// <summary>Read-only fuel eligibility; payment and the once-per-lap marker belong to the caller.</summary>
     public bool CanTriggerSchwarzbierFuel(PlayerState p, bool techEnabled)
     {
-        return p.techState != null && techEnabled && GetModifiers(p).hasSchwarzbierFuel &&
-            p.deck.heatPool != null && p.deck.heatPool.remaining > 0 &&
-            TechTreeRules.CanTriggerSchwarzbierFuelThisLap(p.techState, p.lap);
+        if (p?.techState == null || p.deck?.heatPool == null || RaceTurnRules.IsTerminal(p) ||
+            !techEnabled || p.deck.heatPool.remaining < 1) return false;
+        var modifiers = GetModifiers(p);
+        if (!modifiers.hasSchwarzbierFuel) return false;
+        var burst = p.techState.germanBurst;
+        if (burst.Declared) return modifiers.hasGrillSpezial && burst.Matches(this, p) && burst.FuelUsesThisTurn < 3;
+        return burst.FuelUsesThisTurn == 0 && TechTreeRules.CanTriggerSchwarzbierFuelThisLap(p.techState, p.lap);
+    }
+
+    /// <summary>DE L1 commits one real fixed payment; ordinary discounts, immunity and multipliers remain untouched.</summary>
+    public bool TryCommitSchwarzbierFuel(PlayerState player, bool techEnabled, out CardData receipt)
+    {
+        receipt = null;
+        if (!CanTriggerSchwarzbierFuel(player, techEnabled) ||
+            !player.deck.TryPayFixedPermanentHeatToDiscard(out receipt)) return false;
+        RecordFixedPermanentPayment(player, receipt);
+        var burst = player.techState.germanBurst;
+        TechTreeRules.UseSchwarzbierFuel(player.techState, burst.Declared ? burst.OpeningLap : player.lap);
+        burst.RecordFuel();
+        return true;
+    }
+
+    /// <summary>Read-only pre-gear declaration availability. A free intent never reserves heat or a race use.</summary>
+    public bool CanDeclareGermanBurst(PlayerState player, bool techEnabled, int globalTurn)
+    {
+        var burst = player?.techState?.germanBurst;
+        return techEnabled && player?.techState?.activeNodeIds != null && player.deck?.heatPool != null &&
+            burst != null && burst.DeclarationOpen && !burst.Declared && burst.TurnId == globalTurn &&
+            Players.Contains(player) && RaceTurnRules.GetStartAction(player) == RaceTurnStartAction.SelectGear &&
+            TechTreeRules.CanUseGrillSpezial(player.techState, TechDb);
+    }
+
+    /// <summary>Declares intent before confirmed gear payment; no resource or race use is spent here.</summary>
+    public bool TryDeclareGermanBurst(PlayerState player, bool techEnabled, int globalTurn)
+        => CanDeclareGermanBurst(player, techEnabled, globalTurn) && player.techState.germanBurst.Declare(this, player, globalTurn);
+
+    /// <summary>Closes the declaration deadline before the first actual confirmed gear payment.</summary>
+    public void SealGermanBurstDeclaration(PlayerState player) => player?.techState?.germanBurst.SealDeclaration();
+
+    /// <summary>Cancels only the current owner's observed unpaid declaration, never a newer window.</summary>
+    public bool TryCancelGermanBurst(PlayerState player, int globalTurn, int expectedVersion)
+    {
+        var burst = player?.techState?.germanBurst;
+        return burst != null && burst.TurnId == globalTurn && burst.Matches(this, player) &&
+            burst.Cancel(expectedVersion);
+    }
+
+    /// <summary>Registers a fixed payment's exact owned instance once, including borrowed DE windows.</summary>
+    public void RecordFixedPermanentPayment(PlayerState player, CardData receipt)
+    {
+        if (player?.deck == null || receipt == null || player.heatPaidCardsThisTurn.Contains(receipt) ||
+            !player.deck.IsUniquePermanentHeatInHandOrDiscard(receipt)) return;
+        player.heatPaidCardsThisTurn.Add(receipt);
+        TrackHeatPaid(player, 1);
+        if (player.techState != null) TechTreeRules.TrackDimSumCombo(player.techState, false, false, true);
     }
 
     /// <summary>Count only landmarks crossed by the base endpoint, never by the awarded bonus.</summary>
@@ -465,8 +559,13 @@ public class RaceSession
         int heat = Math.Max(1, overspeed - ConsumeHeatReduction(player));
         if (TeamVehicleBonusesEnabled)
             heat += TeamVehicleRules.GetCornerHeatPenalty(player.teamId);
-        return DriverSkillRules.ReduceCornerHeat(player.driverSkill, heat);
+        heat = DriverSkillRules.ReduceCornerHeat(player.driverSkill, heat);
+        return Math.Max(0, heat - (player.driverSkill?.Tuning.ConsumeReduction(this, player, heat) ?? 0));
     }
+
+    /// <summary>D03 records only exact instances from a typed ordinary corner payment after all cost reductions.</summary>
+    public void RecordOrdinaryCornerPayment(PlayerState player, int actuallyPaid)
+        => player?.driverSkill?.Tuning.RecordOrdinaryCornerPayment(this, player, actuallyPaid);
 
     /// <summary>新的一圈开始 — 重置每圈科技跟踪。</summary>
     public void OnNewLap(PlayerState p)
@@ -516,12 +615,14 @@ public class RaceSession
             return TrickPlayResult.Fail("本回合已打出过特技牌（每回合限 1）");
         if (!TrickCardRules.CanPlaySpecificTrick(def, IsGoMode(p), IsRecoverMode(p)))
             return TrickPlayResult.Fail("当前驾驶模式无法使用该特技牌");
-        return TrickCardRules.ResolvePlay(
+        TrickPlayResult result = TrickCardRules.ResolvePlay(
             def, p.trickState,
             p.deck.heatPool != null && p.deck.heatPool.remaining > 0,
             p.deck.CountHeatInHand() > 0,
             p.deck.CountSpeedInHand() > 0,
             p.trickState.crossedLandmarkLastTurn);
+        if (result.success) p.techState?.prepMeal.CloseInput();
+        return result;
     }
 
     /// <summary>开局特技牌（每队 4 张：2 攻 2 守）。</summary>
@@ -964,10 +1065,24 @@ public class RaceSession
     {
         if (RaceTurnRules.IsTerminal(p) || p.techState == null)
             return 0;
-        return TechTreeRules.CanUseGrillSpezial(p.techState, TechDb)
-            ? Math.Min(TechTreeRules.GetGrillSpezialCooldown(p.techState),
-                p.deck.CountRecordedHeat(p.heatPaidCardsThisTurn))
-            : 0;
+        var burst = p.techState.germanBurst;
+        if (burst.ManualPathThisTurn)
+            return burst.Locked && burst.Matches(this, p) && GetModifiers(p).hasGrillSpezial
+                ? p.deck.CountRecordedHeat(burst.Receipts) : 0;
+        // Undeclared turns never obtain the L3 refund after observing their outcome.
+        return 0;
+    }
+
+    /// <summary>Returns exact manual-window receipts, distinguishing retirement from net engine restoration.</summary>
+    public GermanBurstRefundResult ResolveGermanBurstRefund(PlayerState player, int limit)
+    {
+        var burst = player?.techState?.germanBurst;
+        if (burst == null || !burst.ManualPathThisTurn || limit <= 0) return default;
+        int count = Math.Min(limit, GetGrillSpezialCooldown(player));
+        if (count <= 0) return default;
+        int before = player.deck.heatPool.remaining;
+        var removed = player.deck.CoolRecordedHeatWithSources(burst.Receipts, count);
+        return new GermanBurstRefundResult(removed, Math.Max(0, player.deck.heatPool.remaining - before));
     }
 
     /// <summary>标记烤肉拼盘已使用（调用方随后应用冷却）。</summary>
@@ -980,7 +1095,10 @@ public class RaceSession
     /// <summary>记录本回合支付的热量（烤肉拼盘跟踪）。</summary>
     public void TrackHeatPaid(PlayerState p, int heatPaid)
     {
-        if (p.techState != null && heatPaid > 0)
+        if (p?.techState != null && heatPaid > 0)
+        {
             TechTreeRules.TrackGrillSpezialHeat(p.techState, heatPaid);
+            if (GetModifiers(p).hasGrillSpezial) p.techState.germanBurst.RecordPayments(this, p);
+        }
     }
 }

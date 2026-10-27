@@ -1,0 +1,75 @@
+{
+  "id": "I02b",
+  "date": "2026-10-26",
+  "status": "mansell_passive_source_wiring_and_native_A2_verified_active_UI_modes_pending",
+  "scope": "D02 passive only: same-target two owner-input observations and frozen old hand permanent heat settlement. Existing I02a sources completed and validated, not a claim of two-leg active implementation.",
+  "new_tests": 49,
+  "new_pure_cases": 48,
+  "new_native_coroutine_cases": 1,
+  "first_native": {
+    "total": 1824,
+    "passed": 1822,
+    "failed": 2,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 26.4781307,
+    "selectionMatches": true
+  },
+  "corrected_native": {
+    "total": 790,
+    "passed": 790,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 14.0069824,
+    "selectionMatches": true
+  },
+  "corrected_modules": [
+    "drivers",
+    "core",
+    "tools"
+  ],
+  "earlier_unchanged_modules": [
+    "tech",
+    "cards-heat",
+    "tutorial"
+  ],
+  "native_A2": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 1.9035575,
+    "native_RunFinished": {
+      "fullName": "Foodula1",
+      "resultState": "Passed",
+      "endedUtc": "2026-10-26T06:39:16.6081387Z",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "inconclusive": 0,
+      "message": "",
+      "output": "",
+      "stackTrace": ""
+    }
+  },
+  "runtime_mvid": "b9a158f7-eea3-454b-897f-e88fbdd3b667",
+  "editor_mvid": "06b50765-73af-46c8-8c60-7f55bb2fc9f7",
+  "new_assemblies_loaded": true,
+  "acceptance": {
+    "pure_rules": true,
+    "production_wiring": true,
+    "bounded_A2_automatic_execution": true,
+    "player_operable": false,
+    "active_two_legs": false,
+    "complete_modes": false
+  },
+  "screenshots": null,
+  "visual_boundary": "No UI source/copy/layout changes or screenshot captures. Old skill labels/descriptions and three-resolution acceptance remain pending with I02 presentation.",
+  "review": {
+    "unity_specialist": "static bounded APPROVED; nearest pending-pit exclusion fixed",
+    "qa_tester": "bounded coverage acceptable; true negative-gap case added after review"
+  },
+  "evidence": "../../../production/qa/evidence/tech-driver-I02b-2026-10-26/README.md"
+}

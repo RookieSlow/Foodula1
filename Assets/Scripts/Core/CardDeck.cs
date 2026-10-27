@@ -410,6 +410,82 @@ public class CardDeck
             CountHeatCards(hand, includeTemporary: false) - regionalHeatPendingRetirement);
     }
 
+    /// <summary>Exact old-heat eligibility; rejects draw, temporary and duplicate-zone ownership.</summary>
+    public bool IsUniquePermanentHeatInHandOrDiscard(CardData card)
+    {
+        if (card == null || !card.IsHeat || card.isTemp || drawPile.Contains(card)) return false;
+        int count = 0;
+        foreach (CardData item in hand) if (ReferenceEquals(item, card)) count++;
+        foreach (CardData item in discardPile) if (ReferenceEquals(item, card)) count++;
+        return count == 1;
+    }
+
+    /// <summary>
+    /// Validates the entire exact batch before discarding its speed cost and cooling old H/D heat.
+    /// No draw, refill, callbacks or ordinary partial-payment behavior is involved.
+    /// </summary>
+    public bool TryCommitPrepMeal(CardData cost, IReadOnlyList<CardData> sources,
+        out HeatCoolingResult removed, out int retired, out int restored)
+    {
+        removed = default; retired = 0; restored = 0;
+        if (heatPool == null || cost == null || !cost.IsSpeed || cost.isTemp ||
+            !string.IsNullOrEmpty(cost.trickId) || !hand.Contains(cost) ||
+            discardPile.Contains(cost) || drawPile.Contains(cost) || sources == null ||
+            sources.Count == 0 || sources.Count > 2 || sources.Count <= regionalHeatPendingRetirement) return false;
+        var unique = new HashSet<CardData>();
+        foreach (CardData source in sources)
+            if (!unique.Add(source) || !IsUniquePermanentHeatInHandOrDiscard(source)) return false;
+        int costCount = 0;
+        foreach (CardData card in hand) if (ReferenceEquals(card, cost)) costCount++;
+        if (costCount != 1) return false;
+
+        hand.Remove(cost);
+        discardPile.Add(cost);
+        int fromHand = 0, fromDiscard = 0;
+        foreach (CardData source in sources)
+        {
+            if (hand.Remove(source)) fromHand++;
+            else { discardPile.Remove(source); fromDiscard++; }
+            if (ReturnPermanentHeatToEngine()) restored++;
+            else retired++;
+        }
+        removed = new HeatCoolingResult(fromHand, 0, fromDiscard);
+        return true;
+    }
+
+    /// <summary>One fixed permanent engine heat, paid in full to discard without ordinary cost discounts.</summary>
+    public bool TryPayFixedPermanentHeatToDiscard(out CardData receipt)
+    {
+        receipt = null;
+        if (heatPool == null || heatPool.remaining < 1) return false;
+        receipt = new CardData(CardType.Heat, 0);
+        heatPool.remaining--;
+        discardPile.Add(receipt);
+        return true;
+    }
+
+    /// <summary>D02 fixed cost: validate once, then discard exact speed and one engine heat atomically.</summary>
+    public bool TryCommitMansellChargeCost(CardData speedCost, bool secondLeg, out CardData paidHeat)
+    {
+        paidHeat = null;
+        if (heatPool == null || heatPool.remaining < 1) return false;
+        if (secondLeg) { if (speedCost != null) return false; }
+        else
+        {
+            if (speedCost == null || !speedCost.IsSpeed || speedCost.isTemp ||
+                !string.IsNullOrEmpty(speedCost.trickId) || drawPile.Contains(speedCost) || discardPile.Contains(speedCost))
+                return false;
+            int count = 0;
+            foreach (CardData card in hand) if (ReferenceEquals(card, speedCost)) count++;
+            if (count != 1) return false;
+        }
+        if (!secondLeg) { hand.Remove(speedCost); discardPile.Add(speedCost); }
+        paidHeat = new CardData(CardType.Heat, 0);
+        heatPool.remaining--;
+        discardPile.Add(paidHeat);
+        return true;
+    }
+
     /// <summary>
     /// 从该玩家的引擎牌库支付 count 张热量牌，放入弃牌堆。
     /// 这是显式的弃牌堆支付路径（例如中国队阴阳茶 Go）；它不参与普通抽牌。

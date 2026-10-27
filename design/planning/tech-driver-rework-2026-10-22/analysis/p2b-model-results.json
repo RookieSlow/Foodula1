@@ -1,0 +1,233 @@
+{
+  "package": "P2b",
+  "kind": "independent_design_model_not_unity",
+  "model_sha256": "001be8d96132d15795725b71f06870f3006b8cd926368e75437eba0f9f3cd070",
+  "inputs": {
+    "sha256": {
+      "Assets/Scripts/Config/MVPGameConfig.asset": "907174049445e092eb1f3fb35a7a3bf5732831a76a38ad9b0c89b44419027bfe",
+      "Assets/Scripts/Core/TeamVehicleRules.cs": "59e98c8e7c17d41e07c374689f8446ab463f026975a2aefb3467b1c5255cc1e0",
+      "Assets/Scripts/Core/ChinaGearShiftRules.cs": "9ae12b475e0f1006c225619be71460c83aba5f6deba8fded59adb3971d06da9d",
+      "Assets/Scripts/Core/RaceHeatPaymentExecution.cs": "63022e8da125a72157f4380d8b28ecf9f9e283ee095b56428dbcd44dccfc8dd8",
+      "Assets/Scripts/Core/RaceTurnTechnologyCleanup.cs": "1f4472619f0f6da7765bdea6ddba5f90a01a62774738b4382e1989437c2d3530",
+      "Assets/Scripts/Core/RaceParticipantTechnologySetup.cs": "4d3761bda7d2f308db8e9840696780c6f7d20a47a8ceca645883cd9843a5752d",
+      "Assets/Scripts/Core/RaceSession.cs": "cfa587a0e2d71b06825a7465c458a6887567e0ca4fb04af336873453f78b6ab3",
+      "Assets/Scripts/TechTree/TechTreeRules.cs": "8bb3bb2edc42eb83501ba3887f6dbab53a9b3cedafad3e7a776d44af822bf3c8",
+      "Assets/Scripts/TechTree/TechTreeData.cs": "1a9654e5155074d575bd26f2f66d141afef42626d68e0b403be9b970bdaf4f10",
+      "Assets/Scripts/TechTree/BankuruwaseTurnRules.cs": "465938c7826ab47d70e9436df3e0f6fcb8aedfb700aa4ae5dc6dbbb869e9d6bf",
+      "Assets/Scripts/TrickCards/TrickCardRules.cs": "267e986b56071497898273d15a1948b668a2966b061a62299451b48621ce474c",
+      "Assets/Resources/Configs/Tracks/shanghai_dim_sum.json": "34902f95ec0afa451a58923221ad9a9de59a5be6f74d2b72381cc741f8f93403",
+      "Assets/Resources/Configs/Tracks/suzuka_sushi.json": "1554d4d0d4c6d491a3201fd4206a5781cf9ac0f8a6d21aaae8a011de1a2962c3"
+    },
+    "speed_values": [
+      1,
+      1,
+      1,
+      2,
+      2,
+      2,
+      2,
+      2,
+      3,
+      3,
+      3,
+      4
+    ],
+    "ordinary_hand": 7,
+    "cn_base_pool": 7,
+    "track_cells": {
+      "shanghai_dim_sum": 62,
+      "suzuka_sushi": 60
+    }
+  },
+  "checks_total": 42,
+  "checks_passed": 42,
+  "checks_failed": 0,
+  "checks_skipped": 0,
+  "parameter_cases": 51316,
+  "case_groups": {
+    "cn_ledgers": 6912,
+    "rotor_boundaries": 44352,
+    "broth_union": 40,
+    "choice_combinations": 12
+  },
+  "elapsed_seconds": 0.1624,
+  "cn_ledger_examples": {
+    "null": {
+      "engine": 2,
+      "hand": 2,
+      "discard": 3,
+      "temporary": 0,
+      "trick": true,
+      "speed": true,
+      "paid": true,
+      "manual_used": false,
+      "movement": 2,
+      "receipts": 2,
+      "unpaid_tea": 0
+    },
+    "A": {
+      "engine": 1,
+      "hand": 3,
+      "discard": 3,
+      "temporary": 0,
+      "trick": true,
+      "speed": true,
+      "paid": true,
+      "manual_used": true,
+      "movement": 3,
+      "receipts": 3,
+      "unpaid_tea": 0
+    },
+    "B": {
+      "engine": 2,
+      "hand": 1,
+      "discard": 4,
+      "temporary": 0,
+      "trick": true,
+      "speed": true,
+      "paid": true,
+      "manual_used": true,
+      "movement": 2,
+      "receipts": 3,
+      "unpaid_tea": 0
+    }
+  },
+  "rotor_twelve_turns": {
+    "current": [
+      3,
+      2,
+      1,
+      0,
+      3,
+      2,
+      1,
+      0,
+      3,
+      2,
+      1,
+      0
+    ],
+    "R1": [
+      3,
+      2,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "R2": [
+      0,
+      3,
+      2,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "raw_rank_eligible": {
+    "2": {
+      "current": [
+        1,
+        2
+      ],
+      "R1": [
+        2
+      ],
+      "R2": [
+        2
+      ]
+    },
+    "4": {
+      "current": [
+        3,
+        4
+      ],
+      "R1": [
+        3,
+        4
+      ],
+      "R2": [
+        3,
+        4
+      ]
+    },
+    "6": {
+      "current": [
+        5,
+        6
+      ],
+      "R1": [
+        5,
+        6
+      ],
+      "R2": [
+        5,
+        6
+      ]
+    }
+  },
+  "checks": [
+    "test_01_l1_current_payment_can_complete_combo",
+    "test_02_no_trick_no_combo",
+    "test_03_late_trick_resets_prior_speed",
+    "test_04_real_order_works",
+    "test_05_a_ledger",
+    "test_06_b_ledger",
+    "test_07_empty_engine_is_atomic",
+    "test_08_b_requires_permanent_hand_heat",
+    "test_09_manual_is_once_per_turn",
+    "test_10_recover_disables_manual",
+    "test_11_no_l2_disables_manual",
+    "test_12_no_l1_does_not_fabricate_tea",
+    "test_13_preview_does_not_mutate",
+    "test_14_unconfirmed_does_not_debit",
+    "test_15_finished_before_cleanup_cancels_intent",
+    "test_16_manual_finish_skips_later_tea",
+    "test_17_last_engine_can_starve_automatic_cost",
+    "test_18_new_a_heat_survives_until_next_recover_fixture",
+    "test_19_b_is_relocation_not_net_engine_recovery",
+    "test_20_temporary_heat_not_returned",
+    "test_21_go_and_recover_counts_preserved",
+    "test_22_current_two_car_leader_qualifies",
+    "test_23_candidates_exclude_two_car_leader",
+    "test_24_current_retriggers_on_later_boundary",
+    "test_25_r1_only_one_three_turn_window",
+    "test_26_r2_waits_for_completed_turn",
+    "test_27_r2_no_real_gap_no_activation",
+    "test_28_r2_no_request_preserves_use",
+    "test_29_rank_improvement_does_not_pause",
+    "test_30_expiration_cannot_reactivate_same_boundary",
+    "test_31_terminal_cancels_remaining_window",
+    "test_32_selected_broth_deduplicated",
+    "test_33_expiry_restores_only_selected_broth",
+    "test_34_l3_without_l2_has_no_permanent_broth",
+    "test_35_shoyu_shifts_exact_target_not_match_band",
+    "test_36_broth_is_not_an_ordinary_card",
+    "test_37_b_recipe_keeps_four_existing_tricks",
+    "test_38_tutorial_and_no_l2_have_no_choice",
+    "test_39_after_draw_changes_rejected",
+    "test_40_uk_broth_does_not_change_uk_tricks",
+    "test_41_career_recipe_change_requires_allowed_boundary",
+    "test_42_pure_lobby_plan_does_not_mutate_speed_source"
+  ],
+  "limitations": [
+    "Current-rule characterizations are Python transcriptions, not execution of C# or Unity.",
+    "CN ledger starts AFTER normal costs and cooling, with sufficient L1/L2 heat unless explicitly testing shortage.",
+    "No real corner, spin penalty, opponent, retained draw, save, AI, input or race simulation.",
+    "Broth fields are category-level effects; final corner limit still uses the existing source-stacking formula.",
+    "R1/R2 limits and selection/recipe gates are unapproved candidates, not current game behavior.",
+    "Career recipe change guard does not validate any snapshot codec or persisted carried recipe."
+  ]
+}

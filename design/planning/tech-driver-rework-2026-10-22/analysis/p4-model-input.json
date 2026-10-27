@@ -1,0 +1,128 @@
+{
+  "package": "P4",
+  "kind": "independent_candidate_transaction_model_not_unity",
+  "field_sizes": [
+    2,
+    4,
+    6,
+    12
+  ],
+  "rotor_global_rounds": 3,
+  "mother_road_net_return_cap": 3,
+  "new_action_commit_scope": [
+    "session",
+    "participant",
+    "turn",
+    "plan_version"
+  ],
+  "tailwind_order": [
+    "settled_geometry_and_weather",
+    "hard_block_with_finite_guard",
+    "bbq_soft_reduction",
+    "voluntary_whole_request_forfeiture",
+    "optional_busch_follow_fee",
+    "actual_movement_and_event"
+  ],
+  "persistent_modes": {
+    "free": "normal_team_profile",
+    "career": "isolated_career_snapshot",
+    "tutorial": "no_tech_skill_or_reward_write"
+  },
+  "source_files": [
+    "Assets/Scripts/Core/RaceTurnCleanup.cs",
+    "Assets/Scripts/Core/RaceHeatPaymentExecution.cs",
+    "Assets/Scripts/Core/RaceTurnPreviewRules.cs",
+    "Assets/Scripts/Core/RaceSettledSlipstreamResolution.cs",
+    "Assets/Scripts/Core/RaceParticipantTechnologySetup.cs",
+    "Assets/Scripts/Core/CardDeck.cs",
+    "Assets/Scripts/Core/MVPGameManager.cs",
+    "Assets/Scripts/Core/PlayerState.cs",
+    "Assets/Scripts/Drivers/DriverSkillRuntime.cs",
+    "Assets/Scripts/Drivers/DriverSkillRaceContextRules.cs",
+    "Assets/Scripts/TechTree/TechTreeData.cs",
+    "Assets/Scripts/TechTree/TechTreeProfileCodec.cs",
+    "Assets/Scripts/Career/CareerPersistence.cs",
+    "Assets/Tests/Editor/RegressionModules.json"
+  ],
+  "limits": [
+    "Conceptual runtime tokens are not existing production fields",
+    "Synthetic event sequences do not run original C# or track routing",
+    "No Unity, real UI, storage, AI race, weather or balance acceptance",
+    "Atomic wallet writes are injected model fixtures; current PlayerPrefs adapter does not provide that transaction",
+    "Design alternatives, driver identity and new save fields remain unapproved",
+    "Three-zone model excludes heat in draw and in-flight zones; full production conservation must include every physical permanent-heat zone and count receipt references only once."
+  ],
+  "ma_source_order_fixtures": [
+    {
+      "ordered_heat": [
+        [
+          "H",
+          "TMP",
+          true
+        ],
+        [
+          "H",
+          "OLD",
+          false
+        ]
+      ],
+      "native_effective": 1,
+      "old_hand": [
+        "OLD"
+      ],
+      "expected": []
+    },
+    {
+      "ordered_heat": [
+        [
+          "H",
+          "TMP",
+          true
+        ],
+        [
+          "H",
+          "OLD",
+          false
+        ]
+      ],
+      "native_effective": 2,
+      "old_hand": [
+        "OLD"
+      ],
+      "expected": [
+        "OLD"
+      ]
+    },
+    {
+      "ordered_heat": [
+        [
+          "DRAW",
+          "OLD_DRAW",
+          false
+        ],
+        [
+          "D",
+          "OLD_D",
+          false
+        ]
+      ],
+      "native_effective": 2,
+      "old_hand": [],
+      "expected": []
+    },
+    {
+      "ordered_heat": [
+        [
+          "H",
+          "NEW_THIS_INPUT",
+          false
+        ]
+      ],
+      "native_effective": 1,
+      "old_hand": [
+        "OLD"
+      ],
+      "expected": []
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "baseline_files": 4133,
+  "missing": [],
+  "changed_baseline_files": [
+    "docs/memory/current-task-list.md",
+    "design/planning/tech-driver-rework-2026-10-22/progress.json",
+    "Assets/Scripts/Core/MVPGameManager.cs",
+    "design/gdd/foodula-1-tech-tree.md",
+    "docs/memory/project-overview.md",
+    "tests/regression-suite.md",
+    "Assets/Tests/Editor/uk_prep_meal_manager_test.cs",
+    "design/ux/racing-tech-ui.md",
+    "docs/memory/game-mechanics.md",
+    "design/planning/tech-driver-rework-2026-10-22/implementation-plan.json",
+    "design/ux/racing-tech-ui-checklist.md"
+  ],
+  "head": "f0a12b01e181d1ae9cf3009bc446da003f7c6c56",
+  "note": "All pre-existing baseline paths retained. Independent compiler outputs do not replace Unity loaded assemblies."
+}

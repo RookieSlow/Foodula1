@@ -1,0 +1,270 @@
+{
+  "kind": "independent_design_model_not_unity",
+  "package": "P1",
+  "candidate_numbers_not_balanced": true,
+  "model_sha256": "b7416e004f3c1f97028b6f02e4eb7dfdd02520708ca79a3e656847404338fb92",
+  "checks_total": 25,
+  "checks_passed": 25,
+  "checks_failed": 0,
+  "checks_skipped": 0,
+  "elapsed_seconds": 0.0443,
+  "passed_checks": [
+    "test_breakfast_home_matrix",
+    "test_duplicate_receipt_is_not_double_cooling",
+    "test_empty_engine",
+    "test_fixed_budget_survives_mid_cooling",
+    "test_frozen_budget_survives_mid_cooling",
+    "test_frozen_budget_uses_borrowers_engine",
+    "test_frozen_budget_with_other_costs",
+    "test_frozen_full_engine_exposure",
+    "test_no_mid_cooling_resource_bound",
+    "test_old_discard_is_not_a_current_payment",
+    "test_preview_and_cancel_do_not_mutate",
+    "test_repeated_cleanup_is_idempotent",
+    "test_temporary_is_not_permanent_fuel",
+    "test_terminal_cancels_cooling",
+    "test_three_use_budget",
+    "test_two_use_sensitivity",
+    "test_uk_a_cannot_refresh_quota",
+    "test_uk_a_hand_first",
+    "test_uk_a_home_cooling_doubles_not_uses",
+    "test_uk_a_only_temporary_heat",
+    "test_uk_a_without_source_does_not_spend",
+    "test_uk_a_without_speed_card",
+    "test_uk_b_only_actual_receipts",
+    "test_uk_b_requires_actual_trick",
+    "test_unsafe_engine_only_is_horizon_dependent"
+  ],
+  "parameter_cases": 6748,
+  "breakfast_matrix": [
+    {
+      "country": "UK",
+      "l2": false,
+      "l3": false,
+      "condition": false,
+      "triggers": 0
+    },
+    {
+      "country": "UK",
+      "l2": false,
+      "l3": false,
+      "condition": true,
+      "triggers": 0
+    },
+    {
+      "country": "UK",
+      "l2": false,
+      "l3": true,
+      "condition": false,
+      "triggers": 0
+    },
+    {
+      "country": "UK",
+      "l2": false,
+      "l3": true,
+      "condition": true,
+      "triggers": 1
+    },
+    {
+      "country": "UK",
+      "l2": true,
+      "l3": false,
+      "condition": false,
+      "triggers": 0
+    },
+    {
+      "country": "UK",
+      "l2": true,
+      "l3": false,
+      "condition": true,
+      "triggers": 1
+    },
+    {
+      "country": "UK",
+      "l2": true,
+      "l3": true,
+      "condition": false,
+      "triggers": 0
+    },
+    {
+      "country": "UK",
+      "l2": true,
+      "l3": true,
+      "condition": true,
+      "triggers": 2
+    },
+    {
+      "country": "GB",
+      "l2": false,
+      "l3": false,
+      "condition": false,
+      "triggers": 0
+    },
+    {
+      "country": "GB",
+      "l2": false,
+      "l3": false,
+      "condition": true,
+      "triggers": 0
+    },
+    {
+      "country": "GB",
+      "l2": false,
+      "l3": true,
+      "condition": false,
+      "triggers": 0
+    },
+    {
+      "country": "GB",
+      "l2": false,
+      "l3": true,
+      "condition": true,
+      "triggers": 1
+    },
+    {
+      "country": "GB",
+      "l2": true,
+      "l3": false,
+      "condition": false,
+      "triggers": 0
+    },
+    {
+      "country": "GB",
+      "l2": true,
+      "l3": false,
+      "condition": true,
+      "triggers": 1
+    },
+    {
+      "country": "GB",
+      "l2": true,
+      "l3": true,
+      "condition": false,
+      "triggers": 0
+    },
+    {
+      "country": "GB",
+      "l2": true,
+      "l3": true,
+      "condition": true,
+      "triggers": 2
+    },
+    {
+      "country": "DE",
+      "l2": false,
+      "l3": false,
+      "condition": false,
+      "triggers": 0
+    },
+    {
+      "country": "DE",
+      "l2": false,
+      "l3": false,
+      "condition": true,
+      "triggers": 0
+    },
+    {
+      "country": "DE",
+      "l2": false,
+      "l3": true,
+      "condition": false,
+      "triggers": 0
+    },
+    {
+      "country": "DE",
+      "l2": false,
+      "l3": true,
+      "condition": true,
+      "triggers": 0
+    },
+    {
+      "country": "DE",
+      "l2": true,
+      "l3": false,
+      "condition": false,
+      "triggers": 0
+    },
+    {
+      "country": "DE",
+      "l2": true,
+      "l3": false,
+      "condition": true,
+      "triggers": 1
+    },
+    {
+      "country": "DE",
+      "l2": true,
+      "l3": true,
+      "condition": false,
+      "triggers": 0
+    },
+    {
+      "country": "DE",
+      "l2": true,
+      "l3": true,
+      "condition": true,
+      "triggers": 1
+    }
+  ],
+  "de_upper_bounds": [
+    {
+      "engine": 0,
+      "cap2": 0,
+      "cap3": 0,
+      "frozen": 0
+    },
+    {
+      "engine": 1,
+      "cap2": 2,
+      "cap3": 2,
+      "frozen": 2
+    },
+    {
+      "engine": 2,
+      "cap2": 4,
+      "cap3": 4,
+      "frozen": 4
+    },
+    {
+      "engine": 3,
+      "cap2": 4,
+      "cap3": 6,
+      "frozen": 6
+    },
+    {
+      "engine": 4,
+      "cap2": 4,
+      "cap3": 6,
+      "frozen": 8
+    },
+    {
+      "engine": 6,
+      "cap2": 4,
+      "cap3": 6,
+      "frozen": 12
+    },
+    {
+      "engine": 8,
+      "cap2": 4,
+      "cap3": 6,
+      "frozen": 16
+    },
+    {
+      "engine": 10,
+      "cap2": 4,
+      "cap3": 6,
+      "frozen": 20
+    }
+  ],
+  "assumptions": [
+    "Permanent engine is a count; payment creates a new owned receipt.",
+    "Every fuel bonus requires one actual permanent engine payment.",
+    "Mid-cooling is a stress input, not a claim about production timing.",
+    "Ordinary payment is affordable; the model does not resolve spin, lanes, rankings or RNG.",
+    "Terminal status suppresses return; temporary heat never increases engine."
+  ],
+  "limitations": [
+    "No Unity/AI/full race/player-handling/balance acceptance.",
+    "No evidence for actual trigger frequency or win-rate fairness."
+  ]
+}

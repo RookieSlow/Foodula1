@@ -1,0 +1,30 @@
+{
+    "modules": [
+        "long-races"
+    ],
+    "testNames": [
+        "RaceGameLoopCoroutineTests.MissingCarsPreserveVisualTraversalCrossingOrder",
+        "RaceGameLoopCoroutineTests.RealAuthoredPitChoiceSuspendsResumesAndCompletesShanghaiRace",
+        "RaceGameLoopCoroutineTests.RealCareerCompletionRejectsFailedOrStaleSavesAndRetriesWithoutNormalRewards",
+        "RaceGameLoopCoroutineTests.RealCareerFifthRaceConsumesSummerTechnologyAndCompletesOnce",
+        "RaceGameLoopCoroutineTests.RealCareerFinaleCompletesStandingsAndRejectsNinthRace",
+        "RaceGameLoopCoroutineTests.RealCareerFourthRaceCompletesSummerDraftAndUnlocksFifthLaunchOnce",
+        "RaceGameLoopCoroutineTests.RealCareerStartRejectsSummerBreakAndCompletedAuthorityBeforeAssembly",
+        "RaceGameLoopCoroutineTests.RealCareerStartupRunsAuthoredTrackToFinishAndIsolatedSettlement",
+        "RaceGameLoopCoroutineTests.RealGameLoopSchedulesTwoTurnsAcrossTeamsAndFinalSprintRecoveryOrRetirement",
+        "RaceGameLoopCoroutineTests.RealStartupDeckCompletesAcrossTeamsWithoutReplacingCards",
+        "RaceGameLoopCoroutineTests.RealStartupDeckCompletesCustomRostersAndPreservesParticipantOwnership",
+        "RaceGameLoopCoroutineTests.RealStartupDeckCompletesShanghaiPitWithoutReplacingCards",
+        "RaceGameLoopCoroutineTests.RealStartupDeckCompletesShanghaiWithWeatherAndPit",
+        "RaceGameLoopCoroutineTests.RealStartupDeckCompletesThunderstormWithIndependentTeammates",
+        "RaceGameLoopCoroutineTests.RealStartupDeckCompletesWithAuthoredWeatherAndSharedLapGate",
+        "RaceGameLoopCoroutineTests.RealStartupRunsAuthoredTrackToFinishAndIsolatedSettlement"
+    ],
+    "missingFixtures": [],
+    "staleFixtures": [],
+    "discovered": 3002,
+    "selected": 16,
+    "excluded": 2986,
+    "longSelected": 16,
+    "full": false
+}

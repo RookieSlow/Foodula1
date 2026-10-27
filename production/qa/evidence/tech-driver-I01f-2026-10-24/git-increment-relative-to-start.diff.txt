@@ -1,0 +1,275 @@
+--- git diff at I01f start
++++ git diff at I01f finish
+@@ -65,7 +65,7 @@
+      }
+  
+ diff --git a/Assets/Scripts/Core/MVPGameManager.cs b/Assets/Scripts/Core/MVPGameManager.cs
+-index 32132fd..0b54906 100644
++index 32132fd..06b0edb 100644
+ --- a/Assets/Scripts/Core/MVPGameManager.cs
+ +++ b/Assets/Scripts/Core/MVPGameManager.cs
+ @@ -72,6 +72,10 @@ public class MVPGameManager : MonoBehaviour
+@@ -530,7 +530,7 @@
+          PlayerState player = Player;
+          if (player == null || player.driverSkill == null) return;
+  
+-@@ -3725,6 +3941,77 @@ public class MVPGameManager : MonoBehaviour
++@@ -3725,6 +3941,78 @@ public class MVPGameManager : MonoBehaviour
+              return;
+          }
+  
+@@ -564,8 +564,9 @@
+ +        string targetName = plan.Target.name ?? plan.Target.DriverProfile.ShortName;
+ +        // Target names are data, not TMP rich-text instructions.
+ +        targetName = targetName.Replace("<", "＜").Replace(">", "＞");
+-+        string message = $"目标：{targetName} · 前方 {plan.TargetDistance} 格\n" +
+-+            $"弃置 1 张普通速度牌，本次驾驶移动 +{plan.MovementBonus}；剩余 {player.driverSkill.UsesRemaining} 次";
+++        string message = $"目标：{targetName} · 前方{plan.TargetDistance}格\n" +
+++            $"弃1张普通速度牌；本次移动+{plan.MovementBonus}格；剩余{player.driverSkill.UsesRemaining}次\n" +
+++            "新增弯心仍按原速度付热，热量不足会失控";
+ +        hudUI.ShowDriverSkillCardChoice(player.DriverProfile.ActiveName, message, plan.Choices,
+ +            cost => CommitHunterSkillSelection(plan, cost),
+ +            () => { plan.Cancel(); if (ReferenceEquals(pendingHunterSkillPlan, plan)) pendingHunterSkillPlan = null; });
+@@ -608,7 +609,7 @@
+          AudioService.PlayUi(AudioEventNames.UiConfirm);
+          string message = $"{player.DriverProfile.ActiveName} 已发动（剩余 {player.driverSkill.UsesRemaining} 次）";
+          hudUI?.AppendLog($"<color=#D9A7FF>{message}</color>");
+-@@ -3742,6 +4029,14 @@ public class MVPGameManager : MonoBehaviour
++@@ -3742,6 +4030,14 @@ public class MVPGameManager : MonoBehaviour
+      {
+          interactable = false;
+          if (player == null || player.driverSkill == null) return "车手技能";
+@@ -623,7 +624,7 @@
+          return DriverSkillPresentationRules.GetButtonLabel(
+              player.DriverProfile, player.driverSkill,
+              BuildDriverSkillActivationContext(player), out interactable);
+-@@ -3895,6 +4190,8 @@ public class MVPGameManager : MonoBehaviour
++@@ -3895,6 +4191,8 @@ public class MVPGameManager : MonoBehaviour
+          }
+          LogPlayedCards(player, "PLAYER");
+          RefreshHumanHand(player);
+@@ -632,7 +633,7 @@
+          cardHandUI.BlockActionButtonBriefly();
+          return true;
+      }
+-@@ -3905,6 +4202,9 @@ public class MVPGameManager : MonoBehaviour
++@@ -3905,6 +4203,9 @@ public class MVPGameManager : MonoBehaviour
+          if (!ValidateTutorialSpecialtySpeedCompletion(player))
+              return;
+  
+@@ -642,7 +643,7 @@
+          int speedCount = player.playedSpeedCardsThisTurn.Count;
+  
+          // 引擎故障：速度牌不足时，每缺 1 张 → +1 热量入手牌。引擎不足 → 失控
+-@@ -4076,6 +4376,9 @@ public class MVPGameManager : MonoBehaviour
++@@ -4076,6 +4377,9 @@ public class MVPGameManager : MonoBehaviour
+          System.Action initializeGuide,
+          System.Action startLoop)
+      {
+@@ -1604,6 +1605,46 @@
+          RequestInRaceAction(
+              InRaceConfirmationAction.DriverSkill,
+              "确认发动技能",
++diff --git a/Assets/Tests/Editor/career_ui_pointer_test_scope.cs b/Assets/Tests/Editor/career_ui_pointer_test_scope.cs
++index a99407d..3ae281b 100644
++--- a/Assets/Tests/Editor/career_ui_pointer_test_scope.cs
+++++ b/Assets/Tests/Editor/career_ui_pointer_test_scope.cs
++@@ -32,12 +32,16 @@ internal sealed class CareerUiPointerTestScope : IDisposable
++     // The loader keeps asset lookup outside resource ownership and lets tests
++     // verify cleanup when loading fails after scene/target allocation.
++     internal static CareerUiPointerTestScope Create(Func<TMP_FontAsset> loadFont)
+++        => CreateSized(1920, 1080, loadFont);
+++
+++    internal static CareerUiPointerTestScope CreateSized(int width, int height, Func<TMP_FontAsset> loadFont)
++     {
+++        if (width <= 0 || height <= 0) throw new ArgumentOutOfRangeException(nameof(width));
++         if (loadFont == null) throw new ArgumentNullException(nameof(loadFont));
++         var scope = new CareerUiPointerTestScope();
++         try
++         {
++-            scope.Initialize(loadFont);
+++            scope.Initialize(loadFont, width, height);
++             return scope;
++         }
++         catch
++@@ -49,7 +53,7 @@ internal sealed class CareerUiPointerTestScope : IDisposable
++ 
++     private CareerUiPointerTestScope() { }
++ 
++-    private void Initialize(Func<TMP_FontAsset> loadFont)
+++    private void Initialize(Func<TMP_FontAsset> loadFont, int width, int height)
++     {
++         PreviewScene = EditorSceneManager.NewPreviewScene();
++         // Inactive EventSystem supplies event data without replacing the user's
++@@ -66,7 +70,7 @@ internal sealed class CareerUiPointerTestScope : IDisposable
++         renderCamera.cullingMask = 1 << 5;
++         renderCamera.clearFlags = CameraClearFlags.SolidColor;
++         renderCamera.backgroundColor = Color.clear;
++-        Target = new RenderTexture(1920, 1080, 24);
+++        Target = new RenderTexture(width, height, 24);
++         Assert.That(Target.Create(), Is.True, "Fixture render target must be available");
++         renderCamera.targetTexture = Target;
++         Root = new GameObject("Completed career pointer regression", typeof(RectTransform), typeof(Canvas));
+ diff --git a/Assets/Tests/Editor/driver_skill_rules_test.cs b/Assets/Tests/Editor/driver_skill_rules_test.cs
+ index 5d9c2c3..3a5abf6 100644
+ --- a/Assets/Tests/Editor/driver_skill_rules_test.cs
+@@ -2440,7 +2481,7 @@
+    m_GameObjectNamingScheme: 0
+    m_AssetNamingUsesSpace: 1
+ diff --git a/design/gdd/foodula-1-drivers.md b/design/gdd/foodula-1-drivers.md
+-index 100a396..34a79f1 100644
++index 100a396..04786b0 100644
+ --- a/design/gdd/foodula-1-drivers.md
+ +++ b/design/gdd/foodula-1-drivers.md
+ @@ -10,6 +10,8 @@
+@@ -2470,7 +2511,7 @@
+  ---
+  
+  **② 奈杰尔·"雄狮"·曼森 (Nigel "Lion" Mansen)**
+-@@ -316,3 +322,9 @@
++@@ -316,3 +322,13 @@
+  | ⚡ 主动「排水沟过弯」 | 本回合无视一个弯道的限速判定，不再附带移动惩罚，每场 1 次 | 同上 | 可连续无视 2 个弯道，使用次数 2 |
+  
+  > **背景**：对车毫无兴趣的高中生。每天凌晨帮父亲的豆腐店送货，在秋名山上开了五年。副驾驶放一杯水——不能洒。当他被卷入地下赛车时才意识到，自己那辆黑白 AE86 能在弯道甩掉任何比他快两倍的跑车。不是因为马力，是因为在每一个弯道，他知道极限在毫米级。
+@@ -2480,8 +2521,12 @@
+ +
+ +
+ +> I01e生产边界（2026-10-24）：哈特新增主动尾端/被动实际1格经过的新弯心仍按原速度牌角速、原限速/费用减免与普通部分支付/失控处理；跨圈新经过仍收费，不重复同次物理弯段。主动在该新增弯心费用成功前不登记随后最终完赛；费用失败不凭原计划路线预约进站或领地标。原生尾流两次和其他角色既有免二次角判不变，实际奖励次数不退款。主动预测副本已同步；新风险确认文案与三尺寸操作仍未验收。16新增案例及最终定向2154/2154、10.3944555s，详见I01e证据，非全量/全模式。
+++
+++### 2026-10-25 I01f：UK/Hart 风险提示生产边界
+++
+++哈特必选弃牌确认由真实计划显示目标、距离、牌费、本次移动收益、余次，并补“新增弯心仍按原速度付热，热量不足会失控”。不另开确认，不改变 I01e 普通角费/部分支付/失控。新增36项真实Manager/HUD三尺寸受控操作用例；最终原生 ui/drivers/tech/gears/cards-heat 1394/1394、0失败/跳过、10.1942977秒。改前18及最终改后18逐张查看/0溢出，有界静态UX复审通过。受控预览Canvas与EventSystem事件覆盖不能当完整RaceCanvas、硬件或完整模式验收。I01源码/有界操作交接至I02；其他车手、模式/存档组合及720p舒适度仍待后续。详见 production/qa/evidence/tech-driver-I01f-2026-10-24/README.md；保留前节历史版本边界。
+ diff --git a/design/gdd/foodula-1-tech-tree.md b/design/gdd/foodula-1-tech-tree.md
+-index 57fcddc..f9c552f 100644
++index 57fcddc..81a3ccc 100644
+ --- a/design/gdd/foodula-1-tech-tree.md
+ +++ b/design/gdd/foodula-1-tech-tree.md
+ @@ -114,11 +114,15 @@ L3 大师层（无需通用前置）→ L3 专属
+@@ -2503,7 +2548,7 @@
+  
+  ### L2 — 全套英式早餐 `Full English`
+  
+-@@ -616,3 +620,9 @@ Demo 模式下，每队赛前给予 **25,000 RP**——够解锁全部 L1 + 两
++@@ -616,3 +620,13 @@ Demo 模式下，每队赛前给予 **25,000 RP**——够解锁全部 L1 + 两
+  - [x] 车队专属特技牌设计（六国）
+  - [ ] 通用科技明细调整
+  - [x] 跨文档一致性审查（2026-08-23；以代码、赛道 JSON 和运行时配置为准）
+@@ -2513,11 +2558,15 @@
+ +
+ +
+ +> I01e生产边界（2026-10-24）：哈特新增主动尾端/被动实际1格经过的新弯心仍按原速度牌角速、原限速/费用减免与普通部分支付/失控处理；跨圈新经过仍收费，不重复同次物理弯段。主动在该新增弯心费用成功前不登记随后最终完赛；费用失败不凭原计划路线预约进站或领地标。原生尾流两次和其他角色既有免二次角判不变，实际奖励次数不退款。主动预测副本已同步；新风险确认文案与三尺寸操作仍未验收。16新增案例及最终定向2154/2154、10.3944555s，详见I01e证据，非全量/全模式。
+++
+++### 2026-10-25 I01f：UK/Hart 风险提示生产边界
+++
+++哈特必选弃牌确认由真实计划显示目标、距离、牌费、本次移动收益、余次，并补“新增弯心仍按原速度付热，热量不足会失控”。不另开确认，不改变 I01e 普通角费/部分支付/失控。新增36项真实Manager/HUD三尺寸受控操作用例；最终原生 ui/drivers/tech/gears/cards-heat 1394/1394、0失败/跳过、10.1942977秒。改前18及最终改后18逐张查看/0溢出，有界静态UX复审通过。受控预览Canvas与EventSystem事件覆盖不能当完整RaceCanvas、硬件或完整模式验收。I01源码/有界操作交接至I02；其他车手、模式/存档组合及720p舒适度仍待后续。详见 production/qa/evidence/tech-driver-I01f-2026-10-24/README.md；保留前节历史版本边界。
+ diff --git a/design/ux/racing-tech-ui-checklist.md b/design/ux/racing-tech-ui-checklist.md
+-index 6ffa098..938c3c5 100644
++index 6ffa098..33b5d32 100644
+ --- a/design/ux/racing-tech-ui-checklist.md
+ +++ b/design/ux/racing-tech-ui-checklist.md
+-@@ -167,3 +167,48 @@
++@@ -167,3 +167,57 @@
+  - [x] 本轮实际读取focused-56-native.json原生56/56，失败/跳过/不确定0，UTC04:07:37.1394358Z；四组含新6/1native，root记录3.2094577秒。原生输入/生命周期/射线与对比通过，旧结果未复用；本轮新全量2990/2990已完成，见下项。
+  - [x] 实际读本轮full-2990-native.json，原生2990/2990、失败/跳过/不确定0，UTC04:19:55.0543520Z；root记录710.7150231秒。最终MainMenu干净、未播放编译更新、许可有效、idle/ready/testfalse；Console仅no_such_track负向预期1error，warning0，无新增runtimeerror。
+  - [x] 最终基线/continuity与Git前范围审计完成；实际推送由root核验，不预称Git已完成。本切片与自动回归通过不等于整套UI完成。
+@@ -2566,11 +2615,20 @@
+ +真实GameLoop验证A2早餐后冻旧永久热、A4主场回2且保留早餐临时热、正式速度提交关窗；主动完整A1/A4→移动→角费→finish/pit；被动是生产尾流结算适配器协程，非完整回合；中断项是局部finish-gate生命周期，不冒充完整Hart GameLoop退出。Unity最终MainMenu/loaded scenes无dirty、未播放/编译/导入/测试占用、Personal；Console仅no_such_track预期负面测试error。ready资源仍stale_status，以直接实时查询/原生安全门和RunFinished为据。初次编译3个Action缺using错误已改全限定名，未在旧程序集上跑通过；MCP会话404重新初始化，无配置/服务安装修改。
+ +
+ +无新UI布局或截图；新角费风险提示、真实改前后三尺寸操作仍待I01f，不复用历史图冒充本轮视觉验收。I01仍进行中，I02-I13不提前勾选；下一包有限补提示及操作，通过后推进I02。证据 production/qa/evidence/tech-driver-I01e-2026-10-24/README.md。
+++
+++### 2026-10-25 I01f 有界确认窗验收
+++
+++- [x] 真实HUD按钮→MVP计划固定目标/费用/收益/余次/新增弯心付热和失控风险；mask0/All均不可旁路费用。
+++- [x] 三尺寸改前18/最终改后18逐张查看；长中文数字、六队目标、2/4/6/12 roster，0溢出；按钮/索引/禁用原因均有文字。
+++- [x] EventSystem/GraphicRaycaster 实际几何点击、窗内Move/Submit、取消/重开、同值第二原实例、遮罩与合法焦点返回；36新增。既有gear拖动7例随1394/1394通过，非Hart新增拖动机制。
+++- [ ] 完整RaceCanvas布局、OS硬件输入、完整赛事/生涯/教程与存档组合、720p主观舒适度：I13继续验收，不能据本包勾选。
+++
+++1394总/1394过/0失败/0跳过/0不确定，10.1942977秒；新程序集与有限独立复审通过。证据 production/qa/evidence/tech-driver-I01f-2026-10-24/README.md。I02为下一实装包。
+ diff --git a/design/ux/racing-tech-ui.md b/design/ux/racing-tech-ui.md
+-index e1542fc..932a756 100644
++index e1542fc..6df24ab 100644
+ --- a/design/ux/racing-tech-ui.md
+ +++ b/design/ux/racing-tech-ui.md
+-@@ -494,3 +494,41 @@ UX实际查看**after12张、before3张**，未称45张全部目视审：CN1080
++@@ -494,3 +494,49 @@ UX实际查看**after12张、before3张**，未称45张全部目视审：CN1080
+  实际读取本轮 [full-2990-native.json](../../production/qa/evidence/github-submission-2026-10-16/full-2990-native.json)：原生RunFinished **2990/2990 Passed**，失败/跳过/不确定均0，UTC `2026-10-16T04:19:55.0543520Z`；根任务记录710.7150231秒。本轮定向56/56与此新全量共同作为提交前自动回归证据，替代§20.5当时“全量运行中”的状态，不挪用历史通过数。
+  
+  根任务核验最终MainMenu干净、未播放/编译/更新，许可有效，资源idle/ready且test=false。Console唯一1条error是no_such_track负向测试预期日志，warning0，无新增运行错误；不称Console完全无error。基线/continuity及Git最终审计由根任务收口，本节不宣称已commit/push。第九包有界效果条已接入并通过上述自动与有限独立视觉验收；720p舒适度、完整模式/物理输入、未迁移屏幕和用户主观最终验收仍保留，不宣布整套UI升级完成。
+@@ -2612,11 +2670,19 @@
+ +真实GameLoop验证A2早餐后冻旧永久热、A4主场回2且保留早餐临时热、正式速度提交关窗；主动完整A1/A4→移动→角费→finish/pit；被动是生产尾流结算适配器协程，非完整回合；中断项是局部finish-gate生命周期，不冒充完整Hart GameLoop退出。Unity最终MainMenu/loaded scenes无dirty、未播放/编译/导入/测试占用、Personal；Console仅no_such_track预期负面测试error。ready资源仍stale_status，以直接实时查询/原生安全门和RunFinished为据。初次编译3个Action缺using错误已改全限定名，未在旧程序集上跑通过；MCP会话404重新初始化，无配置/服务安装修改。
+ +
+ +无新UI布局或截图；新角费风险提示、真实改前后三尺寸操作仍待I01f，不复用历史图冒充本轮视觉验收。I01仍进行中，I02-I13不提前勾选；下一包有限补提示及操作，通过后推进I02。证据 production/qa/evidence/tech-driver-I01e-2026-10-24/README.md。
+++
+++### 2026-10-25 I01f：实际确认窗风险提示及 UK 有界操作交接
+++
+++哈特必选弃牌确认现显示真实目标/距离、普通速度牌费用、本次移动收益和余次，并明确“新增弯心仍按原速度付热，热量不足会失控”；沿用原一次确认，不改变费用、角速、次数或共享 CardData。新增 HunterSkillProductionUiTests 36例，登记 ui；三尺寸×六种目标/操作夹具×mask0/All，实际 HUD按钮→MVP计划→确认/取消，核对同值第二实例、无额外扣热、重复确认、遮罩射线及合法焦点返回。
+++
+++最终新runtime/editor程序集已加载；ui/drivers/tech/gears/cards-heat 原生 RunFinished **1394/1394，失败0/跳过0/不确定0，10.1942977s，selectionMatches=true**，含36新增及7项既有拖动回归，非全量/完整比赛。改前18图与最终改后18图在1920×1080、2560×1440、1280×720逐张查看，0溢出；独立UX/静态复审有限APPROVED。夹具是真实生产弹窗与Manager计划，背景入口/挡位为自有控件，非完整RaceCanvas；EventSystem/GraphicRaycaster事件不冒称硬件输入。六队目标身份、2/4/6/12参赛车数及长中文数字覆盖不等于其他队技能或完整模式已接入。
+++
+++Unity最终MainMenu干净、未播放/编译/导入/测试占用，Personal许可；Console error0，既有缺cardPrefab测试warning1，未清Console；ready资源仍stale_status，直接查询/原生安全门/RunFinished为据。保留初次夹具射线失败及中间文案截图，最终文案“本次移动+3格”有独立新图。I01仅源码及有界操作交接，完整RaceCanvas/硬件输入/全模式/存档兼容/720p舒适度继续未验；执行指针进入I02曼森两段同目标追近，不在I01无限重复审计。证据 production/qa/evidence/tech-driver-I01f-2026-10-24/README.md。无提交推送、无Word/场景/音频/字体/快速播放设置写入。
+ diff --git a/docs/memory/current-task-list.md b/docs/memory/current-task-list.md
+-index 6e9bf50..45602dd 100644
++index 6e9bf50..d9f92cc 100644
+ --- a/docs/memory/current-task-list.md
+ +++ b/docs/memory/current-task-list.md
+-@@ -1423,3 +1423,95 @@ maintained source for current work.
++@@ -1423,3 +1423,103 @@ maintained source for current work.
+  - before45/after45三尺寸六队12特技及速度/普通heat诊断/US真实BBQ，全部目标0overflow/0truncated，原文匹配/完整显示/清空隐藏/重开均45/45；raw/parsed/几何前后完全一致。本人实际看before6/after9，另UX3/12与root3/3分别记录，受控RaceCanvas非完整GameLoop，普通heatprivateShow不冒称正常可选。
+  - 四组原生定向56/56，失败/跳过/不确定0，UTC2026-10-16T04:07:37.1394358Z，3.2094577秒；新增6项含1原生，本轮新原生全量2990/2990通过，失败/跳过/不确定0，UTC2026-10-16T04:19:55.0543520Z、710.7150231秒，原文件归github-submission-2026-10-16；最终MainMenu干净/无播放编译导入、许可/idle/ready有效、testsfalse，Console仅no_such_track负向预期error1、warnings0、无新增运行错误。
+  - 证据production/qa/evidence/racing-tech-selected-effect-2026-10-16/README.md；602项展开基线/11源副本及三文档全分页读审计已存，旧文件保留。用户另明确要求完成当前未完工作后提交Github，提交范围/保护排除与最终Git结果由root另记，本代理未操作Git。720舒适度、物理输入/完整模式、卡面既有对比及长期剩余页面仍未验，不因本包或提交称全部UI完成。
+@@ -2712,11 +2778,19 @@
+ +真实GameLoop验证A2早餐后冻旧永久热、A4主场回2且保留早餐临时热、正式速度提交关窗；主动完整A1/A4→移动→角费→finish/pit；被动是生产尾流结算适配器协程，非完整回合；中断项是局部finish-gate生命周期，不冒充完整Hart GameLoop退出。Unity最终MainMenu/loaded scenes无dirty、未播放/编译/导入/测试占用、Personal；Console仅no_such_track预期负面测试error。ready资源仍stale_status，以直接实时查询/原生安全门和RunFinished为据。初次编译3个Action缺using错误已改全限定名，未在旧程序集上跑通过；MCP会话404重新初始化，无配置/服务安装修改。
+ +
+ +无新UI布局或截图；新角费风险提示、真实改前后三尺寸操作仍待I01f，不复用历史图冒充本轮视觉验收。I01仍进行中，I02-I13不提前勾选；下一包有限补提示及操作，通过后推进I02。证据 production/qa/evidence/tech-driver-I01e-2026-10-24/README.md。
+++
+++### 2026-10-25 I01f：实际确认窗风险提示及 UK 有界操作交接
+++
+++哈特必选弃牌确认现显示真实目标/距离、普通速度牌费用、本次移动收益和余次，并明确“新增弯心仍按原速度付热，热量不足会失控”；沿用原一次确认，不改变费用、角速、次数或共享 CardData。新增 HunterSkillProductionUiTests 36例，登记 ui；三尺寸×六种目标/操作夹具×mask0/All，实际 HUD按钮→MVP计划→确认/取消，核对同值第二实例、无额外扣热、重复确认、遮罩射线及合法焦点返回。
+++
+++最终新runtime/editor程序集已加载；ui/drivers/tech/gears/cards-heat 原生 RunFinished **1394/1394，失败0/跳过0/不确定0，10.1942977s，selectionMatches=true**，含36新增及7项既有拖动回归，非全量/完整比赛。改前18图与最终改后18图在1920×1080、2560×1440、1280×720逐张查看，0溢出；独立UX/静态复审有限APPROVED。夹具是真实生产弹窗与Manager计划，背景入口/挡位为自有控件，非完整RaceCanvas；EventSystem/GraphicRaycaster事件不冒称硬件输入。六队目标身份、2/4/6/12参赛车数及长中文数字覆盖不等于其他队技能或完整模式已接入。
+++
+++Unity最终MainMenu干净、未播放/编译/导入/测试占用，Personal许可；Console error0，既有缺cardPrefab测试warning1，未清Console；ready资源仍stale_status，直接查询/原生安全门/RunFinished为据。保留初次夹具射线失败及中间文案截图，最终文案“本次移动+3格”有独立新图。I01仅源码及有界操作交接，完整RaceCanvas/硬件输入/全模式/存档兼容/720p舒适度继续未验；执行指针进入I02曼森两段同目标追近，不在I01无限重复审计。证据 production/qa/evidence/tech-driver-I01f-2026-10-24/README.md。无提交推送、无Word/场景/音频/字体/快速播放设置写入。
+ diff --git a/docs/memory/game-mechanics.md b/docs/memory/game-mechanics.md
+-index e74c31f..91b295e 100644
++index e74c31f..b34537f 100644
+ --- a/docs/memory/game-mechanics.md
+ +++ b/docs/memory/game-mechanics.md
+-@@ -787,3 +787,65 @@ prototype and is no longer the authoritative model.
++@@ -787,3 +787,73 @@ prototype and is no longer the authoritative model.
+  
+  See [project-overview.md](project-overview.md) for architecture context and
+  [current-task-list.md](current-task-list.md) for remaining work.
+@@ -2782,11 +2856,19 @@
+ +真实GameLoop验证A2早餐后冻旧永久热、A4主场回2且保留早餐临时热、正式速度提交关窗；主动完整A1/A4→移动→角费→finish/pit；被动是生产尾流结算适配器协程，非完整回合；中断项是局部finish-gate生命周期，不冒充完整Hart GameLoop退出。Unity最终MainMenu/loaded scenes无dirty、未播放/编译/导入/测试占用、Personal；Console仅no_such_track预期负面测试error。ready资源仍stale_status，以直接实时查询/原生安全门和RunFinished为据。初次编译3个Action缺using错误已改全限定名，未在旧程序集上跑通过；MCP会话404重新初始化，无配置/服务安装修改。
+ +
+ +无新UI布局或截图；新角费风险提示、真实改前后三尺寸操作仍待I01f，不复用历史图冒充本轮视觉验收。I01仍进行中，I02-I13不提前勾选；下一包有限补提示及操作，通过后推进I02。证据 production/qa/evidence/tech-driver-I01e-2026-10-24/README.md。
+++
+++### 2026-10-25 I01f：实际确认窗风险提示及 UK 有界操作交接
+++
+++哈特必选弃牌确认现显示真实目标/距离、普通速度牌费用、本次移动收益和余次，并明确“新增弯心仍按原速度付热，热量不足会失控”；沿用原一次确认，不改变费用、角速、次数或共享 CardData。新增 HunterSkillProductionUiTests 36例，登记 ui；三尺寸×六种目标/操作夹具×mask0/All，实际 HUD按钮→MVP计划→确认/取消，核对同值第二实例、无额外扣热、重复确认、遮罩射线及合法焦点返回。
+++
+++最终新runtime/editor程序集已加载；ui/drivers/tech/gears/cards-heat 原生 RunFinished **1394/1394，失败0/跳过0/不确定0，10.1942977s，selectionMatches=true**，含36新增及7项既有拖动回归，非全量/完整比赛。改前18图与最终改后18图在1920×1080、2560×1440、1280×720逐张查看，0溢出；独立UX/静态复审有限APPROVED。夹具是真实生产弹窗与Manager计划，背景入口/挡位为自有控件，非完整RaceCanvas；EventSystem/GraphicRaycaster事件不冒称硬件输入。六队目标身份、2/4/6/12参赛车数及长中文数字覆盖不等于其他队技能或完整模式已接入。
+++
+++Unity最终MainMenu干净、未播放/编译/导入/测试占用，Personal许可；Console error0，既有缺cardPrefab测试warning1，未清Console；ready资源仍stale_status，直接查询/原生安全门/RunFinished为据。保留初次夹具射线失败及中间文案截图，最终文案“本次移动+3格”有独立新图。I01仅源码及有界操作交接，完整RaceCanvas/硬件输入/全模式/存档兼容/720p舒适度继续未验；执行指针进入I02曼森两段同目标追近，不在I01无限重复审计。证据 production/qa/evidence/tech-driver-I01f-2026-10-24/README.md。无提交推送、无Word/场景/音频/字体/快速播放设置写入。
+ diff --git a/docs/memory/project-overview.md b/docs/memory/project-overview.md
+-index b406afb..540ba30 100644
++index b406afb..14bbe9e 100644
+ --- a/docs/memory/project-overview.md
+ +++ b/docs/memory/project-overview.md
+-@@ -583,3 +583,78 @@ See [game-mechanics.md](game-mechanics.md) for current gameplay rules and
++@@ -583,3 +583,86 @@ See [game-mechanics.md](game-mechanics.md) for current gameplay rules and
+  - before45/after45三尺寸六队12特技及速度/普通heat诊断/US真实BBQ，全部目标0overflow/0truncated，原文匹配/完整显示/清空隐藏/重开均45/45；raw/parsed/几何前后完全一致。本人实际看before6/after9，另UX3/12与root3/3分别记录，受控RaceCanvas非完整GameLoop，普通heatprivateShow不冒称正常可选。
+  - 四组原生定向56/56，失败/跳过/不确定0，UTC2026-10-16T04:07:37.1394358Z，3.2094577秒；新增6项含1原生，本轮新原生全量2990/2990通过，失败/跳过/不确定0，UTC2026-10-16T04:19:55.0543520Z、710.7150231秒，原文件归github-submission-2026-10-16；最终MainMenu干净/无播放编译导入、许可/idle/ready有效、testsfalse，Console仅no_such_track负向预期error1、warnings0、无新增运行错误。
+  - 证据production/qa/evidence/racing-tech-selected-effect-2026-10-16/README.md；602项展开基线/11源副本及三文档全分页读审计已存，旧文件保留。用户另明确要求完成当前未完工作后提交Github，提交范围/保护排除与最终Git结果由root另记，本代理未操作Git。720舒适度、物理输入/完整模式、卡面既有对比及长期剩余页面仍未验，不因本包或提交称全部UI完成。
+@@ -2865,3 +2947,11 @@
+ +真实GameLoop验证A2早餐后冻旧永久热、A4主场回2且保留早餐临时热、正式速度提交关窗；主动完整A1/A4→移动→角费→finish/pit；被动是生产尾流结算适配器协程，非完整回合；中断项是局部finish-gate生命周期，不冒充完整Hart GameLoop退出。Unity最终MainMenu/loaded scenes无dirty、未播放/编译/导入/测试占用、Personal；Console仅no_such_track预期负面测试error。ready资源仍stale_status，以直接实时查询/原生安全门和RunFinished为据。初次编译3个Action缺using错误已改全限定名，未在旧程序集上跑通过；MCP会话404重新初始化，无配置/服务安装修改。
+ +
+ +无新UI布局或截图；新角费风险提示、真实改前后三尺寸操作仍待I01f，不复用历史图冒充本轮视觉验收。I01仍进行中，I02-I13不提前勾选；下一包有限补提示及操作，通过后推进I02。证据 production/qa/evidence/tech-driver-I01e-2026-10-24/README.md。
+++
+++### 2026-10-25 I01f：实际确认窗风险提示及 UK 有界操作交接
+++
+++哈特必选弃牌确认现显示真实目标/距离、普通速度牌费用、本次移动收益和余次，并明确“新增弯心仍按原速度付热，热量不足会失控”；沿用原一次确认，不改变费用、角速、次数或共享 CardData。新增 HunterSkillProductionUiTests 36例，登记 ui；三尺寸×六种目标/操作夹具×mask0/All，实际 HUD按钮→MVP计划→确认/取消，核对同值第二实例、无额外扣热、重复确认、遮罩射线及合法焦点返回。
+++
+++最终新runtime/editor程序集已加载；ui/drivers/tech/gears/cards-heat 原生 RunFinished **1394/1394，失败0/跳过0/不确定0，10.1942977s，selectionMatches=true**，含36新增及7项既有拖动回归，非全量/完整比赛。改前18图与最终改后18图在1920×1080、2560×1440、1280×720逐张查看，0溢出；独立UX/静态复审有限APPROVED。夹具是真实生产弹窗与Manager计划，背景入口/挡位为自有控件，非完整RaceCanvas；EventSystem/GraphicRaycaster事件不冒称硬件输入。六队目标身份、2/4/6/12参赛车数及长中文数字覆盖不等于其他队技能或完整模式已接入。
+++
+++Unity最终MainMenu干净、未播放/编译/导入/测试占用，Personal许可；Console error0，既有缺cardPrefab测试warning1，未清Console；ready资源仍stale_status，直接查询/原生安全门/RunFinished为据。保留初次夹具射线失败及中间文案截图，最终文案“本次移动+3格”有独立新图。I01仅源码及有界操作交接，完整RaceCanvas/硬件输入/全模式/存档兼容/720p舒适度继续未验；执行指针进入I02曼森两段同目标追近，不在I01无限重复审计。证据 production/qa/evidence/tech-driver-I01f-2026-10-24/README.md。无提交推送、无Word/场景/音频/字体/快速播放设置写入。

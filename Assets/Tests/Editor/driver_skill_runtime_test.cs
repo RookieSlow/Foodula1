@@ -2,6 +2,143 @@ using NUnit.Framework;
 
 public class DriverSkillRuntimeTests
 {
+    [TestCase("uk_hunter_hart", 3)]
+    [TestCase("uk_hunter_hart", 5)]
+    [TestCase("uk_hunter_hart", 7)]
+    [TestCase("uk_nigel_mansell", 3)]
+    [TestCase("uk_nigel_mansell", 5)]
+    [TestCase("uk_nigel_mansell", 7)]
+    public void UkWindowExpiresAtNextOwnerInputAndCannotTickTwice(string id, int level)
+    {
+        DriverCatalog.TryGet(id, out DriverProfile driver);
+        var state = new DriverSkillRuntimeState();
+        state.Initialize(driver, level, true);
+        state.BeginGlobalTurn();
+        Assert.That(state.BeginDrivingInput(), Is.True);
+        int uses = state.UsesRemaining;
+        Assert.That(state.TryActivate(driver,
+            new DriverSkillActivationContext(true, 2, 3, 6, 6, 0), out _), Is.True);
+
+        state.BeginGlobalTurn();
+        Assert.That(state.IsActive, Is.True, "A global round is not the owner's next input.");
+        Assert.That(state.DrivingInputsStarted, Is.EqualTo(1));
+        Assert.That(state.BeginDrivingInput(), Is.True);
+        Assert.That(state.IsActive, Is.False);
+        Assert.That(state.BeginDrivingInput(), Is.False);
+        Assert.That(state.DrivingInputsStarted, Is.EqualTo(2));
+        Assert.That(state.UsesRemaining, Is.EqualTo(uses - 1));
+    }
+
+    [TestCase("uk_hunter_hart")]
+    [TestCase("uk_nigel_mansell")]
+    public void InterruptedUkInputDoesNotRefundOrReopenUntilANewRound(string id)
+    {
+        DriverCatalog.TryGet(id, out DriverProfile driver);
+        var state = new DriverSkillRuntimeState();
+        state.Initialize(driver, 7, true);
+        state.BeginGlobalTurn();
+        state.BeginDrivingInput();
+        Assert.That(state.TryActivate(driver,
+            new DriverSkillActivationContext(true, 2, 3, 6, 6, 0), out _), Is.True);
+        int remaining = state.UsesRemaining;
+
+        state.InterruptDrivingInput();
+        state.InterruptDrivingInput();
+        Assert.That(state.IsActive, Is.False);
+        Assert.That(state.ActivatedThisTurn, Is.False);
+        Assert.That(state.BeginDrivingInput(), Is.False);
+        Assert.That(state.UsesRemaining, Is.EqualTo(remaining));
+        state.BeginGlobalTurn();
+        Assert.That(state.BeginDrivingInput(), Is.True);
+        Assert.That(state.IsActive, Is.False);
+        Assert.That(state.DrivingInputsStarted, Is.EqualTo(2));
+    }
+
+    [TestCase("uk_hunter_hart")]
+    [TestCase("uk_nigel_mansell")]
+    public void UkClockCopyAdvancesWithoutChangingRealDurationOrInputCount(string id)
+    {
+        DriverCatalog.TryGet(id, out DriverProfile driver);
+        var real = new DriverSkillRuntimeState();
+        real.Initialize(driver, 7, true);
+        real.BeginGlobalTurn();
+        real.BeginDrivingInput();
+        Assert.That(real.TryActivate(driver,
+            new DriverSkillActivationContext(true, 2, 3, 6, 6, 0), out _), Is.True);
+        real.BeginGlobalTurn();
+        DriverSkillRuntimeState preview = real.CreatePresentationCopy();
+
+        Assert.That(preview.BeginDrivingInput(), Is.True);
+        Assert.That(preview.IsActive, Is.False);
+        Assert.That(real.IsActive, Is.True);
+        Assert.That(real.DrivingInputsStarted, Is.EqualTo(1));
+        Assert.That(preview.DrivingInputsStarted, Is.EqualTo(2));
+        Assert.That(preview.UsesRemaining, Is.EqualTo(real.UsesRemaining));
+    }
+
+    [TestCase("uk_hunter_hart")]
+    [TestCase("uk_nigel_mansell")]
+    public void DisabledUkSkillDoesNotOpenAnInputClock(string id)
+    {
+        DriverCatalog.TryGet(id, out DriverProfile driver);
+        var state = new DriverSkillRuntimeState();
+        state.Initialize(driver, 7, false);
+        state.BeginGlobalTurn();
+        Assert.That(state.BeginDrivingInput(), Is.False);
+        Assert.That(state.DrivingInputsStarted, Is.Zero);
+        Assert.That(state.IsActive, Is.False);
+    }
+
+    [TestCase("uk_hunter_hart")]
+    [TestCase("uk_nigel_mansell")]
+    public void ReinitializingInterruptedUkRuntimeStartsANewRaceClock(string id)
+    {
+        DriverCatalog.TryGet(id, out DriverProfile driver);
+        var state = new DriverSkillRuntimeState();
+        state.Initialize(driver, 7, true);
+        state.BeginGlobalTurn();
+        state.BeginDrivingInput();
+        Assert.That(state.TryActivate(driver,
+            new DriverSkillActivationContext(true, 2, 3, 6, 6, 0), out _), Is.True);
+        state.InterruptDrivingInput();
+
+        state.Initialize(driver, 7, true);
+
+        Assert.That(state.DrivingInputsStarted, Is.Zero);
+        Assert.That(state.IsActive, Is.False);
+        Assert.That(state.UsesRemaining, Is.EqualTo(3));
+        Assert.That(state.BeginDrivingInput(), Is.True);
+        Assert.That(state.DrivingInputsStarted, Is.EqualTo(1));
+    }
+
+    [TestCase("de_michael_schumacher")]
+    [TestCase("de_sebastian_vettel")]
+    [TestCase("it_alberto_ascari")]
+    [TestCase("it_tazio_nuvolari")]
+    [TestCase("us_tony_stewart")]
+    [TestCase("us_kyle_busch")]
+    [TestCase("cn_zhou_guanyu")]
+    [TestCase("cn_ma_qinghua")]
+    [TestCase("jp_keiichi_tsuchiya")]
+    [TestCase("jp_takumi_fujiwara")]
+    public void UnmigratedDriverKeepsLegacyDurationAndIgnoresUkInputHooks(string id)
+    {
+        DriverCatalog.TryGet(id, out DriverProfile driver);
+        var state = new DriverSkillRuntimeState();
+        state.Initialize(driver, 7, true);
+        Assert.That(state.TryActivate(driver,
+            new DriverSkillActivationContext(true, 2, 3, 0, 10, 1), out _), Is.True);
+        int duration = state.ActiveTurnsRemaining;
+        state.BeginGlobalTurn();
+        int expected = duration == int.MaxValue ? duration : duration - 1;
+
+        Assert.That(state.ActiveTurnsRemaining, Is.EqualTo(expected));
+        Assert.That(state.BeginDrivingInput(), Is.False);
+        state.InterruptDrivingInput();
+        Assert.That(state.ActiveTurnsRemaining, Is.EqualTo(expected));
+        Assert.That(state.DrivingInputsStarted, Is.Zero);
+    }
+
     [Test]
     public void ActivationConsumesOneUseAndExpiresAfterDocumentedTurns()
     {
@@ -46,19 +183,17 @@ public class DriverSkillRuntimeTests
     }
 
     [Test]
-    public void SchumacherPassivePreparesAOneHeatDiscountOnItsCadence()
+    public void SchumacherCadenceCannotPrepareGenericHeatDiscountWithoutActualCornerPayment()
     {
         DriverCatalog.TryGet("de_michael_schumacher", out DriverProfile driver);
         var state = new DriverSkillRuntimeState();
         state.Initialize(driver, 2, true);
-
-        state.BeginTurn();
-        Assert.That(state.ConsumePassiveHeatDiscount(), Is.Zero);
-        state.BeginTurn();
-        Assert.That(state.ConsumePassiveHeatDiscount(), Is.Zero);
-        state.BeginTurn();
-        Assert.That(state.ConsumePassiveHeatDiscount(), Is.EqualTo(1));
-        Assert.That(state.ConsumePassiveHeatDiscount(), Is.Zero);
+        for (int i = 0; i < 8; i++)
+        {
+            state.BeginTurn();
+            Assert.That(state.ConsumePassiveHeatDiscount(), Is.Zero);
+            Assert.That(state.Tuning.HasPending, Is.False);
+        }
     }
 
     [Test]
@@ -81,7 +216,7 @@ public class DriverSkillRuntimeTests
     }
 
     [Test]
-    public void MansellPassiveArmsNextTurnMovementAndHigherTierCoolingAfterOvertake()
+    public void MansellLegacyOvertakeHookNoLongerAwardsMovementOrCooling()
     {
         DriverCatalog.TryGet("uk_nigel_mansell", out DriverProfile driver);
         var tierOne = new DriverSkillRuntimeState();
@@ -89,7 +224,7 @@ public class DriverSkillRuntimeTests
         tierOne.BeginTurn();
         tierOne.ResolvePassiveTurnEnd(1);
         tierOne.BeginTurn();
-        Assert.That(tierOne.PassiveMovementBonusThisTurn, Is.EqualTo(1));
+        Assert.That(tierOne.PassiveMovementBonusThisTurn, Is.Zero);
         Assert.That(tierOne.PassiveCoolingBonusThisTurn, Is.Zero);
 
         var tierTwo = new DriverSkillRuntimeState();
@@ -97,8 +232,8 @@ public class DriverSkillRuntimeTests
         tierTwo.BeginTurn();
         tierTwo.ResolvePassiveTurnEnd(1);
         tierTwo.BeginTurn();
-        Assert.That(tierTwo.PassiveMovementBonusThisTurn, Is.EqualTo(1));
-        Assert.That(tierTwo.PassiveCoolingBonusThisTurn, Is.EqualTo(1));
+        Assert.That(tierTwo.PassiveMovementBonusThisTurn, Is.Zero);
+        Assert.That(tierTwo.PassiveCoolingBonusThisTurn, Is.Zero);
     }
 
     [Test]

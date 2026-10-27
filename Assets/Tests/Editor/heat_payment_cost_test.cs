@@ -32,7 +32,7 @@ public class HeatPaymentCostTests
 
     [TestCase(HeatPaymentDestination.Hand)]
     [TestCase(HeatPaymentDestination.Discard)]
-    public void FishAndChipsRecoversPartialPaymentOnceWithoutMarkingCombo(HeatPaymentDestination destination)
+    public void PrepMealDoesNotRescueOrdinaryPartialPayment(HeatPaymentDestination destination)
     {
         var player = Player();
         player.techState = new TechTreeState(TeamId.UK)
@@ -45,11 +45,11 @@ public class HeatPaymentCostTests
 
         Assert.AreEqual(1, first.Drawn);
         Assert.IsFalse(first.Sufficient);
-        Assert.IsTrue(first.UsedFishAndChips);
-        Assert.IsTrue(player.techState.fishAndChipsUsed);
-        Assert.AreEqual(1, player.deck.heatPool.remaining);
-        Assert.AreEqual(0, player.deck.CountHeatInHand());
-        Assert.IsEmpty(player.deck.DiscardPile);
+        Assert.IsFalse(first.UsedFishAndChips);
+        Assert.IsFalse(player.techState.fishAndChipsUsed);
+        Assert.AreEqual(0, player.deck.heatPool.remaining);
+        Assert.AreEqual(destination == HeatPaymentDestination.Hand ? 1 : 0, player.deck.CountHeatInHand());
+        Assert.AreEqual(destination == HeatPaymentDestination.Discard ? 1 : 0, player.deck.DiscardPile.Count);
         Assert.AreEqual(1, player.heatPaidCardsThisTurn.Count, "Recovery does not erase payment receipts.");
         Assert.AreEqual(1, player.techState.grillSpezialHeatPaidThisTurn);
         Assert.IsFalse(player.techState.dimSumPaidHeat);
@@ -58,7 +58,7 @@ public class HeatPaymentCostTests
         Assert.IsFalse(second.Sufficient);
         Assert.IsFalse(second.UsedFishAndChips);
         Assert.AreEqual(0, player.deck.heatPool.remaining);
-        Assert.AreEqual(2, player.techState.grillSpezialHeatPaidThisTurn);
+        Assert.AreEqual(1, player.techState.grillSpezialHeatPaidThisTurn);
         Assert.IsFalse(player.techState.dimSumPaidHeat);
         Assert.AreEqual(0, player.spinCounter);
     }
@@ -77,7 +77,7 @@ public class HeatPaymentCostTests
 
     [TestCase(HeatPaymentDestination.Hand)]
     [TestCase(HeatPaymentDestination.Discard)]
-    public void FishWithoutPermanentRecoverySourceStillIgnoresInsufficiencyOnlyOnce(
+    public void PrepMealDoesNotRescueInsufficiencyWithoutSources(
         HeatPaymentDestination destination)
     {
         var player = Player();
@@ -91,7 +91,7 @@ public class HeatPaymentCostTests
         var first = RaceHeatPaymentExecution.Pay(player, session, 2, destination);
         var second = RaceHeatPaymentExecution.Pay(player, session, 2, destination);
 
-        Assert.IsTrue(first.UsedFishAndChips);
+        Assert.IsFalse(first.UsedFishAndChips);
         Assert.IsFalse(first.Sufficient);
         Assert.IsFalse(second.UsedFishAndChips);
         Assert.IsFalse(second.Sufficient);
@@ -120,29 +120,34 @@ public class HeatPaymentCostTests
         Assert.IsEmpty(player.heatPaidCardsThisTurn);
     }
 
-    [TestCase(0, 0, 1)]
-    [TestCase(1, 0, 0)]
-    [TestCase(3, 1, 0)]
-    public void PassiveDiscountPrecedesBreadAndCannotBeConsumedTwice(int requested, int expected, int discountLeft)
+    [TestCase(0, 0, 2)]
+    [TestCase(1, 1, 1)]
+    [TestCase(3, 2, 1)]
+    public void PreparedCornerTuningDoesNotDiscountGenericHeatOrConsumeItsToken(int requested, int expected, int breadLeft)
     {
-        var player = Player();
-        DriverCatalog.TryGet("de_michael_schumacher", out var driver);
+        var player = Player(); player.teamId = TeamId.DE; player.driverId = "de_michael_schumacher";
+        DriverCatalog.TryGet(player.driverId, out var driver);
         player.driverSkill.Initialize(driver, 2, true);
-        for (int i = 0; i < 3; i++) player.driverSkill.BeginTurn();
-        player.trickState.schwarzbrotActive = true;
-        player.trickState.schwarzbrotRemaining = 2;
+        player.deck.heatPool = new HeatPool(6);
+        var race = new RaceSession(new SystemRandomSource(1)) { TeamVehicleBonusesEnabled = false };
+        race.Players.Add(player); race.BeginTurn(player); Assert.IsTrue(race.BeginDriverSkillInput(player));
+        Assert.AreEqual(2, RaceHeatPaymentExecution.Pay(player, race, 2, HeatPaymentDestination.Hand, HeatPaymentSource.OrdinaryCorner).Drawn);
+        race.BeginTurn(player); Assert.IsTrue(race.BeginDriverSkillInput(player));
+        player.trickState.schwarzbrotActive = true; player.trickState.schwarzbrotRemaining = 2;
         var cost = HeatPaymentCostRules.Resolve(player, requested);
         Assert.AreEqual(expected, cost.Amount);
-        Assert.AreEqual(System.Math.Max(0, requested - 1), cost.BeforeBread);
-        Assert.AreEqual(requested > 1 ? 1 : 2, player.trickState.schwarzbrotRemaining);
-        Assert.AreEqual(discountLeft, player.driverSkill.ConsumePassiveHeatDiscount());
+        Assert.AreEqual(System.Math.Max(0, requested), cost.BeforeBread);
+        Assert.AreEqual(breadLeft, player.trickState.schwarzbrotRemaining);
+        Assert.IsTrue(player.driverSkill.Tuning.HasPending);
         Assert.AreEqual(0, player.driverSkill.ConsumePassiveHeatDiscount());
+        Assert.AreEqual(1, race.ResolveOverspeedHeatCost(player, 2));
+        Assert.AreEqual(2, race.ResolveOverspeedHeatCost(player, 2));
     }
 
-    [TestCase(3, 6, 5)]
-    [TestCase(5, 6, 5)]
-    [TestCase(7, 5, 4)]
-    public void ActiveMultiplierPrecedesBreadAndPreservesRounding(int level, int beforeBread, int expected)
+    [TestCase(3, 3, 2)]
+    [TestCase(5, 3, 2)]
+    [TestCase(7, 3, 2)]
+    public void HunterLeavesOrdinaryHeatAndBreadDiscountUnchanged(int level, int beforeBread, int expected)
     {
         var player = Player();
         DriverCatalog.TryGet("uk_hunter_hart", out var driver);

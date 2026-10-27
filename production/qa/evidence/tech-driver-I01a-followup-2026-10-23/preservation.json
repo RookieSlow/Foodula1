@@ -1,0 +1,13 @@
+{
+  "missing": [],
+  "changed_existing": [
+    "Assets/Tests/Editor/uk_prep_meal_test.cs",
+    "tests/regression-suite.md",
+    "design/planning/tech-driver-rework-2026-10-22/progress.json",
+    "docs/memory/game-mechanics.md",
+    "docs/memory/current-task-list.md",
+    "docs/memory/project-overview.md",
+    "design/planning/tech-driver-rework-2026-10-22/implementation-plan.json"
+  ],
+  "head": "f0a12b01e181d1ae9cf3009bc446da003f7c6c56"
+}

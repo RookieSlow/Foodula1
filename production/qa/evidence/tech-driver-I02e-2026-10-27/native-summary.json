@@ -1,0 +1,76 @@
+{
+  "startedUtc": "2026-10-26T18:03:53.7159283Z",
+  "endedUtc": "2026-10-26T18:04:21.0775403Z",
+  "state": "Passed",
+  "nativeState": "Passed",
+  "total": 2076,
+  "passed": 2076,
+  "failed": 0,
+  "skipped": 0,
+  "inconclusive": 0,
+  "seconds": 22.5495703,
+  "selectionMatches": true,
+  "modules": [
+    "cards-heat",
+    "core",
+    "drivers",
+    "gears",
+    "tech",
+    "ui"
+  ],
+  "mansell_ui_cases_passed": 72,
+  "existing_drag_cases_passed": 9,
+  "focused_game_loop": {
+    "mode": "EditMode",
+    "summary": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 3.1201921,
+      "resultState": "Passed"
+    },
+    "results": [
+      {
+        "name": "MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+        "fullName": "RaceGameLoopCoroutineTests.MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+        "state": "Passed",
+        "durationSeconds": 1.0738765,
+        "message": null,
+        "stackTrace": null,
+        "output": "[PlayEntry] 0.456s; domainReloadDisabled=True\r\n"
+      },
+      {
+        "name": "MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+        "fullName": "RaceGameLoopCoroutineTests.MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+        "state": "Passed",
+        "durationSeconds": 1.0098119,
+        "message": null,
+        "stackTrace": null,
+        "output": "[PlayEntry] 0.437s; domainReloadDisabled=True\r\n"
+      },
+      {
+        "name": "MansellRealA2CoolsOnlyFrozenOldHandBeforePreparationSnapshot",
+        "fullName": "RaceGameLoopCoroutineTests.MansellRealA2CoolsOnlyFrozenOldHandBeforePreparationSnapshot",
+        "state": "Passed",
+        "durationSeconds": 1.0088911,
+        "message": null,
+        "stackTrace": null,
+        "output": "[PlayEntry] 0.468s; domainReloadDisabled=True\r\n"
+      }
+    ]
+  },
+  "focused_game_loop_native_RunFinished": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-10-26T18:10:56.1478575Z",
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": "",
+    "stackTrace": ""
+  }
+}

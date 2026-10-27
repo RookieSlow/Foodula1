@@ -1,0 +1,8 @@
+{
+  "observed_after_final_native": true,
+  "error_count": 0,
+  "warning_count": 1,
+  "warning": "CardHandUI: cardPrefab is not set. Drag CardPrefab into the Inspector.",
+  "origin": "TeamGearPresentationTests.CommittingSelectedCardsKeepsTheForecastAndAuthoritativePlanRemovesPreview -> MVPGameManager.OnPlayCardsButtonClicked/RefreshHumanHand -> CardHandUI.ShowHand:139",
+  "assessment": "Existing controlled test fixture has no cardPrefab. Not a new production runtime exception; the Console is not reported as completely empty."
+}

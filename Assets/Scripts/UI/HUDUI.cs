@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// HUD UI 管理器 — 显示比赛状态（档位、热量池、圈数、位置），
@@ -64,6 +66,19 @@ public class HUDUI : MonoBehaviour
     private Action pendingConfirmationAction;
     private InRaceConfirmationAction? pendingConfirmationType;
     private TMP_Text returnToMenuConfirmTitle;
+    private DriverSkillCardChoiceUI driverSkillCardChoice;
+    private UnityEngine.Events.UnityAction<CardData> pendingDriverSkillCardConfirm;
+    private UnityEngine.Events.UnityAction pendingDriverSkillCardCancel;
+    private bool driverSkillCardChoicePending;
+    private bool driverSkillChoiceRequiresCard = true;
+    private CanvasGroup confirmationVisibility;
+    private bool confirmationHiddenByLifecycle;
+    private float confirmationPreviousAlpha;
+    private bool confirmationPreviousInteraction, confirmationPreviousRaycasts;
+    private DriverSkillChoiceFocus driverSkillChoiceFocus;
+    private UkPrepMealActionUI ukPrepMealAction;
+    private GermanFuelActionUI germanFuelAction;
+    private GermanBurstActionUI germanBurstAction;
     [SerializeField] private HeatThermometerUI heatThermometer;
     [SerializeField] private GearDialPresentationUI gearDialPresentation;
     [SerializeField] private TeamGearPresentationUI teamGearPresentation;
@@ -76,10 +91,13 @@ public class HUDUI : MonoBehaviour
     public HeatThermometerUI HeatThermometer => heatThermometer;
     public GearDialPresentationUI GearDialPresentation => gearDialPresentation;
     public TeamGearPresentationUI TeamGearPresentation => teamGearPresentation;
+    public Button UkPrepMealButton => ukPrepMealAction != null ? ukPrepMealAction.Button : null;
+    public Button GermanFuelButton => germanFuelAction != null ? germanFuelAction.Button : null;
+    public Button GermanBurstButton => germanBurstAction != null ? germanBurstAction.Button : null;
     public bool IsTelemetryDetailsOpen => telemetryDetailsPanel != null && telemetryDetailsPanel.activeSelf;
     public GameConfigSO GameConfigForPresentation => gameManager != null ? gameManager.Config : null;
     public bool IsReturnToMenuConfirmationVisible =>
-        returnToMenuConfirmPanel != null && returnToMenuConfirmPanel.activeSelf;
+        returnToMenuConfirmPanel != null && returnToMenuConfirmPanel.activeSelf && !confirmationHiddenByLifecycle;
 
     void Start()
     {
@@ -167,6 +185,7 @@ public class HUDUI : MonoBehaviour
     /// <summary>在游戏初始化后设置引用。</summary>
     public void SetGameManager(MVPGameManager gm)
     {
+        if (gameManager != gm && driverSkillCardChoicePending) DismissConfirmation(false, true);
         if (gameManager != gm && telemetryDetailsPanel != null) telemetryDetailsPanel.SetActive(false);
         gameManager = gm;
         if (gm != null && gm.Player != null) RefreshTurnTelemetry(gm.Player);
@@ -194,6 +213,7 @@ public class HUDUI : MonoBehaviour
     /// </summary>
     public void Refresh(MVPGameManager gm, PlayerState player, PlayerState ai, System.Collections.Generic.IReadOnlyList<PlayerState> allPlayers)
     {
+        if (gameManager != gm && driverSkillCardChoicePending) DismissConfirmation(false, true);
         gameManager = gm;
 
         RefreshPlayerResources(player);
@@ -290,6 +310,7 @@ public class HUDUI : MonoBehaviour
     /// </summary>
     public void EnsureReturnToMenuConfirmationUI()
     {
+        if (driverSkillCardChoicePending) DismissConfirmation(false, true);
         Transform canvasRoot = transform.root != null ? transform.root : transform;
 
         if (returnToMenuConfirmPanel == null)
@@ -316,6 +337,19 @@ public class HUDUI : MonoBehaviour
 
         if (returnToMenuConfirmPanel != null)
         {
+            if (confirmationVisibility == null)
+            {
+                confirmationVisibility = returnToMenuConfirmPanel.GetComponent<CanvasGroup>();
+                if (confirmationVisibility == null)
+                    confirmationVisibility = returnToMenuConfirmPanel.AddComponent<CanvasGroup>();
+            }
+            if (confirmationHiddenByLifecycle)
+            {
+                confirmationVisibility.alpha = confirmationPreviousAlpha;
+                confirmationVisibility.interactable = confirmationPreviousInteraction;
+                confirmationVisibility.blocksRaycasts = confirmationPreviousRaycasts;
+                confirmationHiddenByLifecycle = false;
+            }
             RacingTechConfirmationStyle.Apply(returnToMenuConfirmPanel, returnToMenuConfirmTitle,
                 returnToMenuConfirmText, cancelReturnToMenuButton, confirmReturnToMenuButton);
             returnToMenuConfirmPanel.SetActive(false);
@@ -340,11 +374,46 @@ public class HUDUI : MonoBehaviour
     /// <summary>Dismisses the modal and leaves the race untouched.</summary>
     public void CancelReturnToMenu()
     {
+        DismissConfirmation(true, true);
+    }
+
+    private void DismissConfirmation(bool refresh, bool notifyCancel)
+    {
+        UnityEngine.Events.UnityAction cancel = ClearDriverSkillCardChoice(out DriverSkillChoiceFocus focus);
         pendingConfirmationAction = null;
         pendingConfirmationType = null;
         if (returnToMenuConfirmPanel != null)
             returnToMenuConfirmPanel.SetActive(false);
-        RefreshTeamGearPresentation();
+        try
+        {
+            if (refresh) RefreshTeamGearPresentation();
+            if (notifyCancel) cancel?.Invoke();
+        }
+        finally { RestoreDriverSkillChoiceFocus(focus); }
+    }
+
+    /// <summary>
+    /// Native OnDisable may run inside a child or ancestor's SetActive operation.
+    /// Clear the intent and hide/block the surface without re-entering that hierarchy transition.
+    /// The next ordinary Ensure restores its original CanvasGroup values.
+    /// </summary>
+    public void CancelDriverSkillChoiceForLifecycle()
+    {
+        UnityEngine.Events.UnityAction cancel = ClearDriverSkillCardChoice(out DriverSkillChoiceFocus focus, false);
+        pendingConfirmationAction = null;
+        pendingConfirmationType = null;
+        if (confirmationVisibility != null && !confirmationHiddenByLifecycle)
+        {
+            confirmationPreviousAlpha = confirmationVisibility.alpha;
+            confirmationPreviousInteraction = confirmationVisibility.interactable;
+            confirmationPreviousRaycasts = confirmationVisibility.blocksRaycasts;
+            confirmationHiddenByLifecycle = true;
+            confirmationVisibility.alpha = 0f;
+            confirmationVisibility.interactable = false;
+            confirmationVisibility.blocksRaycasts = false;
+        }
+        try { cancel?.Invoke(); }
+        finally { RestoreDriverSkillChoiceFocus(focus); }
     }
 
     /// <summary>Confirms the destructive navigation action.</summary>
@@ -354,14 +423,175 @@ public class HUDUI : MonoBehaviour
             return;
 
         Action action = pendingConfirmationAction;
+        DriverSkillChoiceFocus focus = null;
+        if (driverSkillCardChoicePending)
+        {
+            CardData selected = driverSkillCardChoice != null ? driverSkillCardChoice.Selected : null;
+            if ((driverSkillChoiceRequiresCard && selected == null) || pendingDriverSkillCardConfirm == null ||
+                confirmReturnToMenuButton == null || !confirmReturnToMenuButton.interactable)
+                return;
+            UnityEngine.Events.UnityAction<CardData> confirm = pendingDriverSkillCardConfirm;
+            action = () => confirm.Invoke(selected);
+            ClearDriverSkillCardChoice(out focus);
+        }
         pendingConfirmationAction = null;
         pendingConfirmationType = null;
         returnToMenuConfirmPanel.SetActive(false);
-        if (action != null)
-            action.Invoke();
+        if (focus == null)
+        {
+            action?.Invoke();
+            RefreshTeamGearPresentation();
+        }
         else
-            SceneLoader.LoadMainMenu();
+        {
+            try { action?.Invoke(); }
+            finally
+            {
+                RefreshTeamGearPresentation();
+                RestoreDriverSkillChoiceFocus(focus);
+            }
+        }
+    }
+
+    /// <summary>A required cost choice shares the existing single confirmation surface.</summary>
+    public void ShowDriverSkillCardChoice(string title, string message, IReadOnlyList<CardData> choices,
+        UnityEngine.Events.UnityAction<CardData> confirm, UnityEngine.Events.UnityAction cancel)
+    {
+        ShowRequiredCardChoice(title, message, choices, confirm, cancel,
+            InRaceConfirmationAction.DriverSkill, "弃置并发动", null);
+    }
+
+    /// <summary>A technology cost choice uses the same required selection and lifecycle surface.</summary>
+    public void ShowTechnologyCardChoice(string title, string message, IReadOnlyList<CardData> choices,
+        UnityEngine.Events.UnityAction<CardData> confirm, UnityEngine.Events.UnityAction cancel)
+    {
+        CardHandUI hand = transform.root.GetComponentInChildren<CardHandUI>(true);
+        GameObject continuation = hand != null && hand.playCardsButton != null ? hand.playCardsButton.gameObject : null;
+        ShowRequiredCardChoice(title, message, choices, confirm, cancel,
+            InRaceConfirmationAction.CardAction, "弃牌并回热", continuation);
+    }
+
+    /// <summary>Optional fixed-heat continuation shares cancellation/focus and honors the existing confirmation switch.</summary>
+    public void ShowDriverSkillContinuation(string title, string message,
+        UnityEngine.Events.UnityAction confirm, UnityEngine.Events.UnityAction cancel)
+    {
+        if (confirm == null || IsTelemetryDetailsOpen) { cancel?.Invoke(); return; }
+        if (InRaceConfirmationRules.IsEnabled(GameSettingsRuntime.Current.inRaceConfirmationMask,
+                InRaceConfirmationAction.DriverSkill))
+        {
+            ShowRequiredCardChoice(title, message, Array.Empty<CardData>(), _ => confirm.Invoke(), cancel,
+                InRaceConfirmationAction.DriverSkill, "支付1热并追击", null, false);
+            return;
+        }
+        DismissConfirmation(false, true);
+        EventSystem events = EventSystem.current;
+        GameObject previous = events != null ? events.currentSelectedGameObject : null;
+        var focus = new DriverSkillChoiceFocus(events, previous, null, null);
+        try { confirm.Invoke(); }
+        finally { RefreshTeamGearPresentation(); RestoreDriverSkillChoiceFocus(focus); }
+    }
+
+    private void ShowRequiredCardChoice(string title, string message, IReadOnlyList<CardData> choices,
+        UnityEngine.Events.UnityAction<CardData> confirm, UnityEngine.Events.UnityAction cancel,
+        InRaceConfirmationAction confirmationType, string confirmLabel, GameObject continuationFocus, bool requiresCard = true)
+    {
+        DismissConfirmation(false, true);
+        if (IsTelemetryDetailsOpen)
+        {
+            cancel?.Invoke();
+            return;
+        }
+        EnsureReturnToMenuConfirmationUI();
+        Transform card = returnToMenuConfirmPanel != null
+            ? returnToMenuConfirmPanel.transform.Find("ReturnToMenuConfirmCard") : null;
+        if (card == null || confirmReturnToMenuButton == null || cancelReturnToMenuButton == null)
+        {
+            cancel?.Invoke();
+            return;
+        }
+        driverSkillCardChoice = DriverSkillCardChoiceUI.Attach(card, FindReferenceFont(card));
+        EventSystem eventSystem = EventSystem.current;
+        GameObject selected = eventSystem != null ? eventSystem.currentSelectedGameObject : null;
+        driverSkillChoiceFocus = new DriverSkillChoiceFocus(eventSystem,
+            IsAvailableFocus(selected) ? selected : null, driverSkillCardChoice.gameObject, continuationFocus);
+        if (returnToMenuConfirmTitle != null) returnToMenuConfirmTitle.text = title;
+        if (returnToMenuConfirmText != null) returnToMenuConfirmText.text = message;
+        SetConfirmationButtonLabels(confirmationType);
+        TMP_Text commitLabel = confirmReturnToMenuButton.GetComponentInChildren<TMP_Text>(true);
+        if (commitLabel != null) commitLabel.text = confirmLabel;
+        pendingDriverSkillCardConfirm = confirm;
+        pendingDriverSkillCardCancel = cancel;
+        driverSkillCardChoicePending = true;
+        driverSkillChoiceRequiresCard = requiresCard;
+        pendingConfirmationType = confirmationType;
+        driverSkillCardChoice.Show(choices, returnToMenuConfirmTitle, returnToMenuConfirmText,
+            cancelReturnToMenuButton, confirmReturnToMenuButton, confirm != null,
+            CancelDriverSkillChoiceForLifecycle, requiresCard);
+        returnToMenuConfirmPanel.transform.SetAsLastSibling();
+        returnToMenuConfirmPanel.SetActive(true);
         RefreshTeamGearPresentation();
+        driverSkillCardChoice.FocusWithinModal();
+    }
+
+    private UnityEngine.Events.UnityAction ClearDriverSkillCardChoice(out DriverSkillChoiceFocus focus, bool hideRow = true)
+    {
+        focus = driverSkillChoiceFocus;
+        driverSkillChoiceFocus = null;
+        UnityEngine.Events.UnityAction cancel = pendingDriverSkillCardCancel;
+        driverSkillCardChoicePending = false;
+        driverSkillChoiceRequiresCard = true;
+        pendingDriverSkillCardConfirm = null;
+        pendingDriverSkillCardCancel = null;
+        if (driverSkillCardChoice != null) driverSkillCardChoice.HideAndClear(hideRow);
+        return cancel;
+    }
+
+    private sealed class DriverSkillChoiceFocus
+    {
+        internal readonly EventSystem EventSystem;
+        internal readonly GameObject Previous, Row, Continuation;
+        internal DriverSkillChoiceFocus(EventSystem eventSystem, GameObject previous, GameObject row, GameObject continuation)
+        { EventSystem = eventSystem; Previous = previous; Row = row; Continuation = continuation; }
+    }
+
+    private static bool IsAvailableFocus(GameObject target)
+    {
+        if (target == null || !target.activeInHierarchy) return false;
+        Selectable selectable = target.GetComponent<Selectable>();
+        return selectable != null && selectable.isActiveAndEnabled && selectable.IsInteractable();
+    }
+
+    private void RestoreDriverSkillChoiceFocus(DriverSkillChoiceFocus focus)
+    {
+        if (focus == null || focus.EventSystem == null || !focus.EventSystem.isActiveAndEnabled ||
+            EventSystem.current != focus.EventSystem)
+            return;
+        GameObject target = null;
+        if (this != null && isActiveAndEnabled)
+        {
+            if (IsAvailableFocus(focus.Previous)) target = focus.Previous;
+            else if (IsAvailableFocus(focus.Continuation)) target = focus.Continuation;
+            else if (UkPrepMealButton != null && IsAvailableFocus(UkPrepMealButton.gameObject)) target = UkPrepMealButton.gameObject;
+            else if (GermanFuelButton != null && IsAvailableFocus(GermanFuelButton.gameObject)) target = GermanFuelButton.gameObject;
+            else if (GermanBurstButton != null && IsAvailableFocus(GermanBurstButton.gameObject)) target = GermanBurstButton.gameObject;
+            else if (driverSkillButton != null && IsAvailableFocus(driverSkillButton.gameObject)) target = driverSkillButton.gameObject;
+            else if (gear1Button != null && IsAvailableFocus(gear1Button.gameObject)) target = gear1Button.gameObject;
+            else if (gear2Button != null && IsAvailableFocus(gear2Button.gameObject)) target = gear2Button.gameObject;
+            else if (gear3Button != null && IsAvailableFocus(gear3Button.gameObject)) target = gear3Button.gameObject;
+            else if (gear4Button != null && IsAvailableFocus(gear4Button.gameObject)) target = gear4Button.gameObject;
+            else if (confirmGearButton != null && IsAvailableFocus(confirmGearButton.gameObject)) target = confirmGearButton.gameObject;
+            else if (gameManager != null && gameManager.cardHandUI != null && gameManager.cardHandUI.playCardsButton != null &&
+                IsAvailableFocus(gameManager.cardHandUI.playCardsButton.gameObject)) target = gameManager.cardHandUI.playCardsButton.gameObject;
+        }
+        if (target != null)
+            focus.EventSystem.SetSelectedGameObject(target);
+        else
+        {
+            GameObject selected = focus.EventSystem.currentSelectedGameObject;
+            if (selected != null && ((focus.Row != null && selected.transform.IsChildOf(focus.Row.transform)) ||
+                (returnToMenuConfirmPanel != null && selected.transform.IsChildOf(returnToMenuConfirmPanel.transform))))
+                focus.EventSystem.SetSelectedGameObject(null);
+        }
     }
 
     /// <summary>
@@ -376,6 +606,8 @@ public class HUDUI : MonoBehaviour
     {
         if (callback == null || IsTelemetryDetailsOpen)
             return;
+
+        if (driverSkillCardChoicePending) DismissConfirmation(false, true);
 
         if (!InRaceConfirmationRules.IsEnabled(
                 GameSettingsRuntime.Current.inRaceConfirmationMask,
@@ -709,6 +941,8 @@ public class HUDUI : MonoBehaviour
     public void RefreshTeamGearPresentation()
     {
         EnsurePresentation();
+        RefreshUkPrepMeal(gameManager, gameManager != null ? gameManager.Player : null);
+        RefreshGermanFuel(gameManager, gameManager != null ? gameManager.Player : null);
         if (gameManager == null || gameManager.Player == null || teamGearPresentation == null)
             return;
         bool modal = IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
@@ -832,11 +1066,17 @@ public class HUDUI : MonoBehaviour
 
     private void OnDisable()
     {
+        if (ukPrepMealAction != null) ukPrepMealAction.SuspendInteraction();
+        if (germanFuelAction != null) germanFuelAction.SuspendInteraction();
+        if (germanBurstAction != null) germanBurstAction.SuspendInteraction();
+        CancelDriverSkillChoiceForLifecycle();
         if (telemetryDetailsPanel != null) telemetryDetailsPanel.SetActive(false);
     }
 
     private void OnDestroy()
     {
+        if (germanBurstAction != null) germanBurstAction.RestoreSlot();
+        CancelDriverSkillChoiceForLifecycle();
         if (telemetryDetailsPanel == null || telemetryDetailsPanel.transform.IsChildOf(transform)) return;
         // A HUD nested below its canvas owns a sibling overlay; clean that up too.
         if (Application.isPlaying) Destroy(telemetryDetailsPanel);
@@ -850,6 +1090,8 @@ public class HUDUI : MonoBehaviour
 
     public void RefreshDriverSkill(MVPGameManager gm, PlayerState player)
     {
+        RefreshUkPrepMeal(gm, player);
+        RefreshGermanFuel(gm, player);
         if (driverSkillButton == null) return;
         bool interactable = false;
         string label = gm != null ? gm.GetDriverSkillButtonLabel(player, out interactable) : "车手技能";
@@ -858,6 +1100,100 @@ public class HUDUI : MonoBehaviour
             ? driverSkillLabel
             : driverSkillButton.GetComponentInChildren<TMP_Text>(true);
         if (target != null) target.text = label;
+    }
+
+    /// <summary>Displays manager-owned availability; A4 technology and A1 driver share space only.</summary>
+    public void RefreshUkPrepMeal(MVPGameManager gm, PlayerState player)
+    {
+        germanBurstAction?.RestoreSlot();
+        bool visible = gm != null && gm.IsUkPrepMealVisible(player);
+        if (ukPrepMealAction == null && !visible) { RefreshGermanBurst(gm, player); return; }
+        if (ukPrepMealAction == null) ukPrepMealAction = UkPrepMealActionUI.Attach(this, OnUkPrepMealClicked);
+        if (ukPrepMealAction == null) { RefreshGermanBurst(gm, player); return; }
+        bool interactable = false;
+        string label = gm != null ? gm.GetUkPrepMealButtonLabel(player, out interactable) : "科技·预备餐";
+        bool modal = IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
+            (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf);
+        ukPrepMealAction.Refresh(visible, interactable && !modal && isActiveAndEnabled, label);
+        RefreshGermanBurst(gm, player);
+    }
+
+    /// <summary>Phase-exclusive technology presentation; resource authority stays in the manager plan.</summary>
+    public void RefreshGermanFuel(MVPGameManager gm, PlayerState player)
+    {
+        germanBurstAction?.RestoreSlot();
+        bool visible = gm != null && gm.IsGermanFuelVisible(player);
+        if (germanFuelAction == null && !visible) { RefreshGermanBurst(gm, player); return; }
+        if (germanFuelAction == null) germanFuelAction = GermanFuelActionUI.Attach(this, OnGermanFuelClicked);
+        if (germanFuelAction == null) { RefreshGermanBurst(gm, player); return; }
+        bool interactable = false;
+        string label = gm != null ? gm.GetGermanFuelButtonLabel(player, out interactable) : "科技·黑啤燃料";
+        bool modal = IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
+            (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf);
+        germanFuelAction.Refresh(visible, interactable && !modal && isActiveAndEnabled, label);
+        RefreshGermanBurst(gm, player);
+    }
+
+    /// <summary>Displays the manager-owned DE declaration beside the current driver or technology action.</summary>
+    public void RefreshGermanBurst(MVPGameManager gm, PlayerState player)
+    {
+        bool visible = gm != null && gm.IsGermanBurstVisible(player);
+        if (germanBurstAction == null && !visible) return;
+        if (germanBurstAction == null) germanBurstAction = GermanBurstActionUI.Attach(this, OnGermanBurstClicked);
+        if (germanBurstAction == null) return;
+        bool interactable = false;
+        string label = gm != null ? gm.GetGermanBurstButtonLabel(player, out interactable) : "科技·烤肉拼盘";
+        bool modal = IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
+            (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf);
+        Button source = GermanFuelButton != null && GermanFuelButton.gameObject.activeSelf ? GermanFuelButton :
+            UkPrepMealButton != null && UkPrepMealButton.gameObject.activeSelf ? UkPrepMealButton : driverSkillButton;
+        germanBurstAction.Refresh(source, visible, interactable && !modal && isActiveAndEnabled, label);
+    }
+
+    private void OnGermanBurstClicked()
+    {
+        if (!isActiveAndEnabled || gameManager == null || GermanBurstButton == null ||
+            !GermanBurstButton.isActiveAndEnabled || !GermanBurstButton.IsInteractable() ||
+            IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
+            (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf)) return;
+        gameManager.OnGermanBurstButtonClicked();
+    }
+
+    private void OnGermanFuelClicked()
+    {
+        if (!isActiveAndEnabled || gameManager == null || GermanFuelButton == null ||
+            !GermanFuelButton.isActiveAndEnabled || !GermanFuelButton.IsInteractable() ||
+            IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
+            (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf)) return;
+        gameManager.OnGermanFuelButtonClicked();
+    }
+
+    /// <summary>Optional fixed technology fee uses the existing card-action confirmation, cancel and focus surface.</summary>
+    public void ShowGermanFuelConfirmation(string title, string message,
+        UnityEngine.Events.UnityAction confirm, UnityEngine.Events.UnityAction cancel)
+    {
+        if (confirm == null || IsTelemetryDetailsOpen) { cancel?.Invoke(); return; }
+        if (InRaceConfirmationRules.IsEnabled(GameSettingsRuntime.Current.inRaceConfirmationMask, InRaceConfirmationAction.CardAction))
+        {
+            ShowRequiredCardChoice(title, message, Array.Empty<CardData>(), _ => confirm.Invoke(), cancel,
+                InRaceConfirmationAction.CardAction, "支付1热 · 移动+2", null, false);
+            driverSkillCardChoice?.SetNoCardDescription("无需弃置速度牌\n仅支付1张永久热");
+            return;
+        }
+        DismissConfirmation(false, true);
+        EventSystem events = EventSystem.current;
+        var focus = new DriverSkillChoiceFocus(events, events != null ? events.currentSelectedGameObject : null, null, null);
+        try { confirm.Invoke(); }
+        finally { RefreshTeamGearPresentation(); RestoreDriverSkillChoiceFocus(focus); }
+    }
+
+    private void OnUkPrepMealClicked()
+    {
+        if (!isActiveAndEnabled || gameManager == null || UkPrepMealButton == null ||
+            !UkPrepMealButton.isActiveAndEnabled || !UkPrepMealButton.IsInteractable() ||
+            IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen)
+            return;
+        gameManager.OnUkPrepMealButtonClicked();
     }
 
     public void SetStatus(string msg)
@@ -1115,6 +1451,8 @@ public class HUDUI : MonoBehaviour
 
     private void OnDriverSkillClicked()
     {
+        if (gameManager != null &&
+            (gameManager.TryRequestHunterSkillSelection() || gameManager.TryRequestMansellChargeSelection())) return;
         RequestInRaceAction(
             InRaceConfirmationAction.DriverSkill,
             "确认发动技能",

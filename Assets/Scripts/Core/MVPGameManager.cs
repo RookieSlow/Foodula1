@@ -72,6 +72,13 @@ public class MVPGameManager : MonoBehaviour
     private readonly RacePhaseState phaseState = new RacePhaseState();
     private RaceTestLogWriter raceLogWriter;
     private int raceTurnNumber;
+    private int driverSkillPlanVersion;
+    private HunterSkillActivationPlan pendingHunterSkillPlan;
+    private MansellChargeActivationPlan pendingMansellChargePlan;
+    private UkPrepMealActivationPlan pendingPrepMealPlan;
+    private int prepMealPlanVersion;
+    private GermanFuelActivationPlan pendingGermanFuelPlan;
+    private int germanFuelPlanVersion;
     // Storage/display defaults stay at the coordinator boundary; startup/coroutine
     // regressions replace these dependencies without touching player profiles or resolution.
     private System.Action<TechTreeState> saveRaceTechState = TechTreeProfileStore.Save;
@@ -255,6 +262,9 @@ public class MVPGameManager : MonoBehaviour
 
     void OnDestroy()
     {
+        CancelPrepMealPlan(true);
+        ClosePrepMealInputs();
+        CancelHunterSkillPlan(true);
         StopMovementAudio(true);
         presentationSkipState.End();
         if (raceLogWriter != null && raceLogWriter.IsActive)
@@ -263,6 +273,9 @@ public class MVPGameManager : MonoBehaviour
 
     void OnDisable()
     {
+        CancelPrepMealPlan(true);
+        ClosePrepMealInputs();
+        CancelHunterSkillPlan(true);
         StopMovementAudio(true);
     }
 
@@ -1587,7 +1600,7 @@ public class MVPGameManager : MonoBehaviour
             // ──── 回合开始 ────
             raceCameraController?.BeginTurn();
             foreach (var p in session.Players)
-                session.BeginTurn(p);
+                session.BeginTurn(p, raceTurnNumber);
             hudUI?.RefreshTurnTelemetry(Player);
             // JP L3 番狂わせ：末位/次末位自动激活，逐回合递减
             TickBankuruwaseForAll();
@@ -1599,6 +1612,7 @@ public class MVPGameManager : MonoBehaviour
             foreach (var p in turnOrder)
             {
                 RaceTurnStartAction startAction = RaceTurnRules.GetStartAction(p);
+                session.BeginDriverSkillInput(p, trackManager.TotalNodes, trackManager.StartFinishNodeIndex);
                 // 已完赛或已爆缸的赛车不再参与后续回合；否则在玩家 DNF
                 // 后比赛继续时，A1 仍会向玩家请求档位输入。
                 if (startAction == RaceTurnStartAction.ExcludeTerminal)
@@ -1626,6 +1640,7 @@ public class MVPGameManager : MonoBehaviour
 
                 if (p.isAI)
                 {
+                    PrepareAiGermanBurst(p);
                     ApplyGearShift(p, GetAIController(p).DecideGear());
                 }
                 else
@@ -1720,13 +1735,19 @@ public class MVPGameManager : MonoBehaviour
                     if (triggers > 0 && hudUI != null)
                         hudUI.AppendLog($"{p.name} 英式全餐：尾流距离+{triggers}，获得 {triggers} 张限时热量牌。");
                 }
+                session.ResolveMansellPursuitAfterDraw(p);
+                if (config.enableTechTree)
+                    session.BeginPrepMealInput(p, raceTurnNumber);
             }
 
             // ====== PHASE A3: AI 特技牌 ======
             foreach (var p in turnOrder)
             {
                 if (p.isAI && !turnSkipped.Contains(p))
+                {
+                    TryUseAiPrepMeal(p);
                     DecideAITrick(p);
+                }
             }
 
             // ====== PHASE A4: 速度牌可多选确认，特技牌单张即时确认 ======
@@ -1753,6 +1774,8 @@ public class MVPGameManager : MonoBehaviour
                     if (hudUI != null)
                     {
                         hudUI.RefreshPlayerResources(p);
+                        hudUI.RefreshUkPrepMeal(this, p);
+                        hudUI.RefreshGermanFuel(this, p);
                         hudUI.SetStatus($"{GetSpeedCardRequirementLabel(p)} - 可多选速度牌后确认（最多 {GetMaxSpeedCardsThisTurn(p)} 张；特技牌单张确认）");
                     }
                     if (cardHandUI != null)
@@ -1810,10 +1833,19 @@ public class MVPGameManager : MonoBehaviour
                 int rawEnd = oldPos + p.cornerTotalThisTurn;
 
                 // 移动 → 反应(冷却) → 弯道判定
-                yield return StartCoroutine(AnimateMovement(p, GetCarIndex(p)));
+                int lapBeforeMovement = p.lap;
+                bool finishDeferred = false;
+                bool hasHunterExtraCorners = HunterActiveCornerIds(p, oldPos, rawEnd, lapBeforeMovement).Count > 0;
+                System.Action deferFinish = hasHunterExtraCorners
+                    ? (System.Action)(() => finishDeferred = true) : null;
+                yield return StartCoroutine(AnimateBaseMovementWithFinishGate(p, GetCarIndex(p), deferFinish));
                 ReactStep(p);
                 int engineBeforeCorners = p.deck.heatPool.remaining;
-                bool completedCorner = ResolveCorners(p, oldPos, rawEnd);
+                bool completedCorner = ResolveBaseMovementCorners(p, oldPos, rawEnd, lapBeforeMovement);
+                // A newly reached Hart apex before the final line must settle its
+                // ordinary fee before the line can assign an irreversible finish.
+                if (finishDeferred && !RaceTurnRules.IsTerminal(p) && !RaceTurnRules.ShouldSkip(p))
+                    RegisterStartFinishCrossing(p);
                 session.ArmItalyCornerExitBonus(p, completedCorner);
 
                 if (!p.isAI)
@@ -1873,8 +1905,13 @@ public class MVPGameManager : MonoBehaviour
                     }
                 }
 
-                ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
-                RegisterPitEntryCrossing(p, oldPos, oldPos + p.totalMovementThisTurn);
+                // Only the newly introduced Hart path is gated here. A failed
+                // extra-apex payment cannot claim its abandoned planned route.
+                if (!hasHunterExtraCorners || (!RaceTurnRules.IsTerminal(p) && !RaceTurnRules.ShouldSkip(p)))
+                {
+                    ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
+                    RegisterPitEntryCrossing(p, oldPos, oldPos + p.totalMovementThisTurn);
+                }
                 yield return WaitForTutorialNavigation();
             }
             raceLogWriter?.Append("[MOVE_PHASE] end");
@@ -1968,6 +2005,7 @@ public class MVPGameManager : MonoBehaviour
     public void HandleSpin(PlayerState p, int rewindPos, string reason)
     {
         if (p.isBlown) return;
+        p.driverSkill?.Tuning.Interrupt();
         if (movementAudioPlayer == p || instantAudioPlayer == p) StopMovementAudio(true);
 
         int spinMax = session != null ? session.EffectiveSpinMax(p) : 3;
@@ -2037,7 +2075,7 @@ public class MVPGameManager : MonoBehaviour
     /// 尝试从引擎支付热量。若引擎不足 → 触发失控。
     /// 默认将支付的永久热量放入手牌，让热量实际占用手牌；明确指定弃牌堆的效果
     /// （例如中国队阴阳茶 Go）仍可使用 Discard 目的地。
-    /// 支持特技牌黑面包垫底（-1，最少 1）与英国 L1 炸鱼薯条（每场 1 次免单）。
+    /// 支持原车手与特技减免；英国预备餐不免除不足判定。
     /// 返回 true 表示支付成功，false 表示已触发失控。
     /// </summary>
     public bool TryPayHeat(
@@ -2045,7 +2083,8 @@ public class MVPGameManager : MonoBehaviour
         int amount,
         int rewindPos,
         string reason,
-        HeatPaymentDestination destination = HeatPaymentDestination.Hand)
+        HeatPaymentDestination destination = HeatPaymentDestination.Hand,
+        HeatPaymentSource source = HeatPaymentSource.Other)
     {
         if (amount <= 0) return true;
 
@@ -2053,19 +2092,10 @@ public class MVPGameManager : MonoBehaviour
         amount = cost.Amount;
         if (amount <= 0) return true;
 
-        RaceHeatPaymentResult payment = RaceHeatPaymentExecution.Pay(p, session, amount, destination);
+        RaceHeatPaymentResult payment = RaceHeatPaymentExecution.Pay(p, session, amount, destination, source);
         int drawn = payment.Drawn;
         if (!payment.Sufficient)
         {
-            // UK L1 炸鱼薯条：每场限 1 次 — 忽略本次热量判定，回收 1 张热量牌至引擎
-            if (payment.UsedFishAndChips)
-            {
-                RefreshHumanHeatPresentation(p);
-                if (hudUI != null)
-                    hudUI.AppendLog($"<color=green>{p.name} 炸鱼薯条！忽略本次热量判定，回收 1 张热量牌至引擎。</color>");
-                return true;
-            }
-
             HandleSpin(p, rewindPos, reason);
             return false;
         }
@@ -2091,6 +2121,7 @@ public class MVPGameManager : MonoBehaviour
 
     private void ApplyGearShift(PlayerState p, int targetGear)
     {
+        session?.SealGermanBurstDeclaration(p);
         int previousGear = p.gear;
         TeamGearRules.Resolution shift = TeamGearRules.Resolve(
             p.teamId,
@@ -2207,19 +2238,19 @@ public class MVPGameManager : MonoBehaviour
     // ====== 移动动画（含圈数检测） ======
 
     private IEnumerator AnimateMovement(PlayerState p, int carIndex)
+        => AnimateBaseMovementWithFinishGate(p, carIndex, null);
+
+    private IEnumerator AnimateBaseMovementWithFinishGate(PlayerState p, int carIndex, System.Action deferFinalFinish)
     {
-        yield return StartCoroutine(AnimateMovementByAmount(
-            p,
-            carIndex,
-            p != null ? p.totalMovementThisTurn : 0,
-            true));
+        yield return StartCoroutine(AnimateMovementWithFinishGate(
+            p, carIndex, p != null ? p.totalMovementThisTurn : 0, true, deferFinalFinish));
     }
 
-    private IEnumerator AnimateMovementByAmount(
-        PlayerState p,
-        int carIndex,
-        int totalMove,
-        bool playOvertake)
+    private IEnumerator AnimateMovementByAmount(PlayerState p, int carIndex, int totalMove, bool playOvertake)
+        => AnimateMovementWithFinishGate(p, carIndex, totalMove, playOvertake, null);
+
+    private IEnumerator AnimateMovementWithFinishGate(
+        PlayerState p, int carIndex, int totalMove, bool playOvertake, System.Action deferFinalFinish)
     {
         if (p == null || trackManager == null || trackManager.TotalNodes <= 0)
             yield break;
@@ -2233,7 +2264,7 @@ public class MVPGameManager : MonoBehaviour
             // Missing visuals must not suppress lap/weather/finish or lane gates.
             // Reuse the same ordered node traversal, omitting only car animation.
             int rawEnd = p.position + totalMove;
-            yield return TraverseMovementNodes(p, null, rawEnd, GetVisualLaneIndex(p));
+            yield return TraverseMovementNodesWithFinishGate(p, null, rawEnd, GetVisualLaneIndex(p), deferFinalFinish);
             p.position = rawEnd % trackManager.TotalNodes;
             SyncRegionalHeatCapacity(p);
             yield break;
@@ -2263,7 +2294,7 @@ public class MVPGameManager : MonoBehaviour
         }
         try
         {
-            yield return StartCoroutine(TraverseMovementNodes(p, car, targetPos, laneIndex));
+            yield return StartCoroutine(TraverseMovementNodesWithFinishGate(p, car, targetPos, laneIndex, deferFinalFinish));
         }
         finally
         {
@@ -2299,6 +2330,10 @@ public class MVPGameManager : MonoBehaviour
 
     /// <summary>Visits movement nodes in order, settling each crossing before continuing.</summary>
     private IEnumerator TraverseMovementNodes(PlayerState p, GameObject car, int targetPos, int laneIndex)
+        => TraverseMovementNodesWithFinishGate(p, car, targetPos, laneIndex, null);
+
+    private IEnumerator TraverseMovementNodesWithFinishGate(PlayerState p, GameObject car,
+        int targetPos, int laneIndex, System.Action deferFinalFinish)
     {
         int totalNodes = trackManager.TotalNodes;
         for (int i = p.position + 1; i <= targetPos; i++)
@@ -2318,7 +2353,10 @@ public class MVPGameManager : MonoBehaviour
             p.turnMovement.Advance(1);
             if (p == Player) hudUI?.RefreshTurnTelemetry(p);
 
-            if (trackManager.GetNode(nodeIdx).isStartFinish && RegisterStartFinishCrossing(p))
+            bool atFinish = trackManager.GetNode(nodeIdx).isStartFinish;
+            bool defer = atFinish && deferFinalFinish != null && p.lap + 1 >= config.totalLaps;
+            if (defer) deferFinalFinish();
+            if (atFinish && !defer && RegisterStartFinishCrossing(p))
             {
                 // A lane decision may wait indefinitely; a stationary car must
                 // not keep its previous high-rev loop running underneath it.
@@ -2502,19 +2540,22 @@ public class MVPGameManager : MonoBehaviour
             p.turnMovement.AddPlan("特技牌：鱼雷天妇罗", torpedoBonus, TurnMovementKind.Card);
             bonus += RaceMovementRules.ComputeCardAndDriverMovementBonus(p, crossedCorner);
 
-            // DE L1 黑啤酒燃料：每圈一次，付 1 热 → +2 移动
-            // 引擎支付至弃牌堆；不额外要求保留一张热量。
-            if (session.CanTriggerSchwarzbierFuel(p, config.enableTechTree))
+            // DE L1 固定费用不经过普通罚热减免/倍率；没有真实永久热收据就没有 +2。
+            // Human fuel is committed only through its explicit HUD request; AI keeps its existing technology policy.
+            if (p.isAI && p.techState != null && p.techState.germanBurst.FuelUsesThisTurn == 0 &&
+                session.TryCommitSchwarzbierFuel(p, config.enableTechTree, out _))
             {
-                if (TryPayHeat(p, 1, p.positionAtTurnStart, "schwarzbier fuel", HeatPaymentDestination.Discard))
-                {
-                    TechTreeRules.UseSchwarzbierFuel(p.techState, p.lap);
-                    bonus += 2;
-                    p.turnMovement.AddPlan("科技：黑啤酒燃料", 2, TurnMovementKind.Technology);
-                    if (hudUI != null)
-                        hudUI.AppendLog($"{p.name} 黑啤酒燃料（本圈一次）：付 1 热 → +2 移动。");
-                }
+                if (!p.isAI && cardHandUI != null)
+                    cardHandUI.PlayHeatTransitions(1, CardVisualZone.Engine, CardVisualZone.DiscardPile);
+                RefreshHumanHeatPresentation(p);
+                if (!p.isAI) AudioService.PlaySfx(AudioEventNames.HeatPay);
+                if (hudUI != null)
+                    hudUI.AppendLog($"{p.name} 黑啤酒燃料（本圈一次）：付 1 热 → +2 移动。");
             }
+
+            int paidFuelMovement = p.techState?.germanBurst.FuelMovement ?? 0;
+            bonus += paidFuelMovement;
+            p.turnMovement.AddPlan("科技：黑啤酒燃料", paidFuelMovement, TurnMovementKind.Technology);
 
             // US L1 得来速：基础移动每经过一处地标（起点线/中点）→ +1 移动。
             // 奖励不递归触发本次行动的另一轮得来速判定。
@@ -2615,14 +2656,17 @@ public class MVPGameManager : MonoBehaviour
 
                 int oldPos = follower.position;
                 int tailwindMovement = chain.TotalBonus;
+                int traversedBefore = follower.turnMovement.ActualCells;
                 raceLogWriter?.Append(
                     $"[SLIPSTREAM_MOVE] {follower.name} from={oldPos} " +
                     $"bonus={tailwindMovement} to={(oldPos + tailwindMovement) % trackManager.TotalNodes}");
                 yield return StartCoroutine(AnimateMovementByAmount(
                     follower, GetCarIndex(follower), tailwindMovement, false));
+                int actualNativeCells = follower.turnMovement.ActualCells - traversedBefore;
 
                 ResolveLandmarkPasses(follower, oldPos, oldPos + tailwindMovement);
                 RegisterPitEntryCrossing(follower, oldPos, oldPos + tailwindMovement);
+                yield return StartCoroutine(ApplyHunterSlipstreamReward(follower, actualNativeCells));
             }
         }
         finally
@@ -2634,6 +2678,42 @@ public class MVPGameManager : MonoBehaviour
         raceLogWriter?.Append($"[SLIPSTREAM_MOVE_PHASE] end time_scale_after={Time.timeScale:F2}");
         if (hudUI != null)
             hudUI.SetStatus("尾流加成已执行 · 正在弃牌");
+    }
+
+    private IEnumerator ApplyHunterSlipstreamReward(PlayerState follower, int actualNativeCells)
+    {
+        int totalNodes = trackManager.TotalNodes;
+        HunterSlipstreamRuntime.Reward reward = follower.driverSkill?.Hunting.BeginReward(
+            session, follower, totalNodes, actualNativeCells);
+        if (reward == null) yield break;
+        int before = follower.turnMovement.ActualCells;
+        int oldPos = follower.position;
+        int actual = 0;
+        follower.turnMovement.AddPlan("车手：狩猎本能", 1, TurnMovementKind.Driver);
+        try
+        {
+            yield return StartCoroutine(AnimateMovementByAmount(follower, GetCarIndex(follower), 1, false));
+        }
+        finally
+        {
+            actual = follower.turnMovement.ActualCells - before;
+            if (reward.Complete(actual))
+            {
+                follower.totalMovementThisTurn++;
+                if (hudUI != null)
+                    hudUI.AppendLog($"{follower.name} 狩猎本能：实际追近锁定前车，额外 +1 格（本圈已用）。");
+                raceLogWriter?.Append($"[HUNTING_INSTINCT] {follower.name} actual_bonus=1");
+            }
+        }
+        if (actual <= 0 || RaceTurnRules.IsTerminal(follower) || RaceTurnRules.ShouldSkip(follower)) yield break;
+        // Native slipstream keeps its original exemption. Hart's separate actual
+        // cell must pay for its newly crossed apex at the original card speed.
+        var newCorners = trackManager.GetUniqueCornersCrossed(oldPos, oldPos + actual);
+        if (newCorners.Count > 0 && !ResolveCornerSet(follower, oldPos, newCorners)) yield break;
+        if (RaceTurnRules.IsTerminal(follower) || RaceTurnRules.ShouldSkip(follower)) yield break;
+        ResolveLandmarkPasses(follower, oldPos, oldPos + actual);
+        RegisterPitEntryCrossing(follower, oldPos, oldPos + actual);
+        if (hudUI != null) hudUI.RefreshTurnTelemetry(Player);
     }
 
     private void ResolveLandmarkPasses(PlayerState p, int oldPos, int rawMovementEnd)
@@ -2766,6 +2846,25 @@ public class MVPGameManager : MonoBehaviour
 
     // ====== 弯道判定（per-corner-segment，含天气/科技修正） ======
 
+    /// <summary>Original card apexes plus only the tail newly reached by Hart's active reward.</summary>
+    private bool ResolveBaseMovementCorners(PlayerState p, int oldPos, int rawEndPos, int startingLap)
+    {
+        if (p.cornerTotalThisTurn <= 0 || p.isBlown) return false;
+        var corners = new List<int>(trackManager.GetUniqueCornersCrossed(oldPos, rawEndPos));
+        corners.AddRange(HunterActiveCornerIds(p, oldPos, rawEndPos, startingLap));
+        // Deduplicate the same physical segment, while a later lap is a new pass.
+        return corners.Count > 0 && ResolveCornerSet(p, oldPos, corners);
+    }
+
+    private List<int> HunterActiveCornerIds(PlayerState p, int oldPos, int rawEndPos, int startingLap)
+    {
+        var tail = RaceMovementRules.GetHunterActiveCornerTail(p, oldPos);
+        int end = TrackRules.EndBeforeFinalFinish(trackManager.Nodes, oldPos,
+            tail.end, config.totalLaps - startingLap);
+        return TrackRules.GetAdditionalApexCornersCrossed(trackManager.Nodes,
+            oldPos, rawEndPos, tail.start, end);
+    }
+
     private bool ResolveCorners(PlayerState p, int oldPos, int rawEndPos)
     {
         if (p.cornerTotalThisTurn <= 0) return false;
@@ -2773,6 +2872,11 @@ public class MVPGameManager : MonoBehaviour
 
         HashSet<int> corners = trackManager.GetUniqueCornersCrossed(oldPos, rawEndPos);
         if (corners.Count == 0) return false;
+        return ResolveCornerSet(p, oldPos, corners);
+    }
+
+    private bool ResolveCornerSet(PlayerState p, int rewindPosition, IEnumerable<int> corners)
+    {
         int laneIndex = GetLane(p);
         var result = RaceCornerResolver.Resolve(
             p, laneIndex, corners,
@@ -2780,7 +2884,7 @@ public class MVPGameManager : MonoBehaviour
                 p, trackManager.GetCornerSpeedLimit(cornerId, laneIndex)),
             trackManager.GetCornerName,
             overspeed => session.ResolveOverspeedHeatCost(p, overspeed),
-            (heat, reason) => TryPayHeat(p, heat, oldPos, reason),
+            (heat, reason) => TryPayHeat(p, heat, rewindPosition, reason, HeatPaymentDestination.Hand, HeatPaymentSource.OrdinaryCorner),
             over => AudioService.PlaySfx(over ? AudioEventNames.CornerOver : AudioEventNames.CornerSafe));
         if (hudUI != null) hudUI.AppendLog(result.log);
         return result.completed;
@@ -3239,19 +3343,23 @@ public class MVPGameManager : MonoBehaviour
 
     private void ApplyCleanupGrill(PlayerState p, int cooldown)
     {
-        HeatCoolingResult result = p.deck.CoolRecordedHeatWithSources(p.heatPaidCardsThisTurn, cooldown);
+        GermanBurstRefundResult refund = session.ResolveGermanBurstRefund(p, cooldown);
+        HeatCoolingResult result = refund.Removed;
         int cooled = result.Total;
         if (cooled > 0)
         {
             if (!p.isAI && cardHandUI != null)
             {
-                cardHandUI.PlayHeatCoolingTransitions(result, throughDiscard: true);
+                cardHandUI.PlayHeatTransitions(result.FromHand, CardVisualZone.Hand, CardVisualZone.DiscardPile);
+                cardHandUI.PlayHeatTransitions(result.FromDraw, CardVisualZone.DrawPile, CardVisualZone.DiscardPile);
+                // Retired capacity receipts leave circulation; only net restoration travels to the engine.
+                cardHandUI.PlayHeatTransitions(refund.Restored, CardVisualZone.DiscardPile, CardVisualZone.Engine);
             }
             RefreshHumanHeatPresentation(p);
             if (!p.isAI) AudioService.PlaySfx(AudioEventNames.HeatCool);
         }
         if (cooled > 0 && hudUI != null)
-            hudUI.AppendLog($"<color=green>{p.name} 烤肉拼盘：自动冷却 {cooled} 张热量牌。</color>");
+            hudUI.AppendLog($"<color=green>{p.name} 烤肉爆发：移除窗口收据{cooled}，净回引擎{refund.Restored}，容量退役{refund.Retired}。</color>");
     }
 
     /// <summary>应用阴阳茶结果：Go(阴) → 付 1 引擎热并前进；Recover(阳) → 仅从手牌冷却。</summary>
@@ -3679,7 +3787,137 @@ public class MVPGameManager : MonoBehaviour
             (copy, corner, end) => trackManager != null ? GetNigiriBonus(copy, corner, end, GetLane(player)) : 0,
             trackManager != null ? trackManager.TotalNodes : 0,
             (start, end) => trackManager != null ? trackManager.GetUniqueCornersCrossed(start, end) : new HashSet<int>(),
-            id => trackManager != null ? trackManager.GetCornerSpeedLimit(id, GetLane(player)) : 99);
+            id => trackManager != null ? trackManager.GetCornerSpeedLimit(id, GetLane(player)) : 99,
+            trackManager != null ? trackManager.Nodes : null);
+    }
+
+    /// <summary>Technology and driver actions occupy the same visual slot in separate input phases.</summary>
+    public bool IsUkPrepMealVisible(PlayerState player) => player != null && player == Player && !player.isAI &&
+        config != null && config.enableTechTree && tutorialScenario == null &&
+        phaseState.CanAcceptCards(inputState) && player.teamId == TeamId.UK && player.techState != null &&
+        session != null && session.GetModifiers(player).hasFishAndChips;
+
+    public string GetUkPrepMealButtonLabel(PlayerState player, out bool interactable)
+    {
+        interactable = UkPrepMealRules.CanPrepare(session, player, raceTurnNumber,
+            trackManager?.LoadedTrackConfig?.country, IsUkPrepMealVisible(player),
+            config != null && config.enableTechTree && tutorialScenario == null, out string reason);
+        int remaining = player?.techState != null && player.techState.prepMeal.LastUsedLap == player.lap ? 0 : 1;
+        return $"科技·预备餐  {remaining}/1\n" + (interactable ? "弃1速度 · 选择回热" : reason);
+    }
+
+    /// <summary>Open the mandatory exact-card cost choice; optional confirmation settings add no extra step.</summary>
+    public void OnUkPrepMealButtonClicked()
+    {
+        if (IsTutorialActionInputBlocked || (hudUI != null && hudUI.IsReturnToMenuConfirmationVisible)) return;
+        CancelPrepMealPlan();
+        PlayerState player = Player;
+        if (!UkPrepMealActivationPlan.TryCreate(session, player, raceTurnNumber, prepMealPlanVersion,
+                trackManager?.LoadedTrackConfig?.country, IsUkPrepMealVisible(player),
+                config != null && config.enableTechTree && tutorialScenario == null,
+                out UkPrepMealActivationPlan plan, out string reason))
+        {
+            hudUI?.SetStatus(reason);
+            hudUI?.RefreshUkPrepMeal(this, player);
+        hudUI?.RefreshGermanFuel(this, player);
+            return;
+        }
+        if (hudUI == null) { plan.Cancel(); return; }
+        pendingPrepMealPlan = plan;
+        int required = GetRequiredSpeedCardsThisTurn(player);
+        string message = $"弃1张普通速度；本圈剩余 1/1。\n" +
+            $"预计手牌{plan.PreviewSources.FromHand}、弃牌{plan.PreviewSources.FromDiscard}；退役{plan.PreviewRetired}、净回{plan.PreviewRestored}。\n" +
+            $"弃后速度{player.deck.CountSpeedInHand() - 1}/所需{required}；取消不扣牌或次数。";
+        hudUI.ShowTechnologyCardChoice("科技·预备餐 · 选择弃牌", message, plan.Choices,
+            cost => CommitPrepMealSelection(plan, cost),
+            () => { plan.Cancel(); if (ReferenceEquals(pendingPrepMealPlan, plan)) pendingPrepMealPlan = null; });
+    }
+
+    private void CommitPrepMealSelection(UkPrepMealActivationPlan plan, CardData cost)
+    {
+        if (!ReferenceEquals(pendingPrepMealPlan, plan)) return;
+        pendingPrepMealPlan = null;
+        PlayerState player = Player;
+        if (!plan.TryCommit(session, player, raceTurnNumber, prepMealPlanVersion,
+                trackManager?.LoadedTrackConfig?.country, IsUkPrepMealVisible(player),
+                config != null && config.enableTechTree && tutorialScenario == null, cost,
+                out HeatCoolingResult removed, out int retired, out int restored, out string reason))
+        {
+            plan.Cancel();
+            hudUI?.SetStatus(reason);
+            hudUI?.RefreshUkPrepMeal(this, player);
+        hudUI?.RefreshGermanFuel(this, player);
+            return;
+        }
+        PresentPrepMeal(player, cost, removed, retired, restored);
+    }
+
+    private void PresentPrepMeal(PlayerState player, CardData cost, HeatCoolingResult removed, int retired, int restored)
+    {
+        if (!player.isAI)
+        {
+            cardHandUI?.PlayCardTransitions(new List<CardData> { cost },
+                CardVisualZone.Hand, CardVisualZone.DiscardPile, AudioEventNames.CardPlay);
+            int fromHand = System.Math.Max(0, removed.FromHand - retired);
+            cardHandUI?.PlayHeatTransitions(fromHand, CardVisualZone.Hand, CardVisualZone.Engine);
+            cardHandUI?.PlayHeatTransitions(restored - fromHand, CardVisualZone.DiscardPile, CardVisualZone.Engine);
+            RefreshHumanHand(player);
+            AudioService.PlayUi(AudioEventNames.UiConfirm);
+        }
+        string message = $"预备餐：弃1速度；移除旧永久热{removed.Total}（手{removed.FromHand}/弃{removed.FromDiscard}），退役{retired}，净回引擎{restored}；本圈0/1。";
+        hudUI?.AppendLog(message);
+        if (!player.isAI)
+        {
+            hudUI?.SetStatus($"预备餐净回{restored}；已弃1速度，请核对当前挡位所需张数。");
+            hudUI?.RefreshPlayerResources(player);
+            hudUI?.RefreshUkPrepMeal(this, player);
+        hudUI?.RefreshGermanFuel(this, player);
+        }
+        raceLogWriter?.Append($"[PREP_MEAL] racer={session.Players.IndexOf(player)} turn={raceTurnNumber} lap={player.lap} removed={removed.Total} retired={retired} restored={restored}");
+    }
+
+    private void TryUseAiPrepMeal(PlayerState player)
+    {
+        // A conservative existing-resource choice: keep the mandatory speed cards,
+        // and discard the lowest face value. This does not activate an AI driver skill.
+        int required = CardPlayRules.GetSpeedCardRequirement(player).RequiredCardCount;
+        if (player.deck.CountSpeedInHand() <= required) return;
+        if (!UkPrepMealActivationPlan.TryCreate(session, player, raceTurnNumber, raceTurnNumber,
+                trackManager?.LoadedTrackConfig?.country, true,
+                config.enableTechTree && tutorialScenario == null,
+                out UkPrepMealActivationPlan plan, out _)) return;
+        CardData cost = null;
+        foreach (CardData card in plan.Choices) if (cost == null || card.value < cost.value) cost = card;
+        if (plan.TryCommit(session, player, raceTurnNumber, raceTurnNumber,
+                trackManager?.LoadedTrackConfig?.country, true, config.enableTechTree, cost,
+                out HeatCoolingResult removed, out int retired, out int restored, out _))
+            PresentPrepMeal(player, cost, removed, retired, restored);
+    }
+
+    private void CancelPrepMealPlan(bool fromLifecycle = false)
+    {
+        CloseGermanFuelConfirmation(fromLifecycle);
+        prepMealPlanVersion++;
+        if (pendingPrepMealPlan == null) return;
+        pendingPrepMealPlan.Cancel();
+        pendingPrepMealPlan = null;
+        if (hudUI == null) return;
+        if (fromLifecycle) hudUI.CancelDriverSkillChoiceForLifecycle();
+        else hudUI.CancelReturnToMenu();
+    }
+
+    private void ClosePrepMealInputs()
+    {
+        if (session?.Players == null) return;
+        foreach (PlayerState player in session.Players)
+        {
+            player?.techState?.prepMeal.CloseInput();
+            player?.techState?.germanBurst.CloseWindow();
+            player?.driverSkill?.Tuning.Interrupt();
+            player?.driverSkill?.Pursuit.Interrupt();
+            player?.driverSkill?.InterruptMansellChargeWindow();
+            player?.driverSkill?.Hunting.CloseInput();
+        }
     }
 
     public void OnGearButtonClicked(int gear)
@@ -3696,6 +3934,7 @@ public class MVPGameManager : MonoBehaviour
             AudioService.PlayUi(AudioEventNames.GearFailure);
             return;
         }
+        CancelHunterSkillPlan();
         // 高亮选中的档位按钮
         hudUI?.SelectGearPresentation(gear);
         tutorialGuideUI?.DismissOperationCallout(TutorialFocusOperation.Gear);
@@ -3708,12 +3947,160 @@ public class MVPGameManager : MonoBehaviour
         if (IsTutorialActionInputBlocked) return;
         if (!phaseState.CanAcceptGear(inputState)) return;
         if (!inputState.ConfirmGear()) return;
+        session?.SealGermanBurstDeclaration(Player);
+        CancelHunterSkillPlan();
         SetGearControlsInteractable(false);
         hudUI?.RefreshDriverSkill(this, Player);
     }
 
+    /// <summary>L1 is visible only in the human's live card-input gate, never in tutorials.</summary>
+    public bool IsGermanFuelVisible(PlayerState player) => player != null && player == Player && !player.isAI &&
+        config != null && config.enableTechTree && !IsTutorialMode && phaseState.CanAcceptCards(inputState) &&
+        player.techState != null && player.techState.activeNodeIds != null && session != null && session.GetModifiers(player).hasSchwarzbierFuel;
+
+    public string GetGermanFuelButtonLabel(PlayerState player, out bool interactable)
+    {
+        interactable = GermanFuelActivationPlan.CanPrepare(session, player, raceTurnNumber,
+            IsGermanFuelVisible(player) && !IsTutorialActionInputBlocked, config != null && config.enableTechTree && !IsTutorialMode, out _);
+        var burst = player?.techState?.germanBurst;
+        int maximum = burst != null && burst.Declared ? 3 : 1;
+        int remaining = burst == null ? 0 : System.Math.Max(0, maximum - burst.FuelUsesThisTurn);
+        if (maximum == 1 && player?.techState != null && player.techState.schwarzbierFuelLastLap == player.lap) remaining = 0;
+        string detail = interactable ? "付1永久热 · 移动+2" : "当前状态不可用";
+        if (remaining == 0) detail = maximum == 3 ? "本回合次数已用完" : "本圈已使用";
+        else if (player?.deck?.heatPool == null || player.deck.heatPool.remaining < 1) detail = "缺少1张永久引擎热";
+        if (pendingGermanFuelPlan != null) { interactable = false; detail = "待确认 · 可取消"; }
+        return $"科技·黑啤燃料 {remaining}/{maximum}\n{detail}";
+    }
+
+    /// <summary>Real HUD entry; the existing confirmation setting controls one fixed-payment request.</summary>
+    public void OnGermanFuelButtonClicked()
+    {
+        if (hudUI == null || !hudUI.isActiveAndEnabled || hudUI.IsReturnToMenuConfirmationVisible || hudUI.IsTelemetryDetailsOpen) return;
+        if (!TryPrepareGermanFuelRequest(out var plan, out string reason))
+        { hudUI.SetStatus(reason); hudUI.RefreshGermanFuel(this, Player); return; }
+        string name = (Player.name ?? Player.DriverProfile.ShortName).Replace("<", "＜").Replace(">", "＞");
+        string message = $"赛车：{name}\n付1张永久引擎热到弃牌区；移动+2格\n确认才扣费，取消不扣费\n后续弯道仍按原速度付热，热量不足会失控";
+        hudUI.ShowGermanFuelConfirmation("黑啤燃料", message,
+            () =>
+            {
+                bool committed = TryConfirmGermanFuelRequest(plan, out string failure);
+                hudUI?.SetStatus(committed ? "黑啤已实付1热，本回合移动+2" : failure);
+                if (committed) cardHandUI?.PlayHeatTransitions(1, CardVisualZone.Engine, CardVisualZone.DiscardPile);
+                hudUI?.RefreshGermanFuel(this, Player);
+            },
+            () => { CancelGermanFuelRequest(plan); if (hudUI != null && hudUI.isActiveAndEnabled) hudUI.RefreshGermanFuel(this, Player); });
+    }
+
+    /// <summary>Prepare the manual fuel confirmation without reserving heat or declaring L3. HUD owns only confirmation presentation.</summary>
+    public bool TryPrepareGermanFuelRequest(out GermanFuelActivationPlan plan, out string reason)
+    {
+        CancelGermanFuelRequest();
+        if (!GermanFuelActivationPlan.TryCreate(session, Player, raceTurnNumber, germanFuelPlanVersion,
+                CanAcceptGermanFuelInput(), config != null && config.enableTechTree && !IsTutorialMode,
+                out plan, out reason)) return false;
+        pendingGermanFuelPlan = plan;
+        return true;
+    }
+
+    /// <summary>Only the current confirmation can pay, once; expired callbacks cannot affect a newer request.</summary>
+    public bool TryConfirmGermanFuelRequest(GermanFuelActivationPlan plan, out string reason)
+    {
+        reason = "黑啤确认已过期，请重新选择";
+        if (plan == null || !ReferenceEquals(pendingGermanFuelPlan, plan)) return false;
+        pendingGermanFuelPlan = null;
+        PlayerState player = Player;
+        if (!plan.TryCommit(session, player, raceTurnNumber, germanFuelPlanVersion,
+                CanAcceptGermanFuelInput(), config != null && config.enableTechTree && !IsTutorialMode, out reason)) return false;
+        RefreshHumanHeatPresentation(player);
+        hudUI?.RefreshTurnTelemetry(player);
+        return true;
+    }
+
+    /// <summary>Cancel a single current confirmation; no L3 declaration, resource or race use is undone.</summary>
+    public void CancelGermanFuelRequest(GermanFuelActivationPlan plan)
+    {
+        if (plan == null || !ReferenceEquals(pendingGermanFuelPlan, plan)) return;
+        CancelGermanFuelRequest();
+    }
+
+    private void CancelGermanFuelRequest()
+    {
+        germanFuelPlanVersion++;
+        pendingGermanFuelPlan?.Cancel();
+        pendingGermanFuelPlan = null;
+    }
+
+    private void CloseGermanFuelConfirmation(bool fromLifecycle)
+    {
+        bool hadPlan = pendingGermanFuelPlan != null;
+        CancelGermanFuelRequest();
+        if (!hadPlan || hudUI == null) return;
+        if (fromLifecycle) hudUI.CancelDriverSkillChoiceForLifecycle();
+        else hudUI.CancelReturnToMenu();
+    }
+
+    private bool CanAcceptGermanFuelInput() => !IsTutorialActionInputBlocked && !IsTutorialMode &&
+        phaseState.CanAcceptCards(inputState) && Player != null && !Player.isAI;
+
+    /// <summary>Effective L3 is offered before gear confirmation and remains visible while the declared card-input window is open.</summary>
+    public bool IsGermanBurstVisible(PlayerState player) => player != null && player == Player && !player.isAI &&
+        config != null && config.enableTechTree && !IsTutorialMode && player.techState?.activeNodeIds != null &&
+        session != null && session.GetModifiers(player).hasGrillSpezial &&
+        (phaseState.CanAcceptGear(inputState) || (player.techState.germanBurst.Declared && phaseState.CanAcceptCards(inputState)));
+
+    /// <summary>Readonly intent/count/lock presentation; cancelling an unpaid declaration consumes nothing.</summary>
+    public string GetGermanBurstButtonLabel(PlayerState player, out bool interactable)
+    {
+        var burst = player?.techState?.germanBurst;
+        bool input = IsGermanBurstVisible(player) && !IsTutorialActionInputBlocked &&
+            RaceTurnRules.GetStartAction(player) == RaceTurnStartAction.SelectGear;
+        bool cancel = input && burst != null && burst.Declared && !burst.Locked &&
+            burst.TurnId == raceTurnNumber && burst.Matches(session, player);
+        interactable = cancel || (input && phaseState.CanAcceptGear(inputState) &&
+            session.CanDeclareGermanBurst(player, true, raceTurnNumber));
+        bool used = player?.techState != null && player.techState.grillSpezialUsed;
+        string detail = burst != null && burst.Declared
+            ? (burst.Locked ? "已锁定 · 本回合" : "已预备 · 点击取消")
+            : (used ? "本场已用完" : "免费声明 · 首付锁定");
+        return $"烤肉爆发 {(used ? 0 : 1)}/1\n{detail}";
+    }
+
+    /// <summary>Immediate free intent toggle; no extra fixed fee or confirmation is introduced.</summary>
+    public void OnGermanBurstButtonClicked()
+    {
+        if (hudUI == null || !hudUI.isActiveAndEnabled || hudUI.IsReturnToMenuConfirmationVisible || hudUI.IsTelemetryDetailsOpen) return;
+        PlayerState player = Player;
+        GetGermanBurstButtonLabel(player, out bool allowed);
+        if (!allowed) return;
+        bool cancelling = player.techState.germanBurst.Declared;
+        bool changed = cancelling
+            ? session.TryCancelGermanBurst(player, raceTurnNumber, player.techState.germanBurst.Version)
+            : TryDeclareGermanBurst();
+        if (!changed) return;
+        CancelGermanFuelRequest();
+        hudUI.SetStatus(cancelling ? "爆发声明已取消，未消耗本场机会" : "爆发已预备：首笔永久热实付才锁定");
+        hudUI.AppendLog(cancelling ? "取消烤肉爆发：没有扣费或消耗场次。" :
+            "声明烤肉爆发：首笔永久热实付锁定本场机会；黑啤本回合合计最多3次，收尾仅返仍持有的窗口付款收据。");
+        hudUI.RefreshTeamGearPresentation();
+    }
+
+    /// <summary>Production declaration before the actual confirmed gear cost; tutorials and ordinary AI driver skills remain excluded.</summary>
+    public bool TryDeclareGermanBurst()
+    {
+        return !IsTutorialActionInputBlocked && !IsTutorialMode && config != null && Player != null && !Player.isAI &&
+            phaseState.CanAcceptGear(inputState) && session != null && session.TryDeclareGermanBurst(Player, config.enableTechTree, raceTurnNumber);
+    }
+
+    private void PrepareAiGermanBurst(PlayerState player)
+    {
+        if (player == null || !player.isAI || config == null || !config.enableTechTree || IsTutorialMode || session == null) return;
+        session.TryDeclareGermanBurst(player, true, raceTurnNumber);
+    }
+
     public void OnDriverSkillButtonClicked()
     {
+        if (TryRequestHunterSkillSelection() || TryRequestMansellChargeSelection()) return;
         PlayerState player = Player;
         if (player == null || player.driverSkill == null) return;
 
@@ -3725,6 +4112,144 @@ public class MVPGameManager : MonoBehaviour
             return;
         }
 
+        PresentDriverSkillActivation(player);
+    }
+
+    /// <summary>The required discard selection is independent of optional extra confirmations.</summary>
+    public bool TryRequestHunterSkillSelection()
+    {
+        PlayerState player = Player;
+        if (player?.driverSkill == null || player.driverSkill.Skill != DriverActiveSkillId.FinalLap)
+            return false;
+
+        CancelHunterSkillPlan();
+        if (!HunterSkillActivationPlan.TryCreate(session, player,
+                trackManager != null ? trackManager.TotalNodes : 0,
+                raceTurnNumber, inputState.PendingGear, driverSkillPlanVersion,
+                BuildDriverSkillActivationContext(player), out HunterSkillActivationPlan plan, out string reason))
+        {
+            hudUI?.SetStatus($"<color=orange>{reason}</color>");
+            hudUI?.RefreshDriverSkill(this, player);
+            return true;
+        }
+        if (hudUI == null)
+        {
+            plan.Cancel();
+            return true;
+        }
+
+        pendingHunterSkillPlan = plan;
+        string targetName = plan.Target.name ?? plan.Target.DriverProfile.ShortName;
+        // Target names are data, not TMP rich-text instructions.
+        targetName = targetName.Replace("<", "＜").Replace(">", "＞");
+        string message = $"目标：{targetName} · 前方{plan.TargetDistance}格\n" +
+            $"弃1张普通速度牌；本次移动+{plan.MovementBonus}格；剩余{player.driverSkill.UsesRemaining}次\n" +
+            "新增弯心仍按原速度付热，热量不足会失控";
+        hudUI.ShowDriverSkillCardChoice(player.DriverProfile.ActiveName, message, plan.Choices,
+            cost => CommitHunterSkillSelection(plan, cost),
+            () => { plan.Cancel(); if (ReferenceEquals(pendingHunterSkillPlan, plan)) pendingHunterSkillPlan = null; });
+        return true;
+    }
+
+    private void CommitHunterSkillSelection(HunterSkillActivationPlan plan, CardData cost)
+    {
+        if (!ReferenceEquals(pendingHunterSkillPlan, plan)) return;
+        pendingHunterSkillPlan = null;
+        PlayerState player = Player;
+        if (!plan.TryCommit(session, player, raceTurnNumber, inputState.PendingGear,
+                driverSkillPlanVersion, BuildDriverSkillActivationContext(player), cost, out string reason))
+        {
+            plan.Cancel();
+            hudUI?.SetStatus($"<color=orange>{reason}</color>");
+            hudUI?.RefreshDriverSkill(this, player);
+            return;
+        }
+        RefreshHumanHand(player);
+        hudUI?.RefreshPlayerResources(player);
+        PresentDriverSkillActivation(player);
+    }
+
+    /// <summary>Routes both paid Mansell legs through the same versioned production plan.</summary>
+    public bool TryRequestMansellChargeSelection()
+    {
+        PlayerState player = Player;
+        if (player?.driverSkill == null || player.driverSkill.Skill != DriverActiveSkillId.AngryCharge)
+            return false;
+        CancelHunterSkillPlan();
+        if (!MansellChargeActivationPlan.TryCreate(session, player,
+                trackManager != null ? trackManager.TotalNodes : 0,
+                trackManager != null ? trackManager.StartFinishNodeIndex : 0, raceTurnNumber,
+                inputState.PendingGear, driverSkillPlanVersion, BuildDriverSkillActivationContext(player),
+                out MansellChargeActivationPlan plan, out string reason))
+        {
+            hudUI?.SetStatus($"<color=orange>{reason}</color>");
+            hudUI?.RefreshDriverSkill(this, player);
+            return true;
+        }
+        if (hudUI == null) { plan.Cancel(); return true; }
+        pendingMansellChargePlan = plan;
+        string targetName = (plan.Target.name ?? plan.Target.DriverProfile.ShortName)
+            .Replace("<", "＜").Replace(">", "＞");
+        string cost = plan.IsSecondLeg ? "付1张永久热，不再扣场次" : "弃普通速度牌1张；付1张永久热";
+        string message = $"目标：{targetName}\n前方{plan.TargetDistance}格；{cost}\n" +
+            $"本次移动+{plan.MovementBonus}格；剩余{player.driverSkill.UsesRemaining}次\n" +
+            "新增弯心仍按原速度付热，热量不足会失控";
+        UnityEngine.Events.UnityAction cancel = () => CancelMansellChargeSelection(plan);
+        if (plan.IsSecondLeg)
+            hudUI.ShowDriverSkillContinuation(player.DriverProfile.ActiveName + " · 第二段", message,
+                () => CommitMansellChargeSelection(plan, null), cancel);
+        else
+            hudUI.ShowDriverSkillCardChoice(player.DriverProfile.ActiveName, message, plan.Choices,
+                card => CommitMansellChargeSelection(plan, card), cancel);
+        return true;
+    }
+
+    private void CommitMansellChargeSelection(MansellChargeActivationPlan plan, CardData cost)
+    {
+        if (!ReferenceEquals(pendingMansellChargePlan, plan)) return;
+        pendingMansellChargePlan = null;
+        PlayerState player = Player;
+        if (!plan.TryCommit(session, player, trackManager != null ? trackManager.TotalNodes : 0,
+                trackManager != null ? trackManager.StartFinishNodeIndex : 0, raceTurnNumber,
+                inputState.PendingGear, driverSkillPlanVersion, BuildDriverSkillActivationContext(player), cost, out string reason))
+        {
+            plan.Cancel();
+            hudUI?.SetStatus($"<color=orange>{reason}</color>");
+            hudUI?.RefreshDriverSkill(this, player);
+            return;
+        }
+        RefreshHumanHand(player);
+        hudUI?.RefreshPlayerResources(player);
+        PresentDriverSkillActivation(player);
+    }
+
+    private void CancelMansellChargeSelection(MansellChargeActivationPlan plan)
+    {
+        plan.Cancel();
+        if (ReferenceEquals(pendingMansellChargePlan, plan)) pendingMansellChargePlan = null;
+        hudUI?.RefreshDriverSkill(this, Player);
+    }
+
+    private void CancelHunterSkillPlan(bool fromLifecycle = false)
+    {
+        CloseGermanFuelConfirmation(fromLifecycle);
+        driverSkillPlanVersion++;
+        if (pendingHunterSkillPlan == null && pendingMansellChargePlan == null) return;
+        HunterSkillActivationPlan hunter = pendingHunterSkillPlan;
+        MansellChargeActivationPlan mansell = pendingMansellChargePlan;
+        pendingHunterSkillPlan = null;
+        pendingMansellChargePlan = null;
+        hunter?.Cancel();
+        mansell?.Cancel();
+        if (hudUI != null)
+        {
+            if (fromLifecycle) hudUI.CancelDriverSkillChoiceForLifecycle();
+            else hudUI.CancelReturnToMenu();
+        }
+    }
+
+    private void PresentDriverSkillActivation(PlayerState player)
+    {
         AudioService.PlayUi(AudioEventNames.UiConfirm);
         string message = $"{player.DriverProfile.ActiveName} 已发动（剩余 {player.driverSkill.UsesRemaining} 次）";
         hudUI?.AppendLog($"<color=#D9A7FF>{message}</color>");
@@ -3742,6 +4267,29 @@ public class MVPGameManager : MonoBehaviour
     {
         interactable = false;
         if (player == null || player.driverSkill == null) return "车手技能";
+        if (player.driverSkill.Skill == DriverActiveSkillId.AngryCharge)
+        {
+            if (player.driverSkill.Charge.CommittedThisInput)
+                return $"{player.DriverProfile.ActiveName} 已发动 · 剩余{player.driverSkill.UsesRemaining}次";
+            interactable = MansellChargeActivationPlan.CanPrepare(session, player,
+                trackManager != null ? trackManager.TotalNodes : 0,
+                trackManager != null ? trackManager.StartFinishNodeIndex : 0,
+                inputState.PendingGear, BuildDriverSkillActivationContext(player), out string reason);
+            bool second = player.driverSkill.Charge.IsSecondLegAvailable;
+            int bonus = second ? (player.driverSkill.Tier >= 2 ? 3 : 2) : (player.driverSkill.Tier >= 2 ? 2 : 1);
+            if (!interactable) return $"{player.DriverProfile.ActiveName} {reason}";
+            return second
+                ? $"{player.DriverProfile.ActiveName} 第二段 +{bonus}格\n付1热 · 不扣次 · 余{player.driverSkill.UsesRemaining}次"
+                : $"{player.DriverProfile.ActiveName} +{bonus} · 弃1牌/1热 ×{player.driverSkill.UsesRemaining}";
+        }
+        if (player.driverSkill.Skill == DriverActiveSkillId.FinalLap && !player.driverSkill.IsActive)
+        {
+            interactable = HunterSkillActivationPlan.CanPrepare(session, player,
+                trackManager != null ? trackManager.TotalNodes : 0,
+                inputState.PendingGear, BuildDriverSkillActivationContext(player), out string reason);
+            return interactable ? $"{player.DriverProfile.ActiveName}  ×{player.driverSkill.UsesRemaining}"
+                : $"{player.DriverProfile.ActiveName}  {reason}";
+        }
         return DriverSkillPresentationRules.GetButtonLabel(
             player.DriverProfile, player.driverSkill,
             BuildDriverSkillActivationContext(player), out interactable);
@@ -3895,6 +4443,9 @@ public class MVPGameManager : MonoBehaviour
         }
         LogPlayedCards(player, "PLAYER");
         RefreshHumanHand(player);
+        // A successful formal card closes the preparation window immediately.
+        hudUI?.RefreshUkPrepMeal(this, player);
+        hudUI?.RefreshGermanFuel(this, player);
         cardHandUI.BlockActionButtonBriefly();
         return true;
     }
@@ -3904,6 +4455,9 @@ public class MVPGameManager : MonoBehaviour
     {
         if (!ValidateTutorialSpecialtySpeedCompletion(player))
             return;
+
+        CancelPrepMealPlan();
+        player.techState?.prepMeal.CloseInput();
 
         int speedCount = player.playedSpeedCardsThisTurn.Count;
 
@@ -4076,6 +4630,9 @@ public class MVPGameManager : MonoBehaviour
         System.Action initializeGuide,
         System.Action startLoop)
     {
+        CancelPrepMealPlan();
+        ClosePrepMealInputs();
+        CancelHunterSkillPlan();
         StopMovementAudio(true);
         StopAllCoroutines();
         foreach (var c in GetComponents<AIController>())

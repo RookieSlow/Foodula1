@@ -1,0 +1,58 @@
+[
+  {
+    "name": "HunterSkillCardChoiceUITests.ClearingAndReopeningRestoresSharedButtonsAuthoredNavigation",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.0072883
+  },
+  {
+    "name": "HunterSkillCardChoiceUITests.EmptyOrUnconfirmableChoiceNavigationKeepsCancelReachable(False)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.008198
+  },
+  {
+    "name": "HunterSkillCardChoiceUITests.EmptyOrUnconfirmableChoiceNavigationKeepsCancelReachable(True)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.0057235
+  },
+  {
+    "name": "HunterSkillCardChoiceUITests.OpeningChoiceMovesFocusInsideAndDirectionalSubmitCannotReachUnderlyingAction(0,False)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.006794
+  },
+  {
+    "name": "HunterSkillCardChoiceUITests.OpeningChoiceMovesFocusInsideAndDirectionalSubmitCannotReachUnderlyingAction(255,False)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.0062831
+  },
+  {
+    "name": "HunterSkillCardChoiceUITests.OpeningChoiceMovesFocusInsideAndDirectionalSubmitCannotReachUnderlyingAction(0,True)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.0064284
+  },
+  {
+    "name": "HunterSkillCardChoiceUITests.OpeningChoiceMovesFocusInsideAndDirectionalSubmitCannotReachUnderlyingAction(255,True)",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.0059443
+  },
+  {
+    "name": "HunterSkillCardChoiceUITests.PagingAwayFromLastOrFirstCardMovesDisabledArrowFocusBackInside",
+    "state": "Passed",
+    "message": "",
+    "stackTrace": "",
+    "seconds": 0.0065834
+  }
+]

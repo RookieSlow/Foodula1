@@ -26,11 +26,14 @@ public static class RaceTurnPreviewRules
         IReadOnlyList<CardData> selected, bool gearTrial, int requestedGear,
         Func<int, int, bool> crossesCorner = null, Func<PlayerState, bool, int, int> nigiriBonus = null,
         int totalCells = 0, Func<int, int, IEnumerable<int>> crossedCorners = null,
-        Func<int, int> cornerBaseLimit = null)
+        Func<int, int> cornerBaseLimit = null, IReadOnlyList<TrackNode> trackNodes = null)
     {
         if (player == null || player.deck == null || config == null) return null;
         var copy = new PlayerState(player.name, player.isAI, player.position, player.gear) {
             teamId = player.teamId, usesChinaGearSystem = player.usesChinaGearSystem,
+            hasFinished = player.hasFinished, isBlown = player.isBlown,
+            pitStopScheduled = player.pitStopScheduled,
+            skipNextTurn = player.skipNextTurn, kantoOdenSkipThisTurn = player.kantoOdenSkipThisTurn,
             chinaConsecutiveGearCount = player.chinaConsecutiveGearCount,
             driverId = player.driverId, driverXp = player.driverXp,
             driverSkill = player.driverSkill?.CreatePresentationCopy(), lap = player.lap,
@@ -42,15 +45,18 @@ public static class RaceTurnPreviewRules
             hotpotAttackCardValueThisTurn = player.hotpotAttackCardValueThisTurn,
             italyCornerExitBoostReady = player.italyCornerExitBoostReady
         };
+        copy.driverSkill?.Tuning.RebindPresentationCopy(session, player, copy);
         copy.playedSpeedCardsThisTurn.AddRange(player.playedSpeedCardsThisTurn);
         var result = new RaceTurnPreview { GearTrial = gearTrial, Team = player.teamId, Movement = copy.turnMovement };
-        Func<int, HeatPaymentDestination, bool> pay = (amount, destination) => {
+        Func<int, HeatPaymentDestination, HeatPaymentSource, bool> payWithSource = (amount, destination, source) => {
             int cost = HeatPaymentCostRules.Resolve(copy, amount).Amount;
-            RaceHeatPaymentResult payment = RaceHeatPaymentExecution.Pay(copy, session, cost, destination);
+            RaceHeatPaymentResult payment = RaceHeatPaymentExecution.Pay(copy, session, cost, destination, source);
             result.HeatPaid += payment.Drawn;
             if (!payment.Sufficient) { result.CanPay = false; result.Note = "引擎热量不足，存在失控风险"; }
             return payment.Sufficient;
         };
+        Func<int, HeatPaymentDestination, bool> pay = (amount, destination) =>
+            payWithSource(amount, destination, HeatPaymentSource.Other);
         if (gearTrial)
         {
             var shift = TeamGearRules.Resolve(copy.teamId, copy.gear, copy.chinaConsecutiveGearCount,
@@ -131,7 +137,8 @@ public static class RaceTurnPreviewRules
         if (result.MissingCards > 0) pay(result.MissingCards, HeatPaymentDestination.Hand);
         result.CardSpeedTotal = CardPlayRules.SumCommittedSpeedCardValues(copy.playedSpeedCardsThisTurn);
         copy.turnMovement.BeginBasePlan();
-        if (!copy.kantoOdenSkipThisTurn && (result.CardCount > 0 || copy.trickMoveBonusThisTurn != 0))
+        if (!RaceTurnRules.IsInactive(copy, null) && (result.CardCount > 0 || copy.trickMoveBonusThisTurn != 0 ||
+            (copy.techState?.germanBurst.FuelMovement ?? 0) > 0))
         {
             copy.cornerTotalThisTurn = RaceMovementRules.ComputeCornerSpeed(copy, null, false);
             int rawEnd = copy.position + copy.cornerTotalThisTurn;
@@ -152,12 +159,11 @@ public static class RaceTurnPreviewRules
                 int nigiri = nigiriBonus != null ? nigiriBonus(copy, corner, rawEnd) : 0;
                 bonus += nigiri;
                 copy.turnMovement.AddPlan("科技：寿司精确过弯", nigiri, TurnMovementKind.Technology);
-                if (session.CanTriggerSchwarzbierFuel(copy, config.enableTechTree) &&
-                    pay(1, HeatPaymentDestination.Discard))
-                {
-                    bonus += 2;
-                    copy.turnMovement.AddPlan("科技：黑啤酒燃料", 2, TurnMovementKind.Technology);
-                }
+                if (copy.isAI && copy.techState != null && copy.techState.germanBurst.FuelUsesThisTurn == 0 &&
+                    session.TryCommitSchwarzbierFuel(copy, config.enableTechTree, out _)) result.HeatPaid++;
+                int paidFuelMovement = copy.techState?.germanBurst.FuelMovement ?? 0;
+                bonus += paidFuelMovement;
+                copy.turnMovement.AddPlan("科技：黑啤酒燃料", paidFuelMovement, TurnMovementKind.Technology);
                 int landmark = totalCells > 0
                     ? session.ComputeDriveThruMovementBonus(copy, config.enableTechTree, rawEnd, totalCells) : 0;
                 bonus += landmark;
@@ -185,11 +191,20 @@ public static class RaceTurnPreviewRules
             copy.cornerTotalThisTurn > 0 && crossedCorners != null && cornerBaseLimit != null)
         {
             int beforeCorners = result.HeatPaid;
+            var corners = new List<int>(crossedCorners(player.position, player.position + copy.cornerTotalThisTurn));
+            var tail = RaceMovementRules.GetHunterActiveCornerTail(copy, player.position);
+            int tailEnd = TrackRules.EndBeforeFinalFinish(trackNodes, player.position,
+                tail.end, config.totalLaps - player.lap);
+            if (tailEnd > tail.start)
+                corners.AddRange(trackNodes != null
+                    ? TrackRules.GetAdditionalApexCornersCrossed(trackNodes, player.position,
+                        player.position + copy.cornerTotalThisTurn, tail.start, tailEnd)
+                    : crossedCorners(tail.start, tailEnd));
             RaceCornerResolver.Resolve(copy, 0,
-                crossedCorners(player.position, player.position + copy.cornerTotalThisTurn),
+                corners,
                 id => session.EffectiveCornerLimit(copy, cornerBaseLimit(id)),
                 id => "弯道 " + id, overspeed => session.ResolveOverspeedHeatCost(copy, overspeed),
-                (amount, reason) => pay(amount, HeatPaymentDestination.Hand), _ => { });
+                (amount, reason) => payWithSource(amount, HeatPaymentDestination.Hand, HeatPaymentSource.OrdinaryCorner), _ => { });
             result.CornerHeat = result.HeatPaid - beforeCorners;
         }
         result.ProjectedHeat = result.CanPay ? HeatGaugeRules.Evaluate(copy.deck, copy.playedSpeedCardsThisTurn)

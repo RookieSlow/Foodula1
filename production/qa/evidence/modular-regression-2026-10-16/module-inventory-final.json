@@ -1,0 +1,72 @@
+[
+  {
+    "module": "ai",
+    "fixtures": 4,
+    "cases": 30.0
+  },
+  {
+    "module": "audio",
+    "fixtures": 7,
+    "cases": 54.0
+  },
+  {
+    "module": "cards-heat",
+    "fixtures": 16,
+    "cases": 301.0
+  },
+  {
+    "module": "career",
+    "fixtures": 11,
+    "cases": 230.0
+  },
+  {
+    "module": "core",
+    "fixtures": 27,
+    "cases": 476.0
+  },
+  {
+    "module": "diagnostics",
+    "fixtures": 10,
+    "cases": 181.0
+  },
+  {
+    "module": "drivers",
+    "fixtures": 10,
+    "cases": 103.0
+  },
+  {
+    "module": "gears",
+    "fixtures": 6,
+    "cases": 101.0
+  },
+  {
+    "module": "long-races",
+    "fixtures": 1,
+    "cases": 16.0
+  },
+  {
+    "module": "tech",
+    "fixtures": 17,
+    "cases": 472.0
+  },
+  {
+    "module": "tools",
+    "fixtures": 1,
+    "cases": 12.0
+  },
+  {
+    "module": "tracks-weather-pit",
+    "fixtures": 30,
+    "cases": 611.0
+  },
+  {
+    "module": "tutorial",
+    "fixtures": 8,
+    "cases": 235.0
+  },
+  {
+    "module": "ui",
+    "fixtures": 23,
+    "cases": 180.0
+  }
+]

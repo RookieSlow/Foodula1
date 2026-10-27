@@ -1,0 +1,35 @@
+{
+  "scene": "Assets/Scenes/MainMenu.unity",
+  "isDirty": false,
+  "playing": false,
+  "compiling": false,
+  "importing": false,
+  "nativeTestsRunning": false,
+  "modularBusy": false,
+  "ready": true,
+  "license": {
+    "HasFreeLicense": true,
+    "HasPro": false,
+    "note": "HasPro=false is not a license failure; live HasFreeLicense=true and Licensing Client resolved entitlement."
+  },
+  "runtime_mvid_before": "d8eb8299-ce73-4597-b94c-7f15c13c1622",
+  "runtime_mvid_after": "a5f6b157-de12-4b7a-864c-f5b9910f5f96",
+  "editor_test_mvid_after": "346239b4-6b91-4a62-a676-e7dff345f31a",
+  "new_runtime_method_reflected": true,
+  "new_test_method_reflected": true,
+  "console_errors": 1,
+  "console_warnings": 1,
+  "console_messages_expected_by_tests": [
+    {
+      "message": "[CAREER] Invalid technology snapshot; career race has no active technology.",
+      "assertion": "Assets/Tests/Editor/race_technology_setup_test.cs:631"
+    },
+    {
+      "message": "[MVPGameManager] 无法保证中国队 ATTACK 牌 cn-hotpot-base 进入开局手牌。",
+      "assertion": "Assets/Tests/Editor/race_technology_setup_test.cs:666"
+    }
+  ],
+  "new_compile_errors": 0,
+  "ui_screenshots": [],
+  "ui_note": "No UI source, layout, font or copy changed; new target/confirmation UI and its three-resolution acceptance remain pending."
+}

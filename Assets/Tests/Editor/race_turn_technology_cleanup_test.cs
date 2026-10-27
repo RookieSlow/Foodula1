@@ -81,9 +81,12 @@ public class RaceTurnTechnologyCleanupTests
         player.techState = new TechTreeState(TeamId.DE, 0);
         player.techState.activeNodeIds.Add("de-l3-grill-spezial");
         player.techState.grillSpezialUsed = used;
-        player.techState.grillSpezialHeatPaidThisTurn = 3;
         player.deck.InitializeExactOrder(new[] { new CardData(CardType.Speed, 1) }, new HeatPool(6));
-        player.deck.DrawHeatFromPool(3, HeatPaymentDestination.Hand, player.heatPaidCardsThisTurn);
+        player.gear = 1;
+        session.Players.Add(player);
+        session.BeginTurn(player, 1);
+        Assert.That(session.TryDeclareGermanBurst(player, true, 1), Is.EqualTo(!used));
+        RaceHeatPaymentExecution.Pay(player, session, 3, HeatPaymentDestination.Hand);
         int calls = 0;
         RaceTurnTechnologyCleanup.Execute(player, session, (p, r) => Assert.IsFalse(r.triggered),
             p => Assert.Fail("No CN combo"), (p, n) =>

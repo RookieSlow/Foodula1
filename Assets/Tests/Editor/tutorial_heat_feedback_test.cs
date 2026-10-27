@@ -189,7 +189,7 @@ public class TutorialHeatFeedbackIntegrationTests
         manager.config = config;
         int index = director.CurrentStepIndex;
         bool sufficient = available == 2;
-        bool spins = !sufficient && !fish;
+        bool spins = !sufficient;
         bool completes = sufficient && !ai && !pending;
         try
         {
@@ -202,7 +202,7 @@ public class TutorialHeatFeedbackIntegrationTests
             Assert.AreEqual(available, player.heatPaidCardsThisTurn.Count,
                 "Actual partial payment remains recorded even after recovery/spin.");
             Assert.AreEqual(available, player.techState.grillSpezialHeatPaidThisTurn);
-            Assert.AreEqual(fish, player.techState.fishAndChipsUsed);
+            Assert.IsFalse(player.techState.fishAndChipsUsed);
             Assert.AreEqual(spins ? 1 : 0, player.spinCounter);
             Assert.AreEqual(spins, player.skipNextTurn);
             Assert.AreEqual(sufficient ? 0 : available, player.deck.heatPool.remaining);

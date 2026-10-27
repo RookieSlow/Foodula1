@@ -13,15 +13,17 @@ public static class RaceTurnCleanup
         Action<PlayerState, int> reportTemporaryCards,
         Action<PlayerState> resolveTechnology)
     {
-        int playedTemporaryHeat = player.deck.DiscardPlayedSpeedCards(player.playedSpeedCardsThisTurn);
-        resolveSkills?.Invoke(player);
-        int removed = playedTemporaryHeat + player.deck.RemoveTempCardsFromHand();
-        if (removed > 0) reportTemporaryCards?.Invoke(player, removed);
-
-        // Evaluate after skill effects, not from a stale start-of-cleanup snapshot.
-        if (!RaceTurnRules.IsTerminal(player) && player.techState != null)
-            resolveTechnology?.Invoke(player);
-
-        player.playedSpeedCardsThisTurn.Clear();
+        player.techState?.prepMeal.CloseInput();
+        try
+        {
+            int playedTemporaryHeat = player.deck.DiscardPlayedSpeedCards(player.playedSpeedCardsThisTurn);
+            resolveSkills?.Invoke(player);
+            int removed = playedTemporaryHeat + player.deck.RemoveTempCardsFromHand();
+            if (removed > 0) reportTemporaryCards?.Invoke(player, removed);
+            // Evaluate after skill effects, not from a stale start-of-cleanup snapshot.
+            if (!RaceTurnRules.IsTerminal(player) && player.techState != null) resolveTechnology?.Invoke(player);
+            player.playedSpeedCardsThisTurn.Clear();
+        }
+        finally { player.techState?.germanBurst.CloseWindow(); }
     }
 }

@@ -1,0 +1,25 @@
+{
+  "jsonrpc": "2.0",
+  "id": 22,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Code executed successfully.\",\"data\":{\"result\":{\"nativeRunFinished\":\"{\\\"fullName\\\":\\\"Foodula1\\\",\\\"resultState\\\":\\\"Failed(Child)\\\",\\\"endedUtc\\\":\\\"2026-10-26T07:28:01.6203703Z\\\",\\\"total\\\":2,\\\"passed\\\":1,\\\"failed\\\":1,\\\"skipped\\\":0,\\\"inconclusive\\\":0,\\\"message\\\":\\\"One or more child tests had errors\\\",\\\"output\\\":\\\"\\\",\\\"stackTrace\\\":\\\"\\\"}\",\"playing\":false,\"native\":false},\"compiler\":\"codedom\"}}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "message": "Code executed successfully.",
+      "data": {
+        "result": {
+          "nativeRunFinished": "{\"fullName\":\"Foodula1\",\"resultState\":\"Failed(Child)\",\"endedUtc\":\"2026-10-26T07:28:01.6203703Z\",\"total\":2,\"passed\":1,\"failed\":1,\"skipped\":0,\"inconclusive\":0,\"message\":\"One or more child tests had errors\",\"output\":\"\",\"stackTrace\":\"\"}",
+          "playing": false,
+          "native": false
+        },
+        "compiler": "codedom"
+      }
+    },
+    "isError": false
+  }
+}

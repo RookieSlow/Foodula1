@@ -123,11 +123,11 @@ public static class DriverCatalog
     private static readonly DriverProfile[] Profiles =
     {
         new DriverProfile("uk_hunter_hart", "詹姆斯·猎人·哈特", "猎人·哈特", TeamId.UK, DriverStyle.Aggressive, 1.3f,
-            "狩猎本能", "落后前车 3 格内时速度牌 +1", "最后的圈速", "最后一圈速度提升，但热量加倍"),
+            "狩猎本能", "输入锁定前方3格内最近车，真实尾流追近后额外+1，每圈一次；高阶范围4/5格，保留两段原生尾流", "决胜抉择", "前方 1–5 格有对手且至少有两张普通速度牌：弃一张，本次驾驶移动 +2；高阶 +3"),
         new DriverProfile("uk_nigel_mansell", "奈杰尔·雄狮·曼塞尔", "雄狮·曼塞尔", TeamId.UK, DriverStyle.Aggressive, 1.2f,
-            "雄狮之心", "成功超车后下回合移动 +1；高阶额外冷却 1", "愤怒冲锋", "本回合获得额外移动，强势完成超车"),
+            "蓄势追近", "连续两次驾驶输入追近同一最近前车，每圈首次合格最多回收1张旧手永久热", "雄狮追击", "首段弃普通速度牌并付1热；下次继续追近同车可再付1热追击，不再消耗场次"),
         new DriverProfile("de_michael_schumacher", "米夏尔·教授·舒马赫", "教授·舒马赫", TeamId.DE, DriverStyle.Balanced, 1.5f,
-            "工程师调校", "每 3 回合下一次热量支付 -1；高阶周期缩短", "完美一圈", "本回合不产生弯道热量"),
+            "工程师调校", "真实弯道付款满2热，下次本人首笔弯费-1；每圈一次，高阶门槛1热、等待更久", "完美一圈", "本回合不产生弯道热量"),
         new DriverProfile("de_sebastian_vettel", "塞巴斯蒂安·海绵·维特尔", "海绵·维特尔", TeamId.DE, DriverStyle.Technical, 1.3f,
             "信息海绵", "每 4 回合从牌库顶 3 张中优先抽取最高速度牌", "完美节奏", "持续期间跨两挡不产生换挡热量"),
         new DriverProfile("it_alberto_ascari", "阿尔贝托·蓝衣·阿斯卡里", "蓝衣·阿斯卡里", TeamId.IT, DriverStyle.Technical, 1.2f,

@@ -43,7 +43,10 @@ public static class RaceSettledSlipstreamResolution
         var resolvedChains = session.ComputeSettledSlipstreamChains(
             eligibleFollowers, turnOrder, totalNodes);
         foreach (PlayerState follower in eligibleFollowers)
+        {
             results[follower] = resolvedChains[follower];
+            follower.driverSkill?.Hunting.PrepareNative(session, follower, resolvedChains[follower], totalNodes);
+        }
 
         // Complete every calculation before any bonus changes the movement
         // values used by same-cell tie-breaking.

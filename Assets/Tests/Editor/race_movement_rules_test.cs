@@ -4,6 +4,21 @@ using NUnit.Framework;
 
 public class RaceMovementRulesTests
 {
+    [TestCase(4, 9, 7, 9)]
+    [TestCase(4, 6, 4, 6)]
+    [TestCase(4, 3, 3, 3)]
+    [TestCase(4, 0, 0, 0)]
+    public void HartActiveOnlyAddsTheCounterfactualTailWithoutChangingCornerSpeed(int cardSpeed, int total, int from, int to)
+    {
+        var player = new PlayerState("Hart", false, 10, 1) { driverId = "uk_hunter_hart",
+            cornerTotalThisTurn = cardSpeed, totalMovementThisTurn = total };
+        player.driverSkill.Initialize(player.DriverProfile, 3, true);
+        Assert.IsTrue(player.driverSkill.TryActivate(player.DriverProfile,
+            new DriverSkillActivationContext(true, 1, 2, 6, 6, 0), out _));
+        Assert.That(RaceMovementRules.GetHunterActiveCornerTail(player, 10), Is.EqualTo((10 + from, 10 + to)));
+        Assert.That(player.cornerTotalThisTurn, Is.EqualTo(cardSpeed));
+    }
+
     private static IEnumerable<TestCaseData> CardDriverBonusCases()
     {
         foreach (DriverProfile driver in DriverCatalog.All)
@@ -44,7 +59,7 @@ public class RaceMovementRulesTests
     }
 
     [Test]
-    public void CardDriverSumReadsLivePassiveRewardWithoutConsumingOrCachingIt()
+    public void CardDriverSumNeverReintroducesReplacedMansellOvertakeReward()
     {
         Assert.IsTrue(DriverCatalog.TryGet("uk_nigel_mansell", out DriverProfile driver));
         var state = new DriverSkillRuntimeState();
@@ -52,7 +67,7 @@ public class RaceMovementRulesTests
         state.ResolvePassiveTurnEnd(1);
         state.BeginTurn();
         int passive = state.PassiveMovementBonusThisTurn;
-        Assert.Greater(passive, 0);
+        Assert.That(passive, Is.Zero, "D02 cools an exact old hand instance; overtakes no longer grant movement.");
         var player = new PlayerState("passive", false, 0, 1) { driverSkill = state };
         Assert.AreEqual(passive, RaceMovementRules.ComputeCardAndDriverMovementBonus(player, false));
         Assert.AreEqual(passive, RaceMovementRules.ComputeCardAndDriverMovementBonus(player, true));

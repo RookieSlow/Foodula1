@@ -1,0 +1,40 @@
+{
+  "package": "P1",
+  "local_time": "2026-10-22T01:08:17.699348+08:00",
+  "head": "f0a12b01e181d1ae9cf3009bc446da003f7c6c56",
+  "read_only_sources": {
+    "AGENTS.md": "620757473b1af13289691b8455e97dc3bb8d722c8f952a85520402642a757156",
+    "docs/memory/project-overview.md": "a589da808be7082950527c5fbcae2510af626def1b2b13c320ac6ba1744c00e3",
+    "docs/memory/game-mechanics.md": "41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d",
+    "docs/memory/current-task-list.md": "c6b2a346916b65491bc4127074242e2377290e215afc381e1038f0e23c423098",
+    "design/gdd/foodula-1-tech-tree.md": "61b286ba29a641bdebae0f7a60b34f35f69c27b22377bce1854bd9bb41402ce9",
+    "design/gdd/foodula-1-teams-cars.md": "951874e9240553b7ceed592dec6d4f1f2aec86234898557600d0fd8a590f85ee",
+    "design/gdd/foodula-1-core-mechanics.md": "00a8a85e1ddcf8f8babd8341abc6617a1922861b624c328a745678a06fbb12a8",
+    "design/ux/racing-tech-ui.md": "236137df347863b2f749a464503fbd368b2d49a9df2dfed4e284abe005d1bff0",
+    "docs/architecture/adr-002-layered-pure-function-architecture.md": "b5b74343e02a341d693fab9bbd891637d046d93fa34db7bb2ceeaac0c2ee2687",
+    "Assets/Scripts/TechTree/TechTreeRules.cs": "8bb3bb2edc42eb83501ba3887f6dbab53a9b3cedafad3e7a776d44af822bf3c8",
+    "Assets/Scripts/TechTree/TechTreeDatabase.cs": "5fa98d2da6c25d23becca19901409e685caf0ebf4063a6ba85a900d9a662d0de",
+    "Assets/Scripts/Core/RaceSession.cs": "cfa587a0e2d71b06825a7465c458a6887567e0ca4fb04af336873453f78b6ab3",
+    "Assets/Scripts/Core/RaceHeatPaymentExecution.cs": "63022e8da125a72157f4380d8b28ecf9f9e283ee095b56428dbcd44dccfc8dd8",
+    "Assets/Scripts/Core/CardDeck.cs": "f5bdc0e2720e008c57a08757dc19e5c95e69c9a93c35d6858c2da900aed8c488",
+    "Assets/Scripts/Core/MVPGameManager.cs": "e94c64e1986a8b04f672c41309644346720538af69db58480c0792974f74d530",
+    "Assets/Scripts/Core/RaceTurnTechnologyCleanup.cs": "1f4472619f0f6da7765bdea6ddba5f90a01a62774738b4382e1989437c2d3530",
+    "design/planning/tech-driver-rework-2026-10-22/research.json": "ccf8e5562bf2742541616fb342adda5e6a1cb2fa664e2f98b9b9157644f20750",
+    "design/planning/tech-driver-rework-2026-10-22/feedback.json": "9bf842dabd10396bc8991b5f576a2374abf1ae999d2d1b0bb2f255402fd4a964"
+  },
+  "inputs": {
+    "Foodula1_科技树设计.docx": "c8996c17fc0aa44d6ea25ef58d9659956063be2e839913a51bde462f370c108f",
+    "Foodula1_车手技能设计.docx": "d4def8c0b1e31774c861ea75f23343ef06afecc8ccea166aa2f4becc1c45a201"
+  },
+  "outputs": {
+    "Foodula1_科技树调整草案.docx": "e07728a41e851064e4d13623684b85498dd6751528285d0c3607671462ea1337",
+    "analysis/p1_uk_de_simulation.py": "b7416e004f3c1f97028b6f02e4eb7dfdd02520708ca79a3e656847404338fb92",
+    "analysis/p1-model-results.json": "5cc2d700f77521c95dfabfb2c41d43cf2995b5e777b407bf2cf5bf0db36ba2d9"
+  },
+  "missing_governance": [
+    "production/session-state/active.md",
+    ".Codex/docs"
+  ],
+  "unity_operations": 0,
+  "unity_tests": 0
+}

@@ -277,6 +277,115 @@ public class RacePitTurnBoundaryTests
         Assert.AreEqual(cardSpeed + expectedBonus, player.totalMovementThisTurn);
     }
 
+    [TestCase(false)] [TestCase(true)]
+    public void ProductionMovementAggregatesThreePaidFuelUsesWithoutAnExtraAutomaticPayment(bool ordinaryBeforeDeclaration)
+    {
+        config.enableTechTree = true; session.TeamVehicleBonusesEnabled = false;
+        var nodes = new List<TrackNode>();
+        for (int i = 0; i < 60; i++) nodes.Add(new TrackNode(i, 99));
+        typeof(TrackManager).GetField("nodes", Private).SetValue(manager.trackManager, nodes);
+        var p = new PlayerState("owned silent burst", true, 0, 1) { teamId = TeamId.DE, techState = new TechTreeState(TeamId.DE) };
+        p.techState.activeNodeIds.UnionWith(new[] { "de-l1-schwarzbier-fuel", "de-l3-grill-spezial" });
+        p.deck.heatPool = new HeatPool(10); session.Players.Add(p); session.BeginTurn(p, 1);
+        p.playedSpeedCardsThisTurn.Add(new CardData(CardType.Speed, 2));
+        if (ordinaryBeforeDeclaration) Assert.That(session.TryCommitSchwarzbierFuel(p, true, out _), Is.True);
+        Assert.That(session.TryDeclareGermanBurst(p, true, 1), Is.True);
+        for (int i = ordinaryBeforeDeclaration ? 1 : 0; i < 3; i++)
+            Assert.That(session.TryCommitSchwarzbierFuel(p, true, out _), Is.True);
+        for (int i = 0; i < 2; i++)
+        {
+            Invoke("ComputeMovements", new List<PlayerState> { p }, new HashSet<PlayerState>());
+            Assert.That(p.totalMovementThisTurn, Is.EqualTo(8));
+            Assert.That(p.deck.heatPool.remaining, Is.EqualTo(7));
+            Assert.That(p.heatPaidCardsThisTurn.Count, Is.EqualTo(3));
+        }
+    }
+
+    [TestCase(false)] [TestCase(true)]
+    public void ManagerDeclarationMustPrecedeActualGearConfirmation(bool confirmFirst)
+    {
+        config.enableTechTree = true;
+        var p = new PlayerState("human declaration", false, 0, 1) { teamId = TeamId.DE, techState = new TechTreeState(TeamId.DE) };
+        p.techState.activeNodeIds.Add("de-l3-grill-spezial"); p.deck.heatPool = new HeatPool(4);
+        session.Players.Add(p); session.BeginTurn(p, 1); SetField("raceTurnNumber", 1);
+        ((RacePhaseState)typeof(MVPGameManager).GetField("phaseState", Private).GetValue(manager)).BeginGearSelection();
+        ((RaceInputState)typeof(MVPGameManager).GetField("inputState", Private).GetValue(manager)).BeginGearSelection(1);
+        if (confirmFirst) manager.OnConfirmGearClicked();
+        Assert.That(manager.TryDeclareGermanBurst(), Is.EqualTo(!confirmFirst));
+        Assert.That(p.techState.grillSpezialUsed, Is.False);
+        Assert.That(p.deck.heatPool.remaining, Is.EqualTo(4));
+        if (!confirmFirst)
+        {
+            manager.OnConfirmGearClicked();
+            Assert.That(p.techState.germanBurst.DeclarationOpen, Is.False);
+            RaceHeatPaymentExecution.Pay(p, session, 1, HeatPaymentDestination.Hand);
+            Assert.That(p.techState.grillSpezialUsed, Is.True);
+        }
+    }
+
+    [Test]
+    public void ActualCleanupGrillCannotSubstituteTheEarlierPaymentPrefix()
+    {
+        var p = new PlayerState("owned silent receipt", true, 0, 1) { teamId = TeamId.DE, techState = new TechTreeState(TeamId.DE) };
+        p.techState.activeNodeIds.Add("de-l3-grill-spezial"); p.deck.heatPool = new HeatPool(4);
+        session.Players.Add(p); session.BeginTurn(p, 1);
+        RaceHeatPaymentExecution.Pay(p, session, 1, HeatPaymentDestination.Hand);
+        CardData oldPayment = p.heatPaidCardsThisTurn[0];
+        Assert.That(session.TryDeclareGermanBurst(p, true, 1), Is.True);
+        RaceHeatPaymentExecution.Pay(p, session, 1, HeatPaymentDestination.Hand);
+        CardData newPayment = p.heatPaidCardsThisTurn[1];
+        Invoke("ApplyCleanupGrill", p, 1);
+        Assert.That(p.deck.CountRecordedHeat(new[] { oldPayment }), Is.EqualTo(1));
+        Assert.That(p.deck.CountRecordedHeat(new[] { newPayment }), Is.Zero);
+        Assert.That(p.deck.heatPool.remaining, Is.EqualTo(3));
+    }
+
+    [TestCase(0, 0)] [TestCase(0, 1)]
+    [TestCase(1, 0)] [TestCase(1, 1)]
+    [TestCase(2, 0)] [TestCase(2, 1)]
+    [TestCase(3, 0)] [TestCase(3, 1)]
+    public void ProductionFuelMovementRequiresOneRealHeatWithoutConsumingOrdinaryDiscounts(int effect, int available)
+    {
+        config.enableTechTree = true;
+        session.TeamVehicleBonusesEnabled = false;
+        var nodes = new List<TrackNode>();
+        for (int i = 0; i < 60; i++) nodes.Add(new TrackNode(i, 99));
+        typeof(TrackManager).GetField("nodes", Private).SetValue(manager.trackManager, nodes);
+        // AI presentation suppresses sound in this owned adapter fixture, not a game policy change.
+        var player = new PlayerState("Fixed fuel adapter", true, 0, 1) {
+            teamId = TeamId.DE, driverId = "de_michael_schumacher", techState = new TechTreeState(TeamId.DE) };
+        player.techState.activeNodeIds.Add("de-l1-schwarzbier-fuel");
+        player.deck.heatPool = new HeatPool(available);
+        player.playedSpeedCardsThisTurn.Add(new CardData(CardType.Speed, 2));
+        if (effect == 1)
+        {
+            player.driverSkill.Initialize(player.DriverProfile, 3, true);
+            Assert.That(player.driverSkill.TryActivate(player.DriverProfile,
+                new DriverSkillActivationContext(true, 1, 3, available, 4, 0), out _), Is.True);
+        }
+        if (effect == 2)
+        {
+            player.driverSkill.Initialize(player.DriverProfile, 2, true);
+            for (int i = 0; i < 3; i++) player.driverSkill.BeginTurn();
+        }
+        player.trickState.schwarzbrotActive = effect == 3;
+        player.trickState.schwarzbrotRemaining = 2;
+        Invoke("ComputeMovements", new List<PlayerState> { player }, new HashSet<PlayerState>());
+        Assert.That(player.totalMovementThisTurn, Is.EqualTo(available > 0 ? 4 : 2));
+        Assert.That(player.deck.heatPool.remaining, Is.Zero);
+        Assert.That(player.heatPaidCardsThisTurn.Count, Is.EqualTo(available));
+        Assert.That(player.deck.CountHeatInDiscardPile(), Is.EqualTo(available));
+        Assert.That(player.techState.grillSpezialHeatPaidThisTurn, Is.EqualTo(available));
+        Assert.That(player.techState.schwarzbierFuelLastLap, Is.EqualTo(available > 0 ? player.lap : -1));
+        Assert.That(player.trickState.schwarzbrotRemaining, Is.EqualTo(2));
+        if (effect == 2)
+        {
+            Assert.That(player.driverSkill.ConsumePassiveHeatDiscount(), Is.Zero, "Global cadence cannot prepare D03 tuning.");
+            Assert.That(player.driverSkill.Tuning.HasPending, Is.False, "Ordinary AI driver skills remain disabled; fuel is not corner payment.");
+        }
+        Assert.That(player.spinCounter, Is.Zero, "Declining unavailable optional fuel is not an ordinary heat failure.");
+    }
+
     [TestCase(true, true, true, 1, 0, -1, true)]
     [TestCase(true, true, true, 2, 1, 0, true)]
     [TestCase(false, true, true, 1, 0, -1, false)]
@@ -545,14 +654,14 @@ public class RacePitTurnBoundaryTests
     }
 
     [TestCase(1)] [TestCase(2)]
-    public void SchwarzbierUsesLastAvailableHeatAndPaysToDiscardOncePerLap(int initialHeat)
+    public void AiSchwarzbierRetainsAutomaticLastHeatPaymentOncePerLap(int initialHeat)
     {
         config.enableTechTree = true;
         session.TeamVehicleBonusesEnabled = false;
         var nodes = new List<TrackNode>();
         for (int i = 0; i < 20; i++) nodes.Add(new TrackNode(i, 99));
         typeof(TrackManager).GetField("nodes", Private).SetValue(manager.trackManager, nodes);
-        var player = new PlayerState("Fuel", false, 0, 1) { teamId = TeamId.DE };
+        var player = new PlayerState("AI fuel", true, 0, 1) { teamId = TeamId.DE };
         player.deck.heatPool = new HeatPool(initialHeat);
         player.techState = new TechTreeState(TeamId.DE);
         player.techState.activeNodeIds.Add("de-l1-schwarzbier-fuel");
@@ -563,8 +672,35 @@ public class RacePitTurnBoundaryTests
         Assert.AreEqual(1, player.deck.CountHeatInDiscardPile());
         Assert.AreEqual(0, player.deck.Hand.Count);
         Invoke("ComputeMovements", order, new HashSet<PlayerState>());
-        Assert.AreEqual(0, player.totalMovementThisTurn);
+        // Recalculation keeps this turn's paid movement; it never purchases a second ordinary use.
+        Assert.AreEqual(2, player.totalMovementThisTurn);
         Assert.AreEqual(initialHeat - 1, player.deck.heatPool.remaining);
+        Assert.AreEqual(1, player.deck.CountHeatInDiscardPile());
+    }
+
+    [TestCase(0)] [TestCase(1)] [TestCase(2)] [TestCase(3)] [TestCase(4)]
+    public void HumanPaidFuelWithoutSelectedSpeedMatchesRealMovementAndDoesNotReviveInactiveRacers(int inactive)
+    {
+        config.enableTechTree = true; config.gearOneCooldown = 0; session.TeamVehicleBonusesEnabled = false;
+        typeof(TrackManager).GetField("nodes", Private).SetValue(manager.trackManager,
+            new List<TrackNode> { new TrackNode(0, 99), new TrackNode(1, 99), new TrackNode(2, 99), new TrackNode(3, 99) });
+        var p = new PlayerState("Human paid fuel", false, 0, 1) { teamId = TeamId.DE, techState = new TechTreeState(TeamId.DE) };
+        p.techState.activeNodeIds.Add("de-l1-schwarzbier-fuel"); p.deck.heatPool = new HeatPool(5);
+        session.Players.Add(p); session.BeginTurn(p, 1);
+        Assert.That(session.TryCommitSchwarzbierFuel(p, true, out _), Is.True);
+        p.hasFinished = inactive == 1; p.skipNextTurn = inactive == 2;
+        p.kantoOdenSkipThisTurn = inactive == 3; p.isBlown = inactive == 4;
+        var forecast = RaceTurnPreviewRules.Evaluate(p, session, config, System.Array.Empty<CardData>(), false, 1);
+        Assert.That(forecast.Movement.TotalCells, Is.EqualTo(inactive == 0 ? 2 : 0));
+        Assert.That(p.deck.heatPool.remaining, Is.EqualTo(4), "Forecast cannot spend the real missing-card payment");
+        if (inactive == 0)
+        {
+            Assert.That(forecast.CanPay, Is.True);
+            Assert.That(RaceHeatPaymentExecution.Pay(p, session, forecast.MissingCards, HeatPaymentDestination.Hand).Sufficient, Is.True);
+        }
+        Invoke("ComputeMovements", new List<PlayerState> { p }, new HashSet<PlayerState>());
+        Assert.That(p.totalMovementThisTurn, Is.EqualTo(forecast.Movement.TotalCells));
+        Assert.That(p.techState.germanBurst.FuelUsesThisTurn, Is.EqualTo(1));
     }
 
     [TestCase("IT", true, TeamId.IT)] [TestCase("DE", false, TeamId.DE)]

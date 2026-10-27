@@ -1,0 +1,108 @@
+{
+  "final_native": {
+    "startedUtc": "2026-10-26T23:40:18.9050508Z",
+    "endedUtc": "2026-10-26T23:40:30.8215197Z",
+    "state": "Passed",
+    "nativeState": "Passed",
+    "total": 2712,
+    "passed": 2712,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 8.0673993,
+    "selectionMatches": true
+  },
+  "modules": [
+    "cards-heat",
+    "core",
+    "drivers",
+    "gears",
+    "tech",
+    "tracks-weather-pit",
+    "tutorial"
+  ],
+  "new_cases": 56,
+  "gameloop": {
+    "mode": "EditMode",
+    "summary": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 3.3701701,
+      "resultState": "Passed"
+    },
+    "results": [
+      {
+        "name": "MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+        "fullName": "RaceGameLoopCoroutineTests.MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+        "state": "Passed",
+        "durationSeconds": 1.1580144,
+        "message": null,
+        "stackTrace": null,
+        "output": "[PlayEntry] 0.465s; domainReloadDisabled=True\r\n"
+      },
+      {
+        "name": "MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+        "fullName": "RaceGameLoopCoroutineTests.MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+        "state": "Passed",
+        "durationSeconds": 1.1331063,
+        "message": null,
+        "stackTrace": null,
+        "output": "[PlayEntry] 0.497s; domainReloadDisabled=True\r\n"
+      },
+      {
+        "name": "MansellRealA2CoolsOnlyFrozenOldHandBeforePreparationSnapshot",
+        "fullName": "RaceGameLoopCoroutineTests.MansellRealA2CoolsOnlyFrozenOldHandBeforePreparationSnapshot",
+        "state": "Passed",
+        "durationSeconds": 1.0474932,
+        "message": null,
+        "stackTrace": null,
+        "output": "[PlayEntry] 0.474s; domainReloadDisabled=True\r\n"
+      }
+    ]
+  },
+  "native_GameLoop_RunFinished": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-10-26T23:40:51.2936617Z",
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": "",
+    "stackTrace": ""
+  },
+  "runtime_mvid": "c33b40ad-fc92-429a-8fb8-28cfd734fafe",
+  "editor_mvid": "ab0c90c2-2b5e-48ad-93bc-300585596ee7",
+  "first_native": {
+    "startedUtc": "2026-10-26T23:36:23.6962078Z",
+    "endedUtc": "2026-10-26T23:36:35.6617784Z",
+    "state": "Passed",
+    "nativeState": "Passed",
+    "total": 2702,
+    "passed": 2702,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 8.1302243,
+    "selectionMatches": true
+  },
+  "second_native": {
+    "startedUtc": "2026-10-26T23:38:23.2382978Z",
+    "endedUtc": "2026-10-26T23:38:35.3744149Z",
+    "state": "Passed",
+    "nativeState": "Passed",
+    "total": 2706,
+    "passed": 2706,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 8.3303345,
+    "selectionMatches": true
+  },
+  "native_result_path": "D:/UnityProject/Foodula1/Library/Foodula1/RegressionRuns/20261026T234018900Z-bdd64b9b/result.json",
+  "catalog_refusal": "Before initial catalog import, runner rejected inventory drift for46 new cases, completed0. Manifest already on disk; force import then catalogText contains fixture. Not a test pass or failed case."
+}

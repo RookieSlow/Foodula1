@@ -1,0 +1,11 @@
+{
+  "full": 3002,
+  "fast": 2986,
+  "long": 16,
+  "union": 3002,
+  "overlap": 0,
+  "unionEqualsFull": true,
+  "unmapped": 0,
+  "stale": 0,
+  "comparison": "Ordinal; preserves case-sensitive parameter values. PowerShell default Sort-Object -Unique incorrectly collapsed two case-distinct tests and was corrected."
+}

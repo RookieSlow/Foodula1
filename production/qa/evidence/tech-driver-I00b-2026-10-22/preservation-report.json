@@ -1,0 +1,40 @@
+{
+  "checked_at": "2026-10-22T23:15:35.923671+08:00",
+  "baseline": "D:\\UnityProject\\Foodula1\\Library\\AutomationReview\\tech-driver-I00b-20261022-185406\\baseline.json",
+  "head_unchanged": true,
+  "head": "f0a12b01e181d1ae9cf3009bc446da003f7c6c56",
+  "baseline_files": 892,
+  "unchanged": 873,
+  "changed": [
+    "Assets\\Scripts\\Core\\MVPGameManager.cs",
+    "Assets\\Scripts\\Drivers\\DriverData.cs",
+    "Assets\\Scripts\\Drivers\\DriverSkillRules.cs",
+    "Assets\\Scripts\\Drivers\\DriverSkillRuntime.cs",
+    "Assets\\Scripts\\Editor\\DriverBalanceBenchmark.cs",
+    "Assets\\Scripts\\UI\\HUDUI.cs",
+    "Assets\\Tests\\Editor\\driver_skill_rules_test.cs",
+    "Assets\\Tests\\Editor\\heat_payment_cost_test.cs",
+    "Assets\\Tests\\Editor\\race_driver_skill_activation_adapter_test.cs",
+    "Assets\\Tests\\Editor\\RegressionModules.json",
+    "design\\gdd\\foodula-1-drivers.md",
+    "design\\planning\\tech-driver-rework-2026-10-22\\implementation-plan.json",
+    "design\\planning\\tech-driver-rework-2026-10-22\\progress.json",
+    "design\\ux\\racing-tech-ui-checklist.md",
+    "design\\ux\\racing-tech-ui.md",
+    "docs\\memory\\current-task-list.md",
+    "docs\\memory\\game-mechanics.md",
+    "docs\\memory\\project-overview.md",
+    "tests\\regression-suite.md"
+  ],
+  "missing": [],
+  "protected_unchanged": {
+    "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset": true,
+    "ProjectSettings/EditorSettings.asset": true,
+    "Assets/Scripts/Core/PlayerState.cs": true,
+    "Assets/Scripts/Core/RaceSession.cs": true,
+    "Assets/Scripts/Core/RaceTurnSkillCleanup.cs": true,
+    "Assets/Tests/Editor/driver_skill_runtime_test.cs": true,
+    "Assets/Tests/Editor/race_turn_boundary_integration_test.cs": true
+  },
+  "note": "All baseline deltas are authorized I00b source/tests/module registration/GDD/UX/continuity/planning files. Earlier I00a-only source/tests, original font/settings, Word inputs/drafts, untracked and excluded assets retained. No commit/push/delete/move."
+}

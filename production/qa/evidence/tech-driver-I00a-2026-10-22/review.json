@@ -1,0 +1,23 @@
+{
+  "skill": ".agents/skills/code-review/SKILL.md",
+  "code_review": {
+    "agent": "unity-specialist",
+    "verdict": "APPROVED WITH SUGGESTIONS",
+    "must_fix": [],
+    "scope": "UK owner-input clock and existing adapters only; no editor manipulation or test execution by reviewer"
+  },
+  "qa_review": {
+    "agent": "qa-tester",
+    "verdict": "APPROVED",
+    "must_fix": [],
+    "followup": "Existing 0/1 overtake, 0/2 movement, 0/1 cooling and non-repeat assertions preserved; new timing and four optional boundary cases reviewed."
+  },
+  "addressed_suggestions": [
+    "Both UK drivers reinitialize after interruption",
+    "Mansell pending passive normal commit versus skip expiration"
+  ],
+  "limits": [
+    "Not a review of I01 new costs/targets",
+    "Not Play Mode, full race, UI or overall UK acceptance"
+  ]
+}

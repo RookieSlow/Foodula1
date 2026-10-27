@@ -24,6 +24,53 @@ public static class TrackRules
         return corners;
     }
 
+    /// <summary>New physical apex passes only; a later lap is a new pass of the same corner.</summary>
+    public static List<int> GetAdditionalApexCornersCrossed(IReadOnlyList<TrackNode> nodes,
+        int originalStart, int originalEnd, int extraStart, int extraEnd)
+    {
+        var result = new List<int>();
+        if (nodes == null || nodes.Count == 0 || extraEnd <= extraStart) return result;
+        var seen = new HashSet<(int corner, int segmentStart)>();
+        for (int position = originalStart + 1; position <= originalEnd; position++)
+        {
+            TrackNode node = nodes[NormalizeIndex(position, nodes.Count)];
+            if (node.cornerId > 0 && node.isApex)
+                seen.Add((node.cornerId, ApexSegmentStart(nodes, position, node.cornerId)));
+        }
+        for (int position = extraStart + 1; position <= extraEnd; position++)
+        {
+            TrackNode node = nodes[NormalizeIndex(position, nodes.Count)];
+            if (node.cornerId > 0 && node.isApex &&
+                seen.Add((node.cornerId, ApexSegmentStart(nodes, position, node.cornerId))))
+                result.Add(node.cornerId);
+        }
+        return result;
+    }
+
+    private static int ApexSegmentStart(IReadOnlyList<TrackNode> nodes, int position, int corner)
+    {
+        int start = position;
+        for (int count = 1; count < nodes.Count; count++)
+        {
+            if (nodes[NormalizeIndex(start - 1, nodes.Count)].cornerId != corner) return start;
+            start--;
+        }
+        // A track made entirely of one corner has no entry boundary; one array
+        // cycle is its pass. This also keeps the search bounded for malformed data.
+        return position - NormalizeIndex(position, nodes.Count);
+    }
+
+    /// <summary>End of a newly added path before the crossing that finishes this racer.</summary>
+    public static int EndBeforeFinalFinish(IReadOnlyList<TrackNode> nodes, int from, int to, int lapsRemaining)
+    {
+        if (lapsRemaining <= 0) return from;
+        if (nodes == null || nodes.Count == 0) return to;
+        for (int position = from + 1; position <= to; position++)
+            if (nodes[NormalizeIndex(position, nodes.Count)].isStartFinish && --lapsRemaining == 0)
+                return position - 1;
+        return to;
+    }
+
     public static bool CrossesStartFinish(
         IReadOnlyList<TrackNode> nodes,
         int fromPosition,

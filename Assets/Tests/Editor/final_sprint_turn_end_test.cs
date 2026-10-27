@@ -115,7 +115,7 @@ public class RaceTurnSkillCleanupTests
     }
 
     [Test]
-    public void PassiveUsesRuntimeAndOvertakesChangedDuringReport()
+    public void CleanupStillQueriesLiveRuntimeWithoutLegacyMansellReward()
     {
         PlayerState player = CreateFinalSprint(7);
         var overtakes = new Dictionary<PlayerState, int> { [player] = 0 };
@@ -129,8 +129,8 @@ public class RaceTurnSkillCleanupTests
 
         Assert.That(player.spinCounter, Is.EqualTo(1));
         replacement.BeginTurn();
-        Assert.That(replacement.PassiveMovementBonusThisTurn, Is.EqualTo(2));
-        Assert.That(replacement.PassiveCoolingBonusThisTurn, Is.EqualTo(1));
+        Assert.That(replacement.PassiveMovementBonusThisTurn, Is.Zero);
+        Assert.That(replacement.PassiveCoolingBonusThisTurn, Is.Zero);
     }
 
     [TestCase("cap")]
@@ -173,7 +173,7 @@ public class RaceTurnSkillCleanupTests
     [TestCase(0)]
     [TestCase(1)]
     [TestCase(3)]
-    public void OvertakeRewardIsArmedOnlyForNextTurnAndConsumedOnce(int overtakes)
+    public void MansellOvertakeCountNeverArmsTheReplacedReward(int overtakes)
     {
         var player = new PlayerState("driver", false, 0, 1) { driverSkill = CreateMansell() };
         RaceTurnSkillCleanup.Execute(player,
@@ -182,8 +182,8 @@ public class RaceTurnSkillCleanupTests
 
         Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
         player.driverSkill.BeginTurn();
-        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.EqualTo(overtakes > 0 ? 2 : 0));
-        Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.EqualTo(overtakes > 0 ? 1 : 0));
+        Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
+        Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.Zero);
         player.driverSkill.BeginTurn();
         Assert.That(player.driverSkill.PassiveMovementBonusThisTurn, Is.Zero);
         Assert.That(player.driverSkill.PassiveCoolingBonusThisTurn, Is.Zero);

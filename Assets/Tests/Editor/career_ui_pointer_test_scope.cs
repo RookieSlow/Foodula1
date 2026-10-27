@@ -32,12 +32,16 @@ internal sealed class CareerUiPointerTestScope : IDisposable
     // The loader keeps asset lookup outside resource ownership and lets tests
     // verify cleanup when loading fails after scene/target allocation.
     internal static CareerUiPointerTestScope Create(Func<TMP_FontAsset> loadFont)
+        => CreateSized(1920, 1080, loadFont);
+
+    internal static CareerUiPointerTestScope CreateSized(int width, int height, Func<TMP_FontAsset> loadFont)
     {
+        if (width <= 0 || height <= 0) throw new ArgumentOutOfRangeException(nameof(width));
         if (loadFont == null) throw new ArgumentNullException(nameof(loadFont));
         var scope = new CareerUiPointerTestScope();
         try
         {
-            scope.Initialize(loadFont);
+            scope.Initialize(loadFont, width, height);
             return scope;
         }
         catch
@@ -49,7 +53,7 @@ internal sealed class CareerUiPointerTestScope : IDisposable
 
     private CareerUiPointerTestScope() { }
 
-    private void Initialize(Func<TMP_FontAsset> loadFont)
+    private void Initialize(Func<TMP_FontAsset> loadFont, int width, int height)
     {
         PreviewScene = EditorSceneManager.NewPreviewScene();
         // Inactive EventSystem supplies event data without replacing the user's
@@ -66,7 +70,7 @@ internal sealed class CareerUiPointerTestScope : IDisposable
         renderCamera.cullingMask = 1 << 5;
         renderCamera.clearFlags = CameraClearFlags.SolidColor;
         renderCamera.backgroundColor = Color.clear;
-        Target = new RenderTexture(1920, 1080, 24);
+        Target = new RenderTexture(width, height, 24);
         Assert.That(Target.Create(), Is.True, "Fixture render target must be available");
         renderCamera.targetTexture = Target;
         Root = new GameObject("Completed career pointer regression", typeof(RectTransform), typeof(Canvas));

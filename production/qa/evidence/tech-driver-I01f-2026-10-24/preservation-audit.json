@@ -1,0 +1,36 @@
+{
+  "baseline_count": 4236,
+  "missing": [],
+  "changed": [
+    "Assets/Tests/Editor/RegressionModules.json",
+    "design/planning/tech-driver-rework-2026-10-22/implementation-plan.json",
+    "design/planning/tech-driver-rework-2026-10-22/progress.json",
+    "tests/regression-suite.md",
+    "Assets/Scripts/Core/MVPGameManager.cs",
+    "Assets/Tests/Editor/career_ui_pointer_test_scope.cs",
+    "design/gdd/foodula-1-drivers.md",
+    "design/gdd/foodula-1-tech-tree.md",
+    "design/ux/racing-tech-ui-checklist.md",
+    "design/ux/racing-tech-ui.md",
+    "docs/memory/current-task-list.md",
+    "docs/memory/game-mechanics.md",
+    "docs/memory/project-overview.md"
+  ],
+  "unexpected_changes": [],
+  "protected_baseline_count": 238,
+  "protected_changed": [],
+  "InitTestScene_matches": [],
+  "diff_check_exit": 0,
+  "head": "f0a12b01e181d1ae9cf3009bc446da003f7c6c56",
+  "word_hashes": {
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技与车手调整简报.docx": "afc1c1e33b1edef7a547a68e2df34e4879c55e1e5f87f9988a579ae10b11d01b",
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技树调整草案.docx": "281e077813344ab1e3627bb075dcc28d361a0626c8c39b3492f016a9f62d7bb3",
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_车手技能调整草案.docx": "94eb7763825f777d477b3fcb8fee92bad27e6353e42d8b2cdeb98f3889914f46",
+    "design/planning/tech-driver-rework-2026-10-22/inputs/Foodula1_科技树设计.docx": "c8996c17fc0aa44d6ea25ef58d9659956063be2e839913a51bde462f370c108f",
+    "design/planning/tech-driver-rework-2026-10-22/inputs/Foodula1_车手技能设计.docx": "d4def8c0b1e31774c861ea75f23343ef06afecc8ccea166aa2f4becc1c45a201",
+    "design/word/Foodula1_科技树设计.docx": "23f6a11bb1196f80d25c3ac87da0c59ecf8aeafb02682e6154e6915f4a630bfd",
+    "design/word/Foodula1_车手技能设计.docx": "0133feee3f0dc4fd7e5bee96af5c8431cb5869da5c26ba06b61aa3ad8409f13d",
+    "design/word/Foodula1_车队与赛车设计.docx": "193df0dd356d50aa36bc8a565194774b7e5847cd33f4bd8de05732212133370d"
+  },
+  "excluded_scope_note": "No deletion, scene save, audio/font/settings writes. Hash comparison covers baseline tracked/untracked files; does not invent prior hashes for ignored or absent files."
+}

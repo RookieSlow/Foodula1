@@ -1,0 +1,83 @@
+{
+  "modules": [
+    "cards-heat",
+    "core",
+    "drivers",
+    "gears",
+    "tech",
+    "tracks-weather-pit",
+    "tutorial",
+    "ui"
+  ],
+  "first_native": {
+    "startedUtc": "2026-10-26T23:24:36.4426774Z",
+    "endedUtc": "2026-10-26T23:24:59.1433626Z",
+    "state": "Failed(Child)",
+    "nativeState": "Failed(Child)",
+    "total": 2990,
+    "passed": 2988,
+    "failed": 2,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 18.717076,
+    "selectionMatches": true
+  },
+  "final_native": {
+    "startedUtc": "2026-10-26T23:26:04.7098536Z",
+    "endedUtc": "2026-10-26T23:26:28.6384319Z",
+    "state": "Passed",
+    "nativeState": "Passed",
+    "total": 2990,
+    "passed": 2990,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 19.5448375,
+    "selectionMatches": true
+  },
+  "new_runtime_cases": 29,
+  "new_production_adapter_cases": 5,
+  "gameloop": {
+    "mode": "EditMode",
+    "summary": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 3.3656232,
+      "resultState": "Passed"
+    },
+    "results": [
+      {
+        "name": "MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+        "fullName": "RaceGameLoopCoroutineTests.MansellPaidNewTailApexKeepsOrdinaryPartialPaymentAndSpin",
+        "state": "Passed",
+        "durationSeconds": 1.1233328,
+        "message": null,
+        "stackTrace": null,
+        "output": "[PlayEntry] 0.477s; domainReloadDisabled=True\r\n"
+      },
+      {
+        "name": "MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+        "fullName": "RaceGameLoopCoroutineTests.MansellPaidTwoLegsObserveActualOtherCarActionsAndNeverSpendAnotherRaceUse",
+        "state": "Passed",
+        "durationSeconds": 1.1595453,
+        "message": null,
+        "stackTrace": null,
+        "output": "[PlayEntry] 0.465s; domainReloadDisabled=True\r\n"
+      },
+      {
+        "name": "MansellRealA2CoolsOnlyFrozenOldHandBeforePreparationSnapshot",
+        "fullName": "RaceGameLoopCoroutineTests.MansellRealA2CoolsOnlyFrozenOldHandBeforePreparationSnapshot",
+        "state": "Passed",
+        "durationSeconds": 1.0484311,
+        "message": null,
+        "stackTrace": null,
+        "output": "[PlayEntry] 0.467s; domainReloadDisabled=True\r\n"
+      }
+    ]
+  },
+  "runtime_mvid": "1355eddf-9d2a-4dae-8a1d-19ecc171d10e",
+  "editor_mvid": "a0cab66d-67cb-488c-aee8-cb227b684d94",
+  "native_result_path": "D:/UnityProject/Foodula1/Library/Foodula1/RegressionRuns/20261026T232604698Z-6cec6093/result.json"
+}

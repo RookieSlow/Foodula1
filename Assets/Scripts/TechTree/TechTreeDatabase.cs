@@ -290,12 +290,12 @@ public static class TechTreeDatabaseFactory
     {
         db.Add(new TechNodeDef(
             id: "uk-l1-fish-and-chips",
-            name: "炸鱼薯条",
-            nameEn: "Fish & Chips",
+            name: "预备餐",
+            nameEn: "Prep Meal",
             tier: TechTreeTier.L1, teamId: TeamId.UK, index: 1, rpCost: 5000,
             prerequisites: new string[0], upgradesTo: "",
             effects: new[] { new TechEffect(TechEffectType.FishAndChips, 1) },
-            description: "每场限1次。需要支付热量但引擎不足时，忽略这次热量判定，并从一处移回1张热量牌至引擎"
+            description: "每圈1次，抽牌与早餐后、首次正式出牌前弃1张普通速度牌，回收旧永久热至引擎：手牌优先、弃牌其次，最多1张；UK/GB主场且启用L3时最多2张。弃牌可能导致当前挡位缺牌，不再免除热量不足判定。"
         ));
 
         db.Add(new TechNodeDef(
@@ -332,7 +332,7 @@ public static class TechTreeDatabaseFactory
             tier: TechTreeTier.L1, teamId: TeamId.DE, index: 1, rpCost: 5000,
             prerequisites: new string[0], upgradesTo: "",
             effects: new[] { new TechEffect(TechEffectType.SchwarzbierFuel, 1) },
-            description: "每圈最多一次，将引擎中1张热量牌支付到弃牌堆，前进2格。"
+            description: "常态每圈1次，出牌阶段可选：实付1张永久引擎热到弃牌区，移动+2。已声明爆发回合计入3次总预算。"
         ));
 
         db.Add(new TechNodeDef(
@@ -352,7 +352,7 @@ public static class TechTreeDatabaseFactory
             tier: TechTreeTier.L3, teamId: TeamId.DE, index: 1, rpCost: 12000,
             prerequisites: new string[0], upgradesTo: "",
             effects: new[] { new TechEffect(TechEffectType.GrillSpezial, 1) },
-            description: "每场1次。本回合从引擎支付的所有热量牌，在回合结束时从弃牌堆自动冷却回引擎。"
+            description: "每场1次，确认挡位前声明；首笔永久热实付才锁定。黑啤本回合合计最多3次；正常反应后仅回收仍持有的窗口付款收据，容量退役不计净回。"
         ));
     }
 

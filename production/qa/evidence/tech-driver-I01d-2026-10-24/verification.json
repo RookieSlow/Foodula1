@@ -1,0 +1,47 @@
+{
+  "id": "I01d",
+  "date_utc": "2026-10-24",
+  "new_test_cases": 8,
+  "native": {
+    "total": 2363,
+    "passed": 2363,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 12.1640629,
+    "selectionMatches": true
+  },
+  "first_native": {
+    "total": 2363,
+    "passed": 2360,
+    "failed": 3,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 12.8776254,
+    "selectionMatches": true
+  },
+  "unity_loaded_new_assemblies": true,
+  "runtime_mvid": "de3963f6-f8d6-44a8-ae5f-11d15906f580",
+  "editor_mvid": "2f97f193-8dd9-4c61-a1b1-9fc5ddc5b474",
+  "modules": [
+    "ui",
+    "tech",
+    "drivers",
+    "cards-heat",
+    "core",
+    "tracks-weather-pit"
+  ],
+  "full_modes": false,
+  "screenshots": {
+    "count": 15,
+    "overflows": 0,
+    "root_viewed": 6,
+    "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I00b-2026-10-22/after/run-20261024-175918440",
+    "kind": "controlled production RaceCanvas fixture; not a race",
+    "new_before_screenshots": 0,
+    "before_boundary": "Historical I00b before images remain only historical references; no new pre-change screenshots taken for I01d, so before/after interaction acceptance remains open."
+  },
+  "review": "QA static approved after native-discovered fixes; static review alone missed selected-button disable side effect",
+  "console": "one expected TrackDataLoader no_such_track error via LogAssert.Expect; no compile errors",
+  "resource_ready": "cached editor/state remains stale_status; fresh direct queries confirmed idle/clean and native guard checked all loaded scenes"
+}

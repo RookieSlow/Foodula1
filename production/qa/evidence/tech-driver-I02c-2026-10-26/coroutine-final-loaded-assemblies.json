@@ -1,0 +1,25 @@
+{
+  "jsonrpc": "2.0",
+  "id": 22,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Code executed successfully.\",\"data\":{\"result\":{\"safe\":true,\"runtime\":\"b825ebc4-d36e-4855-bace-c69939a2b42b\",\"editor\":\"f7783e3a-4051-42a4-89fe-4f22311ac19f\"},\"compiler\":\"codedom\"}}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "message": "Code executed successfully.",
+      "data": {
+        "result": {
+          "safe": true,
+          "runtime": "b825ebc4-d36e-4855-bace-c69939a2b42b",
+          "editor": "f7783e3a-4051-42a4-89fe-4f22311ac19f"
+        },
+        "compiler": "codedom"
+      }
+    },
+    "isError": false
+  }
+}

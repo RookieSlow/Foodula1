@@ -1,0 +1,650 @@
+{
+    "stage": "after",
+    "utc": "2026-10-26T18:01:13.7295704Z",
+    "runtimeMvid": "75da8f93-5012-451b-a5d4-5a7104ad2a30",
+    "kind": "Owned EditMode preview Canvas; real HUD.Start, driver button and MVP manager plan. EventSystem/GraphicRaycaster dispatch, not hardware input or a running match.",
+    "records": [
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 2,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "first",
+            "targetTeam": "UK",
+            "text": "目标：猎人·哈特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1920x1080-first.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：猎人·哈特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 4,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "equal-second-card",
+            "targetTeam": "DE",
+            "text": "目标：教授·舒马赫\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1920x1080-equal-second-card.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：教授·舒马赫\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 6,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "second-leg",
+            "targetTeam": "IT",
+            "text": "目标：意大利队·长中文车手名称1234567890\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1920x1080-second-leg.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：意大利队·长中文车手名称1234567890\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 12,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "keyboard",
+            "targetTeam": "US",
+            "text": "目标：烟雾·斯图尔特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1920x1080-keyboard.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：烟雾·斯图尔特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 4,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "cancel-reopen",
+            "targetTeam": "CN",
+            "text": "目标：破风者·冠宇\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1920x1080-cancel-reopen.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：破风者·冠宇\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 2,
+            "mask": 255,
+            "usesAfter": 3,
+            "fixture": "unavailable",
+            "targetTeam": "JP",
+            "text": "雄狮追击 需要合格的同一最近前车，首段距离1–6格",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1920x1080-unavailable.png",
+            "modal": false,
+            "blockedUnderlyingPointer": false,
+            "exactCost": false,
+            "focusRestored": false,
+            "overflows": []
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 2,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "second-cancel",
+            "targetTeam": "UK",
+            "text": "目标：猎人·哈特\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1920x1080-second-cancel.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": false,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：猎人·哈特\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 4,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "second-keyboard",
+            "targetTeam": "DE",
+            "text": "目标：教授·舒马赫\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1920x1080-second-keyboard.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：教授·舒马赫\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 6,
+            "mask": 255,
+            "usesAfter": 0,
+            "fixture": "last-use-second",
+            "targetTeam": "IT",
+            "text": "目标：蓝衣·阿斯卡里\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余0次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1920x1080-last-use-second.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：蓝衣·阿斯卡里\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余0次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 12,
+            "mask": 255,
+            "usesAfter": 3,
+            "fixture": "gear-cancel",
+            "targetTeam": "US",
+            "text": "目标：烟雾·斯图尔特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1920x1080-gear-cancel.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": false,
+            "focusRestored": false,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：烟雾·斯图尔特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 4,
+            "mask": 255,
+            "usesAfter": 3,
+            "fixture": "lifecycle-cancel",
+            "targetTeam": "CN",
+            "text": "目标：破风者·冠宇\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1920x1080-lifecycle-cancel.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": false,
+            "focusRestored": false,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：破风者·冠宇\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 2,
+            "mask": 255,
+            "usesAfter": 3,
+            "fixture": "stale-target",
+            "targetTeam": "JP",
+            "text": "目标：漂移之王·圭一\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1920x1080-stale-target.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": false,
+            "focusRestored": false,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：漂移之王·圭一\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 2,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "first",
+            "targetTeam": "UK",
+            "text": "目标：猎人·哈特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\2560x1440-first.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：猎人·哈特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 4,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "equal-second-card",
+            "targetTeam": "DE",
+            "text": "目标：教授·舒马赫\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\2560x1440-equal-second-card.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：教授·舒马赫\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 6,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "second-leg",
+            "targetTeam": "IT",
+            "text": "目标：意大利队·长中文车手名称1234567890\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\2560x1440-second-leg.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：意大利队·长中文车手名称1234567890\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 12,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "keyboard",
+            "targetTeam": "US",
+            "text": "目标：烟雾·斯图尔特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\2560x1440-keyboard.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：烟雾·斯图尔特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 4,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "cancel-reopen",
+            "targetTeam": "CN",
+            "text": "目标：破风者·冠宇\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\2560x1440-cancel-reopen.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：破风者·冠宇\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 2,
+            "mask": 255,
+            "usesAfter": 3,
+            "fixture": "unavailable",
+            "targetTeam": "JP",
+            "text": "雄狮追击 需要合格的同一最近前车，首段距离1–6格",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\2560x1440-unavailable.png",
+            "modal": false,
+            "blockedUnderlyingPointer": false,
+            "exactCost": false,
+            "focusRestored": false,
+            "overflows": []
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 2,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "second-cancel",
+            "targetTeam": "UK",
+            "text": "目标：猎人·哈特\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\2560x1440-second-cancel.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": false,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：猎人·哈特\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 4,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "second-keyboard",
+            "targetTeam": "DE",
+            "text": "目标：教授·舒马赫\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\2560x1440-second-keyboard.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：教授·舒马赫\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 6,
+            "mask": 255,
+            "usesAfter": 0,
+            "fixture": "last-use-second",
+            "targetTeam": "IT",
+            "text": "目标：蓝衣·阿斯卡里\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余0次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\2560x1440-last-use-second.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：蓝衣·阿斯卡里\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余0次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 12,
+            "mask": 255,
+            "usesAfter": 3,
+            "fixture": "gear-cancel",
+            "targetTeam": "US",
+            "text": "目标：烟雾·斯图尔特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\2560x1440-gear-cancel.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": false,
+            "focusRestored": false,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：烟雾·斯图尔特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 4,
+            "mask": 255,
+            "usesAfter": 3,
+            "fixture": "lifecycle-cancel",
+            "targetTeam": "CN",
+            "text": "目标：破风者·冠宇\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\2560x1440-lifecycle-cancel.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": false,
+            "focusRestored": false,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：破风者·冠宇\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 2,
+            "mask": 255,
+            "usesAfter": 3,
+            "fixture": "stale-target",
+            "targetTeam": "JP",
+            "text": "目标：漂移之王·圭一\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\2560x1440-stale-target.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": false,
+            "focusRestored": false,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：漂移之王·圭一\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 2,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "first",
+            "targetTeam": "UK",
+            "text": "目标：猎人·哈特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1280x720-first.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：猎人·哈特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 4,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "equal-second-card",
+            "targetTeam": "DE",
+            "text": "目标：教授·舒马赫\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1280x720-equal-second-card.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：教授·舒马赫\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 6,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "second-leg",
+            "targetTeam": "IT",
+            "text": "目标：意大利队·长中文车手名称1234567890\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1280x720-second-leg.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：意大利队·长中文车手名称1234567890\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 12,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "keyboard",
+            "targetTeam": "US",
+            "text": "目标：烟雾·斯图尔特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1280x720-keyboard.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：烟雾·斯图尔特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 4,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "cancel-reopen",
+            "targetTeam": "CN",
+            "text": "目标：破风者·冠宇\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1280x720-cancel-reopen.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：破风者·冠宇\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 2,
+            "mask": 255,
+            "usesAfter": 3,
+            "fixture": "unavailable",
+            "targetTeam": "JP",
+            "text": "雄狮追击 需要合格的同一最近前车，首段距离1–6格",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1280x720-unavailable.png",
+            "modal": false,
+            "blockedUnderlyingPointer": false,
+            "exactCost": false,
+            "focusRestored": false,
+            "overflows": []
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 2,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "second-cancel",
+            "targetTeam": "UK",
+            "text": "目标：猎人·哈特\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1280x720-second-cancel.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": false,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：猎人·哈特\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 4,
+            "mask": 255,
+            "usesAfter": 2,
+            "fixture": "second-keyboard",
+            "targetTeam": "DE",
+            "text": "目标：教授·舒马赫\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1280x720-second-keyboard.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：教授·舒马赫\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余2次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 6,
+            "mask": 255,
+            "usesAfter": 0,
+            "fixture": "last-use-second",
+            "targetTeam": "IT",
+            "text": "目标：蓝衣·阿斯卡里\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余0次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1280x720-last-use-second.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": true,
+            "focusRestored": true,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：蓝衣·阿斯卡里\n前方2格；付1张永久热，不再扣场次\n本次移动+3格；剩余0次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 12,
+            "mask": 255,
+            "usesAfter": 3,
+            "fixture": "gear-cancel",
+            "targetTeam": "US",
+            "text": "目标：烟雾·斯图尔特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1280x720-gear-cancel.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": false,
+            "focusRestored": false,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：烟雾·斯图尔特\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 4,
+            "mask": 255,
+            "usesAfter": 3,
+            "fixture": "lifecycle-cancel",
+            "targetTeam": "CN",
+            "text": "目标：破风者·冠宇\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1280x720-lifecycle-cancel.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": false,
+            "focusRestored": false,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：破风者·冠宇\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 2,
+            "mask": 255,
+            "usesAfter": 3,
+            "fixture": "stale-target",
+            "targetTeam": "JP",
+            "text": "目标：漂移之王·圭一\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I02d-2026-10-26\\after\\run-20261026-180113728\\1280x720-stale-target.png",
+            "modal": true,
+            "blockedUnderlyingPointer": true,
+            "exactCost": false,
+            "focusRestored": false,
+            "overflows": [
+                "ReturnToMenuConfirmText: 目标：漂移之王·圭一\n前方3格；弃普通速度牌1张；付1张永久热\n本次移动+2格；剩余3次\n新增弯心仍按原速度付热，热量不足会失控"
+            ]
+        }
+    ]
+}

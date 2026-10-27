@@ -96,6 +96,25 @@ public static class RaceMovementRules
     }
 
     /// <summary>
+    /// Hart's whole-movement reward checks only newly reached tail cells. Ordinary
+    /// card corners retain their original range and speed; unrelated bonuses retain
+    /// their existing behavior. Absolute endpoints preserve a new pass after a lap.
+    /// </summary>
+    public static (int start, int end) GetHunterActiveCornerTail(PlayerState player, int startPosition)
+    {
+        DriverSkillRuntimeState skill = player?.driverSkill;
+        bool paidMansell = skill != null && skill.Skill == DriverActiveSkillId.AngryCharge && skill.Charge.CommittedThisInput;
+        if (skill == null || (skill.Skill != DriverActiveSkillId.FinalLap && !paidMansell) || !skill.IsActive)
+            return (startPosition, startPosition);
+        int movement = Math.Max(0, player.totalMovementThisTurn);
+        int reward = Math.Max(0, DriverSkillRules.GetMovementBonus(skill, false));
+        int withoutReward = Math.Max(0, movement - reward);
+        int alreadyCovered = Math.Max(Math.Max(0, player.cornerTotalThisTurn), withoutReward);
+        int start = startPosition + Math.Min(movement, alreadyCovered);
+        return (start, startPosition + movement);
+    }
+
+    /// <summary>
     /// Keep the original order: clamp base movement, apply the authored leader
     /// movement, then remove that leader's corner speed for corner resolution.
     /// </summary>

@@ -1,0 +1,164 @@
+{
+    "utc": "2026-10-22T11:01:43.3209178Z",
+    "stage": "before",
+    "kind": "Controlled EditMode production RaceCanvas fixture, not a running match.",
+    "lifecycle": "Owned preview scene and prefab clone; disabled project behaviours; explicit HUD.Start. Settings current/repository restored exactly. Font/material clones are static and destroyed. Callback counters exercise original HUD cancel/confirm handlers; no gameplay state or navigation callback. After fixtures call ShowDriverSkillCardChoice through reflection so this helper compiles before that API exists.",
+    "records": [
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\before\\run-20261022-110143312\\1920x1080-generic-driver-skill.png",
+            "fixture": "generic-driver-skill",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbacks": 0,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认发动技能",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "车手技能发动后会消耗本场次数，确定继续吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "发动技能",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\before\\run-20261022-110143312\\2560x1440-generic-driver-skill.png",
+            "fixture": "generic-driver-skill",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbacks": 0,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认发动技能",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "车手技能发动后会消耗本场次数，确定继续吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "发动技能",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I00b-2026-10-22\\before\\run-20261022-110143312\\1280x720-generic-driver-skill.png",
+            "fixture": "generic-driver-skill",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbacks": 0,
+            "confirmCallbacks": 1,
+            "cardWidth": 620.0,
+            "cardHeight": 300.0,
+            "overlayRaycast": true,
+            "confirmInteractable": true,
+            "selectedExactInstance": true,
+            "labels": [
+                {
+                    "name": "ReturnToMenuConfirmTitle",
+                    "text": "确认发动技能",
+                    "width": 520.800048828125,
+                    "height": 54.0,
+                    "preferredHeight": 40.54999923706055,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "ReturnToMenuConfirmText",
+                    "text": "车手技能发动后会消耗本场次数，确定继续吗？",
+                    "width": 496.0,
+                    "height": 90.0,
+                    "preferredHeight": 27.520000457763673,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "暂不发动",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "发动技能",
+                    "width": 190.0,
+                    "height": 52.0,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        }
+    ]
+}

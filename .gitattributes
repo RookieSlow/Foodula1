@@ -40,3 +40,7 @@ production/qa/evidence/**/baseline-diff.txt -text -whitespace
 # Raw before snapshots and source diffs retain Unity YAML whitespace and hashed bytes.
 production/qa/evidence/**/*source-before.txt -text -whitespace
 production/qa/evidence/**/source-increment.diff.txt -text -whitespace
+
+# Raw incremental review diffs retain exact source bytes and original whitespace.
+production/qa/evidence/**/related-git-diff.patch -text -whitespace
+production/qa/evidence/**/git-increment-relative-to-start.diff.txt -text -whitespace

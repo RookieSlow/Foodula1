@@ -1,0 +1,37 @@
+{
+  "jsonrpc": "2.0",
+  "id": 22,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"message\":\"Code executed successfully.\",\"data\":{\"result\":{\"scenes\":[{\"name\":\"MainMenu\",\"path\":\"Assets/Scenes/MainMenu.unity\",\"dirty\":false}],\"active\":\"MainMenu\",\"playing\":false,\"compiling\":false,\"updating\":false,\"native\":false,\"runtime\":\"b825ebc4-d36e-4855-bace-c69939a2b42b\",\"editor\":\"f7783e3a-4051-42a4-89fe-4f22311ac19f\",\"nativeRunFinished\":\"{\\\"fullName\\\":\\\"Foodula1\\\",\\\"resultState\\\":\\\"Passed\\\",\\\"endedUtc\\\":\\\"2026-10-26T07:36:23.4943425Z\\\",\\\"total\\\":2,\\\"passed\\\":2,\\\"failed\\\":0,\\\"skipped\\\":0,\\\"inconclusive\\\":0,\\\"message\\\":\\\"\\\",\\\"output\\\":\\\"\\\",\\\"stackTrace\\\":\\\"\\\"}\"},\"compiler\":\"codedom\"}}"
+      }
+    ],
+    "structuredContent": {
+      "success": true,
+      "message": "Code executed successfully.",
+      "data": {
+        "result": {
+          "scenes": [
+            {
+              "name": "MainMenu",
+              "path": "Assets/Scenes/MainMenu.unity",
+              "dirty": false
+            }
+          ],
+          "active": "MainMenu",
+          "playing": false,
+          "compiling": false,
+          "updating": false,
+          "native": false,
+          "runtime": "b825ebc4-d36e-4855-bace-c69939a2b42b",
+          "editor": "f7783e3a-4051-42a4-89fe-4f22311ac19f",
+          "nativeRunFinished": "{\"fullName\":\"Foodula1\",\"resultState\":\"Passed\",\"endedUtc\":\"2026-10-26T07:36:23.4943425Z\",\"total\":2,\"passed\":2,\"failed\":0,\"skipped\":0,\"inconclusive\":0,\"message\":\"\",\"output\":\"\",\"stackTrace\":\"\"}"
+        },
+        "compiler": "codedom"
+      }
+    },
+    "isError": false
+  }
+}

@@ -1,0 +1,306 @@
+[
+  {
+    "id": "S01",
+    "title": "James Hunt",
+    "publisher": "Formula 1",
+    "url": "https://www.formula1.com/en/information/drivers-hall-of-fame-james-hunt.4vRKjActuXEjrFBR9hzo2A",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "1976 年世界冠军；早期 Hesketh 经历、强烈比赛压力与进攻性可作为人物研究线索。",
+    "kind": "primary_reference_only",
+    "rechecked_package": "P3a",
+    "rechecked": "2026-10-22"
+  },
+  {
+    "id": "S02",
+    "title": "Nigel Mansell",
+    "publisher": "Formula 1",
+    "url": "https://www.formula1.com/en/information/drivers-hall-of-fame-john-surtees.3mLYxotFMTyLgIRxilGObS",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "1987 银石追赶并超越皮奎特；1992 F1 与 1993 IndyCar 冠军。页面 URL 的人物 slug 与实际标题不一致，本轮核验实际标题及正文为 Nigel Mansell。",
+    "kind": "primary_reference_only",
+    "rechecked_package": "P3a",
+    "rechecked": "2026-10-22",
+    "verified_url": "https://www.formula1.com/en/information/drivers-hall-of-fame-nigel-mansell.3mLYxotFMTyLgIRxilGObS",
+    "verification_note": "P3a 实际打开同 ID 正确人物 slug，标题与正文仍为 Nigel Mansell；原归档 URL 保留。"
+  },
+  {
+    "id": "S03",
+    "title": "Michael Schumacher",
+    "publisher": "Formula 1",
+    "url": "https://www.formula1.com/en/information/drivers-hall-of-fame-michael-schumacher.7KdX5nJlTG55vR5JQSbZ21",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "七届世界冠军；长期投入训练、研发和团队协作。旧传记中的历史最高纪录措辞不可当作今日排名。",
+    "kind": "primary_reference_only",
+    "rechecked_package": "P3a",
+    "rechecked": "2026-10-22"
+  },
+  {
+    "id": "S04",
+    "title": "1998 匈牙利三停策略",
+    "publisher": "Formula 1",
+    "url": "https://www.formula1.com/en/latest/article/hungary-1998-how-a-classic-schumacher-brawn-gamble-snatched-victory-from.6RIv63NqY0wBnDYlrdJCiC",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "舒马赫与布朗通过改变进站策略及连续快圈争取胜利；适合提炼准备、执行、兑现的时间窗口。",
+    "kind": "primary_reference_only",
+    "rechecked_package": "P3a",
+    "rechecked": "2026-10-22"
+  },
+  {
+    "id": "S05",
+    "title": "Sebastian Vettel",
+    "publisher": "Formula 1",
+    "url": "https://www.formula1.com/en/information/drivers-hall-of-fame-sebastian-vettel.GBy6vPkxKOKUV89QOhZe5",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "2010—2013 四连冠；2012 巴西受损后追赶保住冠军，2015 帮助法拉利复苏。车队增幅是设计解读，不是“成功只来自赛车”的事实结论。",
+    "kind": "primary_reference_only",
+    "rechecked_package": "P3a",
+    "rechecked": "2026-10-22"
+  },
+  {
+    "id": "S06",
+    "title": "Alberto Ascari",
+    "publisher": "Formula 1",
+    "url": "https://www.formula1.com/en/information/drivers-hall-of-fame-alberto-ascari.6zgWYwDIjoQmYSiz48FAZD",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "1952、1953 连冠，以精确驾驶著称；蓝色幸运头盔是个人习惯，不能写成事故的因果解释。",
+    "kind": "primary_reference_only",
+    "rechecked_package": "P3b",
+    "rechecked": "2026-10-22",
+    "verification_note": "精确驾驶、1952与1953连冠；事故原因与蓝色个人习惯不得混作因果。"
+  },
+  {
+    "id": "S07",
+    "title": "Tazio Nuvolari 生平",
+    "publisher": "Tazio Nuvolari Museum",
+    "url": "https://www.museotazionuvolari.it/en/nuvolari-biografia.php",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "1935 年驾驶较旧 Alfa Romeo P3 在纽博格林击败强大对手；1933 年获勒芒胜利。适合研究弱车逆袭及持续执行。",
+    "kind": "primary_reference_only",
+    "rechecked_package": "P3b",
+    "rechecked": "2026-10-22",
+    "verification_note": "博物馆记载1921年已参加汽车赛，原卡37岁才起步不成立；高度赞誉引语归属与原卡冲突，草案不引用；1947与1948 Mille Miglia强势表现不等于完赛获胜。"
+  },
+  {
+    "id": "S08",
+    "title": "Tony Stewart 2011 决赛",
+    "publisher": "NASCAR",
+    "url": "https://www.nascar.com/news-media/2020/03/24/rewatch-tony-stewarts-2011-win-at-homestead-miami-speedway/",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "克服进站问题及车损，在收官站取胜，并以胜场数打破年度积分平局。",
+    "kind": "primary_reference_only",
+    "rechecked_package": "P3b",
+    "rechecked": "2026-10-22"
+  },
+  {
+    "id": "S09",
+    "title": "Kyle Busch 2015 冠军",
+    "publisher": "NASCAR",
+    "url": "https://www.nascar.com/news-media/2015/11/22/kyle-busch-wins-first-sprint-cup-series-championship/",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "赛季初伤停、缺席前 11 场积分赛后复出夺冠；末段重启和短期强势表现可作为候选主题。",
+    "kind": "primary_reference_only",
+    "rechecked_package": "P3b",
+    "rechecked": "2026-10-22",
+    "verification_note": "2015缺席11场积分赛后复出，经当时豁免及晋级条件参赛夺冠；不省略规则条件，也不把伤病幸存直接变成技能。"
+  },
+  {
+    "id": "S10",
+    "title": "2022 英国站车队赛后记录",
+    "publisher": "Formula 1",
+    "url": "https://www.formula1.com/en/latest/article/what-the-teams-said-race-day-at-the-2022-british-grand-prix.1wPCxgM7OxvoMdrqDd5Us5",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "周冠宇银石翻车发生于 2022 年 7 月 3 日；本人及车队强调 Halo 等安全设计。不能把幸存归因于驾驶技能。",
+    "kind": "primary_reference_only",
+    "P3c_recheck_attempt": {
+      "status": "no_matching_body_at_old_url",
+      "substitute": "S23",
+      "note": "保留早先已核验记录，本轮不冒称旧地址重新读到正文。"
+    }
+  },
+  {
+    "id": "S11",
+    "title": "马青骅 2014 俄罗斯站首胜",
+    "publisher": "FIA",
+    "url": "https://www.fia.com/news/ma-writes-motorsport-history",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "2014 年 6 月 8 日，马青骅赢得 WTCC 俄罗斯第二场比赛，成为首位赢得 FIA 世界锦标赛比赛的中国车手。",
+    "kind": "primary_reference_only",
+    "rechecked_in_P3c": {
+      "accessed": "2026-10-22",
+      "opened": true,
+      "finding": "重新读到2014俄罗斯WTCC第二场的历史首胜；发车失位、争位及对手受罚参与赛况，不归纳为无条件超车技能。"
+    }
+  },
+  {
+    "id": "S12",
+    "title": "马青骅 2017 澳门回归",
+    "publisher": "FIA",
+    "url": "https://www.fia.com/news/wtcc-wtcc-street-fighters-aim-master-macau",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "记录其 2015 年总成绩第四、Vila Real 胜利及 2017 年重返 WTCC；可支撑适应和赛道记忆方向。",
+    "kind": "primary_reference_only",
+    "rechecked_in_P3c": {
+      "accessed": "2026-10-22",
+      "opened": true,
+      "finding": "2017文章是澳门回归预告，记载2015年度第四及Vila Real第二胜；不误写预告为赛果，不扩写未经核验的跨项目领奖台。"
+    }
+  },
+  {
+    "id": "S13",
+    "title": "土屋圭一与 Toyota 勒芒历史",
+    "publisher": "Toyota Gazoo Racing",
+    "url": "https://toyotagazooracing.com/wec/special/2019-2020/lemans-challenging-history-04/",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "土屋与片山右京、铃木利男的组合在 1998 年完赛，1999 年取得勒芒总成绩第二；单圈最快不能无证归给三人中某一位。",
+    "kind": "primary_reference_only",
+    "rechecked_in_P3c": {
+      "accessed": "2026-10-22",
+      "opened": true,
+      "finding": "Toyota明确1998三人车组第九、1999第二；最快圈属于该车组赛车，未单独归给土屋。"
+    }
+  },
+  {
+    "id": "S14",
+    "title": "星野一义与 Nissan R390",
+    "publisher": "Nissan Heritage Collection",
+    "url": "https://www.nissan-global.com/EN/HERITAGE_COLLECTION/Nissan_R390_GT1_2.html",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "星野一义、铃木亚久里、影山正彦共同驾驶 32 号赛车取得 1998 年勒芒总成绩第三；仅作为替换候选资料。",
+    "kind": "primary_reference_only",
+    "P3c_recheck_attempt": {
+      "status": "opened_reference_only",
+      "finding": "Nissan 1998 R390 No32星野一义等车组总成绩第三；只作已有资料，不增加第二替换方案。"
+    }
+  },
+  {
+    "id": "S15",
+    "title": "高桥国光生涯回顾",
+    "publisher": "Honda Racing",
+    "url": "https://honda.racing/post/160322-kunimitsu-takahashi",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "1961 年成为首位赢得世界 GP 的日本车手，后转四轮；1995 勒芒 GT2 组别获胜，后来经营 Team Kunimitsu。",
+    "kind": "primary_reference_only",
+    "rechecked_in_P3c": {
+      "accessed": "2026-10-22",
+      "opened": true,
+      "finding": "Honda区分1961摩托250cc GP胜利、1977日本F1第九、1992组队、1995勒芒GT2组胜与2018/2020车队GT500冠军。",
+      "uncertainty": "英文正文的Keisuke Tsuchiya拼写及管理起年与年表有歧义；不据此扩写土屋1995名单或管理起年。"
+    }
+  },
+  {
+    "id": "S16",
+    "title": "Heat 游戏与规则入口",
+    "publisher": "Days of Wonder",
+    "url": "https://www.daysofwonder.com/game/heat/",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "官方产品页强调手牌管理、速度与过热取舍、赛前车辆定制。仅作机制参考，不移植图片、文案或受保护素材。",
+    "kind": "primary_reference_only"
+  },
+  {
+    "id": "S17",
+    "title": "Formula One racing's greatest title showdowns",
+    "publisher": "Formula 1",
+    "url": "https://www.formula1.com/en/latest/article/formula-one-racings-greatest-title-showdowns.73LmegYX1AuPDL9cnWR1no",
+    "finding": "1976 富士收官：亨特因末段轮胎问题进站落至第五，随后追回第三，以一分优势夺冠。只使用该历史小节。",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "kind": "primary_reference_only",
+    "package": "P3a"
+  },
+  {
+    "id": "S18",
+    "title": "Moments in time - the British Grand Prix",
+    "publisher": "Formula 1",
+    "url": "https://www.formula1.com/en/latest/article/moments-in-time-the-british-grand-prix.75fZYfjfQvbAofkfSAOvLe",
+    "finding": "1987 银石：曼塞尔非计划换胎后落后近30秒，通过连续快圈追回，并在 Stowe 超越皮奎特。只使用该历史小节。",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "kind": "primary_reference_only",
+    "package": "P3a"
+  },
+  {
+    "id": "S19",
+    "title": "INSIGHT: A closer look at the 12 constructors’ title-winning cars Adrian Newey has designed",
+    "publisher": "Formula 1",
+    "url": "https://www.formula1.com/en/latest/article/insight-a-closer-look-at-the-12-constructors-title-winning-cars-adrian-newey.1QAwEdYMG8hAz76kEHGefF",
+    "finding": "2023年发表的技术回顾：2012 RB8 后期气动概念完善，维特尔能利用油门调整后部稳定性；2013 RB9 延续演进。支持人车匹配的设计推论，不证明车手贡献只来自赛车，也不作为2026现状。",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "kind": "primary_reference_only",
+    "package": "P3a"
+  },
+  {
+    "id": "S20",
+    "title": "Kyle Busch 200 wins across NASCAR national series",
+    "publisher": "NASCAR",
+    "url": "https://www.nascar.com/news-media/2019/03/17/kyle-busch-200-wins-nascar-national-series/",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "2019年的200胜为Cup、Xfinity、Truck合计，当时为53/94/53；与Richard Petty的200场Cup胜利口径不同。另记2004首场Xfinity胜、2005首场Cup胜及2009 Xfinity冠军。仅历史截点，不作2026总数。",
+    "kind": "primary_reference_only",
+    "package": "P3b"
+  },
+  {
+    "id": "S21",
+    "title": "Tony Stewart love of racing and Hall of Fame career profile",
+    "publisher": "NASCAR",
+    "url": "https://www.nascar.com/news-media/2020/01/29/tony-stewarts-love-of-racing-will-be-treasured-in-nascar-hall-of-fame/amp/",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "回顾1997 IndyCar冠军、2002/2005/2011 Cup冠军与2011车手兼车主身份；2011常规赛无胜后在十场季后赛取五胜。支持逆境执行的设计推论，不引用2020文章的唯一纪录措辞为当前事实。",
+    "kind": "primary_reference_only",
+    "package": "P3b"
+  },
+  {
+    "id": "S22",
+    "title": "F2 官方周冠宇生涯回顾",
+    "publisher": "FIA Formula 2",
+    "url": "https://www.fiaformula2.com/en/latest/article/guanyu-zhou.4HiKMPMRQtSyjC7hOeH5Jk",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "2019 F2新人最高积分，2020 Sochi首胜，2021四胜后进入2022 F1阵容；可支持成长过程，不证明雨战或稳定性排名。",
+    "kind": "primary_reference_only",
+    "package": "P3c",
+    "uncertainty": "历史人物介绍，不能当作2026当前席位；事实与稳守技能的设计推论分开。"
+  },
+  {
+    "id": "S23",
+    "title": "周冠宇 2022 银石事故后致谢赛道与医疗团队",
+    "publisher": "Formula 1",
+    "url": "https://www.formula1.com/en/latest/article/zhou-thanks-marshals-and-medical-team-after-lap-1-silverstone-crash.3REDo1U9SvkS4O5FeU9sjP",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "2022年7月4日报道此前英国站首圈翻车、医疗检查与对救援人员及Halo等安全技术的致谢；原稿2024年份错误，不能把事故幸存归为驾驶技能。",
+    "kind": "primary_reference_only",
+    "package": "P3c",
+    "uncertainty": "不以事故推断个人心理或驾驶免疫力。"
+  },
+  {
+    "id": "S24",
+    "title": "讲谈社 Initial D 作品与人物背景",
+    "publisher": "Kodansha",
+    "url": "https://licensing.kodansha.com/title/initial-d/",
+    "accessed": "2026-10-22",
+    "opened": true,
+    "finding": "重野秀一作品中的拓海帮助父亲豆腐店配送、驾驶AE86；只支持虚构身份与配送背景。",
+    "kind": "primary_reference_only",
+    "package": "P3c",
+    "uncertainty": "许可目录是研究来源，不是可分发游戏角色素材授权；不支持真实车手纪录或原稿水杯细节。"
+  }
+]

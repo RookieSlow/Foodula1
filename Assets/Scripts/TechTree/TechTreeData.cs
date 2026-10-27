@@ -60,7 +60,7 @@ public enum TechEffectType
     LightweightDoubler,
 
     // ── UK Unique ──
-    FishAndChips,          // L1: once/race ignore heat + return 1 heat
+    FishAndChips,          // Stable UK L1 ID: once/lap discard speed, recover old permanent H/D heat
     FullEnglish,           // L2: hand has heat+speed+trick → +1 temp heat + slipstream +1
     SunNeverSets,          // L3: gain target country's L2+L3
 
@@ -337,11 +337,17 @@ public class TechTreeState
     /// <summary>Whether per-lap heat reduction has been used this lap.</summary>
     public bool heatReductionUsedThisLap;
 
-    /// <summary>UK L1: FishAndChips used this race.</summary>
+    /// <summary>Inert legacy runtime flag; retained for compatibility, never grants a heat-payment rescue.</summary>
     public bool fishAndChipsUsed;
+
+    /// <summary>UK L1: per-participant input sources and once-per-lap usage, never persisted.</summary>
+    public UkPrepMealRuntime prepMeal = new UkPrepMealRuntime();
 
     /// <summary>DE L3: GrillSpezial used this race.</summary>
     public bool grillSpezialUsed;
+
+    /// <summary>Per-racer manual burst scope, receipts and fuel budget; never a profile unlock.</summary>
+    public GermanBurstRuntime germanBurst = new GermanBurstRuntime();
 
     /// <summary>DE L3: Total heat paid this turn (tracked for GrillSpezial auto-cool).</summary>
     public int grillSpezialHeatPaidThisTurn;
@@ -389,6 +395,8 @@ public class TechTreeState
         var copy = (TechTreeState)MemberwiseClone();
         copy.unlockedNodeIds = new HashSet<string>(unlockedNodeIds);
         copy.activeNodeIds = new HashSet<string>(activeNodeIds);
+        copy.prepMeal = prepMeal.CreatePresentationCopy();
+        copy.germanBurst = germanBurst.CreatePresentationCopy();
         return copy;
     }
 

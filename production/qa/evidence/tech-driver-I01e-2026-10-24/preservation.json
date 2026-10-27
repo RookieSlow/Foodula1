@@ -1,0 +1,50 @@
+{
+  "baseline_count": 4216,
+  "changed": [
+    "design/planning/tech-driver-rework-2026-10-22/implementation-plan.json",
+    "design/planning/tech-driver-rework-2026-10-22/progress.json",
+    "tests/regression-suite.md",
+    "Assets/Scripts/Core/MVPGameManager.cs",
+    "Assets/Scripts/Core/RaceMovementRules.cs",
+    "Assets/Scripts/Core/RaceTurnPreviewRules.cs",
+    "Assets/Scripts/Gameplay/TrackRules.cs",
+    "Assets/Tests/Editor/race_movement_rules_test.cs",
+    "Assets/Tests/Editor/race_turn_preview_test.cs",
+    "Assets/Tests/Editor/track_rules_test.cs",
+    "design/gdd/foodula-1-drivers.md",
+    "design/gdd/foodula-1-tech-tree.md",
+    "design/ux/racing-tech-ui-checklist.md",
+    "design/ux/racing-tech-ui.md",
+    "docs/memory/current-task-list.md",
+    "docs/memory/game-mechanics.md",
+    "docs/memory/project-overview.md"
+  ],
+  "missing": [],
+  "protected_changed": [],
+  "new_paths": [
+    "Assets/Tests/Editor/race_uk_skill_coroutine_test.cs",
+    "Assets/Tests/Editor/race_uk_skill_coroutine_test.cs.meta",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/README.md",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/final-loaded-assemblies.json",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/final-native-plan.json",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/final-native-result.json",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/first-native-plan.json",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/first-native-result.json",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/initial-compile-errors.json",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/initial-independent-compile.json",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/new-native-cases.json",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/related-git-diff.patch",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/review.json",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/run-final-selection.cs",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/source-hashes.json",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/unity-postflight.json",
+    "production/qa/evidence/tech-driver-I01e-2026-10-24/verification.json"
+  ],
+  "diff_check_exit": 0,
+  "head": "f0a12b01e181d1ae9cf3009bc446da003f7c6c56",
+  "word_sha256": {
+    "design\\planning\\tech-driver-rework-2026-10-22\\Foodula1_科技树调整草案.docx": "281e077813344ab1e3627bb075dcc28d361a0626c8c39b3492f016a9f62d7bb3",
+    "design\\planning\\tech-driver-rework-2026-10-22\\Foodula1_车手技能调整草案.docx": "94eb7763825f777d477b3fcb8fee92bad27e6353e42d8b2cdeb98f3889914f46"
+  },
+  "new_fixture_note": "New test source is a partial of existing RaceGameLoopCoroutineTests, already registered in long-races; other cases append existing fixtures. Native discovery matched exact plan, no inventory drift. RegressionModules unchanged."
+}

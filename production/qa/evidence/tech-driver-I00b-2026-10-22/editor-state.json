@@ -1,0 +1,22 @@
+{
+  "observedUtc": "2026-10-22T15:15:30.4018509Z",
+  "scene": "Assets/Scenes/MainMenu.unity",
+  "dirty": false,
+  "loadedScenes": [
+    {
+      "path": "Assets/Scenes/MainMenu.unity",
+      "dirty": false
+    }
+  ],
+  "playing": false,
+  "compiling": false,
+  "importing": false,
+  "license": true,
+  "nativeTests": false,
+  "modularBusy": false,
+  "lastResult": "D:\\UnityProject\\Foodula1\\Library\\Foodula1\\RegressionRuns\\20261022T150838009Z-c4adc382\\result.json",
+  "runtimeMvid": "a3e1bebc-ca62-4c3a-98d5-4fd1d28cf564",
+  "editorMvid": "ee0383d1-87ce-4287-8942-29c07e554116",
+  "selectorCompiled": true,
+  "lifecycleCompiled": true
+}

@@ -1,0 +1,145 @@
+{
+  "package": "P3b",
+  "head": "f0a12b01e181d1ae9cf3009bc446da003f7c6c56",
+  "time": "2026-10-22T05:39:38.128580",
+  "kind": "candidate_design_only_not_implementation",
+  "input_sha256": {
+    "AGENTS.md": "620757473b1af13289691b8455e97dc3bb8d722c8f952a85520402642a757156",
+    "docs/memory/project-overview.md": "a589da808be7082950527c5fbcae2510af626def1b2b13c320ac6ba1744c00e3",
+    "docs/memory/game-mechanics.md": "41cd6b1575d737671bd357307e52bd5e7ec04c580d9361ba899a0f454bd6a56d",
+    "docs/memory/current-task-list.md": "c6b2a346916b65491bc4127074242e2377290e215afc381e1038f0e23c423098",
+    "docs/architecture/adr-002-layered-pure-function-architecture.md": "b5b74343e02a341d693fab9bbd891637d046d93fa34db7bb2ceeaac0c2ee2687",
+    "design/ux/racing-tech-ui.md": "236137df347863b2f749a464503fbd368b2d49a9df2dfed4e284abe005d1bff0",
+    "Assets/Scripts/Drivers/DriverSkillRules.cs": "1eaf5c3e54b7f25e1930f9eb7f0f2b33984b89d3a45a41b0401e58e00a5ba175",
+    "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "69cf5948dc663dd5146a312441d8068c786f3c749ac55636b71bfcb8a1e857dd",
+    "Assets/Scripts/Core/RaceTurnSkillCleanup.cs": "5c8154d991b54c808002388a7922f3a8bdd771ea6257171f5cf498ccfaef41ac",
+    "design/planning/tech-driver-rework-2026-10-22/feedback.json": "9bf842dabd10396bc8991b5f576a2374abf1ae999d2d1b0bb2f255402fd4a964",
+    "design/planning/tech-driver-rework-2026-10-22/inputs/Foodula1_科技树设计.docx": "c8996c17fc0aa44d6ea25ef58d9659956063be2e839913a51bde462f370c108f",
+    "design/planning/tech-driver-rework-2026-10-22/inputs/Foodula1_车手技能设计.docx": "d4def8c0b1e31774c861ea75f23343ef06afecc8ccea166aa2f4becc1c45a201",
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技与车手调整简报.docx": "afc1c1e33b1edef7a547a68e2df34e4879c55e1e5f87f9988a579ae10b11d01b",
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技树调整草案.docx": "aca6e940ea67e7144ee01464aab3eb06e7139b85663a6b16bd723e8806f34202",
+    "design/gdd/foodula-1-ai.md": "9286437a8ceb998e2ec06fb2803f76e3bac85fd8b31e449364ea1c07e37aa9df",
+    "design/gdd/foodula-1-audio-style.md": "3cbde3edaeb26d99d40e246fdff551fda93a4c67992ccadb6ba0bc238c4a5af8",
+    "design/gdd/foodula-1-career-mode.md": "0e93277856cf45ea646e7f7f9c19174c9c4773d28497eccbbe9a2b496fb22600",
+    "design/gdd/foodula-1-concept.md": "130eecddc1eb79839afcbc29e71a314e552c5adf5792c7b277bcf7d27c0dc69d",
+    "design/gdd/foodula-1-core-mechanics.md": "00a8a85e1ddcf8f8babd8341abc6617a1922861b624c328a745678a06fbb12a8",
+    "design/gdd/foodula-1-drivers.md": "e08341852a10e97a659bff69e5fca966ac794b033cb00175365e05b9d0794973",
+    "design/gdd/foodula-1-free-race.md": "67a340b0303e127cae0ce7eba22942d16330f3b70d17c2d754ec60e2ba2b12d5",
+    "design/gdd/foodula-1-teams-cars.md": "951874e9240553b7ceed592dec6d4f1f2aec86234898557600d0fd8a590f85ee",
+    "design/gdd/foodula-1-tech-tree.md": "61b286ba29a641bdebae0f7a60b34f35f69c27b22377bce1854bd9bb41402ce9",
+    "design/gdd/foodula-1-tracks.md": "9aea28328be794e441473331451200ebf2d99cf7cc18524358a9213d0f6574b4",
+    "design/gdd/foodula-1-tutorial-settings-encyclopedia.md": "efd47b687185191c0be7896280951f3b8cb626e694a60283a0f33a2cda571333",
+    "design/gdd/foodula-1-visual-style.md": "e0a229203693238a8b870a1bfed890b43613ac26f1980f4e2ab00ada6abe910b",
+    "design/gdd/game-concept.md": "abd32a1f4c3f244b03b46fe30951bab09fe024715a247b9c3484e09b967c8c8f",
+    "design/gdd/reviews/game-concept-review-log.md": "786846e603f0198b77a82078d59c02027c0819b0b42f25e1429720d01a656b36",
+    "design/gdd/systems-index.md": "0b4f3d34a054c97ab9f0832f77ddd6ee5c817b9dcc814439fe4a1bbf8dc38bea"
+  },
+  "original_feedback_sha256": {
+    "C:\\Users\\Admin\\AppData\\Roaming\\dragfile_file\\Foodula1_科技树设计.docx": "c8996c17fc0aa44d6ea25ef58d9659956063be2e839913a51bde462f370c108f",
+    "C:\\Users\\Admin\\AppData\\Roaming\\dragfile_file\\Foodula1_车手技能设计.docx": "d4def8c0b1e31774c861ea75f23343ef06afecc8ccea166aa2f4becc1c45a201"
+  },
+  "output_sha256": {
+    "Foodula1_车手技能调整草案.docx": "e527bb46c91e64b397ec0a6d6eba389a97eb5b782f56d4a6aab1174f3b076a33"
+  },
+  "model_files": {
+    "p3b-model-input.json": "c74506aa8fcf2e73ff7980a3d1e3880d0e346d2147995206c0e281504506b817",
+    "p3b_design_model.py": "25f8bde70f40592198874fef20a54182c5d7a17826fd78b1f85259d562afed9e",
+    "p3b-model-results.json": "706843d2f6f65808e005619ab821b11aecf12f78906a5f0c3e8886ac70de0f4b"
+  },
+  "research_sha256": "3c323e0a96142ad292719935e78551a16948db30a3a51a0ef0ef55d66e49053b",
+  "progress_sha256": "abe3e47c06378c7f4ae5ab14763def2fcee7ee32739352c7c8d8bd12123666d9",
+  "verified_sources": [
+    {
+      "id": "S06",
+      "url": "https://www.formula1.com/en/information/drivers-hall-of-fame-alberto-ascari.6zgWYwDIjoQmYSiz48FAZD"
+    },
+    {
+      "id": "S07",
+      "url": "https://www.museotazionuvolari.it/en/nuvolari-biografia.php"
+    },
+    {
+      "id": "S08",
+      "url": "https://www.nascar.com/news-media/2020/03/24/rewatch-tony-stewarts-2011-win-at-homestead-miami-speedway/"
+    },
+    {
+      "id": "S09",
+      "url": "https://www.nascar.com/news-media/2015/11/22/kyle-busch-wins-first-sprint-cup-series-championship/"
+    },
+    {
+      "id": "S20",
+      "url": "https://www.nascar.com/news-media/2019/03/17/kyle-busch-200-wins-nascar-national-series/"
+    },
+    {
+      "id": "S21",
+      "url": "https://www.nascar.com/news-media/2020/01/29/tony-stewarts-love-of-racing-will-be-treasured-in-nascar-hall-of-fame/amp/"
+    }
+  ],
+  "qa": {
+    "directory": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P3b-it-us",
+    "pdf": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P3b-it-us\\driver-final.pdf",
+    "render": "D:\\UnityProject\\Foodula1\\Library\\DocumentReview\\tech-driver-20261022\\P3b-it-us\\render-final",
+    "pages_reviewed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "last_repair_rechecked_pages": [
+      21,
+      22,
+      23
+    ],
+    "other_pages_pixel_identical": true,
+    "native_word_read_only_export": true,
+    "packaged_renderer_limitation": "此前同一依赖包已诊断缺少soffice.exe，本包使用隐藏Word只读导出和PDFium渲染，未安装软件",
+    "template_preserve_only_parts_unchanged": true,
+    "editable_tables": 26,
+    "source_hyperlinks_in_body": 14,
+    "style_lint_note": "Normal样式的加粗表头被提示为heading-like；逐页核验为列名，未把表头误改为章节标题"
+  },
+  "missing_governance": [
+    ".Codex/docs",
+    "production/session-state/active.md"
+  ],
+  "unity_tests_run": 0,
+  "unity_and_console_checked": false,
+  "gameplay_changed": false,
+  "limits": [
+    "No production C# execution",
+    "No full board route, deck or random draw",
+    "No weather, hidden AI, career save or win-rate simulation",
+    "Linear apex fixture only checks candidate ordering and fee requests",
+    "No Unity or player feel acceptance",
+    "Figures are candidates, not balanced numbers or approved gameplay",
+    "Pressure choice and Ascari card selection require future UI and mode review"
+  ],
+  "owned_increment_files": [
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_车手技能调整草案.docx",
+    "design/planning/tech-driver-rework-2026-10-22/research.json",
+    "design/planning/tech-driver-rework-2026-10-22/progress.json",
+    "design/planning/tech-driver-rework-2026-10-22/analysis/p3b-model-input.json",
+    "design/planning/tech-driver-rework-2026-10-22/analysis/p3b_design_model.py",
+    "design/planning/tech-driver-rework-2026-10-22/analysis/p3b-model-results.json",
+    "design/planning/tech-driver-rework-2026-10-22/analysis/p3b-source-manifest.json"
+  ]
+}

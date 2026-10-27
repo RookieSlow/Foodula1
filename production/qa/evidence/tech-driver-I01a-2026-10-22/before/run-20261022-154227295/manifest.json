@@ -1,0 +1,527 @@
+{
+    "utc": "2026-10-22T15:42:27.2973945Z",
+    "stage": "before",
+    "kind": "Controlled EditMode full production RaceCanvas. A4 labels and technology states are explicit presentation fixtures; no running match, actual heat transfer, gameplay balance or complete-mode acceptance.",
+    "lifecycle": "Owned preview scene/canvas/camera, disabled project behaviours and explicitly invoked HUD.Start plus production ApplyLayout. Owned static font/material clones; exact settings current/repository restoration. Before keeps the original disabled A4 driver slot; after calls the production technology widget and ShowTechnologyCardChoice through reflection, with counter callbacks only. No source fonts, scenes, player save or settings persistence.",
+    "records": [
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I01a-2026-10-22\\before\\run-20261022-154227295\\1920x1080-entry-before.png",
+            "fixture": "entry-before",
+            "width": 1920,
+            "height": 1080,
+            "cancelCallbacks": 0,
+            "confirmCallbacks": 0,
+            "entryCallbacks": 0,
+            "technologyActive": false,
+            "driverActive": true,
+            "technologyInteractable": false,
+            "cardWidth": 0.0,
+            "cardHeight": 0.0,
+            "overlayRaycast": false,
+            "confirmInteractable": false,
+            "selectedExactInstance": false,
+            "labels": [
+                {
+                    "name": "OperationTitle",
+                    "text": "其他操作菜单",
+                    "width": 229.63201904296876,
+                    "height": 51.02996826171875,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "1",
+                    "width": 71.2857666015625,
+                    "height": 32.69322204589844,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "2",
+                    "width": 71.2857666015625,
+                    "height": 32.6932373046875,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "3",
+                    "width": 71.28578186035156,
+                    "height": 32.69322204589844,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "4",
+                    "width": 71.28578186035156,
+                    "height": 32.6932373046875,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "TeamGearTitle",
+                    "text": "英国 · 经典 H 档",
+                    "width": 209.66403198242188,
+                    "height": 22.147018432617189,
+                    "preferredHeight": 18.829999923706056,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "TeamGearState",
+                    "text": "实际 G2 / 待选 G2",
+                    "width": 209.66403198242188,
+                    "height": 22.147018432617189,
+                    "preferredHeight": 17.3799991607666,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "TeamGearDetail",
+                    "text": "出牌 2张 · 换挡热 0",
+                    "width": 209.66403198242188,
+                    "height": 20.03778076171875,
+                    "preferredHeight": 16.65999984741211,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "MovementLabel",
+                    "text": "",
+                    "width": 197.08419799804688,
+                    "height": 21.387693405151368,
+                    "preferredHeight": 0.0,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "HeatLabel",
+                    "text": "",
+                    "width": 197.08419799804688,
+                    "height": 21.619705200195314,
+                    "preferredHeight": 0.0,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "确认",
+                    "width": 209.66403198242188,
+                    "height": 61.235992431640628,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "决胜抉择 · 请在选挡阶段发动",
+                    "width": 209.66403198242188,
+                    "height": 64.63801574707031,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "重新开始",
+                    "width": 209.66403198242188,
+                    "height": 47.62799072265625,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "返回主菜单",
+                    "width": 209.66403198242188,
+                    "height": 47.62799072265625,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "StatusText",
+                    "text": "出牌阶段 · 首次正式出牌前",
+                    "width": 209.66403198242188,
+                    "height": 61.235992431640628,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "出牌",
+                    "width": 209.66403198242188,
+                    "height": 61.235992431640628,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "LogText",
+                    "text": "",
+                    "width": 219.64804077148438,
+                    "height": 44.22599792480469,
+                    "preferredHeight": 0.0,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I01a-2026-10-22\\before\\run-20261022-154227295\\2560x1440-entry-before.png",
+            "fixture": "entry-before",
+            "width": 2560,
+            "height": 1440,
+            "cancelCallbacks": 0,
+            "confirmCallbacks": 0,
+            "entryCallbacks": 0,
+            "technologyActive": false,
+            "driverActive": true,
+            "technologyInteractable": false,
+            "cardWidth": 0.0,
+            "cardHeight": 0.0,
+            "overlayRaycast": false,
+            "confirmInteractable": false,
+            "selectedExactInstance": false,
+            "labels": [
+                {
+                    "name": "OperationTitle",
+                    "text": "其他操作菜单",
+                    "width": 229.63201904296876,
+                    "height": 51.02996826171875,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "1",
+                    "width": 71.2857666015625,
+                    "height": 32.69322204589844,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "2",
+                    "width": 71.2857666015625,
+                    "height": 32.6932373046875,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "3",
+                    "width": 71.28578186035156,
+                    "height": 32.69322204589844,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "4",
+                    "width": 71.28578186035156,
+                    "height": 32.6932373046875,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "TeamGearTitle",
+                    "text": "英国 · 经典 H 档",
+                    "width": 209.66403198242188,
+                    "height": 22.147018432617189,
+                    "preferredHeight": 18.829999923706056,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "TeamGearState",
+                    "text": "实际 G2 / 待选 G2",
+                    "width": 209.66403198242188,
+                    "height": 22.147018432617189,
+                    "preferredHeight": 17.3799991607666,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "TeamGearDetail",
+                    "text": "出牌 2张 · 换挡热 0",
+                    "width": 209.66403198242188,
+                    "height": 20.03778076171875,
+                    "preferredHeight": 16.65999984741211,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "MovementLabel",
+                    "text": "",
+                    "width": 197.08419799804688,
+                    "height": 21.387693405151368,
+                    "preferredHeight": 0.0,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "HeatLabel",
+                    "text": "",
+                    "width": 197.08419799804688,
+                    "height": 21.619705200195314,
+                    "preferredHeight": 0.0,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "确认",
+                    "width": 209.66403198242188,
+                    "height": 61.235992431640628,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "决胜抉择 · 请在选挡阶段发动",
+                    "width": 209.66403198242188,
+                    "height": 64.63801574707031,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "重新开始",
+                    "width": 209.66403198242188,
+                    "height": 47.62799072265625,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "返回主菜单",
+                    "width": 209.66403198242188,
+                    "height": 47.62799072265625,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "StatusText",
+                    "text": "出牌阶段 · 首次正式出牌前",
+                    "width": 209.66403198242188,
+                    "height": 61.235992431640628,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "出牌",
+                    "width": 209.66403198242188,
+                    "height": 61.235992431640628,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "LogText",
+                    "text": "",
+                    "width": 219.64804077148438,
+                    "height": 44.22599792480469,
+                    "preferredHeight": 0.0,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        },
+        {
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I01a-2026-10-22\\before\\run-20261022-154227295\\1280x720-entry-before.png",
+            "fixture": "entry-before",
+            "width": 1280,
+            "height": 720,
+            "cancelCallbacks": 0,
+            "confirmCallbacks": 0,
+            "entryCallbacks": 0,
+            "technologyActive": false,
+            "driverActive": true,
+            "technologyInteractable": false,
+            "cardWidth": 0.0,
+            "cardHeight": 0.0,
+            "overlayRaycast": false,
+            "confirmInteractable": false,
+            "selectedExactInstance": false,
+            "labels": [
+                {
+                    "name": "OperationTitle",
+                    "text": "其他操作菜单",
+                    "width": 229.63201904296876,
+                    "height": 51.02996826171875,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "1",
+                    "width": 71.2857666015625,
+                    "height": 32.69322204589844,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "2",
+                    "width": 71.2857666015625,
+                    "height": 32.6932373046875,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "3",
+                    "width": 71.28578186035156,
+                    "height": 32.69322204589844,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "4",
+                    "width": 71.28578186035156,
+                    "height": 32.6932373046875,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "TeamGearTitle",
+                    "text": "英国 · 经典 H 档",
+                    "width": 209.66403198242188,
+                    "height": 22.147018432617189,
+                    "preferredHeight": 18.829999923706056,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "TeamGearState",
+                    "text": "实际 G2 / 待选 G2",
+                    "width": 209.66403198242188,
+                    "height": 22.147018432617189,
+                    "preferredHeight": 17.3799991607666,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "TeamGearDetail",
+                    "text": "出牌 2张 · 换挡热 0",
+                    "width": 209.66403198242188,
+                    "height": 20.03778076171875,
+                    "preferredHeight": 16.65999984741211,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "MovementLabel",
+                    "text": "",
+                    "width": 197.08419799804688,
+                    "height": 21.387693405151368,
+                    "preferredHeight": 0.0,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "HeatLabel",
+                    "text": "",
+                    "width": 197.08419799804688,
+                    "height": 21.619705200195314,
+                    "preferredHeight": 0.0,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "确认",
+                    "width": 209.66403198242188,
+                    "height": 61.235992431640628,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "决胜抉择 · 请在选挡阶段发动",
+                    "width": 209.66403198242188,
+                    "height": 64.63801574707031,
+                    "preferredHeight": 57.91999816894531,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "重新开始",
+                    "width": 209.66403198242188,
+                    "height": 47.62799072265625,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "返回主菜单",
+                    "width": 209.66403198242188,
+                    "height": 47.62799072265625,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "StatusText",
+                    "text": "出牌阶段 · 首次正式出牌前",
+                    "width": 209.66403198242188,
+                    "height": 61.235992431640628,
+                    "preferredHeight": 20.280000686645509,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "Label",
+                    "text": "出牌",
+                    "width": 209.66403198242188,
+                    "height": 61.235992431640628,
+                    "preferredHeight": 28.959999084472658,
+                    "overflow": false,
+                    "raycastTarget": false
+                },
+                {
+                    "name": "LogText",
+                    "text": "",
+                    "width": 219.64804077148438,
+                    "height": 44.22599792480469,
+                    "preferredHeight": 0.0,
+                    "overflow": false,
+                    "raycastTarget": false
+                }
+            ],
+            "overflows": []
+        }
+    ]
+}

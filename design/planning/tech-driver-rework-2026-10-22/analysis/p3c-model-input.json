@@ -1,0 +1,12 @@
+{
+  "package": "P3c",
+  "kind": "independent_candidate_design_not_production",
+  "heat_fixture_capacity": 7,
+  "native_china": {"go_cards": [3, 4, 4, 4], "go_extra_heat": [0, 1, 2, 3], "recover_cards": 1, "recover_cooling": [3, 2, 1, 0]},
+  "zhou": {"passive_extra_cooling": [1, 1, 2], "passive_per_lap": 1, "active_old_hand_cooling": [1, 2, 2], "active_personal_inputs": [2, 3, 3], "guard_max_uses_per_activation": 1, "protected_slipstream_max": 1, "active_uses_per_race": [1, 1, 2]},
+  "ma": {"passive_changes_per_lap": [1, 1, 2], "first_apex_limit_bonus": 1, "first_apex_heat_reduction": [0, 1, 1], "foregone_native_cooling": 1, "next_go_movement": [2, 3, 3], "active_uses_per_race": [1, 1, 2]},
+  "tsuchiya": {"next_first_speed_bonus": 1, "discounted_positive_apexes_per_turn": [0, 1, 2], "smoke_rear_range": [2, 3, 3], "own_slipstream_bonus": [0, 0, 2], "active_uses_per_race": [1, 1, 2]},
+  "takumi_retention": {"synthetic_public_corner_ids": ["C1", "C2", "C3"], "retained_original_speed_max": [1, 2, 3], "retained_cards_per_lap": 1, "hand_limit_fixture": 7, "gutter_max_apexes": [1, 1, 2], "active_uses_per_race": [1, 1, 2]},
+  "takahashi_replacement_option": {"passive_defense_events_per_lap": [1, 1, 2], "passive_cooling_per_event": 1, "active_cooling_from_old_discard": [1, 2, 2], "active_uses_per_race": [1, 1, 2]},
+  "limits": ["Receipt IDs are conceptual model ledgers; production engine is a count pool", "No production C# or Unity execution", "No full track routing, deck randomness, AI, weather performance or save migration", "Takahashi is one optional replacement, never an extra driver or approved ID change", "UI, full mode integration and balance remain unverified"]
+}

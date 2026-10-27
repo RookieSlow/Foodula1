@@ -1,0 +1,373 @@
+{
+  "package": "P4",
+  "kind": "candidate_cross_system_review_not_implementation",
+  "checked_at": "2026-10-22T06:41:34.172854+08:00",
+  "review_mode": "design-review lean",
+  "production_changed": false,
+  "implementation_authorized": false,
+  "feedback_total": 24,
+  "driver_cards": 12,
+  "replacement_candidates": 1,
+  "sources_opened_total": 24,
+  "new_external_sources": 0,
+  "source_sha256": {
+    "Assets/Scripts/Core/RaceTurnCleanup.cs": "7471e83828b73862ea519fa6147cb005539f49b5b65d2eac8c75c48233159f9b",
+    "Assets/Scripts/Core/RaceHeatPaymentExecution.cs": "63022e8da125a72157f4380d8b28ecf9f9e283ee095b56428dbcd44dccfc8dd8",
+    "Assets/Scripts/Core/RaceTurnPreviewRules.cs": "ae7ab1740b64f8bdd585f05d0ad2752caeb7254f1b7e6816c38eb6bd2a9079cb",
+    "Assets/Scripts/Core/RaceSettledSlipstreamResolution.cs": "c2fc56ae897cb415d078b8bb10d1e2106b5227199dfe74bd1758e614d9a3c6b5",
+    "Assets/Scripts/Core/RaceParticipantTechnologySetup.cs": "4d3761bda7d2f308db8e9840696780c6f7d20a47a8ceca645883cd9843a5752d",
+    "Assets/Scripts/Core/CardDeck.cs": "f5bdc0e2720e008c57a08757dc19e5c95e69c9a93c35d6858c2da900aed8c488",
+    "Assets/Scripts/Core/MVPGameManager.cs": "e94c64e1986a8b04f672c41309644346720538af69db58480c0792974f74d530",
+    "Assets/Scripts/Core/PlayerState.cs": "d92593e61dd73d90a23dfbd0033ecb9c1aebb3f0cd587d8e6d65e8aea0ebe867",
+    "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "69cf5948dc663dd5146a312441d8068c786f3c749ac55636b71bfcb8a1e857dd",
+    "Assets/Scripts/Drivers/DriverSkillRaceContextRules.cs": "e51a401897d2421601ce14a63ba83ec2ce16572fc9cb3a7b0c25c3e69f7e9923",
+    "Assets/Scripts/TechTree/TechTreeData.cs": "1a9654e5155074d575bd26f2f66d141afef42626d68e0b403be9b970bdaf4f10",
+    "Assets/Scripts/TechTree/TechTreeProfileCodec.cs": "95e7913891e67d47e87912cbecda98cfa2fd7c3424cc978ab0aa1d2704864952",
+    "Assets/Scripts/Career/CareerPersistence.cs": "e3d79a42028a8947d04c46610cbbbc56c5441b68195ce2701b91657a6cb59b46",
+    "Assets/Tests/Editor/RegressionModules.json": "83c9478d5f0c5cc60f9c3e85c80f2bb855516ece3f994e1b2e3c069a4fcece59",
+    "Assets/Scripts/Core/RaceSession.cs": "cfa587a0e2d71b06825a7465c458a6887567e0ca4fb04af336873453f78b6ab3",
+    "Assets/Scripts/Core/RaceTurnTechnologyCleanup.cs": "1f4472619f0f6da7765bdea6ddba5f90a01a62774738b4382e1989437c2d3530",
+    "Assets/Scripts/Drivers/DriverProgressStore.cs": "ca78955616d96a3deb7386fe6e33ceb700315acee212ceeff1796226e119431a",
+    "Assets/Scripts/Settings/InRaceConfirmationAction.cs": "5527bf6f3790caed59c2e267f0af94f75fb4b3c80ea5954c3402afd6511bf917",
+    "design/gdd/foodula-1-tech-tree.md": "61b286ba29a641bdebae0f7a60b34f35f69c27b22377bce1854bd9bb41402ce9",
+    "design/gdd/foodula-1-drivers.md": "e08341852a10e97a659bff69e5fca966ac794b033cb00175365e05b9d0794973",
+    "design/gdd/foodula-1-teams-cars.md": "951874e9240553b7ceed592dec6d4f1f2aec86234898557600d0fd8a590f85ee",
+    "design/ux/racing-tech-ui.md": "236137df347863b2f749a464503fbd368b2d49a9df2dfed4e284abe005d1bff0",
+    "design/ux/racing-tech-ui-checklist.md": "981ee1fc6870e10ea70b43ad7bcbb95b2aab4b9c1cd8cd7bb3efccdf8a6e31c9",
+    "docs/architecture/adr-002-layered-pure-function-architecture.md": "b5b74343e02a341d693fab9bbd891637d046d93fa34db7bb2ceeaac0c2ee2687"
+  },
+  "findings": [
+    {
+      "id": "F01",
+      "area": "input_commit",
+      "source_member": "MVPGameManager.BuildDriverSkillActivationContext / OnDriverSkillButtonClicked",
+      "observed_or_prior_candidate": "Existing driver button accepts gear input and spends immediately; target-card candidates need deferred plans.",
+      "candidate_resolution": "Candidate targets bind session, participant, round and version; stale or repeated confirm never spends again.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F02",
+      "area": "normal_heat_payment",
+      "source_member": "RaceHeatPaymentExecution.Pay",
+      "observed_or_prior_candidate": "Ordinary penalties can pay partially and then fail; this is existing gameplay.",
+      "candidate_resolution": "New fixed-cost intents preflight atomically; never replace all ordinary payments or undo committed penalties.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F03",
+      "area": "retention_order",
+      "source_member": "RaceTurnCleanup.Execute",
+      "observed_or_prior_candidate": "Played speed cards are discarded before resolveSkills.",
+      "candidate_resolution": "Intercept the unique retained ordinary speed before discard and refill; never duplicate the same instance in hand and discard.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F04",
+      "area": "forecast_isolation",
+      "source_member": "DriverSkillRuntime.CreatePresentationCopy / CardDeck.CreatePresentationCopy / TechTreeState.CreatePresentationCopy",
+      "observed_or_prior_candidate": "Current clones copy scalar state or lists; CardData instances remain shared.",
+      "candidate_resolution": "Deep-copy future mutable targets, reservations and seen-event sets; keep card adjustments in the plan, not CardData.value.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F05",
+      "area": "retirement_debt",
+      "source_member": "CardDeck.SetRegionalCapacityBonus / ReturnPermanentHeatToEngine / ReturnHeatCardsToPool",
+      "observed_or_prior_candidate": "Removed heat can settle capacity retirement debt rather than increase engine count.",
+      "candidate_resolution": "Display removed/retired/net-return separately; US ultimate caps net three; no paid-card double return. Full runtime conservation includes permanent heat in draw or in-flight zones; the three-zone model has neither and receipt references are not additional cards.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F06",
+      "area": "cn_cooling_drift",
+      "source_member": "RaceSession.ComputeReactionCooldown / MVPGameManager.ReactStep / foodula-1-teams-cars.md / CardDeck.RemoveHeatFromPile",
+      "observed_or_prior_candidate": "GDD hand-only description differs from production general cooling across hand/draw/discard at reaction.",
+      "candidate_resolution": "Record explicit confirmation point; preserve production behavior for research. Ma reservation covers all cooling sources, with weather-adjusted native budget; bonus cooling cannot pay it. Reserve only an old permanent hand card reached by the weather-adjusted native traversal prefix; temporary heat consumes that budget too.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F07",
+      "area": "source_ownership",
+      "source_member": "CardDeck.CoolHeatWithSources / RaceTurnTechnologyCleanup",
+      "observed_or_prior_candidate": "Same-input payments and temporary heat must not be silently treated as old source cards.",
+      "candidate_resolution": "Freeze old H/D IDs at input start; revalidate after ordinary cooling and before each candidate action.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F08",
+      "area": "tailwind_snapshot",
+      "source_member": "RaceSettledSlipstreamResolution.Execute",
+      "observed_or_prior_candidate": "Native follower chains are planned from one settled snapshot before movement.",
+      "candidate_resolution": "Keep snapshot; legal source -> hard block/finite guard -> BBQ soft loss -> voluntary forfeit -> exclusive Busch fee -> actual event.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F09",
+      "area": "clock_units",
+      "source_member": "MVPGameManager.GameLoop / RaceSession.BeginTurn / PlayerState.ClearTurnState / DriverSkillRuntime.BeginTurn",
+      "observed_or_prior_candidate": "Current duration ticks at global begin-round.",
+      "candidate_resolution": "New driver windows count own accepted inputs, clear on skip/pit/exit; JP R2 explicitly counts three global rounds regardless of field size.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F10",
+      "area": "ai_and_tutorial",
+      "source_member": "MVPGameManager player.driverSkill.Initialize / RaceParticipantTechnologySetup.Prepare",
+      "observed_or_prior_candidate": "Ordinary AI drivers disabled and tutorials omit technology; existing AI technology auto paths remain.",
+      "candidate_resolution": "Do not enable AI driver actions as a research side effect; future AI uses public geometry and own resources with identical validation.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F11",
+      "area": "season_state",
+      "source_member": "TechTreeProfileCodec.SaveData / CareerTechSnapshotData / CareerSaveCodec",
+      "observed_or_prior_candidate": "No IT structural choice or JP ratio field; career save schema is version 1.",
+      "candidate_resolution": "After approval only, specify versioned migration/defaults; retain and refuse unsupported future payloads instead of overwriting.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F12",
+      "area": "rp_launch_receipt",
+      "source_member": "TechTreeProfileStore.Save",
+      "observed_or_prior_candidate": "Void save/cache update provides no atomic RP spend plus launch authorization receipt.",
+      "candidate_resolution": "Candidate A needs one persisted team/mode-bound receipt; failed save grants nothing, prestart compensation once, no poststart/refunded reuse. Candidate B still compared.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F13",
+      "area": "driver_identity",
+      "source_member": "DriverProgressStore",
+      "observed_or_prior_candidate": "XP keyed by existing catalog-valid driver ID.",
+      "candidate_resolution": "Keep Takumi raw key; optional Takahashi independent zero or explicitly approved once-only migration. No chosen new ID or runtime edit.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F14",
+      "area": "confirmation_settings",
+      "source_member": "InRaceConfirmationAction",
+      "observed_or_prior_candidate": "Eight existing confirmation actions; no new technology bit currently.",
+      "candidate_resolution": "Reuse relevant existing preferences, one combined confirmation per final submission, visible disabled reasons and focus restoration.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F15",
+      "area": "uk_multiplier",
+      "source_member": "foodula-1-drivers.md / foodula-1-teams-cars.md / DriverSkillRuntime",
+      "observed_or_prior_candidate": "Old passive and technology blanket 1.25 descriptions conflict; no universal runtime entry found.",
+      "candidate_resolution": "Candidate integer caps are final, without implicit extra multiplier; preserve original UK uses and XP; final choice remains open.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F16",
+      "area": "per_car_scope",
+      "source_member": "MVPGameManager / RaceParticipantTechnologySetup",
+      "observed_or_prior_candidate": "Ordinary/free and 12-car Thunder setups differ; same team does not mean same participant.",
+      "candidate_resolution": "All temporary uses, targets, receipts and dedupe per unique participant; no shared team counter.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F17",
+      "area": "technology_layers",
+      "source_member": "RaceParticipantTechnologySetup.Prepare / RaceTurnTechnologyCleanup",
+      "observed_or_prior_candidate": "JP rules and demoBroth adapter exist; DE L3 and US repair/ultimate have auto paths; career branch not demoBroth.",
+      "candidate_resolution": "Separate pure rule, adapter, player operation and full-mode validation. New options do not erase existing implementation or claim player accessibility.",
+      "runtime_acceptance": "not_run"
+    },
+    {
+      "id": "F18",
+      "area": "candidate_combination_costs",
+      "source_member": "P1 P2 P3 candidate drafts",
+      "observed_or_prior_candidate": "Separate fees and source windows can be accidentally collapsed into free synergy.",
+      "candidate_resolution": "UK/driver discards use distinct cards; Ascari/IT cannot tune same card; Stewart/Busch new H cannot fill already locked BBQ; Ma is not a payment receipt.",
+      "runtime_acceptance": "not_run"
+    }
+  ],
+  "future_validation": [
+    {
+      "modules": [
+        "tech",
+        "drivers",
+        "cards-heat"
+      ],
+      "acceptance": "Fixed skill fees, target existence, cancel and replay; normal partial-payment/spin remains unchanged.",
+      "executed": false
+    },
+    {
+      "modules": [
+        "tech",
+        "drivers",
+        "cards-heat"
+      ],
+      "acceptance": "Distinct fee cards, old versus newly paid H/D, regional retirement debt and net-three US cap.",
+      "executed": false
+    },
+    {
+      "modules": [
+        "drivers",
+        "cards-heat",
+        "gears"
+      ],
+      "acceptance": "Ma native/weather attribution, all-source reservation, next-input Go/Recover and skip cleanup; Zhou post-cooling old-H gate.",
+      "executed": false
+    },
+    {
+      "modules": [
+        "drivers",
+        "cards-heat",
+        "core"
+      ],
+      "acceptance": "Takumi pre-discard exclusion, exact object ownership, refill cap and printed-value eligibility.",
+      "executed": false
+    },
+    {
+      "modules": [
+        "drivers",
+        "tech",
+        "tracks-weather-pit"
+      ],
+      "acceptance": "Frozen tailwind geometry, hard/soft modifiers, forfeit before fee, zero result and once-only actual event.",
+      "executed": false
+    },
+    {
+      "modules": [
+        "drivers",
+        "tech",
+        "core"
+      ],
+      "acceptance": "Own-input clocks versus JP three global rounds, 2/4/6/12 participants, terminal and scene-exit cleanup.",
+      "executed": false
+    },
+    {
+      "modules": [
+        "tech",
+        "career"
+      ],
+      "acceptance": "IT/JP choice migration, unsupported future payload retained, career isolation, summer window, and launch receipt replay/refund.",
+      "executed": false
+    },
+    {
+      "modules": [
+        "drivers",
+        "career"
+      ],
+      "acceptance": "Old XP key preserved; no alias or migration before explicit role decision.",
+      "executed": false
+    },
+    {
+      "modules": [
+        "drivers",
+        "tech",
+        "ui"
+      ],
+      "acceptance": "Target selectors, plan invalidation, confirmations once, input shielding, return/focus, disabled text, 3 resolutions and all affected rosters/modes.",
+      "executed": false
+    },
+    {
+      "modules": [
+        "drivers",
+        "tech",
+        "ai",
+        "tutorial"
+      ],
+      "acceptance": "AI stays disabled until implementation scope approved; future legal public-information decisions, tutorial exact deck/no rewards.",
+      "executed": false
+    }
+  ],
+  "model": {
+    "path": "analysis/p4-model-results.json",
+    "sha256": "542eb31995ed90bd8b383fd975c0505c51d4b716be7fa93fec6e6141c9e03e96",
+    "script_sha256": "10c55bd24519d132f6755058b537e15c92e3af798be929fe3ea3cf760c082b68",
+    "input_sha256": "a98924a2e46fe020692b2192ba04635a7010474394ebfc7441f2afe2eaa847d1",
+    "total": 46,
+    "passed": 46,
+    "failed": 0,
+    "skipped": 0,
+    "parameter_cases": 1180,
+    "elapsed_seconds": 0.0071,
+    "limitations": [
+      "Conceptual runtime tokens are not existing production fields",
+      "Synthetic event sequences do not run original C# or track routing",
+      "No Unity, real UI, storage, AI race, weather or balance acceptance",
+      "Atomic wallet writes are injected model fixtures; current PlayerPrefs adapter does not provide that transaction",
+      "Design alternatives, driver identity and new save fields remain unapproved",
+      "Three-zone model excludes heat in draw and in-flight zones; full production conservation must include every physical permanent-heat zone and count receipt references only once.",
+      "Mutually exclusive driver flags appear only in synthetic stress fixtures, not a legal roster."
+    ]
+  },
+  "model_attempts": [
+    {
+      "attempt": 1,
+      "status": "failed",
+      "total": 40,
+      "passed": 39,
+      "failed": 1,
+      "skipped": 0,
+      "parameter_cases": 1152,
+      "elapsed_seconds": null,
+      "failure": "Final case-count assertion expected 3456 instead of 1152; all enumerated resource/priority invariants reached completion.",
+      "time_note": "Initial process exited before model timer/result writer; no elapsed value was captured. Not a passing model run."
+    },
+    {
+      "attempt": 2,
+      "total": 43,
+      "passed": 43,
+      "failed": 0,
+      "skipped": 0,
+      "parameter_cases": 1152,
+      "elapsed_seconds": 0.0053,
+      "script_sha256": "3a14e536e05d11dd501fe8ce8e23db7f13549daea1e889cdddaf05966c0076ea",
+      "input_sha256": "c56b26ebeb2f4f133a5293abe6e2cb1975a4aac2d9795e240c6d640572c3f373"
+    },
+    {
+      "attempt": 3,
+      "total": 44,
+      "passed": 44,
+      "failed": 0,
+      "skipped": 0,
+      "parameter_cases": 1152,
+      "elapsed_seconds": 0.0059,
+      "script_sha256": "f317bc0339a6e8bcb084e79a38596e0b51b09578f9acc3df44aba0f8f8ab3d33",
+      "input_sha256": "c56b26ebeb2f4f133a5293abe6e2cb1975a4aac2d9795e240c6d640572c3f373"
+    },
+    {
+      "attempt": 4,
+      "total": 45,
+      "passed": 45,
+      "failed": 0,
+      "skipped": 0,
+      "parameter_cases": 1176,
+      "elapsed_seconds": 0.0053,
+      "input_sha256": "c56b26ebeb2f4f133a5293abe6e2cb1975a4aac2d9795e240c6d640572c3f373",
+      "script_sha256": "183ee333c10cb7180fd99e2a66e98ea706f5f4699aff828aa9545203a39c8a4d"
+    },
+    {
+      "attempt": 5,
+      "total": 46,
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0,
+      "parameter_cases": 1180,
+      "elapsed_seconds": 0.0071,
+      "script_sha256": "10c55bd24519d132f6755058b537e15c92e3af798be929fe3ea3cf760c082b68",
+      "input_sha256": "a98924a2e46fe020692b2192ba04635a7010474394ebfc7441f2afe2eaa847d1"
+    }
+  ],
+  "missing_governance": [
+    "production/session-state/active.md",
+    ".Codex/docs/directory-structure.md",
+    ".Codex/docs/technical-preferences.md",
+    ".Codex/docs/coordination-rules.md",
+    ".Codex/docs/coding-standards.md",
+    ".Codex/docs/context-management.md"
+  ],
+  "unity_tests": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "elapsed_seconds": null,
+    "native_RunFinished": null,
+    "reason": "Independent design package; Unity/editor/Console not inspected or operated."
+  },
+  "next_package": "P5 bounded consolidation of both drafts, 24 comment responses, key decisions and validation plan; no implementation."
+}

@@ -1,0 +1,22 @@
+{
+  "id": "I01c",
+  "date": "2026-10-24",
+  "status": "production_refresh_fix_independently_compiled_native_verification_pending",
+  "production_change": "Successful ConfirmPlayerSpeedCards now refreshes UK preparation action immediately after closing input; invalid commits retain input. No technology numeric or Hart passive change.",
+  "new_tests": 2,
+  "native_tests": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": null,
+    "status": "not_executed_unity_mcp_unavailable"
+  },
+  "independent_compile": {
+    "runtime_exit": 0,
+    "editor_exit": 0,
+    "kind": "Unity bundled Roslyn with copied current Bee response files; outputs in Library/AutomationReview only; not editor import or loaded new assemblies"
+  },
+  "evidence": "../../../production/qa/evidence/tech-driver-I01c-2026-10-24/README.md",
+  "screenshots": "none; new UI state screenshots pending"
+}
