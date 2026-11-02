@@ -123,9 +123,15 @@
         "MansellPursuitTests",
         "RaceDriverSkillActivationAdapterTests",
         "RaceTurnSkillCleanupTests",
+        "SchumacherStrategyManagerTests",
+        "SchumacherStrategyTests",
         "SchumacherTuningIntegrationTests",
         "SchumacherTuningTests",
-        "TrackTeamBalanceCornerHeatTests"
+        "TrackTeamBalanceCornerHeatTests",
+        "VettelFeedbackIntegrationTests",
+        "VettelFeedbackTests",
+        "VettelRhythmManagerTests",
+        "VettelRhythmTests"
       ]
     },
     {
@@ -248,8 +254,11 @@
         "ReturnToMenuConfirmationTests",
         "ReturnToMenuLifecycleAdapterTests",
         "SchumacherPassiveProfileUiTests",
+        "SchumacherStrategyProductionUiTests",
         "TeamCarPresentationTests",
-        "UkPrepMealManagerTests"
+        "UkPrepMealManagerTests",
+        "VettelFeedbackProfileUiTests",
+        "VettelRhythmProductionUiTests"
       ]
     },
     {

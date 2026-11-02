@@ -198,6 +198,13 @@ public sealed class TeamGearPresentationUI : MonoBehaviour
             appliedWhileLocked = true;
         minimumGear = config != null ? Mathf.Clamp(config.minGear, 1, 4) : 1;
         maximumGear = config != null ? Mathf.Clamp(config.maxGear, minimumGear, 4) : 4;
+        if (player.driverSkill?.Skill == DriverActiveSkillId.PerfectLap && player.driverSkill.Strategy.CommittedThisInput)
+        {
+            if (player.driverSkill.Strategy.Stage == SchumacherStrategyStage.PreparationCommitted)
+                maximumGear = Mathf.Min(maximumGear, 2);
+            else
+                minimumGear = Mathf.Max(minimumGear, 3);
+        }
         CurrentGear = ClampGear(player.gear);
         PendingGear = ClampGear(pendingGear);
         ControlsInteractable = canSelect;

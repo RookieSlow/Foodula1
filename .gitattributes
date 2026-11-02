@@ -44,3 +44,17 @@ production/qa/evidence/**/source-increment.diff.txt -text -whitespace
 # Raw incremental review diffs retain exact source bytes and original whitespace.
 production/qa/evidence/**/related-git-diff.patch -text -whitespace
 production/qa/evidence/**/git-increment-relative-to-start.diff.txt -text -whitespace
+
+# Preserve hashed raw I04 submission evidence byte-for-byte.
+production/qa/evidence/tech-driver-I04b1-2026-10-29/diff-before.patch -text -whitespace
+production/qa/evidence/tech-driver-I04b2-2026-10-29/diff-before.patch -text -whitespace
+production/qa/evidence/tech-driver-I04c1-2026-10-29/diff-after.patch -text -whitespace
+production/qa/evidence/tech-driver-I04c1-2026-10-29/native/diff-before.patch -text -whitespace
+production/qa/evidence/tech-driver-I04c2-2026-10-29/diff-after.patch -text -whitespace
+production/qa/evidence/tech-driver-I04c2-2026-10-29/native/diff-before.patch -text -whitespace
+production/qa/evidence/tech-driver-I04c2-2026-10-29/source/Assets/Scripts/Core/RaceSession.cs.meta -text -whitespace
+production/qa/evidence/tech-driver-I04c3a-2026-11-02/diff-after.patch -text -whitespace
+production/qa/evidence/tech-driver-I04c3a-2026-11-02/verification/compile_and_pure.py -text -whitespace
+production/qa/evidence/tech-driver-I04c3a-2026-11-02/verification/compile_and_pure64.py -text -whitespace
+production/qa/evidence/tech-driver-I04c3a-2026-11-02/verification/diff-before.patch -text -whitespace
+production/qa/evidence/tech-driver-I04c3a-2026-11-02/verification/standalone-rules-runtime-result.xml -text -whitespace

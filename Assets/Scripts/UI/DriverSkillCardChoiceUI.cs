@@ -9,6 +9,8 @@ using UnityEngine.UI;
 public sealed class DriverSkillCardChoiceUI : MonoBehaviour
 {
     private readonly List<CardData> cards = new List<CardData>();
+    private readonly List<VettelNativeSource> sources = new List<VettelNativeSource>();
+    private bool sourceMode;
     private readonly List<RectSnapshot> originalLayout = new List<RectSnapshot>();
     private readonly List<NavigationSnapshot> originalNavigation = new List<NavigationSnapshot>();
     private Button previousButton, nextButton, cancellationButton, confirmationButton;
@@ -19,6 +21,7 @@ public sealed class DriverSkillCardChoiceUI : MonoBehaviour
     private bool requiresCard = true;
 
     public CardData Selected => cards.Count > 0 ? cards[selectedIndex] : null;
+    public VettelNativeSource? SelectedSource => sourceMode && sources.Count > 0 ? sources[selectedIndex] : (VettelNativeSource?)null;
 
     public static DriverSkillCardChoiceUI Attach(Transform card, TMP_FontAsset font)
     {
@@ -41,6 +44,8 @@ public sealed class DriverSkillCardChoiceUI : MonoBehaviour
     {
         Clear();
         this.requiresCard = requiresCard;
+        previousButton.GetComponentInChildren<TMP_Text>().text = "上一张";
+        nextButton.GetComponentInChildren<TMP_Text>().text = "下一张";
         previousButton.gameObject.SetActive(requiresCard);
         nextButton.gameObject.SetActive(requiresCard);
         if (choices != null)
@@ -73,6 +78,23 @@ public sealed class DriverSkillCardChoiceUI : MonoBehaviour
         gameObject.SetActive(true);
     }
 
+    /// <summary>Required typed source selection on the same modal; no synthetic card or resource mutation.</summary>
+    public void ShowSources(IReadOnlyList<VettelNativeSource> choices, TMP_Text title, TMP_Text body,
+        Button cancel, Button confirm, bool canConfirm, Action onHidden)
+    {
+        Show(Array.Empty<CardData>(), title, body, cancel, confirm, canConfirm, onHidden, false);
+        sourceMode = true;
+        if (choices != null)
+            foreach (VettelNativeSource choice in choices)
+                if ((choice == VettelNativeSource.BasicCruise || choice == VettelNativeSource.PaidBeer ||
+                    choice == VettelNativeSource.GermanCornerExit) && !sources.Contains(choice)) sources.Add(choice);
+        previousButton.gameObject.SetActive(true); nextButton.gameObject.SetActive(true);
+        previousButton.GetComponentInChildren<TMP_Text>().text = "上一项";
+        nextButton.GetComponentInChildren<TMP_Text>().text = "下一项";
+        confirm.interactable = canConfirm && sources.Count > 0;
+        RefreshLabel();
+    }
+
     public void HideAndClear(bool hideObject = true)
     {
         Clear();
@@ -97,7 +119,7 @@ public sealed class DriverSkillCardChoiceUI : MonoBehaviour
 
     private void Next()
     {
-        if (selectedIndex >= cards.Count - 1) return;
+        if (selectedIndex >= (sourceMode ? sources.Count : cards.Count) - 1) return;
         selectedIndex++;
         RefreshLabel();
     }
@@ -116,14 +138,20 @@ public sealed class DriverSkillCardChoiceUI : MonoBehaviour
         GameObject focused = events != null ? events.currentSelectedGameObject : null;
         Button pagingFocus = focused == previousButton.gameObject ? previousButton :
             focused == nextButton.gameObject ? nextButton : null;
-        previousButton.interactable = cards.Count > 0 && selectedIndex > 0;
-        nextButton.interactable = cards.Count > 0 && selectedIndex < cards.Count - 1;
-        choiceLabel.text = !requiresCard ? "第二段无需弃速度牌\n仅支付1张永久热" : cards.Count == 0
+        int count = sourceMode ? sources.Count : cards.Count;
+        previousButton.interactable = count > 0 && selectedIndex > 0;
+        nextButton.interactable = count > 0 && selectedIndex < count - 1;
+        choiceLabel.text = sourceMode ? (count == 0 ? "没有可选来源\n0 / 0" : SourceLabel(sources[selectedIndex]) + $"\n永久热1→手牌 · {selectedIndex + 1} / {count}") : !requiresCard ? "第二段无需弃速度牌\n仅支付1张永久热" : cards.Count == 0
             ? "没有可选速度牌\n0 / 0"
             : $"普通速度牌 {cards[selectedIndex].value}\n{selectedIndex + 1} / {cards.Count}";
         RefreshNavigation();
         if (pagingFocus != null && !IsNavigable(pagingFocus)) FocusWithinModal();
     }
+
+    /// <summary>Player-facing names only; ownership and fees remain in the versioned plan.</summary>
+    public static string SourceLabel(VettelNativeSource source) => source == VettelNativeSource.BasicCruise
+        ? "基础巡航（1值直道原生）" : source == VettelNativeSource.PaidBeer
+        ? "实付黑啤（已解锁）" : source == VettelNativeSource.GermanCornerExit ? "德式出弯（已解锁）" : "无效来源";
 
     private void RefreshNavigation()
     {
@@ -171,6 +199,7 @@ public sealed class DriverSkillCardChoiceUI : MonoBehaviour
     {
         hidden = null;
         cards.Clear();
+        sources.Clear(); sourceMode = false;
         selectedIndex = 0;
         if (previousButton != null) { previousButton.onClick.RemoveAllListeners(); previousButton.interactable = false; }
         if (nextButton != null) { nextButton.onClick.RemoveAllListeners(); nextButton.interactable = false; }

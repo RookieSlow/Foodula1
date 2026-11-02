@@ -149,7 +149,7 @@ public class RaceSession
             player.extraCardSlotsThisTurn += TrickCardRules.ConsumeKantoOden(player.trickState);
     }
 
-    /// <summary>Starts only the eligible owner's input clocks; D03 passive does not migrate its legacy active clock.</summary>
+    /// <summary>Starts only the eligible owner's input clocks; D03 strategy is independent of its legacy active clock.</summary>
     public bool BeginDriverSkillInput(PlayerState player, int totalNodes = 0, int startFinishIndex = 0)
     {
         var skill = player?.driverSkill;
@@ -160,8 +160,11 @@ public class RaceSession
             skill.InterruptDrivingInput();
             return false;
         }
-        bool passiveStarted = skill.UsesPassiveDrivingInputClock && skill.Tuning.BeginInput(this, player);
-        if (!skill.BeginDrivingInput()) return passiveStarted;
+        bool passiveStarted = skill.PassiveSkill == DriverPassiveSkillId.EngineersTune && skill.Tuning.BeginInput(this, player);
+        bool feedbackStarted = skill.PassiveSkill == DriverPassiveSkillId.InformationSponge && skill.Feedback.BeginInput(this, player);
+        bool strategyStarted = skill.Skill == DriverActiveSkillId.PerfectLap && skill.Strategy.BeginInput(this, player);
+        bool rhythmStarted = skill.Skill == DriverActiveSkillId.PerfectRhythm && skill.Rhythm.BeginInput(this, player);
+        if (!skill.BeginDrivingInput()) return passiveStarted || strategyStarted || feedbackStarted || rhythmStarted;
         skill.Hunting.BeginInput(this, player, totalNodes, startFinishIndex);
         skill.Pursuit.BeginInput(this, player, totalNodes, startFinishIndex);
         skill.Charge.BeginInput(this, player, totalNodes, startFinishIndex);
@@ -178,6 +181,10 @@ public class RaceSession
     /// <summary>D02 A2 settlement, after ordinary draw/breakfast, from the owner's frozen old hand heat only.</summary>
     public MansellPursuitCoolingResult ResolveMansellPursuitAfterDraw(PlayerState player)
         => player?.driverSkill?.Pursuit.ConsumeAfterDraw(this, player) ?? default;
+
+    /// <summary>D04 one post-draw attempt, restricted to permanent original hand heat frozen at the next owner input.</summary>
+    public int ResolveVettelFeedbackAfterDraw(PlayerState player)
+        => player?.driverSkill?.Feedback.ConsumeAfterDraw(this, player) ?? 0;
 
     /// <summary>Called once after ordinary draw and breakfast, before any card is formally played.</summary>
     public bool BeginPrepMealInput(PlayerState player, int globalTurn)
@@ -366,6 +373,8 @@ public class RaceSession
         var burst = player.techState.germanBurst;
         TechTreeRules.UseSchwarzbierFuel(player.techState, burst.Declared ? burst.OpeningLap : player.lap);
         burst.RecordFuel();
+        player.driverSkill?.Feedback.RecordSource(this, player, VettelNativeSource.PaidBeer, 2, player.lap);
+        player.driverSkill?.Rhythm.MarkPaidBeer(this, player);
         return true;
     }
 

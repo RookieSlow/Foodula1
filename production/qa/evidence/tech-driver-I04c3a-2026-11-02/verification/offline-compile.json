@@ -1,0 +1,16 @@
+[
+  {
+    "assembly": "Assembly-CSharp",
+    "exit": 0,
+    "sources": 233,
+    "rsp_sha256": "3fb77cc2ae96cd91eea826a8658f4b72a9d8629ecf65d79e792b937ad0888e9a",
+    "boundary": "Offline Roslyn C#9; never loaded into live Unity, not Editor TestRunner/visual evidence."
+  },
+  {
+    "assembly": "Assembly-CSharp-Editor",
+    "exit": 0,
+    "sources": 214,
+    "rsp_sha256": "303d87d4a38b7ddc8172e74011e14b8af6b437f91a7515c4d5d034bede6b8972",
+    "boundary": "Offline Roslyn C#9; never loaded into live Unity, not Editor TestRunner/visual evidence."
+  }
+]

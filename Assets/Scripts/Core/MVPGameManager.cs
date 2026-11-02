@@ -75,6 +75,9 @@ public class MVPGameManager : MonoBehaviour
     private int driverSkillPlanVersion;
     private HunterSkillActivationPlan pendingHunterSkillPlan;
     private MansellChargeActivationPlan pendingMansellChargePlan;
+    private SchumacherStrategyActivationPlan pendingSchumacherStrategyPlan;
+    private VettelRhythmActivationPlan pendingVettelRhythmPlan;
+    private readonly Dictionary<PlayerState, VettelMovementFeedbackObservation> vettelMovementFeedback = new Dictionary<PlayerState, VettelMovementFeedbackObservation>();
     private UkPrepMealActivationPlan pendingPrepMealPlan;
     private int prepMealPlanVersion;
     private GermanFuelActivationPlan pendingGermanFuelPlan;
@@ -1736,6 +1739,9 @@ public class MVPGameManager : MonoBehaviour
                         hudUI.AppendLog($"{p.name} 英式全餐：尾流距离+{triggers}，获得 {triggers} 张限时热量牌。");
                 }
                 session.ResolveMansellPursuitAfterDraw(p);
+                int feedbackCooling = session.ResolveVettelFeedbackAfterDraw(p);
+                if (feedbackCooling > 0)
+                    hudUI?.AppendLog($"{p.name} 信息海绵：旧手永久热处理{feedbackCooling}，净回{p.driverSkill.Feedback.LastRestored}，退役{p.driverSkill.Feedback.LastRetired}。");
                 if (config.enableTechTree)
                     session.BeginPrepMealInput(p, raceTurnNumber);
             }
@@ -1847,6 +1853,14 @@ public class MVPGameManager : MonoBehaviour
                 if (finishDeferred && !RaceTurnRules.IsTerminal(p) && !RaceTurnRules.ShouldSkip(p))
                     RegisterStartFinishCrossing(p);
                 session.ArmItalyCornerExitBonus(p, completedCorner);
+                int rhythmBonus = ResolveVettelFeedbackAfterMovement(p, oldPos, lapBeforeMovement, completedCorner);
+                if (rhythmBonus > 0)
+                {
+                    // Settle the native route once before the separate tail can rewind or schedule its own pit crossing.
+                    ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
+                    RegisterPitEntryCrossing(p, oldPos, oldPos + p.totalMovementThisTurn);
+                }
+                yield return StartCoroutine(ApplyVettelRhythmReward(p, oldPos, rawEnd, lapBeforeMovement, rhythmBonus));
 
                 if (!p.isAI)
                 {
@@ -1907,7 +1921,7 @@ public class MVPGameManager : MonoBehaviour
 
                 // Only the newly introduced Hart path is gated here. A failed
                 // extra-apex payment cannot claim its abandoned planned route.
-                if (!hasHunterExtraCorners || (!RaceTurnRules.IsTerminal(p) && !RaceTurnRules.ShouldSkip(p)))
+                if (rhythmBonus <= 0 && (!hasHunterExtraCorners || (!RaceTurnRules.IsTerminal(p) && !RaceTurnRules.ShouldSkip(p))))
                 {
                     ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
                     RegisterPitEntryCrossing(p, oldPos, oldPos + p.totalMovementThisTurn);
@@ -2006,6 +2020,9 @@ public class MVPGameManager : MonoBehaviour
     {
         if (p.isBlown) return;
         p.driverSkill?.Tuning.Interrupt();
+        p.driverSkill?.Strategy.Interrupt();
+        p.driverSkill?.Feedback.Interrupt();
+        p.driverSkill?.Rhythm.Interrupt();
         if (movementAudioPlayer == p || instantAudioPlayer == p) StopMovementAudio(true);
 
         int spinMax = session != null ? session.EffectiveSpinMax(p) : 3;
@@ -2121,6 +2138,7 @@ public class MVPGameManager : MonoBehaviour
 
     private void ApplyGearShift(PlayerState p, int targetGear)
     {
+        if (p?.driverSkill?.Strategy.IsGearAllowed(targetGear) == false) return;
         session?.SealGermanBurstDeclaration(p);
         int previousGear = p.gear;
         TeamGearRules.Resolution shift = TeamGearRules.Resolve(
@@ -2487,8 +2505,50 @@ public class MVPGameManager : MonoBehaviour
         return GetVisualLaneIndex(p);
     }
 
+    /// <summary>Confirm frozen native source facts after actual animation/reaction/corner settlement, never from a forecast.</summary>
+    private int ResolveVettelFeedbackAfterMovement(PlayerState player, int oldPosition, int sourceLap, bool completedCorner)
+    {
+        if (!vettelMovementFeedback.TryGetValue(player, out var observation)) return 0;
+        vettelMovementFeedback.Remove(player);
+        if (observation.SourcePosition != oldPosition || observation.SourceLap != sourceLap) return 0;
+        int distance = player.turnMovement.ActualCells - observation.ActualCellsBefore;
+        observation.ApplyIfSettled(session, player, distance, completedCorner);
+        return observation.ConsumeRhythmBonusIfSettled(session, player, distance, completedCorner);
+    }
+
+    /// <summary>Settled native-source amplification is a separate driver tail with ordinary new-apex fees.</summary>
+    private IEnumerator ApplyVettelRhythmReward(PlayerState player, int baseStart, int baseCornerEnd, int sourceLap, int bonus)
+    {
+        if (bonus <= 0 || RaceTurnRules.IsTerminal(player) || RaceTurnRules.ShouldSkip(player)) yield break;
+        int before = player.turnMovement.ActualCells;
+        int oldPosition = player.position;
+        int tailStart = baseStart + player.totalMovementThisTurn;
+        int tailEnd = TrackRules.EndBeforeFinalFinish(trackManager.Nodes, baseStart,
+            tailStart + bonus, config.totalLaps - sourceLap);
+        var newCorners = TrackRules.GetAdditionalApexCornersCrossed(trackManager.Nodes,
+            baseStart, tailStart, tailStart, tailEnd);
+        int move = tailEnd < tailStart + bonus ? System.Math.Max(0, tailEnd + 1 - tailStart) : bonus;
+        bool finishDeferred = false;
+        System.Action deferFinish = newCorners.Count > 0 ? (System.Action)(() => finishDeferred = true) : null;
+        player.turnMovement.AddPlan("车手：人车合拍（固定来源）", bonus, TurnMovementKind.Driver);
+        yield return StartCoroutine(AnimateMovementWithFinishGate(player, GetCarIndex(player), move, false, deferFinish));
+        int actual = player.turnMovement.ActualCells - before;
+        player.totalMovementThisTurn += actual;
+        if (actual <= 0) yield break;
+        newCorners = TrackRules.GetAdditionalApexCornersCrossed(trackManager.Nodes,
+            baseStart, System.Math.Max(baseCornerEnd, tailStart), tailStart, System.Math.Min(tailEnd, tailStart + actual));
+        if (newCorners.Count > 0 && !ResolveCornerSet(player, oldPosition, newCorners)) yield break;
+        if (finishDeferred && !RaceTurnRules.IsTerminal(player) && !RaceTurnRules.ShouldSkip(player)) RegisterStartFinishCrossing(player);
+        if (RaceTurnRules.IsTerminal(player) || RaceTurnRules.ShouldSkip(player)) yield break;
+        ResolveLandmarkPasses(player, oldPosition, oldPosition + actual);
+        RegisterPitEntryCrossing(player, oldPosition, oldPosition + actual);
+        hudUI?.AppendLog($"{player.name} 人车合拍：锁定原生来源已实际生效，追加{actual}格（本次已用）。");
+        hudUI?.RefreshTurnTelemetry(Player);
+    }
+
     private void ComputeMovements(List<PlayerState> turnOrder, HashSet<PlayerState> turnSkipped)
     {
+        vettelMovementFeedback.Clear();
         overtakesThisTurn.Clear();
         slipstreamsThisTurn.Clear();
 
@@ -2497,11 +2557,15 @@ public class MVPGameManager : MonoBehaviour
         {
             if (RaceTurnRules.IsInactive(p, turnSkipped))
             {
+                p.driverSkill?.Strategy.Interrupt();
+                p.driverSkill?.Feedback.Interrupt();
+                p.driverSkill?.Rhythm.Interrupt();
                 p.totalMovementThisTurn = 0;
                 p.cornerTotalThisTurn = 0;
                 slipstreamsThisTurn[p] = default;
                 continue;
             }
+            p.driverSkill?.Strategy.ValidateMovementInput(session, p, GetRequiredSpeedCardsThisTurn(p));
             p.cornerTotalThisTurn = RaceMovementRules.ComputeCornerSpeed(
                 p, activeTutorialOpponentCue, p == AI);
         }
@@ -2525,7 +2589,8 @@ public class MVPGameManager : MonoBehaviour
             bonus += italyCornerExitBonus;
             p.turnMovement.AddPlan("意大利：弯后出弯加速", italyCornerExitBonus, TurnMovementKind.Other);
             // DE L2 香肠拼盘：额外 +1 不计限速，原速度仍在 ResolveCorners 判定。
-            if (p.techState != null && TechTreeRules.ShouldTriggerWurstplatte(p.techState, session.TechDb, crossedCorner))
+            bool germanCornerExit = p.techState != null && TechTreeRules.ShouldTriggerWurstplatte(p.techState, session.TechDb, crossedCorner);
+            if (germanCornerExit)
             {
                 bonus += 1;
                 p.turnMovement.AddPlan("科技：香肠拼盘", 1, TurnMovementKind.Technology);
@@ -2575,6 +2640,8 @@ public class MVPGameManager : MonoBehaviour
                 RaceMovementRules.ResolveBaseMovement(
                     p.cornerTotalThisTurn, bonus, activeTutorialOpponentCue, p == AI);
             p.turnMovement.ReconcileBaseTotal(p.totalMovementThisTurn);
+            var feedback = VettelMovementFeedbackObservation.Capture(session, p, crossedCorner, germanCornerExit);
+            if (feedback != null) vettelMovementFeedback[p] = feedback;
             raceLogWriter?.Append(
                 $"[MOVE_PLAN] {p.name} role={(p.isAI ? "AI" : "PLAYER")} position={p.position} " +
                 $"corner_speed={p.cornerTotalThisTurn} non_slipstream_bonus={bonus} " +
@@ -3908,12 +3975,16 @@ public class MVPGameManager : MonoBehaviour
 
     private void ClosePrepMealInputs()
     {
+        vettelMovementFeedback.Clear();
         if (session?.Players == null) return;
         foreach (PlayerState player in session.Players)
         {
             player?.techState?.prepMeal.CloseInput();
             player?.techState?.germanBurst.CloseWindow();
             player?.driverSkill?.Tuning.Interrupt();
+            player?.driverSkill?.Strategy.Interrupt();
+            player?.driverSkill?.Feedback.Interrupt();
+            player?.driverSkill?.Rhythm.Interrupt();
             player?.driverSkill?.Pursuit.Interrupt();
             player?.driverSkill?.InterruptMansellChargeWindow();
             player?.driverSkill?.Hunting.CloseInput();
@@ -3922,6 +3993,7 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnGearButtonClicked(int gear)
     {
+        if (Player?.driverSkill?.Strategy.IsGearAllowed(gear) == false) return;
         if (IsTutorialActionInputBlocked) return;
         if (!phaseState.CanAcceptGear(inputState)) return;
         if (Player != null && TeamGearRules.IsChina(Player.teamId) && gear > ChinaGearShiftRules.GoGear)
@@ -3946,6 +4018,7 @@ public class MVPGameManager : MonoBehaviour
     {
         if (IsTutorialActionInputBlocked) return;
         if (!phaseState.CanAcceptGear(inputState)) return;
+        if (Player?.driverSkill?.Strategy.SealGear(inputState.PendingGear) == false) return;
         if (!inputState.ConfirmGear()) return;
         session?.SealGermanBurstDeclaration(Player);
         CancelHunterSkillPlan();
@@ -4098,9 +4171,82 @@ public class MVPGameManager : MonoBehaviour
         session.TryDeclareGermanBurst(player, true, raceTurnNumber);
     }
 
+    /// <summary>I04c2 source transaction API; real button and merged source confirmation follow in I04c3.</summary>
+    public bool TryPrepareVettelRhythmRequest(out VettelRhythmActivationPlan plan, out string reason)
+    {
+        plan = null; reason = "当前没有维特尔驾驶输入";
+        if (!CanAcceptSchumacherStrategyRequest()) return false;
+        CancelVettelRhythmRequest();
+        if (!VettelRhythmActivationPlan.TryCreate(session, Player, raceTurnNumber,
+            inputState.PendingGear, driverSkillPlanVersion, BuildDriverSkillActivationContext(Player), out plan, out reason)) return false;
+        pendingVettelRhythmPlan = plan;
+        return true;
+    }
+
+    /// <summary>One exact current plan commits a fixed source and full permanent fee; stale callbacks cannot charge.</summary>
+    public bool TryConfirmVettelRhythmRequest(VettelRhythmActivationPlan plan, VettelNativeSource source, out string reason)
+    {
+        reason = "人车合拍选择已过期";
+        if (plan == null || !ReferenceEquals(pendingVettelRhythmPlan, plan)) return false;
+        pendingVettelRhythmPlan = null;
+        if (!CanAcceptSchumacherStrategyRequest()) { plan.Cancel(); return false; }
+        if (!plan.TryCommit(session, Player, raceTurnNumber, inputState.PendingGear,
+            driverSkillPlanVersion, BuildDriverSkillActivationContext(Player), source, out reason)) return false;
+        RefreshHumanHand(Player);
+        return true;
+    }
+
+    /// <summary>Cancels only an unpaid source request; the committed window and costs are never refunded.</summary>
+    public void CancelVettelRhythmRequest()
+    {
+        driverSkillPlanVersion++;
+        var old = pendingVettelRhythmPlan;
+        pendingVettelRhythmPlan = null;
+        old?.Cancel();
+    }
+
+    /// <summary>I04b1 transaction API only; the real three-stage button/choice surface is connected in I04b2.</summary>
+    public bool TryPrepareSchumacherStrategyRequest(out SchumacherStrategyActivationPlan plan, out string reason)
+    {
+        plan = null;
+        reason = "当前没有舒马赫战术驾驶输入";
+        if (!CanAcceptSchumacherStrategyRequest()) return false;
+        CancelSchumacherStrategyRequest(false);
+        if (!SchumacherStrategyActivationPlan.TryCreate(session, Player, raceTurnNumber,
+            inputState.PendingGear, driverSkillPlanVersion, BuildDriverSkillActivationContext(Player), out plan, out reason)) return false;
+        pendingSchumacherStrategyPlan = plan;
+        return true;
+    }
+
+    /// <summary>Commit one currently pending exact plan; stale delegates cannot affect a replacement request.</summary>
+    public bool TryConfirmSchumacherStrategyRequest(SchumacherStrategyActivationPlan plan, CardData cost, out string reason)
+    {
+        reason = "战术选择已过期";
+        if (plan == null || !ReferenceEquals(pendingSchumacherStrategyPlan, plan)) return false;
+        pendingSchumacherStrategyPlan = null;
+        if (!CanAcceptSchumacherStrategyRequest()) { plan.Cancel(); return false; }
+        if (!plan.TryCommit(session, Player, raceTurnNumber, inputState.PendingGear,
+            driverSkillPlanVersion, BuildDriverSkillActivationContext(Player), cost, out reason)) return false;
+        RefreshHumanHand(Player);
+        return true;
+    }
+
+    /// <summary>Cancel a pending request for free; explicit execution decline abandons the remaining sequence.</summary>
+    public void CancelSchumacherStrategyRequest(bool declineExecution = true)
+    {
+        driverSkillPlanVersion++;
+        SchumacherStrategyActivationPlan old = pendingSchumacherStrategyPlan;
+        pendingSchumacherStrategyPlan = null;
+        old?.Cancel(declineExecution);
+    }
+
+    private bool CanAcceptSchumacherStrategyRequest() =>
+        !IsTutorialActionInputBlocked && !IsTutorialMode && config != null && Player != null && !Player.isAI &&
+        session != null && phaseState.CanAcceptGear(inputState);
+
     public void OnDriverSkillButtonClicked()
     {
-        if (TryRequestHunterSkillSelection() || TryRequestMansellChargeSelection()) return;
+        if (TryRequestHunterSkillSelection() || TryRequestMansellChargeSelection() || TryRequestSchumacherStrategySelection() || TryRequestVettelRhythmSelection()) return;
         PlayerState player = Player;
         if (player == null || player.driverSkill == null) return;
 
@@ -4113,6 +4259,82 @@ public class MVPGameManager : MonoBehaviour
         }
 
         PresentDriverSkillActivation(player);
+    }
+
+    /// <summary>D04 actual entry consumes this driver even on failure; it can never fall back to free legacy activation.</summary>
+    public bool TryRequestVettelRhythmSelection()
+    {
+        PlayerState player = Player;
+        if (player?.driverSkill == null || player.driverSkill.Skill != DriverActiveSkillId.PerfectRhythm) return false;
+        if (!TryPrepareVettelRhythmRequest(out var plan, out string reason))
+        { hudUI?.SetStatus(reason); hudUI?.RefreshDriverSkill(this, player); return true; }
+        if (hudUI == null) { CancelVettelRhythmRequest(); return true; }
+        string window = player.driverSkill.Tier >= 2 ? "本次及下次本人输入，各最多+2" : "仅本次本人输入，最多+2";
+        string safeName = (player.name ?? "").Replace("<", "＜").Replace(">", "＞");
+        string message = $"{safeName}\n付1永久引擎热→手牌，消耗1次\n{window}\n锁定后不换源；未触发不退款，新弯照常付热";
+        hudUI.ShowDriverSkillSourceChoice("人车合拍 · 选择固定来源", message, plan.Choices,
+            source => CommitVettelRhythmSelection(plan, source), () => CancelVettelRhythmSelection(plan));
+        hudUI.RefreshDriverSkill(this, player);
+        return true;
+    }
+
+    private void CommitVettelRhythmSelection(VettelRhythmActivationPlan plan, VettelNativeSource source)
+    {
+        if (!ReferenceEquals(pendingVettelRhythmPlan, plan)) return;
+        if (!TryConfirmVettelRhythmRequest(plan, source, out string reason))
+        { hudUI?.SetStatus(reason); hudUI?.RefreshDriverSkill(this, Player); return; }
+        hudUI?.RefreshPlayerResources(Player);
+        PresentDriverSkillActivation(Player);
+    }
+
+    private void CancelVettelRhythmSelection(VettelRhythmActivationPlan plan)
+    {
+        plan.Cancel();
+        if (ReferenceEquals(pendingVettelRhythmPlan, plan)) pendingVettelRhythmPlan = null;
+        hudUI?.RefreshDriverSkill(this, Player);
+    }
+
+    /// <summary>D03 actual player entry: one required discard or optional fixed-heat confirmation, never legacy activation.</summary>
+    public bool TryRequestSchumacherStrategySelection()
+    {
+        PlayerState player = Player;
+        if (player?.driverSkill == null || player.driverSkill.Skill != DriverActiveSkillId.PerfectLap) return false;
+        if (!TryPrepareSchumacherStrategyRequest(out var plan, out string reason))
+        {
+            hudUI?.SetStatus(reason);
+            hudUI?.RefreshDriverSkill(this, player);
+            return true;
+        }
+        if (hudUI == null) { CancelSchumacherStrategyRequest(); return true; }
+        string message = plan.IsExecution
+            ? $"执行{plan.ExecutionNumber}/2：付1张永久引擎热到手牌\n本次限3/4挡，移动+{plan.MovementBonus}格；不再扣次\n取消/缺牌/缺热将失去剩余执行\n追加弯心照常付热，不足会失控"
+            : $"准备：弃1张普通速度牌 · 限1/2挡\n后两次本人输入：3/4挡，各付1永久热\n每段移动+{DriverSkillRules.GetSchumacherStrategyMovementBonus(player.driverSkill.Tier)}格；本场剩余{player.driverSkill.UsesRemaining}次\n追加弯心照常付热，不足会失控";
+        UnityEngine.Events.UnityAction cancel = () => CancelSchumacherStrategySelection(plan);
+        if (plan.IsExecution)
+            hudUI.ShowDriverSkillContinuation("三段战术 · 执行" + plan.ExecutionNumber + "/2", message,
+                () => CommitSchumacherStrategySelection(plan, null), cancel, "支付1热并执行", "本段无需弃速度牌\n仅支付1张永久热");
+        else
+            hudUI.ShowDriverSkillCardChoice("三段战术 · 准备", message, plan.Choices,
+                card => CommitSchumacherStrategySelection(plan, card), cancel, "弃牌并准备");
+        return true;
+    }
+
+    private void CommitSchumacherStrategySelection(SchumacherStrategyActivationPlan plan, CardData cost)
+    {
+        if (!ReferenceEquals(pendingSchumacherStrategyPlan, plan)) return;
+        if (!TryConfirmSchumacherStrategyRequest(plan, cost, out string reason))
+        {
+            hudUI?.SetStatus(reason); hudUI?.RefreshDriverSkill(this, Player); return;
+        }
+        hudUI?.RefreshPlayerResources(Player);
+        PresentDriverSkillActivation(Player);
+    }
+
+    private void CancelSchumacherStrategySelection(SchumacherStrategyActivationPlan plan)
+    {
+        plan.Cancel();
+        if (ReferenceEquals(pendingSchumacherStrategyPlan, plan)) pendingSchumacherStrategyPlan = null;
+        hudUI?.RefreshDriverSkill(this, Player);
     }
 
     /// <summary>The required discard selection is independent of optional extra confirmations.</summary>
@@ -4234,11 +4456,17 @@ public class MVPGameManager : MonoBehaviour
     {
         CloseGermanFuelConfirmation(fromLifecycle);
         driverSkillPlanVersion++;
-        if (pendingHunterSkillPlan == null && pendingMansellChargePlan == null) return;
+        if (pendingHunterSkillPlan == null && pendingMansellChargePlan == null && pendingSchumacherStrategyPlan == null && pendingVettelRhythmPlan == null) return;
         HunterSkillActivationPlan hunter = pendingHunterSkillPlan;
         MansellChargeActivationPlan mansell = pendingMansellChargePlan;
+        SchumacherStrategyActivationPlan strategy = pendingSchumacherStrategyPlan;
+        VettelRhythmActivationPlan rhythm = pendingVettelRhythmPlan;
         pendingHunterSkillPlan = null;
         pendingMansellChargePlan = null;
+        pendingSchumacherStrategyPlan = null;
+        pendingVettelRhythmPlan = null;
+        rhythm?.Cancel();
+        strategy?.Cancel();
         hunter?.Cancel();
         mansell?.Cancel();
         if (hudUI != null)
@@ -4267,6 +4495,50 @@ public class MVPGameManager : MonoBehaviour
     {
         interactable = false;
         if (player == null || player.driverSkill == null) return "车手技能";
+        if (player.driverSkill.Skill == DriverActiveSkillId.PerfectRhythm)
+        {
+            var rhythm = player.driverSkill.Rhythm;
+            int uses = player.driverSkill.UsesRemaining;
+            if (ReferenceEquals(player, Player) && pendingVettelRhythmPlan != null && !pendingVettelRhythmPlan.IsClosed)
+                return $"人车合拍 待确认\n选来源 · 付1永久热 · 余{uses}次";
+            if (rhythm.HasWindow)
+            {
+                string source = rhythm.LockedSource == VettelNativeSource.BasicCruise ? "巡航" : rhythm.LockedSource == VettelNativeSource.PaidBeer ? "黑啤" : "出弯";
+                return rhythm.BonusThisInput > 0
+                    ? $"人车合拍 {source} · 本次已+2\n之后{System.Math.Max(0, rhythm.RemainingInputs - 1)}输入 · 余{uses}次"
+                    : $"人车合拍 锁{source} · {(rhythm.IsInputOpen ? "本次待触发" : "下次待触发")}\n窗口余{rhythm.RemainingInputs}输入 · 余{uses}次";
+            }
+            interactable = CanAcceptSchumacherStrategyRequest() && VettelRhythmActivationPlan.CanPrepare(session,
+                player, inputState.PendingGear, BuildDriverSkillActivationContext(player), out _);
+            if (!interactable)
+            {
+                VettelRhythmActivationPlan.CanPrepare(session, player, inputState.PendingGear,
+                    BuildDriverSkillActivationContext(player), out string reason);
+                return $"人车合拍 {(!string.IsNullOrEmpty(reason) ? reason : "当前阶段不可使用")}\n剩余{uses}次";
+            }
+            return $"人车合拍 选来源 · 付1热\n首次实效+2 · 余{uses}次";
+        }
+        if (player.driverSkill.Skill == DriverActiveSkillId.PerfectLap)
+        {
+            var strategy = player.driverSkill.Strategy;
+            int uses = player.driverSkill.UsesRemaining;
+            if (strategy.CommittedThisInput)
+                return strategy.Stage == SchumacherStrategyStage.PreparationCommitted
+                    ? $"三段战术 准备已弃牌\n本次限1/2挡 · 余{uses}次"
+                    : $"三段战术 执行{strategy.ExecutionNumber}/2已付热\n本次+{strategy.MovementBonusThisInput}格 · 余{uses}次";
+            interactable = CanAcceptSchumacherStrategyRequest() && SchumacherStrategyActivationPlan.CanPrepare(session,
+                player, inputState.PendingGear, BuildDriverSkillActivationContext(player), out _);
+            if (!interactable)
+            {
+                SchumacherStrategyActivationPlan.CanPrepare(session, player, inputState.PendingGear,
+                    BuildDriverSkillActivationContext(player), out string unavailable);
+                if (string.IsNullOrEmpty(unavailable)) unavailable = "当前阶段不可使用";
+                return $"三段战术 {unavailable}\n剩余{uses}次";
+            }
+            return strategy.IsExecutionAvailable
+                ? $"三段战术 执行{strategy.ExecutionNumber}/2 · +{DriverSkillRules.GetSchumacherStrategyMovementBonus(player.driverSkill.Tier)}格\n3/4挡付1热 · 不扣次 · 余{uses}次"
+                : $"三段战术 准备 · 弃1牌\n限1/2挡 · 余{uses}次";
+        }
         if (player.driverSkill.Skill == DriverActiveSkillId.AngryCharge)
         {
             if (player.driverSkill.Charge.CommittedThisInput)
@@ -4466,6 +4738,7 @@ public class MVPGameManager : MonoBehaviour
         int missing = RaceRules.GetMissingSpeedCardCount(required, speedCount);
         if (missing > 0)
         {
+            player.driverSkill?.Strategy.Interrupt();
             bool heatPaid = TryPayHeat(player, missing, player.position, "engine failure");
             TryAdvanceTutorialIfExpected(
                 TutorialAction.TriggerMissingCardPenalty,

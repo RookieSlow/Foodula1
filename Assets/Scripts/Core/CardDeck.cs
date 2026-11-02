@@ -464,6 +464,41 @@ public class CardDeck
         return true;
     }
 
+    /// <summary>One fixed permanent engine heat paid in full to hand; no ordinary partial payment or discount.</summary>
+    public bool TryPayFixedPermanentHeatToHand(out CardData receipt)
+    {
+        receipt = null;
+        if (heatPool == null || heatPool.remaining < 1) return false;
+        receipt = new CardData(CardType.Heat, 0);
+        heatPool.remaining--;
+        hand.Add(receipt);
+        return true;
+    }
+
+    /// <summary>D03 commits either one exact preparation discard or one full permanent execution payment.</summary>
+    public bool TryCommitSchumacherStrategyCost(CardData speedCost, bool execution, out CardData paidHeat)
+    {
+        paidHeat = null;
+        if (heatPool == null) return false;
+        if (execution)
+        {
+            if (speedCost != null || heatPool.remaining < 1) return false;
+            paidHeat = new CardData(CardType.Heat, 0);
+            heatPool.remaining--;
+            hand.Add(paidHeat);
+            return true;
+        }
+        if (speedCost == null || !speedCost.IsSpeed || speedCost.isTemp ||
+            !string.IsNullOrEmpty(speedCost.trickId) || drawPile.Contains(speedCost) || discardPile.Contains(speedCost))
+            return false;
+        int count = 0;
+        foreach (CardData card in hand) if (ReferenceEquals(card, speedCost)) count++;
+        if (count != 1) return false;
+        hand.Remove(speedCost);
+        discardPile.Add(speedCost);
+        return true;
+    }
+
     /// <summary>D02 fixed cost: validate once, then discard exact speed and one engine heat atomically.</summary>
     public bool TryCommitMansellChargeCost(CardData speedCost, bool secondLeg, out CardData paidHeat)
     {

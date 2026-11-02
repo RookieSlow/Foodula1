@@ -22,9 +22,12 @@ public sealed class DriverSkillRuntimeState
     public MansellChargeRuntime Charge { get; private set; } = new MansellChargeRuntime();
     public MansellPursuitRuntime Pursuit { get; private set; } = new MansellPursuitRuntime();
     public SchumacherTuningRuntime Tuning { get; private set; } = new SchumacherTuningRuntime();
+    public SchumacherStrategyRuntime Strategy { get; private set; } = new SchumacherStrategyRuntime();
+    public VettelFeedbackRuntime Feedback { get; private set; } = new VettelFeedbackRuntime();
+    public VettelRhythmRuntime Rhythm { get; private set; } = new VettelRhythmRuntime();
 
-    /// <summary>D03 passive clock is independent of its not-yet-migrated active skill.</summary>
-    public bool UsesPassiveDrivingInputClock => PassiveSkill == DriverPassiveSkillId.EngineersTune;
+    /// <summary>D03/D04 event passives use independent owner-input clocks.</summary>
+    public bool UsesPassiveDrivingInputClock => PassiveSkill == DriverPassiveSkillId.EngineersTune || PassiveSkill == DriverPassiveSkillId.InformationSponge;
 
     /// <summary>Migration is explicit so other drivers retain their existing clock.</summary>
     public bool UsesDrivingInputClock => DriverSkillRules.UsesDrivingInputClock(Skill);
@@ -52,10 +55,14 @@ public sealed class DriverSkillRuntimeState
         copy.Charge = Charge.CreatePresentationCopy();
         copy.Pursuit = Pursuit.CreatePresentationCopy();
         copy.Tuning = Tuning.CreatePresentationCopy();
+        copy.Strategy = Strategy.CreatePresentationCopy();
+        copy.Feedback = Feedback.CreatePresentationCopy();
+        copy.Rhythm = Rhythm.CreatePresentationCopy();
         return copy;
     }
 
-    public bool IsActive => Enabled && ActiveTurnsRemaining > 0;
+    public bool IsActive => Enabled && (Skill == DriverActiveSkillId.PerfectRhythm && Rhythm.ManualPath
+        ? Rhythm.HasWindow : ActiveTurnsRemaining > 0);
 
     public void Initialize(DriverProfile profile, int level, bool enabled)
     {
@@ -64,6 +71,9 @@ public sealed class DriverSkillRuntimeState
         Charge = new MansellChargeRuntime();
         Pursuit = new MansellPursuitRuntime();
         Tuning = new SchumacherTuningRuntime();
+        Strategy = new SchumacherStrategyRuntime();
+        Feedback = new VettelFeedbackRuntime();
+        Rhythm = new VettelRhythmRuntime();
         Skill = profile != null ? DriverSkillRules.GetSkill(profile.Id) : DriverActiveSkillId.None;
         PassiveSkill = profile != null ? DriverSkillRules.GetPassiveSkill(profile.Id) : DriverPassiveSkillId.None;
         Tier = DriverProgression.GetActiveTier(level);
@@ -90,6 +100,10 @@ public sealed class DriverSkillRuntimeState
 
     public bool TryActivate(DriverProfile profile, DriverSkillActivationContext context, out string reason)
     {
+        if (Skill == DriverActiveSkillId.PerfectRhythm)
+        { reason = "人车合拍需要当前固定来源费用计划"; return false; }
+        if (Skill == DriverActiveSkillId.PerfectLap && Strategy.ManualPath)
+        { reason = "三段战术需要当前费用计划"; return false; }
         // Never interleave the unmigrated UI path with a paid sequence.
         if (Skill == DriverActiveSkillId.AngryCharge && Charge.HasSequence)
         { reason = "雄狮追击需要当前费用计划"; return false; }
@@ -124,6 +138,9 @@ public sealed class DriverSkillRuntimeState
         Charge.CloseInput();
         Pursuit.CloseInput();
         Tuning.BeginGlobalTurn();
+        Strategy.BeginGlobalTurn();
+        Feedback.BeginGlobalTurn();
+        Rhythm.BeginGlobalTurn();
         drivingInputStartedThisTurn = false;
         IsDrivingInputOpen = false;
         if (!UsesDrivingInputClock)
@@ -155,6 +172,9 @@ public sealed class DriverSkillRuntimeState
         Charge.Interrupt();
         Pursuit.Interrupt();
         Tuning.Interrupt();
+        Strategy.Interrupt();
+        Feedback.Interrupt();
+        Rhythm.Interrupt();
         if (!UsesDrivingInputClock) return;
         IsDrivingInputOpen = false;
         drivingInputStartedThisTurn = true;

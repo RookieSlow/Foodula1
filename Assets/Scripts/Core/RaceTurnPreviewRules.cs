@@ -46,6 +46,9 @@ public static class RaceTurnPreviewRules
             italyCornerExitBoostReady = player.italyCornerExitBoostReady
         };
         copy.driverSkill?.Tuning.RebindPresentationCopy(session, player, copy);
+        copy.driverSkill?.Strategy.RebindPresentationCopy(session, player, copy);
+        copy.driverSkill?.Feedback.RebindPresentationCopy(session, player, copy);
+        copy.driverSkill?.Rhythm.RebindPresentationCopy(session, player, copy);
         copy.playedSpeedCardsThisTurn.AddRange(player.playedSpeedCardsThisTurn);
         var result = new RaceTurnPreview { GearTrial = gearTrial, Team = player.teamId, Movement = copy.turnMovement };
         Func<int, HeatPaymentDestination, HeatPaymentSource, bool> payWithSource = (amount, destination, source) => {
@@ -135,14 +138,18 @@ public static class RaceTurnPreviewRules
         result.MissingCards = copy.kantoOdenSkipThisTurn ? 0 : RaceRules.GetMissingSpeedCardCount(
             CardPlayRules.GetSpeedCardRequirement(copy).RequiredCardCount, result.CardCount);
         if (result.MissingCards > 0) pay(result.MissingCards, HeatPaymentDestination.Hand);
+        copy.driverSkill?.Strategy.ValidateMovementInput(session, copy,
+            CardPlayRules.GetSpeedCardRequirement(copy).RequiredCardCount);
         result.CardSpeedTotal = CardPlayRules.SumCommittedSpeedCardValues(copy.playedSpeedCardsThisTurn);
         copy.turnMovement.BeginBasePlan();
+        bool rhythmCruise = false, rhythmExit = false;
         if (!RaceTurnRules.IsInactive(copy, null) && (result.CardCount > 0 || copy.trickMoveBonusThisTurn != 0 ||
             (copy.techState?.germanBurst.FuelMovement ?? 0) > 0))
         {
             copy.cornerTotalThisTurn = RaceMovementRules.ComputeCornerSpeed(copy, null, false);
             int rawEnd = copy.position + copy.cornerTotalThisTurn;
             bool corner = crossesCorner != null && crossesCorner(copy.position, rawEnd);
+            rhythmCruise = VettelMovementFeedbackObservation.HasCruiseSource(session, copy, corner);
             RaceMovementRules.RecordCardAndDriverMovementPlan(copy, corner);
             int bonus = RaceMovementRules.ComputeCardAndDriverMovementBonus(copy, corner);
             if (session != null)
@@ -153,6 +160,7 @@ public static class RaceTurnPreviewRules
                 copy.turnMovement.AddPlan("意大利：弯后出弯加速", italy, TurnMovementKind.Other);
                 if (copy.techState != null && TechTreeRules.ShouldTriggerWurstplatte(copy.techState, session.TechDb, corner))
                 {
+                    rhythmExit = true;
                     bonus++;
                     copy.turnMovement.AddPlan("科技：香肠拼盘", 1, TurnMovementKind.Technology);
                 }
@@ -206,6 +214,37 @@ public static class RaceTurnPreviewRules
                 id => "弯道 " + id, overspeed => session.ResolveOverspeedHeatCost(copy, overspeed),
                 (amount, reason) => payWithSource(amount, HeatPaymentDestination.Hand, HeatPaymentSource.OrdinaryCorner), _ => { });
             result.CornerHeat = result.HeatPaid - beforeCorners;
+        }
+        // A driver tail is forecast only after the isolated base fees succeed. It emits no source or payment in real state.
+        int baseEnd = player.position + copy.totalMovementThisTurn;
+        bool baseReachesFinalLine = trackNodes != null && TrackRules.EndBeforeFinalFinish(trackNodes,
+            player.position, baseEnd, config.totalLaps - player.lap) < baseEnd;
+        int rhythm = result.CanPay && !baseReachesFinalLine && !RaceTurnRules.IsInactive(copy, null) && copy.totalMovementThisTurn > 0
+            ? copy.driverSkill?.Rhythm.PreviewBonus(session, copy, rhythmCruise, rhythmExit) ?? 0 : 0;
+        if (rhythm > 0)
+        {
+            int tailEnd = TrackRules.EndBeforeFinalFinish(trackNodes, player.position,
+                baseEnd + rhythm, config.totalLaps - player.lap);
+            if (tailEnd < baseEnd + rhythm) rhythm = Math.Max(0, tailEnd + 1 - baseEnd);
+            copy.turnMovement.AddPlan("车手：人车合拍（预计固定来源）", rhythm, TurnMovementKind.Driver);
+            copy.totalMovementThisTurn += rhythm;
+            if (totalCells > 0)
+            {
+                copy.position = (copy.position + rhythm) % totalCells;
+                session.SyncRegionalHeatCapacity(copy, totalCells, config.enableTechTree);
+            }
+            if (crossedCorners != null && cornerBaseLimit != null && session != null)
+            {
+                var corners = trackNodes != null
+                    ? TrackRules.GetAdditionalApexCornersCrossed(trackNodes, player.position, baseEnd, baseEnd, tailEnd)
+                    : new List<int>(crossedCorners(baseEnd, tailEnd));
+                int beforeTail = result.HeatPaid;
+                RaceCornerResolver.Resolve(copy, 0, corners,
+                    id => session.EffectiveCornerLimit(copy, cornerBaseLimit(id)), id => "弯道 " + id,
+                    over => session.ResolveOverspeedHeatCost(copy, over),
+                    (amount, reason) => payWithSource(amount, HeatPaymentDestination.Hand, HeatPaymentSource.OrdinaryCorner), _ => { });
+                result.CornerHeat += result.HeatPaid - beforeTail;
+            }
         }
         result.ProjectedHeat = result.CanPay ? HeatGaugeRules.Evaluate(copy.deck, copy.playedSpeedCardsThisTurn)
             : HeatGaugeRules.Evaluate(player.deck, player.playedSpeedCardsThisTurn);

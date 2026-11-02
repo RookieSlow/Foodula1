@@ -1,0 +1,94 @@
+{
+  "id": "I04c3a",
+  "local_date": "2026-11-02",
+  "status": "production_source_button_and_typed_choice_wired_offline_compiled_Unity_acceptance_pending",
+  "scope": "Real manager/HUD D04 entry routes exact fixed-source plan, no free legacy fallback. Mandatory typed enum source and full permanent fee share one modal at mask0/All. Confirm captures enum before clearing; cancel/lifecycle/stale plans do not charge. Source paging retains ordinary card/continuation navigation. Runtime read-only owner-window count, current/next/used text, new active name/copy, D04-only profile autosizing; no geometry redesign.",
+  "offline_compile": [
+    {
+      "assembly": "Assembly-CSharp",
+      "exit": 0,
+      "sources": 233,
+      "rsp_sha256": "3fb77cc2ae96cd91eea826a8658f4b72a9d8629ecf65d79e792b937ad0888e9a",
+      "boundary": "Offline Roslyn C#9; never loaded into live Unity, not Editor TestRunner/visual evidence."
+    },
+    {
+      "assembly": "Assembly-CSharp-Editor",
+      "exit": 0,
+      "sources": 214,
+      "rsp_sha256": "303d87d4a38b7ddc8172e74011e14b8af6b437f91a7515c4d5d034bede6b8972",
+      "boundary": "Offline Roslyn C#9; never loaded into live Unity, not Editor TestRunner/visual evidence."
+    }
+  ],
+  "offline_assemblies": {
+    "runtime_mvid": "e5145345-a280-4a10-a75a-56d5ad2f2ab3",
+    "editor_mvid": "552f101a-d0d7-40aa-aea0-d19c7d343059",
+    "runtime_sources": 233,
+    "editor_sources": 214,
+    "destination": "Library/AutomationReview/tech-driver-I04c3-20261102/offline-compile",
+    "Unity_loaded": false
+  },
+  "standalone_pure": {
+    "total": 64,
+    "passed": 64,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "duration": 0.063609
+  },
+  "standalone_rules_runtime": {
+    "total": 51,
+    "passed": 50,
+    "failed": 1,
+    "skipped": 0,
+    "inconclusive": 0,
+    "duration": 0.056966
+  },
+  "standalone_failure": {
+    "name": "DriverSkillRuntimeTests.AuthoredRaceCanvasExposesDriverSkillButtonAndLabel",
+    "reason": "Standalone Mono has no live UnityEditor.AssetDatabase.LoadAssetAtPath native internal call; MissingMethodException, retained as1 environment failure, not a pass or silently skipped. Mono generic mismatch text is a host limitation, no Unity install repair attempted."
+  },
+  "test_boundary": "64 current Vettel pure cases passed. Separate Rules/Runtime51:50passed1environment failure; disjoint selections115executed/114passed/1failed/0skipped. Not Unity EditMode results. Native modules/GameLoop/UI cases executed this continuation=0. Old C2 native3812 and previous screenshots are historical, not current passes.",
+  "new_UI_cases_registered": 51,
+  "new_UI_cases_executed": 0,
+  "new_native_cases": 0,
+  "existing_native_upgraded": "VettelPaidSourceWindowAddsTwoAfterEachOfTwoRealOwnerInputsAndChargesOnlyOnce now enters actual manager button and HUD source confirmation instead of direct transaction API; not executed on new code.",
+  "visual": {
+    "new_after_screenshots": 0,
+    "prior_C3_before_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/before/hud-20261029-044246962",
+    "prior_C3_before_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/before/profile",
+    "prior_before_frames_viewed": 6,
+    "sizes": [
+      "1920x1080",
+      "2560x1440",
+      "1280x720"
+    ],
+    "boundary": "Before frames captured/viewed Oct29 before production C3 UI edits, same unchanged HUD/row baseline throughNov2. No new after frames, native UI or overflow acceptance.51parameterized UI/profile assertions compiled only. Full modes/hardware/720p readability remain pending."
+  },
+  "review": "Initial UI and QA agents hit usage limit before production/after-fixture work; root implemented remaining sources/tests. Independent final specialist readonly no blocking issue; name escaping and next-input wording suggestions applied. No independent execution signoff.",
+  "acceptance": {
+    "source_wiring": true,
+    "offline_full_runtime_editor_compile": true,
+    "standalone_pure_rules": true,
+    "Unity_new_assembly_loaded": false,
+    "Unity_modules": false,
+    "actual_player_interaction_verified": false,
+    "three_size_after_UI_verified": false,
+    "complete_modes_and_save": false
+  },
+  "Unity_current": {
+    "tools_available": false,
+    "live_scene_dirty_play_compile_import_license_console_ready": "unverified; no editor commands, Play/scene saves or old assembly tests performed in this continuation",
+    "last_observed_prior_C3": "Oct29 before capture: MainMenu clean/idle,0game/compiler errors and reload MCP WebSocket warning. Historical only."
+  },
+  "preservation": {
+    "Word": 8,
+    "scenes": 32,
+    "excluded_files": 4,
+    "old_untracked_entries_preserved": 313,
+    "SHA_mismatches": []
+  },
+  "missing_governance": "active.md/control-manifest/technical-preferences/coding-standards missing references retained as prior record; no placeholders created.",
+  "next_slice": "I04c3b：Unity工具可用后先核验场景/播放/编译导入/许可/Console/ready，再让最终新程序集实际加载，运行tech/drivers及依赖、51项真实UI检查与已升级的GameLoop；实际查看三尺寸改后HUD/profile及输入/取消/焦点/遮罩。当前不推进I05，完整模式/存档/硬件仍I13。",
+  "evidence": "../../../production/qa/evidence/tech-driver-I04c3a-2026-11-02/README.md",
+  "git": "HEAD4c94d01 unchanged, staged empty; no commit/push/reset/checkout/rebase/file cleanup/package install/system or quick-play changes."
+}

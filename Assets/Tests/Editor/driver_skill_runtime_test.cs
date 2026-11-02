@@ -112,7 +112,6 @@ public class DriverSkillRuntimeTests
     }
 
     [TestCase("de_michael_schumacher")]
-    [TestCase("de_sebastian_vettel")]
     [TestCase("it_alberto_ascari")]
     [TestCase("it_tazio_nuvolari")]
     [TestCase("us_tony_stewart")]
@@ -137,6 +136,17 @@ public class DriverSkillRuntimeTests
         state.InterruptDrivingInput();
         Assert.That(state.ActiveTurnsRemaining, Is.EqualTo(expected));
         Assert.That(state.DrivingInputsStarted, Is.Zero);
+    }
+
+    [TestCase(3)] [TestCase(5)] [TestCase(7)]
+    public void VettelAlwaysRejectsLegacyFreeActivationWithoutSpendingRaceUses(int level)
+    {
+        DriverCatalog.TryGet("de_sebastian_vettel", out DriverProfile driver);
+        var state = new DriverSkillRuntimeState(); state.Initialize(driver, level, true);
+        int uses = state.UsesRemaining;
+        Assert.That(state.TryActivate(driver, new DriverSkillActivationContext(true, 0, 3, 6, 6, 0), out string reason), Is.False);
+        Assert.That(reason, Does.Contain("费用计划")); Assert.That(state.UsesRemaining, Is.EqualTo(uses));
+        Assert.That(state.IsActive, Is.False); Assert.That(DriverSkillRules.ApplyGearHeatCost(state, 2, false), Is.EqualTo(2));
     }
 
     [Test]
@@ -197,21 +207,19 @@ public class DriverSkillRuntimeTests
     }
 
     [Test]
-    public void VettelPassiveOffersTopThreeLookaheadOnItsCadence()
+    public void VettelSourceFeedbackDoesNotRetainLegacyCadenceLookahead()
     {
         DriverCatalog.TryGet("de_sebastian_vettel", out DriverProfile driver);
         var state = new DriverSkillRuntimeState();
         state.Initialize(driver, 2, true);
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 8; i++)
         {
             state.BeginTurn();
             Assert.That(state.TryConsumePassiveDeckLookahead(out _), Is.False);
         }
 
-        state.BeginTurn();
-        Assert.That(state.TryConsumePassiveDeckLookahead(out int lookahead), Is.True);
-        Assert.That(lookahead, Is.EqualTo(3));
+        Assert.That(DriverSkillRules.GetPassiveDeckLookahead(DriverPassiveSkillId.InformationSponge, 1), Is.Zero);
         Assert.That(state.TryConsumePassiveDeckLookahead(out _), Is.False);
     }
 

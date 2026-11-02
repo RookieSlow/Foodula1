@@ -1,0 +1,118 @@
+{
+  "id": "I04c1",
+  "local_date": "2026-10-29",
+  "status": "vettel_passive_native_sources_and_next_owner_post_draw_cooling_verified",
+  "scope": "D04 passive only: first positive owned native source per producer lap; tier1 basic cruise, tier2 actual paid beer, tier3 real German corner exit. Next eligible owner input freezes old permanent hand instances before draw/fees; after ordinary draw remove at most one remaining original. Retire vs net recovery distinguished. No active migration.",
+  "new_cases": {
+    "pure": 51,
+    "integration": 39,
+    "profile_UI": 3,
+    "actual_GameLoop": 1,
+    "total": 94
+  },
+  "native_11modules": {
+    "total": 3714,
+    "passed": 3714,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 35.3502378,
+    "state": "Passed",
+    "nativeState": "Passed",
+    "selectionMatches": true,
+    "startedUtc": "2026-10-28T23:21:48.3651565Z",
+    "endedUtc": "2026-10-28T23:22:29.1388649Z"
+  },
+  "first_modules": {
+    "total": 3714,
+    "passed": 3713,
+    "failed": 1,
+    "skipped": 0,
+    "seconds": 35.3438921
+  },
+  "first_modules_fix": "Forecast clone before explicit isolated rebinding accidentally cleared its own state on real-owner call. Guard now returns before mutation; original deep-copy assertions retained.",
+  "actual_GameLoop_first": {
+    "total": 7,
+    "passed": 6,
+    "failed": 1,
+    "skipped": 0,
+    "endedUtc": "2026-10-28T23:23:06.5273565Z",
+    "resultState": "Failed(Child)"
+  },
+  "actual_GameLoop_final_vettel": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 1.5235029,
+    "resultState": "Passed"
+  },
+  "actual_GameLoop_boundary": "Initial exact7:6 passed/1 failed. Only failing new Vettel test rerun after fixture captured real sourceLap0 (completed-lap counter) instead of hardcoded1;1/1 passed1.5235029s. Other6 not rerun. Do not report final7/7 or aggregate overlapping runs as distinct passes.",
+  "assemblies": {
+    "modules_runtime": "f0d11d5d-3edd-46cf-a8dc-d5dd756a1bca",
+    "modules_editor": "68bfbb8e-c587-420b-a27a-8df8998ebba1",
+    "final_runtime": "f0d11d5d-3edd-46cf-a8dc-d5dd756a1bca",
+    "final_editor": "21ecc0f7-b3c5-437c-9131-d32622a5d279",
+    "boundary": "Only native fixture lap assertion/diagnostics changed after3714pass; fresh editor assembly loaded, unchanged production runtime. No repeated unchanged modules/full suite."
+  },
+  "visual": {
+    "before": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c1-2026-10-29/before/profile-20261028-231355670",
+    "after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c1-2026-10-29/after/profile-final",
+    "sizes": [
+      "1920x1080",
+      "2560x1440",
+      "1280x720"
+    ],
+    "full_frames_viewed": 6,
+    "D04_passive_overflows": 0,
+    "preexisting_other_overflows_per_size": [
+      14,
+      14,
+      14
+    ],
+    "coverage": "Owned production DriverSelectionUI,12drivers/six teams; pointer/Submit/Back/focus/mask exercised by profile fixture. No new action UI in passive slice. Existing14 other overflows not accepted; full RaceCanvas/hardware drag/720p readability/full modes pendingI13."
+  },
+  "acceptance": {
+    "pure_rules": true,
+    "production_wiring": true,
+    "actual_player_passive": true,
+    "controlled_three_size_profile": true,
+    "actual_GameLoop_cruise_next_input": true,
+    "vettel_active": false,
+    "complete_modes": false
+  },
+  "review": "Independent gameplay core and QA fixtures; Unity specialist readonly final review found no blocking issue after temp-value1 native predicate and ActualCells ledger corrections. Root compiled, ran and viewed stated evidence.",
+  "unity_final": {
+    "scenes": [
+      {
+        "path": "Assets/Scenes/MainMenu.unity",
+        "dirty": false
+      }
+    ],
+    "playing": false,
+    "compiling": false,
+    "updating": false,
+    "tests": false,
+    "runtime": "f0d11d5d-3edd-46cf-a8dc-d5dd756a1bca",
+    "editor": "21ecc0f7-b3c5-437c-9131-d32622a5d279",
+    "native": "{\"fullName\":\"Foodula1\",\"resultState\":\"Passed\",\"endedUtc\":\"2026-10-28T23:26:24.3510902Z\",\"total\":1,\"passed\":1,\"failed\":0,\"skipped\":0,\"inconclusive\":0,\"message\":\"\",\"output\":\"\",\"stackTrace\":\"\"}"
+  },
+  "console": {
+    "errors": 0,
+    "warnings": 0,
+    "not_cleared": true,
+    "earlier_tool_warning": "MCP WebSocket not initialised during reload; no gameplay/compiler errors remaining"
+  },
+  "license": "Editor.log licensing client successfully resolved entitlement details; no license or system changes.",
+  "preservation": {
+    "word": 8,
+    "scenes": 32,
+    "excluded_files": 4,
+    "changed": [],
+    "old_untracked_entries_preserved": 187
+  },
+  "evidence": "../../../production/qa/evidence/tech-driver-I04c1-2026-10-29/README.md",
+  "next_slice": "I04c2：维特尔主动固定来源选择、永久热固定费用与有限本人输入增幅的运行态/生产API；随后真实按钮合并确认与三尺寸交互。I04保持进行中，完整模式/存档/硬件组合留I13。",
+  "git": "HEAD4c94d01 preserved. No commit/push/staging/reset/checkout/rebase, cleanup, package install, scene save or play-settings mutation.",
+  "missing_governance": "active.md/control-manifest/technical-preferences missing as previously recorded; no placeholder created."
+}

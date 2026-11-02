@@ -109,14 +109,20 @@ public sealed class DriverSelectionUI : MonoBehaviour
             new Vector2(0f, 42f), new Vector2(285f, 26f), FontStyles.Normal, new Color(0.92f, 0.95f, 1f));
         TMP_Text passive = CreateText(card.transform, "Passive", $"被动：{driver.PassiveName}\n{driver.PassiveSummary}", 14f,
             new Vector2(0f, -4f), new Vector2(282f, 58f), FontStyles.Normal, new Color(0.98f, 0.82f, 0.42f));
-        if (driver.Id == "de_michael_schumacher")
+        if (driver.Id == "de_michael_schumacher" || driver.Id == "de_sebastian_vettel")
         {
             passive.enableAutoSizing = true;
             passive.fontSizeMin = 12f;
             passive.fontSizeMax = 14f;
         }
-        CreateText(card.transform, "Active", $"主动：{driver.ActiveName}\n{driver.ActiveSummary}", 14f,
+        TMP_Text active = CreateText(card.transform, "Active", $"主动：{driver.ActiveName}\n{driver.ActiveSummary}", 14f,
             new Vector2(0f, -62f), new Vector2(282f, 58f), FontStyles.Normal, new Color(0.62f, 0.88f, 1f));
+        if (driver.Id == "de_michael_schumacher" || driver.Id == "de_sebastian_vettel")
+        {
+            active.enableAutoSizing = true;
+            active.fontSizeMin = 12f;
+            active.fontSizeMax = 14f;
+        }
     }
 
     private static void AddTeamLogo(Transform parent, TeamId team, Vector2 position, Vector2 size)

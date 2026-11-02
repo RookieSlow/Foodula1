@@ -1,0 +1,85 @@
+{
+    "stage": "before",
+    "runtimeMvid": "e6d6e80f-4853-4179-b3cb-8501d59619d0",
+    "kind": "Owned orthographic Canvas, real HUD.Start button/GraphicRaycaster/Submit and manager versioned transactions; not hardware/full RaceCanvas/modes.",
+    "records": [
+        {
+            "width": 1920,
+            "height": 1080,
+            "fixture": 0,
+            "mask": 255,
+            "roster": 2,
+            "uses": 0,
+            "heat": 0,
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I04b2-2026-10-29\\before\\hud-20261028-224125331\\1920x1080-0.png",
+            "label": "完美一圈  ×2",
+            "body": "",
+            "modal": false,
+            "blocked": false,
+            "focusRestored": false,
+            "overflows": [
+                "Label: 1",
+                "TeamGearTitle: 德国 · 方向盘拨片",
+                "TeamGearState: 实际 G1 / 待选 G1",
+                "TeamGearDetail: 出牌 1张 · 换挡热 0",
+                "TeamGearNumber: 1",
+                "MovementLabel: 手牌试算 1 格 · G1",
+                "HeatLabel: 热量 0→预计 0/8",
+                "Label: -",
+                "Label: +"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "fixture": 0,
+            "mask": 255,
+            "roster": 2,
+            "uses": 0,
+            "heat": 0,
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I04b2-2026-10-29\\before\\hud-20261028-224125331\\2560x1440-0.png",
+            "label": "完美一圈  ×2",
+            "body": "",
+            "modal": false,
+            "blocked": false,
+            "focusRestored": false,
+            "overflows": [
+                "Label: 1",
+                "TeamGearTitle: 德国 · 方向盘拨片",
+                "TeamGearState: 实际 G1 / 待选 G1",
+                "TeamGearDetail: 出牌 1张 · 换挡热 0",
+                "TeamGearNumber: 1",
+                "MovementLabel: 手牌试算 1 格 · G1",
+                "HeatLabel: 热量 0→预计 0/8",
+                "Label: -",
+                "Label: +"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "fixture": 0,
+            "mask": 255,
+            "roster": 2,
+            "uses": 0,
+            "heat": 0,
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I04b2-2026-10-29\\before\\hud-20261028-224125331\\1280x720-0.png",
+            "label": "完美一圈  ×2",
+            "body": "",
+            "modal": false,
+            "blocked": false,
+            "focusRestored": false,
+            "overflows": [
+                "Label: 1",
+                "TeamGearTitle: 德国 · 方向盘拨片",
+                "TeamGearState: 实际 G1 / 待选 G1",
+                "TeamGearDetail: 出牌 1张 · 换挡热 0",
+                "TeamGearNumber: 1",
+                "MovementLabel: 手牌试算 1 格 · G1",
+                "HeatLabel: 热量 0→预计 0/8",
+                "Label: -",
+                "Label: +"
+            ]
+        }
+    ]
+}

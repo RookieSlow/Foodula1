@@ -1,0 +1,234 @@
+diff --git a/.claude/settings.json b/.claude/settings.json
+index ee755fa..e05c45f 100644
+--- a/.claude/settings.json
++++ b/.claude/settings.json
+@@ -2,7 +2,7 @@
+   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+   "statusLine": {
+     "type": "command",
+-    "command": "bash .claude/statusline.sh"
++    "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook statusline -Source claude"
+   },
+   "permissions": {
+     "allow": [
+@@ -38,12 +38,12 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/session-start.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook session-start -Source claude",
+             "timeout": 10
+           },
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/detect-gaps.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook detect-gaps -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -55,13 +55,8 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/validate-commit.sh",
+-            "timeout": 15
+-          },
+-          {
+-            "type": "command",
+-            "command": "bash .claude/hooks/validate-push.sh",
+-            "timeout": 10
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-git -Source claude",
++            "timeout": 25
+           }
+         ]
+       }
+@@ -72,12 +67,12 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/validate-assets.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-assets -Source claude",
+             "timeout": 10
+           },
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/validate-skill-change.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-skill-change -Source claude",
+             "timeout": 5
+           }
+         ]
+@@ -89,7 +84,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/notify.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook notify -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -101,7 +96,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/pre-compact.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook pre-compact -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -113,7 +108,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/post-compact.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook post-compact -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -125,7 +120,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/session-stop.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook session-stop -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -137,7 +132,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/log-agent.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook log-agent -Source claude",
+             "timeout": 5
+           }
+         ]
+@@ -149,7 +144,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/log-agent-stop.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook log-agent-stop -Source claude",
+             "timeout": 5
+           }
+         ]
+diff --git a/.codex/hooks.json b/.codex/hooks.json
+index f08d747..d162ea6 100644
+--- a/.codex/hooks.json
++++ b/.codex/hooks.json
+@@ -6,13 +6,8 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\validate-commit.sh'",
+-            "timeout": 15
+-          },
+-          {
+-            "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\validate-push.sh'",
+-            "timeout": 10
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-git -Source codex",
++            "timeout": 25
+           }
+         ]
+       }
+@@ -23,12 +18,12 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\validate-assets.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-assets -Source codex",
+             "timeout": 10
+           },
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\validate-skill-change.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-skill-change -Source codex",
+             "timeout": 5
+           }
+         ]
+@@ -40,7 +35,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\pre-compact.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook pre-compact -Source codex",
+             "timeout": 10
+           }
+         ]
+@@ -52,7 +47,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\post-compact.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook post-compact -Source codex",
+             "timeout": 10
+           }
+         ]
+@@ -64,12 +59,12 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\session-start.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook session-start -Source codex",
+             "timeout": 10
+           },
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\detect-gaps.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook detect-gaps -Source codex",
+             "timeout": 10
+           }
+         ]
+@@ -81,7 +76,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\log-agent.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook log-agent -Source codex",
+             "timeout": 5
+           }
+         ]
+@@ -93,7 +88,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\log-agent-stop.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook log-agent-stop -Source codex",
+             "timeout": 5
+           }
+         ]
+@@ -104,7 +99,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\session-stop.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook session-stop -Source codex",
+             "timeout": 10
+           }
+         ]
+diff --git a/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset b/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset
+index ca2f2d6..500b86e 100644
+--- a/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset	
++++ b/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset	
+@@ -1,3 +1,3 @@
+ version https://git-lfs.github.com/spec/v1
+-oid sha256:138eb727664c34cec3defb833ccd2d527aac13a6296e1e9b1475ea1a900e53ed
+-size 34155550
++oid sha256:c44b368e107f8e08e35d9cc93b6e8be7c022273a1cb7bc1daca8317f45848d94
++size 34180244
+diff --git a/ProjectSettings/EditorSettings.asset b/ProjectSettings/EditorSettings.asset
+index ce486a2..cfda889 100644
+--- a/ProjectSettings/EditorSettings.asset
++++ b/ProjectSettings/EditorSettings.asset
+@@ -24,8 +24,8 @@ EditorSettings:
+   m_EnableEditorAsyncCPUTextureLoading: 0
+   m_AsyncShaderCompilation: 1
+   m_PrefabModeAllowAutoSave: 1
+-  m_EnterPlayModeOptionsEnabled: 0
+-  m_EnterPlayModeOptions: 3
++  m_EnterPlayModeOptionsEnabled: 1
++  m_EnterPlayModeOptions: 1
+   m_GameObjectNamingDigits: 1
+   m_GameObjectNamingScheme: 0
+   m_AssetNamingUsesSpace: 1
+warning: in the working copy of 'ProjectSettings/EditorSettings.asset', LF will be replaced by CRLF the next time Git touches it

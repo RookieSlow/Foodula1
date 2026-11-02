@@ -12,7 +12,8 @@ public class DriverSkillRulesTests
             var state = new DriverSkillRuntimeState();
             state.Initialize(driver, level, true);
             Assert.That(DriverSkillRules.GetReactionHeatCost(state), Is.Zero, driver.Id);
-            Assert.That(state.TryActivate(driver,
+            if (driver.Id == "de_sebastian_vettel") state = Activate(driver.Id, level);
+            else Assert.That(state.TryActivate(driver,
                 new DriverSkillActivationContext(true, 2, 3, 1, 10, 3), out string reason), Is.True, reason);
             int uses = state.UsesRemaining, turns = state.ActiveTurnsRemaining;
             int expected = state.IsActive && state.Skill == DriverActiveSkillId.TrueSelf ? 1 : 0;
@@ -93,8 +94,8 @@ public class DriverSkillRulesTests
         Assert.That(DriverSkillRules.GetOvertakeBonus(mansell, 1), Is.EqualTo(1));
 
         DriverSkillRuntimeState vettel = Activate("de_sebastian_vettel", 5);
-        Assert.That(DriverSkillRules.ApplyGearHeatCost(vettel, 2, false), Is.Zero);
-        Assert.That(vettel.ActiveTurnsRemaining, Is.EqualTo(4));
+        Assert.That(DriverSkillRules.ApplyGearHeatCost(vettel, 2, false), Is.EqualTo(2));
+        Assert.That(vettel.Rhythm.RemainingInputs, Is.EqualTo(2));
 
         DriverSkillRuntimeState zhou = Activate("cn_zhou_guanyu", 5);
         Assert.That(DriverSkillRules.IsWeatherImmune(zhou), Is.True);
@@ -114,9 +115,9 @@ public class DriverSkillRulesTests
             DriverPassiveSkillId.EngineersTune, 1), Is.Zero);
 
         Assert.That(DriverSkillRules.GetPassiveDeckLookahead(
-            DriverPassiveSkillId.InformationSponge, 1), Is.EqualTo(3));
+            DriverPassiveSkillId.InformationSponge, 1), Is.Zero);
         Assert.That(DriverSkillRules.GetPassiveTriggerInterval(
-            DriverPassiveSkillId.InformationSponge, 3), Is.EqualTo(2));
+            DriverPassiveSkillId.InformationSponge, 3), Is.Zero);
 
         Assert.That(DriverSkillRules.GetPassiveOvertakeMovementBonus(
             DriverPassiveSkillId.LionsHeart, 1), Is.Zero);
@@ -163,6 +164,17 @@ public class DriverSkillRulesTests
         var state = new DriverSkillRuntimeState();
         state.Initialize(driver, level, true);
         DriverSkillActivationContext context = supplied ?? Context(canInput: true);
+        if (driverId == "de_sebastian_vettel")
+        {
+            var race = new RaceSession();
+            var player = new PlayerState("Vettel rules", false, 0, 1) { driverId = driverId, teamId = TeamId.DE };
+            player.deck.InitializeExactOrder(new[] { new CardData(CardType.Speed, 1) }, new HeatPool(6));
+            player.driverSkill.Initialize(driver, level, true); race.Players.Add(player);
+            race.BeginTurn(player, 1); race.BeginDriverSkillInput(player, 60);
+            Assert.That(VettelRhythmActivationPlan.TryCreate(race, player, 1, 1, 1, context, out var plan, out string error), Is.True, error);
+            Assert.That(plan.TryCommit(race, player, 1, 1, 1, context, VettelNativeSource.BasicCruise, out error), Is.True, error);
+            return player.driverSkill;
+        }
         Assert.That(state.TryActivate(driver, context, out string reason), Is.True, reason);
         return state;
     }

@@ -29,6 +29,9 @@ public static class RaceTurnSkillCleanup
         int overtakes = getPassiveOvertakes(player);
         player.driverSkill?.ResolvePassiveTurnEnd(overtakes);
         player.driverSkill?.Hunting.CloseInput();
+        if (player.pitStopScheduled) player.driverSkill?.Strategy.Interrupt();
+        if (player.pitStopScheduled) player.driverSkill?.Feedback.Interrupt();
+        if (player.pitStopScheduled) player.driverSkill?.Rhythm.Interrupt();
         if (player.pitStopScheduled) player.driverSkill?.Tuning.Interrupt();
         else player.driverSkill?.Tuning.CloseInput();
         if (RaceTurnRules.IsTerminal(player) || RaceTurnRules.ShouldSkip(player))

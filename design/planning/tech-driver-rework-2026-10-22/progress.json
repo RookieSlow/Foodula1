@@ -30,7 +30,7 @@
   ],
   "sources_opened": 24,
   "status": "implementation_in_progress",
-  "next_package": "I04b：舒马赫三段战术主动，真实弃速度牌、低挡准备、后两个本人高挡输入逐段付1永久热；现有主动未迁移。随后I04c维特尔固定来源联动；完整模式留I13。",
+  "next_package": "I04c：维特尔固定真实非零原生来源的有限增幅及本人输入窗口，沿锁定方案与DE科技联动；I04不标整包完成，全模式/存档/硬件组合仍I13。",
   "implementation_authorized": true,
   "stages": [
     {
@@ -126,9 +126,9 @@
   "cadence_minutes": 30,
   "brief_pages_reviewed": 12,
   "next_package_acceptance": [
-    "Mansell follows the locked original target; no alternate driver/ID/XP change.",
-    "Validate each real leg and second fixed cost, atomic cancel/stale rejection and owner-input cleanup.",
-    "Compile/load new assemblies and run drivers/tech plus affected movement/card/UI tests; new UI gets current three-size evidence, complete modes remain I13."
+    "Vettel locked original identity/XP/uses, exact nonzero native sources only.",
+    "Versioned choice/fixed payment and owner input cleanup, genuine receipts and forecast isolation.",
+    "Fresh native drivers/tech plus affected modules; changed UI gets actual3size evidence, full modes remainI13."
   ],
   "last_package": {
     "id": "P5",
@@ -603,8 +603,8 @@
     "automation_prompt_sha256": "d3b28cfe0313d5ce25218f76ff10d56ec2253e5e79e3f4ad68ca157609971d2f",
     "baseline": "D:\\UnityProject\\Foodula1\\Library\\AutomationReview\\tech-driver-implementation-20261022-174531\\baseline.json"
   },
-  "implementation_last_package": "I04a",
-  "implementation_next_slice": "I04b：舒马赫三段战术主动，真实弃速度牌、低挡准备、后两个本人高挡输入逐段付1永久热；现有主动未迁移。随后I04c维特尔固定来源联动；完整模式留I13。",
+  "implementation_last_package": "I04c3a",
+  "implementation_next_slice": "I04c3b：Unity工具可用后先核验场景/播放/编译导入/许可/Console/ready，再让最终新程序集实际加载，运行tech/drivers及依赖、51项真实UI检查与已升级的GameLoop；实际查看三尺寸改后HUD/profile及输入/取消/焦点/遮罩。当前不推进I05，完整模式/存档/硬件仍I13。",
   "uk_hunting_cap_question": {
     "status": "answered_by_user",
     "source": "driver draft paragraph 102 and direct async user reply in this chat",
@@ -1768,6 +1768,607 @@
         "unity_current": "Editor closed after last clean MainMenu and Console0/0; not restarted",
         "cached_diff_check": 0
       }
+    },
+    {
+      "id": "I04b1",
+      "local_date": "2026-10-29",
+      "ended_utc": "2026-10-28T17:26:52.7989363Z",
+      "status": "schumacher_strategy_runtime_api_and_bounded_native_verified_actual_ui_pending",
+      "scope": "D03 exact speed discard preparation at gear1/2; next two consecutive owner inputs gear3/4, fixed permanent heat1 each for movement2/3/3. Independent Strategy clock and exact versioned plans, Manager transaction/gear/cards/movement/cleanup adapters; actual button remains I04b2.",
+      "new_cases": 87,
+      "new_pure_cases": 53,
+      "new_manager_adapter_cases": 33,
+      "new_actual_GameLoop_cases": 1,
+      "final_native": {
+        "startedUtc": "2026-10-28T17:24:07.2969851Z",
+        "endedUtc": "2026-10-28T17:24:47.0646871Z",
+        "state": "Passed",
+        "nativeState": "Passed",
+        "total": 3570,
+        "passed": 3570,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0,
+        "seconds": 33.0757789,
+        "selectionMatches": true
+      },
+      "modules": [
+        "ai",
+        "cards-heat",
+        "career",
+        "core",
+        "drivers",
+        "gears",
+        "tech",
+        "tools",
+        "tracks-weather-pit",
+        "tutorial",
+        "ui"
+      ],
+      "gameloop": {
+        "total": 6,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "durationSeconds": 6.7724629,
+        "resultState": "Passed"
+      },
+      "native_GameLoop_RunFinished": {
+        "fullName": "Foodula1",
+        "resultState": "Passed",
+        "endedUtc": "2026-10-28T17:26:52.7989363Z",
+        "total": 6,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0,
+        "message": "",
+        "output": "",
+        "stackTrace": ""
+      },
+      "gameloop_boundary": "Six exact selected cases: new D03 active internally levels3/5, existing D03 passive, two German declaration and two Mansell actual loops. Synthetic track/headless adapters; not all long-races or full modes.",
+      "first_gameloop_native": {
+        "fullName": "Foodula1",
+        "resultState": "Failed(Child)",
+        "endedUtc": "2026-10-28T17:25:16.4625555Z",
+        "total": 6,
+        "passed": 5,
+        "failed": 1,
+        "skipped": 0,
+        "inconclusive": 0,
+        "message": "One or more child tests had errors",
+        "output": "",
+        "stackTrace": ""
+      },
+      "first_gameloop_job_wall_seconds": 7.397,
+      "failure_resolution": "Only new GameLoop fixture initially retained DE chassis +2 straight bonus (expected1, actual3). Set session.TeamVehicleBonusesEnabled=false explicitly in owned new fixture; preserved original position/heat assertions. Production and selected11module cases unchanged; no repeat of unchanged3570.",
+      "runtime_mvid": "e6d6e80f-4853-4179-b3cb-8501d59619d0",
+      "module_editor_mvid": "79888f06-3448-49ab-87ba-fad14881200e",
+      "final_editor_mvid": "612a0e6a-1efe-44cb-b3ef-07a656e2affa",
+      "new_assemblies_loaded": true,
+      "acceptance": {
+        "pure_rules": true,
+        "production_wiring": true,
+        "manager_api_operable": true,
+        "strategy_observed_through_actual_GameLoop": true,
+        "actual_player_button_migrated": false,
+        "three_size_strategy_ui": false,
+        "schumacher_active_fully_accepted": false,
+        "vettel": false,
+        "complete_modes": false
+      },
+      "source_review": "Independent Unity specialist final read-only review found no blocking issues in9 existing production files+newRuntime/Plan. Native compiler/tests supply execution evidence. New bonus tail pays ordinary corners and defers finish; exception/pit cleanup covered.",
+      "unity_final": {
+        "scene": "Assets/Scenes/MainMenu.unity",
+        "dirty": false,
+        "loadedScenes": [
+          {
+            "path": "Assets/Scenes/MainMenu.unity",
+            "dirty": false
+          }
+        ],
+        "playing": false,
+        "compiling": false,
+        "updating": false,
+        "tests": false
+      },
+      "console": {
+        "errors": 0,
+        "warnings": 0,
+        "not_cleared": true
+      },
+      "license": "Successfully resolved entitlement details; Editor.log:21080",
+      "visual": {
+        "new_screenshots": 0,
+        "reason": "No UI/layout/player button changed in API-only I04b1. Actual button/confirmation/text and required three-size before/after review remain I04b2; I04a screenshots not reused as this slice acceptance."
+      },
+      "protected_files": {
+        "word_count": 8,
+        "scene_count": 32,
+        "changed": [],
+        "excluded_diff_preserved": {
+          ".claude/settings.json": true,
+          ".codex/hooks.json": true,
+          "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset": true,
+          "ProjectSettings/EditorSettings.asset": true
+        },
+        "previous_untracked_preserved": 78
+      },
+      "evidence": "../../../production/qa/evidence/tech-driver-I04b1-2026-10-29/README.md",
+      "next_slice": "I04b2：将舒马赫三段战术接到真实技能按钮、弃牌/逐次付热确认与状态文案，覆盖取消/焦点/键盘/拖动及三尺寸改前后受控生产UI；随后I04c维特尔，完整模式/存档组合留I13。",
+      "git": "HEAD4c94d01 unchanged; no commit/push/staging/reset/checkout/rebase, file cleanup, package install or settings mutation.",
+      "format_only_followup": {
+        "kind": "Removed only one trailing EOF blank line in each of two new test files and normalized final newline; reconstructing old EOF CRLFCRLF reproduces preformat SHA256; no executable tokens changed.",
+        "paths": [
+          "Assets/Tests/Editor/schumacher_strategy_manager_test.cs",
+          "Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs"
+        ],
+        "new_editor_mvid": "3850947d-3485-430b-a498-fb03d3ef8730",
+        "runtime_mvid": "e6d6e80f-4853-4179-b3cb-8501d59619d0",
+        "fresh_compile_verified": true,
+        "tests_repeated": false,
+        "credited_additional_passes": 0,
+        "test_editor_mvid": "612a0e6a-1efe-44cb-b3ef-07a656e2affa"
+      }
+    },
+    {
+      "id": "I04b2",
+      "local_date": "2026-10-29",
+      "status": "schumacher_strategy_actual_button_confirmation_and_bounded_ui_verified",
+      "scope": "Real HUD+manager D03 button routes exact preparation/continuation plans, no legacy free fallback; one merged fee surface with existing confirmation switch, stage/reasons/uses, legal gear presentation and current profile copy. IDs/XP/unlock/uses unchanged.",
+      "new_ui_cases": 51,
+      "new_actual_GameLoop_cases": 0,
+      "existing_GameLoop_upgraded": "Existing I04b1 strategy case now calls manager actual button and HUD confirmation at preparation and both executions; internally two levels, not2 extra test cases.",
+      "native_11modules_before_profile_font_fix": {
+        "total": 3618,
+        "passed": 3618,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0,
+        "seconds": 34.3221161,
+        "state": "Passed",
+        "nativeState": "Passed",
+        "selectionMatches": true,
+        "startedUtc": "2026-10-28T22:44:54.0596627Z",
+        "endedUtc": "2026-10-28T22:45:35.1391998Z"
+      },
+      "native_final_ui_drivers_tech": {
+        "total": 1576,
+        "passed": 1576,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0,
+        "seconds": 20.7530156,
+        "state": "Passed",
+        "nativeState": "Passed",
+        "selectionMatches": true,
+        "startedUtc": "2026-10-28T22:47:56.6248223Z",
+        "endedUtc": "2026-10-28T22:48:20.2101577Z"
+      },
+      "actual_GameLoop": {
+        "total": 6,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "durationSeconds": 6.803973,
+        "resultState": "Passed"
+      },
+      "native_RunFinished": {
+        "fullName": "Foodula1",
+        "resultState": "Passed",
+        "endedUtc": "2026-10-28T22:46:06.0932865Z",
+        "total": 6,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0,
+        "message": "",
+        "output": "",
+        "stackTrace": ""
+      },
+      "runtime_before_profile_font_fix": "6fbb8abe-cd86-4852-89a2-157aeb5c056f",
+      "editor_before_profile_font_fix": "efc0c201-4d69-41ff-a208-72c6491bd107",
+      "final_runtime": "a00e5717-db24-4c9a-b83d-7d49d9833c13",
+      "final_editor": "c3e1959e-bb44-405c-a813-7d417415e7a3",
+      "version_boundary": "Final change after6GameLoop/3618 was D03 active profile text autosize12..14 and3 corresponding tests only. Fresh assemblies loaded and ui/drivers/tech1576 passed; no unchanged full/module11 repeat and no assertion that6GameLoop ran on final font-only MVID.",
+      "first_ui_run": {
+        "selected": 48,
+        "completed": 48,
+        "state": "failed",
+        "native_summary_available": false,
+        "failure_list_capped": true,
+        "credited_passes": 0,
+        "reason": "MCP failed-job result omitted summary/capped list; no inferred pass/fail totals. Missing legal G3 focus target and undersized synthetic gear container fixed by real four-gear presentation, assertions retained."
+      },
+      "compile_fix": "One initial new-fixture CS1061 referenced nonexistent EventCamera; switched to actual Canvas.worldCamera before any credited tests.",
+      "visual": {
+        "before_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/before/profile-20261028-174153715",
+        "before_hud": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/before/hud-20261028-224125331",
+        "after_hud": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009",
+        "after_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/after/profile-final-20261028-224832541",
+        "sizes": [
+          "1920x1080",
+          "2560x1440",
+          "1280x720"
+        ],
+        "hud_before_count": 3,
+        "hud_after_count": 24,
+        "hud_after_full_frames_root_viewed": 15,
+        "viewed_hud_fixtures": [
+          0,
+          2,
+          3,
+          5,
+          6
+        ],
+        "profile_before_and_final_viewed": 6,
+        "hud_changed_text_overflows": 0,
+        "new_profile_active_overflow_before_fix": 3,
+        "new_profile_active_overflow_final": 0,
+        "preexisting_profile_overflows_per_size": 14,
+        "boundary": "Owned orthographic production HUD/DriverSelectionUI. Before HUD initial synthetic gear host too small/onlyG1; first white-on-white fixture version rejected, dark surface recaptured before production edit. After host supplies actual four gears and correct300x330 holder; not a like-for-like full gear layout comparison. Driver slot/modal/source profile validated. Full RaceCanvas/hardware/mode/720p subjective comfort pendingI13. Profile existing14 other overflows per size are not accepted.",
+        "coverage": "48 HUD cases: 3sizes x8fixtures xmask0/All, preparation/cancel, execution1/2, cancel, heat/gear unavailable, Submit/focus/mask/exact costs/repeat confirm; rosters2/4/6/12 from real six-team catalog. 3 profile cases select12/six teams, Submit/Back/mask; long name fixture. Generic drag existing module coverage, no new physical drag/mode acceptance."
+      },
+      "acceptance": {
+        "pure_rules_preexisting": true,
+        "production_wiring": true,
+        "actual_player_button": true,
+        "controlled_three_size_UI": true,
+        "actual_GameLoop_with_HUD_confirmation": true,
+        "full_hardware_and_modes": false,
+        "vettel": false
+      },
+      "review": "Independent specialist supplied initial routing/modal/cancel/readonly advice then all3agents hit usage limit before edits/final review. Root implemented and inspected final source, ran native and viewed stated screenshots; no independent final signoff claimed.",
+      "unity_final": {
+        "scenes": [
+          {
+            "path": "Assets/Scenes/MainMenu.unity",
+            "dirty": false
+          }
+        ],
+        "playing": false,
+        "compiling": false,
+        "updating": false,
+        "tests": false,
+        "runtime": "a00e5717-db24-4c9a-b83d-7d49d9833c13",
+        "editor": "c3e1959e-bb44-405c-a813-7d417415e7a3",
+        "nativeGameLoop": "{\"fullName\":\"Foodula1\",\"resultState\":\"Passed\",\"endedUtc\":\"2026-10-28T22:46:06.0932865Z\",\"total\":6,\"passed\":6,\"failed\":0,\"skipped\":0,\"inconclusive\":0,\"message\":\"\",\"output\":\"\",\"stackTrace\":\"\"}"
+      },
+      "console": {
+        "errors": 0,
+        "warnings": 0,
+        "not_cleared": true,
+        "earlier_tool_warning": "MCP WebSocket not initialised during reload, no gameplay/compiler warning remaining"
+      },
+      "preservation": {
+        "word": 8,
+        "scenes": 32,
+        "excluded_files": 4,
+        "old_untracked_entries_preserved": 122
+      },
+      "evidence": "../../../production/qa/evidence/tech-driver-I04b2-2026-10-29/README.md",
+      "next_slice": "I04c：维特尔固定真实非零原生来源的有限增幅及本人输入窗口，沿锁定方案与DE科技联动；I04不标整包完成，全模式/存档/硬件组合仍I13。",
+      "git": "No commit/push/staging/reset/checkout/rebase; HEAD4c94d01 preserved."
+    },
+    {
+      "id": "I04c1",
+      "local_date": "2026-10-29",
+      "status": "vettel_passive_native_sources_and_next_owner_post_draw_cooling_verified",
+      "scope": "D04 passive only: first positive owned native source per producer lap; tier1 basic cruise, tier2 actual paid beer, tier3 real German corner exit. Next eligible owner input freezes old permanent hand instances before draw/fees; after ordinary draw remove at most one remaining original. Retire vs net recovery distinguished. No active migration.",
+      "new_cases": {
+        "pure": 51,
+        "integration": 39,
+        "profile_UI": 3,
+        "actual_GameLoop": 1,
+        "total": 94
+      },
+      "native_11modules": {
+        "total": 3714,
+        "passed": 3714,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0,
+        "seconds": 35.3502378,
+        "state": "Passed",
+        "nativeState": "Passed",
+        "selectionMatches": true,
+        "startedUtc": "2026-10-28T23:21:48.3651565Z",
+        "endedUtc": "2026-10-28T23:22:29.1388649Z"
+      },
+      "first_modules": {
+        "total": 3714,
+        "passed": 3713,
+        "failed": 1,
+        "skipped": 0,
+        "seconds": 35.3438921
+      },
+      "first_modules_fix": "Forecast clone before explicit isolated rebinding accidentally cleared its own state on real-owner call. Guard now returns before mutation; original deep-copy assertions retained.",
+      "actual_GameLoop_first": {
+        "total": 7,
+        "passed": 6,
+        "failed": 1,
+        "skipped": 0,
+        "endedUtc": "2026-10-28T23:23:06.5273565Z",
+        "resultState": "Failed(Child)"
+      },
+      "actual_GameLoop_final_vettel": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "durationSeconds": 1.5235029,
+        "resultState": "Passed"
+      },
+      "actual_GameLoop_boundary": "Initial exact7:6 passed/1 failed. Only failing new Vettel test rerun after fixture captured real sourceLap0 (completed-lap counter) instead of hardcoded1;1/1 passed1.5235029s. Other6 not rerun. Do not report final7/7 or aggregate overlapping runs as distinct passes.",
+      "assemblies": {
+        "modules_runtime": "f0d11d5d-3edd-46cf-a8dc-d5dd756a1bca",
+        "modules_editor": "68bfbb8e-c587-420b-a27a-8df8998ebba1",
+        "final_runtime": "f0d11d5d-3edd-46cf-a8dc-d5dd756a1bca",
+        "final_editor": "21ecc0f7-b3c5-437c-9131-d32622a5d279",
+        "boundary": "Only native fixture lap assertion/diagnostics changed after3714pass; fresh editor assembly loaded, unchanged production runtime. No repeated unchanged modules/full suite."
+      },
+      "visual": {
+        "before": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c1-2026-10-29/before/profile-20261028-231355670",
+        "after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c1-2026-10-29/after/profile-final",
+        "sizes": [
+          "1920x1080",
+          "2560x1440",
+          "1280x720"
+        ],
+        "full_frames_viewed": 6,
+        "D04_passive_overflows": 0,
+        "preexisting_other_overflows_per_size": [
+          14,
+          14,
+          14
+        ],
+        "coverage": "Owned production DriverSelectionUI,12drivers/six teams; pointer/Submit/Back/focus/mask exercised by profile fixture. No new action UI in passive slice. Existing14 other overflows not accepted; full RaceCanvas/hardware drag/720p readability/full modes pendingI13."
+      },
+      "acceptance": {
+        "pure_rules": true,
+        "production_wiring": true,
+        "actual_player_passive": true,
+        "controlled_three_size_profile": true,
+        "actual_GameLoop_cruise_next_input": true,
+        "vettel_active": false,
+        "complete_modes": false
+      },
+      "review": "Independent gameplay core and QA fixtures; Unity specialist readonly final review found no blocking issue after temp-value1 native predicate and ActualCells ledger corrections. Root compiled, ran and viewed stated evidence.",
+      "unity_final": {
+        "scenes": [
+          {
+            "path": "Assets/Scenes/MainMenu.unity",
+            "dirty": false
+          }
+        ],
+        "playing": false,
+        "compiling": false,
+        "updating": false,
+        "tests": false,
+        "runtime": "f0d11d5d-3edd-46cf-a8dc-d5dd756a1bca",
+        "editor": "21ecc0f7-b3c5-437c-9131-d32622a5d279",
+        "native": "{\"fullName\":\"Foodula1\",\"resultState\":\"Passed\",\"endedUtc\":\"2026-10-28T23:26:24.3510902Z\",\"total\":1,\"passed\":1,\"failed\":0,\"skipped\":0,\"inconclusive\":0,\"message\":\"\",\"output\":\"\",\"stackTrace\":\"\"}"
+      },
+      "console": {
+        "errors": 0,
+        "warnings": 0,
+        "not_cleared": true,
+        "earlier_tool_warning": "MCP WebSocket not initialised during reload; no gameplay/compiler errors remaining"
+      },
+      "license": "Editor.log licensing client successfully resolved entitlement details; no license or system changes.",
+      "preservation": {
+        "word": 8,
+        "scenes": 32,
+        "excluded_files": 4,
+        "changed": [],
+        "old_untracked_entries_preserved": 187
+      },
+      "evidence": "../../../production/qa/evidence/tech-driver-I04c1-2026-10-29/README.md",
+      "next_slice": "I04c2：维特尔主动固定来源选择、永久热固定费用与有限本人输入增幅的运行态/生产API；随后真实按钮合并确认与三尺寸交互。I04保持进行中，完整模式/存档/硬件组合留I13。",
+      "git": "HEAD4c94d01 preserved. No commit/push/staging/reset/checkout/rebase, cleanup, package install, scene save or play-settings mutation.",
+      "missing_governance": "active.md/control-manifest/technical-preferences missing as previously recorded; no placeholder created."
+    },
+    {
+      "id": "I04c2",
+      "local_date": "2026-10-29",
+      "status": "vettel_fixed_source_active_runtime_and_production_API_verified_actual_button_pending",
+      "scope": "Fixed source for whole window: native cruise always, unlocked L1 actual paid beer or unlocked L2 actual German exit. One full permanent engine heat to hand; one race use1/1/2. Tier1 current eligible owner input, tier2/3 current+next, at most+2/input. Separate driver-only actual tail, new apexes ordinary payment, final-line truncation, no source recursion.",
+      "new_cases": {
+        "pure": 64,
+        "manager": 34,
+        "actual_GameLoop": 2,
+        "actual_production_coroutine": 1,
+        "total": 101
+      },
+      "modules": {
+        "total": 3812,
+        "passed": 3812,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0,
+        "seconds": 50.8084862,
+        "state": "Passed",
+        "nativeState": "Passed",
+        "selectionMatches": true,
+        "startedUtc": "2026-10-29T04:23:03.2262014Z",
+        "endedUtc": "2026-10-29T04:24:04.5088776Z"
+      },
+      "module_start_gate": {
+        "executed": 0,
+        "reason": "New manager fixture meta initially had33hex GUID, Unity ignored its script; modular inventory correctly refused stale fixture. Corrected only newmeta to32hex and verified type in fresh editor assembly before3812run. No stale assembly credit."
+      },
+      "native_first": {
+        "fullName": "Foodula1",
+        "resultState": "Failed(Child)",
+        "endedUtc": "2026-10-29T04:25:18.0441442Z",
+        "total": 10,
+        "passed": 9,
+        "failed": 1,
+        "skipped": 0,
+        "inconclusive": 0,
+        "message": "One or more child tests had errors",
+        "output": "",
+        "stackTrace": ""
+      },
+      "native_first_seconds": null,
+      "native_retry": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "durationSeconds": 2.227267,
+        "resultState": "Passed"
+      },
+      "native_count_boundary": "First exact10 comprised9 actual GameLoop cases and1 production-coroutine case;9 passed1 failed0 skipped, failed MCP job omitted duration. Only failing new tail case rerun after fixture spin-or-discard wait correction,1/1 passed2.227267s. Other9 not repeated, no final10/10 or additive unique-pass count claimed. New tail and final-line cases each contain2 synthetic scenarios, not extra NUnit cases.",
+      "native_fixture_fix": "Spin bypasses ordinary discard. Wait now observes actual spinCounter>0 OR discard as existing Mansell native fixture; all fee/old instance/uses/rewind/pit scheduling assertions retained.",
+      "runtime_mvid": "65fa0ac4-4623-40eb-b650-0577b56337d6",
+      "module_editor_mvid": "16969b24-e74d-491d-8307-26f346e00172",
+      "final_editor_mvid": "993e7cbf-26d1-4b17-8716-3e6debcdbfd8",
+      "version_boundary": "Only failing native fixture wait changed after3812modules/first10native. Production runtime unchanged; fresh editor compiled for single retry. No unchanged full/module rerun.",
+      "review": "Independent core and QA ownership; readonly Unity specialist found base route could re-register expanded tail pit after spin. Fixed native-route settlement before tail, original end branch only when no rhythm bonus; tail route settles once after successful new-corner fees. Added actual successful/failed tail pit regression. Final readonly specialist approved with no blocking findings; root ran native evidence.",
+      "acceptance": {
+        "pure_rules": true,
+        "production_wiring": true,
+        "manager_transaction_API": true,
+        "actual_owner_input_GameLoop": true,
+        "actual_tail_corner_partial_payment_spin_pit": true,
+        "actual_nonzero_finish_coroutine": true,
+        "player_button": false,
+        "source_confirmation_UI": false,
+        "full_modes_and_save_compatibility": false
+      },
+      "UI": {
+        "changed": false,
+        "new_screenshots": 0,
+        "boundary": "No UI/copy/layout changes in API-only C2. Existing legacy player button remains untilC3; after first manualAPI commit old free activation/gear waiver cannot interleave. C1 screenshots are historical and not credited here. Three-size source-selection interactions pendingC3, full hardware/modesI13."
+      },
+      "unity_final": {
+        "scenes": [
+          {
+            "path": "Assets/Scenes/MainMenu.unity",
+            "dirty": false
+          }
+        ],
+        "playing": false,
+        "compiling": false,
+        "updating": false,
+        "tests": false,
+        "runtime": "65fa0ac4-4623-40eb-b650-0577b56337d6",
+        "editor": "993e7cbf-26d1-4b17-8716-3e6debcdbfd8",
+        "native": "{\"fullName\":\"Foodula1\",\"resultState\":\"Passed\",\"endedUtc\":\"2026-10-29T04:27:17.8400999Z\",\"total\":1,\"passed\":1,\"failed\":0,\"skipped\":0,\"inconclusive\":0,\"message\":\"\",\"output\":\"\",\"stackTrace\":\"\"}"
+      },
+      "console": {
+        "errors": 0,
+        "warnings": 0,
+        "not_cleared": true,
+        "earlier_tool_warning": "MCP WebSocket not initialised during reload; no remaining compiler/gameplay warnings"
+      },
+      "license": "Editor.log109099 Successfully resolved entitlement details. No license/system settings changed.",
+      "preservation": {
+        "word": 8,
+        "scenes": 32,
+        "excluded_files": 4,
+        "old_untracked_entries_preserved": 243,
+        "changed": []
+      },
+      "missing_governance": "active.md/control-manifest/technical-preferences/coding-standards references absent; recorded only, no placeholder or governance expansion.",
+      "next_slice": "I04c3：把维特尔固定来源主动接到真实技能按钮和一次合并来源/费用确认，替换旧免费完美节奏入口与摘要；覆盖取消/焦点/键盘/遮罩/禁用/剩余输入、三尺寸改前后交互。I04仍进行中，完整模式/存档/硬件组合留I13。",
+      "evidence": "../../../production/qa/evidence/tech-driver-I04c2-2026-10-29/README.md",
+      "git": "HEAD4c94d01 preserved; no commit/push/staging/reset/checkout/rebase, user-file cleanup, package install, scene save or quick-play setting change."
+    },
+    {
+      "id": "I04c3a",
+      "local_date": "2026-11-02",
+      "status": "production_source_button_and_typed_choice_wired_offline_compiled_Unity_acceptance_pending",
+      "scope": "Real manager/HUD D04 entry routes exact fixed-source plan, no free legacy fallback. Mandatory typed enum source and full permanent fee share one modal at mask0/All. Confirm captures enum before clearing; cancel/lifecycle/stale plans do not charge. Source paging retains ordinary card/continuation navigation. Runtime read-only owner-window count, current/next/used text, new active name/copy, D04-only profile autosizing; no geometry redesign.",
+      "offline_compile": [
+        {
+          "assembly": "Assembly-CSharp",
+          "exit": 0,
+          "sources": 233,
+          "rsp_sha256": "3fb77cc2ae96cd91eea826a8658f4b72a9d8629ecf65d79e792b937ad0888e9a",
+          "boundary": "Offline Roslyn C#9; never loaded into live Unity, not Editor TestRunner/visual evidence."
+        },
+        {
+          "assembly": "Assembly-CSharp-Editor",
+          "exit": 0,
+          "sources": 214,
+          "rsp_sha256": "303d87d4a38b7ddc8172e74011e14b8af6b437f91a7515c4d5d034bede6b8972",
+          "boundary": "Offline Roslyn C#9; never loaded into live Unity, not Editor TestRunner/visual evidence."
+        }
+      ],
+      "offline_assemblies": {
+        "runtime_mvid": "e5145345-a280-4a10-a75a-56d5ad2f2ab3",
+        "editor_mvid": "552f101a-d0d7-40aa-aea0-d19c7d343059",
+        "runtime_sources": 233,
+        "editor_sources": 214,
+        "destination": "Library/AutomationReview/tech-driver-I04c3-20261102/offline-compile",
+        "Unity_loaded": false
+      },
+      "standalone_pure": {
+        "total": 64,
+        "passed": 64,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0,
+        "duration": 0.063609
+      },
+      "standalone_rules_runtime": {
+        "total": 51,
+        "passed": 50,
+        "failed": 1,
+        "skipped": 0,
+        "inconclusive": 0,
+        "duration": 0.056966
+      },
+      "standalone_failure": {
+        "name": "DriverSkillRuntimeTests.AuthoredRaceCanvasExposesDriverSkillButtonAndLabel",
+        "reason": "Standalone Mono has no live UnityEditor.AssetDatabase.LoadAssetAtPath native internal call; MissingMethodException, retained as1 environment failure, not a pass or silently skipped. Mono generic mismatch text is a host limitation, no Unity install repair attempted."
+      },
+      "test_boundary": "64 current Vettel pure cases passed. Separate Rules/Runtime51:50passed1environment failure; disjoint selections115executed/114passed/1failed/0skipped. Not Unity EditMode results. Native modules/GameLoop/UI cases executed this continuation=0. Old C2 native3812 and previous screenshots are historical, not current passes.",
+      "new_UI_cases_registered": 51,
+      "new_UI_cases_executed": 0,
+      "new_native_cases": 0,
+      "existing_native_upgraded": "VettelPaidSourceWindowAddsTwoAfterEachOfTwoRealOwnerInputsAndChargesOnlyOnce now enters actual manager button and HUD source confirmation instead of direct transaction API; not executed on new code.",
+      "visual": {
+        "new_after_screenshots": 0,
+        "prior_C3_before_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/before/hud-20261029-044246962",
+        "prior_C3_before_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/before/profile",
+        "prior_before_frames_viewed": 6,
+        "sizes": [
+          "1920x1080",
+          "2560x1440",
+          "1280x720"
+        ],
+        "boundary": "Before frames captured/viewed Oct29 before production C3 UI edits, same unchanged HUD/row baseline throughNov2. No new after frames, native UI or overflow acceptance.51parameterized UI/profile assertions compiled only. Full modes/hardware/720p readability remain pending."
+      },
+      "review": "Initial UI and QA agents hit usage limit before production/after-fixture work; root implemented remaining sources/tests. Independent final specialist readonly no blocking issue; name escaping and next-input wording suggestions applied. No independent execution signoff.",
+      "acceptance": {
+        "source_wiring": true,
+        "offline_full_runtime_editor_compile": true,
+        "standalone_pure_rules": true,
+        "Unity_new_assembly_loaded": false,
+        "Unity_modules": false,
+        "actual_player_interaction_verified": false,
+        "three_size_after_UI_verified": false,
+        "complete_modes_and_save": false
+      },
+      "Unity_current": {
+        "tools_available": false,
+        "live_scene_dirty_play_compile_import_license_console_ready": "unverified; no editor commands, Play/scene saves or old assembly tests performed in this continuation",
+        "last_observed_prior_C3": "Oct29 before capture: MainMenu clean/idle,0game/compiler errors and reload MCP WebSocket warning. Historical only."
+      },
+      "preservation": {
+        "Word": 8,
+        "scenes": 32,
+        "excluded_files": 4,
+        "old_untracked_entries_preserved": 313,
+        "SHA_mismatches": []
+      },
+      "missing_governance": "active.md/control-manifest/technical-preferences/coding-standards missing references retained as prior record; no placeholders created.",
+      "next_slice": "I04c3b：Unity工具可用后先核验场景/播放/编译导入/许可/Console/ready，再让最终新程序集实际加载，运行tech/drivers及依赖、51项真实UI检查与已升级的GameLoop；实际查看三尺寸改后HUD/profile及输入/取消/焦点/遮罩。当前不推进I05，完整模式/存档/硬件仍I13。",
+      "evidence": "../../../production/qa/evidence/tech-driver-I04c3a-2026-11-02/README.md",
+      "git": "HEAD4c94d01 unchanged, staged empty; no commit/push/reset/checkout/rebase/file cleanup/package install/system or quick-play changes."
     }
   ]
 }

@@ -1,0 +1,142 @@
+{
+  "id": "I04b1",
+  "local_date": "2026-10-29",
+  "ended_utc": "2026-10-28T17:26:52.7989363Z",
+  "status": "schumacher_strategy_runtime_api_and_bounded_native_verified_actual_ui_pending",
+  "scope": "D03 exact speed discard preparation at gear1/2; next two consecutive owner inputs gear3/4, fixed permanent heat1 each for movement2/3/3. Independent Strategy clock and exact versioned plans, Manager transaction/gear/cards/movement/cleanup adapters; actual button remains I04b2.",
+  "new_cases": 87,
+  "new_pure_cases": 53,
+  "new_manager_adapter_cases": 33,
+  "new_actual_GameLoop_cases": 1,
+  "final_native": {
+    "startedUtc": "2026-10-28T17:24:07.2969851Z",
+    "endedUtc": "2026-10-28T17:24:47.0646871Z",
+    "state": "Passed",
+    "nativeState": "Passed",
+    "total": 3570,
+    "passed": 3570,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "seconds": 33.0757789,
+    "selectionMatches": true
+  },
+  "modules": [
+    "ai",
+    "cards-heat",
+    "career",
+    "core",
+    "drivers",
+    "gears",
+    "tech",
+    "tools",
+    "tracks-weather-pit",
+    "tutorial",
+    "ui"
+  ],
+  "gameloop": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 6.7724629,
+    "resultState": "Passed"
+  },
+  "native_GameLoop_RunFinished": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-10-28T17:26:52.7989363Z",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": "",
+    "stackTrace": ""
+  },
+  "gameloop_boundary": "Six exact selected cases: new D03 active internally levels3/5, existing D03 passive, two German declaration and two Mansell actual loops. Synthetic track/headless adapters; not all long-races or full modes.",
+  "first_gameloop_native": {
+    "fullName": "Foodula1",
+    "resultState": "Failed(Child)",
+    "endedUtc": "2026-10-28T17:25:16.4625555Z",
+    "total": 6,
+    "passed": 5,
+    "failed": 1,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "One or more child tests had errors",
+    "output": "",
+    "stackTrace": ""
+  },
+  "first_gameloop_job_wall_seconds": 7.397,
+  "failure_resolution": "Only new GameLoop fixture initially retained DE chassis +2 straight bonus (expected1, actual3). Set session.TeamVehicleBonusesEnabled=false explicitly in owned new fixture; preserved original position/heat assertions. Production and selected11module cases unchanged; no repeat of unchanged3570.",
+  "runtime_mvid": "e6d6e80f-4853-4179-b3cb-8501d59619d0",
+  "module_editor_mvid": "79888f06-3448-49ab-87ba-fad14881200e",
+  "final_editor_mvid": "612a0e6a-1efe-44cb-b3ef-07a656e2affa",
+  "new_assemblies_loaded": true,
+  "acceptance": {
+    "pure_rules": true,
+    "production_wiring": true,
+    "manager_api_operable": true,
+    "strategy_observed_through_actual_GameLoop": true,
+    "actual_player_button_migrated": false,
+    "three_size_strategy_ui": false,
+    "schumacher_active_fully_accepted": false,
+    "vettel": false,
+    "complete_modes": false
+  },
+  "source_review": "Independent Unity specialist final read-only review found no blocking issues in9 existing production files+newRuntime/Plan. Native compiler/tests supply execution evidence. New bonus tail pays ordinary corners and defers finish; exception/pit cleanup covered.",
+  "unity_final": {
+    "scene": "Assets/Scenes/MainMenu.unity",
+    "dirty": false,
+    "loadedScenes": [
+      {
+        "path": "Assets/Scenes/MainMenu.unity",
+        "dirty": false
+      }
+    ],
+    "playing": false,
+    "compiling": false,
+    "updating": false,
+    "tests": false
+  },
+  "console": {
+    "errors": 0,
+    "warnings": 0,
+    "not_cleared": true
+  },
+  "license": "Successfully resolved entitlement details; Editor.log:21080",
+  "visual": {
+    "new_screenshots": 0,
+    "reason": "No UI/layout/player button changed in API-only I04b1. Actual button/confirmation/text and required three-size before/after review remain I04b2; I04a screenshots not reused as this slice acceptance."
+  },
+  "protected_files": {
+    "word_count": 8,
+    "scene_count": 32,
+    "changed": [],
+    "excluded_diff_preserved": {
+      ".claude/settings.json": true,
+      ".codex/hooks.json": true,
+      "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset": true,
+      "ProjectSettings/EditorSettings.asset": true
+    },
+    "previous_untracked_preserved": 78
+  },
+  "evidence": "../../../production/qa/evidence/tech-driver-I04b1-2026-10-29/README.md",
+  "next_slice": "I04b2：将舒马赫三段战术接到真实技能按钮、弃牌/逐次付热确认与状态文案，覆盖取消/焦点/键盘/拖动及三尺寸改前后受控生产UI；随后I04c维特尔，完整模式/存档组合留I13。",
+  "git": "HEAD4c94d01 unchanged; no commit/push/staging/reset/checkout/rebase, file cleanup, package install or settings mutation.",
+  "format_only_followup": {
+    "kind": "Removed only one trailing EOF blank line in each of two new test files and normalized final newline; reconstructing old EOF CRLFCRLF reproduces preformat SHA256; no executable tokens changed.",
+    "paths": [
+      "Assets/Tests/Editor/schumacher_strategy_manager_test.cs",
+      "Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs"
+    ],
+    "new_editor_mvid": "3850947d-3485-430b-a498-fb03d3ef8730",
+    "runtime_mvid": "e6d6e80f-4853-4179-b3cb-8501d59619d0",
+    "fresh_compile_verified": true,
+    "tests_repeated": false,
+    "credited_additional_passes": 0,
+    "test_editor_mvid": "612a0e6a-1efe-44cb-b3ef-07a656e2affa"
+  }
+}

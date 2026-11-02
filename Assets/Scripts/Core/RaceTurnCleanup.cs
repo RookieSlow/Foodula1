@@ -24,6 +24,19 @@ public static class RaceTurnCleanup
             if (!RaceTurnRules.IsTerminal(player) && player.techState != null) resolveTechnology?.Invoke(player);
             player.playedSpeedCardsThisTurn.Clear();
         }
-        finally { player.techState?.germanBurst.CloseWindow(); }
+        catch
+        {
+            player.driverSkill?.Strategy.Interrupt();
+            player.driverSkill?.Feedback.Interrupt();
+            player.driverSkill?.Rhythm.Interrupt();
+            throw;
+        }
+        finally
+        {
+            player.techState?.germanBurst.CloseWindow();
+            player.driverSkill?.Strategy.CloseInput();
+            player.driverSkill?.Feedback.CloseInput();
+            player.driverSkill?.Rhythm.CloseInput();
+        }
     }
 }

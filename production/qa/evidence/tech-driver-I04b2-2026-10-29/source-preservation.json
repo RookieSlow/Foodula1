@@ -1,0 +1,88 @@
+{
+  "changed_baseline_paths": {
+    "Assets/Scripts/Core/MVPGameManager.cs": {
+      "before": "54a008490b4946af6a4a0e91d45a9cf4f62dfd24f0360528b674868b4b7566f0",
+      "after": "973658fda32da0b006a30598e4dc12324f66d6ea23f34aea995975d457df2a68"
+    },
+    "Assets/Scripts/Drivers/DriverData.cs": {
+      "before": "0351aade2f85d35115c202cff60cad055f5e0a4242e3d8c9b352bb8600f04a9a",
+      "after": "f14ebfa92e2dd7b7479cc34e077333d09867ebf665a7d99f6b4096f4dedeb94f"
+    },
+    "Assets/Scripts/UI/DriverSelectionUI.cs": {
+      "before": "ad0c488b1ba9384ff51478b30a86750d5cdabeb7c59a3b40abfe4b23917ad003",
+      "after": "5eafec562a031731d798c141d2011a32dc08bffecd04427106027671bb1e7c67"
+    },
+    "Assets/Scripts/UI/HUDUI.cs": {
+      "before": "24ebd061ad2304a64fe844f09a12edbb7e1d9057cd4025cfb77aaf57f292e9f9",
+      "after": "d5a0c00a87070f02e30c49bd27de86cfd56bdcc231b956c7f733b4cb3e150f47"
+    },
+    "Assets/Scripts/UI/TeamGearPresentationUI.cs": {
+      "before": "acdb9b443a5a21546752329b7d3d050820064900bdc1e0c261fff2aee7188a70",
+      "after": "dc8411c2b14e91cc9b2867acf6029e2913a0c012816e2b7080be5d3318caea0a"
+    },
+    "Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs": {
+      "before": "979211c0830eafd60cc4b7938cd0a141a4cc4aca611c4f60aa62cc3def406e85",
+      "after": "017c5517683f683c4e1d471636fa638435fa30cece384f4b2010f53ed9701eea"
+    },
+    "Assets/Tests/Editor/RegressionModules.json": {
+      "before": "430c706622c50d8a1a562000ef5094d4ff3c01f26e41b061be215d6e5fcf9a35",
+      "after": "8721766354d04ac2f6a0138f02f27c5aef855b32a4d9f8382d539b1c313dc74d"
+    },
+    "design/planning/tech-driver-rework-2026-10-22/implementation-plan.json": {
+      "before": "0fd59fdf1c1788b73cc1bb7d25360bd828d46502032bdddda00199f8f4e145a6",
+      "after": "2d292c14ee81b84ea20518d6f7940c02c1a5c1255926938f0f83a9f0cfd1c45f"
+    },
+    "design/planning/tech-driver-rework-2026-10-22/progress.json": {
+      "before": "a6d49ec1fdd9acd0ffda331107662d82bd224bf72c7d5e60fe99d99508e08a7b",
+      "after": "86de4839e313d32684b58e37bbd282e6455937d1008b326e7005eae59c951c81"
+    }
+  },
+  "protected_unchanged": {
+    "Assets/Scenes/MainMenu.unity": "e860b24c74611afacfb34ca6d8d55798758ca73d4632b892e0843acb12f45b72",
+    "Assets/Scenes/Race.unity": "ec072d67de3a5e2e8f49f36879de15142a8d0bbb4851dc1c75e74056235eb20f",
+    "Assets/TmpScenes/TmpSample.unity": "19a04f0ab87b5d645c8621b8cf07379a64ed5f8a071d78a98117fd3e295dadf6",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/01-  Single Line TextMesh Pro.unity": "cdb80b42a580232c8d60f04e3c6d2cafbd2d99b57322a8a8b11008a1828d905e",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/02 - Multi-line TextMesh Pro.unity": "317ec754c02a4eb508daf5c4a7f2329e18534ad4b9fd71cc8d6a33f468502685",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/03 - Line Justification.unity": "bd892ffa1a656548b15e5edde17c64c298988dac71336c17c32294554aff9a55",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/04 - Word Wrapping.unity": "0a01fb45fe50894c66c63c169b92aae766c4472f64cdae6b3eb986a00e7e25f9",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/05 - Style Tags.unity": "83da37c6865a7fa31a32c67d73616406768afc72d9aee23b6b2fc6168dbd3887",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/06 - Extra Rich Text Examples.unity": "737bfc9df61a0a0b57edcc55aae53778085e99d534886800f5498096c9f88f2a",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/07 - Superscript & Subscript Example.unity": "e4ae928851c690246ce2fdd39464869889f6c4228603a68db2af20f21dbd91b5",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/08 - Improved Text Alignment.unity": "05c6a6b85b52972b39cbb2eeb7aaee4b51793eeb1e627bdaeb5a21e7ca4802d4",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/09 - Margin Tag Example.unity": "ec6ab2d9e38290113e795c1b86735b64fe6d775200a3ef9092e9a745ad6b3bf0",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/10 - Bullets & Numbered List Example.unity": "d468902d557d03ae822e0b7ff2539b44c1a276c48d487a98163abcf4c5ca88ce",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/11 - The Style Tag.unity": "80010ddbda5e6b95f784abf21a58a5e90dfe41b5e525e2ae02c7c9c98cb7f9be",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/12 - Link Example.unity": "353d0a20d06514b2a2325e6bb40d41bdf4f67e0702069ba88e88cedf53de969c",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/12a - Text Interactions.unity": "2860f48cec243dd323d7608ced821d9f48cfdc3012fbe6df74b4523b3f92829d",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/13 - Soft Hyphenation.unity": "be93ce1673df9882b08c46468079bcf5b1b2701c0f30cee8769117a177f2c4cd",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/14 - Multi Font & Sprites.unity": "8893d1091228960c45ecc650a6f1a75a3e691319b3f9052b54126aaf77cd01bc",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/15 - Inline Graphics & Sprites.unity": "530947500e5ba5c6d173ee7efcf5c0854d7fa1dda030f7bf21a85b43c182364a",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/16 - Linked text overflow mode example.unity": "4246dd769fe6c6fbc5bef742e8e57e0cc906539867cdfa9ae61706cc65486b31",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/17 - Old Computer Terminal.unity": "ca97ddbaae007aed4a31083590f6a2c4bb758bbc608f0d84409a9149301b7612",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/18 - ScrollRect & Masking & Layout.unity": "8aa2e52132a0d83bd1fb2a58604334b75700bf51a47b31136212c607cecaf515",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/19 - Masking Texture & Soft Mask.unity": "349c3c87b99d67c912daab798392404603970eacb87dee2f3cea712cbd7a21b8",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/20 - Input Field with Scrollbar.unity": "97a7bfb9ec437c5931e288ba8a635f6838ad12b51ca04447fe8c40481fc7c6a2",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/21 - Script Example.unity": "237c42e7460f753dad428fc6a52a175c48e85a462acf7eec70e654840c57a46f",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/22 - Basic Scripting Example.unity": "7a79a85bc46a80489a62838e70a80f7bf90086836f2a5c828b0b7ec47530693a",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/23 - Animating Vertex Attributes.unity": "82254ebd51a288a14af09d5b15cdbf7150cdabc1938daead04a1cd4419bd0808",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/24 - Surface Shader Example.unity": "ab9a5656b3914249c0e806b2ca7f8349f38eb2b51e5910b182148e0effc4376d",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/25 - Sunny Days Example.unity": "2d79de75b0f4ffe3e0475337d140c52c24451ba2d7d23b2142daff275e781f4e",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/26 - Dropdown Placeholder Example.unity": "ee4ae9adad47b9f739e13e939febdb9f7e43b558c2d7227cb17375e410a314e2",
+    "Assets/TextMesh Pro/Examples & Extras/Scenes/Benchmark (Floating Text).unity": "fcb878e08ccd7df8361b9cb1a0c86fcf9d72547c3904b1d9247bd6bc9d5243d1",
+    "Assets/TmpFont/Sample/Sample InputField.unity": "5e84a16985602744c7435d957342b0c22cd114f70f2083bfce03f9bdf8017adf",
+    "design/word/Foodula1_科技树设计.docx": "23f6a11bb1196f80d25c3ac87da0c59ecf8aeafb02682e6154e6915f4a630bfd",
+    "design/word/Foodula1_车手技能设计.docx": "0133feee3f0dc4fd7e5bee96af5c8431cb5869da5c26ba06b61aa3ad8409f13d",
+    "design/word/Foodula1_车队与赛车设计.docx": "193df0dd356d50aa36bc8a565194774b7e5847cd33f4bd8de05732212133370d",
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技与车手调整简报.docx": "afc1c1e33b1edef7a547a68e2df34e4879c55e1e5f87f9988a579ae10b11d01b",
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_科技树调整草案.docx": "281e077813344ab1e3627bb075dcc28d361a0626c8c39b3492f016a9f62d7bb3",
+    "design/planning/tech-driver-rework-2026-10-22/Foodula1_车手技能调整草案.docx": "94eb7763825f777d477b3fcb8fee92bad27e6353e42d8b2cdeb98f3889914f46",
+    "design/planning/tech-driver-rework-2026-10-22/inputs/Foodula1_科技树设计.docx": "c8996c17fc0aa44d6ea25ef58d9659956063be2e839913a51bde462f370c108f",
+    "design/planning/tech-driver-rework-2026-10-22/inputs/Foodula1_车手技能设计.docx": "d4def8c0b1e31774c861ea75f23343ef06afecc8ccea166aa2f4becc1c45a201",
+    ".claude/settings.json": "36f46ec933be7f321d7d6933279c84dad5536f22c80c99928df056dceb2001ac",
+    ".codex/hooks.json": "e5414c3a2324af96670deeacaba30c9395b9140639816ae0787b061940310bd1",
+    "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset": "c44b368e107f8e08e35d9cc93b6e8be7c022273a1cb7bc1daca8317f45848d94",
+    "ProjectSettings/EditorSettings.asset": "6ab19fe30172c763029b8f2e0616c6dc3dcfe480e845fc1aaaef5975c948eec0"
+  },
+  "old_untracked_preserved": 122,
+  "head": "4c94d011365a9df5daada6eccda672aecf676bcc"
+}

@@ -96,7 +96,7 @@ public static class RaceMovementRules
     }
 
     /// <summary>
-    /// Hart's whole-movement reward checks only newly reached tail cells. Ordinary
+    /// Hart, paid Mansell and paid Schumacher rewards check only newly reached tail cells. Ordinary
     /// card corners retain their original range and speed; unrelated bonuses retain
     /// their existing behavior. Absolute endpoints preserve a new pass after a lap.
     /// </summary>
@@ -104,7 +104,9 @@ public static class RaceMovementRules
     {
         DriverSkillRuntimeState skill = player?.driverSkill;
         bool paidMansell = skill != null && skill.Skill == DriverActiveSkillId.AngryCharge && skill.Charge.CommittedThisInput;
-        if (skill == null || (skill.Skill != DriverActiveSkillId.FinalLap && !paidMansell) || !skill.IsActive)
+        bool paidSchumacher = skill != null && skill.Skill == DriverActiveSkillId.PerfectLap &&
+            skill.Strategy.ManualPath && skill.Strategy.CommittedThisInput && skill.Strategy.MovementBonusThisInput > 0;
+        if (skill == null || (skill.Skill != DriverActiveSkillId.FinalLap && !paidMansell && !paidSchumacher) || !skill.IsActive)
             return (startPosition, startPosition);
         int movement = Math.Max(0, player.totalMovementThisTurn);
         int reward = Math.Max(0, DriverSkillRules.GetMovementBonus(skill, false));

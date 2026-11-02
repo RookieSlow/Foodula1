@@ -1,0 +1,57 @@
+﻿cant resolve internal call to "UnityEngine.Component::get_transform" (tested without signature also)
+
+Your mono runtime and class libraries are out of sync.
+The out of sync library is: C:\Program Files\Unity\Hub\Editor\2022.3.62f3c1\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll
+
+When you update one from git you need to update, compile and install
+the other too.
+Do not report this as a bug unless you're sure you have updated correctly:
+you probably have a broken mono install.
+If you see other errors or faults after this message they are probably related
+and you need to fix your mono install first.
+cant resolve internal call to "UnityEngine.RectTransform::get_anchorMin_Injected" (tested without signature also)
+
+Your mono runtime and class libraries are out of sync.
+The out of sync library is: C:\Program Files\Unity\Hub\Editor\2022.3.62f3c1\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll
+
+When you update one from git you need to update, compile and install
+the other too.
+Do not report this as a bug unless you're sure you have updated correctly:
+you probably have a broken mono install.
+If you see other errors or faults after this message they are probably related
+and you need to fix your mono install first.
+cant resolve internal call to "UnityEngine.RectTransform::get_anchorMax_Injected" (tested without signature also)
+
+Your mono runtime and class libraries are out of sync.
+The out of sync library is: C:\Program Files\Unity\Hub\Editor\2022.3.62f3c1\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll
+
+When you update one from git you need to update, compile and install
+the other too.
+Do not report this as a bug unless you're sure you have updated correctly:
+you probably have a broken mono install.
+If you see other errors or faults after this message they are probably related
+and you need to fix your mono install first.
+cant resolve internal call to "UnityEditor.AssetDatabase::LoadAssetAtPath" (tested without signature also)
+
+Your mono runtime and class libraries are out of sync.
+The out of sync library is: C:\Program Files\Unity\Hub\Editor\2022.3.62f3c1\Editor\Data\Managed\UnityEngine\UnityEditor.CoreModule.dll
+
+When you update one from git you need to update, compile and install
+the other too.
+Do not report this as a bug unless you're sure you have updated correctly:
+you probably have a broken mono install.
+If you see other errors or faults after this message they are probably related
+and you need to fix your mono install first.
+cant resolve internal call to "UnityEditor.AssetDatabase::LoadAssetAtPath" (tested without signature also)
+STANDALONE_RULES_RUNTIME runtime=e5145345-a280-4a10-a75a-56d5ad2f2ab3 editor=552f101a-d0d7-40aa-aea0-d19c7d343059 total=51 passed=50 failed=1 skipped=0 seconds=0.0569657
+
+Your mono runtime and class libraries are out of sync.
+The out of sync library is: C:\Program Files\Unity\Hub\Editor\2022.3.62f3c1\Editor\Data\Managed\UnityEngine\UnityEditor.CoreModule.dll
+
+When you update one from git you need to update, compile and install
+the other too.
+Do not report this as a bug unless you're sure you have updated correctly:
+you probably have a broken mono install.
+If you see other errors or faults after this message they are probably related
+and you need to fix your mono install first.
+﻿

@@ -1,0 +1,30 @@
+{
+  "tracked_exit": 0,
+  "new_source_and_meta_checked": [
+    "Assets/Scripts/Drivers/SchumacherStrategyActivationPlan.cs",
+    "Assets/Scripts/Drivers/SchumacherStrategyActivationPlan.cs.meta",
+    "Assets/Scripts/Drivers/SchumacherStrategyRuntime.cs",
+    "Assets/Scripts/Drivers/SchumacherStrategyRuntime.cs.meta",
+    "Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs",
+    "Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs.meta",
+    "Assets/Tests/Editor/schumacher_strategy_manager_test.cs",
+    "Assets/Tests/Editor/schumacher_strategy_manager_test.cs.meta",
+    "Assets/Tests/Editor/schumacher_strategy_test.cs",
+    "Assets/Tests/Editor/schumacher_strategy_test.cs.meta"
+  ],
+  "new_whitespace_findings": [],
+  "head": "4c94d011365a9df5daada6eccda672aecf676bcc",
+  "format_only_followup": {
+    "kind": "Removed only one trailing EOF blank line in each of two new test files and normalized final newline; reconstructing old EOF CRLFCRLF reproduces preformat SHA256; no executable tokens changed.",
+    "paths": [
+      "Assets/Tests/Editor/schumacher_strategy_manager_test.cs",
+      "Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs"
+    ],
+    "new_editor_mvid": "3850947d-3485-430b-a498-fb03d3ef8730",
+    "runtime_mvid": "e6d6e80f-4853-4179-b3cb-8501d59619d0",
+    "fresh_compile_verified": true,
+    "tests_repeated": false,
+    "credited_additional_passes": 0,
+    "test_editor_mvid": "612a0e6a-1efe-44cb-b3ef-07a656e2affa"
+  }
+}

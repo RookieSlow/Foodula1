@@ -225,13 +225,22 @@ public sealed partial class TeamGearPresentationTests
         Assert.That(View.DetailLabel.text, Does.Contain(team == TeamId.CN ? "连用热 +1" : "换挡热 1"));
         Assert.That(DriverCatalog.TryGet(driverId, out DriverProfile driver), Is.True);
         player.driverSkill.Initialize(driver, 5, true);
-        Assert.That(player.driverSkill.TryActivate(driver,
+        player.driverId = driverId;
+        if (team == TeamId.DE)
+        {
+            var race = (RaceSession)typeof(MVPGameManager).GetField("session", Private).GetValue(manager);
+            race.BeginTurn(player, 1); race.BeginDriverSkillInput(player, 60);
+            var context = new DriverSkillActivationContext(true, 0, 3, 6, 6, 0);
+            Assert.That(VettelRhythmActivationPlan.TryCreate(race, player, 1, 3, 1, context, out var plan, out string reason), Is.True, reason);
+            Assert.That(plan.TryCommit(race, player, 1, 3, 1, context, VettelNativeSource.BasicCruise, out reason), Is.True, reason);
+        }
+        else Assert.That(player.driverSkill.TryActivate(driver,
             new DriverSkillActivationContext(true, 0, 3, 6, 6, 0), out _), Is.True);
         int turns = player.driverSkill.ActiveTurnsRemaining;
         int uses = player.driverSkill.UsesRemaining;
         hud.RefreshTeamGearPresentation();
         hud.RefreshTeamGearPresentation();
-        Assert.That(View.DetailLabel.text, Does.Contain(team == TeamId.CN ? "连用热 +0" : "换挡热 0"));
+        Assert.That(View.DetailLabel.text, Does.Contain(team == TeamId.CN ? "连用热 +0" : "换挡热 1"));
         Assert.That(player.driverSkill.ActiveTurnsRemaining, Is.EqualTo(turns));
         Assert.That(player.driverSkill.UsesRemaining, Is.EqualTo(uses));
     }

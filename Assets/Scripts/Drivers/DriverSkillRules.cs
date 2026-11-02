@@ -204,7 +204,7 @@ public static class DriverSkillRules
         int t = Math.Max(1, Math.Min(3, tier));
         switch (skill)
         {
-            case DriverActiveSkillId.PerfectRhythm: return t == 1 ? 3 : t == 2 ? 4 : 5;
+            case DriverActiveSkillId.PerfectRhythm: return t == 1 ? 1 : 2;
             case DriverActiveSkillId.TrueSelf: return t == 1 ? 2 : 3;
             case DriverActiveSkillId.ChinaSpeed: return t == 1 ? 2 : 3;
             case DriverActiveSkillId.ExtremeSwitch: return t == 1 ? 3 : t == 2 ? 4 : int.MaxValue;
@@ -228,7 +228,7 @@ public static class DriverSkillRules
         switch (skill)
         {
             case DriverPassiveSkillId.EngineersTune: return 0; // D03 is armed only by actual ordinary-corner receipts.
-            case DriverPassiveSkillId.InformationSponge: return t == 1 ? 4 : t == 2 ? 3 : 2;
+            case DriverPassiveSkillId.InformationSponge: return 0; // D04 now observes actual native sources, never a global draw cadence.
             default: return 0;
         }
     }
@@ -249,7 +249,7 @@ public static class DriverSkillRules
 
     public static int GetPassiveDeckLookahead(DriverPassiveSkillId skill, int tier)
     {
-        return skill == DriverPassiveSkillId.InformationSponge && tier > 0 ? 3 : 0;
+        return 0; // D04 source feedback replaces the legacy best-of-three draw.
     }
 
     public static int GetPassiveOvertakeMovementBonus(DriverPassiveSkillId skill, int tier)
@@ -261,6 +261,12 @@ public static class DriverSkillRules
     {
         return 0;
     }
+
+    /// <summary>D03 each of the two paid execution inputs has this bounded movement reward.</summary>
+    public static int GetSchumacherStrategyMovementBonus(int tier) => tier <= 0 ? 0 : tier == 1 ? 2 : 3;
+
+    /// <summary>D03 execution count is fixed independently of the level-three extra race use.</summary>
+    public static int GetSchumacherStrategyExecutionCount(int tier) => tier <= 0 ? 0 : 2;
 
     /// <summary>D02 passive tier ranges; the first observation itself has no active-skill six-cell cap.</summary>
     public static int GetMansellPursuitRange(int tier) => tier <= 0 ? 0 : Math.Min(3, tier) + 1;
@@ -287,6 +293,8 @@ public static class DriverSkillRules
 
     public static int GetMovementBonus(DriverSkillRuntimeState state, bool crossedCorner)
     {
+        if (state != null && state.Skill == DriverActiveSkillId.PerfectLap && state.Strategy.ManualPath)
+            return state.Strategy.MovementBonusThisInput;
         if (Active(state, DriverActiveSkillId.FinalLap)) return state.Tier >= 2 ? 3 : 2;
         if (state != null && state.Skill == DriverActiveSkillId.AngryCharge && state.Charge.CommittedThisInput)
             return state.Charge.MovementBonusThisInput;
@@ -316,7 +324,7 @@ public static class DriverSkillRules
 
     public static int ReduceCornerHeat(DriverSkillRuntimeState state, int heat)
     {
-        if (Active(state, DriverActiveSkillId.PerfectLap)) return 0;
+        if (Active(state, DriverActiveSkillId.PerfectLap) && !state.Strategy.ManualPath) return 0;
         int reduced = Active(state, DriverActiveSkillId.PrecisionCornering)
             ? Math.Max(0, heat - 1)
             : Math.Max(0, heat);
@@ -333,8 +341,6 @@ public static class DriverSkillRules
     public static int ApplyGearHeatCost(DriverSkillRuntimeState state, int heatCost, bool isChinaAdditionalHeat)
     {
         int cost = Math.Max(0, heatCost);
-        if (Active(state, DriverActiveSkillId.PerfectRhythm) && !isChinaAdditionalHeat)
-            return 0;
         if (Active(state, DriverActiveSkillId.ExtremeSwitch))
             return state.Tier >= 3 ? 0 : cost / 2;
         return cost;
@@ -342,7 +348,7 @@ public static class DriverSkillRules
 
     public static int GetSlipstreamBonus(DriverSkillRuntimeState state)
     {
-        if (Active(state, DriverActiveSkillId.PerfectLap) && state.Tier >= 2) return 1;
+        if (Active(state, DriverActiveSkillId.PerfectLap) && !state.Strategy.ManualPath && state.Tier >= 2) return 1;
         if (Active(state, DriverActiveSkillId.SmokeScreen) && state.Tier >= 3) return 2;
         return 0;
     }

@@ -1,0 +1,19 @@
+{
+  "Assets/Scripts/Core/MVPGameManager.cs": "05ced7e88e82f3ecd4ce77b68eb6aaf7cee9e2decaf361af1d7335468989d5f9",
+  "Assets/Scripts/Core/RaceSession.cs": "1e69baf1e57936c6652dc70722e481d1755e88e10d95cffde88847ee1e705b9f",
+  "Assets/Scripts/Core/RaceTurnCleanup.cs": "fbb9a50941e203c8e0c58205b8109f968bbd44ec87ec0dc957e5145582e8b149",
+  "Assets/Scripts/Core/RaceTurnPreviewRules.cs": "15cfc413a705cb8b42ae0f947a7bc1652adf1bced7341fa6779bcdbef473b012",
+  "Assets/Scripts/Core/RaceTurnSkillCleanup.cs": "52fe7eb8a74e6ca9f1358295e036d0d360e1a52d91fae2dde2141c07a7782ebb",
+  "Assets/Scripts/Drivers/DriverData.cs": "c73b4f75640ea3b4ebcdf4ef19e2c95236aeaf7da64af1bbbcb2e9836cfc85cb",
+  "Assets/Scripts/Drivers/DriverSkillRules.cs": "48312837164104c6fe4158c7ede3a4db52944870a4d348fa77ffb922a5fe348c",
+  "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "e6c37ee94b01f56add54bdb2bc9d047c8d69d5797303a8b05e84fc2e40419a89",
+  "Assets/Scripts/Drivers/VettelFeedbackRuntime.cs": "bc8c690218de3c6aa20406f6f0aa5e772cdb9f89dda1d97c4a0b2bec573d01da",
+  "Assets/Scripts/Drivers/VettelMovementFeedbackObservation.cs": "a6542614fce2c937879e5b98cda1a5ec4c0bcf2a1e6e25b754b084e19fb3a158",
+  "Assets/Scripts/UI/DriverSelectionUI.cs": "89bf379fed102c410a29f1baf7cfbfc660eb58c7c8f9ab356d758289a61a57e6",
+  "Assets/Tests/Editor/RegressionModules.json": "1d84f86cb974b549970fc675fd7fb2acd0327e9272b96a08037bddce090b0557",
+  "Assets/Tests/Editor/driver_skill_rules_test.cs": "0a5dbf9adf26cc5069d2a2a61b8658e85748d3f4c59f68d54afb42ae41a93df4",
+  "Assets/Tests/Editor/driver_skill_runtime_test.cs": "7d0846ec417d50103405fc5cf34043b2a9eab44d090608c4e65ff5c73289a25e",
+  "Assets/Tests/Editor/race_vettel_feedback_coroutine_test.cs": "abda87f7160b2d56a3213ba67d9773f02c0a752b71d6fef7051618ae99186792",
+  "Assets/Tests/Editor/vettel_feedback_integration_test.cs": "2e871cd63275177ccdcb7abaf162fdc0ee4bdeed3acf07eec98264ee308d4d1f",
+  "Assets/Tests/Editor/vettel_feedback_test.cs": "275dbdaede628659283437230df2039e147ae33ff9806020a21aeb3a90e06e2c"
+}

@@ -1,0 +1,215 @@
+ M .claude/settings.json
+ M .codex/hooks.json
+ M Assets/Scripts/Core/CardDeck.cs
+ M Assets/Scripts/Core/MVPGameManager.cs
+ M Assets/Scripts/Core/RaceMovementRules.cs
+ M Assets/Scripts/Core/RaceSession.cs
+ M Assets/Scripts/Core/RaceTurnCleanup.cs
+ M Assets/Scripts/Core/RaceTurnPreviewRules.cs
+ M Assets/Scripts/Core/RaceTurnSkillCleanup.cs
+ M Assets/Scripts/Drivers/DriverData.cs
+ M Assets/Scripts/Drivers/DriverSkillRules.cs
+ M Assets/Scripts/Drivers/DriverSkillRuntime.cs
+ M Assets/Scripts/UI/DriverSelectionUI.cs
+ M Assets/Scripts/UI/HUDUI.cs
+ M Assets/Scripts/UI/TeamGearPresentationUI.cs
+ M Assets/Tests/Editor/RegressionModules.json
+ M "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset"
+ M ProjectSettings/EditorSettings.asset
+ M design/gdd/foodula-1-drivers.md
+ M design/gdd/foodula-1-tech-tree.md
+ M design/planning/tech-driver-rework-2026-10-22/implementation-plan.json
+ M design/planning/tech-driver-rework-2026-10-22/progress.json
+ M design/ux/racing-tech-ui-checklist.md
+ M design/ux/racing-tech-ui.md
+ M docs/memory/current-task-list.md
+ M docs/memory/game-mechanics.md
+ M docs/memory/project-overview.md
+ M tests/regression-suite.md
+?? .codex/hooks/Invoke-NativeHook.ps1
+?? Assets/Resources/Audio/SFX/team_shift_cn_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_cn_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_cn_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_cn_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_de_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_de_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_de_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_de_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_it_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_it_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_it_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_it_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_jp_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_jp_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_jp_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_jp_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_uk_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_uk_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_uk_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_uk_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_us_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_us_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_us_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_us_up.wav.meta
+?? Assets/Scripts/Drivers/SchumacherStrategyActivationPlan.cs
+?? Assets/Scripts/Drivers/SchumacherStrategyActivationPlan.cs.meta
+?? Assets/Scripts/Drivers/SchumacherStrategyRuntime.cs
+?? Assets/Scripts/Drivers/SchumacherStrategyRuntime.cs.meta
+?? Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs
+?? Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs.meta
+?? Assets/Tests/Editor/schumacher_strategy_manager_test.cs
+?? Assets/Tests/Editor/schumacher_strategy_manager_test.cs.meta
+?? Assets/Tests/Editor/schumacher_strategy_production_ui_test.cs
+?? Assets/Tests/Editor/schumacher_strategy_production_ui_test.cs.meta
+?? Assets/Tests/Editor/schumacher_strategy_test.cs
+?? Assets/Tests/Editor/schumacher_strategy_test.cs.meta
+?? docs/audio/licenses/overtake/BigSoundBank-s0556-source.html
+?? production/qa/evidence/team-audio-preview-2026-10-11.wav
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/README.md
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/baseline.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/compiled-assemblies-final.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/compiled-assemblies.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/console-after-format.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/console-final.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/console-precompile.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/diff-before.patch
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/diff-check.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/format-followup-compile.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/gameloop-job-final.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/gameloop-job.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/gameloop-native-first.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/manifest-sha256.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/native-modules-result.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/new-source/Assets/Scripts/Drivers/SchumacherStrategyActivationPlan.cs.meta.txt
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/new-source/Assets/Scripts/Drivers/SchumacherStrategyActivationPlan.cs.txt
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/new-source/Assets/Scripts/Drivers/SchumacherStrategyRuntime.cs.meta.txt
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/new-source/Assets/Scripts/Drivers/SchumacherStrategyRuntime.cs.txt
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/new-source/Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs.meta.txt
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/new-source/Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs.txt
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/new-source/Assets/Tests/Editor/schumacher_strategy_manager_test.cs.meta.txt
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/new-source/Assets/Tests/Editor/schumacher_strategy_manager_test.cs.txt
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/new-source/Assets/Tests/Editor/schumacher_strategy_test.cs.meta.txt
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/new-source/Assets/Tests/Editor/schumacher_strategy_test.cs.txt
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/ready-after-format.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/ready-final.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/ready-preflight.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/related-git-diff.patch
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/source-preservation.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/status-after.txt
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/status-before.txt
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/summary.json
+?? production/qa/evidence/tech-driver-I04b1-2026-10-29/unity-final.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/README.md
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1280x720-0.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1280x720-1.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1280x720-2.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1280x720-3.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1280x720-4.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1280x720-5.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1280x720-6.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1280x720-7.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1920x1080-0.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1920x1080-1.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1920x1080-2.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1920x1080-3.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1920x1080-4.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1920x1080-5.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1920x1080-6.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/1920x1080-7.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/2560x1440-0.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/2560x1440-1.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/2560x1440-2.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/2560x1440-3.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/2560x1440-4.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/2560x1440-5.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/2560x1440-6.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/2560x1440-7.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009/manifest.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/profile-20261028-224655770/1280x720-strategy-active.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/profile-20261028-224655770/1920x1080-strategy-active.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/profile-20261028-224655770/2560x1440-strategy-active.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/profile-final-20261028-224832541/1280x720-strategy-active.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/profile-final-20261028-224832541/1920x1080-strategy-active.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/after/profile-final-20261028-224832541/2560x1440-strategy-active.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/baseline.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/before/hud-20261028-224055703/1280x720-0.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/before/hud-20261028-224055703/1920x1080-0.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/before/hud-20261028-224055703/2560x1440-0.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/before/hud-20261028-224055703/manifest.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/before/hud-20261028-224125331/1280x720-0.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/before/hud-20261028-224125331/1920x1080-0.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/before/hud-20261028-224125331/2560x1440-0.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/before/hud-20261028-224125331/manifest.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/before/profile-20261028-174153715/1280x720-old-active.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/before/profile-20261028-174153715/1920x1080-old-active.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/before/profile-20261028-174153715/2560x1440-old-active.png
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/diff-before.patch
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/final-0.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/final-1.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/final-2.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/gameloop-final.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/manifest-sha256.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/native-11modules.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/native-final-ui-drivers-tech.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/profile-after-final.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/profile-after.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/profile-before.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/related-git-diff.patch
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/schumacher_strategy_production_ui_test.cs.meta.source.txt
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/schumacher_strategy_production_ui_test.cs.source.txt
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/source-preservation.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/status-after.txt
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/status-before.txt
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/summary.json
+?? production/qa/evidence/tech-driver-I04b2-2026-10-29/ui-first.json
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_cn_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_cn_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_de_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_de_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_it_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_it_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_jp_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_jp_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_uk_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_uk_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_us_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_us_up.wav
+?? tools/Audio/overtake-staging/overtake_cc0.wav
+?? tools/Audio/overtake-staging/overtake_source_then_cue.wav
+?? tools/Audio/team_vehicle_comparison.wav
+?? tools/Audio/team_vehicle_tuning_comparison.wav
+?? tools/audio-overtake-staging/AudioEventNames.cs.txt
+?? tools/audio-overtake-staging/AudioRuntimeRules.cs.txt
+?? tools/audio-overtake-staging/AudioService.cs.txt
+?? tools/audio-overtake-staging/OvertakeAudioPresentation.cs.txt
+?? tools/audio-overtake-staging/RaceEventFX.cs.txt
+?? tools/audio-overtake-staging/baseline-hashes.json
+?? tools/audio-overtake-staging/compile.rsp
+?? tools/audio-overtake-staging/overtake_audio_presentation_test.cs.txt
+?? tools/ui-action-buttons-staging/RaceUILayoutController.cs.txt
+?? tools/ui-action-buttons-staging/RacingTechActionButtonStyle.cs.txt
+?? tools/ui-action-buttons-staging/compile.rsp
+?? tools/ui-action-buttons-staging/racing_tech_action_button_test.cs.txt
+?? tools/ui-card-zone-staging/CardPilePreviewUI.cs.txt
+?? tools/ui-card-zone-staging/RaceUILayoutController.cs.txt
+?? tools/ui-card-zone-staging/RacingTechCardZoneStyle.cs.txt
+?? tools/ui-card-zone-staging/racing_tech_card_zone_test.cs.txt
+?? tools/ui-card-zones-staging/RacingTechCardZonesCapture.cs.txt
+?? tools/ui-card-zones-staging/audit-evidence.ps1
+?? tools/ui-card-zones-staging/finalize-evidence.ps1
+?? tools/ui-confirmation-staging/HUDUI.cs.txt
+?? tools/ui-confirmation-staging/RacingTechConfirmationStyle.cs.txt
+?? tools/ui-confirmation-staging/compile.rsp
+?? tools/ui-confirmation-staging/racing_tech_confirmation_test.cs.txt
+?? tools/ui-pile-inspector-staging/CardPilePreviewUI.cs.txt
+?? tools/ui-pile-inspector-staging/RacingTechPileInspectorCapture.cs.txt
+?? tools/ui-pile-inspector-staging/RacingTechPileInspectorStyle.cs.txt
+?? tools/ui-pile-inspector-staging/racing_tech_pile_inspector_test.cs.txt
+?? tools/ui-selected-effect-staging/CardHandUI.cs.txt
+?? tools/ui-selected-effect-staging/RacingTechSelectedEffectCapture.cs.txt
+?? tools/ui-selected-effect-staging/RacingTechSelectedEffectStyle.cs.txt
+?? tools/ui-selected-effect-staging/racing_tech_selected_effect_test.cs.txt
+?? tools/ui-track-staging/RacingTechTrackSelectionCapture.cs.txt
+?? tools/ui-track-staging/TrackSelectionUI.cs.txt
+?? tools/ui-track-staging/compile.rsp
+?? tools/ui-track-staging/racing_tech_track_selection_test.cs.txt

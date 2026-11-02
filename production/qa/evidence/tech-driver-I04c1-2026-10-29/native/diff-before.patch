@@ -1,0 +1,1939 @@
+diff --git a/.claude/settings.json b/.claude/settings.json
+index ee755fa..e05c45f 100644
+--- a/.claude/settings.json
++++ b/.claude/settings.json
+@@ -2,7 +2,7 @@
+   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+   "statusLine": {
+     "type": "command",
+-    "command": "bash .claude/statusline.sh"
++    "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook statusline -Source claude"
+   },
+   "permissions": {
+     "allow": [
+@@ -38,12 +38,12 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/session-start.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook session-start -Source claude",
+             "timeout": 10
+           },
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/detect-gaps.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook detect-gaps -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -55,13 +55,8 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/validate-commit.sh",
+-            "timeout": 15
+-          },
+-          {
+-            "type": "command",
+-            "command": "bash .claude/hooks/validate-push.sh",
+-            "timeout": 10
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-git -Source claude",
++            "timeout": 25
+           }
+         ]
+       }
+@@ -72,12 +67,12 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/validate-assets.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-assets -Source claude",
+             "timeout": 10
+           },
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/validate-skill-change.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-skill-change -Source claude",
+             "timeout": 5
+           }
+         ]
+@@ -89,7 +84,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/notify.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook notify -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -101,7 +96,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/pre-compact.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook pre-compact -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -113,7 +108,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/post-compact.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook post-compact -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -125,7 +120,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/session-stop.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook session-stop -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -137,7 +132,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/log-agent.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook log-agent -Source claude",
+             "timeout": 5
+           }
+         ]
+@@ -149,7 +144,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/log-agent-stop.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook log-agent-stop -Source claude",
+             "timeout": 5
+           }
+         ]
+diff --git a/.codex/hooks.json b/.codex/hooks.json
+index f08d747..d162ea6 100644
+--- a/.codex/hooks.json
++++ b/.codex/hooks.json
+@@ -6,13 +6,8 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\validate-commit.sh'",
+-            "timeout": 15
+-          },
+-          {
+-            "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\validate-push.sh'",
+-            "timeout": 10
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-git -Source codex",
++            "timeout": 25
+           }
+         ]
+       }
+@@ -23,12 +18,12 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\validate-assets.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-assets -Source codex",
+             "timeout": 10
+           },
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\validate-skill-change.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-skill-change -Source codex",
+             "timeout": 5
+           }
+         ]
+@@ -40,7 +35,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\pre-compact.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook pre-compact -Source codex",
+             "timeout": 10
+           }
+         ]
+@@ -52,7 +47,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\post-compact.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook post-compact -Source codex",
+             "timeout": 10
+           }
+         ]
+@@ -64,12 +59,12 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\session-start.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook session-start -Source codex",
+             "timeout": 10
+           },
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\detect-gaps.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook detect-gaps -Source codex",
+             "timeout": 10
+           }
+         ]
+@@ -81,7 +76,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\log-agent.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook log-agent -Source codex",
+             "timeout": 5
+           }
+         ]
+@@ -93,7 +88,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\log-agent-stop.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook log-agent-stop -Source codex",
+             "timeout": 5
+           }
+         ]
+@@ -104,7 +99,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\session-stop.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook session-stop -Source codex",
+             "timeout": 10
+           }
+         ]
+diff --git a/Assets/Scripts/Core/CardDeck.cs b/Assets/Scripts/Core/CardDeck.cs
+index c716b8f..e00d7c9 100644
+--- a/Assets/Scripts/Core/CardDeck.cs
++++ b/Assets/Scripts/Core/CardDeck.cs
+@@ -464,6 +464,30 @@ public class CardDeck
+         return true;
+     }
+ 
++    /// <summary>D03 commits either one exact preparation discard or one full permanent execution payment.</summary>
++    public bool TryCommitSchumacherStrategyCost(CardData speedCost, bool execution, out CardData paidHeat)
++    {
++        paidHeat = null;
++        if (heatPool == null) return false;
++        if (execution)
++        {
++            if (speedCost != null || heatPool.remaining < 1) return false;
++            paidHeat = new CardData(CardType.Heat, 0);
++            heatPool.remaining--;
++            hand.Add(paidHeat);
++            return true;
++        }
++        if (speedCost == null || !speedCost.IsSpeed || speedCost.isTemp ||
++            !string.IsNullOrEmpty(speedCost.trickId) || drawPile.Contains(speedCost) || discardPile.Contains(speedCost))
++            return false;
++        int count = 0;
++        foreach (CardData card in hand) if (ReferenceEquals(card, speedCost)) count++;
++        if (count != 1) return false;
++        hand.Remove(speedCost);
++        discardPile.Add(speedCost);
++        return true;
++    }
++
+     /// <summary>D02 fixed cost: validate once, then discard exact speed and one engine heat atomically.</summary>
+     public bool TryCommitMansellChargeCost(CardData speedCost, bool secondLeg, out CardData paidHeat)
+     {
+diff --git a/Assets/Scripts/Core/MVPGameManager.cs b/Assets/Scripts/Core/MVPGameManager.cs
+index 5fc42f8..aa260eb 100644
+--- a/Assets/Scripts/Core/MVPGameManager.cs
++++ b/Assets/Scripts/Core/MVPGameManager.cs
+@@ -75,6 +75,7 @@ public class MVPGameManager : MonoBehaviour
+     private int driverSkillPlanVersion;
+     private HunterSkillActivationPlan pendingHunterSkillPlan;
+     private MansellChargeActivationPlan pendingMansellChargePlan;
++    private SchumacherStrategyActivationPlan pendingSchumacherStrategyPlan;
+     private UkPrepMealActivationPlan pendingPrepMealPlan;
+     private int prepMealPlanVersion;
+     private GermanFuelActivationPlan pendingGermanFuelPlan;
+@@ -2006,6 +2007,7 @@ public class MVPGameManager : MonoBehaviour
+     {
+         if (p.isBlown) return;
+         p.driverSkill?.Tuning.Interrupt();
++        p.driverSkill?.Strategy.Interrupt();
+         if (movementAudioPlayer == p || instantAudioPlayer == p) StopMovementAudio(true);
+ 
+         int spinMax = session != null ? session.EffectiveSpinMax(p) : 3;
+@@ -2121,6 +2123,7 @@ public class MVPGameManager : MonoBehaviour
+ 
+     private void ApplyGearShift(PlayerState p, int targetGear)
+     {
++        if (p?.driverSkill?.Strategy.IsGearAllowed(targetGear) == false) return;
+         session?.SealGermanBurstDeclaration(p);
+         int previousGear = p.gear;
+         TeamGearRules.Resolution shift = TeamGearRules.Resolve(
+@@ -2497,11 +2500,13 @@ public class MVPGameManager : MonoBehaviour
+         {
+             if (RaceTurnRules.IsInactive(p, turnSkipped))
+             {
++                p.driverSkill?.Strategy.Interrupt();
+                 p.totalMovementThisTurn = 0;
+                 p.cornerTotalThisTurn = 0;
+                 slipstreamsThisTurn[p] = default;
+                 continue;
+             }
++            p.driverSkill?.Strategy.ValidateMovementInput(session, p, GetRequiredSpeedCardsThisTurn(p));
+             p.cornerTotalThisTurn = RaceMovementRules.ComputeCornerSpeed(
+                 p, activeTutorialOpponentCue, p == AI);
+         }
+@@ -3914,6 +3919,7 @@ public class MVPGameManager : MonoBehaviour
+             player?.techState?.prepMeal.CloseInput();
+             player?.techState?.germanBurst.CloseWindow();
+             player?.driverSkill?.Tuning.Interrupt();
++            player?.driverSkill?.Strategy.Interrupt();
+             player?.driverSkill?.Pursuit.Interrupt();
+             player?.driverSkill?.InterruptMansellChargeWindow();
+             player?.driverSkill?.Hunting.CloseInput();
+@@ -3922,6 +3928,7 @@ public class MVPGameManager : MonoBehaviour
+ 
+     public void OnGearButtonClicked(int gear)
+     {
++        if (Player?.driverSkill?.Strategy.IsGearAllowed(gear) == false) return;
+         if (IsTutorialActionInputBlocked) return;
+         if (!phaseState.CanAcceptGear(inputState)) return;
+         if (Player != null && TeamGearRules.IsChina(Player.teamId) && gear > ChinaGearShiftRules.GoGear)
+@@ -3946,6 +3953,7 @@ public class MVPGameManager : MonoBehaviour
+     {
+         if (IsTutorialActionInputBlocked) return;
+         if (!phaseState.CanAcceptGear(inputState)) return;
++        if (Player?.driverSkill?.Strategy.SealGear(inputState.PendingGear) == false) return;
+         if (!inputState.ConfirmGear()) return;
+         session?.SealGermanBurstDeclaration(Player);
+         CancelHunterSkillPlan();
+@@ -4098,9 +4106,48 @@ public class MVPGameManager : MonoBehaviour
+         session.TryDeclareGermanBurst(player, true, raceTurnNumber);
+     }
+ 
++    /// <summary>I04b1 transaction API only; the real three-stage button/choice surface is connected in I04b2.</summary>
++    public bool TryPrepareSchumacherStrategyRequest(out SchumacherStrategyActivationPlan plan, out string reason)
++    {
++        plan = null;
++        reason = "当前没有舒马赫战术驾驶输入";
++        if (!CanAcceptSchumacherStrategyRequest()) return false;
++        CancelSchumacherStrategyRequest(false);
++        if (!SchumacherStrategyActivationPlan.TryCreate(session, Player, raceTurnNumber,
++            inputState.PendingGear, driverSkillPlanVersion, BuildDriverSkillActivationContext(Player), out plan, out reason)) return false;
++        pendingSchumacherStrategyPlan = plan;
++        return true;
++    }
++
++    /// <summary>Commit one currently pending exact plan; stale delegates cannot affect a replacement request.</summary>
++    public bool TryConfirmSchumacherStrategyRequest(SchumacherStrategyActivationPlan plan, CardData cost, out string reason)
++    {
++        reason = "战术选择已过期";
++        if (plan == null || !ReferenceEquals(pendingSchumacherStrategyPlan, plan)) return false;
++        pendingSchumacherStrategyPlan = null;
++        if (!CanAcceptSchumacherStrategyRequest()) { plan.Cancel(); return false; }
++        if (!plan.TryCommit(session, Player, raceTurnNumber, inputState.PendingGear,
++            driverSkillPlanVersion, BuildDriverSkillActivationContext(Player), cost, out reason)) return false;
++        RefreshHumanHand(Player);
++        return true;
++    }
++
++    /// <summary>Cancel a pending request for free; explicit execution decline abandons the remaining sequence.</summary>
++    public void CancelSchumacherStrategyRequest(bool declineExecution = true)
++    {
++        driverSkillPlanVersion++;
++        SchumacherStrategyActivationPlan old = pendingSchumacherStrategyPlan;
++        pendingSchumacherStrategyPlan = null;
++        old?.Cancel(declineExecution);
++    }
++
++    private bool CanAcceptSchumacherStrategyRequest() =>
++        !IsTutorialActionInputBlocked && !IsTutorialMode && config != null && Player != null && !Player.isAI &&
++        session != null && phaseState.CanAcceptGear(inputState);
++
+     public void OnDriverSkillButtonClicked()
+     {
+-        if (TryRequestHunterSkillSelection() || TryRequestMansellChargeSelection()) return;
++        if (TryRequestHunterSkillSelection() || TryRequestMansellChargeSelection() || TryRequestSchumacherStrategySelection()) return;
+         PlayerState player = Player;
+         if (player == null || player.driverSkill == null) return;
+ 
+@@ -4115,6 +4162,49 @@ public class MVPGameManager : MonoBehaviour
+         PresentDriverSkillActivation(player);
+     }
+ 
++    /// <summary>D03 actual player entry: one required discard or optional fixed-heat confirmation, never legacy activation.</summary>
++    public bool TryRequestSchumacherStrategySelection()
++    {
++        PlayerState player = Player;
++        if (player?.driverSkill == null || player.driverSkill.Skill != DriverActiveSkillId.PerfectLap) return false;
++        if (!TryPrepareSchumacherStrategyRequest(out var plan, out string reason))
++        {
++            hudUI?.SetStatus(reason);
++            hudUI?.RefreshDriverSkill(this, player);
++            return true;
++        }
++        if (hudUI == null) { CancelSchumacherStrategyRequest(); return true; }
++        string message = plan.IsExecution
++            ? $"执行{plan.ExecutionNumber}/2：付1张永久引擎热到手牌\n本次限3/4挡，移动+{plan.MovementBonus}格；不再扣次\n取消/缺牌/缺热将失去剩余执行\n追加弯心照常付热，不足会失控"
++            : $"准备：弃1张普通速度牌 · 限1/2挡\n后两次本人输入：3/4挡，各付1永久热\n每段移动+{DriverSkillRules.GetSchumacherStrategyMovementBonus(player.driverSkill.Tier)}格；本场剩余{player.driverSkill.UsesRemaining}次\n追加弯心照常付热，不足会失控";
++        UnityEngine.Events.UnityAction cancel = () => CancelSchumacherStrategySelection(plan);
++        if (plan.IsExecution)
++            hudUI.ShowDriverSkillContinuation("三段战术 · 执行" + plan.ExecutionNumber + "/2", message,
++                () => CommitSchumacherStrategySelection(plan, null), cancel, "支付1热并执行", "本段无需弃速度牌\n仅支付1张永久热");
++        else
++            hudUI.ShowDriverSkillCardChoice("三段战术 · 准备", message, plan.Choices,
++                card => CommitSchumacherStrategySelection(plan, card), cancel, "弃牌并准备");
++        return true;
++    }
++
++    private void CommitSchumacherStrategySelection(SchumacherStrategyActivationPlan plan, CardData cost)
++    {
++        if (!ReferenceEquals(pendingSchumacherStrategyPlan, plan)) return;
++        if (!TryConfirmSchumacherStrategyRequest(plan, cost, out string reason))
++        {
++            hudUI?.SetStatus(reason); hudUI?.RefreshDriverSkill(this, Player); return;
++        }
++        hudUI?.RefreshPlayerResources(Player);
++        PresentDriverSkillActivation(Player);
++    }
++
++    private void CancelSchumacherStrategySelection(SchumacherStrategyActivationPlan plan)
++    {
++        plan.Cancel();
++        if (ReferenceEquals(pendingSchumacherStrategyPlan, plan)) pendingSchumacherStrategyPlan = null;
++        hudUI?.RefreshDriverSkill(this, Player);
++    }
++
+     /// <summary>The required discard selection is independent of optional extra confirmations.</summary>
+     public bool TryRequestHunterSkillSelection()
+     {
+@@ -4234,11 +4324,14 @@ public class MVPGameManager : MonoBehaviour
+     {
+         CloseGermanFuelConfirmation(fromLifecycle);
+         driverSkillPlanVersion++;
+-        if (pendingHunterSkillPlan == null && pendingMansellChargePlan == null) return;
++        if (pendingHunterSkillPlan == null && pendingMansellChargePlan == null && pendingSchumacherStrategyPlan == null) return;
+         HunterSkillActivationPlan hunter = pendingHunterSkillPlan;
+         MansellChargeActivationPlan mansell = pendingMansellChargePlan;
++        SchumacherStrategyActivationPlan strategy = pendingSchumacherStrategyPlan;
+         pendingHunterSkillPlan = null;
+         pendingMansellChargePlan = null;
++        pendingSchumacherStrategyPlan = null;
++        strategy?.Cancel();
+         hunter?.Cancel();
+         mansell?.Cancel();
+         if (hudUI != null)
+@@ -4267,6 +4360,27 @@ public class MVPGameManager : MonoBehaviour
+     {
+         interactable = false;
+         if (player == null || player.driverSkill == null) return "车手技能";
++        if (player.driverSkill.Skill == DriverActiveSkillId.PerfectLap)
++        {
++            var strategy = player.driverSkill.Strategy;
++            int uses = player.driverSkill.UsesRemaining;
++            if (strategy.CommittedThisInput)
++                return strategy.Stage == SchumacherStrategyStage.PreparationCommitted
++                    ? $"三段战术 准备已弃牌\n本次限1/2挡 · 余{uses}次"
++                    : $"三段战术 执行{strategy.ExecutionNumber}/2已付热\n本次+{strategy.MovementBonusThisInput}格 · 余{uses}次";
++            interactable = CanAcceptSchumacherStrategyRequest() && SchumacherStrategyActivationPlan.CanPrepare(session,
++                player, inputState.PendingGear, BuildDriverSkillActivationContext(player), out _);
++            if (!interactable)
++            {
++                SchumacherStrategyActivationPlan.CanPrepare(session, player, inputState.PendingGear,
++                    BuildDriverSkillActivationContext(player), out string unavailable);
++                if (string.IsNullOrEmpty(unavailable)) unavailable = "当前阶段不可使用";
++                return $"三段战术 {unavailable}\n剩余{uses}次";
++            }
++            return strategy.IsExecutionAvailable
++                ? $"三段战术 执行{strategy.ExecutionNumber}/2 · +{DriverSkillRules.GetSchumacherStrategyMovementBonus(player.driverSkill.Tier)}格\n3/4挡付1热 · 不扣次 · 余{uses}次"
++                : $"三段战术 准备 · 弃1牌\n限1/2挡 · 余{uses}次";
++        }
+         if (player.driverSkill.Skill == DriverActiveSkillId.AngryCharge)
+         {
+             if (player.driverSkill.Charge.CommittedThisInput)
+@@ -4466,6 +4580,7 @@ public class MVPGameManager : MonoBehaviour
+         int missing = RaceRules.GetMissingSpeedCardCount(required, speedCount);
+         if (missing > 0)
+         {
++            player.driverSkill?.Strategy.Interrupt();
+             bool heatPaid = TryPayHeat(player, missing, player.position, "engine failure");
+             TryAdvanceTutorialIfExpected(
+                 TutorialAction.TriggerMissingCardPenalty,
+diff --git a/Assets/Scripts/Core/RaceMovementRules.cs b/Assets/Scripts/Core/RaceMovementRules.cs
+index a6a3973..bba054c 100644
+--- a/Assets/Scripts/Core/RaceMovementRules.cs
++++ b/Assets/Scripts/Core/RaceMovementRules.cs
+@@ -96,7 +96,7 @@ public static class RaceMovementRules
+     }
+ 
+     /// <summary>
+-    /// Hart's whole-movement reward checks only newly reached tail cells. Ordinary
++    /// Hart, paid Mansell and paid Schumacher rewards check only newly reached tail cells. Ordinary
+     /// card corners retain their original range and speed; unrelated bonuses retain
+     /// their existing behavior. Absolute endpoints preserve a new pass after a lap.
+     /// </summary>
+@@ -104,7 +104,9 @@ public static class RaceMovementRules
+     {
+         DriverSkillRuntimeState skill = player?.driverSkill;
+         bool paidMansell = skill != null && skill.Skill == DriverActiveSkillId.AngryCharge && skill.Charge.CommittedThisInput;
+-        if (skill == null || (skill.Skill != DriverActiveSkillId.FinalLap && !paidMansell) || !skill.IsActive)
++        bool paidSchumacher = skill != null && skill.Skill == DriverActiveSkillId.PerfectLap &&
++            skill.Strategy.ManualPath && skill.Strategy.CommittedThisInput && skill.Strategy.MovementBonusThisInput > 0;
++        if (skill == null || (skill.Skill != DriverActiveSkillId.FinalLap && !paidMansell && !paidSchumacher) || !skill.IsActive)
+             return (startPosition, startPosition);
+         int movement = Math.Max(0, player.totalMovementThisTurn);
+         int reward = Math.Max(0, DriverSkillRules.GetMovementBonus(skill, false));
+diff --git a/Assets/Scripts/Core/RaceSession.cs b/Assets/Scripts/Core/RaceSession.cs
+index df641fa..62e0dd3 100644
+--- a/Assets/Scripts/Core/RaceSession.cs
++++ b/Assets/Scripts/Core/RaceSession.cs
+@@ -149,7 +149,7 @@ public class RaceSession
+             player.extraCardSlotsThisTurn += TrickCardRules.ConsumeKantoOden(player.trickState);
+     }
+ 
+-    /// <summary>Starts only the eligible owner's input clocks; D03 passive does not migrate its legacy active clock.</summary>
++    /// <summary>Starts only the eligible owner's input clocks; D03 strategy is independent of its legacy active clock.</summary>
+     public bool BeginDriverSkillInput(PlayerState player, int totalNodes = 0, int startFinishIndex = 0)
+     {
+         var skill = player?.driverSkill;
+@@ -161,7 +161,8 @@ public class RaceSession
+             return false;
+         }
+         bool passiveStarted = skill.UsesPassiveDrivingInputClock && skill.Tuning.BeginInput(this, player);
+-        if (!skill.BeginDrivingInput()) return passiveStarted;
++        bool strategyStarted = skill.Skill == DriverActiveSkillId.PerfectLap && skill.Strategy.BeginInput(this, player);
++        if (!skill.BeginDrivingInput()) return passiveStarted || strategyStarted;
+         skill.Hunting.BeginInput(this, player, totalNodes, startFinishIndex);
+         skill.Pursuit.BeginInput(this, player, totalNodes, startFinishIndex);
+         skill.Charge.BeginInput(this, player, totalNodes, startFinishIndex);
+diff --git a/Assets/Scripts/Core/RaceTurnCleanup.cs b/Assets/Scripts/Core/RaceTurnCleanup.cs
+index 83d47b1..87ba9a6 100644
+--- a/Assets/Scripts/Core/RaceTurnCleanup.cs
++++ b/Assets/Scripts/Core/RaceTurnCleanup.cs
+@@ -24,6 +24,15 @@ public static class RaceTurnCleanup
+             if (!RaceTurnRules.IsTerminal(player) && player.techState != null) resolveTechnology?.Invoke(player);
+             player.playedSpeedCardsThisTurn.Clear();
+         }
+-        finally { player.techState?.germanBurst.CloseWindow(); }
++        catch
++        {
++            player.driverSkill?.Strategy.Interrupt();
++            throw;
++        }
++        finally
++        {
++            player.techState?.germanBurst.CloseWindow();
++            player.driverSkill?.Strategy.CloseInput();
++        }
+     }
+ }
+diff --git a/Assets/Scripts/Core/RaceTurnPreviewRules.cs b/Assets/Scripts/Core/RaceTurnPreviewRules.cs
+index 292839e..aa744ea 100644
+--- a/Assets/Scripts/Core/RaceTurnPreviewRules.cs
++++ b/Assets/Scripts/Core/RaceTurnPreviewRules.cs
+@@ -46,6 +46,7 @@ public static class RaceTurnPreviewRules
+             italyCornerExitBoostReady = player.italyCornerExitBoostReady
+         };
+         copy.driverSkill?.Tuning.RebindPresentationCopy(session, player, copy);
++        copy.driverSkill?.Strategy.RebindPresentationCopy(session, player, copy);
+         copy.playedSpeedCardsThisTurn.AddRange(player.playedSpeedCardsThisTurn);
+         var result = new RaceTurnPreview { GearTrial = gearTrial, Team = player.teamId, Movement = copy.turnMovement };
+         Func<int, HeatPaymentDestination, HeatPaymentSource, bool> payWithSource = (amount, destination, source) => {
+@@ -135,6 +136,8 @@ public static class RaceTurnPreviewRules
+         result.MissingCards = copy.kantoOdenSkipThisTurn ? 0 : RaceRules.GetMissingSpeedCardCount(
+             CardPlayRules.GetSpeedCardRequirement(copy).RequiredCardCount, result.CardCount);
+         if (result.MissingCards > 0) pay(result.MissingCards, HeatPaymentDestination.Hand);
++        copy.driverSkill?.Strategy.ValidateMovementInput(session, copy,
++            CardPlayRules.GetSpeedCardRequirement(copy).RequiredCardCount);
+         result.CardSpeedTotal = CardPlayRules.SumCommittedSpeedCardValues(copy.playedSpeedCardsThisTurn);
+         copy.turnMovement.BeginBasePlan();
+         if (!RaceTurnRules.IsInactive(copy, null) && (result.CardCount > 0 || copy.trickMoveBonusThisTurn != 0 ||
+diff --git a/Assets/Scripts/Core/RaceTurnSkillCleanup.cs b/Assets/Scripts/Core/RaceTurnSkillCleanup.cs
+index 272c1c8..bf3d3f9 100644
+--- a/Assets/Scripts/Core/RaceTurnSkillCleanup.cs
++++ b/Assets/Scripts/Core/RaceTurnSkillCleanup.cs
+@@ -29,6 +29,7 @@ public static class RaceTurnSkillCleanup
+         int overtakes = getPassiveOvertakes(player);
+         player.driverSkill?.ResolvePassiveTurnEnd(overtakes);
+         player.driverSkill?.Hunting.CloseInput();
++        if (player.pitStopScheduled) player.driverSkill?.Strategy.Interrupt();
+         if (player.pitStopScheduled) player.driverSkill?.Tuning.Interrupt();
+         else player.driverSkill?.Tuning.CloseInput();
+         if (RaceTurnRules.IsTerminal(player) || RaceTurnRules.ShouldSkip(player))
+diff --git a/Assets/Scripts/Drivers/DriverData.cs b/Assets/Scripts/Drivers/DriverData.cs
+index 9ebd98d..89bccee 100644
+--- a/Assets/Scripts/Drivers/DriverData.cs
++++ b/Assets/Scripts/Drivers/DriverData.cs
+@@ -127,7 +127,7 @@ public static class DriverCatalog
+         new DriverProfile("uk_nigel_mansell", "奈杰尔·雄狮·曼塞尔", "雄狮·曼塞尔", TeamId.UK, DriverStyle.Aggressive, 1.2f,
+             "蓄势追近", "连续两次驾驶输入追近同一最近前车，每圈首次合格最多回收1张旧手永久热", "雄狮追击", "首段弃普通速度牌并付1热；下次继续追近同车可再付1热追击，不再消耗场次"),
+         new DriverProfile("de_michael_schumacher", "米夏尔·教授·舒马赫", "教授·舒马赫", TeamId.DE, DriverStyle.Balanced, 1.5f,
+-            "工程师调校", "真实弯道付款满2热，下次本人首笔弯费-1；每圈一次，高阶门槛1热、等待更久", "完美一圈", "本回合不产生弯道热量"),
++            "工程师调校", "真实弯道付款满2热，下次本人首笔弯费-1；每圈一次，高阶门槛1热、等待更久", "三段战术", "弃速度牌以1/2挡准备；后两次本人输入3/4挡各付1热，移动+2（高阶+3）"),
+         new DriverProfile("de_sebastian_vettel", "塞巴斯蒂安·海绵·维特尔", "海绵·维特尔", TeamId.DE, DriverStyle.Technical, 1.3f,
+             "信息海绵", "每 4 回合从牌库顶 3 张中优先抽取最高速度牌", "完美节奏", "持续期间跨两挡不产生换挡热量"),
+         new DriverProfile("it_alberto_ascari", "阿尔贝托·蓝衣·阿斯卡里", "蓝衣·阿斯卡里", TeamId.IT, DriverStyle.Technical, 1.2f,
+diff --git a/Assets/Scripts/Drivers/DriverSkillRules.cs b/Assets/Scripts/Drivers/DriverSkillRules.cs
+index 9b48e17..ee52f6c 100644
+--- a/Assets/Scripts/Drivers/DriverSkillRules.cs
++++ b/Assets/Scripts/Drivers/DriverSkillRules.cs
+@@ -262,6 +262,12 @@ public static class DriverSkillRules
+         return 0;
+     }
+ 
++    /// <summary>D03 each of the two paid execution inputs has this bounded movement reward.</summary>
++    public static int GetSchumacherStrategyMovementBonus(int tier) => tier <= 0 ? 0 : tier == 1 ? 2 : 3;
++
++    /// <summary>D03 execution count is fixed independently of the level-three extra race use.</summary>
++    public static int GetSchumacherStrategyExecutionCount(int tier) => tier <= 0 ? 0 : 2;
++
+     /// <summary>D02 passive tier ranges; the first observation itself has no active-skill six-cell cap.</summary>
+     public static int GetMansellPursuitRange(int tier) => tier <= 0 ? 0 : Math.Min(3, tier) + 1;
+ 
+@@ -287,6 +293,8 @@ public static class DriverSkillRules
+ 
+     public static int GetMovementBonus(DriverSkillRuntimeState state, bool crossedCorner)
+     {
++        if (state != null && state.Skill == DriverActiveSkillId.PerfectLap && state.Strategy.ManualPath)
++            return state.Strategy.MovementBonusThisInput;
+         if (Active(state, DriverActiveSkillId.FinalLap)) return state.Tier >= 2 ? 3 : 2;
+         if (state != null && state.Skill == DriverActiveSkillId.AngryCharge && state.Charge.CommittedThisInput)
+             return state.Charge.MovementBonusThisInput;
+@@ -316,7 +324,7 @@ public static class DriverSkillRules
+ 
+     public static int ReduceCornerHeat(DriverSkillRuntimeState state, int heat)
+     {
+-        if (Active(state, DriverActiveSkillId.PerfectLap)) return 0;
++        if (Active(state, DriverActiveSkillId.PerfectLap) && !state.Strategy.ManualPath) return 0;
+         int reduced = Active(state, DriverActiveSkillId.PrecisionCornering)
+             ? Math.Max(0, heat - 1)
+             : Math.Max(0, heat);
+@@ -342,7 +350,7 @@ public static class DriverSkillRules
+ 
+     public static int GetSlipstreamBonus(DriverSkillRuntimeState state)
+     {
+-        if (Active(state, DriverActiveSkillId.PerfectLap) && state.Tier >= 2) return 1;
++        if (Active(state, DriverActiveSkillId.PerfectLap) && !state.Strategy.ManualPath && state.Tier >= 2) return 1;
+         if (Active(state, DriverActiveSkillId.SmokeScreen) && state.Tier >= 3) return 2;
+         return 0;
+     }
+diff --git a/Assets/Scripts/Drivers/DriverSkillRuntime.cs b/Assets/Scripts/Drivers/DriverSkillRuntime.cs
+index 2cc9027..536d8cc 100644
+--- a/Assets/Scripts/Drivers/DriverSkillRuntime.cs
++++ b/Assets/Scripts/Drivers/DriverSkillRuntime.cs
+@@ -22,6 +22,7 @@ public sealed class DriverSkillRuntimeState
+     public MansellChargeRuntime Charge { get; private set; } = new MansellChargeRuntime();
+     public MansellPursuitRuntime Pursuit { get; private set; } = new MansellPursuitRuntime();
+     public SchumacherTuningRuntime Tuning { get; private set; } = new SchumacherTuningRuntime();
++    public SchumacherStrategyRuntime Strategy { get; private set; } = new SchumacherStrategyRuntime();
+ 
+     /// <summary>D03 passive clock is independent of its not-yet-migrated active skill.</summary>
+     public bool UsesPassiveDrivingInputClock => PassiveSkill == DriverPassiveSkillId.EngineersTune;
+@@ -52,6 +53,7 @@ public sealed class DriverSkillRuntimeState
+         copy.Charge = Charge.CreatePresentationCopy();
+         copy.Pursuit = Pursuit.CreatePresentationCopy();
+         copy.Tuning = Tuning.CreatePresentationCopy();
++        copy.Strategy = Strategy.CreatePresentationCopy();
+         return copy;
+     }
+ 
+@@ -64,6 +66,7 @@ public sealed class DriverSkillRuntimeState
+         Charge = new MansellChargeRuntime();
+         Pursuit = new MansellPursuitRuntime();
+         Tuning = new SchumacherTuningRuntime();
++        Strategy = new SchumacherStrategyRuntime();
+         Skill = profile != null ? DriverSkillRules.GetSkill(profile.Id) : DriverActiveSkillId.None;
+         PassiveSkill = profile != null ? DriverSkillRules.GetPassiveSkill(profile.Id) : DriverPassiveSkillId.None;
+         Tier = DriverProgression.GetActiveTier(level);
+@@ -90,6 +93,8 @@ public sealed class DriverSkillRuntimeState
+ 
+     public bool TryActivate(DriverProfile profile, DriverSkillActivationContext context, out string reason)
+     {
++        if (Skill == DriverActiveSkillId.PerfectLap && Strategy.ManualPath)
++        { reason = "三段战术需要当前费用计划"; return false; }
+         // Never interleave the unmigrated UI path with a paid sequence.
+         if (Skill == DriverActiveSkillId.AngryCharge && Charge.HasSequence)
+         { reason = "雄狮追击需要当前费用计划"; return false; }
+@@ -124,6 +129,7 @@ public sealed class DriverSkillRuntimeState
+         Charge.CloseInput();
+         Pursuit.CloseInput();
+         Tuning.BeginGlobalTurn();
++        Strategy.BeginGlobalTurn();
+         drivingInputStartedThisTurn = false;
+         IsDrivingInputOpen = false;
+         if (!UsesDrivingInputClock)
+@@ -155,6 +161,7 @@ public sealed class DriverSkillRuntimeState
+         Charge.Interrupt();
+         Pursuit.Interrupt();
+         Tuning.Interrupt();
++        Strategy.Interrupt();
+         if (!UsesDrivingInputClock) return;
+         IsDrivingInputOpen = false;
+         drivingInputStartedThisTurn = true;
+diff --git a/Assets/Scripts/UI/DriverSelectionUI.cs b/Assets/Scripts/UI/DriverSelectionUI.cs
+index b5fc539..6bac51f 100644
+--- a/Assets/Scripts/UI/DriverSelectionUI.cs
++++ b/Assets/Scripts/UI/DriverSelectionUI.cs
+@@ -115,8 +115,14 @@ public sealed class DriverSelectionUI : MonoBehaviour
+             passive.fontSizeMin = 12f;
+             passive.fontSizeMax = 14f;
+         }
+-        CreateText(card.transform, "Active", $"主动：{driver.ActiveName}\n{driver.ActiveSummary}", 14f,
++        TMP_Text active = CreateText(card.transform, "Active", $"主动：{driver.ActiveName}\n{driver.ActiveSummary}", 14f,
+             new Vector2(0f, -62f), new Vector2(282f, 58f), FontStyles.Normal, new Color(0.62f, 0.88f, 1f));
++        if (driver.Id == "de_michael_schumacher")
++        {
++            active.enableAutoSizing = true;
++            active.fontSizeMin = 12f;
++            active.fontSizeMax = 14f;
++        }
+     }
+ 
+     private static void AddTeamLogo(Transform parent, TeamId team, Vector2 position, Vector2 size)
+diff --git a/Assets/Scripts/UI/HUDUI.cs b/Assets/Scripts/UI/HUDUI.cs
+index e722e0e..d87572b 100644
+--- a/Assets/Scripts/UI/HUDUI.cs
++++ b/Assets/Scripts/UI/HUDUI.cs
+@@ -455,10 +455,11 @@ public class HUDUI : MonoBehaviour
+ 
+     /// <summary>A required cost choice shares the existing single confirmation surface.</summary>
+     public void ShowDriverSkillCardChoice(string title, string message, IReadOnlyList<CardData> choices,
+-        UnityEngine.Events.UnityAction<CardData> confirm, UnityEngine.Events.UnityAction cancel)
++        UnityEngine.Events.UnityAction<CardData> confirm, UnityEngine.Events.UnityAction cancel,
++        string confirmLabel = "弃置并发动")
+     {
+         ShowRequiredCardChoice(title, message, choices, confirm, cancel,
+-            InRaceConfirmationAction.DriverSkill, "弃置并发动", null);
++            InRaceConfirmationAction.DriverSkill, confirmLabel, null);
+     }
+ 
+     /// <summary>A technology cost choice uses the same required selection and lifecycle surface.</summary>
+@@ -473,14 +474,16 @@ public class HUDUI : MonoBehaviour
+ 
+     /// <summary>Optional fixed-heat continuation shares cancellation/focus and honors the existing confirmation switch.</summary>
+     public void ShowDriverSkillContinuation(string title, string message,
+-        UnityEngine.Events.UnityAction confirm, UnityEngine.Events.UnityAction cancel)
++        UnityEngine.Events.UnityAction confirm, UnityEngine.Events.UnityAction cancel,
++        string confirmLabel = "支付1热并追击", string noCardDescription = null)
+     {
+         if (confirm == null || IsTelemetryDetailsOpen) { cancel?.Invoke(); return; }
+         if (InRaceConfirmationRules.IsEnabled(GameSettingsRuntime.Current.inRaceConfirmationMask,
+                 InRaceConfirmationAction.DriverSkill))
+         {
+             ShowRequiredCardChoice(title, message, Array.Empty<CardData>(), _ => confirm.Invoke(), cancel,
+-                InRaceConfirmationAction.DriverSkill, "支付1热并追击", null, false);
++                InRaceConfirmationAction.DriverSkill, confirmLabel, null, false);
++            if (!string.IsNullOrEmpty(noCardDescription)) driverSkillCardChoice?.SetNoCardDescription(noCardDescription);
+             return;
+         }
+         DismissConfirmation(false, true);
+@@ -1452,7 +1455,8 @@ public class HUDUI : MonoBehaviour
+     private void OnDriverSkillClicked()
+     {
+         if (gameManager != null &&
+-            (gameManager.TryRequestHunterSkillSelection() || gameManager.TryRequestMansellChargeSelection())) return;
++            (gameManager.TryRequestHunterSkillSelection() || gameManager.TryRequestMansellChargeSelection() ||
++             gameManager.TryRequestSchumacherStrategySelection())) return;
+         RequestInRaceAction(
+             InRaceConfirmationAction.DriverSkill,
+             "确认发动技能",
+diff --git a/Assets/Scripts/UI/TeamGearPresentationUI.cs b/Assets/Scripts/UI/TeamGearPresentationUI.cs
+index 8645aca..942bb0e 100644
+--- a/Assets/Scripts/UI/TeamGearPresentationUI.cs
++++ b/Assets/Scripts/UI/TeamGearPresentationUI.cs
+@@ -198,6 +198,13 @@ public sealed class TeamGearPresentationUI : MonoBehaviour
+             appliedWhileLocked = true;
+         minimumGear = config != null ? Mathf.Clamp(config.minGear, 1, 4) : 1;
+         maximumGear = config != null ? Mathf.Clamp(config.maxGear, minimumGear, 4) : 4;
++        if (player.driverSkill?.Skill == DriverActiveSkillId.PerfectLap && player.driverSkill.Strategy.CommittedThisInput)
++        {
++            if (player.driverSkill.Strategy.Stage == SchumacherStrategyStage.PreparationCommitted)
++                maximumGear = Mathf.Min(maximumGear, 2);
++            else
++                minimumGear = Mathf.Max(minimumGear, 3);
++        }
+         CurrentGear = ClampGear(player.gear);
+         PendingGear = ClampGear(pendingGear);
+         ControlsInteractable = canSelect;
+diff --git a/Assets/Tests/Editor/RegressionModules.json b/Assets/Tests/Editor/RegressionModules.json
+index 137f5fc..359d3f7 100644
+--- a/Assets/Tests/Editor/RegressionModules.json
++++ b/Assets/Tests/Editor/RegressionModules.json
+@@ -123,6 +123,8 @@
+         "MansellPursuitTests",
+         "RaceDriverSkillActivationAdapterTests",
+         "RaceTurnSkillCleanupTests",
++        "SchumacherStrategyManagerTests",
++        "SchumacherStrategyTests",
+         "SchumacherTuningIntegrationTests",
+         "SchumacherTuningTests",
+         "TrackTeamBalanceCornerHeatTests"
+@@ -248,6 +250,7 @@
+         "ReturnToMenuConfirmationTests",
+         "ReturnToMenuLifecycleAdapterTests",
+         "SchumacherPassiveProfileUiTests",
++        "SchumacherStrategyProductionUiTests",
+         "TeamCarPresentationTests",
+         "UkPrepMealManagerTests"
+       ]
+diff --git a/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset b/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset
+index ca2f2d6..500b86e 100644
+--- a/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset	
++++ b/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset	
+@@ -1,3 +1,3 @@
+ version https://git-lfs.github.com/spec/v1
+-oid sha256:138eb727664c34cec3defb833ccd2d527aac13a6296e1e9b1475ea1a900e53ed
+-size 34155550
++oid sha256:c44b368e107f8e08e35d9cc93b6e8be7c022273a1cb7bc1daca8317f45848d94
++size 34180244
+diff --git a/ProjectSettings/EditorSettings.asset b/ProjectSettings/EditorSettings.asset
+index ce486a2..cfda889 100644
+--- a/ProjectSettings/EditorSettings.asset
++++ b/ProjectSettings/EditorSettings.asset
+@@ -24,8 +24,8 @@ EditorSettings:
+   m_EnableEditorAsyncCPUTextureLoading: 0
+   m_AsyncShaderCompilation: 1
+   m_PrefabModeAllowAutoSave: 1
+-  m_EnterPlayModeOptionsEnabled: 0
+-  m_EnterPlayModeOptions: 3
++  m_EnterPlayModeOptionsEnabled: 1
++  m_EnterPlayModeOptions: 1
+   m_GameObjectNamingDigits: 1
+   m_GameObjectNamingScheme: 0
+   m_AssetNamingUsesSpace: 1
+diff --git a/design/gdd/foodula-1-drivers.md b/design/gdd/foodula-1-drivers.md
+index c12c3d7..b13af2b 100644
+--- a/design/gdd/foodula-1-drivers.md
++++ b/design/gdd/foodula-1-drivers.md
+@@ -150,8 +150,10 @@
+ 
+ | 技能 | Tier 1 (Lv2) | Tier 2 (Lv4) | Tier 3 (Lv6) |
+ |---|---|---|---|
+-| ⭐ 被动「工程师调校」 | 每 3 回合，下一次热量支付 -1 | 每 2 回合触发 | 每 2 回合触发 |
+-| ⚡ 主动「完美一圈」 | 宣告后，本回合不产生任何弯道热量（精密到极致），每场 1 次 | 额外：本回合尾流 +1 | 使用次数 2 |
++| ⭐ 被动「工程师调校」 | 本人同输入普通弯道实付满2永久热：下1个合格本人输入首笔正弯费-1，每圈一次 | 门槛改为1永久热，期限仍1输入 | 门槛1，期限2输入；不叠加/续期 |
++| ⚡ 主动「三段战术」 | 弃1普通速度牌、1/2挡准备；后两次连续本人输入3/4挡各付1永久热，移动+2；每场1次 | 执行段各+3，仍逐段实付热 | 单次仍两段+3；每场2次 |
++
++> 历史I04b1接入状态（现由I04b2续接）：当时主动仍为玩家按钮的旧入口。新「三段战术」运行态/API与实际GameLoop已接入：准备弃1张普通速度牌、限1/2挡；后两个连续本人输入限3/4挡，每段实付1永久热得+2/+3/+3，场次1/1/2，进入付费序列后旧免热/尾流不可再用。真实按钮、确认与摘要留I04b2，当前不标为玩家可操作或完整验收。
+ 
+ > **背景**：父亲是卡丁车场砖匠，母亲经营小卖部。4 岁开卡丁车撞上电线杆。30 年后他是 7 届世界冠军，训练比任何人都刻苦，大脑比任何人多算一步。他唯一的争议：为了赢，可以撞对手。
+ 
+@@ -380,3 +382,23 @@ Unity连接恢复后，实查MainMenu及全部loaded scenes干净、未播放/
+ 受控生产DriverSelectionUI在1920×1080、2560×1440、1280×720改前/后各3全帧实际查看；新D03被动overflow前后0，每尺寸全页既有14条其他文字/姓名overflow保留，不算全页可读验收；UK拥挤与姓名重叠未扩修。真实Raycaster选12车手/六队、Submit、遮罩、返回均通过；正交自有Canvas不算实际菜单启动/硬件/完整比赛模式，720p舒适度仍I13。前绝对目录 D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04a-2026-10-27/before/run-20261027-100904358；后 D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04a-2026-10-27/after/run-20261027-152526369。
+ 
+ 最终MainMenu干净、未播放/编译/导入/测试，Console0错误/0警告未清，许可正常；ready记录见证据。8 Word/32场景及既有排除文件保留，未改快速播放设置。I04仍进行中，下一I04b舒马赫弃牌低挡准备/两段逐付热主动，再接维特尔；完整模式/存档仍I13。用户随后明确授权“将改动提交到github”，按相关范围核对并提交/推送，其他钩子/音频暂存/字体缓存/编辑器设置不纳入。证据 production/qa/evidence/tech-driver-I04a-2026-10-27/README.md。
++
++### 2026-10-29 I04b1：舒马赫三段战术运行态与生产API（真实按钮待I04b2）
++
++已接入准备段弃1张原普通速度牌、限1/2挡；之后两个连续本人输入限3/4挡，逐次实付1张永久引擎热到手牌，移动+2/+3/+3，准备时仅扣一次场次（仍1/1/2）。计划绑定session/参赛车/本人输入/回合/版本与牌区快照；取消、过期不扣费，未付执行或缺牌/低挡/进站/跳过/终态/异常/退出丢弃剩余，已付费用与次数不返还。独立Strategy时钟不推进旧PerfectLap主动时钟；进入ManualPath后旧免弯费/高阶尾流保持禁用。新增奖励尾段仍查新弯心并付普通费用；预测复制重绑定不改真实牌值/热池/收据。DE L3记录/回收实际固定手牌原收据，不回收声明前旧热，也不重置黑啤预算。
++
++新程序集runtime e6d6e80f-4853-4179-b3cb-8501d59619d0；11模块editor79888f06-3448-49ab-87ba-fad14881200e。新增53规则+33管理器案例，原生11模块3570/3570，失败/跳过/不确定0，33.0757789秒，selectionMatches=true。另实际GameLoop最终6/6，失败/跳过0，6.7724629秒；新增1案例内部等级3/5两场，各准备→两次执行→第4输入，另5条既有DE/D03被动/Mansell流程。首轮6条为5过1失败：新夹具遗漏关闭德国底盘直道+2，准备期预计1实为3；只修夹具显式关闭底盘、保留原断言，新editor612a0e6a-1efe-44cb-b3ef-07a656e2affa后6条全过。未变生产/3570案例不重复全跑。独立引擎静态终审无阻断，不冒充执行证据。
++
++实际按钮、选择/逐次付热确认、主动摘要尚未迁移，API可用不等于玩家已可操作；本包未改UI、无新截图，三尺寸真实交互留I04b2，既有I04a图片不算本轮验收。最终MainMenu全部loaded scene干净，未播放/编译/导入/测试，Console0错误/0警告未清，许可/ready正常。8 Word/32场景、4既有排除文件diff及原78个未跟踪条目保留；未提交/推送/清理或改快速播放。I04仍进行中，下一I04b2真实UI，再I04c维特尔；全模式/存档组合仍I13。证据：[I04b1运行态与原生验收](../../production/qa/evidence/tech-driver-I04b1-2026-10-29/README.md)。
++
++末尾格式复核仅移除两份新增测试各1个EOF空白行，字节还原校验确认无执行内容变化；runtime保持e6d6e80f-4853-4179-b3cb-8501d59619d0，后续editor3850947d-3485-430b-a498-fb03d3ef8730已实际编译/加载，Console0/0；不重复测试、不新增通过计数，上述3570与6条仍对应各自记录的测试程序集。
++
++### 2026-10-29 I04b2：舒马赫真实三段按钮与确认
++
++HUD与Manager按钮已统一路由三段战术，失败也不落回旧免费PerfectLap；准备以一次必选原速度牌窗弃牌，执行1/2复用一次付1永久热确认，沿DriverSkill确认开关，关闭开关仍不能跳过准备选牌。显示准备/执行/已提交、费用收益、限制挡位、取消失去剩余段、余次与缺热/低挡禁用原因。已付准备限1/2、已付执行限3/4，挡位呈现同步禁用；取消/陈旧回调依原计划版本，保持1/1/2场次、ID/XP/解锁不变。正式车手页主动名/摘要已更新，仅D03主动12..14字号适配。
++
++新增51UI参数（48HUD+3profile）登记ui；实际GameLoop既有三段案例升级为按钮入口→HUD确认，仍1案例内部level3/5两场。原生11模块3618/3618，0失败/跳过/不确定，34.3221161秒；另精确6条GameLoop6/6，6.803973秒。之后仅D03主动字号及3回归改变，新runtime a00e5717-db24-4c9a-b83d-7d49d9833c13/editor c3e1959e-bb44-405c-a813-7d417415e7a3加载，最终ui/drivers/tech1576/1576，0失败/跳过，20.7530156秒；各选择重叠，不累计为独立数，6条未冒称在最后字号程序集重跑。首轮48新UI失败结果MCP截断且无汇总，通过数计0；补齐夹具四挡/合法高挡焦点和300×330容器后断言保留并通过。最早新夹具不存在EventCamera编译错已改真实Canvas.camera；一次MCP重载警告已消失。新主动摘要三尺寸溢出在profile检查发现，局部字号修正后均0，其他14条旧全页问题仍未验收。
++
++改前HUD3/profile3，改后HUD24/profile最终3；实际查看HUD改前3、改后15（准备/执行1/执行2/缺热/低挡）及profile前后6帧，三尺寸齐全。owned正交生产Canvas、GraphicRaycaster/Submit/Cancel焦点/遮罩与费用验证，不是全RaceCanvas/硬件/完整模式。改前HUD的合成gear容器仅G1且过小，初版白底白字被拒、先用深底重拍；改后夹具补四挡/容器，不能把整块gear布局前后差异当生产改版。既有拖动随gears/ui模块回归，未新增硬件拖动验收。截图绝对路径及记录见 production/qa/evidence/tech-driver-I04b2-2026-10-29/README.md。
++
++独立代理仅完成前置建议后触发用量限制，未写生产/最终签审；根完成实现/源码复核/原生与视觉检查，不声称独立最终审查。最终MainMenu干净、未播放/编译/导入/测试，ready正常，Console0错误0警告未清，许可正常。8Word/32场景/4排除文件与原未跟踪条目保留；无提交推送或系统/快速播放设置修改。I04仍进行中，下一I04c维特尔；全模式/存档/硬件与720p主观舒适度留I13。
+diff --git a/design/gdd/foodula-1-tech-tree.md b/design/gdd/foodula-1-tech-tree.md
+index 2c69e68..69400b9 100644
+--- a/design/gdd/foodula-1-tech-tree.md
++++ b/design/gdd/foodula-1-tech-tree.md
+@@ -697,3 +697,7 @@ A1新增烤肉爆发免费声明/取消，与原车手按钮分槽共存；未
+ 三尺寸改前24图由捕获代理实际查看、后24动作/确认/状态区域及4张全帧由父任务查看，均0正文溢出。前目录 `D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I03e-2026-10-27/before/run-20261027-043617806`，后目录 `D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I03e-2026-10-27/after/run-20261027-094346842`。前A1自有白底白字的旧driver标签不算可读验收；后仅给自有背景应用既有生产样式，且正交摄影机不同，不冒称同摄影机像素比较。terminal/exit图片为清理前确认界面、资源字段为清理后断言，不算终态后截图；前engineAfter=0未测量。净回/退役日志有实际适配器断言，未在这些图中渲染。完整RaceCanvas、硬件、模式/存档/完整比赛及720p主观舒适度仍I13。
+ 
+ 最终MainMenu全部loaded scene干净，未播放/编译/导入/测试，许可正常，Console0错误/0警告未清，ready新鲜true。模块运行后曾有预期no_such_track错误与cardPrefab夹具警告，最终记录清楚区分。8 Word/32场景及既有改动保留；git diff --check通过，无提交推送、清理或系统/快速播放设置修改。I03仅有界交付，执行指针进入I04舒马赫/维特尔真实来源与本人输入窗口；全模式未完成。详见production/qa/evidence/tech-driver-I03e-2026-10-27/README.md。
++
++### 2026-10-29 I04b1 德国科技与D03生产API
++
++三段战术执行费为逐段实付1永久热到手牌，由固定费用收据路径记录；与黑啤一样不吃普通减费/黑面包折扣，声明后的DE L3可回收仍持有的该原实例，声明前旧热不返还、预算不重置。新增尾段按普通弯费处理；本轮对应管理器收据/新弯心与既有德国真实流程均过。新D03真实按钮尚待I04b2；详见production/qa/evidence/tech-driver-I04b1-2026-10-29/README.md。
+diff --git a/design/planning/tech-driver-rework-2026-10-22/implementation-plan.json b/design/planning/tech-driver-rework-2026-10-22/implementation-plan.json
+index 5b28f8e..2f4eed1 100644
+--- a/design/planning/tech-driver-rework-2026-10-22/implementation-plan.json
++++ b/design/planning/tech-driver-rework-2026-10-22/implementation-plan.json
+@@ -1222,14 +1222,300 @@
+           "cached_diff_check": 0
+         }
+       },
+-      "next_slice": "I04b：舒马赫三段战术主动，真实弃速度牌、低挡准备、后两个本人高挡输入逐段付1永久热；现有主动未迁移。随后I04c维特尔固定来源联动；完整模式留I13。",
++      "next_slice": "I04c：维特尔固定真实非零原生来源的有限增幅及本人输入窗口，沿锁定方案与DE科技联动；I04不标整包完成，全模式/存档/硬件组合仍I13。",
+       "verification": {
+         "schumacher_passive_pure_rules": true,
+         "schumacher_passive_production_wiring": true,
+         "schumacher_passive_actual_owner_inputs": true,
+-        "schumacher_active": false,
++        "schumacher_active": true,
+         "vettel": false,
+-        "complete_modes": false
++        "complete_modes": false,
++        "schumacher_active_runtime": true,
++        "schumacher_active_manager_api": true,
++        "schumacher_active_actual_GameLoop": true,
++        "schumacher_active_player_button": true,
++        "schumacher_active_controlled_UI": true
++      },
++      "schumacher_strategy_runtime_slice": {
++        "id": "I04b1",
++        "local_date": "2026-10-29",
++        "ended_utc": "2026-10-28T17:26:52.7989363Z",
++        "status": "schumacher_strategy_runtime_api_and_bounded_native_verified_actual_ui_pending",
++        "scope": "D03 exact speed discard preparation at gear1/2; next two consecutive owner inputs gear3/4, fixed permanent heat1 each for movement2/3/3. Independent Strategy clock and exact versioned plans, Manager transaction/gear/cards/movement/cleanup adapters; actual button remains I04b2.",
++        "new_cases": 87,
++        "new_pure_cases": 53,
++        "new_manager_adapter_cases": 33,
++        "new_actual_GameLoop_cases": 1,
++        "final_native": {
++          "startedUtc": "2026-10-28T17:24:07.2969851Z",
++          "endedUtc": "2026-10-28T17:24:47.0646871Z",
++          "state": "Passed",
++          "nativeState": "Passed",
++          "total": 3570,
++          "passed": 3570,
++          "failed": 0,
++          "skipped": 0,
++          "inconclusive": 0,
++          "seconds": 33.0757789,
++          "selectionMatches": true
++        },
++        "modules": [
++          "ai",
++          "cards-heat",
++          "career",
++          "core",
++          "drivers",
++          "gears",
++          "tech",
++          "tools",
++          "tracks-weather-pit",
++          "tutorial",
++          "ui"
++        ],
++        "gameloop": {
++          "total": 6,
++          "passed": 6,
++          "failed": 0,
++          "skipped": 0,
++          "durationSeconds": 6.7724629,
++          "resultState": "Passed"
++        },
++        "native_GameLoop_RunFinished": {
++          "fullName": "Foodula1",
++          "resultState": "Passed",
++          "endedUtc": "2026-10-28T17:26:52.7989363Z",
++          "total": 6,
++          "passed": 6,
++          "failed": 0,
++          "skipped": 0,
++          "inconclusive": 0,
++          "message": "",
++          "output": "",
++          "stackTrace": ""
++        },
++        "gameloop_boundary": "Six exact selected cases: new D03 active internally levels3/5, existing D03 passive, two German declaration and two Mansell actual loops. Synthetic track/headless adapters; not all long-races or full modes.",
++        "first_gameloop_native": {
++          "fullName": "Foodula1",
++          "resultState": "Failed(Child)",
++          "endedUtc": "2026-10-28T17:25:16.4625555Z",
++          "total": 6,
++          "passed": 5,
++          "failed": 1,
++          "skipped": 0,
++          "inconclusive": 0,
++          "message": "One or more child tests had errors",
++          "output": "",
++          "stackTrace": ""
++        },
++        "first_gameloop_job_wall_seconds": 7.397,
++        "failure_resolution": "Only new GameLoop fixture initially retained DE chassis +2 straight bonus (expected1, actual3). Set session.TeamVehicleBonusesEnabled=false explicitly in owned new fixture; preserved original position/heat assertions. Production and selected11module cases unchanged; no repeat of unchanged3570.",
++        "runtime_mvid": "e6d6e80f-4853-4179-b3cb-8501d59619d0",
++        "module_editor_mvid": "79888f06-3448-49ab-87ba-fad14881200e",
++        "final_editor_mvid": "612a0e6a-1efe-44cb-b3ef-07a656e2affa",
++        "new_assemblies_loaded": true,
++        "acceptance": {
++          "pure_rules": true,
++          "production_wiring": true,
++          "manager_api_operable": true,
++          "strategy_observed_through_actual_GameLoop": true,
++          "actual_player_button_migrated": false,
++          "three_size_strategy_ui": false,
++          "schumacher_active_fully_accepted": false,
++          "vettel": false,
++          "complete_modes": false
++        },
++        "source_review": "Independent Unity specialist final read-only review found no blocking issues in9 existing production files+newRuntime/Plan. Native compiler/tests supply execution evidence. New bonus tail pays ordinary corners and defers finish; exception/pit cleanup covered.",
++        "unity_final": {
++          "scene": "Assets/Scenes/MainMenu.unity",
++          "dirty": false,
++          "loadedScenes": [
++            {
++              "path": "Assets/Scenes/MainMenu.unity",
++              "dirty": false
++            }
++          ],
++          "playing": false,
++          "compiling": false,
++          "updating": false,
++          "tests": false
++        },
++        "console": {
++          "errors": 0,
++          "warnings": 0,
++          "not_cleared": true
++        },
++        "license": "Successfully resolved entitlement details; Editor.log:21080",
++        "visual": {
++          "new_screenshots": 0,
++          "reason": "No UI/layout/player button changed in API-only I04b1. Actual button/confirmation/text and required three-size before/after review remain I04b2; I04a screenshots not reused as this slice acceptance."
++        },
++        "protected_files": {
++          "word_count": 8,
++          "scene_count": 32,
++          "changed": [],
++          "excluded_diff_preserved": {
++            ".claude/settings.json": true,
++            ".codex/hooks.json": true,
++            "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset": true,
++            "ProjectSettings/EditorSettings.asset": true
++          },
++          "previous_untracked_preserved": 78
++        },
++        "evidence": "../../../production/qa/evidence/tech-driver-I04b1-2026-10-29/README.md",
++        "next_slice": "I04b2：将舒马赫三段战术接到真实技能按钮、弃牌/逐次付热确认与状态文案，覆盖取消/焦点/键盘/拖动及三尺寸改前后受控生产UI；随后I04c维特尔，完整模式/存档组合留I13。",
++        "git": "HEAD4c94d01 unchanged; no commit/push/staging/reset/checkout/rebase, file cleanup, package install or settings mutation.",
++        "format_only_followup": {
++          "kind": "Removed only one trailing EOF blank line in each of two new test files and normalized final newline; reconstructing old EOF CRLFCRLF reproduces preformat SHA256; no executable tokens changed.",
++          "paths": [
++            "Assets/Tests/Editor/schumacher_strategy_manager_test.cs",
++            "Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs"
++          ],
++          "new_editor_mvid": "3850947d-3485-430b-a498-fb03d3ef8730",
++          "runtime_mvid": "e6d6e80f-4853-4179-b3cb-8501d59619d0",
++          "fresh_compile_verified": true,
++          "tests_repeated": false,
++          "credited_additional_passes": 0,
++          "test_editor_mvid": "612a0e6a-1efe-44cb-b3ef-07a656e2affa"
++        }
++      },
++      "schumacher_strategy_ui_slice": {
++        "id": "I04b2",
++        "local_date": "2026-10-29",
++        "status": "schumacher_strategy_actual_button_confirmation_and_bounded_ui_verified",
++        "scope": "Real HUD+manager D03 button routes exact preparation/continuation plans, no legacy free fallback; one merged fee surface with existing confirmation switch, stage/reasons/uses, legal gear presentation and current profile copy. IDs/XP/unlock/uses unchanged.",
++        "new_ui_cases": 51,
++        "new_actual_GameLoop_cases": 0,
++        "existing_GameLoop_upgraded": "Existing I04b1 strategy case now calls manager actual button and HUD confirmation at preparation and both executions; internally two levels, not2 extra test cases.",
++        "native_11modules_before_profile_font_fix": {
++          "total": 3618,
++          "passed": 3618,
++          "failed": 0,
++          "skipped": 0,
++          "inconclusive": 0,
++          "seconds": 34.3221161,
++          "state": "Passed",
++          "nativeState": "Passed",
++          "selectionMatches": true,
++          "startedUtc": "2026-10-28T22:44:54.0596627Z",
++          "endedUtc": "2026-10-28T22:45:35.1391998Z"
++        },
++        "native_final_ui_drivers_tech": {
++          "total": 1576,
++          "passed": 1576,
++          "failed": 0,
++          "skipped": 0,
++          "inconclusive": 0,
++          "seconds": 20.7530156,
++          "state": "Passed",
++          "nativeState": "Passed",
++          "selectionMatches": true,
++          "startedUtc": "2026-10-28T22:47:56.6248223Z",
++          "endedUtc": "2026-10-28T22:48:20.2101577Z"
++        },
++        "actual_GameLoop": {
++          "total": 6,
++          "passed": 6,
++          "failed": 0,
++          "skipped": 0,
++          "durationSeconds": 6.803973,
++          "resultState": "Passed"
++        },
++        "native_RunFinished": {
++          "fullName": "Foodula1",
++          "resultState": "Passed",
++          "endedUtc": "2026-10-28T22:46:06.0932865Z",
++          "total": 6,
++          "passed": 6,
++          "failed": 0,
++          "skipped": 0,
++          "inconclusive": 0,
++          "message": "",
++          "output": "",
++          "stackTrace": ""
++        },
++        "runtime_before_profile_font_fix": "6fbb8abe-cd86-4852-89a2-157aeb5c056f",
++        "editor_before_profile_font_fix": "efc0c201-4d69-41ff-a208-72c6491bd107",
++        "final_runtime": "a00e5717-db24-4c9a-b83d-7d49d9833c13",
++        "final_editor": "c3e1959e-bb44-405c-a813-7d417415e7a3",
++        "version_boundary": "Final change after6GameLoop/3618 was D03 active profile text autosize12..14 and3 corresponding tests only. Fresh assemblies loaded and ui/drivers/tech1576 passed; no unchanged full/module11 repeat and no assertion that6GameLoop ran on final font-only MVID.",
++        "first_ui_run": {
++          "selected": 48,
++          "completed": 48,
++          "state": "failed",
++          "native_summary_available": false,
++          "failure_list_capped": true,
++          "credited_passes": 0,
++          "reason": "MCP failed-job result omitted summary/capped list; no inferred pass/fail totals. Missing legal G3 focus target and undersized synthetic gear container fixed by real four-gear presentation, assertions retained."
++        },
++        "compile_fix": "One initial new-fixture CS1061 referenced nonexistent EventCamera; switched to actual Canvas.worldCamera before any credited tests.",
++        "visual": {
++          "before_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/before/profile-20261028-174153715",
++          "before_hud": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/before/hud-20261028-224125331",
++          "after_hud": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009",
++          "after_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/after/profile-final-20261028-224832541",
++          "sizes": [
++            "1920x1080",
++            "2560x1440",
++            "1280x720"
++          ],
++          "hud_before_count": 3,
++          "hud_after_count": 24,
++          "hud_after_full_frames_root_viewed": 15,
++          "viewed_hud_fixtures": [
++            0,
++            2,
++            3,
++            5,
++            6
++          ],
++          "profile_before_and_final_viewed": 6,
++          "hud_changed_text_overflows": 0,
++          "new_profile_active_overflow_before_fix": 3,
++          "new_profile_active_overflow_final": 0,
++          "preexisting_profile_overflows_per_size": 14,
++          "boundary": "Owned orthographic production HUD/DriverSelectionUI. Before HUD initial synthetic gear host too small/onlyG1; first white-on-white fixture version rejected, dark surface recaptured before production edit. After host supplies actual four gears and correct300x330 holder; not a like-for-like full gear layout comparison. Driver slot/modal/source profile validated. Full RaceCanvas/hardware/mode/720p subjective comfort pendingI13. Profile existing14 other overflows per size are not accepted.",
++          "coverage": "48 HUD cases: 3sizes x8fixtures xmask0/All, preparation/cancel, execution1/2, cancel, heat/gear unavailable, Submit/focus/mask/exact costs/repeat confirm; rosters2/4/6/12 from real six-team catalog. 3 profile cases select12/six teams, Submit/Back/mask; long name fixture. Generic drag existing module coverage, no new physical drag/mode acceptance."
++        },
++        "acceptance": {
++          "pure_rules_preexisting": true,
++          "production_wiring": true,
++          "actual_player_button": true,
++          "controlled_three_size_UI": true,
++          "actual_GameLoop_with_HUD_confirmation": true,
++          "full_hardware_and_modes": false,
++          "vettel": false
++        },
++        "review": "Independent specialist supplied initial routing/modal/cancel/readonly advice then all3agents hit usage limit before edits/final review. Root implemented and inspected final source, ran native and viewed stated screenshots; no independent final signoff claimed.",
++        "unity_final": {
++          "scenes": [
++            {
++              "path": "Assets/Scenes/MainMenu.unity",
++              "dirty": false
++            }
++          ],
++          "playing": false,
++          "compiling": false,
++          "updating": false,
++          "tests": false,
++          "runtime": "a00e5717-db24-4c9a-b83d-7d49d9833c13",
++          "editor": "c3e1959e-bb44-405c-a813-7d417415e7a3",
++          "nativeGameLoop": "{\"fullName\":\"Foodula1\",\"resultState\":\"Passed\",\"endedUtc\":\"2026-10-28T22:46:06.0932865Z\",\"total\":6,\"passed\":6,\"failed\":0,\"skipped\":0,\"inconclusive\":0,\"message\":\"\",\"output\":\"\",\"stackTrace\":\"\"}"
++        },
++        "console": {
++          "errors": 0,
++          "warnings": 0,
++          "not_cleared": true,
++          "earlier_tool_warning": "MCP WebSocket not initialised during reload, no gameplay/compiler warning remaining"
++        },
++        "preservation": {
++          "word": 8,
++          "scenes": 32,
++          "excluded_files": 4,
++          "old_untracked_entries_preserved": 122
++        },
++        "evidence": "../../../production/qa/evidence/tech-driver-I04b2-2026-10-29/README.md",
++        "next_slice": "I04c：维特尔固定真实非零原生来源的有限增幅及本人输入窗口，沿锁定方案与DE科技联动；I04不标整包完成，全模式/存档/硬件组合仍I13。",
++        "git": "No commit/push/staging/reset/checkout/rebase; HEAD4c94d01 preserved."
+       }
+     },
+     {
+@@ -1290,9 +1576,9 @@
+     "I00b",
+     "I00"
+   ],
+-  "tests_executed_for_implementation": 3484,
+-  "note": "I04a passive only accepted in bounded production/GameLoop/profile fixtures; I04 remains in progress. Final selected11modules3484/3484 + separateGameLoop3/3; no full-suite/mode claim.",
+-  "last_implementation_package": "I04a",
++  "tests_executed_for_implementation": 1576,
++  "note": "I04b2 actual D03 button/HUD/controlled3size UI verified. 11modules3618 and6GameLoop passed before final profile-only font adjustment; fresh finalui/drivers/tech1576 passed. Overlapping selections are not additive unique tests. I04 remainsin_progress; nextVettelI04c, fullmodesI13.",
++  "last_implementation_package": "I04b2",
+   "tests_count_semantics": "Latest authoritative selected native run, not cumulative unique coverage or full-suite pass.",
+   "uk_hunting_cap_question": {
+     "status": "answered_by_user",
+@@ -1504,6 +1790,287 @@
+   "bounded_implementation_handoffs": [
+     "I01",
+     "I02",
+-    "I03"
++    "I03",
++    {
++      "id": "I04b1",
++      "local_date": "2026-10-29",
++      "ended_utc": "2026-10-28T17:26:52.7989363Z",
++      "status": "schumacher_strategy_runtime_api_and_bounded_native_verified_actual_ui_pending",
++      "scope": "D03 exact speed discard preparation at gear1/2; next two consecutive owner inputs gear3/4, fixed permanent heat1 each for movement2/3/3. Independent Strategy clock and exact versioned plans, Manager transaction/gear/cards/movement/cleanup adapters; actual button remains I04b2.",
++      "new_cases": 87,
++      "new_pure_cases": 53,
++      "new_manager_adapter_cases": 33,
++      "new_actual_GameLoop_cases": 1,
++      "final_native": {
++        "startedUtc": "2026-10-28T17:24:07.2969851Z",
++        "endedUtc": "2026-10-28T17:24:47.0646871Z",
++        "state": "Passed",
++        "nativeState": "Passed",
++        "total": 3570,
++        "passed": 3570,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "seconds": 33.0757789,
++        "selectionMatches": true
++      },
++      "modules": [
++        "ai",
++        "cards-heat",
++        "career",
++        "core",
++        "drivers",
++        "gears",
++        "tech",
++        "tools",
++        "tracks-weather-pit",
++        "tutorial",
++        "ui"
++      ],
++      "gameloop": {
++        "total": 6,
++        "passed": 6,
++        "failed": 0,
++        "skipped": 0,
++        "durationSeconds": 6.7724629,
++        "resultState": "Passed"
++      },
++      "native_GameLoop_RunFinished": {
++        "fullName": "Foodula1",
++        "resultState": "Passed",
++        "endedUtc": "2026-10-28T17:26:52.7989363Z",
++        "total": 6,
++        "passed": 6,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "message": "",
++        "output": "",
++        "stackTrace": ""
++      },
++      "gameloop_boundary": "Six exact selected cases: new D03 active internally levels3/5, existing D03 passive, two German declaration and two Mansell actual loops. Synthetic track/headless adapters; not all long-races or full modes.",
++      "first_gameloop_native": {
++        "fullName": "Foodula1",
++        "resultState": "Failed(Child)",
++        "endedUtc": "2026-10-28T17:25:16.4625555Z",
++        "total": 6,
++        "passed": 5,
++        "failed": 1,
++        "skipped": 0,
++        "inconclusive": 0,
++        "message": "One or more child tests had errors",
++        "output": "",
++        "stackTrace": ""
++      },
++      "first_gameloop_job_wall_seconds": 7.397,
++      "failure_resolution": "Only new GameLoop fixture initially retained DE chassis +2 straight bonus (expected1, actual3). Set session.TeamVehicleBonusesEnabled=false explicitly in owned new fixture; preserved original position/heat assertions. Production and selected11module cases unchanged; no repeat of unchanged3570.",
++      "runtime_mvid": "e6d6e80f-4853-4179-b3cb-8501d59619d0",
++      "module_editor_mvid": "79888f06-3448-49ab-87ba-fad14881200e",
++      "final_editor_mvid": "612a0e6a-1efe-44cb-b3ef-07a656e2affa",
++      "new_assemblies_loaded": true,
++      "acceptance": {
++        "pure_rules": true,
++        "production_wiring": true,
++        "manager_api_operable": true,
++        "strategy_observed_through_actual_GameLoop": true,
++        "actual_player_button_migrated": false,
++        "three_size_strategy_ui": false,
++        "schumacher_active_fully_accepted": false,
++        "vettel": false,
++        "complete_modes": false
++      },
++      "source_review": "Independent Unity specialist final read-only review found no blocking issues in9 existing production files+newRuntime/Plan. Native compiler/tests supply execution evidence. New bonus tail pays ordinary corners and defers finish; exception/pit cleanup covered.",
++      "unity_final": {
++        "scene": "Assets/Scenes/MainMenu.unity",
++        "dirty": false,
++        "loadedScenes": [
++          {
++            "path": "Assets/Scenes/MainMenu.unity",
++            "dirty": false
++          }
++        ],
++        "playing": false,
++        "compiling": false,
++        "updating": false,
++        "tests": false
++      },
++      "console": {
++        "errors": 0,
++        "warnings": 0,
++        "not_cleared": true
++      },
++      "license": "Successfully resolved entitlement details; Editor.log:21080",
++      "visual": {
++        "new_screenshots": 0,
++        "reason": "No UI/layout/player button changed in API-only I04b1. Actual button/confirmation/text and required three-size before/after review remain I04b2; I04a screenshots not reused as this slice acceptance."
++      },
++      "protected_files": {
++        "word_count": 8,
++        "scene_count": 32,
++        "changed": [],
++        "excluded_diff_preserved": {
++          ".claude/settings.json": true,
++          ".codex/hooks.json": true,
++          "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset": true,
++          "ProjectSettings/EditorSettings.asset": true
++        },
++        "previous_untracked_preserved": 78
++      },
++      "evidence": "../../../production/qa/evidence/tech-driver-I04b1-2026-10-29/README.md",
++      "next_slice": "I04b2：将舒马赫三段战术接到真实技能按钮、弃牌/逐次付热确认与状态文案，覆盖取消/焦点/键盘/拖动及三尺寸改前后受控生产UI；随后I04c维特尔，完整模式/存档组合留I13。",
++      "git": "HEAD4c94d01 unchanged; no commit/push/staging/reset/checkout/rebase, file cleanup, package install or settings mutation.",
++      "format_only_followup": {
++        "kind": "Removed only one trailing EOF blank line in each of two new test files and normalized final newline; reconstructing old EOF CRLFCRLF reproduces preformat SHA256; no executable tokens changed.",
++        "paths": [
++          "Assets/Tests/Editor/schumacher_strategy_manager_test.cs",
++          "Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs"
++        ],
++        "new_editor_mvid": "3850947d-3485-430b-a498-fb03d3ef8730",
++        "runtime_mvid": "e6d6e80f-4853-4179-b3cb-8501d59619d0",
++        "fresh_compile_verified": true,
++        "tests_repeated": false,
++        "credited_additional_passes": 0,
++        "test_editor_mvid": "612a0e6a-1efe-44cb-b3ef-07a656e2affa"
++      }
++    },
++    {
++      "id": "I04b2",
++      "local_date": "2026-10-29",
++      "status": "schumacher_strategy_actual_button_confirmation_and_bounded_ui_verified",
++      "scope": "Real HUD+manager D03 button routes exact preparation/continuation plans, no legacy free fallback; one merged fee surface with existing confirmation switch, stage/reasons/uses, legal gear presentation and current profile copy. IDs/XP/unlock/uses unchanged.",
++      "new_ui_cases": 51,
++      "new_actual_GameLoop_cases": 0,
++      "existing_GameLoop_upgraded": "Existing I04b1 strategy case now calls manager actual button and HUD confirmation at preparation and both executions; internally two levels, not2 extra test cases.",
++      "native_11modules_before_profile_font_fix": {
++        "total": 3618,
++        "passed": 3618,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "seconds": 34.3221161,
++        "state": "Passed",
++        "nativeState": "Passed",
++        "selectionMatches": true,
++        "startedUtc": "2026-10-28T22:44:54.0596627Z",
++        "endedUtc": "2026-10-28T22:45:35.1391998Z"
++      },
++      "native_final_ui_drivers_tech": {
++        "total": 1576,
++        "passed": 1576,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "seconds": 20.7530156,
++        "state": "Passed",
++        "nativeState": "Passed",
++        "selectionMatches": true,
++        "startedUtc": "2026-10-28T22:47:56.6248223Z",
++        "endedUtc": "2026-10-28T22:48:20.2101577Z"
++      },
++      "actual_GameLoop": {
++        "total": 6,
++        "passed": 6,
++        "failed": 0,
++        "skipped": 0,
++        "durationSeconds": 6.803973,
++        "resultState": "Passed"
++      },
++      "native_RunFinished": {
++        "fullName": "Foodula1",
++        "resultState": "Passed",
++        "endedUtc": "2026-10-28T22:46:06.0932865Z",
++        "total": 6,
++        "passed": 6,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "message": "",
++        "output": "",
++        "stackTrace": ""
++      },
++      "runtime_before_profile_font_fix": "6fbb8abe-cd86-4852-89a2-157aeb5c056f",
++      "editor_before_profile_font_fix": "efc0c201-4d69-41ff-a208-72c6491bd107",
++      "final_runtime": "a00e5717-db24-4c9a-b83d-7d49d9833c13",
++      "final_editor": "c3e1959e-bb44-405c-a813-7d417415e7a3",
++      "version_boundary": "Final change after6GameLoop/3618 was D03 active profile text autosize12..14 and3 corresponding tests only. Fresh assemblies loaded and ui/drivers/tech1576 passed; no unchanged full/module11 repeat and no assertion that6GameLoop ran on final font-only MVID.",
++      "first_ui_run": {
++        "selected": 48,
++        "completed": 48,
++        "state": "failed",
++        "native_summary_available": false,
++        "failure_list_capped": true,
++        "credited_passes": 0,
++        "reason": "MCP failed-job result omitted summary/capped list; no inferred pass/fail totals. Missing legal G3 focus target and undersized synthetic gear container fixed by real four-gear presentation, assertions retained."
++      },
++      "compile_fix": "One initial new-fixture CS1061 referenced nonexistent EventCamera; switched to actual Canvas.worldCamera before any credited tests.",
++      "visual": {
++        "before_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/before/profile-20261028-174153715",
++        "before_hud": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/before/hud-20261028-224125331",
++        "after_hud": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009",
++        "after_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/after/profile-final-20261028-224832541",
++        "sizes": [
++          "1920x1080",
++          "2560x1440",
++          "1280x720"
++        ],
++        "hud_before_count": 3,
++        "hud_after_count": 24,
++        "hud_after_full_frames_root_viewed": 15,
++        "viewed_hud_fixtures": [
++          0,
++          2,
++          3,
++          5,
++          6
++        ],
++        "profile_before_and_final_viewed": 6,
++        "hud_changed_text_overflows": 0,
++        "new_profile_active_overflow_before_fix": 3,
++        "new_profile_active_overflow_final": 0,
++        "preexisting_profile_overflows_per_size": 14,
++        "boundary": "Owned orthographic production HUD/DriverSelectionUI. Before HUD initial synthetic gear host too small/onlyG1; first white-on-white fixture version rejected, dark surface recaptured before production edit. After host supplies actual four gears and correct300x330 holder; not a like-for-like full gear layout comparison. Driver slot/modal/source profile validated. Full RaceCanvas/hardware/mode/720p subjective comfort pendingI13. Profile existing14 other overflows per size are not accepted.",
++        "coverage": "48 HUD cases: 3sizes x8fixtures xmask0/All, preparation/cancel, execution1/2, cancel, heat/gear unavailable, Submit/focus/mask/exact costs/repeat confirm; rosters2/4/6/12 from real six-team catalog. 3 profile cases select12/six teams, Submit/Back/mask; long name fixture. Generic drag existing module coverage, no new physical drag/mode acceptance."
++      },
++      "acceptance": {
++        "pure_rules_preexisting": true,
++        "production_wiring": true,
++        "actual_player_button": true,
++        "controlled_three_size_UI": true,
++        "actual_GameLoop_with_HUD_confirmation": true,
++        "full_hardware_and_modes": false,
++        "vettel": false
++      },
++      "review": "Independent specialist supplied initial routing/modal/cancel/readonly advice then all3agents hit usage limit before edits/final review. Root implemented and inspected final source, ran native and viewed stated screenshots; no independent final signoff claimed.",
++      "unity_final": {
++        "scenes": [
++          {
++            "path": "Assets/Scenes/MainMenu.unity",
++            "dirty": false
++          }
++        ],
++        "playing": false,
++        "compiling": false,
++        "updating": false,
++        "tests": false,
++        "runtime": "a00e5717-db24-4c9a-b83d-7d49d9833c13",
++        "editor": "c3e1959e-bb44-405c-a813-7d417415e7a3",
++        "nativeGameLoop": "{\"fullName\":\"Foodula1\",\"resultState\":\"Passed\",\"endedUtc\":\"2026-10-28T22:46:06.0932865Z\",\"total\":6,\"passed\":6,\"failed\":0,\"skipped\":0,\"inconclusive\":0,\"message\":\"\",\"output\":\"\",\"stackTrace\":\"\"}"
++      },
++      "console": {
++        "errors": 0,
++        "warnings": 0,
++        "not_cleared": true,
++        "earlier_tool_warning": "MCP WebSocket not initialised during reload, no gameplay/compiler warning remaining"
++      },
++      "preservation": {
++        "word": 8,
++        "scenes": 32,
++        "excluded_files": 4,
++        "old_untracked_entries_preserved": 122
++      },
++      "evidence": "../../../production/qa/evidence/tech-driver-I04b2-2026-10-29/README.md",
++      "next_slice": "I04c：维特尔固定真实非零原生来源的有限增幅及本人输入窗口，沿锁定方案与DE科技联动；I04不标整包完成，全模式/存档/硬件组合仍I13。",
++      "git": "No commit/push/staging/reset/checkout/rebase; HEAD4c94d01 preserved."
++    }
+   ]
+-}
+\ No newline at end of file
++}
+diff --git a/design/planning/tech-driver-rework-2026-10-22/progress.json b/design/planning/tech-driver-rework-2026-10-22/progress.json
+index 1aeee18..e8ee4f9 100644
+--- a/design/planning/tech-driver-rework-2026-10-22/progress.json
++++ b/design/planning/tech-driver-rework-2026-10-22/progress.json
+@@ -30,7 +30,7 @@
+   ],
+   "sources_opened": 24,
+   "status": "implementation_in_progress",
+-  "next_package": "I04b：舒马赫三段战术主动，真实弃速度牌、低挡准备、后两个本人高挡输入逐段付1永久热；现有主动未迁移。随后I04c维特尔固定来源联动；完整模式留I13。",
++  "next_package": "I04c：维特尔固定真实非零原生来源的有限增幅及本人输入窗口，沿锁定方案与DE科技联动；I04不标整包完成，全模式/存档/硬件组合仍I13。",
+   "implementation_authorized": true,
+   "stages": [
+     {
+@@ -126,9 +126,9 @@
+   "cadence_minutes": 30,
+   "brief_pages_reviewed": 12,
+   "next_package_acceptance": [
+-    "Mansell follows the locked original target; no alternate driver/ID/XP change.",
+-    "Validate each real leg and second fixed cost, atomic cancel/stale rejection and owner-input cleanup.",
+-    "Compile/load new assemblies and run drivers/tech plus affected movement/card/UI tests; new UI gets current three-size evidence, complete modes remain I13."
++    "Vettel locked original identity/XP/uses, exact nonzero native sources only.",
++    "Versioned choice/fixed payment and owner input cleanup, genuine receipts and forecast isolation.",
++    "Fresh native drivers/tech plus affected modules; changed UI gets actual3size evidence, full modes remainI13."
+   ],
+   "last_package": {
+     "id": "P5",
+@@ -603,8 +603,8 @@
+     "automation_prompt_sha256": "d3b28cfe0313d5ce25218f76ff10d56ec2253e5e79e3f4ad68ca157609971d2f",
+     "baseline": "D:\\UnityProject\\Foodula1\\Library\\AutomationReview\\tech-driver-implementation-20261022-174531\\baseline.json"
+   },
+-  "implementation_last_package": "I04a",
+-  "implementation_next_slice": "I04b：舒马赫三段战术主动，真实弃速度牌、低挡准备、后两个本人高挡输入逐段付1永久热；现有主动未迁移。随后I04c维特尔固定来源联动；完整模式留I13。",
++  "implementation_last_package": "I04b2",
++  "implementation_next_slice": "I04c：维特尔固定真实非零原生来源的有限增幅及本人输入窗口，沿锁定方案与DE科技联动；I04不标整包完成，全模式/存档/硬件组合仍I13。",
+   "uk_hunting_cap_question": {
+     "status": "answered_by_user",
+     "source": "driver draft paragraph 102 and direct async user reply in this chat",
+@@ -1768,6 +1768,287 @@
+         "unity_current": "Editor closed after last clean MainMenu and Console0/0; not restarted",
+         "cached_diff_check": 0
+       }
++    },
++    {
++      "id": "I04b1",
++      "local_date": "2026-10-29",
++      "ended_utc": "2026-10-28T17:26:52.7989363Z",
++      "status": "schumacher_strategy_runtime_api_and_bounded_native_verified_actual_ui_pending",
++      "scope": "D03 exact speed discard preparation at gear1/2; next two consecutive owner inputs gear3/4, fixed permanent heat1 each for movement2/3/3. Independent Strategy clock and exact versioned plans, Manager transaction/gear/cards/movement/cleanup adapters; actual button remains I04b2.",
++      "new_cases": 87,
++      "new_pure_cases": 53,
++      "new_manager_adapter_cases": 33,
++      "new_actual_GameLoop_cases": 1,
++      "final_native": {
++        "startedUtc": "2026-10-28T17:24:07.2969851Z",
++        "endedUtc": "2026-10-28T17:24:47.0646871Z",
++        "state": "Passed",
++        "nativeState": "Passed",
++        "total": 3570,
++        "passed": 3570,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "seconds": 33.0757789,
++        "selectionMatches": true
++      },
++      "modules": [
++        "ai",
++        "cards-heat",
++        "career",
++        "core",
++        "drivers",
++        "gears",
++        "tech",
++        "tools",
++        "tracks-weather-pit",
++        "tutorial",
++        "ui"
++      ],
++      "gameloop": {
++        "total": 6,
++        "passed": 6,
++        "failed": 0,
++        "skipped": 0,
++        "durationSeconds": 6.7724629,
++        "resultState": "Passed"
++      },
++      "native_GameLoop_RunFinished": {
++        "fullName": "Foodula1",
++        "resultState": "Passed",
++        "endedUtc": "2026-10-28T17:26:52.7989363Z",
++        "total": 6,
++        "passed": 6,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "message": "",
++        "output": "",
++        "stackTrace": ""
++      },
++      "gameloop_boundary": "Six exact selected cases: new D03 active internally levels3/5, existing D03 passive, two German declaration and two Mansell actual loops. Synthetic track/headless adapters; not all long-races or full modes.",
++      "first_gameloop_native": {
++        "fullName": "Foodula1",
++        "resultState": "Failed(Child)",
++        "endedUtc": "2026-10-28T17:25:16.4625555Z",
++        "total": 6,
++        "passed": 5,
++        "failed": 1,
++        "skipped": 0,
++        "inconclusive": 0,
++        "message": "One or more child tests had errors",
++        "output": "",
++        "stackTrace": ""
++      },
++      "first_gameloop_job_wall_seconds": 7.397,
++      "failure_resolution": "Only new GameLoop fixture initially retained DE chassis +2 straight bonus (expected1, actual3). Set session.TeamVehicleBonusesEnabled=false explicitly in owned new fixture; preserved original position/heat assertions. Production and selected11module cases unchanged; no repeat of unchanged3570.",
++      "runtime_mvid": "e6d6e80f-4853-4179-b3cb-8501d59619d0",
++      "module_editor_mvid": "79888f06-3448-49ab-87ba-fad14881200e",
++      "final_editor_mvid": "612a0e6a-1efe-44cb-b3ef-07a656e2affa",
++      "new_assemblies_loaded": true,
++      "acceptance": {
++        "pure_rules": true,
++        "production_wiring": true,
++        "manager_api_operable": true,
++        "strategy_observed_through_actual_GameLoop": true,
++        "actual_player_button_migrated": false,
++        "three_size_strategy_ui": false,
++        "schumacher_active_fully_accepted": false,
++        "vettel": false,
++        "complete_modes": false
++      },
++      "source_review": "Independent Unity specialist final read-only review found no blocking issues in9 existing production files+newRuntime/Plan. Native compiler/tests supply execution evidence. New bonus tail pays ordinary corners and defers finish; exception/pit cleanup covered.",
++      "unity_final": {
++        "scene": "Assets/Scenes/MainMenu.unity",
++        "dirty": false,
++        "loadedScenes": [
++          {
++            "path": "Assets/Scenes/MainMenu.unity",
++            "dirty": false
++          }
++        ],
++        "playing": false,
++        "compiling": false,
++        "updating": false,
++        "tests": false
++      },
++      "console": {
++        "errors": 0,
++        "warnings": 0,
++        "not_cleared": true
++      },
++      "license": "Successfully resolved entitlement details; Editor.log:21080",
++      "visual": {
++        "new_screenshots": 0,
++        "reason": "No UI/layout/player button changed in API-only I04b1. Actual button/confirmation/text and required three-size before/after review remain I04b2; I04a screenshots not reused as this slice acceptance."
++      },
++      "protected_files": {
++        "word_count": 8,
++        "scene_count": 32,
++        "changed": [],
++        "excluded_diff_preserved": {
++          ".claude/settings.json": true,
++          ".codex/hooks.json": true,
++          "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset": true,
++          "ProjectSettings/EditorSettings.asset": true
++        },
++        "previous_untracked_preserved": 78
++      },
++      "evidence": "../../../production/qa/evidence/tech-driver-I04b1-2026-10-29/README.md",
++      "next_slice": "I04b2：将舒马赫三段战术接到真实技能按钮、弃牌/逐次付热确认与状态文案，覆盖取消/焦点/键盘/拖动及三尺寸改前后受控生产UI；随后I04c维特尔，完整模式/存档组合留I13。",
++      "git": "HEAD4c94d01 unchanged; no commit/push/staging/reset/checkout/rebase, file cleanup, package install or settings mutation.",
++      "format_only_followup": {
++        "kind": "Removed only one trailing EOF blank line in each of two new test files and normalized final newline; reconstructing old EOF CRLFCRLF reproduces preformat SHA256; no executable tokens changed.",
++        "paths": [
++          "Assets/Tests/Editor/schumacher_strategy_manager_test.cs",
++          "Assets/Tests/Editor/race_schumacher_strategy_coroutine_test.cs"
++        ],
++        "new_editor_mvid": "3850947d-3485-430b-a498-fb03d3ef8730",
++        "runtime_mvid": "e6d6e80f-4853-4179-b3cb-8501d59619d0",
++        "fresh_compile_verified": true,
++        "tests_repeated": false,
++        "credited_additional_passes": 0,
++        "test_editor_mvid": "612a0e6a-1efe-44cb-b3ef-07a656e2affa"
++      }
++    },
++    {
++      "id": "I04b2",
++      "local_date": "2026-10-29",
++      "status": "schumacher_strategy_actual_button_confirmation_and_bounded_ui_verified",
++      "scope": "Real HUD+manager D03 button routes exact preparation/continuation plans, no legacy free fallback; one merged fee surface with existing confirmation switch, stage/reasons/uses, legal gear presentation and current profile copy. IDs/XP/unlock/uses unchanged.",
++      "new_ui_cases": 51,
++      "new_actual_GameLoop_cases": 0,
++      "existing_GameLoop_upgraded": "Existing I04b1 strategy case now calls manager actual button and HUD confirmation at preparation and both executions; internally two levels, not2 extra test cases.",
++      "native_11modules_before_profile_font_fix": {
++        "total": 3618,
++        "passed": 3618,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "seconds": 34.3221161,
++        "state": "Passed",
++        "nativeState": "Passed",
++        "selectionMatches": true,
++        "startedUtc": "2026-10-28T22:44:54.0596627Z",
++        "endedUtc": "2026-10-28T22:45:35.1391998Z"
++      },
++      "native_final_ui_drivers_tech": {
++        "total": 1576,
++        "passed": 1576,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "seconds": 20.7530156,
++        "state": "Passed",
++        "nativeState": "Passed",
++        "selectionMatches": true,
++        "startedUtc": "2026-10-28T22:47:56.6248223Z",
++        "endedUtc": "2026-10-28T22:48:20.2101577Z"
++      },
++      "actual_GameLoop": {
++        "total": 6,
++        "passed": 6,
++        "failed": 0,
++        "skipped": 0,
++        "durationSeconds": 6.803973,
++        "resultState": "Passed"
++      },
++      "native_RunFinished": {
++        "fullName": "Foodula1",
++        "resultState": "Passed",
++        "endedUtc": "2026-10-28T22:46:06.0932865Z",
++        "total": 6,
++        "passed": 6,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "message": "",
++        "output": "",
++        "stackTrace": ""
++      },
++      "runtime_before_profile_font_fix": "6fbb8abe-cd86-4852-89a2-157aeb5c056f",
++      "editor_before_profile_font_fix": "efc0c201-4d69-41ff-a208-72c6491bd107",
++      "final_runtime": "a00e5717-db24-4c9a-b83d-7d49d9833c13",
++      "final_editor": "c3e1959e-bb44-405c-a813-7d417415e7a3",
++      "version_boundary": "Final change after6GameLoop/3618 was D03 active profile text autosize12..14 and3 corresponding tests only. Fresh assemblies loaded and ui/drivers/tech1576 passed; no unchanged full/module11 repeat and no assertion that6GameLoop ran on final font-only MVID.",
++      "first_ui_run": {
++        "selected": 48,
++        "completed": 48,
++        "state": "failed",
++        "native_summary_available": false,
++        "failure_list_capped": true,
++        "credited_passes": 0,
++        "reason": "MCP failed-job result omitted summary/capped list; no inferred pass/fail totals. Missing legal G3 focus target and undersized synthetic gear container fixed by real four-gear presentation, assertions retained."
++      },
++      "compile_fix": "One initial new-fixture CS1061 referenced nonexistent EventCamera; switched to actual Canvas.worldCamera before any credited tests.",
++      "visual": {
++        "before_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/before/profile-20261028-174153715",
++        "before_hud": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/before/hud-20261028-224125331",
++        "after_hud": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/after/hud-20261028-224557009",
++        "after_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04b2-2026-10-29/after/profile-final-20261028-224832541",
++        "sizes": [
++          "1920x1080",
++          "2560x1440",
++          "1280x720"
++        ],
++        "hud_before_count": 3,
++        "hud_after_count": 24,
++        "hud_after_full_frames_root_viewed": 15,
++        "viewed_hud_fixtures": [
++          0,
++          2,
++          3,
++          5,
++          6
++        ],
++        "profile_before_and_final_viewed": 6,
++        "hud_changed_text_overflows": 0,
++        "new_profile_active_overflow_before_fix": 3,
++        "new_profile_active_overflow_final": 0,
++        "preexisting_profile_overflows_per_size": 14,
++        "boundary": "Owned orthographic production HUD/DriverSelectionUI. Before HUD initial synthetic gear host too small/onlyG1; first white-on-white fixture version rejected, dark surface recaptured before production edit. After host supplies actual four gears and correct300x330 holder; not a like-for-like full gear layout comparison. Driver slot/modal/source profile validated. Full RaceCanvas/hardware/mode/720p subjective comfort pendingI13. Profile existing14 other overflows per size are not accepted.",
++        "coverage": "48 HUD cases: 3sizes x8fixtures xmask0/All, preparation/cancel, execution1/2, cancel, heat/gear unavailable, Submit/focus/mask/exact costs/repeat confirm; rosters2/4/6/12 from real six-team catalog. 3 profile cases select12/six teams, Submit/Back/mask; long name fixture. Generic drag existing module coverage, no new physical drag/mode acceptance."
++      },
++      "acceptance": {
++        "pure_rules_preexisting": true,
++        "production_wiring": true,
++        "actual_player_button": true,
++        "controlled_three_size_UI": true,
++        "actual_GameLoop_with_HUD_confirmation": true,
++        "full_hardware_and_modes": false,
++        "vettel": false
++      },
++      "review": "Independent specialist supplied initial routing/modal/cancel/readonly advice then all3agents hit usage limit before edits/final review. Root implemented and inspected final source, ran native and viewed stated screenshots; no independent final signoff claimed.",
++      "unity_final": {
++        "scenes": [
++          {
++            "path": "Assets/Scenes/MainMenu.unity",
++            "dirty": false
++          }
++        ],
++        "playing": false,
++        "compiling": false,
++        "updating": false,
++        "tests": false,
++        "runtime": "a00e5717-db24-4c9a-b83d-7d49d9833c13",
++        "editor": "c3e1959e-bb44-405c-a813-7d417415e7a3",
++        "nativeGameLoop": "{\"fullName\":\"Foodula1\",\"resultState\":\"Passed\",\"endedUtc\":\"2026-10-28T22:46:06.0932865Z\",\"total\":6,\"passed\":6,\"failed\":0,\"skipped\":0,\"inconclusive\":0,\"message\":\"\",\"output\":\"\",\"stackTrace\":\"\"}"
++      },
++      "console": {
++        "errors": 0,
++        "warnings": 0,
++        "not_cleared": true,
++        "earlier_tool_warning": "MCP WebSocket not initialised during reload, no gameplay/compiler warning remaining"
++      },
++      "preservation": {
++        "word": 8,
++        "scenes": 32,
++        "excluded_files": 4,
++        "old_untracked_entries_preserved": 122
++      },
++      "evidence": "../../../production/qa/evidence/tech-driver-I04b2-2026-10-29/README.md",
++      "next_slice": "I04c：维特尔固定真实非零原生来源的有限增幅及本人输入窗口，沿锁定方案与DE科技联动；I04不标整包完成，全模式/存档/硬件组合仍I13。",
++      "git": "No commit/push/staging/reset/checkout/rebase; HEAD4c94d01 preserved."
+     }
+   ]
+-}
+\ No newline at end of file
++}
+diff --git a/design/ux/racing-tech-ui-checklist.md b/design/ux/racing-tech-ui-checklist.md
+index 66576ef..46a0ace 100644
+--- a/design/ux/racing-tech-ui-checklist.md
++++ b/design/ux/racing-tech-ui-checklist.md
+@@ -272,3 +272,10 @@ A1德国L3声明/取消与driver分槽、A4燃料与未付取消/锁定禁用、
+ ### I04a 2026-10-27 舒马赫被动有界验证
+ 
+ 真实普通弯道付款调校已接线；42规则、24适配器、3车手页案例登记drivers/ui，1新增实际GameLoop沿long-races。最终11模块3484/3484（40.2925337秒）及实际GameLoop3/3（4.2840327秒），均0失败/跳过。被动摘要更新且仅D03字号12..14适配；三尺寸改前后各3图全部查看，本次文字0overflow；全页每尺寸14个既有其他文字问题保留，不算全页UI/硬件/完整模式验收。首轮3失败即本次新摘要溢出，已修；pitScheduled预测复制遗漏静态修复并加2例。I04主动/维特尔待做，详见production/qa/evidence/tech-driver-I04a-2026-10-27/README.md（绝对截图/程序集/原生结果/边界）。
++
++## I04b2 舒马赫三段操作（受控生产UI）
++
++- [x] 准备原牌选择与执行固定费复用一次费用表面，确认开关、取消、焦点与禁用文字有原生案例。
++- [x] 1920×1080/2560×1440/1280×720真实改前后受控截图，已查看的帧与夹具几何变化边界见I04b2证据。
++- [x] 新D03主动profile三尺寸溢出修正并加3回归；其他14个既有文字溢出未验收。
++- [ ] 完整RaceCanvas、硬件输入/拖动、完整模式与720p主观舒适度，继续I13。
+diff --git a/design/ux/racing-tech-ui.md b/design/ux/racing-tech-ui.md
+index 4a9f7f3..ddfc513 100644
+--- a/design/ux/racing-tech-ui.md
++++ b/design/ux/racing-tech-ui.md
+@@ -572,3 +572,13 @@ A1德国L3声明/取消与driver分槽、A4燃料与未付取消/锁定禁用、
+ ### I04a 2026-10-27 舒马赫被动有界验证
+ 
+ 真实普通弯道付款调校已接线；42规则、24适配器、3车手页案例登记drivers/ui，1新增实际GameLoop沿long-races。最终11模块3484/3484（40.2925337秒）及实际GameLoop3/3（4.2840327秒），均0失败/跳过。被动摘要更新且仅D03字号12..14适配；三尺寸改前后各3图全部查看，本次文字0overflow；全页每尺寸14个既有其他文字问题保留，不算全页UI/硬件/完整模式验收。首轮3失败即本次新摘要溢出，已修；pitScheduled预测复制遗漏静态修复并加2例。I04主动/维特尔待做，详见production/qa/evidence/tech-driver-I04a-2026-10-27/README.md（绝对截图/程序集/原生结果/边界）。
++
++### 2026-10-29 I04b2：舒马赫真实三段按钮与确认
++
++HUD与Manager按钮已统一路由三段战术，失败也不落回旧免费PerfectLap；准备以一次必选原速度牌窗弃牌，执行1/2复用一次付1永久热确认，沿DriverSkill确认开关，关闭开关仍不能跳过准备选牌。显示准备/执行/已提交、费用收益、限制挡位、取消失去剩余段、余次与缺热/低挡禁用原因。已付准备限1/2、已付执行限3/4，挡位呈现同步禁用；取消/陈旧回调依原计划版本，保持1/1/2场次、ID/XP/解锁不变。正式车手页主动名/摘要已更新，仅D03主动12..14字号适配。
++
++新增51UI参数（48HUD+3profile）登记ui；实际GameLoop既有三段案例升级为按钮入口→HUD确认，仍1案例内部level3/5两场。原生11模块3618/3618，0失败/跳过/不确定，34.3221161秒；另精确6条GameLoop6/6，6.803973秒。之后仅D03主动字号及3回归改变，新runtime a00e5717-db24-4c9a-b83d-7d49d9833c13/editor c3e1959e-bb44-405c-a813-7d417415e7a3加载，最终ui/drivers/tech1576/1576，0失败/跳过，20.7530156秒；各选择重叠，不累计为独立数，6条未冒称在最后字号程序集重跑。首轮48新UI失败结果MCP截断且无汇总，通过数计0；补齐夹具四挡/合法高挡焦点和300×330容器后断言保留并通过。最早新夹具不存在EventCamera编译错已改真实Canvas.camera；一次MCP重载警告已消失。新主动摘要三尺寸溢出在profile检查发现，局部字号修正后均0，其他14条旧全页问题仍未验收。
++
++改前HUD3/profile3，改后HUD24/profile最终3；实际查看HUD改前3、改后15（准备/执行1/执行2/缺热/低挡）及profile前后6帧，三尺寸齐全。owned正交生产Canvas、GraphicRaycaster/Submit/Cancel焦点/遮罩与费用验证，不是全RaceCanvas/硬件/完整模式。改前HUD的合成gear容器仅G1且过小，初版白底白字被拒、先用深底重拍；改后夹具补四挡/容器，不能把整块gear布局前后差异当生产改版。既有拖动随gears/ui模块回归，未新增硬件拖动验收。截图绝对路径及记录见 production/qa/evidence/tech-driver-I04b2-2026-10-29/README.md。
++
++独立代理仅完成前置建议后触发用量限制，未写生产/最终签审；根完成实现/源码复核/原生与视觉检查，不声称独立最终审查。最终MainMenu干净、未播放/编译/导入/测试，ready正常，Console0错误0警告未清，许可正常。8Word/32场景/4排除文件与原未跟踪条目保留；无提交推送或系统/快速播放设置修改。I04仍进行中，下一I04c维特尔；全模式/存档/硬件与720p主观舒适度留I13。
+diff --git a/docs/memory/current-task-list.md b/docs/memory/current-task-list.md
+index 2eb71ce..dd284f2 100644
+--- a/docs/memory/current-task-list.md
++++ b/docs/memory/current-task-list.md
+@@ -1648,4 +1648,24 @@ A1新增烤肉爆发免费声明/取消，与原车手按钮分槽共存；未
+ 
+ 最终MainMenu干净、未播放/编译/导入/测试，Console0错误/0警告未清，许可正常；ready记录见证据。8 Word/32场景及既有排除文件保留，未改快速播放设置。I04仍进行中，下一I04b舒马赫弃牌低挡准备/两段逐付热主动，再接维特尔；完整模式/存档仍I13。用户随后明确授权“将改动提交到github”，按相关范围核对并提交/推送，其他钩子/音频暂存/字体缓存/编辑器设置不纳入。证据 production/qa/evidence/tech-driver-I04a-2026-10-27/README.md。
+ 
+-提交前补记：仅清除新增.meta空字段尾空格、uk_prep_meal_test.cs末尾多余空行，并为原始增量diff添加既有保字节策略。生产runtime保持dec425bf-2fe1-41d6-8ebc-7936e91615a1；新editor b60d7ab3-e318-4d64-afcd-6bd9f7073c66已编译。额外UkPrepMealTests复检启动后Unity正常退出，未取得完成结果，计入通过数0；此前3484/3484及GameLoop3/3原生结果有效。最后MainMenu干净、Console0/0，随后编辑器关闭，不自动重启。用户本轮授权将相关改动提交GitHub；本地钩子/音频暂存/字体缓存/EditorSettings和全部场景排除。
+\ No newline at end of file
++提交前补记：仅清除新增.meta空字段尾空格、uk_prep_meal_test.cs末尾多余空行，并为原始增量diff添加既有保字节策略。生产runtime保持dec425bf-2fe1-41d6-8ebc-7936e91615a1；新editor b60d7ab3-e318-4d64-afcd-6bd9f7073c66已编译。额外UkPrepMealTests复检启动后Unity正常退出，未取得完成结果，计入通过数0；此前3484/3484及GameLoop3/3原生结果有效。最后MainMenu干净、Console0/0，随后编辑器关闭，不自动重启。用户本轮授权将相关改动提交GitHub；本地钩子/音频暂存/字体缓存/EditorSettings和全部场景排除。
++
++### 2026-10-29 I04b1：舒马赫三段战术运行态与生产API（真实按钮待I04b2）
++
++已接入准备段弃1张原普通速度牌、限1/2挡；之后两个连续本人输入限3/4挡，逐次实付1张永久引擎热到手牌，移动+2/+3/+3，准备时仅扣一次场次（仍1/1/2）。计划绑定session/参赛车/本人输入/回合/版本与牌区快照；取消、过期不扣费，未付执行或缺牌/低挡/进站/跳过/终态/异常/退出丢弃剩余，已付费用与次数不返还。独立Strategy时钟不推进旧PerfectLap主动时钟；进入ManualPath后旧免弯费/高阶尾流保持禁用。新增奖励尾段仍查新弯心并付普通费用；预测复制重绑定不改真实牌值/热池/收据。DE L3记录/回收实际固定手牌原收据，不回收声明前旧热，也不重置黑啤预算。
++
++新程序集runtime e6d6e80f-4853-4179-b3cb-8501d59619d0；11模块editor79888f06-3448-49ab-87ba-fad14881200e。新增53规则+33管理器案例，原生11模块3570/3570，失败/跳过/不确定0，33.0757789秒，selectionMatches=true。另实际GameLoop最终6/6，失败/跳过0，6.7724629秒；新增1案例内部等级3/5两场，各准备→两次执行→第4输入，另5条既有DE/D03被动/Mansell流程。首轮6条为5过1失败：新夹具遗漏关闭德国底盘直道+2，准备期预计1实为3；只修夹具显式关闭底盘、保留原断言，新editor612a0e6a-1efe-44cb-b3ef-07a656e2affa后6条全过。未变生产/3570案例不重复全跑。独立引擎静态终审无阻断，不冒充执行证据。
++
++实际按钮、选择/逐次付热确认、主动摘要尚未迁移，API可用不等于玩家已可操作；本包未改UI、无新截图，三尺寸真实交互留I04b2，既有I04a图片不算本轮验收。最终MainMenu全部loaded scene干净，未播放/编译/导入/测试，Console0错误/0警告未清，许可/ready正常。8 Word/32场景、4既有排除文件diff及原78个未跟踪条目保留；未提交/推送/清理或改快速播放。I04仍进行中，下一I04b2真实UI，再I04c维特尔；全模式/存档组合仍I13。证据：[I04b1运行态与原生验收](../../production/qa/evidence/tech-driver-I04b1-2026-10-29/README.md)。
++
++末尾格式复核仅移除两份新增测试各1个EOF空白行，字节还原校验确认无执行内容变化；runtime保持e6d6e80f-4853-4179-b3cb-8501d59619d0，后续editor3850947d-3485-430b-a498-fb03d3ef8730已实际编译/加载，Console0/0；不重复测试、不新增通过计数，上述3570与6条仍对应各自记录的测试程序集。
++
++### 2026-10-29 I04b2：舒马赫真实三段按钮与确认
++
++HUD与Manager按钮已统一路由三段战术，失败也不落回旧免费PerfectLap；准备以一次必选原速度牌窗弃牌，执行1/2复用一次付1永久热确认，沿DriverSkill确认开关，关闭开关仍不能跳过准备选牌。显示准备/执行/已提交、费用收益、限制挡位、取消失去剩余段、余次与缺热/低挡禁用原因。已付准备限1/2、已付执行限3/4，挡位呈现同步禁用；取消/陈旧回调依原计划版本，保持1/1/2场次、ID/XP/解锁不变。正式车手页主动名/摘要已更新，仅D03主动12..14字号适配。
++
++新增51UI参数（48HUD+3profile）登记ui；实际GameLoop既有三段案例升级为按钮入口→HUD确认，仍1案例内部level3/5两场。原生11模块3618/3618，0失败/跳过/不确定，34.3221161秒；另精确6条GameLoop6/6，6.803973秒。之后仅D03主动字号及3回归改变，新runtime a00e5717-db24-4c9a-b83d-7d49d9833c13/editor c3e1959e-bb44-405c-a813-7d417415e7a3加载，最终ui/drivers/tech1576/1576，0失败/跳过，20.7530156秒；各选择重叠，不累计为独立数，6条未冒称在最后字号程序集重跑。首轮48新UI失败结果MCP截断且无汇总，通过数计0；补齐夹具四挡/合法高挡焦点和300×330容器后断言保留并通过。最早新夹具不存在EventCamera编译错已改真实Canvas.camera；一次MCP重载警告已消失。新主动摘要三尺寸溢出在profile检查发现，局部字号修正后均0，其他14条旧全页问题仍未验收。
++
++改前HUD3/profile3，改后HUD24/profile最终3；实际查看HUD改前3、改后15（准备/执行1/执行2/缺热/低挡）及profile前后6帧，三尺寸齐全。owned正交生产Canvas、GraphicRaycaster/Submit/Cancel焦点/遮罩与费用验证，不是全RaceCanvas/硬件/完整模式。改前HUD的合成gear容器仅G1且过小，初版白底白字被拒、先用深底重拍；改后夹具补四挡/容器，不能把整块gear布局前后差异当生产改版。既有拖动随gears/ui模块回归，未新增硬件拖动验收。截图绝对路径及记录见 production/qa/evidence/tech-driver-I04b2-2026-10-29/README.md。
++
++独立代理仅完成前置建议后触发用量限制，未写生产/最终签审；根完成实现/源码复核/原生与视觉检查，不声称独立最终审查。最终MainMenu干净、未播放/编译/导入/测试，ready正常，Console0错误0警告未清，许可正常。8Word/32场景/4排除文件与原未跟踪条目保留；无提交推送或系统/快速播放设置修改。I04仍进行中，下一I04c维特尔；全模式/存档/硬件与720p主观舒适度留I13。
+diff --git a/docs/memory/game-mechanics.md b/docs/memory/game-mechanics.md
+index 2224420..d557ee2 100644
+--- a/docs/memory/game-mechanics.md
++++ b/docs/memory/game-mechanics.md
+@@ -981,3 +981,23 @@ A1新增烤肉爆发免费声明/取消，与原车手按钮分槽共存；未
+ 受控生产DriverSelectionUI在1920×1080、2560×1440、1280×720改前/后各3全帧实际查看；新D03被动overflow前后0，每尺寸全页既有14条其他文字/姓名overflow保留，不算全页可读验收；UK拥挤与姓名重叠未扩修。真实Raycaster选12车手/六队、Submit、遮罩、返回均通过；正交自有Canvas不算实际菜单启动/硬件/完整比赛模式，720p舒适度仍I13。前绝对目录 D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04a-2026-10-27/before/run-20261027-100904358；后 D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04a-2026-10-27/after/run-20261027-152526369。
+ 
+ 最终MainMenu干净、未播放/编译/导入/测试，Console0错误/0警告未清，许可正常；ready记录见证据。8 Word/32场景及既有排除文件保留，未改快速播放设置。I04仍进行中，下一I04b舒马赫弃牌低挡准备/两段逐付热主动，再接维特尔；完整模式/存档仍I13。用户随后明确授权“将改动提交到github”，按相关范围核对并提交/推送，其他钩子/音频暂存/字体缓存/编辑器设置不纳入。证据 production/qa/evidence/tech-driver-I04a-2026-10-27/README.md。
++
++### 2026-10-29 I04b1：舒马赫三段战术运行态与生产API（真实按钮待I04b2）
++
++已接入准备段弃1张原普通速度牌、限1/2挡；之后两个连续本人输入限3/4挡，逐次实付1张永久引擎热到手牌，移动+2/+3/+3，准备时仅扣一次场次（仍1/1/2）。计划绑定session/参赛车/本人输入/回合/版本与牌区快照；取消、过期不扣费，未付执行或缺牌/低挡/进站/跳过/终态/异常/退出丢弃剩余，已付费用与次数不返还。独立Strategy时钟不推进旧PerfectLap主动时钟；进入ManualPath后旧免弯费/高阶尾流保持禁用。新增奖励尾段仍查新弯心并付普通费用；预测复制重绑定不改真实牌值/热池/收据。DE L3记录/回收实际固定手牌原收据，不回收声明前旧热，也不重置黑啤预算。
++
++新程序集runtime e6d6e80f-4853-4179-b3cb-8501d59619d0；11模块editor79888f06-3448-49ab-87ba-fad14881200e。新增53规则+33管理器案例，原生11模块3570/3570，失败/跳过/不确定0，33.0757789秒，selectionMatches=true。另实际GameLoop最终6/6，失败/跳过0，6.7724629秒；新增1案例内部等级3/5两场，各准备→两次执行→第4输入，另5条既有DE/D03被动/Mansell流程。首轮6条为5过1失败：新夹具遗漏关闭德国底盘直道+2，准备期预计1实为3；只修夹具显式关闭底盘、保留原断言，新editor612a0e6a-1efe-44cb-b3ef-07a656e2affa后6条全过。未变生产/3570案例不重复全跑。独立引擎静态终审无阻断，不冒充执行证据。
++
++实际按钮、选择/逐次付热确认、主动摘要尚未迁移，API可用不等于玩家已可操作；本包未改UI、无新截图，三尺寸真实交互留I04b2，既有I04a图片不算本轮验收。最终MainMenu全部loaded scene干净，未播放/编译/导入/测试，Console0错误/0警告未清，许可/ready正常。8 Word/32场景、4既有排除文件diff及原78个未跟踪条目保留；未提交/推送/清理或改快速播放。I04仍进行中，下一I04b2真实UI，再I04c维特尔；全模式/存档组合仍I13。证据：[I04b1运行态与原生验收](../../production/qa/evidence/tech-driver-I04b1-2026-10-29/README.md)。
++
++末尾格式复核仅移除两份新增测试各1个EOF空白行，字节还原校验确认无执行内容变化；runtime保持e6d6e80f-4853-4179-b3cb-8501d59619d0，后续editor3850947d-3485-430b-a498-fb03d3ef8730已实际编译/加载，Console0/0；不重复测试、不新增通过计数，上述3570与6条仍对应各自记录的测试程序集。
++
++### 2026-10-29 I04b2：舒马赫真实三段按钮与确认
++
++HUD与Manager按钮已统一路由三段战术，失败也不落回旧免费PerfectLap；准备以一次必选原速度牌窗弃牌，执行1/2复用一次付1永久热确认，沿DriverSkill确认开关，关闭开关仍不能跳过准备选牌。显示准备/执行/已提交、费用收益、限制挡位、取消失去剩余段、余次与缺热/低挡禁用原因。已付准备限1/2、已付执行限3/4，挡位呈现同步禁用；取消/陈旧回调依原计划版本，保持1/1/2场次、ID/XP/解锁不变。正式车手页主动名/摘要已更新，仅D03主动12..14字号适配。
++
++新增51UI参数（48HUD+3profile）登记ui；实际GameLoop既有三段案例升级为按钮入口→HUD确认，仍1案例内部level3/5两场。原生11模块3618/3618，0失败/跳过/不确定，34.3221161秒；另精确6条GameLoop6/6，6.803973秒。之后仅D03主动字号及3回归改变，新runtime a00e5717-db24-4c9a-b83d-7d49d9833c13/editor c3e1959e-bb44-405c-a813-7d417415e7a3加载，最终ui/drivers/tech1576/1576，0失败/跳过，20.7530156秒；各选择重叠，不累计为独立数，6条未冒称在最后字号程序集重跑。首轮48新UI失败结果MCP截断且无汇总，通过数计0；补齐夹具四挡/合法高挡焦点和300×330容器后断言保留并通过。最早新夹具不存在EventCamera编译错已改真实Canvas.camera；一次MCP重载警告已消失。新主动摘要三尺寸溢出在profile检查发现，局部字号修正后均0，其他14条旧全页问题仍未验收。
++
++改前HUD3/profile3，改后HUD24/profile最终3；实际查看HUD改前3、改后15（准备/执行1/执行2/缺热/低挡）及profile前后6帧，三尺寸齐全。owned正交生产Canvas、GraphicRaycaster/Submit/Cancel焦点/遮罩与费用验证，不是全RaceCanvas/硬件/完整模式。改前HUD的合成gear容器仅G1且过小，初版白底白字被拒、先用深底重拍；改后夹具补四挡/容器，不能把整块gear布局前后差异当生产改版。既有拖动随gears/ui模块回归，未新增硬件拖动验收。截图绝对路径及记录见 production/qa/evidence/tech-driver-I04b2-2026-10-29/README.md。
++
++独立代理仅完成前置建议后触发用量限制，未写生产/最终签审；根完成实现/源码复核/原生与视觉检查，不声称独立最终审查。最终MainMenu干净、未播放/编译/导入/测试，ready正常，Console0错误0警告未清，许可正常。8Word/32场景/4排除文件与原未跟踪条目保留；无提交推送或系统/快速播放设置修改。I04仍进行中，下一I04c维特尔；全模式/存档/硬件与720p主观舒适度留I13。
+diff --git a/docs/memory/project-overview.md b/docs/memory/project-overview.md
+index 4789d66..8515f86 100644
+--- a/docs/memory/project-overview.md
++++ b/docs/memory/project-overview.md
+@@ -790,3 +790,23 @@ A1新增烤肉爆发免费声明/取消，与原车手按钮分槽共存；未
+ 受控生产DriverSelectionUI在1920×1080、2560×1440、1280×720改前/后各3全帧实际查看；新D03被动overflow前后0，每尺寸全页既有14条其他文字/姓名overflow保留，不算全页可读验收；UK拥挤与姓名重叠未扩修。真实Raycaster选12车手/六队、Submit、遮罩、返回均通过；正交自有Canvas不算实际菜单启动/硬件/完整比赛模式，720p舒适度仍I13。前绝对目录 D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04a-2026-10-27/before/run-20261027-100904358；后 D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04a-2026-10-27/after/run-20261027-152526369。
+ 
+ 最终MainMenu干净、未播放/编译/导入/测试，Console0错误/0警告未清，许可正常；ready记录见证据。8 Word/32场景及既有排除文件保留，未改快速播放设置。I04仍进行中，下一I04b舒马赫弃牌低挡准备/两段逐付热主动，再接维特尔；完整模式/存档仍I13。用户随后明确授权“将改动提交到github”，按相关范围核对并提交/推送，其他钩子/音频暂存/字体缓存/编辑器设置不纳入。证据 production/qa/evidence/tech-driver-I04a-2026-10-27/README.md。
++
++### 2026-10-29 I04b1：舒马赫三段战术运行态与生产API（真实按钮待I04b2）
++
++已接入准备段弃1张原普通速度牌、限1/2挡；之后两个连续本人输入限3/4挡，逐次实付1张永久引擎热到手牌，移动+2/+3/+3，准备时仅扣一次场次（仍1/1/2）。计划绑定session/参赛车/本人输入/回合/版本与牌区快照；取消、过期不扣费，未付执行或缺牌/低挡/进站/跳过/终态/异常/退出丢弃剩余，已付费用与次数不返还。独立Strategy时钟不推进旧PerfectLap主动时钟；进入ManualPath后旧免弯费/高阶尾流保持禁用。新增奖励尾段仍查新弯心并付普通费用；预测复制重绑定不改真实牌值/热池/收据。DE L3记录/回收实际固定手牌原收据，不回收声明前旧热，也不重置黑啤预算。
++
++新程序集runtime e6d6e80f-4853-4179-b3cb-8501d59619d0；11模块editor79888f06-3448-49ab-87ba-fad14881200e。新增53规则+33管理器案例，原生11模块3570/3570，失败/跳过/不确定0，33.0757789秒，selectionMatches=true。另实际GameLoop最终6/6，失败/跳过0，6.7724629秒；新增1案例内部等级3/5两场，各准备→两次执行→第4输入，另5条既有DE/D03被动/Mansell流程。首轮6条为5过1失败：新夹具遗漏关闭德国底盘直道+2，准备期预计1实为3；只修夹具显式关闭底盘、保留原断言，新editor612a0e6a-1efe-44cb-b3ef-07a656e2affa后6条全过。未变生产/3570案例不重复全跑。独立引擎静态终审无阻断，不冒充执行证据。
++
++实际按钮、选择/逐次付热确认、主动摘要尚未迁移，API可用不等于玩家已可操作；本包未改UI、无新截图，三尺寸真实交互留I04b2，既有I04a图片不算本轮验收。最终MainMenu全部loaded scene干净，未播放/编译/导入/测试，Console0错误/0警告未清，许可/ready正常。8 Word/32场景、4既有排除文件diff及原78个未跟踪条目保留；未提交/推送/清理或改快速播放。I04仍进行中，下一I04b2真实UI，再I04c维特尔；全模式/存档组合仍I13。证据：[I04b1运行态与原生验收](../../production/qa/evidence/tech-driver-I04b1-2026-10-29/README.md)。
++
++末尾格式复核仅移除两份新增测试各1个EOF空白行，字节还原校验确认无执行内容变化；runtime保持e6d6e80f-4853-4179-b3cb-8501d59619d0，后续editor3850947d-3485-430b-a498-fb03d3ef8730已实际编译/加载，Console0/0；不重复测试、不新增通过计数，上述3570与6条仍对应各自记录的测试程序集。
++
++### 2026-10-29 I04b2：舒马赫真实三段按钮与确认
++
++HUD与Manager按钮已统一路由三段战术，失败也不落回旧免费PerfectLap；准备以一次必选原速度牌窗弃牌，执行1/2复用一次付1永久热确认，沿DriverSkill确认开关，关闭开关仍不能跳过准备选牌。显示准备/执行/已提交、费用收益、限制挡位、取消失去剩余段、余次与缺热/低挡禁用原因。已付准备限1/2、已付执行限3/4，挡位呈现同步禁用；取消/陈旧回调依原计划版本，保持1/1/2场次、ID/XP/解锁不变。正式车手页主动名/摘要已更新，仅D03主动12..14字号适配。
++
++新增51UI参数（48HUD+3profile）登记ui；实际GameLoop既有三段案例升级为按钮入口→HUD确认，仍1案例内部level3/5两场。原生11模块3618/3618，0失败/跳过/不确定，34.3221161秒；另精确6条GameLoop6/6，6.803973秒。之后仅D03主动字号及3回归改变，新runtime a00e5717-db24-4c9a-b83d-7d49d9833c13/editor c3e1959e-bb44-405c-a813-7d417415e7a3加载，最终ui/drivers/tech1576/1576，0失败/跳过，20.7530156秒；各选择重叠，不累计为独立数，6条未冒称在最后字号程序集重跑。首轮48新UI失败结果MCP截断且无汇总，通过数计0；补齐夹具四挡/合法高挡焦点和300×330容器后断言保留并通过。最早新夹具不存在EventCamera编译错已改真实Canvas.camera；一次MCP重载警告已消失。新主动摘要三尺寸溢出在profile检查发现，局部字号修正后均0，其他14条旧全页问题仍未验收。
++
++改前HUD3/profile3，改后HUD24/profile最终3；实际查看HUD改前3、改后15（准备/执行1/执行2/缺热/低挡）及profile前后6帧，三尺寸齐全。owned正交生产Canvas、GraphicRaycaster/Submit/Cancel焦点/遮罩与费用验证，不是全RaceCanvas/硬件/完整模式。改前HUD的合成gear容器仅G1且过小，初版白底白字被拒、先用深底重拍；改后夹具补四挡/容器，不能把整块gear布局前后差异当生产改版。既有拖动随gears/ui模块回归，未新增硬件拖动验收。截图绝对路径及记录见 production/qa/evidence/tech-driver-I04b2-2026-10-29/README.md。
++
++独立代理仅完成前置建议后触发用量限制，未写生产/最终签审；根完成实现/源码复核/原生与视觉检查，不声称独立最终审查。最终MainMenu干净、未播放/编译/导入/测试，ready正常，Console0错误0警告未清，许可正常。8Word/32场景/4排除文件与原未跟踪条目保留；无提交推送或系统/快速播放设置修改。I04仍进行中，下一I04c维特尔；全模式/存档/硬件与720p主观舒适度留I13。
+diff --git a/tests/regression-suite.md b/tests/regression-suite.md
+index bba79e6..9a8e136 100644
+--- a/tests/regression-suite.md
++++ b/tests/regression-suite.md
+@@ -244,3 +244,19 @@ A1德国L3声明/取消与driver分槽、A4燃料与未付取消/锁定禁用、
+ ### I04a 2026-10-27 舒马赫被动有界验证
+ 
+ 真实普通弯道付款调校已接线；42规则、24适配器、3车手页案例登记drivers/ui，1新增实际GameLoop沿long-races。最终11模块3484/3484（40.2925337秒）及实际GameLoop3/3（4.2840327秒），均0失败/跳过。被动摘要更新且仅D03字号12..14适配；三尺寸改前后各3图全部查看，本次文字0overflow；全页每尺寸14个既有其他文字问题保留，不算全页UI/硬件/完整模式验收。首轮3失败即本次新摘要溢出，已修；pitScheduled预测复制遗漏静态修复并加2例。I04主动/维特尔待做，详见production/qa/evidence/tech-driver-I04a-2026-10-27/README.md（绝对截图/程序集/原生结果/边界）。
++
++### I04b1 2026-10-29 三段战术API有界验证
++
++SchumacherStrategyTests新增53例、SchumacherStrategyManagerTests新增33例，登记drivers；新增actual partial沿long-races，1案例内部等级3/5两场。新runtime下11模块3570/3570（33.0757789秒），另精确6条GameLoop最终6/6（6.7724629秒），均0失败/跳过；原生RunFinished确认。首轮GameLoop5过1失败是新夹具DE底盘+2未隔离，仅修夹具后新editor编译重跑6条，未改生产/未重复3570。覆盖原实例弃牌、固定费、陈旧回调、真实gear/cards/movement、尾段普通弯费、pit/异常清理、L3准确收据和预测深复制。实际按钮/确认/三尺寸UI未验收，完整模式I13。详见production/qa/evidence/tech-driver-I04b1-2026-10-29/README.md。
++
++末尾格式复核仅移除两份新增测试各1个EOF空白行，字节还原校验确认无执行内容变化；runtime保持e6d6e80f-4853-4179-b3cb-8501d59619d0，后续editor3850947d-3485-430b-a498-fb03d3ef8730已实际编译/加载，Console0/0；不重复测试、不新增通过计数，上述3570与6条仍对应各自记录的测试程序集。
++
++### 2026-10-29 I04b2：舒马赫真实三段按钮与确认
++
++HUD与Manager按钮已统一路由三段战术，失败也不落回旧免费PerfectLap；准备以一次必选原速度牌窗弃牌，执行1/2复用一次付1永久热确认，沿DriverSkill确认开关，关闭开关仍不能跳过准备选牌。显示准备/执行/已提交、费用收益、限制挡位、取消失去剩余段、余次与缺热/低挡禁用原因。已付准备限1/2、已付执行限3/4，挡位呈现同步禁用；取消/陈旧回调依原计划版本，保持1/1/2场次、ID/XP/解锁不变。正式车手页主动名/摘要已更新，仅D03主动12..14字号适配。
++
++新增51UI参数（48HUD+3profile）登记ui；实际GameLoop既有三段案例升级为按钮入口→HUD确认，仍1案例内部level3/5两场。原生11模块3618/3618，0失败/跳过/不确定，34.3221161秒；另精确6条GameLoop6/6，6.803973秒。之后仅D03主动字号及3回归改变，新runtime a00e5717-db24-4c9a-b83d-7d49d9833c13/editor c3e1959e-bb44-405c-a813-7d417415e7a3加载，最终ui/drivers/tech1576/1576，0失败/跳过，20.7530156秒；各选择重叠，不累计为独立数，6条未冒称在最后字号程序集重跑。首轮48新UI失败结果MCP截断且无汇总，通过数计0；补齐夹具四挡/合法高挡焦点和300×330容器后断言保留并通过。最早新夹具不存在EventCamera编译错已改真实Canvas.camera；一次MCP重载警告已消失。新主动摘要三尺寸溢出在profile检查发现，局部字号修正后均0，其他14条旧全页问题仍未验收。
++
++改前HUD3/profile3，改后HUD24/profile最终3；实际查看HUD改前3、改后15（准备/执行1/执行2/缺热/低挡）及profile前后6帧，三尺寸齐全。owned正交生产Canvas、GraphicRaycaster/Submit/Cancel焦点/遮罩与费用验证，不是全RaceCanvas/硬件/完整模式。改前HUD的合成gear容器仅G1且过小，初版白底白字被拒、先用深底重拍；改后夹具补四挡/容器，不能把整块gear布局前后差异当生产改版。既有拖动随gears/ui模块回归，未新增硬件拖动验收。截图绝对路径及记录见 production/qa/evidence/tech-driver-I04b2-2026-10-29/README.md。
++
++独立代理仅完成前置建议后触发用量限制，未写生产/最终签审；根完成实现/源码复核/原生与视觉检查，不声称独立最终审查。最终MainMenu干净、未播放/编译/导入/测试，ready正常，Console0错误0警告未清，许可正常。8Word/32场景/4排除文件与原未跟踪条目保留；无提交推送或系统/快速播放设置修改。I04仍进行中，下一I04c维特尔；全模式/存档/硬件与720p主观舒适度留I13。

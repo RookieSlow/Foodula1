@@ -68,6 +68,7 @@ public class HUDUI : MonoBehaviour
     private TMP_Text returnToMenuConfirmTitle;
     private DriverSkillCardChoiceUI driverSkillCardChoice;
     private UnityEngine.Events.UnityAction<CardData> pendingDriverSkillCardConfirm;
+    private UnityEngine.Events.UnityAction<VettelNativeSource> pendingDriverSkillSourceConfirm;
     private UnityEngine.Events.UnityAction pendingDriverSkillCardCancel;
     private bool driverSkillCardChoicePending;
     private bool driverSkillChoiceRequiresCard = true;
@@ -427,11 +428,22 @@ public class HUDUI : MonoBehaviour
         if (driverSkillCardChoicePending)
         {
             CardData selected = driverSkillCardChoice != null ? driverSkillCardChoice.Selected : null;
-            if ((driverSkillChoiceRequiresCard && selected == null) || pendingDriverSkillCardConfirm == null ||
+            VettelNativeSource? source = driverSkillCardChoice != null ? driverSkillCardChoice.SelectedSource : null;
+            bool sourceMode = pendingDriverSkillSourceConfirm != null;
+            if ((sourceMode ? !source.HasValue : (driverSkillChoiceRequiresCard && selected == null) || pendingDriverSkillCardConfirm == null) ||
                 confirmReturnToMenuButton == null || !confirmReturnToMenuButton.interactable)
                 return;
-            UnityEngine.Events.UnityAction<CardData> confirm = pendingDriverSkillCardConfirm;
-            action = () => confirm.Invoke(selected);
+            if (sourceMode)
+            {
+                var confirm = pendingDriverSkillSourceConfirm;
+                VettelNativeSource captured = source.Value;
+                action = () => confirm.Invoke(captured);
+            }
+            else
+            {
+                var confirm = pendingDriverSkillCardConfirm;
+                action = () => confirm.Invoke(selected);
+            }
             ClearDriverSkillCardChoice(out focus);
         }
         pendingConfirmationAction = null;
@@ -455,10 +467,25 @@ public class HUDUI : MonoBehaviour
 
     /// <summary>A required cost choice shares the existing single confirmation surface.</summary>
     public void ShowDriverSkillCardChoice(string title, string message, IReadOnlyList<CardData> choices,
-        UnityEngine.Events.UnityAction<CardData> confirm, UnityEngine.Events.UnityAction cancel)
+        UnityEngine.Events.UnityAction<CardData> confirm, UnityEngine.Events.UnityAction cancel,
+        string confirmLabel = "弃置并发动")
     {
         ShowRequiredCardChoice(title, message, choices, confirm, cancel,
-            InRaceConfirmationAction.DriverSkill, "弃置并发动", null);
+            InRaceConfirmationAction.DriverSkill, confirmLabel, null);
+    }
+
+    /// <summary>Source is a mandatory action parameter, including when optional extra confirmation is disabled.</summary>
+    public void ShowDriverSkillSourceChoice(string title, string message, IReadOnlyList<VettelNativeSource> choices,
+        UnityEngine.Events.UnityAction<VettelNativeSource> confirm, UnityEngine.Events.UnityAction cancel,
+        string confirmLabel = "锁定并付1热")
+    {
+        ShowRequiredCardChoice(title, message, Array.Empty<CardData>(), null, cancel,
+            InRaceConfirmationAction.DriverSkill, confirmLabel, null, false);
+        if (!driverSkillCardChoicePending || driverSkillCardChoice == null) return;
+        pendingDriverSkillSourceConfirm = confirm;
+        driverSkillCardChoice.ShowSources(choices, returnToMenuConfirmTitle, returnToMenuConfirmText,
+            cancelReturnToMenuButton, confirmReturnToMenuButton, confirm != null, CancelDriverSkillChoiceForLifecycle);
+        driverSkillCardChoice.FocusWithinModal();
     }
 
     /// <summary>A technology cost choice uses the same required selection and lifecycle surface.</summary>
@@ -473,14 +500,16 @@ public class HUDUI : MonoBehaviour
 
     /// <summary>Optional fixed-heat continuation shares cancellation/focus and honors the existing confirmation switch.</summary>
     public void ShowDriverSkillContinuation(string title, string message,
-        UnityEngine.Events.UnityAction confirm, UnityEngine.Events.UnityAction cancel)
+        UnityEngine.Events.UnityAction confirm, UnityEngine.Events.UnityAction cancel,
+        string confirmLabel = "支付1热并追击", string noCardDescription = null)
     {
         if (confirm == null || IsTelemetryDetailsOpen) { cancel?.Invoke(); return; }
         if (InRaceConfirmationRules.IsEnabled(GameSettingsRuntime.Current.inRaceConfirmationMask,
                 InRaceConfirmationAction.DriverSkill))
         {
             ShowRequiredCardChoice(title, message, Array.Empty<CardData>(), _ => confirm.Invoke(), cancel,
-                InRaceConfirmationAction.DriverSkill, "支付1热并追击", null, false);
+                InRaceConfirmationAction.DriverSkill, confirmLabel, null, false);
+            if (!string.IsNullOrEmpty(noCardDescription)) driverSkillCardChoice?.SetNoCardDescription(noCardDescription);
             return;
         }
         DismissConfirmation(false, true);
@@ -541,6 +570,7 @@ public class HUDUI : MonoBehaviour
         driverSkillCardChoicePending = false;
         driverSkillChoiceRequiresCard = true;
         pendingDriverSkillCardConfirm = null;
+        pendingDriverSkillSourceConfirm = null;
         pendingDriverSkillCardCancel = null;
         if (driverSkillCardChoice != null) driverSkillCardChoice.HideAndClear(hideRow);
         return cancel;
@@ -1452,7 +1482,8 @@ public class HUDUI : MonoBehaviour
     private void OnDriverSkillClicked()
     {
         if (gameManager != null &&
-            (gameManager.TryRequestHunterSkillSelection() || gameManager.TryRequestMansellChargeSelection())) return;
+            (gameManager.TryRequestHunterSkillSelection() || gameManager.TryRequestMansellChargeSelection() ||
+               gameManager.TryRequestSchumacherStrategySelection() || gameManager.TryRequestVettelRhythmSelection())) return;
         RequestInRaceAction(
             InRaceConfirmationAction.DriverSkill,
             "确认发动技能",
