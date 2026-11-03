@@ -419,14 +419,16 @@ public class RaceTurnBoundaryIntegrationTests
 
     [TestCase(3, 0, false, RaceTurnStartAction.ResolveSkip)]
     [TestCase(7, 0, false, RaceTurnStartAction.SelectGear)]
-    [TestCase(3, 3, true, RaceTurnStartAction.ExcludeTerminal)]
-    [TestCase(7, 3, true, RaceTurnStartAction.ExcludeTerminal)]
+    [TestCase(3, 2, true, RaceTurnStartAction.ExcludeTerminal)]
+    [TestCase(7, 2, true, RaceTurnStartAction.ExcludeTerminal)]
     public void RealFinalSprintReportsCommittedDynamicCostBeforeTemporaryCleanup(
         int level, int initialSpins, bool blown, RaceTurnStartAction nextAction)
     {
         var player = CreatePlayer(TeamId.IT);
         player.techState.activeNodeIds.Add("it-l2-lasagna");
-        Assert.That(session.EffectiveSpinMax(player), Is.EqualTo(4));
+        Assert.That(session.EffectiveSpinMax(player), Is.EqualTo(3));
+        Assert.That(session.EffectiveHandSize(player, 7), Is.EqualTo(8));
+        Assert.That(session.EffectiveHeatPoolSize(player, 6), Is.EqualTo(6));
         ActivateFinalSprint(player, level);
         player.spinCounter = initialSpins;
         int uses = player.driverSkill.UsesRemaining;
@@ -452,7 +454,7 @@ public class RaceTurnBoundaryIntegrationTests
 
         Assert.That(messages, Is.EqualTo(new[]
         {
-            $"driver 最后冲刺代价：强制打转，失控 {initialSpins + 1}/4。",
+            $"driver 最后冲刺代价：强制打转，失控 {initialSpins + 1}/3。",
             "driver 限时热量牌销毁 1 张。"
         }));
         Assert.That(player.driverSkill.ActivatedThisTurn, Is.True);

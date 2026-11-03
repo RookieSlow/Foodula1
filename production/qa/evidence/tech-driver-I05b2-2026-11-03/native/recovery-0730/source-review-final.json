@@ -1,0 +1,15 @@
+{
+  "reviewer": "i05b2_source_close/unity-ui-specialist",
+  "verdict": "bounded accepted; no production blocking findings",
+  "ADR": "ADR-002 layered rules/runtime/manager adapter/UI maintained",
+  "findings": [
+    "captured plan/session/owner/version prevents stale fallback submit",
+    "cancel refreshes isolated forecast; no shared card value or RP write",
+    "UK shared geometry restore versus full-slot CanvasGroup restore appropriate",
+    "ordinary no-pending pointer and Space paths preserved"
+  ],
+  "nonblocking": [
+    "stale XML comments about future selector/card drag; no card-drag feature claimed"
+  ],
+  "fixture_fix": "Reuse the single active EventSystem, create owned only when absent, assert active/current set around frames and restore original set/focus; Unity fake-null cleanup assertion fixed without weakening alive-focus identity. Latest test file SHA 42ea2a8621abc941c517cf6145a5997100133f0866f4bd781242b268f6a40dc5"
+}

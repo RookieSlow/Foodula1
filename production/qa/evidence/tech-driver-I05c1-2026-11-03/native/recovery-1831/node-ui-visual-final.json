@@ -1,0 +1,81 @@
+{
+  "reviewer": "i05c1_node_fix/unity-ui-specialist",
+  "reviewed_utc": "2026-11-03T10:43:29.818886+00:00",
+  "method": "Actually opened all six original after PNG using tools.view_image. Read both after manifest and existing before review; no image editing or Unity mutation.",
+  "after_actual_viewed": [
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05c1-2026-11-03/after/tech-ui-20261103-104206439/1280x720-career.png",
+      "sha256": "23244da4075d4f83a5b065ddebeba072f64bca8c3f89f79f28b6cd526c43bc74",
+      "width": 1280,
+      "height": 720,
+      "screen": "owned career",
+      "target_overflows": []
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05c1-2026-11-03/after/tech-ui-20261103-104206439/1280x720-normal.png",
+      "sha256": "4a65ec0f31af3d35024273895f1fb64eec77925956110af6ce88782fb5928aa8",
+      "width": 1280,
+      "height": 720,
+      "screen": "normal",
+      "target_overflows": []
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05c1-2026-11-03/after/tech-ui-20261103-104206439/1920x1080-career.png",
+      "sha256": "f127ab00d6ceaa9d999b73a81fda7bde968fc7a372c4120e524bfe3b559d9bce",
+      "width": 1920,
+      "height": 1080,
+      "screen": "owned career",
+      "target_overflows": []
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05c1-2026-11-03/after/tech-ui-20261103-104206439/1920x1080-normal.png",
+      "sha256": "12c254a3f30163c2c7e2ab5b6d8971fa00323be6f23634d55a63cfbeb4122886",
+      "width": 1920,
+      "height": 1080,
+      "screen": "normal",
+      "target_overflows": []
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05c1-2026-11-03/after/tech-ui-20261103-104206439/2560x1440-career.png",
+      "sha256": "87f3908c21eb5cc1419215a56ce5a5b8c3368fc68778418bdfb87a50aa4bf3aa",
+      "width": 2560,
+      "height": 1440,
+      "screen": "owned career",
+      "target_overflows": []
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05c1-2026-11-03/after/tech-ui-20261103-104206439/2560x1440-normal.png",
+      "sha256": "e75975bef079d482ed6e94416347ead49b5bd7c672e40293f5bb1e5adca1b0be",
+      "width": 2560,
+      "height": 1440,
+      "screen": "normal",
+      "target_overflows": []
+    }
+  ],
+  "after_count": 6,
+  "runtime_mvid": "ad6daf92-eb42-47a7-9368-cb961a81e351",
+  "editor_mvid_reported_by_root": "b2649230 (root native evidence contains full identifier)",
+  "before_review_reused": "D:/UnityProject/Foodula1/Library/AutomationReview/tech-driver-I05c1-20261103-1331/node-ui-visual-review.json",
+  "before_count_in_existing_review": 6,
+  "before_freshly_viewed_by_this_review": 0,
+  "bounded_L3_node_copy_accepted": true,
+  "whole_page_acceptance": false,
+  "findings": [
+    "L3 original red-horse name, RP12,000 and champion RP x1.5/upward rounding plus Monza Italian-driver additional x1.5 retained and legible at all three sizes.",
+    "New once-per-race, already-selected ordinary speed >=2, contribution -1 minimum1, movement/corner speed together, no extra RP and no same card as Ascari are all present and not visibly clipped on the new L3 node.",
+    "Normal six-team tabs, RP987,654,321 and Back visible; owned career RP123,456,789 and cancel/confirm visible.",
+    "L3 description is dense and the phrase every race once wraps across lines; it remains complete. States use text as well as color."
+  ],
+  "nonblocking_existing_or_unverified": [
+    "L2 first common-node sentence still horizontally overflows exactly as before; retained as preexisting non-target condition, not accepted as whole-page clean.",
+    "720p text is small; no subjective comfort/readability acceptance for full-page play."
+  ],
+  "not_verified": [
+    "Actual Ascari player target selector/active button; this package only implements its API.",
+    "Normal successful unlock/profile Save, complete menus/modes/real saves/hardware input or gear dragging.",
+    "Focus navigation, click-through and cancel semantics cannot be established by still images alone; combine root current native tests.",
+    "Production deferred-destruction lifecycle is not accepted by the owned EditMode callback adapter."
+  ],
+  "manifest_target_overflows": 0,
+  "source_or_Unity_changed_by_review": false
+}

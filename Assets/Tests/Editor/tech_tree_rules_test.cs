@@ -162,7 +162,7 @@ public class TechTreeRulesTests
     [TestCase(TeamId.DE, TechTreeTier.L2, "de-l2-wurstplatte", TechEffectType.WurstplatteSuspension, 8000, 1)]
     [TestCase(TeamId.DE, TechTreeTier.L3, "de-l3-grill-spezial", TechEffectType.GrillSpezial, 12000, 1)]
     [TestCase(TeamId.IT, TechTreeTier.L1, "it-l1-pizza-sottile", TechEffectType.LightweightDoubler, 5000, 1)]
-    [TestCase(TeamId.IT, TechTreeTier.L2, "it-l2-lasagna", TechEffectType.SpinCounterMaxBonus, 8000, 1)]
+    [TestCase(TeamId.IT, TechTreeTier.L2, "it-l2-lasagna", TechEffectType.HandSizeBonus, 8000, 1)]
     [TestCase(TeamId.IT, TechTreeTier.L3, "it-l3-cavallino-rampante", TechEffectType.CavallinoRampante, 12000, 1)]
     [TestCase(TeamId.US, TechTreeTier.L1, "us-l1-drive-thru", TechEffectType.DriveThru, 5000, 1)]
     [TestCase(TeamId.US, TechTreeTier.L2, "us-l2-smoked-bbq", TechEffectType.SmokedBBQ, 8000, 1)]
@@ -192,13 +192,11 @@ public class TechTreeRulesTests
     }
 
     [Test]
-    public void test_italian_l2_catalog_includes_all_three_documented_bonuses()
+    public void test_italian_l2_catalog_selects_locked_hand_depth_only_branch()
     {
         var effects = db.Get("it-l2-lasagna").effects;
-        Assert.That(effects.Length, Is.EqualTo(3));
-        Assert.That(effects[0].type, Is.EqualTo(TechEffectType.SpinCounterMaxBonus));
-        Assert.That(effects[1].type, Is.EqualTo(TechEffectType.HandSizeBonus));
-        Assert.That(effects[2].type, Is.EqualTo(TechEffectType.EngineCapacityBonus));
+        Assert.That(effects.Length, Is.EqualTo(1));
+        Assert.That(effects[0].type, Is.EqualTo(TechEffectType.HandSizeBonus));
         foreach (var effect in effects)
             Assert.That(effect.value, Is.EqualTo(1f));
     }
@@ -599,10 +597,10 @@ public class TechTreeRulesTests
         TechTreeRules.SelectActiveNodes(itState, new[] { "it-l2-lasagna" }, db);
 
         var mods = TechTreeRules.ComputeModifiers(itState, db);
-        Assert.That(mods.spinCounterMaxBonus, Is.EqualTo(1));
+        Assert.That(mods.spinCounterMaxBonus, Is.Zero);
         Assert.That(mods.handSizeBonus, Is.EqualTo(1));
-        Assert.That(mods.engineCapacityBonus, Is.EqualTo(1));
-        Assert.That(mods.EffectiveSpinCounterMax, Is.EqualTo(4)); // 3 + 1
+        Assert.That(mods.engineCapacityBonus, Is.Zero);
+        Assert.That(mods.EffectiveSpinCounterMax, Is.EqualTo(3));
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -1204,7 +1202,7 @@ public class TechTreeRulesTests
         var before = new HashSet<string>(state.activeNodeIds);
         var modifiers = TechTreeRules.ComputeModifiers(state, db);
         Assert.AreEqual(1, modifiers.handSizeBonus);
-        Assert.AreEqual(1, modifiers.engineCapacityBonus);
+        Assert.AreEqual(0, modifiers.engineCapacityBonus, "Borrowed IT L2 adds hand depth only.");
         Assert.IsTrue(TechTreeRules.HasEffect(state, db, TechEffectType.CavallinoRampante));
         CollectionAssert.AreEquivalent(before, state.activeNodeIds);
         Assert.IsEmpty(state.unlockedNodeIds);
@@ -1286,7 +1284,7 @@ public class TechTreeRulesTests
         // Selecting a node already granted must not double additive capacity/hand size.
         state.activeNodeIds.Add("it-l2-lasagna");
         Assert.AreEqual(1, TechTreeRules.ComputeModifiers(state, db).handSizeBonus);
-        Assert.AreEqual(1, TechTreeRules.ComputeModifiers(state, db).engineCapacityBonus);
+        Assert.AreEqual(0, TechTreeRules.ComputeModifiers(state, db).engineCapacityBonus, "Explicit plus borrowed IT L2 never adds engine capacity.");
 
         state.sunNeverSetsTarget = TeamId.US;
         Assert.IsFalse(TechTreeRules.HasEffect(state, db, TechEffectType.CavallinoRampante));

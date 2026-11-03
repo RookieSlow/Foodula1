@@ -1,0 +1,16 @@
+{
+  "runtime": "6d288778-ccda-4464-9ece-ebc2038f01eb",
+  "editor": "f9a48bd9-0e21-4cf4-8c02-9baa75db3daa",
+  "active": "人车合拍",
+  "scenes": [
+    {
+      "path": "Assets/Scenes/MainMenu.unity",
+      "dirty": false
+    }
+  ],
+  "playing": false,
+  "compiling": false,
+  "updating": false,
+  "busy": false,
+  "native": false
+}

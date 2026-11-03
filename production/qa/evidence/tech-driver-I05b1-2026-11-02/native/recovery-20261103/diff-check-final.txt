@@ -1,0 +1,6 @@
+warning: in the working copy of 'Assets/Scripts/UI/CareerTechTreeUI.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/Scripts/UI/TechTreeUI.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/Tests/Editor/race_technology_setup_test.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/Tests/Editor/tech_tree_rules_test.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'Assets/Tests/Editor/vettel_rhythm_production_ui_test.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'ProjectSettings/EditorSettings.asset', LF will be replaced by CRLF the next time Git touches it

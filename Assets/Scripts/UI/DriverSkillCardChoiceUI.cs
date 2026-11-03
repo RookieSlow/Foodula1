@@ -19,6 +19,7 @@ public sealed class DriverSkillCardChoiceUI : MonoBehaviour
     private int selectedIndex;
     private bool originalConfirmInteractable;
     private bool requiresCard = true;
+    private Func<CardData, string> cardLabel;
 
     public CardData Selected => cards.Count > 0 ? cards[selectedIndex] : null;
     public VettelNativeSource? SelectedSource => sourceMode && sources.Count > 0 ? sources[selectedIndex] : (VettelNativeSource?)null;
@@ -130,6 +131,13 @@ public sealed class DriverSkillCardChoiceUI : MonoBehaviour
         if (!requiresCard && choiceLabel != null) choiceLabel.text = text;
     }
 
+    /// <summary>Changes only the current chooser's explanatory text, retaining the exact original card.</summary>
+    public void SetCardLabelFormatter(Func<CardData, string> formatter)
+    {
+        cardLabel = formatter;
+        RefreshLabel();
+    }
+
     private void RefreshLabel()
     {
         // Unity clears EventSystem selection as soon as the selected Button is disabled.
@@ -143,7 +151,7 @@ public sealed class DriverSkillCardChoiceUI : MonoBehaviour
         nextButton.interactable = count > 0 && selectedIndex < count - 1;
         choiceLabel.text = sourceMode ? (count == 0 ? "没有可选来源\n0 / 0" : SourceLabel(sources[selectedIndex]) + $"\n永久热1→手牌 · {selectedIndex + 1} / {count}") : !requiresCard ? "第二段无需弃速度牌\n仅支付1张永久热" : cards.Count == 0
             ? "没有可选速度牌\n0 / 0"
-            : $"普通速度牌 {cards[selectedIndex].value}\n{selectedIndex + 1} / {cards.Count}";
+            : (cardLabel != null ? cardLabel(cards[selectedIndex]) : $"普通速度牌 {cards[selectedIndex].value}") + $"\n{selectedIndex + 1} / {cards.Count}";
         RefreshNavigation();
         if (pagingFocus != null && !IsNavigable(pagingFocus)) FocusWithinModal();
     }
@@ -200,6 +208,7 @@ public sealed class DriverSkillCardChoiceUI : MonoBehaviour
         hidden = null;
         cards.Clear();
         sources.Clear(); sourceMode = false;
+        cardLabel = null;
         selectedIndex = 0;
         if (previousButton != null) { previousButton.onClick.RemoveAllListeners(); previousButton.interactable = false; }
         if (nextButton != null) { nextButton.onClick.RemoveAllListeners(); nextButton.interactable = false; }

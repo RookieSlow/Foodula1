@@ -74,6 +74,8 @@ public sealed class CareerTechTreeUI : MonoBehaviour
         contentRect.anchoredPosition = new Vector2(0f, -20f);
         contentRect.sizeDelta = new Vector2(1440f, 690f);
         HorizontalLayoutGroup columns = contentRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
+        columns.childControlWidth = true;
+        columns.childControlHeight = true;
         columns.spacing = 22f;
         columns.childAlignment = TextAnchor.UpperCenter;
         columns.childForceExpandWidth = true;
@@ -115,6 +117,8 @@ public sealed class CareerTechTreeUI : MonoBehaviour
         GameObject column = new GameObject(title, typeof(RectTransform), typeof(VerticalLayoutGroup));
         column.transform.SetParent(contentRoot, false);
         VerticalLayoutGroup layout = column.GetComponent<VerticalLayoutGroup>();
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
         layout.spacing = 8f;
         layout.childAlignment = TextAnchor.UpperCenter;
         layout.childForceExpandWidth = true;

@@ -6,7 +6,9 @@ public enum SpeedCardCommitResult
     Success,
     InvalidCard,
     CardNotInHand,
-    SpeedLimitReached
+    SpeedLimitReached,
+    PrecisionTuneExpired,
+    AscariPrecisionExpired
 }
 
 /// <summary>
@@ -98,10 +100,15 @@ public static class CardPlayRules
         IReadOnlyList<CardData> cards,
         int maxSpeedCards,
         RaceSession session,
-        int totalCells)
+        int totalCells, ItalyPrecisionTuneActivationPlan precisionTunePlan = null,
+        int globalTurn = -1, int requestVersion = 0, bool inputAllowed = true,
+        AscariPrecisionActivationPlan ascariPlan = null, int ascariRequestVersion = 0,
+        IReadOnlyList<TrackNode> trackNodes = null, int totalLaps = 0, bool technologyEnabled = true)
     {
-        bool heatAsSpeed = CanUseHeatAsSpeed(player, session, totalCells);
-        return CommitSpeedCardsInternal(player, cards, maxSpeedCards, heatAsSpeed);
+        bool heatAsSpeed = technologyEnabled && CanUseHeatAsSpeed(player, session, totalCells);
+        return CommitSpeedCardsInternal(player, cards, maxSpeedCards, heatAsSpeed,
+            precisionTunePlan, session, globalTurn, requestVersion, inputAllowed,
+            ascariPlan, ascariRequestVersion, trackNodes, totalLaps, technologyEnabled);
     }
 
     /// <summary>
@@ -126,7 +133,10 @@ public static class CardPlayRules
         PlayerState player,
         IReadOnlyList<CardData> cards,
         int maxSpeedCards,
-        bool heatAsSpeed)
+        bool heatAsSpeed, ItalyPrecisionTuneActivationPlan precisionTunePlan = null,
+        RaceSession session = null, int globalTurn = -1, int requestVersion = 0, bool inputAllowed = true,
+        AscariPrecisionActivationPlan ascariPlan = null, int ascariRequestVersion = 0,
+        IReadOnlyList<TrackNode> trackNodes = null, int totalLaps = 0, bool technologyEnabled = true)
     {
         if (player == null || player.deck == null || cards == null || cards.Count == 0)
             return SpeedCardCommitResult.InvalidCard;
@@ -147,6 +157,15 @@ public static class CardPlayRules
                 return SpeedCardCommitResult.CardNotInHand;
         }
 
+        if (precisionTunePlan != null && !precisionTunePlan.Validate(session, player, cards,
+            globalTurn, requestVersion, inputAllowed, technologyEnabled, out _,
+            ascariPlan?.Target ?? player.driverSkill?.Precision.CommittedTarget))
+            return SpeedCardCommitResult.PrecisionTuneExpired;
+
+        if (ascariPlan != null && !ascariPlan.Validate(session, player, cards,
+            globalTurn, ascariRequestVersion, inputAllowed, trackNodes, totalLaps, out _, precisionTunePlan))
+            return SpeedCardCommitResult.AscariPrecisionExpired;
+
         List<CardData> removed = player.deck.RemoveFromHand(new List<CardData>(cards));
         if (removed.Count != cards.Count)
             return SpeedCardCommitResult.CardNotInHand;
@@ -163,6 +182,9 @@ public static class CardPlayRules
             player.hotpotAttackAppliedThisTurn = true;
             player.hotpotAttackCardValueThisTurn = GetCommittedSpeedCardValue(cards[0]);
         }
+        // All deck validation has succeeded. This is the only live tuning consumption boundary.
+        precisionTunePlan?.CommitValidated();
+        ascariPlan?.CommitValidated();
         player.techState?.prepMeal.CloseInput();
         return SpeedCardCommitResult.Success;
     }

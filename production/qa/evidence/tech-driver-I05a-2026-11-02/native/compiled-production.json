@@ -1,0 +1,16 @@
+{
+  "runtime": "110b698e-9a74-4981-afd9-fb686dcba3ca",
+  "editor": "5b2af31d-9c88-420d-b9f2-e6dea346b204",
+  "effects": [
+    "HandSizeBonus"
+  ],
+  "description": "手牌上限+1；永久引擎容量与失控淘汰阈值不变。",
+  "scene": "Assets/Scenes/MainMenu.unity",
+  "dirty": false,
+  "play": false,
+  "compiling": false,
+  "updating": false,
+  "freeLicense": true,
+  "busy": false,
+  "native": false
+}

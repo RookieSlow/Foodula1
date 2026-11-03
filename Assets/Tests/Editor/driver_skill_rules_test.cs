@@ -12,15 +12,19 @@ public class DriverSkillRulesTests
             var state = new DriverSkillRuntimeState();
             state.Initialize(driver, level, true);
             Assert.That(DriverSkillRules.GetReactionHeatCost(state), Is.Zero, driver.Id);
-            if (driver.Id == "de_sebastian_vettel") state = Activate(driver.Id, level);
+            if (driver.Id == "de_sebastian_vettel" || driver.Id == "it_alberto_ascari") state = Activate(driver.Id, level);
             else Assert.That(state.TryActivate(driver,
                 new DriverSkillActivationContext(true, 2, 3, 1, 10, 3), out string reason), Is.True, reason);
             int uses = state.UsesRemaining, turns = state.ActiveTurnsRemaining;
+            int precisionVersion = state.Precision.Version;
+            CardData precisionTarget = state.Precision.CommittedTarget;
             int expected = state.IsActive && state.Skill == DriverActiveSkillId.TrueSelf ? 1 : 0;
             for (int i = 0; i < 2; i++)
                 Assert.That(DriverSkillRules.GetReactionHeatCost(state), Is.EqualTo(expected), driver.Id);
             Assert.That(state.UsesRemaining, Is.EqualTo(uses));
             Assert.That(state.ActiveTurnsRemaining, Is.EqualTo(turns));
+            Assert.That(state.Precision.Version, Is.EqualTo(precisionVersion));
+            Assert.That(state.Precision.CommittedTarget, Is.SameAs(precisionTarget));
             Assert.That(state.ActivatedThisTurn, Is.True);
             state.Initialize(driver, level, false);
             Assert.That(DriverSkillRules.GetReactionHeatCost(state), Is.Zero);
@@ -148,9 +152,12 @@ public class DriverSkillRulesTests
         Assert.That(DriverSkillRules.ReduceCornerHeat(schumacher, 4), Is.Zero);
         Assert.That(DriverSkillRules.GetSlipstreamBonus(schumacher), Is.EqualTo(1));
 
-        DriverSkillRuntimeState ascari = Activate("it_alberto_ascari", 5);
-        Assert.That(DriverSkillRules.ReduceCornerHeat(ascari, 3), Is.EqualTo(2));
-        Assert.That(DriverSkillRules.GetCornerLimitBonus(ascari), Is.EqualTo(1));
+        DriverCatalog.TryGet("it_alberto_ascari", out DriverProfile ascariProfile);
+        var ascari = new DriverSkillRuntimeState(); ascari.Initialize(ascariProfile, 5, true);
+        Assert.That(ascari.TryActivate(ascariProfile, new DriverSkillActivationContext(true, 2, 3, 6, 6, 0), out _), Is.False,
+            "D05 no longer has an untargeted free activation.");
+        Assert.That(DriverSkillRules.ReduceCornerHeat(ascari, 3), Is.EqualTo(3));
+        Assert.That(DriverSkillRules.GetCornerLimitBonus(ascari), Is.Zero);
 
         DriverSkillRuntimeState takumi = Activate("jp_takumi_fujiwara", 7);
         Assert.That(DriverSkillRules.GetIgnoredCornerCount(takumi), Is.EqualTo(2));
@@ -164,6 +171,23 @@ public class DriverSkillRulesTests
         var state = new DriverSkillRuntimeState();
         state.Initialize(driver, level, true);
         DriverSkillActivationContext context = supplied ?? Context(canInput: true);
+        if (driverId == "it_alberto_ascari")
+        {
+            var race = new RaceSession();
+            var player = new PlayerState("Ascari rules", false, 0, 1) { driverId = driverId, teamId = TeamId.IT };
+            var target = new CardData(CardType.Speed, 2);
+            player.deck.InitializeExactOrder(new[] { target }, new HeatPool(6)); player.deck.DrawToHand(1);
+            player.driverSkill.Initialize(driver, level, true); race.Players.Add(player);
+            race.BeginTurn(player, 1); race.BeginDriverSkillInput(player);
+            var nodes = new List<TrackNode> { new TrackNode(0, 99), new TrackNode(1, 5, "first", 1, false, true), new TrackNode(2, 99) };
+            Assert.That(race.TryPrepareAscariPrecision(player, new[] { target }, target, 1, 0, true, nodes, 3,
+                out var plan, out string error), Is.True, error);
+            Assert.That(CardPlayRules.CommitSpeedCards(player, new[] { target }, 1, race, nodes.Count,
+                null, 1, 0, true, plan, 0, nodes, 3), Is.EqualTo(SpeedCardCommitResult.Success));
+            Assert.That(player.driverSkill.Precision.CommittedTarget, Is.SameAs(target));
+            Assert.That(target.value, Is.EqualTo(2));
+            return player.driverSkill;
+        }
         if (driverId == "de_sebastian_vettel")
         {
             var race = new RaceSession();

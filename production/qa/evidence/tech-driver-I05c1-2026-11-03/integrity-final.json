@@ -1,0 +1,11 @@
+{
+  "source": 25,
+  "protected": 44,
+  "unrelated": 82,
+  "formal_documents": 10,
+  "current_package": "I05",
+  "I05_status": "in_progress",
+  "D05_player_UI": false,
+  "D05_passive": false,
+  "complete_modes_save": false
+}

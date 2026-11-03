@@ -85,6 +85,8 @@ public sealed class TechTreeUI : MonoBehaviour
         tabsRect.anchoredPosition = new Vector2(0f, 365f);
         tabsRect.sizeDelta = new Vector2(1410f, 54f);
         HorizontalLayoutGroup tabLayout = tabs.AddComponent<HorizontalLayoutGroup>();
+        tabLayout.childControlWidth = true;
+        tabLayout.childControlHeight = true;
         tabLayout.spacing = 12f;
         tabLayout.childAlignment = TextAnchor.MiddleCenter;
         tabLayout.childForceExpandWidth = true;
@@ -105,6 +107,8 @@ public sealed class TechTreeUI : MonoBehaviour
         contentRect.anchoredPosition = new Vector2(0f, -25f);
         contentRect.sizeDelta = new Vector2(1440f, 690f);
         HorizontalLayoutGroup columns = contentRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
+        columns.childControlWidth = true;
+        columns.childControlHeight = true;
         columns.spacing = 22f;
         columns.childAlignment = TextAnchor.UpperCenter;
         columns.childForceExpandWidth = true;
@@ -167,6 +171,8 @@ public sealed class TechTreeUI : MonoBehaviour
     {
         GameObject column = CreateObject(title, contentRoot);
         VerticalLayoutGroup layout = column.AddComponent<VerticalLayoutGroup>();
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
         layout.spacing = 8f;
         layout.childAlignment = TextAnchor.UpperCenter;
         layout.childForceExpandWidth = true;

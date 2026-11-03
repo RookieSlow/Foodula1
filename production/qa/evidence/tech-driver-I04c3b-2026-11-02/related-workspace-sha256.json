@@ -1,0 +1,15 @@
+{
+  "Assets/Scripts/Core/MVPGameManager.cs": "f697c810b60eb495d355242bb1bfc88a904ac1ca47cc3d8d1d601d224865fc55",
+  "Assets/Tests/Editor/race_movement_rules_test.cs": "1bb58267c5de4c3fa57c641c242552726a3145ac29dfafed34cc26cf0d4a4f8f",
+  "Assets/Tests/Editor/vettel_rhythm_production_ui_test.cs": "2bcb61bb64dd64ca53b43bd335e07681e7a405a49c5226ebf3c103a4f794ca47",
+  "design/gdd/foodula-1-drivers.md": "3403e88adafbc3dabf308170bf9a1bb17204671f58260ca6831375ccd2c06eb6",
+  "design/gdd/foodula-1-tech-tree.md": "d844ea32bc921fab1ebbe611803a09958c060db0eb8b9a57a2cdfa7d236255b7",
+  "design/planning/tech-driver-rework-2026-10-22/implementation-plan.json": "b32f91729d19ad2eac2685ba35a7cf28963f145a8911485bb8d0d8c18369a1a3",
+  "design/planning/tech-driver-rework-2026-10-22/progress.json": "dca1b45e102e857baa978cf25710b555859fc4105bde3e3293624bd1836ef02c",
+  "design/ux/racing-tech-ui-checklist.md": "b3ce754fc2adfcee672c4405ecdb8f01ebb9bd838385adb0432016dc89698a14",
+  "design/ux/racing-tech-ui.md": "7e1ca2e00fb9c8da4429b5b73021d9ecaf98246e1ad6d5ca905015fe826bc66f",
+  "docs/memory/current-task-list.md": "cd71b1b08ba8b664bf41d690e8f2fc33163b727a1ae5186be3bf3aa9a04b5f56",
+  "docs/memory/game-mechanics.md": "365ab8c5f02aedc10bb67d9b52e98310bb85a0735bfa532e4d6bd03337f781c9",
+  "docs/memory/project-overview.md": "3e5691337d46f96b0c98c3981e0cc1e4d161cab06fae8b76801bbc787ef1bb29",
+  "tests/regression-suite.md": "e23513485633f28ed82b54c2c46be21eb51c3346c92e636001ffb9639a2fce52"
+}

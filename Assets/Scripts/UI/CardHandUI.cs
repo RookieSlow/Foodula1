@@ -496,6 +496,7 @@ public class CardHandUI : MonoBehaviour
         AudioService.PlayUi(card.isSelected
             ? AudioEventNames.CardSelect
             : AudioEventNames.CardDeselect);
+        gameManager.OnSpeedCardSelectionChanged();
         UpdateActionButtonLabel();
         UpdatePendingCardStatus(player, maxCards);
         RefreshSelectedCardEffect(card.isSelected ? card : null);
@@ -506,6 +507,12 @@ public class CardHandUI : MonoBehaviour
         if (gameManager == null)
             return;
         gameManager.DismissTutorialInteractionCallout();
+
+        if (!isDiscardMode && gameManager.HasPendingItalyPrecisionTune && gameManager.hudUI != null)
+        {
+            gameManager.RequestItalyPrecisionTuneCardCommit();
+            return;
+        }
 
         // Playing/confirming a card group is a state-changing in-race action.
         // Reuse HUDUI's configurable gate so authored and fallback canvases
@@ -589,13 +596,15 @@ public class CardHandUI : MonoBehaviour
         // Keyboard play is already an explicit two-step gesture: select a card,
         // then press Space. Execute it immediately instead of opening the
         // pointer-oriented confirmation dialog and requiring a second Space.
-        gameManager.OnPlayCardsButtonClicked();
+        if (gameManager.HasPendingItalyPrecisionTune) OnPlayClicked();
+        else gameManager.OnPlayCardsButtonClicked();
         return true;
     }
 
     /// <summary>Clears all play selections without changing the underlying hand.</summary>
     public void ClearPendingPlaySelection()
     {
+        gameManager?.OnSpeedCardSelectionChanged();
         foreach (CardUI ui in cardUIs)
         {
             if (ui != null)
@@ -785,6 +794,7 @@ public class CardHandUI : MonoBehaviour
     {
         if (gameManager == null || gameManager.hudUI == null || player == null) return;
         gameManager.hudUI.RefreshTurnTelemetry(player);
+        gameManager.hudUI.RefreshItalyPrecisionTune(gameManager,player);
 
         int played = player.playedSpeedCardsThisTurn.Count;
         List<CardData> selected = GetSelectedPlayCards();

@@ -1,0 +1,7 @@
+{
+  "stage": "before_helper_only_no_production_change",
+  "compile": "failed",
+  "error": "CS0052 at italy_precision_tune_production_ui_test.cs:62 Context.Scope exposes internal CareerUiPointerTestScope",
+  "capture_attempt": "type unavailable; no image generated",
+  "tests_executed": 0
+}

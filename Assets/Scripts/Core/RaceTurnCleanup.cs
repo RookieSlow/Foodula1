@@ -34,9 +34,11 @@ public static class RaceTurnCleanup
         finally
         {
             player.techState?.germanBurst.CloseWindow();
+            player.techState?.precisionTune.CloseInput();
             player.driverSkill?.Strategy.CloseInput();
             player.driverSkill?.Feedback.CloseInput();
             player.driverSkill?.Rhythm.CloseInput();
+            player.driverSkill?.Precision.CloseInput();
         }
     }
 }

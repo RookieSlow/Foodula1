@@ -80,6 +80,8 @@ public class HUDUI : MonoBehaviour
     private UkPrepMealActionUI ukPrepMealAction;
     private GermanFuelActionUI germanFuelAction;
     private GermanBurstActionUI germanBurstAction;
+    private ItalyPrecisionTuneActionUI italyPrecisionTuneAction;
+    private bool italyPrecisionTuneChoicePending;
     [SerializeField] private HeatThermometerUI heatThermometer;
     [SerializeField] private GearDialPresentationUI gearDialPresentation;
     [SerializeField] private TeamGearPresentationUI teamGearPresentation;
@@ -95,6 +97,7 @@ public class HUDUI : MonoBehaviour
     public Button UkPrepMealButton => ukPrepMealAction != null ? ukPrepMealAction.Button : null;
     public Button GermanFuelButton => germanFuelAction != null ? germanFuelAction.Button : null;
     public Button GermanBurstButton => germanBurstAction != null ? germanBurstAction.Button : null;
+    public Button ItalyPrecisionTuneButton => italyPrecisionTuneAction != null ? italyPrecisionTuneAction.Button : null;
     public bool IsTelemetryDetailsOpen => telemetryDetailsPanel != null && telemetryDetailsPanel.activeSelf;
     public GameConfigSO GameConfigForPresentation => gameManager != null ? gameManager.Config : null;
     public bool IsReturnToMenuConfirmationVisible =>
@@ -498,6 +501,35 @@ public class HUDUI : MonoBehaviour
             InRaceConfirmationAction.CardAction, "弃牌并回热", continuation);
     }
 
+    /// <summary>Target selection only joins an unpaid plan; final card confirmation owns the race use.</summary>
+    public void ShowItalyPrecisionTuneChoice(IReadOnlyList<CardData> choices,
+        UnityEngine.Events.UnityAction<CardData> selected, UnityEngine.Events.UnityAction cancel)
+    {
+        ShowRequiredCardChoice("选择精调目标", "只调已选普通速度牌，无额外RP。\n加入计划不耗次数，最终出牌时使用。\n移动减1，弯速减1（最低0）。", choices, selected, cancel,
+            InRaceConfirmationAction.CardAction,"加入出牌计划",gameManager?.cardHandUI?.playCardsButton?.gameObject);
+        driverSkillCardChoice?.SetCardLabelFormatter(card =>
+        {
+            int value = ItalyPrecisionTuneRules.GetSourceContribution(gameManager?.Player, card);
+            return $"普通速度牌 {value}→{Mathf.Max(1,value-1)}";
+        });
+        italyPrecisionTuneChoicePending = driverSkillCardChoicePending;
+    }
+
+    /// <summary>One combined final card-action confirmation, honoring the existing switch and focus policy.</summary>
+    public void RequestItalyPrecisionTuneCommit(string message, UnityEngine.Events.UnityAction commit,
+        UnityEngine.Events.UnityAction cancel)
+    {
+        if (commit == null || IsTelemetryDetailsOpen || IsReturnToMenuConfirmationVisible) return;
+        if (!InRaceConfirmationRules.IsEnabled(GameSettingsRuntime.Current.inRaceConfirmationMask,InRaceConfirmationAction.CardAction))
+        {
+            commit.Invoke(); return;
+        }
+        ShowRequiredCardChoice("确认出牌 · 精准调校",message,Array.Empty<CardData>(),_ => commit.Invoke(),cancel,
+            InRaceConfirmationAction.CardAction,"出牌并精调",gameManager?.cardHandUI?.playCardsButton?.gameObject,false);
+        driverSkillCardChoice?.SetNoCardDescription("不额外弃牌 · 不支付RP\n随所选速度牌一次提交");
+        italyPrecisionTuneChoicePending = driverSkillCardChoicePending;
+    }
+
     /// <summary>Optional fixed-heat continuation shares cancellation/focus and honors the existing confirmation switch.</summary>
     public void ShowDriverSkillContinuation(string title, string message,
         UnityEngine.Events.UnityAction confirm, UnityEngine.Events.UnityAction cancel,
@@ -564,6 +596,7 @@ public class HUDUI : MonoBehaviour
 
     private UnityEngine.Events.UnityAction ClearDriverSkillCardChoice(out DriverSkillChoiceFocus focus, bool hideRow = true)
     {
+        italyPrecisionTuneChoicePending = false;
         focus = driverSkillChoiceFocus;
         driverSkillChoiceFocus = null;
         UnityEngine.Events.UnityAction cancel = pendingDriverSkillCardCancel;
@@ -604,6 +637,7 @@ public class HUDUI : MonoBehaviour
             else if (UkPrepMealButton != null && IsAvailableFocus(UkPrepMealButton.gameObject)) target = UkPrepMealButton.gameObject;
             else if (GermanFuelButton != null && IsAvailableFocus(GermanFuelButton.gameObject)) target = GermanFuelButton.gameObject;
             else if (GermanBurstButton != null && IsAvailableFocus(GermanBurstButton.gameObject)) target = GermanBurstButton.gameObject;
+            else if (ItalyPrecisionTuneButton != null && IsAvailableFocus(ItalyPrecisionTuneButton.gameObject)) target = ItalyPrecisionTuneButton.gameObject;
             else if (driverSkillButton != null && IsAvailableFocus(driverSkillButton.gameObject)) target = driverSkillButton.gameObject;
             else if (gear1Button != null && IsAvailableFocus(gear1Button.gameObject)) target = gear1Button.gameObject;
             else if (gear2Button != null && IsAvailableFocus(gear2Button.gameObject)) target = gear2Button.gameObject;
@@ -733,6 +767,13 @@ public class HUDUI : MonoBehaviour
 
         ConfirmReturnToMenu();
         return true;
+    }
+
+    /// <summary>Escape cancels only the tuning chooser/final request; other existing modal policies are unchanged.</summary>
+    public bool TryCancelItalyPrecisionTuneKeyboardAction()
+    {
+        if (!IsReturnToMenuConfirmationVisible || !italyPrecisionTuneChoicePending) return false;
+        CancelReturnToMenu(); return true;
     }
 
     /// <summary>Shows a live, signed breakdown for one corner limit.</summary>
@@ -973,6 +1014,7 @@ public class HUDUI : MonoBehaviour
         EnsurePresentation();
         RefreshUkPrepMeal(gameManager, gameManager != null ? gameManager.Player : null);
         RefreshGermanFuel(gameManager, gameManager != null ? gameManager.Player : null);
+        RefreshItalyPrecisionTune(gameManager, gameManager != null ? gameManager.Player : null);
         if (gameManager == null || gameManager.Player == null || teamGearPresentation == null)
             return;
         bool modal = IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
@@ -1099,6 +1141,7 @@ public class HUDUI : MonoBehaviour
         if (ukPrepMealAction != null) ukPrepMealAction.SuspendInteraction();
         if (germanFuelAction != null) germanFuelAction.SuspendInteraction();
         if (germanBurstAction != null) germanBurstAction.SuspendInteraction();
+        if (italyPrecisionTuneAction != null) italyPrecisionTuneAction.SuspendInteraction();
         CancelDriverSkillChoiceForLifecycle();
         if (telemetryDetailsPanel != null) telemetryDetailsPanel.SetActive(false);
     }
@@ -1106,6 +1149,7 @@ public class HUDUI : MonoBehaviour
     private void OnDestroy()
     {
         if (germanBurstAction != null) germanBurstAction.RestoreSlot();
+        if (italyPrecisionTuneAction != null) italyPrecisionTuneAction.RestoreSlot();
         CancelDriverSkillChoiceForLifecycle();
         if (telemetryDetailsPanel == null || telemetryDetailsPanel.transform.IsChildOf(transform)) return;
         // A HUD nested below its canvas owns a sibling overlay; clean that up too.
@@ -1120,8 +1164,10 @@ public class HUDUI : MonoBehaviour
 
     public void RefreshDriverSkill(MVPGameManager gm, PlayerState player)
     {
+        italyPrecisionTuneAction?.RestoreSlot();
         RefreshUkPrepMeal(gm, player);
         RefreshGermanFuel(gm, player);
+        italyPrecisionTuneAction?.RestoreSlot();
         if (driverSkillButton == null) return;
         bool interactable = false;
         string label = gm != null ? gm.GetDriverSkillButtonLabel(player, out interactable) : "车手技能";
@@ -1130,11 +1176,13 @@ public class HUDUI : MonoBehaviour
             ? driverSkillLabel
             : driverSkillButton.GetComponentInChildren<TMP_Text>(true);
         if (target != null) target.text = label;
+        RefreshItalyPrecisionTune(gm,player);
     }
 
     /// <summary>Displays manager-owned availability; A4 technology and A1 driver share space only.</summary>
     public void RefreshUkPrepMeal(MVPGameManager gm, PlayerState player)
     {
+        italyPrecisionTuneAction?.RestoreSlot();
         germanBurstAction?.RestoreSlot();
         bool visible = gm != null && gm.IsUkPrepMealVisible(player);
         if (ukPrepMealAction == null && !visible) { RefreshGermanBurst(gm, player); return; }
@@ -1151,6 +1199,7 @@ public class HUDUI : MonoBehaviour
     /// <summary>Phase-exclusive technology presentation; resource authority stays in the manager plan.</summary>
     public void RefreshGermanFuel(MVPGameManager gm, PlayerState player)
     {
+        italyPrecisionTuneAction?.RestoreSlot();
         germanBurstAction?.RestoreSlot();
         bool visible = gm != null && gm.IsGermanFuelVisible(player);
         if (germanFuelAction == null && !visible) { RefreshGermanBurst(gm, player); return; }
@@ -1168,9 +1217,9 @@ public class HUDUI : MonoBehaviour
     public void RefreshGermanBurst(MVPGameManager gm, PlayerState player)
     {
         bool visible = gm != null && gm.IsGermanBurstVisible(player);
-        if (germanBurstAction == null && !visible) return;
+        if (germanBurstAction == null && !visible) { RefreshItalyPrecisionTune(gm,player); return; }
         if (germanBurstAction == null) germanBurstAction = GermanBurstActionUI.Attach(this, OnGermanBurstClicked);
-        if (germanBurstAction == null) return;
+        if (germanBurstAction == null) { RefreshItalyPrecisionTune(gm,player); return; }
         bool interactable = false;
         string label = gm != null ? gm.GetGermanBurstButtonLabel(player, out interactable) : "科技·烤肉拼盘";
         bool modal = IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
@@ -1178,6 +1227,42 @@ public class HUDUI : MonoBehaviour
         Button source = GermanFuelButton != null && GermanFuelButton.gameObject.activeSelf ? GermanFuelButton :
             UkPrepMealButton != null && UkPrepMealButton.gameObject.activeSelf ? UkPrepMealButton : driverSkillButton;
         germanBurstAction.Refresh(source, visible, interactable && !modal && isActiveAndEnabled, label);
+        RefreshItalyPrecisionTune(gm,player);
+    }
+
+    /// <summary>Shows the unpaid tuning plan in the actual operation slot, retaining UK preparation alongside it.</summary>
+    public void RefreshItalyPrecisionTune(MVPGameManager gm, PlayerState player)
+    {
+        bool visible = gm != null && gm.IsItalyPrecisionTuneVisible(player);
+        if (italyPrecisionTuneAction == null && !visible) return;
+        if (italyPrecisionTuneAction == null) italyPrecisionTuneAction = ItalyPrecisionTuneActionUI.Attach(this,OnItalyPrecisionTuneClicked);
+        if (italyPrecisionTuneAction == null) return;
+        bool available = false;
+        string label = gm != null ? gm.GetItalyPrecisionTuneButtonLabel(player,out available) : "精调 不可用";
+        bool modal = IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
+            (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf);
+        bool share = UkPrepMealButton != null && UkPrepMealButton.gameObject.activeSelf;
+        Button source = share ? UkPrepMealButton : driverSkillButton;
+        string companion = string.Empty;
+        if (share)
+        {
+            string original = gm.GetUkPrepMealButtonLabel(player,out bool prepAvailable);
+            int remaining = player.techState.prepMeal.LastUsedLap == player.lap ? 0 : 1;
+            string reason = prepAvailable ? "可用" : original.Contains("旧永久热") ? "无旧热" :
+                original.Contains("本圈已用") ? "已用" : original.Contains("首次正式") ? "窗口已关" :
+                original.Contains("普通速度") ? "缺速度牌" : original.Contains("来源无效") ? "来源无效" : "输入已关";
+            companion = $"预备餐 {remaining}/1 {reason}";
+        }
+        italyPrecisionTuneAction.Refresh(source,visible,available && !modal && isActiveAndEnabled,label,companion,share,gm?.cardHandUI?.playCardsButton);
+    }
+
+    private void OnItalyPrecisionTuneClicked()
+    {
+        if (!isActiveAndEnabled || gameManager == null || ItalyPrecisionTuneButton == null ||
+            !ItalyPrecisionTuneButton.isActiveAndEnabled || !ItalyPrecisionTuneButton.IsInteractable() ||
+            IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
+            (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf)) return;
+        gameManager.OnItalyPrecisionTuneButtonClicked();
     }
 
     private void OnGermanBurstClicked()

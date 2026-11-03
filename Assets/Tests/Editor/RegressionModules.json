@@ -101,7 +101,9 @@
         "SchwarzbierFixedPaymentTests",
         "GermanBurstRuntimeTests",
         "GermanBurstManagerTests",
-        "GermanFuelActivationPlanTests"
+        "GermanFuelActivationPlanTests",
+        "ItalyL2RuntimeTests",
+        "ItalyPrecisionTuneTests"
       ]
     },
     {
@@ -131,7 +133,8 @@
         "VettelFeedbackIntegrationTests",
         "VettelFeedbackTests",
         "VettelRhythmManagerTests",
-        "VettelRhythmTests"
+        "VettelRhythmTests",
+        "AscariPrecisionTests"
       ]
     },
     {
@@ -258,7 +261,10 @@
         "TeamCarPresentationTests",
         "UkPrepMealManagerTests",
         "VettelFeedbackProfileUiTests",
-        "VettelRhythmProductionUiTests"
+        "VettelRhythmProductionUiTests",
+        "ItalyL2ProductionUiTests",
+        "ItalyPrecisionTuneProductionUiTests",
+        "ItalyL3NodeProductionUiTests"
       ]
     },
     {

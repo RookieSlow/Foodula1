@@ -82,6 +82,10 @@ public class MVPGameManager : MonoBehaviour
     private int prepMealPlanVersion;
     private GermanFuelActivationPlan pendingGermanFuelPlan;
     private int germanFuelPlanVersion;
+    private ItalyPrecisionTuneActivationPlan pendingItalyPrecisionTunePlan;
+    private AscariPrecisionActivationPlan pendingAscariPrecisionPlan;
+    private int ascariPrecisionPlanVersion;
+    private int italyPrecisionTunePlanVersion;
     // Storage/display defaults stay at the coordinator boundary; startup/coroutine
     // regressions replace these dependencies without touching player profiles or resolution.
     private System.Action<TechTreeState> saveRaceTechState = TechTreeProfileStore.Save;
@@ -216,6 +220,7 @@ public class MVPGameManager : MonoBehaviour
 
         if (hudUI != null && hudUI.IsReturnToMenuConfirmationVisible)
         {
+            if (Input.GetKeyDown(KeyCode.Escape) && hudUI.TryCancelItalyPrecisionTuneKeyboardAction()) return;
             if (spacePressed)
                 hudUI.TryConfirmKeyboardAction();
             return;
@@ -1743,7 +1748,10 @@ public class MVPGameManager : MonoBehaviour
                 if (feedbackCooling > 0)
                     hudUI?.AppendLog($"{p.name} 信息海绵：旧手永久热处理{feedbackCooling}，净回{p.driverSkill.Feedback.LastRestored}，退役{p.driverSkill.Feedback.LastRetired}。");
                 if (config.enableTechTree)
+                {
                     session.BeginPrepMealInput(p, raceTurnNumber);
+                    session.BeginItalyPrecisionTuneInput(p, raceTurnNumber);
+                }
             }
 
             // ====== PHASE A3: AI 特技牌 ======
@@ -1840,6 +1848,7 @@ public class MVPGameManager : MonoBehaviour
 
                 // 移动 → 反应(冷却) → 弯道判定
                 int lapBeforeMovement = p.lap;
+                int actualBeforeBaseMovement = p.turnMovement.ActualCells;
                 bool finishDeferred = false;
                 bool hasHunterExtraCorners = HunterActiveCornerIds(p, oldPos, rawEnd, lapBeforeMovement).Count > 0;
                 System.Action deferFinish = hasHunterExtraCorners
@@ -1853,6 +1862,17 @@ public class MVPGameManager : MonoBehaviour
                 if (finishDeferred && !RaceTurnRules.IsTerminal(p) && !RaceTurnRules.ShouldSkip(p))
                     RegisterStartFinishCrossing(p);
                 session.ArmItalyCornerExitBonus(p, completedCorner);
+                int ascariBonus = p.driverSkill?.Precision.ConsumeSettledReward(
+                    session, p, trackManager.Nodes, oldPos, lapBeforeMovement, config.totalLaps,
+                    System.Math.Min(AscariPrecisionRules.GetCommittedBaseSpeed(p), p.turnMovement.ActualCells - actualBeforeBaseMovement),
+                    id => session.EffectiveCornerLimit(p,
+                        trackManager.GetCornerSpeedLimit(id, GetLane(p)))) ?? 0;
+                if (ascariBonus > 0)
+                {
+                    ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
+                    RegisterPitEntryCrossing(p, oldPos, oldPos + p.totalMovementThisTurn);
+                }
+                yield return StartCoroutine(ApplyAscariPrecisionReward(p, oldPos, rawEnd, lapBeforeMovement, ascariBonus));
                 int rhythmBonus = ResolveVettelFeedbackAfterMovement(p, oldPos, lapBeforeMovement, completedCorner);
                 if (rhythmBonus > 0)
                 {
@@ -1921,7 +1941,7 @@ public class MVPGameManager : MonoBehaviour
 
                 // Only the newly introduced Hart path is gated here. A failed
                 // extra-apex payment cannot claim its abandoned planned route.
-                if (rhythmBonus <= 0 && (!hasHunterExtraCorners || (!RaceTurnRules.IsTerminal(p) && !RaceTurnRules.ShouldSkip(p))))
+                if (rhythmBonus <= 0 && ascariBonus <= 0 && (!hasHunterExtraCorners || (!RaceTurnRules.IsTerminal(p) && !RaceTurnRules.ShouldSkip(p))))
                 {
                     ResolveLandmarkPasses(p, oldPos, oldPos + p.totalMovementThisTurn);
                     RegisterPitEntryCrossing(p, oldPos, oldPos + p.totalMovementThisTurn);
@@ -2023,6 +2043,7 @@ public class MVPGameManager : MonoBehaviour
         p.driverSkill?.Strategy.Interrupt();
         p.driverSkill?.Feedback.Interrupt();
         p.driverSkill?.Rhythm.Interrupt();
+                p.driverSkill?.Precision.Interrupt();
         if (movementAudioPlayer == p || instantAudioPlayer == p) StopMovementAudio(true);
 
         int spinMax = session != null ? session.EffectiveSpinMax(p) : 3;
@@ -2546,6 +2567,35 @@ public class MVPGameManager : MonoBehaviour
         hudUI?.RefreshTurnTelemetry(Player);
     }
 
+    /// <summary>D05 earned tail occurs only after the actual reduced ordinary-speed first apex was safe.</summary>
+    private IEnumerator ApplyAscariPrecisionReward(PlayerState player, int baseStart, int baseCornerEnd, int sourceLap, int bonus)
+    {
+        if (bonus <= 0 || RaceTurnRules.IsTerminal(player) || RaceTurnRules.ShouldSkip(player)) yield break;
+        int before = player.turnMovement.ActualCells;
+        int oldPosition = player.position;
+        int tailStart = baseStart + player.totalMovementThisTurn;
+        int tailEnd = TrackRules.EndBeforeFinalFinish(trackManager.Nodes, baseStart,
+            tailStart + bonus, config.totalLaps - sourceLap);
+        var newCorners = TrackRules.GetAdditionalApexCornersCrossed(trackManager.Nodes,
+            baseStart, System.Math.Max(baseCornerEnd, tailStart), tailStart, tailEnd);
+        int move = tailEnd < tailStart + bonus ? System.Math.Max(0, tailEnd + 1 - tailStart) : bonus;
+        bool finishDeferred = false;
+        System.Action deferFinish = newCorners.Count > 0 ? (System.Action)(() => finishDeferred = true) : null;
+        player.turnMovement.AddPlan("车手：精密过弯（安全弯后）", bonus, TurnMovementKind.Driver);
+        yield return StartCoroutine(AnimateMovementWithFinishGate(player, GetCarIndex(player), move, false, deferFinish));
+        int actual = player.turnMovement.ActualCells - before;
+        player.totalMovementThisTurn += actual;
+        if (actual <= 0) yield break;
+        newCorners = TrackRules.GetAdditionalApexCornersCrossed(trackManager.Nodes,
+            baseStart, System.Math.Max(baseCornerEnd, tailStart), tailStart, System.Math.Min(tailEnd, tailStart + actual));
+        if (newCorners.Count > 0 && !ResolveCornerSet(player, oldPosition, newCorners)) yield break;
+        if (finishDeferred && !RaceTurnRules.IsTerminal(player) && !RaceTurnRules.ShouldSkip(player)) RegisterStartFinishCrossing(player);
+        if (RaceTurnRules.IsTerminal(player) || RaceTurnRules.ShouldSkip(player)) yield break;
+        ResolveLandmarkPasses(player, oldPosition, oldPosition + actual);
+        RegisterPitEntryCrossing(player, oldPosition, oldPosition + actual);
+        hudUI?.AppendLog($"{player.name} 精密过弯：首弯安全，追加{actual}格（本次已用）。");
+    }
+
     private void ComputeMovements(List<PlayerState> turnOrder, HashSet<PlayerState> turnSkipped)
     {
         vettelMovementFeedback.Clear();
@@ -2560,6 +2610,7 @@ public class MVPGameManager : MonoBehaviour
                 p.driverSkill?.Strategy.Interrupt();
                 p.driverSkill?.Feedback.Interrupt();
                 p.driverSkill?.Rhythm.Interrupt();
+                p.driverSkill?.Precision.Interrupt();
                 p.totalMovementThisTurn = 0;
                 p.cornerTotalThisTurn = 0;
                 slipstreamsThisTurn[p] = default;
@@ -3855,8 +3906,152 @@ public class MVPGameManager : MonoBehaviour
             trackManager != null ? trackManager.TotalNodes : 0,
             (start, end) => trackManager != null ? trackManager.GetUniqueCornersCrossed(start, end) : new HashSet<int>(),
             id => trackManager != null ? trackManager.GetCornerSpeedLimit(id, GetLane(player)) : 99,
-            trackManager != null ? trackManager.Nodes : null);
+            trackManager != null ? trackManager.Nodes : null,
+            trial ? null : pendingItalyPrecisionTunePlan, trial ? null : pendingAscariPrecisionPlan);
     }
+
+    /// <summary>D05 target API; a later player selector calls this without consuming a race use.</summary>
+    public bool TryPrepareAscariPrecision(CardData target, out string reason)
+    {
+        CancelAscariPrecisionPlan();
+        reason = "仅可在本人普通出牌输入选择精密过弯目标";
+        if (session == null || cardHandUI == null || config == null || tutorialScenario != null ||
+            IsTutorialActionInputBlocked || !phaseState.CanAcceptCards(inputState)) return false;
+        return session.TryPrepareAscariPrecision(Player, cardHandUI.GetSelectedPlayCards(), target,
+            raceTurnNumber, ascariPrecisionPlanVersion, true, trackManager?.Nodes, config.totalLaps,
+            out pendingAscariPrecisionPlan, out reason, pendingItalyPrecisionTunePlan);
+    }
+
+    public bool HasPendingAscariPrecision => pendingAscariPrecisionPlan != null && !pendingAscariPrecisionPlan.IsClosed;
+
+    /// <summary>Cancels only unpaid target intent; committed runtime use and original card stay untouched.</summary>
+    public void CancelAscariPrecisionPlan()
+    {
+        ascariPrecisionPlanVersion++;
+        pendingAscariPrecisionPlan?.Cancel(); pendingAscariPrecisionPlan = null;
+        if (hudUI != null && hudUI.isActiveAndEnabled && Player != null && phaseState.CanAcceptCards(inputState))
+            hudUI.RefreshTurnTelemetry(Player);
+    }
+
+    /// <summary>Prepares IT L3B from the already selected ordinary speed card; player selector UI is a later slice.</summary>
+    public bool TryPrepareItalyPrecisionTune(CardData target, out string reason)
+    {
+        CancelItalyPrecisionTunePlan();
+        reason = "当前不可精调";
+        if (session == null || cardHandUI == null) return false;
+        return session.TryPrepareItalyPrecisionTune(Player, cardHandUI.GetSelectedPlayCards(), target,
+            raceTurnNumber, italyPrecisionTunePlanVersion,
+            phaseState.CanAcceptCards(inputState) && !IsTutorialActionInputBlocked,
+            config != null && config.enableTechTree && tutorialScenario == null,
+            out pendingItalyPrecisionTunePlan, out reason,
+            pendingAscariPrecisionPlan?.Target ?? Player?.driverSkill?.Precision.CommittedTarget);
+    }
+
+    /// <summary>Whether the human has a free tuning target waiting for the ordinary final card commit.</summary>
+    public bool HasPendingItalyPrecisionTune => pendingItalyPrecisionTunePlan != null && !pendingItalyPrecisionTunePlan.IsClosed;
+
+    /// <summary>Selected-card technology uses only the current mode's effective research state.</summary>
+    public bool IsItalyPrecisionTuneVisible(PlayerState player) => player != null && player == Player && !player.isAI &&
+        config != null && config.enableTechTree && tutorialScenario == null && session != null &&
+        phaseState.CanAcceptCards(inputState) && player.techState != null && session.GetModifiers(player).hasCavallinoRampante;
+
+    private List<CardData> ItalyPrecisionTuneChoices()
+    {
+        var choices = new List<CardData>();
+        if (cardHandUI == null || Player == null) return choices;
+        List<CardData> selected = cardHandUI.GetSelectedPlayCards();
+        foreach (CardData card in selected)
+            if (ItalyPrecisionTuneRules.IsEligibleTarget(Player, selected, card)) choices.Add(card);
+        return choices;
+    }
+
+    /// <summary>Compact non-colour state for the actual operation slot; detailed rules stay in the chooser.</summary>
+    public string GetItalyPrecisionTuneButtonLabel(PlayerState player, out bool interactable)
+    {
+        interactable = false;
+        if (HasPendingItalyPrecisionTune)
+        {
+            interactable = IsItalyPrecisionTuneVisible(player);
+            int value = ItalyPrecisionTuneRules.GetSourceContribution(player, pendingItalyPrecisionTunePlan.Target);
+            return $"取消精调 {value}→{Mathf.Max(1,value-1)} 余1";
+        }
+        if (player?.techState?.precisionTune.UsedThisRace == true) return "精调 0/1 本场已用";
+        bool allowed = ItalyPrecisionTuneActivationPlan.CanPrepare(session, player, raceTurnNumber,
+            IsItalyPrecisionTuneVisible(player) && !IsTutorialActionInputBlocked,
+            config != null && config.enableTechTree && tutorialScenario == null, out _);
+        interactable = allowed && ItalyPrecisionTuneChoices().Count > 0;
+        return interactable ? "精调 1/1 选择目标" : "精调 1/1 先选牌≥2";
+    }
+
+    /// <summary>Choosing a target never consumes the opportunity; ordinary card confirmation commits it.</summary>
+    public void OnItalyPrecisionTuneButtonClicked()
+    {
+        if (!IsItalyPrecisionTuneVisible(Player) || IsTutorialActionInputBlocked || hudUI == null ||
+            hudUI.IsReturnToMenuConfirmationVisible || hudUI.IsTelemetryDetailsOpen) return;
+        if (HasPendingItalyPrecisionTune)
+        {
+            CancelItalyPrecisionTunePlan(); hudUI.SetStatus("已取消精调，次数未使用"); return;
+        }
+        GetItalyPrecisionTuneButtonLabel(Player, out bool allowed);
+        if (!allowed) { hudUI.SetStatus("请先选中贡献至少2的普通速度牌"); return; }
+        hudUI.ShowItalyPrecisionTuneChoice(ItalyPrecisionTuneChoices(), target =>
+        {
+            if (!TryPrepareItalyPrecisionTune(target, out string reason)) hudUI?.SetStatus(reason);
+            else
+            {
+                int value = ItalyPrecisionTuneRules.GetSourceContribution(Player,target);
+                hudUI?.SetStatus($"精调 {value}→{value-1}，余1次未用；最终出牌才使用");
+            }
+            hudUI?.RefreshItalyPrecisionTune(this,Player); hudUI?.RefreshTurnTelemetry(Player);
+        }, CancelItalyPrecisionTunePlan);
+    }
+
+    /// <summary>Shown within the existing card-action confirmation, never a second skill confirmation.</summary>
+    public string GetItalyPrecisionTuneCommitDescription()
+    {
+        if (!HasPendingItalyPrecisionTune) return string.Empty;
+        int value = ItalyPrecisionTuneRules.GetSourceContribution(Player,pendingItalyPrecisionTunePlan.Target);
+        return $"精准调校：普通速度 {value}→{Mathf.Max(1,value-1)}。\n移动减1，弯速减1（最低0），无额外RP。\n出牌时使用本场1次；取消不消耗。";
+    }
+
+    /// <summary>Retains the exact free target intent through the final modal; stale confirmation cannot fall back to ordinary play.</summary>
+    public void RequestItalyPrecisionTuneCardCommit()
+    {
+        ItalyPrecisionTuneActivationPlan plan = pendingItalyPrecisionTunePlan;
+        if (plan == null || hudUI == null || cardHandUI == null) return;
+        int version = italyPrecisionTunePlanVersion;
+        AscariPrecisionActivationPlan driverPlan = pendingAscariPrecisionPlan;
+        int driverVersion = ascariPrecisionPlanVersion;
+        RaceSession race = session; PlayerState owner = Player;
+        hudUI.RequestItalyPrecisionTuneCommit(GetItalyPrecisionTuneCommitDescription(), () =>
+        {
+            bool valid = ReferenceEquals(pendingItalyPrecisionTunePlan,plan) && version == italyPrecisionTunePlanVersion &&
+                ReferenceEquals(pendingAscariPrecisionPlan,driverPlan) && driverVersion == ascariPrecisionPlanVersion &&
+                ReferenceEquals(session,race) && ReferenceEquals(Player,owner) &&
+                plan.Validate(session,owner,cardHandUI.GetSelectedPlayCards(),raceTurnNumber,version,
+                    phaseState.CanAcceptCards(inputState) && !IsTutorialActionInputBlocked,
+                    config != null && config.enableTechTree && tutorialScenario == null,out _,
+                    driverPlan?.Target ?? owner?.driverSkill?.Precision.CommittedTarget);
+            if (!valid) { if (ReferenceEquals(pendingItalyPrecisionTunePlan,plan)) CancelItalyPrecisionTunePlan(); hudUI?.SetStatus("精调计划已过期，未出牌；请重新选择"); return; }
+            OnPlayCardsButtonClicked();
+        }, () => { if (ReferenceEquals(pendingItalyPrecisionTunePlan,plan)) CancelItalyPrecisionTunePlan(); });
+    }
+
+    public void CancelItalyPrecisionTunePlan()
+    {
+        italyPrecisionTunePlanVersion++;
+        pendingItalyPrecisionTunePlan?.Cancel();
+        pendingItalyPrecisionTunePlan = null;
+        if (hudUI != null && hudUI.isActiveAndEnabled)
+        {
+            hudUI.RefreshItalyPrecisionTune(this, Player);
+            if (Player != null && phaseState.CanAcceptCards(inputState)) hudUI.RefreshTurnTelemetry(Player);
+        }
+    }
+
+    /// <summary>Click, keyboard and drag card selections share this invalidation boundary.</summary>
+    public void OnSpeedCardSelectionChanged()
+    { CancelItalyPrecisionTunePlan(); CancelAscariPrecisionPlan(); }
 
     /// <summary>Technology and driver actions occupy the same visual slot in separate input phases.</summary>
     public bool IsUkPrepMealVisible(PlayerState player) => player != null && player == Player && !player.isAI &&
@@ -3975,16 +4170,19 @@ public class MVPGameManager : MonoBehaviour
 
     private void ClosePrepMealInputs()
     {
+        CancelItalyPrecisionTunePlan(); CancelAscariPrecisionPlan();
         vettelMovementFeedback.Clear();
         if (session?.Players == null) return;
         foreach (PlayerState player in session.Players)
         {
             player?.techState?.prepMeal.CloseInput();
             player?.techState?.germanBurst.CloseWindow();
+            player?.techState?.precisionTune.CloseInput();
             player?.driverSkill?.Tuning.Interrupt();
             player?.driverSkill?.Strategy.Interrupt();
             player?.driverSkill?.Feedback.Interrupt();
             player?.driverSkill?.Rhythm.Interrupt();
+            player?.driverSkill?.Precision.Interrupt();
             player?.driverSkill?.Pursuit.Interrupt();
             player?.driverSkill?.InterruptMansellChargeWindow();
             player?.driverSkill?.Hunting.CloseInput();
@@ -3993,6 +4191,7 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnGearButtonClicked(int gear)
     {
+        CancelItalyPrecisionTunePlan(); CancelAscariPrecisionPlan();
         if (Player?.driverSkill?.Strategy.IsGearAllowed(gear) == false) return;
         if (IsTutorialActionInputBlocked) return;
         if (!phaseState.CanAcceptGear(inputState)) return;
@@ -4016,6 +4215,7 @@ public class MVPGameManager : MonoBehaviour
 
     public void OnConfirmGearClicked()
     {
+        CancelItalyPrecisionTunePlan(); CancelAscariPrecisionPlan();
         if (IsTutorialActionInputBlocked) return;
         if (!phaseState.CanAcceptGear(inputState)) return;
         if (Player?.driverSkill?.Strategy.SealGear(inputState.PendingGear) == false) return;
@@ -4499,6 +4699,8 @@ public class MVPGameManager : MonoBehaviour
         {
             var rhythm = player.driverSkill.Rhythm;
             int uses = player.driverSkill.UsesRemaining;
+            if (player.driverSkill.Enabled && player.driverSkill.Tier <= 0)
+                return $"人车合拍 车手3级解锁\n剩余{uses}次";
             if (ReferenceEquals(player, Player) && pendingVettelRhythmPlan != null && !pendingVettelRhythmPlan.IsClosed)
                 return $"人车合拍 待确认\n选来源 · 付1永久热 · 余{uses}次";
             if (rhythm.HasWindow)
@@ -4561,6 +4763,13 @@ public class MVPGameManager : MonoBehaviour
                 inputState.PendingGear, BuildDriverSkillActivationContext(player), out string reason);
             return interactable ? $"{player.DriverProfile.ActiveName}  ×{player.driverSkill.UsesRemaining}"
                 : $"{player.DriverProfile.ActiveName}  {reason}";
+        }
+        if (player.driverSkill.Skill == DriverActiveSkillId.PrecisionCornering)
+        {
+            interactable = false;
+            string reason = player.driverSkill.Tier <= 0 ? "Lv3 解锁主动技能" :
+                player.driverSkill.UsesRemaining <= 0 ? "本场次数已用完" : "当前不可用";
+            return $"精密过弯 ×{player.driverSkill.UsesRemaining}\n{reason}";
         }
         return DriverSkillPresentationRules.GetButtonLabel(
             player.DriverProfile, player.driverSkill,
@@ -4633,6 +4842,7 @@ public class MVPGameManager : MonoBehaviour
 
         if (card.IsTrick)
         {
+            CancelItalyPrecisionTunePlan(); CancelAscariPrecisionPlan();
             if (!config.enableTrickCards || !PlayTrickCard(player, card))
                 return false;
 
@@ -4682,8 +4892,12 @@ public class MVPGameManager : MonoBehaviour
         bool hotpotWasArmed = TrickCardRules.HasHotpotAttack(player.trickState);
         int maxCards = GetMaxSpeedCardsThisTurn(player);
         SpeedCardCommitResult commit = CardPlayRules.CommitSpeedCards(player, cards, maxCards,
-            config != null && config.enableTechTree ? session : null,
-            trackManager != null ? trackManager.TotalNodes : 0);
+            session,
+            trackManager != null ? trackManager.TotalNodes : 0,
+            pendingItalyPrecisionTunePlan, raceTurnNumber, italyPrecisionTunePlanVersion,
+            phaseState.CanAcceptCards(inputState) && tutorialScenario == null,
+            pendingAscariPrecisionPlan, ascariPrecisionPlanVersion, trackManager?.Nodes,
+            config != null ? config.totalLaps : 0, config != null && config.enableTechTree);
         if (commit != SpeedCardCommitResult.Success)
         {
             if (hudUI != null)
@@ -4696,6 +4910,7 @@ public class MVPGameManager : MonoBehaviour
             return false;
         }
 
+        CancelItalyPrecisionTunePlan(); CancelAscariPrecisionPlan();
         if (player.techState != null)
             TechTreeRules.TrackDimSumCombo(player.techState, false, true, false);
         if (hotpotWasArmed && player.hotpotAttackAppliedThisTurn)
@@ -4725,6 +4940,7 @@ public class MVPGameManager : MonoBehaviour
     /// <summary>Ends human card play and applies the existing missing-card engine-failure rule.</summary>
     private void FinishPlayerCardPhase(PlayerState player)
     {
+        CancelItalyPrecisionTunePlan(); CancelAscariPrecisionPlan();
         if (!ValidateTutorialSpecialtySpeedCompletion(player))
             return;
 

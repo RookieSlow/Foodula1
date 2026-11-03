@@ -227,7 +227,7 @@ public struct TechModifiers
     /// <summary>Effective slipstream distance in cells (1 or 2).</summary>
     public int EffectiveSlipstreamRange => 1 + slipstreamRangeBonus;
 
-    /// <summary>Effective spin counter maximum (base 3 + bonus, capped at 4 for IT L2).</summary>
+    /// <summary>Effective spin counter maximum (base 3 plus explicitly active modifiers).</summary>
     public int EffectiveSpinCounterMax => 3 + spinCounterMaxBonus;
 
     /// <summary>Permanent engine capacity bonus; SmokedBBQ is granted only by the active track zone.</summary>
@@ -349,6 +349,9 @@ public class TechTreeState
     /// <summary>Per-racer manual burst scope, receipts and fuel budget; never a profile unlock.</summary>
     public GermanBurstRuntime germanBurst = new GermanBurstRuntime();
 
+    /// <summary>IT L3B once-per-racer precision tune, independent of research RP and other participants.</summary>
+    public ItalyPrecisionTuneRuntime precisionTune = new ItalyPrecisionTuneRuntime();
+
     /// <summary>DE L3: Total heat paid this turn (tracked for GrillSpezial auto-cool).</summary>
     public int grillSpezialHeatPaidThisTurn;
 
@@ -397,6 +400,7 @@ public class TechTreeState
         copy.activeNodeIds = new HashSet<string>(activeNodeIds);
         copy.prepMeal = prepMeal.CreatePresentationCopy();
         copy.germanBurst = germanBurst.CreatePresentationCopy();
+        copy.precisionTune = precisionTune.CreatePresentationCopy();
         return copy;
     }
 

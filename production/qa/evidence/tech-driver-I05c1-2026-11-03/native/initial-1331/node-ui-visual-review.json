@@ -1,0 +1,36 @@
+{
+  "reviewer": "i05c1_node_ui/unity-ui-specialist",
+  "before_actual_viewed": [
+    {
+      "path": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05c1-2026-11-03\\before\\tech-ui-20261103-053603105\\1280x720-career.png",
+      "sha256": "9eac5029a6edb9166f2839dd30f14fc05b739633bb37b81d43c43a3d60fa8e28"
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05c1-2026-11-03\\before\\tech-ui-20261103-053603105\\1280x720-normal.png",
+      "sha256": "a4d008b23bde6a3d341f562341e5a10c88ac0308d19d0a19a86e9ad3910824b5"
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05c1-2026-11-03\\before\\tech-ui-20261103-053603105\\1920x1080-career.png",
+      "sha256": "1870048c35bfdef1146bcdd376da1e6b4ab173b7688581c9a70d8ecfc056bf4e"
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05c1-2026-11-03\\before\\tech-ui-20261103-053603105\\1920x1080-normal.png",
+      "sha256": "4bebe9a184c3a203f731241f78be25c06cf99e61d047fe1a038e9df057aa72e5"
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05c1-2026-11-03\\before\\tech-ui-20261103-053603105\\2560x1440-career.png",
+      "sha256": "d29fc8c281aa5a3a9dcc382fa69d674a062537d9e8de2a77cc36440c17c6a4e9"
+    },
+    {
+      "path": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05c1-2026-11-03\\before\\tech-ui-20261103-053603105\\2560x1440-normal.png",
+      "sha256": "e06ea09aed0b1f4f5954394abefed4ba9e548d654a26ccb3281de0617c6a1c99"
+    }
+  ],
+  "after_actual_viewed": [],
+  "before_bounded_target_accepted": true,
+  "after_bounded_target_accepted": false,
+  "runtime_before": "395216e3-1c1e-45e6-91cc-eb8b744a75f5",
+  "production_change": "Only it-l3-cavallino-rampante description; original ID/name/12000RP/Cavallino effect unchanged. No other byte edits by node worker.",
+  "before_findings": "All six original PNG actually opened via view_image. L3 old multiplier-only copy/cost/long RP render completely at three sizes; normal six team tabs/back and career owned summer-break cancel/confirm visible. L2 first common-node sentence horizontally overflows; preexisting non-target condition retained. 720p labels small; no whole-page comfort acceptance.",
+  "boundaries": "Controlled production UI, memory-owned cache/draft; no successful normal unlock/profile persistence, no actual driver action, no full menu/modes/storage/hardware/gear drag acceptance. Parent runs compilation/native/captures; child ran zero Unity tests."
+}

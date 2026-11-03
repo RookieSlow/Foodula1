@@ -1,0 +1,191 @@
+{
+  "id": "I05b1",
+  "local_date": "2026-11-03",
+  "status": "IT_L3B_rules_runtime_plan_and_production_API_bounded_native_verified_player_button_pending",
+  "scope": "LockedITL3B bounded pure rules/runtime/versioned plan and session/CardPlayRules/manager final commit/isolated preview plus CardHandUI selection-event invalidation. No new player tuning button; I05b2UI andAscari are pending.",
+  "locked_parameters": {
+    "source": "technology draft all-descendant paragraphs300-312, implementation-plan selectedB",
+    "node_identity": "ExistingITL3 ID and12000RPunlock investment retained; oldL3RPmultipliers unchanged.",
+    "per_race_fee_RP": 0,
+    "uses_per_race": 1,
+    "target": "One already-selected ordinary speedcard with effective movement contribution>=2; independent -1 adjustment for current plan only, floor1; never mutate sharedCardData.value.",
+    "window": "Cancel/noeligiblecard/staleplan/samecarddriver slowdown does not consume; actualcommit consumes once even if later movement truncated; no extra play slot orL1/home multiplier on the adjustment.",
+    "Hotpot": "Existing attackcard contributes corner0 with nonnegative floor; valid tuned movement still-1, but corner0 remains0. Never claim0->-1.",
+    "mode_scope": "Read each mode own technology state; tutorial zero-gain gate and ordinaryAI skill policy remain. Samecarddriver contract is notAscari implementation."
+  },
+  "acceptance": {
+    "pure_rules": true,
+    "production_wiring": true,
+    "API_controlled_actual_GameLoop": true,
+    "player_operable": false,
+    "complete_modes_and_save": false
+  },
+  "native_tests_executed": 3925,
+  "visual": {
+    "new_screenshots": 0,
+    "layout_change": false,
+    "selection_event_boundary": "CardHandUI selection event invalidates versioned plans; no new fine-tune button, geometry or visual acceptance.",
+    "pending": "I05b2 real player tuning target selection/combined confirmation with click/drag/keyboard/focus/cancel/disabled reason and three sizes1920x1080/2560x1440/1280x720."
+  },
+  "source_word_sha256": {
+    "technology": "281e077813344ab1e3627bb075dcc28d361a0626c8c39b3492f016a9f62d7bb3",
+    "drivers": "94eb7763825f777d477b3fcb8fee92bad27e6353e42d8b2cdeb98f3889914f46"
+  },
+  "preservation": {
+    "baseline_workspace_files": 276,
+    "protected_files": 44,
+    "unrelated_files": 82,
+    "prior_uncommitted_I04_I05a": "preserved; no Git/source mutation by record worker",
+    "final_check": "Compared with02Nov baseline:43/44protected and81/82unrelated unchanged; one existing excluded Chinese font asset changed during long quota interruption, unknown author, preserved without restore. All21frozen source/meta match tested bytes. Compared with03Nov301file resume baseline only owned fixture and docs/evidence change, font unchanged since resume.",
+    "initial_baseline_workspace_files": 276,
+    "recovery_baseline_workspace_files": 301,
+    "initial_protected_files": 44,
+    "initial_unrelated_files": 82,
+    "comparison_to_2026_11_02_baseline": {
+      "protected_unchanged": 43,
+      "protected_changed": 1,
+      "unrelated_unchanged": 81,
+      "unrelated_changed": 1,
+      "changed_path": "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset",
+      "attribution": "Unknown user/Unity write during long interruption; retained as found, not overwritten or attributed to implementation."
+    },
+    "protected_changes_preserved": [
+      "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset"
+    ],
+    "unrelated_changes_preserved": [
+      "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset"
+    ],
+    "resumed_baseline_workspace_files": 301,
+    "unknown_interruption_font_change_retained": "Compared with11/02:43of44protected and81of82unrelated unchanged; fontSourceHanSansTC-Medium-HQ.asset changed during long interruption, attribution unknown, retained without overwrite. Final current-vs11/03recovery baseline is recorded separately, never described as44/44unchanged versus11/02."
+  },
+  "missing_governance": "Missingactive.md/technicalpreferences/controlmanifest are recorded only, no placeholders created.",
+  "git": "HEAD99c06bc/indexempty at root baseline; record worker does not invoke Git or Unity. No commit/push/reset/checkout/rebase/cleanup.",
+  "next_slice": "I05b2：接IT L3B真实精调入口、普通已选原牌选择与合并确认，保留取消/失效不耗次；做三尺寸真实交互。阿斯卡里尚未接入，同牌车手互斥仅合同。I05继续in_progress/currentI05，不推进I06；完整模式/存档/硬件仍I13。",
+  "implementation_started_local_date": "2026-11-02",
+  "recovery_local_date": "2026-11-03",
+  "native_tests_executed_after_recovery": 3925,
+  "initial_native": {
+    "startedUtc": "2026-11-02T09:36:22.4255981Z",
+    "endedUtc": "2026-11-02T09:37:06.8311831Z",
+    "state": "Failed(Child)",
+    "nativeState": "Failed(Child)",
+    "seconds": 38.4150428,
+    "total": 3919,
+    "passed": 3889,
+    "failed": 30,
+    "skipped": 0,
+    "inconclusive": 0,
+    "selectionMatches": true
+  },
+  "initial_native_failure": "Prior30newcases failed in SetUp because fixture passedTempHeat to InitializeExactOrder, which correctly rejects temporary cards. QA repaired owned fixture creation with legal temporary-heat granting; production validation was not relaxed. Original3919/3889pass/30failed38.4150428s raw retained. Final source includingactiveIds-null guard and2additionalboundary cases was separately compiled and executed.",
+  "recovery_baseline": "Library/AutomationReview/tech-driver-I05b1-20261103-0200/baseline-workspace-sha256.json",
+  "runtime_mvid": "4211272c-cdbe-4fdf-b5e1-40dfc72c57e7",
+  "editor_mvid": "81da8879-5b5e-42ea-9761-f7defdb0662b",
+  "native_final": {
+    "startedUtc": "2026-11-02T18:03:05.1620688Z",
+    "endedUtc": "2026-11-02T18:03:38.4075146Z",
+    "state": "Passed",
+    "nativeState": "Passed",
+    "seconds": 27.3711459,
+    "total": 3921,
+    "passed": 3921,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "selectionMatches": true,
+    "unexpected": [],
+    "missing": []
+  },
+  "GameLoop_final": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 4.9505456,
+    "resultState": "Passed"
+  },
+  "native_GameLoop_RunFinished": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-11-02T18:04:01.8398782Z",
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": "",
+    "stackTrace": ""
+  },
+  "new_cases_breakdown": {
+    "rules_runtime_and_commit": 32,
+    "actual_GameLoop": 2
+  },
+  "final_modules": [
+    "tech",
+    "drivers",
+    "cards-heat",
+    "gears",
+    "core",
+    "career",
+    "ai",
+    "ui",
+    "tutorial",
+    "tracks-weather-pit",
+    "tools"
+  ],
+  "test_job_id": "bc58af67c3d942138ff95702142f5684",
+  "initial_failed_result": "native/modules-before-interruption-failed.json",
+  "Unity_final": {
+    "utc": "2026-11-02T18:04:37.4845692Z",
+    "scene": "Assets/Scenes/MainMenu.unity",
+    "dirty": false,
+    "playing": false,
+    "compiling": false,
+    "updating": false,
+    "busy": false,
+    "native": false,
+    "license": true,
+    "runtime": "4211272c-cdbe-4fdf-b5e1-40dfc72c57e7",
+    "editor": "81da8879-5b5e-42ea-9761-f7defdb0662b",
+    "consoleErrors": 0,
+    "consoleWarnings": 5,
+    "consoleLogs": 12,
+    "ready_for_tools": false,
+    "ready_resource_boundary": "MCP editor/state cache remains stale_status. Direct live execute_code after native4/4 confirms clean/idle/not playing/compiling/importing/tests and validPersonal license. No ready=true claim and no scene saved.",
+    "console_warning_explanation": "All5 final warnings are RaceCameraController missing Race canvas in owned headless startup fixtures; no errors, no Console clear. Refresh transient WebSocket warning was observed separately."
+  },
+  "test_count_semantics": "Final11module3921/3921 nativeRunFinished,0failed/skipped/inconclusive27.3711459s; disjoint4/4 actualGameLoop4.9505456s=3925 unique selected cases. New32unit/integration+2GameLoop=34. Prior first3919/3889pass/30SetUpfail38.4150428s retained as failed intermediate; no overlapping or old-assembly results counted.4190 discovery is not executed count.",
+  "source_final_sha256": {
+    "Assets/Scripts/Core/CardPlayRules.cs": "9e8b1d82680bfc185d8f77184a24cc826a7d82dd4da5c14137bbcdd7c4071a3b",
+    "Assets/Scripts/Core/MVPGameManager.cs": "9fd4fc34361ffdf252ff9da5f3f3b3a4c8fad20ac51f60e511da8e8dc47fca3e",
+    "Assets/Scripts/Core/RaceMovementRules.cs": "cb9790b7924e67b855ed8e613a1d0308efbdcace1ef252d76c30981b310d595d",
+    "Assets/Scripts/Core/RaceSession.cs": "d05284057c15436d41be35af03f647b4621aad5d842404307ced04bd93adf901",
+    "Assets/Scripts/Core/RaceTurnCleanup.cs": "8daaf7cee6cf2a90b32ba822e91afd61351dbe33760fed47ba2784689e3e131b",
+    "Assets/Scripts/Core/RaceTurnPreviewRules.cs": "3a3238ef523af7887a979f101be2d1cba6581577dae3eb49b3984d803384f212",
+    "Assets/Scripts/TechTree/ItalyPrecisionTuneActivationPlan.cs": "41612ae00d28ad151974fbe78c2abe64f042d9915f10f55a32b96240ec44532f",
+    "Assets/Scripts/TechTree/ItalyPrecisionTuneRules.cs": "1d909bdea40f1f779471a5e3ee4955b78e0c878bc0d0ddefbe294a9c503bca9d",
+    "Assets/Scripts/TechTree/ItalyPrecisionTuneRuntime.cs": "9b412432a5deab6289b08898f5b33bcd006a215cf0425f6c7bc7d15d0380e4d4",
+    "Assets/Scripts/TechTree/TechTreeData.cs": "3e79ab7138091a5c6fc1873ddf80ca068279fe51f2cec0c2e9f18519df7484af",
+    "Assets/Scripts/TechTree/TechTreeRules.cs": "6d115f60fc53c641a25775289ac12e3d8a74f6ae0ae2c764efd09c4a13e5ef8d",
+    "Assets/Scripts/UI/CardHandUI.cs": "30bec09098d9eeae75fa8038cf348e676eb8eefe1a269e508c29c7b502e33587",
+    "Assets/Tests/Editor/RegressionModules.json": "5c9612caf1057fa063af0cc358b68fc3ed258ee49af815298a11a06afb882e62",
+    "Assets/Tests/Editor/italy_precision_tune_test.cs": "a3646860f331c3630d82249a15c7364fc300b46e7c56b87e157c4c948cfe45f0",
+    "Assets/Tests/Editor/race_italy_precision_tune_coroutine_test.cs": "b57b5135a8342729f702f1596d9998a5b3b4e64c8ffdd89049e74f2319b07546",
+    "Assets/Scripts/Core/GearRequirementFeedbackRules.cs": "1a625f1d90b9fe6cf5f8c2ed3578991df9022acead7868f932c26bc2a9218142",
+    "Assets/Scripts/TechTree/ItalyPrecisionTuneActivationPlan.cs.meta": "aacc777cb2712e2b5c3c594cf592d46b3b9489394e030ecaf6423d763be3cb25",
+    "Assets/Scripts/TechTree/ItalyPrecisionTuneRules.cs.meta": "3ab6c88d295dd5b57b3817c68c89f98fd86bd3ed1273cba4e65c9fd20fb06c91",
+    "Assets/Scripts/TechTree/ItalyPrecisionTuneRuntime.cs.meta": "be89c771b65ffbebeb7846b1b1713971a24639f2575bc6f3452d0506f5a711fc",
+    "Assets/Tests/Editor/italy_precision_tune_test.cs.meta": "b97830735e6d4a7606a742bf47564fa7126885cbcd449ecb153d202f4b31c242",
+    "Assets/Tests/Editor/race_italy_precision_tune_coroutine_test.cs.meta": "c7fcdaffc8a32bb0b549de9283f614f905e91a8c2f854f8f535f5c321899ce3b"
+  },
+  "evidence_registries": {
+    "tested_source_21": "source-frozen-sha256.json",
+    "related_source_and_docs": "related-workspace-sha256.json",
+    "original_protected_44": "preserved-original-20261102-sha256.json",
+    "current_protected_44": "preserved-current-20261103-sha256.json",
+    "comparison": "preservation-comparison.json",
+    "initial_failed_raw": "native/modules-before-interruption-failed.json"
+  },
+  "new_NUnit_cases": 34
+}

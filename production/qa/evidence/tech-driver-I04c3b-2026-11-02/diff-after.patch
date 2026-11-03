@@ -1,0 +1,1179 @@
+diff --git a/.claude/settings.json b/.claude/settings.json
+index ee755fa..e05c45f 100644
+--- a/.claude/settings.json
++++ b/.claude/settings.json
+@@ -2,7 +2,7 @@
+   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+   "statusLine": {
+     "type": "command",
+-    "command": "bash .claude/statusline.sh"
++    "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook statusline -Source claude"
+   },
+   "permissions": {
+     "allow": [
+@@ -38,12 +38,12 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/session-start.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook session-start -Source claude",
+             "timeout": 10
+           },
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/detect-gaps.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook detect-gaps -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -55,13 +55,8 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/validate-commit.sh",
+-            "timeout": 15
+-          },
+-          {
+-            "type": "command",
+-            "command": "bash .claude/hooks/validate-push.sh",
+-            "timeout": 10
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-git -Source claude",
++            "timeout": 25
+           }
+         ]
+       }
+@@ -72,12 +67,12 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/validate-assets.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-assets -Source claude",
+             "timeout": 10
+           },
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/validate-skill-change.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-skill-change -Source claude",
+             "timeout": 5
+           }
+         ]
+@@ -89,7 +84,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/notify.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook notify -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -101,7 +96,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/pre-compact.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook pre-compact -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -113,7 +108,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/post-compact.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook post-compact -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -125,7 +120,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/session-stop.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook session-stop -Source claude",
+             "timeout": 10
+           }
+         ]
+@@ -137,7 +132,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/log-agent.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook log-agent -Source claude",
+             "timeout": 5
+           }
+         ]
+@@ -149,7 +144,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash .claude/hooks/log-agent-stop.sh",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook log-agent-stop -Source claude",
+             "timeout": 5
+           }
+         ]
+diff --git a/.codex/hooks.json b/.codex/hooks.json
+index f08d747..d162ea6 100644
+--- a/.codex/hooks.json
++++ b/.codex/hooks.json
+@@ -6,13 +6,8 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\validate-commit.sh'",
+-            "timeout": 15
+-          },
+-          {
+-            "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\validate-push.sh'",
+-            "timeout": 10
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-git -Source codex",
++            "timeout": 25
+           }
+         ]
+       }
+@@ -23,12 +18,12 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\validate-assets.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-assets -Source codex",
+             "timeout": 10
+           },
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\validate-skill-change.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook validate-skill-change -Source codex",
+             "timeout": 5
+           }
+         ]
+@@ -40,7 +35,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\pre-compact.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook pre-compact -Source codex",
+             "timeout": 10
+           }
+         ]
+@@ -52,7 +47,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\post-compact.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook post-compact -Source codex",
+             "timeout": 10
+           }
+         ]
+@@ -64,12 +59,12 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\session-start.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook session-start -Source codex",
+             "timeout": 10
+           },
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\detect-gaps.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook detect-gaps -Source codex",
+             "timeout": 10
+           }
+         ]
+@@ -81,7 +76,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\log-agent.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook log-agent -Source codex",
+             "timeout": 5
+           }
+         ]
+@@ -93,7 +88,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\log-agent-stop.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook log-agent-stop -Source codex",
+             "timeout": 5
+           }
+         ]
+@@ -104,7 +99,7 @@
+         "hooks": [
+           {
+             "type": "command",
+-            "command": "bash 'D:\\UnityProject\\Foodula1\\.codex\\hooks\\session-stop.sh'",
++            "command": "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File D:/UnityProject/Foodula1/.codex/hooks/Invoke-NativeHook.ps1 -Hook session-stop -Source codex",
+             "timeout": 10
+           }
+         ]
+diff --git a/Assets/Scripts/Core/MVPGameManager.cs b/Assets/Scripts/Core/MVPGameManager.cs
+index 2f9dd76..db05ec5 100644
+--- a/Assets/Scripts/Core/MVPGameManager.cs
++++ b/Assets/Scripts/Core/MVPGameManager.cs
+@@ -4499,6 +4499,8 @@ public class MVPGameManager : MonoBehaviour
+         {
+             var rhythm = player.driverSkill.Rhythm;
+             int uses = player.driverSkill.UsesRemaining;
++            if (player.driverSkill.Enabled && player.driverSkill.Tier <= 0)
++                return $"人车合拍 车手3级解锁\n剩余{uses}次";
+             if (ReferenceEquals(player, Player) && pendingVettelRhythmPlan != null && !pendingVettelRhythmPlan.IsClosed)
+                 return $"人车合拍 待确认\n选来源 · 付1永久热 · 余{uses}次";
+             if (rhythm.HasWindow)
+diff --git a/Assets/Tests/Editor/race_movement_rules_test.cs b/Assets/Tests/Editor/race_movement_rules_test.cs
+index e0060e4..e820346 100644
+--- a/Assets/Tests/Editor/race_movement_rules_test.cs
++++ b/Assets/Tests/Editor/race_movement_rules_test.cs
+@@ -32,13 +32,23 @@ public class RaceMovementRulesTests
+         Assert.IsTrue(DriverCatalog.TryGet(driverId, out DriverProfile driver));
+         var state = new DriverSkillRuntimeState();
+         state.Initialize(driver, 7, true);
+-        Assert.IsTrue(state.TryActivate(driver,
+-            new DriverSkillActivationContext(true, 2, 3, 1, 10, 3), out string reason), reason);
+-        var player = new PlayerState("movement", false, 9, 2)
++        var player = new PlayerState("movement", false, 9, 2) { driverSkill = state };
++        var context = new DriverSkillActivationContext(true, 2, 3, 1, 10, 3);
++        if (driverId == "de_sebastian_vettel")
+         {
+-            driverSkill = state, hotpotAttackAppliedThisTurn = true,
+-            hotpotAttackCardValueThisTurn = 4, trickMoveBonusThisTurn = -2
+-        };
++            var race = new RaceSession();
++            player.driverId = driverId; player.teamId = TeamId.DE;
++            player.deck.InitializeExactOrder(new[] { new CardData(CardType.Speed, 1) }, new HeatPool(6));
++            race.Players.Add(player); race.BeginTurn(player, 1); race.BeginDriverSkillInput(player, 60);
++            Assert.That(VettelRhythmActivationPlan.TryCreate(race, player, 1, 2, 1, context,
++                out var plan, out string planReason), Is.True, planReason);
++            Assert.That(plan.TryCommit(race, player, 1, 2, 1, context,
++                VettelNativeSource.BasicCruise, out planReason), Is.True, planReason);
++        }
++        else Assert.IsTrue(state.TryActivate(driver, context, out string reason), reason);
++        player.hotpotAttackAppliedThisTurn = true;
++        player.hotpotAttackCardValueThisTurn = 4;
++        player.trickMoveBonusThisTurn = -2;
+         int expected = CardPlayRules.GetHotpotMovementContribution(player,
+             DriverSkillRules.GetSpeedPerCardBonus(state));
+         expected += player.trickMoveBonusThisTurn;
+@@ -46,10 +56,12 @@ public class RaceMovementRulesTests
+         expected -= DriverSkillRules.GetGutterMovementPenalty(state);
+         expected += state.PassiveMovementBonusThisTurn;
+         int uses = state.UsesRemaining, duration = state.ActiveTurnsRemaining;
++        int rhythmVersion = state.Rhythm.Version;
+         for (int i = 0; i < 2; i++)
+             Assert.AreEqual(expected, RaceMovementRules.ComputeCardAndDriverMovementBonus(player, crossedCorner));
+         Assert.AreEqual(uses, state.UsesRemaining);
+         Assert.AreEqual(duration, state.ActiveTurnsRemaining);
++        Assert.AreEqual(rhythmVersion, state.Rhythm.Version);
+         Assert.IsTrue(state.ActivatedThisTurn);
+         Assert.IsTrue(player.hotpotAttackAppliedThisTurn);
+         Assert.AreEqual(4, player.hotpotAttackCardValueThisTurn);
+diff --git a/Assets/Tests/Editor/vettel_rhythm_production_ui_test.cs b/Assets/Tests/Editor/vettel_rhythm_production_ui_test.cs
+index 684d931..53db117 100644
+--- a/Assets/Tests/Editor/vettel_rhythm_production_ui_test.cs
++++ b/Assets/Tests/Editor/vettel_rhythm_production_ui_test.cs
+@@ -79,6 +79,10 @@ public static class VettelRhythmProductionUiCapture
+             var hand = handHost.AddComponent<CardHandUI>(); hand.enabled = false;
+             hand.playCardsButton = Button(scope.Root.transform, scope.Font, "Play cards", new Vector2(0, -250));
+             typeof(HUDUI).GetMethod("Start", Private).Invoke(hud, null);
++            // This synchronous EditMode fixture explicitly starts owned behaviours:
++            // native Awake does not initialize the attached feedback's base scale here.
++            typeof(ButtonClickAnimation).GetMethod("Awake", Private).Invoke(
++                hud.driverSkillButton.GetComponent<ButtonClickAnimation>(), null);
+             var eventHost = new GameObject("Owned modal EventSystem", typeof(EventSystem)); eventHost.transform.SetParent(scope.Root.transform, false);
+             events = eventHost.GetComponent<EventSystem>(); typeof(EventSystem).GetMethod("OnEnable", Private).Invoke(events, null); EventSystem.current = events;
+             var host = new GameObject("Owned inactive rhythm manager"); host.transform.SetParent(scope.Root.transform, false); host.SetActive(false);
+@@ -118,6 +122,7 @@ public static class VettelRhythmProductionUiCapture
+             if (fixture == 4 || fixture == 5)
+             {
+                 Assert.That(hud.driverSkillButton.interactable, Is.False);
++                if (fixture == 5) Assert.That(record.label, Does.Contain("3级解锁"));
+                 manager.OnDriverSkillButtonClicked(); // A direct disabled command still cannot fall through to the legacy path.
+                 Assert.That(player.driverSkill.IsActive, Is.False);
+                 Assert.That(hud.IsReturnToMenuConfirmationVisible, Is.False);
+@@ -205,6 +210,17 @@ public static class VettelRhythmProductionUiCapture
+     }
+     private static bool CanReceivePointer(EventSystem events, GraphicRaycaster raycaster, Button button)
+     {
++        // Match CareerUiPointerTestScope.Click: newly created graphics have no live
++        // hit depth until the owned layer/canvas/text geometry has actually rendered.
++        foreach (Transform child in raycaster.GetComponentsInChildren<Transform>(true)) child.gameObject.layer = 5;
++        Canvas.ForceUpdateCanvases();
++        foreach (TMP_Text text in raycaster.GetComponentsInChildren<TMP_Text>()) text.ForceMeshUpdate();
++        Canvas.ForceUpdateCanvases();
++        Camera camera = raycaster.GetComponent<Canvas>().worldCamera;
++        RenderTexture previous = RenderTexture.active;
++        try { camera.Render(); }
++        finally { RenderTexture.active = previous; }
++        Assert.That(button.targetGraphic.depth, Is.GreaterThanOrEqualTo(0), button.name + " must render before hit testing.");
+         Vector3[] corners = new Vector3[4]; button.GetComponent<RectTransform>().GetWorldCorners(corners);
+         var canvas = raycaster.GetComponent<Canvas>();
+         var data = new PointerEventData(events) { position = RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, (corners[0] + corners[2]) * 0.5f) };
+@@ -214,10 +230,15 @@ public static class VettelRhythmProductionUiCapture
+     private static void PointerClick(EventSystem events, GraphicRaycaster raycaster, Button button)
+     {
+         Assert.That(CanReceivePointer(events, raycaster, button), Is.True, button.name + " must own its real raycast.");
+-        var data = new PointerEventData(events);
++        RectTransform rect = button.GetComponent<RectTransform>();
++        var data = new PointerEventData(events) { position = RectTransformUtility.WorldToScreenPoint(
++            raycaster.GetComponent<Canvas>().worldCamera, rect.TransformPoint(rect.rect.center)), button = PointerEventData.InputButton.Left };
++        Vector3 originalScale = button.transform.localScale;
++        Assert.That(originalScale.sqrMagnitude, Is.GreaterThan(0f), button.name + " must have a visible owned scale.");
+         ExecuteEvents.Execute(button.gameObject, data, ExecuteEvents.pointerDownHandler);
+         ExecuteEvents.Execute(button.gameObject, data, ExecuteEvents.pointerUpHandler);
+         ExecuteEvents.Execute(button.gameObject, data, ExecuteEvents.pointerClickHandler);
++        Assert.That(button.transform.localScale, Is.EqualTo(originalScale), button.name + " must restore its scale after pointer release.");
+     }
+     private static void Render(CareerUiPointerTestScope scope, HUDUI hud, Record record)
+     {
+diff --git a/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset b/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset
+index ca2f2d6..500b86e 100644
+--- a/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset	
++++ b/Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset	
+@@ -1,3 +1,3 @@
+ version https://git-lfs.github.com/spec/v1
+-oid sha256:138eb727664c34cec3defb833ccd2d527aac13a6296e1e9b1475ea1a900e53ed
+-size 34155550
++oid sha256:c44b368e107f8e08e35d9cc93b6e8be7c022273a1cb7bc1daca8317f45848d94
++size 34180244
+diff --git a/ProjectSettings/EditorSettings.asset b/ProjectSettings/EditorSettings.asset
+index ce486a2..cfda889 100644
+--- a/ProjectSettings/EditorSettings.asset
++++ b/ProjectSettings/EditorSettings.asset
+@@ -24,8 +24,8 @@ EditorSettings:
+   m_EnableEditorAsyncCPUTextureLoading: 0
+   m_AsyncShaderCompilation: 1
+   m_PrefabModeAllowAutoSave: 1
+-  m_EnterPlayModeOptionsEnabled: 0
+-  m_EnterPlayModeOptions: 3
++  m_EnterPlayModeOptionsEnabled: 1
++  m_EnterPlayModeOptions: 1
+   m_GameObjectNamingDigits: 1
+   m_GameObjectNamingScheme: 0
+   m_AssetNamingUsesSpace: 1
+diff --git a/design/gdd/foodula-1-drivers.md b/design/gdd/foodula-1-drivers.md
+index ad1f85a..c378fd9 100644
+--- a/design/gdd/foodula-1-drivers.md
++++ b/design/gdd/foodula-1-drivers.md
+@@ -171,7 +171,7 @@
+ | 技能 | Tier 1 (Lv2) | Tier 2 (Lv4) | Tier 3 (Lv6) |
+ |---|---|---|---|
+ | ⭐ 被动「信息海绵」（I04c1已接入） | 每圈首次真实基础巡航记录反馈，下次本人输入抽牌后回收1张旧手永久热，无牌失效 | 来源增加实付黑啤；仍每圈一次、最多回1 | 来源再增加真实德式出弯；不叠加/续期 |
+-| ⚡ 主动「人车合拍」（I04c3a源码接线，Unity/UI待验） | 付1永久热锁定一个已拥有原生来源，本次首次非零收益额外+2，每场1次 | 窗口为本次及下次本人输入，各最多+2，总上限+4 | 不再增幅/延长；每场2次 |
++| ⚡ 主动「人车合拍」（I04c3b生产按钮/受控UI已验，完整模式待I13） | 付1永久热锁定一个已拥有原生来源，本次首次非零收益额外+2，每场1次 | 窗口为本次及下次本人输入，各最多+2，总上限+4 | 不再增幅/延长；每场2次 |
+ 
+ > **背景**：来自海德堡附近的中产郊区。父亲的业余爱好是卡丁车，他从 12 岁起被红牛赞助。自己谈合同、不带随从、住在远离赛道的民宿。他对气候变化的愤怒和他对速度的渴望一样真实——也许更真实。他退役那天，嘴里念着蜜蜂和碳信用。
+ 
+@@ -443,3 +443,14 @@ I04c3：把维特尔固定来源主动接到真实技能按钮和一次合并来
+ Unity工具已不可用，本轮没有操作编辑器、没有验证当前scene/isDirty/播放/编译导入/许可/Console/ready，新程序集实际Unity加载未确认。新增48HUD+3profile案例已编译并登记ui，实际执行0；已有两输入真实GameLoop改为Manager实际技能按钮+HUD来源确认，未在新源码上执行。三尺寸改后截图0，10月29日C3改前HUD/profile共6帧为历史前置、不能充当改后验收；玩家可操作、完整模式、存档与硬件均不标通过。
+ 
+ I04c3b：Unity工具可用后先核验场景/播放/编译导入/许可/Console/ready，再让最终新程序集实际加载，运行tech/drivers及依赖、51项真实UI检查与已升级的GameLoop；实际查看三尺寸改后HUD/profile及输入/取消/焦点/遮罩。当前不推进I05，完整模式/存档/硬件仍I13。
++
++
++### 2026-11-02 I04c3b：维特尔来源按钮原生与三尺寸有界验收
++
++维特尔“人车合拍”真实来源/费用单模态、取消/陈旧计划/重复确认、禁用/余次与窗口已按生产按钮验收；本轮生产补齐未达3级的明确禁用原因，仍不得发动、不改变固定费用和窗口规则。UI夹具补真实图形渲染与ButtonClickAnimation自然Awake生命周期，旧移动规则夹具改真实固定来源付费初始化，保留并加强原断言。ID、XP、解锁和1/1/2次数不变。
++
++最终runtime 25ad4092-697e-4d32-ba75-25feab6a198b、editor 42aec987-6dce-496f-8eb7-bd9b396bc69b已实际加载；tech/drivers/ui/core四模块2321/2321通过，失败/跳过/不确定0，43.3136297秒（含51项D04UI/profile），另9项真实GameLoop及1项生产协程10/10通过，19.4897232秒，原生RunFinished一致。首轮11模块3827/3865、38失败的原始记录保留；两类101/101与中间51/51属对应历史程序集，不冒称最终3865全绿，不累计重叠案例。
++
++最终生成三尺寸HUD24张/profile3张；UI专项实际查看HUD每尺寸0/1/3/4/5共15全帧、beforeHUD3帧及profile前后6帧，根另复核最终HUD3帧和profile后3帧，费用/来源/取消/焦点/遮罩/窗口按钮/低级禁用文字覆盖；首版按钮缩零和第二版低级误提示图保留并标被拒/中间，不算最终。受控生产Canvas与真实Raycaster/Submit不等于完整RaceCanvas、硬件Escape/拖动、全部模式、存档或720p舒适度；profile其他14项既有溢出留I13。Unity最终MainMenu干净空闲，Console/许可/ready详见证据；未保存脏场景或改快速播放。
++
++I04按既有有界完成语义收口，当前指针I05，仅下一包接IT科技主案及阿斯卡里；完整模式/存档/硬件组合仍I13，未声称十二车手全部完成。证据：[I04c3b原生与视觉记录](../../production/qa/evidence/tech-driver-I04c3b-2026-11-02/README.md)。
+diff --git a/design/gdd/foodula-1-tech-tree.md b/design/gdd/foodula-1-tech-tree.md
+index 7ad3dd0..5974aae 100644
+--- a/design/gdd/foodula-1-tech-tree.md
++++ b/design/gdd/foodula-1-tech-tree.md
+@@ -734,3 +734,14 @@ I04c2：维特尔主动固定来源选择、永久热固定费用与有限本人
+ 源码接线：维特尔“人车合拍”真实Manager/HUD按钮始终路由固定来源计划，失败也不回落旧免费发动；选择真实VettelNativeSource枚举与1永久引擎热→手牌费用合并为一个必需模态，关闭额外确认开关仍须选择来源。确认先捕获枚举再清行；取消/过期/生命周期不扣费，原卡牌/续段选择保留。新增当前/下次/本次已用与本人窗口/场次文案，玩家名转义TMP标签；旧跨挡免热和通用免费发动已从源码移除，ID/XP/解锁/次数不变。
+ 
+ 基础巡航始终可选，黑啤/德式出弯仅列已有科技；支付、原生触发与+2尾段仍沿I04c2生产边界。Unity工具已不可用，本轮没有操作编辑器、没有验证当前scene/isDirty/播放/编译导入/许可/Console/ready，新程序集实际Unity加载未确认。新增48HUD+3profile案例已编译并登记ui，实际执行0；已有两输入真实GameLoop改为Manager实际技能按钮+HUD来源确认，未在新源码上执行。三尺寸改后截图0，10月29日C3改前HUD/profile共6帧为历史前置、不能充当改后验收；玩家可操作、完整模式、存档与硬件均不标通过。
++
++
++### 2026-11-02 I04c3b：维特尔来源按钮原生与三尺寸有界验收
++
++维特尔“人车合拍”真实来源/费用单模态、取消/陈旧计划/重复确认、禁用/余次与窗口已按生产按钮验收；本轮生产补齐未达3级的明确禁用原因，仍不得发动、不改变固定费用和窗口规则。UI夹具补真实图形渲染与ButtonClickAnimation自然Awake生命周期，旧移动规则夹具改真实固定来源付费初始化，保留并加强原断言。ID、XP、解锁和1/1/2次数不变。
++
++最终runtime 25ad4092-697e-4d32-ba75-25feab6a198b、editor 42aec987-6dce-496f-8eb7-bd9b396bc69b已实际加载；tech/drivers/ui/core四模块2321/2321通过，失败/跳过/不确定0，43.3136297秒（含51项D04UI/profile），另9项真实GameLoop及1项生产协程10/10通过，19.4897232秒，原生RunFinished一致。首轮11模块3827/3865、38失败的原始记录保留；两类101/101与中间51/51属对应历史程序集，不冒称最终3865全绿，不累计重叠案例。
++
++最终生成三尺寸HUD24张/profile3张；UI专项实际查看HUD每尺寸0/1/3/4/5共15全帧、beforeHUD3帧及profile前后6帧，根另复核最终HUD3帧和profile后3帧，费用/来源/取消/焦点/遮罩/窗口按钮/低级禁用文字覆盖；首版按钮缩零和第二版低级误提示图保留并标被拒/中间，不算最终。受控生产Canvas与真实Raycaster/Submit不等于完整RaceCanvas、硬件Escape/拖动、全部模式、存档或720p舒适度；profile其他14项既有溢出留I13。Unity最终MainMenu干净空闲，Console/许可/ready详见证据；未保存脏场景或改快速播放。
++
++I04按既有有界完成语义收口，当前指针I05，仅下一包接IT科技主案及阿斯卡里；完整模式/存档/硬件组合仍I13，未声称十二车手全部完成。证据：[I04c3b原生与视觉记录](../../production/qa/evidence/tech-driver-I04c3b-2026-11-02/README.md)。
+diff --git a/design/planning/tech-driver-rework-2026-10-22/implementation-plan.json b/design/planning/tech-driver-rework-2026-10-22/implementation-plan.json
+index 220fcbc..b052b7a 100644
+--- a/design/planning/tech-driver-rework-2026-10-22/implementation-plan.json
++++ b/design/planning/tech-driver-rework-2026-10-22/implementation-plan.json
+@@ -89,7 +89,7 @@
+     "教程继续禁用科技与车手；生涯八站快照、四站夏休、普通 RP/XP 隔离保持。普通 AI 当前未启用车手技能，不自动扩大为 AI 新玩法。",
+     "保留现有存档、未知未来字段与旧版本兼容；仅为已选汤底或运行态所需的最小兼容字段可以新增并验证，禁止删档或静默清零。"
+   ],
+-  "current_package": "I04",
++  "current_package": "I05",
+   "packages": [
+     {
+       "id": "I00",
+@@ -1090,7 +1090,7 @@
+     },
+     {
+       "id": "I04",
+-      "status": "in_progress",
++      "status": "implemented_bounded_acceptance_passed_full_modes_pending",
+       "scope": "舒马赫与维特尔真实来源、本人输入窗口及与黑啤联动。",
+       "schumacher_passive_slice": {
+         "id": "I04a",
+@@ -1222,13 +1222,13 @@
+           "cached_diff_check": 0
+         }
+       },
+-      "next_slice": "I04c3b：Unity工具可用后先核验场景/播放/编译导入/许可/Console/ready，再让最终新程序集实际加载，运行tech/drivers及依赖、51项真实UI检查与已升级的GameLoop；实际查看三尺寸改后HUD/profile及输入/取消/焦点/遮罩。当前不推进I05，完整模式/存档/硬件仍I13。",
++      "next_slice": "I05：按锁定IT主方案接意大利科技及阿斯卡里；先处理同牌互斥、正贡献、安全弯心，保留L2A加手牌与L3B既有投资附一次精调、不加单场RP。I04有界验收通过，完整模式/存档/硬件组合仍I13。",
+       "verification": {
+         "schumacher_passive_pure_rules": true,
+         "schumacher_passive_production_wiring": true,
+         "schumacher_passive_actual_owner_inputs": true,
+         "schumacher_active": true,
+-        "vettel": false,
++        "vettel": true,
+         "complete_modes": false,
+         "schumacher_active_runtime": true,
+         "schumacher_active_manager_api": true,
+@@ -1240,14 +1240,16 @@
+         "vettel_passive_actual_owner_inputs": true,
+         "vettel_passive_controlled_profile_UI": true,
+         "vettel_passive_actual_GameLoop": true,
+-        "vettel_active": false,
++        "vettel_active": true,
+         "vettel_active_runtime": true,
+         "vettel_active_manager_API": true,
+         "vettel_active_actual_GameLoop": true,
+-        "vettel_active_player_button": false,
+-        "vettel_active_controlled_UI": false,
++        "vettel_active_player_button": true,
++        "vettel_active_controlled_UI": true,
+         "vettel_active_player_button_source_wired": true,
+-        "vettel_active_offline_compile": true
++        "vettel_active_offline_compile": true,
++        "complete_modes_package": "I13",
++        "focused_automatic_verification": true
+       },
+       "schumacher_strategy_runtime_slice": {
+         "id": "I04b1",
+@@ -1849,6 +1851,186 @@
+         "next_slice": "I04c3b：Unity工具可用后先核验场景/播放/编译导入/许可/Console/ready，再让最终新程序集实际加载，运行tech/drivers及依赖、51项真实UI检查与已升级的GameLoop；实际查看三尺寸改后HUD/profile及输入/取消/焦点/遮罩。当前不推进I05，完整模式/存档/硬件仍I13。",
+         "evidence": "../../../production/qa/evidence/tech-driver-I04c3a-2026-11-02/README.md",
+         "git": "HEAD4c94d01 unchanged, staged empty; no commit/push/reset/checkout/rebase/file cleanup/package install/system or quick-play changes."
++      },
++      "vettel_active_UI_verified_slice": {
++        "id": "I04c3b",
++        "local_date": "2026-11-02",
++        "status": "production_button_disabled_reason_and_bounded_native_controlled_UI_verified_full_modes_pending",
++        "scope": "Production Vettel typed-source HUD entry, one fixed-source/fee modal and finite owner window verified in native Unity. This package adds the level3 unlock disabled reason and strengthens owned UI/movement fixtures without weakening payment, source, lifecycle, raycast or focus assertions. No technology branch, identity, XP key, unlock tier or active-use changes.",
++        "initial_native": {
++          "startedUtc": "2026-11-02T03:55:35.6847989Z",
++          "endedUtc": "2026-11-02T03:57:29.7372003Z",
++          "state": "Failed(Child)",
++          "nativeState": "Failed(Child)",
++          "seconds": 90.2351281,
++          "total": 3865,
++          "passed": 3827,
++          "failed": 38,
++          "skipped": 0,
++          "inconclusive": 0,
++          "selectionMatches": true
++        },
++        "initial_failure_classes": {
++          "VettelRhythmProductionUiTests": 36,
++          "RaceMovementRulesTests": 2
++        },
++        "initial_failure_resolution": "D04 owned UI fixture missed real UI-layer/canvas/TMP render preparation before raycast; legacy movement fixture still attempted removed generic free activation. Native assertions retained; Vettel initialization now commits a real fixed-source fee plan and checks Rhythm.Version unchanged.",
++        "targeted_native_retry": {
++          "total": 101,
++          "passed": 101,
++          "failed": 0,
++          "skipped": 0,
++          "durationSeconds": 3.4307996,
++          "resultState": "Passed"
++        },
++        "targeted_retry_selection": [
++          "VettelRhythmProductionUiTests (51)",
++          "RaceMovementRulesTests (50)"
++        ],
++        "native_GameLoop_RunFinished": {
++          "fullName": "Foodula1",
++          "resultState": "Passed",
++          "endedUtc": "2026-11-02T04:08:17.4932926Z",
++          "total": 10,
++          "passed": 10,
++          "failed": 0,
++          "skipped": 0,
++          "inconclusive": 0,
++          "message": "",
++          "output": "",
++          "stackTrace": ""
++        },
++        "test_count_boundary": "Final four modules2321/2321 43.3136297s plus disjoint9GameLoop+1production coroutine10/10 19.4897232s=2331 final selected tests. Initial3865/3827pass/38fail90.2351281s, intermediate101/1013.4307996s and51/513.1034578s and10/1018.2151551s retained as prior assembly evidence, not cumulatively independent and not final3865/3865.",
++        "initial_runtime_mvid": "6d288778-ccda-4464-9ece-ebc2038f01eb",
++        "initial_editor_mvid": "f9a48bd9-0e21-4cf4-8c02-9baa75db3daa",
++        "runtime_mvid": "25ad4092-697e-4d32-ba75-25feab6a198b",
++        "first_retry_editor_mvid": "97ec211e-12e1-4323-8e20-9be54cd5e2c3",
++        "new_assemblies_loaded": true,
++        "visual": {
++          "before_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/before/hud-20261029-044246962",
++          "before_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/before/profile",
++          "rejected_after_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/after/hud-20261102-040051989",
++          "rejected_reason": "First24afterHUDframes rejected: owned EditMode fixture missed ButtonClickAnimation.Awake, so reduceMotion Down/Up used zero original scale and collapsed the skill button. Natural lifecycle fix and subsequent final native/captures supersede these rejected frames; originals retained.",
++          "profile_after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3b-2026-11-02/after/profile",
++          "profile_frames_viewed_by_root": 3,
++          "profile_D04_new_active_overflow": 0,
++          "other_profile_overflows": "Existing names/UK content overflow remains unaccepted; no full-page readability or720pcomfort acceptance.",
++          "sizes": [
++            "1920x1080",
++            "2560x1440",
++            "1280x720"
++          ],
++          "three_size_final_HUD_verified": true,
++          "intermediate_after_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/after/hud-20261102-040440799",
++          "intermediate_boundary": "Second24HUDframes render the paid window button after naturalAwake fixture initialization, but the then-current low-level disabled label was still generic. This intermediate set is not final disabled-reason acceptance; final production3级解锁 label and later current-runtime/native/capture evidence supersede it.",
++          "final_after_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/after/hud-20261102-040754001",
++          "final_HUD_frames_created": 24,
++          "profile_frames_created": 3,
++          "specialist_final_viewed": "All3 sizes x HUD0/1/3/4/5=15 full frames, plus beforeHUD3 and before/afterprofile6 full frames. Root also viewed1920-5/2560-0/1280-3 final and all3 profileafter.",
++          "intermediate_rejected_HUD": "hud-20261102-040051989 scale-zero afterpointer fixture, rejected; hud-20261102-040440799 window visible but level reason pending, intermediate. All retained.",
++          "profile_boundary": "Captured on earlier runtime6d288778 in same turn; DriverData/DriverSelectionUI unchanged by final two-line manager-only disabled label. Final2321 module includes all3 profilecases. Other14 existing text overflows, full-menu/hardware/fullmodes/720p comfort not accepted.",
++          "final_profile_target": "D04 new active summary only; all3 final module profilecases passed, other14 existing profileoverflows unaccepted."
++        },
++        "review": "Independent Unity UI, QA and primary Unity specialists found no production-source blocker; readonly reviews are not native execution evidence.",
++        "acceptance": {
++          "source_wiring": true,
++          "Unity_new_assembly_loaded": true,
++          "pure_rules": true,
++          "production_wiring": true,
++          "actual_manager_HUD_GameLoop": true,
++          "typed_modal_native_cases": true,
++          "player_operable": true,
++          "player_operable_scope": "Owned three-size production HUD/manager with GraphicRaycaster pointer and EventSystem Submit, plus actual9GameLoop+1production coroutine; not hardware/fullRaceCanvas/modes.",
++          "three_size_final_controlled_UI": true,
++          "complete_modes_and_save": false
++        },
++        "license": {
++          "free": true,
++          "education": false,
++          "pro": false
++        },
++        "Unity_boundary": "Final loaded new runtime/editor, MainMenu clean and idle, Free license valid, Console0 errors/0warnings (2logs), ready true. No dirty-scene save, settings change or user play interruption.",
++        "preservation": {
++          "Word": 8,
++          "scenes": 32,
++          "excluded_files": 4,
++          "baseline_untracked": 78,
++          "final_SHA_check": "44 protected sourceWord/scene/excluded hashes unchanged; unrelated78untracked preserved, final root check and copied manifest verified.",
++          "SHA_mismatches": [],
++          "unrelated_untracked_entries_preserved": 78
++        },
++        "git": "HEAD99c06bc from previous explicitly authorized GitHub submission; no commit/push/reset/checkout/rebase in this heartbeat.",
++        "next_slice": "I05：按锁定IT主方案接意大利科技及阿斯卡里；先处理同牌互斥、正贡献、安全弯心，保留L2A加手牌与L3B既有投资附一次精调、不加单场RP。I04有界验收通过，完整模式/存档/硬件组合仍I13。",
++        "intermediate_UI_native": {
++          "total": 51,
++          "passed": 51,
++          "failed": 0,
++          "skipped": 0,
++          "seconds": 3.1034578,
++          "editor_mvid": "0b1bc90d-b37f-4806-a0a1-6ed8dfc81543",
++          "boundary": "NaturalAwake fixture correction. Does not establish final low-level disabled-reason acceptance; retained as an intermediate run."
++        },
++        "editor_mvid": "42aec987-6dce-496f-8eb7-bd9b396bc69b",
++        "native_final": {
++          "startedUtc": "2026-11-02T04:06:29.2525016Z",
++          "endedUtc": "2026-11-02T04:07:19.2439856Z",
++          "state": "Passed",
++          "nativeState": "Passed",
++          "seconds": 43.3136297,
++          "total": 2321,
++          "passed": 2321,
++          "failed": 0,
++          "skipped": 0,
++          "inconclusive": 0,
++          "selectionMatches": true,
++          "unexpected": [],
++          "missing": []
++        },
++        "GameLoop_final": {
++          "total": 10,
++          "passed": 10,
++          "failed": 0,
++          "skipped": 0,
++          "durationSeconds": 19.4897232,
++          "resultState": "Passed"
++        },
++        "production_change": "D04 enabled Tier0 button explicitly states driver level3 unlock; remains disabled. Fixed-source fee/window/XP/ID/uses unchanged.",
++        "new_NUnit_cases": 0,
++        "final_modules": [
++          "tech",
++          "drivers",
++          "ui",
++          "core"
++        ],
++        "Unity_final": {
++          "runtime": "25ad4092-697e-4d32-ba75-25feab6a198b",
++          "editor": "42aec987-6dce-496f-8eb7-bd9b396bc69b",
++          "scene": "Assets/Scenes/MainMenu.unity",
++          "dirty": false,
++          "playing": false,
++          "compiling": false,
++          "updating": false,
++          "busy": false,
++          "native": false,
++          "freeLicense": true,
++          "consoleErrors": 0,
++          "consoleWarnings": 0,
++          "consoleLogs": 2,
++          "ready_for_tools": true
++        },
++        "source_final_sha256": {
++          "Assets/Scripts/Core/MVPGameManager.cs": "f697c810b60eb495d355242bb1bfc88a904ac1ca47cc3d8d1d601d224865fc55",
++          "Assets/Tests/Editor/vettel_rhythm_production_ui_test.cs": "2bcb61bb64dd64ca53b43bd335e07681e7a405a49c5226ebf3c103a4f794ca47",
++          "Assets/Tests/Editor/race_movement_rules_test.cs": "1bb58267c5de4c3fa57c641c242552726a3145ac29dfafed34cc26cf0d4a4f8f"
++        },
++        "GameLoop_intermediate": {
++          "total": 10,
++          "passed": 10,
++          "failed": 0,
++          "skipped": 0,
++          "durationSeconds": 18.2151551,
++          "resultState": "Passed"
++        }
+       }
+     },
+     {
+@@ -1909,10 +2091,10 @@
+     "I00b",
+     "I00"
+   ],
+-  "tests_executed_for_implementation": 115,
+-  "note": "I04b2 actual D03 button/HUD/controlled3size UI verified. 11modules3618 and6GameLoop passed before final profile-only font adjustment; fresh finalui/drivers/tech1576 passed. Overlapping selections are not additive unique tests. I04 remainsin_progress; nextVettelI04c, fullmodesI13.",
+-  "last_implementation_package": "I04c3a",
+-  "tests_count_semantics": "Latest C3a standalone only: disjoint64+51=115executed,114passed/1environmentFailed/0skipped; Unity executions0, prior native evidence remains historical in handoffs.",
++  "tests_executed_for_implementation": 2331,
++  "note": "I04c3b最终新程序集已原生定向模块/长流程与三尺寸受控UI验证；I04有界完成，I05待下一包，完整模式/存档/硬件仍I13。历史失败/中间结果保留，不算最终通过。",
++  "last_implementation_package": "I04c3b",
++  "tests_count_semantics": "Final four modules2321/2321 43.3136297s plus disjoint9GameLoop+1production coroutine10/10 19.4897232s=2331 final selected tests. Initial3865/3827pass/38fail90.2351281s, intermediate101/1013.4307996s and51/513.1034578s and10/1018.2151551s retained as prior assembly evidence, not cumulatively independent and not final3865/3865.",
+   "uk_hunting_cap_question": {
+     "status": "answered_by_user",
+     "source": "driver draft paragraph 102 and direct async user reply in this chat",
+@@ -2724,6 +2906,186 @@
+       "next_slice": "I04c3b：Unity工具可用后先核验场景/播放/编译导入/许可/Console/ready，再让最终新程序集实际加载，运行tech/drivers及依赖、51项真实UI检查与已升级的GameLoop；实际查看三尺寸改后HUD/profile及输入/取消/焦点/遮罩。当前不推进I05，完整模式/存档/硬件仍I13。",
+       "evidence": "../../../production/qa/evidence/tech-driver-I04c3a-2026-11-02/README.md",
+       "git": "HEAD4c94d01 unchanged, staged empty; no commit/push/reset/checkout/rebase/file cleanup/package install/system or quick-play changes."
++    },
++    {
++      "id": "I04c3b",
++      "local_date": "2026-11-02",
++      "status": "production_button_disabled_reason_and_bounded_native_controlled_UI_verified_full_modes_pending",
++      "scope": "Production Vettel typed-source HUD entry, one fixed-source/fee modal and finite owner window verified in native Unity. This package adds the level3 unlock disabled reason and strengthens owned UI/movement fixtures without weakening payment, source, lifecycle, raycast or focus assertions. No technology branch, identity, XP key, unlock tier or active-use changes.",
++      "initial_native": {
++        "startedUtc": "2026-11-02T03:55:35.6847989Z",
++        "endedUtc": "2026-11-02T03:57:29.7372003Z",
++        "state": "Failed(Child)",
++        "nativeState": "Failed(Child)",
++        "seconds": 90.2351281,
++        "total": 3865,
++        "passed": 3827,
++        "failed": 38,
++        "skipped": 0,
++        "inconclusive": 0,
++        "selectionMatches": true
++      },
++      "initial_failure_classes": {
++        "VettelRhythmProductionUiTests": 36,
++        "RaceMovementRulesTests": 2
++      },
++      "initial_failure_resolution": "D04 owned UI fixture missed real UI-layer/canvas/TMP render preparation before raycast; legacy movement fixture still attempted removed generic free activation. Native assertions retained; Vettel initialization now commits a real fixed-source fee plan and checks Rhythm.Version unchanged.",
++      "targeted_native_retry": {
++        "total": 101,
++        "passed": 101,
++        "failed": 0,
++        "skipped": 0,
++        "durationSeconds": 3.4307996,
++        "resultState": "Passed"
++      },
++      "targeted_retry_selection": [
++        "VettelRhythmProductionUiTests (51)",
++        "RaceMovementRulesTests (50)"
++      ],
++      "native_GameLoop_RunFinished": {
++        "fullName": "Foodula1",
++        "resultState": "Passed",
++        "endedUtc": "2026-11-02T04:08:17.4932926Z",
++        "total": 10,
++        "passed": 10,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "message": "",
++        "output": "",
++        "stackTrace": ""
++      },
++      "test_count_boundary": "Final four modules2321/2321 43.3136297s plus disjoint9GameLoop+1production coroutine10/10 19.4897232s=2331 final selected tests. Initial3865/3827pass/38fail90.2351281s, intermediate101/1013.4307996s and51/513.1034578s and10/1018.2151551s retained as prior assembly evidence, not cumulatively independent and not final3865/3865.",
++      "initial_runtime_mvid": "6d288778-ccda-4464-9ece-ebc2038f01eb",
++      "initial_editor_mvid": "f9a48bd9-0e21-4cf4-8c02-9baa75db3daa",
++      "runtime_mvid": "25ad4092-697e-4d32-ba75-25feab6a198b",
++      "first_retry_editor_mvid": "97ec211e-12e1-4323-8e20-9be54cd5e2c3",
++      "new_assemblies_loaded": true,
++      "visual": {
++        "before_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/before/hud-20261029-044246962",
++        "before_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/before/profile",
++        "rejected_after_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/after/hud-20261102-040051989",
++        "rejected_reason": "First24afterHUDframes rejected: owned EditMode fixture missed ButtonClickAnimation.Awake, so reduceMotion Down/Up used zero original scale and collapsed the skill button. Natural lifecycle fix and subsequent final native/captures supersede these rejected frames; originals retained.",
++        "profile_after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3b-2026-11-02/after/profile",
++        "profile_frames_viewed_by_root": 3,
++        "profile_D04_new_active_overflow": 0,
++        "other_profile_overflows": "Existing names/UK content overflow remains unaccepted; no full-page readability or720pcomfort acceptance.",
++        "sizes": [
++          "1920x1080",
++          "2560x1440",
++          "1280x720"
++        ],
++        "three_size_final_HUD_verified": true,
++        "intermediate_after_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/after/hud-20261102-040440799",
++        "intermediate_boundary": "Second24HUDframes render the paid window button after naturalAwake fixture initialization, but the then-current low-level disabled label was still generic. This intermediate set is not final disabled-reason acceptance; final production3级解锁 label and later current-runtime/native/capture evidence supersede it.",
++        "final_after_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/after/hud-20261102-040754001",
++        "final_HUD_frames_created": 24,
++        "profile_frames_created": 3,
++        "specialist_final_viewed": "All3 sizes x HUD0/1/3/4/5=15 full frames, plus beforeHUD3 and before/afterprofile6 full frames. Root also viewed1920-5/2560-0/1280-3 final and all3 profileafter.",
++        "intermediate_rejected_HUD": "hud-20261102-040051989 scale-zero afterpointer fixture, rejected; hud-20261102-040440799 window visible but level reason pending, intermediate. All retained.",
++        "profile_boundary": "Captured on earlier runtime6d288778 in same turn; DriverData/DriverSelectionUI unchanged by final two-line manager-only disabled label. Final2321 module includes all3 profilecases. Other14 existing text overflows, full-menu/hardware/fullmodes/720p comfort not accepted.",
++        "final_profile_target": "D04 new active summary only; all3 final module profilecases passed, other14 existing profileoverflows unaccepted."
++      },
++      "review": "Independent Unity UI, QA and primary Unity specialists found no production-source blocker; readonly reviews are not native execution evidence.",
++      "acceptance": {
++        "source_wiring": true,
++        "Unity_new_assembly_loaded": true,
++        "pure_rules": true,
++        "production_wiring": true,
++        "actual_manager_HUD_GameLoop": true,
++        "typed_modal_native_cases": true,
++        "player_operable": true,
++        "player_operable_scope": "Owned three-size production HUD/manager with GraphicRaycaster pointer and EventSystem Submit, plus actual9GameLoop+1production coroutine; not hardware/fullRaceCanvas/modes.",
++        "three_size_final_controlled_UI": true,
++        "complete_modes_and_save": false
++      },
++      "license": {
++        "free": true,
++        "education": false,
++        "pro": false
++      },
++      "Unity_boundary": "Final loaded new runtime/editor, MainMenu clean and idle, Free license valid, Console0 errors/0warnings (2logs), ready true. No dirty-scene save, settings change or user play interruption.",
++      "preservation": {
++        "Word": 8,
++        "scenes": 32,
++        "excluded_files": 4,
++        "baseline_untracked": 78,
++        "final_SHA_check": "44 protected sourceWord/scene/excluded hashes unchanged; unrelated78untracked preserved, final root check and copied manifest verified.",
++        "SHA_mismatches": [],
++        "unrelated_untracked_entries_preserved": 78
++      },
++      "git": "HEAD99c06bc from previous explicitly authorized GitHub submission; no commit/push/reset/checkout/rebase in this heartbeat.",
++      "next_slice": "I05：按锁定IT主方案接意大利科技及阿斯卡里；先处理同牌互斥、正贡献、安全弯心，保留L2A加手牌与L3B既有投资附一次精调、不加单场RP。I04有界验收通过，完整模式/存档/硬件组合仍I13。",
++      "intermediate_UI_native": {
++        "total": 51,
++        "passed": 51,
++        "failed": 0,
++        "skipped": 0,
++        "seconds": 3.1034578,
++        "editor_mvid": "0b1bc90d-b37f-4806-a0a1-6ed8dfc81543",
++        "boundary": "NaturalAwake fixture correction. Does not establish final low-level disabled-reason acceptance; retained as an intermediate run."
++      },
++      "editor_mvid": "42aec987-6dce-496f-8eb7-bd9b396bc69b",
++      "native_final": {
++        "startedUtc": "2026-11-02T04:06:29.2525016Z",
++        "endedUtc": "2026-11-02T04:07:19.2439856Z",
++        "state": "Passed",
++        "nativeState": "Passed",
++        "seconds": 43.3136297,
++        "total": 2321,
++        "passed": 2321,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "selectionMatches": true,
++        "unexpected": [],
++        "missing": []
++      },
++      "GameLoop_final": {
++        "total": 10,
++        "passed": 10,
++        "failed": 0,
++        "skipped": 0,
++        "durationSeconds": 19.4897232,
++        "resultState": "Passed"
++      },
++      "production_change": "D04 enabled Tier0 button explicitly states driver level3 unlock; remains disabled. Fixed-source fee/window/XP/ID/uses unchanged.",
++      "new_NUnit_cases": 0,
++      "final_modules": [
++        "tech",
++        "drivers",
++        "ui",
++        "core"
++      ],
++      "Unity_final": {
++        "runtime": "25ad4092-697e-4d32-ba75-25feab6a198b",
++        "editor": "42aec987-6dce-496f-8eb7-bd9b396bc69b",
++        "scene": "Assets/Scenes/MainMenu.unity",
++        "dirty": false,
++        "playing": false,
++        "compiling": false,
++        "updating": false,
++        "busy": false,
++        "native": false,
++        "freeLicense": true,
++        "consoleErrors": 0,
++        "consoleWarnings": 0,
++        "consoleLogs": 2,
++        "ready_for_tools": true
++      },
++      "source_final_sha256": {
++        "Assets/Scripts/Core/MVPGameManager.cs": "f697c810b60eb495d355242bb1bfc88a904ac1ca47cc3d8d1d601d224865fc55",
++        "Assets/Tests/Editor/vettel_rhythm_production_ui_test.cs": "2bcb61bb64dd64ca53b43bd335e07681e7a405a49c5226ebf3c103a4f794ca47",
++        "Assets/Tests/Editor/race_movement_rules_test.cs": "1bb58267c5de4c3fa57c641c242552726a3145ac29dfafed34cc26cf0d4a4f8f"
++      },
++      "GameLoop_intermediate": {
++        "total": 10,
++        "passed": 10,
++        "failed": 0,
++        "skipped": 0,
++        "durationSeconds": 18.2151551,
++        "resultState": "Passed"
++      }
+     }
+   ]
+ }
+diff --git a/design/planning/tech-driver-rework-2026-10-22/progress.json b/design/planning/tech-driver-rework-2026-10-22/progress.json
+index 3511bd1..282d509 100644
+--- a/design/planning/tech-driver-rework-2026-10-22/progress.json
++++ b/design/planning/tech-driver-rework-2026-10-22/progress.json
+@@ -30,7 +30,7 @@
+   ],
+   "sources_opened": 24,
+   "status": "implementation_in_progress",
+-  "next_package": "I04c：维特尔固定真实非零原生来源的有限增幅及本人输入窗口，沿锁定方案与DE科技联动；I04不标整包完成，全模式/存档/硬件组合仍I13。",
++  "next_package": "I05：按锁定IT主方案接意大利科技及阿斯卡里；先处理同牌互斥、正贡献、安全弯心，保留L2A加手牌与L3B既有投资附一次精调、不加单场RP。I04有界验收通过，完整模式/存档/硬件组合仍I13。",
+   "implementation_authorized": true,
+   "stages": [
+     {
+@@ -592,7 +592,7 @@
+     "plan": "implementation-plan.json"
+   },
+   "implementation_plan": "implementation-plan.json",
+-  "implementation_current_package": "I04",
++  "implementation_current_package": "I05",
+   "implementation_setup": {
+     "date": "2026-10-22",
+     "status": "automation_active_and_handoff_recorded",
+@@ -603,8 +603,8 @@
+     "automation_prompt_sha256": "d3b28cfe0313d5ce25218f76ff10d56ec2253e5e79e3f4ad68ca157609971d2f",
+     "baseline": "D:\\UnityProject\\Foodula1\\Library\\AutomationReview\\tech-driver-implementation-20261022-174531\\baseline.json"
+   },
+-  "implementation_last_package": "I04c3a",
+-  "implementation_next_slice": "I04c3b：Unity工具可用后先核验场景/播放/编译导入/许可/Console/ready，再让最终新程序集实际加载，运行tech/drivers及依赖、51项真实UI检查与已升级的GameLoop；实际查看三尺寸改后HUD/profile及输入/取消/焦点/遮罩。当前不推进I05，完整模式/存档/硬件仍I13。",
++  "implementation_last_package": "I04c3b",
++  "implementation_next_slice": "I05：按锁定IT主方案接意大利科技及阿斯卡里；先处理同牌互斥、正贡献、安全弯心，保留L2A加手牌与L3B既有投资附一次精调、不加单场RP。I04有界验收通过，完整模式/存档/硬件组合仍I13。",
+   "uk_hunting_cap_question": {
+     "status": "answered_by_user",
+     "source": "driver draft paragraph 102 and direct async user reply in this chat",
+@@ -2369,6 +2369,186 @@
+       "next_slice": "I04c3b：Unity工具可用后先核验场景/播放/编译导入/许可/Console/ready，再让最终新程序集实际加载，运行tech/drivers及依赖、51项真实UI检查与已升级的GameLoop；实际查看三尺寸改后HUD/profile及输入/取消/焦点/遮罩。当前不推进I05，完整模式/存档/硬件仍I13。",
+       "evidence": "../../../production/qa/evidence/tech-driver-I04c3a-2026-11-02/README.md",
+       "git": "HEAD4c94d01 unchanged, staged empty; no commit/push/reset/checkout/rebase/file cleanup/package install/system or quick-play changes."
++    },
++    {
++      "id": "I04c3b",
++      "local_date": "2026-11-02",
++      "status": "production_button_disabled_reason_and_bounded_native_controlled_UI_verified_full_modes_pending",
++      "scope": "Production Vettel typed-source HUD entry, one fixed-source/fee modal and finite owner window verified in native Unity. This package adds the level3 unlock disabled reason and strengthens owned UI/movement fixtures without weakening payment, source, lifecycle, raycast or focus assertions. No technology branch, identity, XP key, unlock tier or active-use changes.",
++      "initial_native": {
++        "startedUtc": "2026-11-02T03:55:35.6847989Z",
++        "endedUtc": "2026-11-02T03:57:29.7372003Z",
++        "state": "Failed(Child)",
++        "nativeState": "Failed(Child)",
++        "seconds": 90.2351281,
++        "total": 3865,
++        "passed": 3827,
++        "failed": 38,
++        "skipped": 0,
++        "inconclusive": 0,
++        "selectionMatches": true
++      },
++      "initial_failure_classes": {
++        "VettelRhythmProductionUiTests": 36,
++        "RaceMovementRulesTests": 2
++      },
++      "initial_failure_resolution": "D04 owned UI fixture missed real UI-layer/canvas/TMP render preparation before raycast; legacy movement fixture still attempted removed generic free activation. Native assertions retained; Vettel initialization now commits a real fixed-source fee plan and checks Rhythm.Version unchanged.",
++      "targeted_native_retry": {
++        "total": 101,
++        "passed": 101,
++        "failed": 0,
++        "skipped": 0,
++        "durationSeconds": 3.4307996,
++        "resultState": "Passed"
++      },
++      "targeted_retry_selection": [
++        "VettelRhythmProductionUiTests (51)",
++        "RaceMovementRulesTests (50)"
++      ],
++      "native_GameLoop_RunFinished": {
++        "fullName": "Foodula1",
++        "resultState": "Passed",
++        "endedUtc": "2026-11-02T04:08:17.4932926Z",
++        "total": 10,
++        "passed": 10,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "message": "",
++        "output": "",
++        "stackTrace": ""
++      },
++      "test_count_boundary": "Final four modules2321/2321 43.3136297s plus disjoint9GameLoop+1production coroutine10/10 19.4897232s=2331 final selected tests. Initial3865/3827pass/38fail90.2351281s, intermediate101/1013.4307996s and51/513.1034578s and10/1018.2151551s retained as prior assembly evidence, not cumulatively independent and not final3865/3865.",
++      "initial_runtime_mvid": "6d288778-ccda-4464-9ece-ebc2038f01eb",
++      "initial_editor_mvid": "f9a48bd9-0e21-4cf4-8c02-9baa75db3daa",
++      "runtime_mvid": "25ad4092-697e-4d32-ba75-25feab6a198b",
++      "first_retry_editor_mvid": "97ec211e-12e1-4323-8e20-9be54cd5e2c3",
++      "new_assemblies_loaded": true,
++      "visual": {
++        "before_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/before/hud-20261029-044246962",
++        "before_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/before/profile",
++        "rejected_after_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/after/hud-20261102-040051989",
++        "rejected_reason": "First24afterHUDframes rejected: owned EditMode fixture missed ButtonClickAnimation.Awake, so reduceMotion Down/Up used zero original scale and collapsed the skill button. Natural lifecycle fix and subsequent final native/captures supersede these rejected frames; originals retained.",
++        "profile_after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3b-2026-11-02/after/profile",
++        "profile_frames_viewed_by_root": 3,
++        "profile_D04_new_active_overflow": 0,
++        "other_profile_overflows": "Existing names/UK content overflow remains unaccepted; no full-page readability or720pcomfort acceptance.",
++        "sizes": [
++          "1920x1080",
++          "2560x1440",
++          "1280x720"
++        ],
++        "three_size_final_HUD_verified": true,
++        "intermediate_after_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/after/hud-20261102-040440799",
++        "intermediate_boundary": "Second24HUDframes render the paid window button after naturalAwake fixture initialization, but the then-current low-level disabled label was still generic. This intermediate set is not final disabled-reason acceptance; final production3级解锁 label and later current-runtime/native/capture evidence supersede it.",
++        "final_after_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/after/hud-20261102-040754001",
++        "final_HUD_frames_created": 24,
++        "profile_frames_created": 3,
++        "specialist_final_viewed": "All3 sizes x HUD0/1/3/4/5=15 full frames, plus beforeHUD3 and before/afterprofile6 full frames. Root also viewed1920-5/2560-0/1280-3 final and all3 profileafter.",
++        "intermediate_rejected_HUD": "hud-20261102-040051989 scale-zero afterpointer fixture, rejected; hud-20261102-040440799 window visible but level reason pending, intermediate. All retained.",
++        "profile_boundary": "Captured on earlier runtime6d288778 in same turn; DriverData/DriverSelectionUI unchanged by final two-line manager-only disabled label. Final2321 module includes all3 profilecases. Other14 existing text overflows, full-menu/hardware/fullmodes/720p comfort not accepted.",
++        "final_profile_target": "D04 new active summary only; all3 final module profilecases passed, other14 existing profileoverflows unaccepted."
++      },
++      "review": "Independent Unity UI, QA and primary Unity specialists found no production-source blocker; readonly reviews are not native execution evidence.",
++      "acceptance": {
++        "source_wiring": true,
++        "Unity_new_assembly_loaded": true,
++        "pure_rules": true,
++        "production_wiring": true,
++        "actual_manager_HUD_GameLoop": true,
++        "typed_modal_native_cases": true,
++        "player_operable": true,
++        "player_operable_scope": "Owned three-size production HUD/manager with GraphicRaycaster pointer and EventSystem Submit, plus actual9GameLoop+1production coroutine; not hardware/fullRaceCanvas/modes.",
++        "three_size_final_controlled_UI": true,
++        "complete_modes_and_save": false
++      },
++      "license": {
++        "free": true,
++        "education": false,
++        "pro": false
++      },
++      "Unity_boundary": "Final loaded new runtime/editor, MainMenu clean and idle, Free license valid, Console0 errors/0warnings (2logs), ready true. No dirty-scene save, settings change or user play interruption.",
++      "preservation": {
++        "Word": 8,
++        "scenes": 32,
++        "excluded_files": 4,
++        "baseline_untracked": 78,
++        "final_SHA_check": "44 protected sourceWord/scene/excluded hashes unchanged; unrelated78untracked preserved, final root check and copied manifest verified.",
++        "SHA_mismatches": [],
++        "unrelated_untracked_entries_preserved": 78
++      },
++      "git": "HEAD99c06bc from previous explicitly authorized GitHub submission; no commit/push/reset/checkout/rebase in this heartbeat.",
++      "next_slice": "I05：按锁定IT主方案接意大利科技及阿斯卡里；先处理同牌互斥、正贡献、安全弯心，保留L2A加手牌与L3B既有投资附一次精调、不加单场RP。I04有界验收通过，完整模式/存档/硬件组合仍I13。",
++      "intermediate_UI_native": {
++        "total": 51,
++        "passed": 51,
++        "failed": 0,
++        "skipped": 0,
++        "seconds": 3.1034578,
++        "editor_mvid": "0b1bc90d-b37f-4806-a0a1-6ed8dfc81543",
++        "boundary": "NaturalAwake fixture correction. Does not establish final low-level disabled-reason acceptance; retained as an intermediate run."
++      },
++      "editor_mvid": "42aec987-6dce-496f-8eb7-bd9b396bc69b",
++      "native_final": {
++        "startedUtc": "2026-11-02T04:06:29.2525016Z",
++        "endedUtc": "2026-11-02T04:07:19.2439856Z",
++        "state": "Passed",
++        "nativeState": "Passed",
++        "seconds": 43.3136297,
++        "total": 2321,
++        "passed": 2321,
++        "failed": 0,
++        "skipped": 0,
++        "inconclusive": 0,
++        "selectionMatches": true,
++        "unexpected": [],
++        "missing": []
++      },
++      "GameLoop_final": {
++        "total": 10,
++        "passed": 10,
++        "failed": 0,
++        "skipped": 0,
++        "durationSeconds": 19.4897232,
++        "resultState": "Passed"
++      },
++      "production_change": "D04 enabled Tier0 button explicitly states driver level3 unlock; remains disabled. Fixed-source fee/window/XP/ID/uses unchanged.",
++      "new_NUnit_cases": 0,
++      "final_modules": [
++        "tech",
++        "drivers",
++        "ui",
++        "core"
++      ],
++      "Unity_final": {
++        "runtime": "25ad4092-697e-4d32-ba75-25feab6a198b",
++        "editor": "42aec987-6dce-496f-8eb7-bd9b396bc69b",
++        "scene": "Assets/Scenes/MainMenu.unity",
++        "dirty": false,
++        "playing": false,
++        "compiling": false,
++        "updating": false,
++        "busy": false,
++        "native": false,
++        "freeLicense": true,
++        "consoleErrors": 0,
++        "consoleWarnings": 0,
++        "consoleLogs": 2,
++        "ready_for_tools": true
++      },
++      "source_final_sha256": {
++        "Assets/Scripts/Core/MVPGameManager.cs": "f697c810b60eb495d355242bb1bfc88a904ac1ca47cc3d8d1d601d224865fc55",
++        "Assets/Tests/Editor/vettel_rhythm_production_ui_test.cs": "2bcb61bb64dd64ca53b43bd335e07681e7a405a49c5226ebf3c103a4f794ca47",
++        "Assets/Tests/Editor/race_movement_rules_test.cs": "1bb58267c5de4c3fa57c641c242552726a3145ac29dfafed34cc26cf0d4a4f8f"
++      },
++      "GameLoop_intermediate": {
++        "total": 10,
++        "passed": 10,
++        "failed": 0,
++        "skipped": 0,
++        "durationSeconds": 18.2151551,
++        "resultState": "Passed"
++      }
+     }
+   ]
+ }
+diff --git a/design/ux/racing-tech-ui-checklist.md b/design/ux/racing-tech-ui-checklist.md
+index 1cbb307..6513fb3 100644
+--- a/design/ux/racing-tech-ui-checklist.md
++++ b/design/ux/racing-tech-ui-checklist.md
+@@ -312,3 +312,13 @@ Unity工具已不可用，本轮没有操作编辑器、没有验证当前scene/
+ - [ ] Unity实际加载最终新程序集、确认Console/ready。
+ - [ ] 51项实际HUD/profile检查与已升级两输入GameLoop。
+ - [ ] 改后1920×1080/2560×1440/1280×720截图查看，费用/目标/取消/返回/焦点/遮罩/禁用/拖动及模式边界。
++
++
++### 2026-11-02 I04c3b：维特尔受控UI有界验收
++
++- [x] 当前生产新程序集已实际加载，tech/drivers/ui/core定向模块与10条长流程通过（精确数量/时长见证据）。
++- [x] 三尺寸真实生产受控HUD/profile，来源/费用单模态、取消、焦点、遮罩、窗口/余次和3级解锁禁用原因按实际截图查看清单确认。
++- [x] 保留首轮38失败、第一组被拒图、第二组中间图及修后结果，不用历史/中间结果冒称最终通过。
++- [ ] 完整RaceCanvas、硬件Escape/拖动、完整模式、存档兼容、profile其他既有14项溢出与720p舒适度，继续I13。
++
++详见 [I04c3b证据](../../production/qa/evidence/tech-driver-I04c3b-2026-11-02/README.md)。
+diff --git a/design/ux/racing-tech-ui.md b/design/ux/racing-tech-ui.md
+index 07fb743..52d55e0 100644
+--- a/design/ux/racing-tech-ui.md
++++ b/design/ux/racing-tech-ui.md
+@@ -615,3 +615,14 @@ Unity工具已不可用，本轮没有操作编辑器、没有验证当前scene/
+ - [ ] Unity实际加载最终新程序集、确认Console/ready。
+ - [ ] 51项实际HUD/profile检查与已升级两输入GameLoop。
+ - [ ] 改后1920×1080/2560×1440/1280×720截图查看，费用/目标/取消/返回/焦点/遮罩/禁用/拖动及模式边界。
++
++
++### 2026-11-02 I04c3b：维特尔来源按钮原生与三尺寸有界验收
++
++维特尔“人车合拍”真实来源/费用单模态、取消/陈旧计划/重复确认、禁用/余次与窗口已按生产按钮验收；本轮生产补齐未达3级的明确禁用原因，仍不得发动、不改变固定费用和窗口规则。UI夹具补真实图形渲染与ButtonClickAnimation自然Awake生命周期，旧移动规则夹具改真实固定来源付费初始化，保留并加强原断言。ID、XP、解锁和1/1/2次数不变。
++
++最终runtime 25ad4092-697e-4d32-ba75-25feab6a198b、editor 42aec987-6dce-496f-8eb7-bd9b396bc69b已实际加载；tech/drivers/ui/core四模块2321/2321通过，失败/跳过/不确定0，43.3136297秒（含51项D04UI/profile），另9项真实GameLoop及1项生产协程10/10通过，19.4897232秒，原生RunFinished一致。首轮11模块3827/3865、38失败的原始记录保留；两类101/101与中间51/51属对应历史程序集，不冒称最终3865全绿，不累计重叠案例。
++
++最终生成三尺寸HUD24张/profile3张；UI专项实际查看HUD每尺寸0/1/3/4/5共15全帧、beforeHUD3帧及profile前后6帧，根另复核最终HUD3帧和profile后3帧，费用/来源/取消/焦点/遮罩/窗口按钮/低级禁用文字覆盖；首版按钮缩零和第二版低级误提示图保留并标被拒/中间，不算最终。受控生产Canvas与真实Raycaster/Submit不等于完整RaceCanvas、硬件Escape/拖动、全部模式、存档或720p舒适度；profile其他14项既有溢出留I13。Unity最终MainMenu干净空闲，Console/许可/ready详见证据；未保存脏场景或改快速播放。
++
++I04按既有有界完成语义收口，当前指针I05，仅下一包接IT科技主案及阿斯卡里；完整模式/存档/硬件组合仍I13，未声称十二车手全部完成。证据：[I04c3b原生与视觉记录](../../production/qa/evidence/tech-driver-I04c3b-2026-11-02/README.md)。
+diff --git a/docs/memory/current-task-list.md b/docs/memory/current-task-list.md
+index 32c3739..056e045 100644
+--- a/docs/memory/current-task-list.md
++++ b/docs/memory/current-task-list.md
+@@ -1708,3 +1708,14 @@ I04c3：把维特尔固定来源主动接到真实技能按钮和一次合并来
+ Unity工具已不可用，本轮没有操作编辑器、没有验证当前scene/isDirty/播放/编译导入/许可/Console/ready，新程序集实际Unity加载未确认。新增48HUD+3profile案例已编译并登记ui，实际执行0；已有两输入真实GameLoop改为Manager实际技能按钮+HUD来源确认，未在新源码上执行。三尺寸改后截图0，10月29日C3改前HUD/profile共6帧为历史前置、不能充当改后验收；玩家可操作、完整模式、存档与硬件均不标通过。
+ 
+ I04c3b：Unity工具可用后先核验场景/播放/编译导入/许可/Console/ready，再让最终新程序集实际加载，运行tech/drivers及依赖、51项真实UI检查与已升级的GameLoop；实际查看三尺寸改后HUD/profile及输入/取消/焦点/遮罩。当前不推进I05，完整模式/存档/硬件仍I13。
++
++
++### 2026-11-02 I04c3b：维特尔来源按钮原生与三尺寸有界验收
++
++维特尔“人车合拍”真实来源/费用单模态、取消/陈旧计划/重复确认、禁用/余次与窗口已按生产按钮验收；本轮生产补齐未达3级的明确禁用原因，仍不得发动、不改变固定费用和窗口规则。UI夹具补真实图形渲染与ButtonClickAnimation自然Awake生命周期，旧移动规则夹具改真实固定来源付费初始化，保留并加强原断言。ID、XP、解锁和1/1/2次数不变。
++
++最终runtime 25ad4092-697e-4d32-ba75-25feab6a198b、editor 42aec987-6dce-496f-8eb7-bd9b396bc69b已实际加载；tech/drivers/ui/core四模块2321/2321通过，失败/跳过/不确定0，43.3136297秒（含51项D04UI/profile），另9项真实GameLoop及1项生产协程10/10通过，19.4897232秒，原生RunFinished一致。首轮11模块3827/3865、38失败的原始记录保留；两类101/101与中间51/51属对应历史程序集，不冒称最终3865全绿，不累计重叠案例。
++
++最终生成三尺寸HUD24张/profile3张；UI专项实际查看HUD每尺寸0/1/3/4/5共15全帧、beforeHUD3帧及profile前后6帧，根另复核最终HUD3帧和profile后3帧，费用/来源/取消/焦点/遮罩/窗口按钮/低级禁用文字覆盖；首版按钮缩零和第二版低级误提示图保留并标被拒/中间，不算最终。受控生产Canvas与真实Raycaster/Submit不等于完整RaceCanvas、硬件Escape/拖动、全部模式、存档或720p舒适度；profile其他14项既有溢出留I13。Unity最终MainMenu干净空闲，Console/许可/ready详见证据；未保存脏场景或改快速播放。
++
++I04按既有有界完成语义收口，当前指针I05，仅下一包接IT科技主案及阿斯卡里；完整模式/存档/硬件组合仍I13，未声称十二车手全部完成。证据：[I04c3b原生与视觉记录](../../production/qa/evidence/tech-driver-I04c3b-2026-11-02/README.md)。
+diff --git a/docs/memory/game-mechanics.md b/docs/memory/game-mechanics.md
+index 5eab954..3f63921 100644
+--- a/docs/memory/game-mechanics.md
++++ b/docs/memory/game-mechanics.md
+@@ -1040,3 +1040,14 @@ I04c3：把维特尔固定来源主动接到真实技能按钮和一次合并来
+ Unity工具已不可用，本轮没有操作编辑器、没有验证当前scene/isDirty/播放/编译导入/许可/Console/ready，新程序集实际Unity加载未确认。新增48HUD+3profile案例已编译并登记ui，实际执行0；已有两输入真实GameLoop改为Manager实际技能按钮+HUD来源确认，未在新源码上执行。三尺寸改后截图0，10月29日C3改前HUD/profile共6帧为历史前置、不能充当改后验收；玩家可操作、完整模式、存档与硬件均不标通过。
+ 
+ I04c3b：Unity工具可用后先核验场景/播放/编译导入/许可/Console/ready，再让最终新程序集实际加载，运行tech/drivers及依赖、51项真实UI检查与已升级的GameLoop；实际查看三尺寸改后HUD/profile及输入/取消/焦点/遮罩。当前不推进I05，完整模式/存档/硬件仍I13。
++
++
++### 2026-11-02 I04c3b：维特尔来源按钮原生与三尺寸有界验收
++
++维特尔“人车合拍”真实来源/费用单模态、取消/陈旧计划/重复确认、禁用/余次与窗口已按生产按钮验收；本轮生产补齐未达3级的明确禁用原因，仍不得发动、不改变固定费用和窗口规则。UI夹具补真实图形渲染与ButtonClickAnimation自然Awake生命周期，旧移动规则夹具改真实固定来源付费初始化，保留并加强原断言。ID、XP、解锁和1/1/2次数不变。
++
++最终runtime 25ad4092-697e-4d32-ba75-25feab6a198b、editor 42aec987-6dce-496f-8eb7-bd9b396bc69b已实际加载；tech/drivers/ui/core四模块2321/2321通过，失败/跳过/不确定0，43.3136297秒（含51项D04UI/profile），另9项真实GameLoop及1项生产协程10/10通过，19.4897232秒，原生RunFinished一致。首轮11模块3827/3865、38失败的原始记录保留；两类101/101与中间51/51属对应历史程序集，不冒称最终3865全绿，不累计重叠案例。
++
++最终生成三尺寸HUD24张/profile3张；UI专项实际查看HUD每尺寸0/1/3/4/5共15全帧、beforeHUD3帧及profile前后6帧，根另复核最终HUD3帧和profile后3帧，费用/来源/取消/焦点/遮罩/窗口按钮/低级禁用文字覆盖；首版按钮缩零和第二版低级误提示图保留并标被拒/中间，不算最终。受控生产Canvas与真实Raycaster/Submit不等于完整RaceCanvas、硬件Escape/拖动、全部模式、存档或720p舒适度；profile其他14项既有溢出留I13。Unity最终MainMenu干净空闲，Console/许可/ready详见证据；未保存脏场景或改快速播放。
++
++I04按既有有界完成语义收口，当前指针I05，仅下一包接IT科技主案及阿斯卡里；完整模式/存档/硬件组合仍I13，未声称十二车手全部完成。证据：[I04c3b原生与视觉记录](../../production/qa/evidence/tech-driver-I04c3b-2026-11-02/README.md)。
+diff --git a/docs/memory/project-overview.md b/docs/memory/project-overview.md
+index 219c323..431f174 100644
+--- a/docs/memory/project-overview.md
++++ b/docs/memory/project-overview.md
+@@ -849,3 +849,14 @@ I04c3：把维特尔固定来源主动接到真实技能按钮和一次合并来
+ Unity工具已不可用，本轮没有操作编辑器、没有验证当前scene/isDirty/播放/编译导入/许可/Console/ready，新程序集实际Unity加载未确认。新增48HUD+3profile案例已编译并登记ui，实际执行0；已有两输入真实GameLoop改为Manager实际技能按钮+HUD来源确认，未在新源码上执行。三尺寸改后截图0，10月29日C3改前HUD/profile共6帧为历史前置、不能充当改后验收；玩家可操作、完整模式、存档与硬件均不标通过。
+ 
+ I04c3b：Unity工具可用后先核验场景/播放/编译导入/许可/Console/ready，再让最终新程序集实际加载，运行tech/drivers及依赖、51项真实UI检查与已升级的GameLoop；实际查看三尺寸改后HUD/profile及输入/取消/焦点/遮罩。当前不推进I05，完整模式/存档/硬件仍I13。
++
++
++### 2026-11-02 I04c3b：维特尔来源按钮原生与三尺寸有界验收
++
++维特尔“人车合拍”真实来源/费用单模态、取消/陈旧计划/重复确认、禁用/余次与窗口已按生产按钮验收；本轮生产补齐未达3级的明确禁用原因，仍不得发动、不改变固定费用和窗口规则。UI夹具补真实图形渲染与ButtonClickAnimation自然Awake生命周期，旧移动规则夹具改真实固定来源付费初始化，保留并加强原断言。ID、XP、解锁和1/1/2次数不变。
++
++最终runtime 25ad4092-697e-4d32-ba75-25feab6a198b、editor 42aec987-6dce-496f-8eb7-bd9b396bc69b已实际加载；tech/drivers/ui/core四模块2321/2321通过，失败/跳过/不确定0，43.3136297秒（含51项D04UI/profile），另9项真实GameLoop及1项生产协程10/10通过，19.4897232秒，原生RunFinished一致。首轮11模块3827/3865、38失败的原始记录保留；两类101/101与中间51/51属对应历史程序集，不冒称最终3865全绿，不累计重叠案例。
++
++最终生成三尺寸HUD24张/profile3张；UI专项实际查看HUD每尺寸0/1/3/4/5共15全帧、beforeHUD3帧及profile前后6帧，根另复核最终HUD3帧和profile后3帧，费用/来源/取消/焦点/遮罩/窗口按钮/低级禁用文字覆盖；首版按钮缩零和第二版低级误提示图保留并标被拒/中间，不算最终。受控生产Canvas与真实Raycaster/Submit不等于完整RaceCanvas、硬件Escape/拖动、全部模式、存档或720p舒适度；profile其他14项既有溢出留I13。Unity最终MainMenu干净空闲，Console/许可/ready详见证据；未保存脏场景或改快速播放。
++
++I04按既有有界完成语义收口，当前指针I05，仅下一包接IT科技主案及阿斯卡里；完整模式/存档/硬件组合仍I13，未声称十二车手全部完成。证据：[I04c3b原生与视觉记录](../../production/qa/evidence/tech-driver-I04c3b-2026-11-02/README.md)。
+diff --git a/tests/regression-suite.md b/tests/regression-suite.md
+index 80c31a4..902e5e1 100644
+--- a/tests/regression-suite.md
++++ b/tests/regression-suite.md
+@@ -295,3 +295,14 @@ VettelRhythmTests/VettelRhythmManagerTests登记drivers；3新增partial案例
+ Unity工具已不可用，本轮没有操作编辑器、没有验证当前scene/isDirty/播放/编译导入/许可/Console/ready，新程序集实际Unity加载未确认。新增48HUD+3profile案例已编译并登记ui，实际执行0；已有两输入真实GameLoop改为Manager实际技能按钮+HUD来源确认，未在新源码上执行。三尺寸改后截图0，10月29日C3改前HUD/profile共6帧为历史前置、不能充当改后验收；玩家可操作、完整模式、存档与硬件均不标通过。
+ 
+ 新VettelRhythmProductionUiTests登记ui：48参数（3尺寸×8场景×mask0/All）与3profile。旧通用维特尔免热断言改为实际固定来源API/换挡仍付热；新增3级通用免费入口拒绝断言。环境失败AuthoredRaceCanvasExposesDriverSkillButtonAndLabel保留，未改安装或伪记跳过。证据：[I04c3a独立结果](../production/qa/evidence/tech-driver-I04c3a-2026-11-02/README.md)。
++
++
++### 2026-11-02 I04c3b：维特尔来源按钮原生与三尺寸有界验收
++
++维特尔“人车合拍”真实来源/费用单模态、取消/陈旧计划/重复确认、禁用/余次与窗口已按生产按钮验收；本轮生产补齐未达3级的明确禁用原因，仍不得发动、不改变固定费用和窗口规则。UI夹具补真实图形渲染与ButtonClickAnimation自然Awake生命周期，旧移动规则夹具改真实固定来源付费初始化，保留并加强原断言。ID、XP、解锁和1/1/2次数不变。
++
++最终runtime 25ad4092-697e-4d32-ba75-25feab6a198b、editor 42aec987-6dce-496f-8eb7-bd9b396bc69b已实际加载；tech/drivers/ui/core四模块2321/2321通过，失败/跳过/不确定0，43.3136297秒（含51项D04UI/profile），另9项真实GameLoop及1项生产协程10/10通过，19.4897232秒，原生RunFinished一致。首轮11模块3827/3865、38失败的原始记录保留；两类101/101与中间51/51属对应历史程序集，不冒称最终3865全绿，不累计重叠案例。
++
++最终生成三尺寸HUD24张/profile3张；UI专项实际查看HUD每尺寸0/1/3/4/5共15全帧、beforeHUD3帧及profile前后6帧，根另复核最终HUD3帧和profile后3帧，费用/来源/取消/焦点/遮罩/窗口按钮/低级禁用文字覆盖；首版按钮缩零和第二版低级误提示图保留并标被拒/中间，不算最终。受控生产Canvas与真实Raycaster/Submit不等于完整RaceCanvas、硬件Escape/拖动、全部模式、存档或720p舒适度；profile其他14项既有溢出留I13。Unity最终MainMenu干净空闲，Console/许可/ready详见证据；未保存脏场景或改快速播放。
++
++I04按既有有界完成语义收口，当前指针I05，仅下一包接IT科技主案及阿斯卡里；完整模式/存档/硬件组合仍I13，未声称十二车手全部完成。证据：[I04c3b原生与视觉记录](../production/qa/evidence/tech-driver-I04c3b-2026-11-02/README.md)。

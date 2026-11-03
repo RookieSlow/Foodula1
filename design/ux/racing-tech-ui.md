@@ -615,3 +615,44 @@ Unity工具已不可用，本轮没有操作编辑器、没有验证当前scene/
 - [ ] Unity实际加载最终新程序集、确认Console/ready。
 - [ ] 51项实际HUD/profile检查与已升级两输入GameLoop。
 - [ ] 改后1920×1080/2560×1440/1280×720截图查看，费用/目标/取消/返回/焦点/遮罩/禁用/拖动及模式边界。
+
+
+### 2026-11-02 I04c3b：维特尔来源按钮原生与三尺寸有界验收
+
+维特尔“人车合拍”真实来源/费用单模态、取消/陈旧计划/重复确认、禁用/余次与窗口已按生产按钮验收；本轮生产补齐未达3级的明确禁用原因，仍不得发动、不改变固定费用和窗口规则。UI夹具补真实图形渲染与ButtonClickAnimation自然Awake生命周期，旧移动规则夹具改真实固定来源付费初始化，保留并加强原断言。ID、XP、解锁和1/1/2次数不变。
+
+最终runtime 25ad4092-697e-4d32-ba75-25feab6a198b、editor 42aec987-6dce-496f-8eb7-bd9b396bc69b已实际加载；tech/drivers/ui/core四模块2321/2321通过，失败/跳过/不确定0，43.3136297秒（含51项D04UI/profile），另9项真实GameLoop及1项生产协程10/10通过，19.4897232秒，原生RunFinished一致。首轮11模块3827/3865、38失败的原始记录保留；两类101/101与中间51/51属对应历史程序集，不冒称最终3865全绿，不累计重叠案例。
+
+最终生成三尺寸HUD24张/profile3张；UI专项实际查看HUD每尺寸0/1/3/4/5共15全帧、beforeHUD3帧及profile前后6帧，根另复核最终HUD3帧和profile后3帧，费用/来源/取消/焦点/遮罩/窗口按钮/低级禁用文字覆盖；首版按钮缩零和第二版低级误提示图保留并标被拒/中间，不算最终。受控生产Canvas与真实Raycaster/Submit不等于完整RaceCanvas、硬件Escape/拖动、全部模式、存档或720p舒适度；profile其他14项既有溢出留I13。Unity最终MainMenu干净空闲，Console/许可/ready详见证据；未保存脏场景或改快速播放。
+
+I04按既有有界完成语义收口，当前指针I05，仅下一包接IT科技主案及阿斯卡里；完整模式/存档/硬件组合仍I13，未声称十二车手全部完成。证据：[I04c3b原生与视觉记录](../../production/qa/evidence/tech-driver-I04c3b-2026-11-02/README.md)。
+
+
+### 2026-11-02 I05a：意大利L2A仅加手牌的有界接入
+
+已将原节点`it-l2-lasagna`改为只增加1手牌位，保留原ID、8,000RP和解锁门槛；永久引擎容量与普通失控淘汰阈值不变，其他common/L1效果不变。真实参赛车科技准备与牌堆初始化接线、两次实际A2抽8/清理、6永久热和普通第3次失控淘汰已有本轮原生案例。IT L3B精调和阿斯卡里尚未接入，不据此标意大利整队完成。
+
+两生产科技屏只显式补齐必要H/V布局组childControlWidth/Height，使配置宽高不依赖EditMode AddComponent触发的EditorReset与Play默认值差异；未改面板/节点尺寸或保存逻辑。改前夹具窄列/重叠不能外推原玩家Play菜单一定损坏。节点文案为“手牌上限+1；永久引擎容量与失控淘汰阈值不变。”
+
+最终runtime110b698e-9a74-4981-afd9-fb686dcba3ca、editor5b2af31d-9c88-420d-b9f2-e6dea346b204已实际加载；定向模块3889/3889通过，失败/跳过0，38.7419623秒，另实际GameLoop2/2通过、3.0659488秒，原生RunFinished一致。新增25个NUnit案例（12runtime、12owned UI、1实际GameLoop）；旧rules/spin/turn/pit/setup断言按锁定L2A迁移保留。历史失败/中间编译与结果单列保留，不把未运行/旧程序集/模型当本轮通过。
+
+三尺寸真实普通/生涯科技屏改前后按证据查看清单复核；普通屏仅readonly tabs/费用/节点说明/遮罩/返回与cacheowned还原，未验真实普通解锁提交或存储。生涯仅owned内存draft的取消/确认/拒绝回调，不写真实生涯档。完整MainMenu/RaceCanvas、硬件/拖动、完整赛事模式、真实存储/存档兼容与720p主观舒适度仍未验。最终Unity/Console/ready与截图绝对目录见证据，未清理场景、覆盖Word或改快速播放设置。
+
+I05保持in_progress/current_package I05；下一I05b按锁定L3B及阿斯卡里继续有界接入，不推进I06。证据：[I05a规则/启动/受控UI/长流程](../../production/qa/evidence/tech-driver-I05a-2026-11-02/README.md)。
+
+
+### 2026-11-03 I05b1：L3B规则与提交API，玩家入口待I05b2
+
+`CardHandUI`新增选牌事件用于版本计划失效；不新增精调按钮、不改布局，本轮没有新截图或三尺寸视觉验收。I05b2须接真实目标选择/单次合并确认，验证点击、拖动、键盘、焦点、取消、禁用原因与剩余次数。
+
+
+### 2026-11-03 I05b2：精准调校HUD入口，节点说明与阿斯卡里待续
+
+精准调校已接真实HUD/原牌目标与CardAction单次合并确认；取消、陈旧pending与Space同门控只影响待提交调校，原正常选牌路径保留。UK预备餐和借IT精调同屏分槽；使用生产RaceUILayoutController及真实RaceCanvas卡面作三尺寸受控验证，不外推完整RaceCanvas/硬件/模式。初版手工420宽槽且缺卡面的6图保留但不作最终几何证据；L3节点屏另待I05b2c。
+
+
+### 2026-11-03 I05c1：阿斯卡里主动API与L3节点有界验收
+
+L3节点新旧说明按生产TechTreeUI/CareerTechTreeUI完成三尺寸有界复核；六队tab、长RP数字、12000门槛、普通RP不足拒绝与返回遮罩、owned生涯draft取消/确认/拒绝已有原生控件测试。RP不足夹具在真实Button指针回调中仅停放owned旧列，原UnityEvent执行一次后清理，以适配EditMode的Destroy限制；不等同实机普通解锁/持久化/全页焦点或硬件验收。D05真实目标UI另待下一包。
+
+最终模块4006/4006、65.7040933秒；另实际GameLoop10/10、20.8561775秒，失败/跳过0。见[I05c1证据](../../production/qa/evidence/tech-driver-I05c1-2026-11-03/README.md)。

@@ -1,0 +1,180 @@
+{
+  "id": "I04c3b",
+  "local_date": "2026-11-02",
+  "status": "production_button_disabled_reason_and_bounded_native_controlled_UI_verified_full_modes_pending",
+  "scope": "Production Vettel typed-source HUD entry, one fixed-source/fee modal and finite owner window verified in native Unity. This package adds the level3 unlock disabled reason and strengthens owned UI/movement fixtures without weakening payment, source, lifecycle, raycast or focus assertions. No technology branch, identity, XP key, unlock tier or active-use changes.",
+  "initial_native": {
+    "startedUtc": "2026-11-02T03:55:35.6847989Z",
+    "endedUtc": "2026-11-02T03:57:29.7372003Z",
+    "state": "Failed(Child)",
+    "nativeState": "Failed(Child)",
+    "seconds": 90.2351281,
+    "total": 3865,
+    "passed": 3827,
+    "failed": 38,
+    "skipped": 0,
+    "inconclusive": 0,
+    "selectionMatches": true
+  },
+  "initial_failure_classes": {
+    "VettelRhythmProductionUiTests": 36,
+    "RaceMovementRulesTests": 2
+  },
+  "initial_failure_resolution": "D04 owned UI fixture missed real UI-layer/canvas/TMP render preparation before raycast; legacy movement fixture still attempted removed generic free activation. Native assertions retained; Vettel initialization now commits a real fixed-source fee plan and checks Rhythm.Version unchanged.",
+  "targeted_native_retry": {
+    "total": 101,
+    "passed": 101,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 3.4307996,
+    "resultState": "Passed"
+  },
+  "targeted_retry_selection": [
+    "VettelRhythmProductionUiTests (51)",
+    "RaceMovementRulesTests (50)"
+  ],
+  "native_GameLoop_RunFinished": {
+    "fullName": "Foodula1",
+    "resultState": "Passed",
+    "endedUtc": "2026-11-02T04:08:17.4932926Z",
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "message": "",
+    "output": "",
+    "stackTrace": ""
+  },
+  "test_count_boundary": "Final four modules2321/2321 43.3136297s plus disjoint9GameLoop+1production coroutine10/10 19.4897232s=2331 final selected tests. Initial3865/3827pass/38fail90.2351281s, intermediate101/1013.4307996s and51/513.1034578s and10/1018.2151551s retained as prior assembly evidence, not cumulatively independent and not final3865/3865.",
+  "initial_runtime_mvid": "6d288778-ccda-4464-9ece-ebc2038f01eb",
+  "initial_editor_mvid": "f9a48bd9-0e21-4cf4-8c02-9baa75db3daa",
+  "runtime_mvid": "25ad4092-697e-4d32-ba75-25feab6a198b",
+  "first_retry_editor_mvid": "97ec211e-12e1-4323-8e20-9be54cd5e2c3",
+  "new_assemblies_loaded": true,
+  "visual": {
+    "before_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/before/hud-20261029-044246962",
+    "before_profile": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/before/profile",
+    "rejected_after_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/after/hud-20261102-040051989",
+    "rejected_reason": "First24afterHUDframes rejected: owned EditMode fixture missed ButtonClickAnimation.Awake, so reduceMotion Down/Up used zero original scale and collapsed the skill button. Natural lifecycle fix and subsequent final native/captures supersede these rejected frames; originals retained.",
+    "profile_after": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3b-2026-11-02/after/profile",
+    "profile_frames_viewed_by_root": 3,
+    "profile_D04_new_active_overflow": 0,
+    "other_profile_overflows": "Existing names/UK content overflow remains unaccepted; no full-page readability or720pcomfort acceptance.",
+    "sizes": [
+      "1920x1080",
+      "2560x1440",
+      "1280x720"
+    ],
+    "three_size_final_HUD_verified": true,
+    "intermediate_after_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/after/hud-20261102-040440799",
+    "intermediate_boundary": "Second24HUDframes render the paid window button after naturalAwake fixture initialization, but the then-current low-level disabled label was still generic. This intermediate set is not final disabled-reason acceptance; final production3级解锁 label and later current-runtime/native/capture evidence supersede it.",
+    "final_after_HUD": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I04c3-2026-10-29/after/hud-20261102-040754001",
+    "final_HUD_frames_created": 24,
+    "profile_frames_created": 3,
+    "specialist_final_viewed": "All3 sizes x HUD0/1/3/4/5=15 full frames, plus beforeHUD3 and before/afterprofile6 full frames. Root also viewed1920-5/2560-0/1280-3 final and all3 profileafter.",
+    "intermediate_rejected_HUD": "hud-20261102-040051989 scale-zero afterpointer fixture, rejected; hud-20261102-040440799 window visible but level reason pending, intermediate. All retained.",
+    "profile_boundary": "Captured on earlier runtime6d288778 in same turn; DriverData/DriverSelectionUI unchanged by final two-line manager-only disabled label. Final2321 module includes all3 profilecases. Other14 existing text overflows, full-menu/hardware/fullmodes/720p comfort not accepted.",
+    "final_profile_target": "D04 new active summary only; all3 final module profilecases passed, other14 existing profileoverflows unaccepted."
+  },
+  "review": "Independent Unity UI, QA and primary Unity specialists found no production-source blocker; readonly reviews are not native execution evidence.",
+  "acceptance": {
+    "source_wiring": true,
+    "Unity_new_assembly_loaded": true,
+    "pure_rules": true,
+    "production_wiring": true,
+    "actual_manager_HUD_GameLoop": true,
+    "typed_modal_native_cases": true,
+    "player_operable": true,
+    "player_operable_scope": "Owned three-size production HUD/manager with GraphicRaycaster pointer and EventSystem Submit, plus actual9GameLoop+1production coroutine; not hardware/fullRaceCanvas/modes.",
+    "three_size_final_controlled_UI": true,
+    "complete_modes_and_save": false
+  },
+  "license": {
+    "free": true,
+    "education": false,
+    "pro": false
+  },
+  "Unity_boundary": "Final loaded new runtime/editor, MainMenu clean and idle, Free license valid, Console0 errors/0warnings (2logs), ready true. No dirty-scene save, settings change or user play interruption.",
+  "preservation": {
+    "Word": 8,
+    "scenes": 32,
+    "excluded_files": 4,
+    "baseline_untracked": 78,
+    "final_SHA_check": "44 protected sourceWord/scene/excluded hashes unchanged; unrelated78untracked preserved, final root check and copied manifest verified.",
+    "SHA_mismatches": [],
+    "unrelated_untracked_entries_preserved": 78
+  },
+  "git": "HEAD99c06bc from previous explicitly authorized GitHub submission; no commit/push/reset/checkout/rebase in this heartbeat.",
+  "next_slice": "I05：按锁定IT主方案接意大利科技及阿斯卡里；先处理同牌互斥、正贡献、安全弯心，保留L2A加手牌与L3B既有投资附一次精调、不加单场RP。I04有界验收通过，完整模式/存档/硬件组合仍I13。",
+  "intermediate_UI_native": {
+    "total": 51,
+    "passed": 51,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 3.1034578,
+    "editor_mvid": "0b1bc90d-b37f-4806-a0a1-6ed8dfc81543",
+    "boundary": "NaturalAwake fixture correction. Does not establish final low-level disabled-reason acceptance; retained as an intermediate run."
+  },
+  "editor_mvid": "42aec987-6dce-496f-8eb7-bd9b396bc69b",
+  "native_final": {
+    "startedUtc": "2026-11-02T04:06:29.2525016Z",
+    "endedUtc": "2026-11-02T04:07:19.2439856Z",
+    "state": "Passed",
+    "nativeState": "Passed",
+    "seconds": 43.3136297,
+    "total": 2321,
+    "passed": 2321,
+    "failed": 0,
+    "skipped": 0,
+    "inconclusive": 0,
+    "selectionMatches": true,
+    "unexpected": [],
+    "missing": []
+  },
+  "GameLoop_final": {
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 19.4897232,
+    "resultState": "Passed"
+  },
+  "production_change": "D04 enabled Tier0 button explicitly states driver level3 unlock; remains disabled. Fixed-source fee/window/XP/ID/uses unchanged.",
+  "new_NUnit_cases": 0,
+  "final_modules": [
+    "tech",
+    "drivers",
+    "ui",
+    "core"
+  ],
+  "Unity_final": {
+    "runtime": "25ad4092-697e-4d32-ba75-25feab6a198b",
+    "editor": "42aec987-6dce-496f-8eb7-bd9b396bc69b",
+    "scene": "Assets/Scenes/MainMenu.unity",
+    "dirty": false,
+    "playing": false,
+    "compiling": false,
+    "updating": false,
+    "busy": false,
+    "native": false,
+    "freeLicense": true,
+    "consoleErrors": 0,
+    "consoleWarnings": 0,
+    "consoleLogs": 2,
+    "ready_for_tools": true
+  },
+  "source_final_sha256": {
+    "Assets/Scripts/Core/MVPGameManager.cs": "f697c810b60eb495d355242bb1bfc88a904ac1ca47cc3d8d1d601d224865fc55",
+    "Assets/Tests/Editor/vettel_rhythm_production_ui_test.cs": "2bcb61bb64dd64ca53b43bd335e07681e7a405a49c5226ebf3c103a4f794ca47",
+    "Assets/Tests/Editor/race_movement_rules_test.cs": "1bb58267c5de4c3fa57c641c242552726a3145ac29dfafed34cc26cf0d4a4f8f"
+  },
+  "GameLoop_intermediate": {
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "durationSeconds": 18.2151551,
+    "resultState": "Passed"
+  }
+}

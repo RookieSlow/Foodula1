@@ -1,0 +1,115 @@
+ M .claude/settings.json
+ M .codex/hooks.json
+ M Assets/Scripts/Core/CardPlayRules.cs
+ M Assets/Scripts/Core/GearRequirementFeedbackRules.cs
+ M Assets/Scripts/Core/MVPGameManager.cs
+ M Assets/Scripts/Core/RaceMovementRules.cs
+ M Assets/Scripts/Core/RaceSession.cs
+ M Assets/Scripts/Core/RaceTurnCleanup.cs
+ M Assets/Scripts/Core/RaceTurnPreviewRules.cs
+ M Assets/Scripts/TechTree/TechTreeData.cs
+ M Assets/Scripts/TechTree/TechTreeDatabase.cs
+ M Assets/Scripts/TechTree/TechTreeRules.cs
+ M Assets/Scripts/UI/CardHandUI.cs
+ M Assets/Scripts/UI/CareerTechTreeUI.cs
+ M Assets/Scripts/UI/DriverSkillCardChoiceUI.cs
+ M Assets/Scripts/UI/HUDUI.cs
+ M Assets/Scripts/UI/TechTreeUI.cs
+ M Assets/Tests/Editor/RegressionModules.json
+ M Assets/Tests/Editor/race_movement_rules_test.cs
+ M Assets/Tests/Editor/race_pit_turn_boundary_test.cs
+ M Assets/Tests/Editor/race_spin_boundary_test.cs
+ M Assets/Tests/Editor/race_technology_setup_test.cs
+ M Assets/Tests/Editor/race_turn_boundary_integration_test.cs
+ M Assets/Tests/Editor/tech_tree_rules_test.cs
+ M Assets/Tests/Editor/vettel_rhythm_production_ui_test.cs
+ M "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset"
+ M ProjectSettings/EditorSettings.asset
+ M design/gdd/foodula-1-drivers.md
+ M design/gdd/foodula-1-tech-tree.md
+ M design/planning/tech-driver-rework-2026-10-22/implementation-plan.json
+ M design/planning/tech-driver-rework-2026-10-22/progress.json
+ M design/ux/racing-tech-ui-checklist.md
+ M design/ux/racing-tech-ui.md
+ M docs/memory/current-task-list.md
+ M docs/memory/game-mechanics.md
+ M docs/memory/project-overview.md
+ M tests/regression-suite.md
+?? .codex/hooks/Invoke-NativeHook.ps1
+?? Assets/Resources/Audio/SFX/team_shift_cn_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_cn_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_cn_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_cn_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_de_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_de_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_de_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_de_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_it_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_it_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_it_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_it_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_jp_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_jp_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_jp_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_jp_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_uk_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_uk_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_uk_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_uk_up.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_us_down.wav
+?? Assets/Resources/Audio/SFX/team_shift_us_down.wav.meta
+?? Assets/Resources/Audio/SFX/team_shift_us_up.wav
+?? Assets/Resources/Audio/SFX/team_shift_us_up.wav.meta
+?? Assets/Scripts/TechTree/ItalyPrecisionTuneActivationPlan.cs
+?? Assets/Scripts/TechTree/ItalyPrecisionTuneActivationPlan.cs.meta
+?? Assets/Scripts/TechTree/ItalyPrecisionTuneRules.cs
+?? Assets/Scripts/TechTree/ItalyPrecisionTuneRules.cs.meta
+?? Assets/Scripts/TechTree/ItalyPrecisionTuneRuntime.cs
+?? Assets/Scripts/TechTree/ItalyPrecisionTuneRuntime.cs.meta
+?? Assets/Scripts/UI/ItalyPrecisionTuneActionUI.cs
+?? Assets/Scripts/UI/ItalyPrecisionTuneActionUI.cs.meta
+?? Assets/Tests/Editor/italy_l2_production_ui_test.cs
+?? Assets/Tests/Editor/italy_l2_production_ui_test.cs.meta
+?? Assets/Tests/Editor/italy_l2_runtime_test.cs
+?? Assets/Tests/Editor/italy_l2_runtime_test.cs.meta
+?? Assets/Tests/Editor/italy_precision_tune_production_ui_test.cs
+?? Assets/Tests/Editor/italy_precision_tune_production_ui_test.cs.meta
+?? Assets/Tests/Editor/italy_precision_tune_test.cs
+?? Assets/Tests/Editor/italy_precision_tune_test.cs.meta
+?? Assets/Tests/Editor/race_italy_l2_coroutine_test.cs
+?? Assets/Tests/Editor/race_italy_l2_coroutine_test.cs.meta
+?? Assets/Tests/Editor/race_italy_precision_tune_coroutine_test.cs
+?? Assets/Tests/Editor/race_italy_precision_tune_coroutine_test.cs.meta
+?? Assets/Tests/Editor/race_italy_precision_tune_ui_coroutine_test.cs
+?? Assets/Tests/Editor/race_italy_precision_tune_ui_coroutine_test.cs.meta
+?? docs/audio/licenses/overtake/BigSoundBank-s0556-source.html
+?? production/qa/evidence/team-audio-preview-2026-10-11.wav
+?? production/qa/evidence/tech-driver-I04c3-2026-10-29/after/
+?? production/qa/evidence/tech-driver-I04c3b-2026-11-02/
+?? production/qa/evidence/tech-driver-I05a-2026-11-02/
+?? production/qa/evidence/tech-driver-I05b1-2026-11-02/
+?? production/qa/evidence/tech-driver-I05b2-2026-11-03/
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_cn_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_cn_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_de_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_de_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_it_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_it_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_jp_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_jp_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_uk_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_uk_up.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_us_down.wav
+?? tools/Audio/cc0-shift-staging/team_shift_cc0_us_up.wav
+?? tools/Audio/overtake-staging/overtake_cc0.wav
+?? tools/Audio/overtake-staging/overtake_source_then_cue.wav
+?? tools/Audio/team_vehicle_comparison.wav
+?? tools/Audio/team_vehicle_tuning_comparison.wav
+?? tools/audio-overtake-staging/
+?? tools/ui-action-buttons-staging/
+?? tools/ui-card-zone-staging/
+?? tools/ui-card-zones-staging/
+?? tools/ui-confirmation-staging/
+?? tools/ui-pile-inspector-staging/
+?? tools/ui-selected-effect-staging/
+?? tools/ui-track-staging/

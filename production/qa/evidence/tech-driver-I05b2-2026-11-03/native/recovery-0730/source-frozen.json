@@ -1,0 +1,10 @@
+{
+  "Assets/Scripts/UI/CardHandUI.cs": "8518cc6826c1ed99c862d019f1e1d361f5f4a00ebc69ebcdcd81212b9e89daaf",
+  "Assets/Scripts/UI/ItalyPrecisionTuneActionUI.cs": "9b4a406ee1384f23dfb22df2d2f69f5835e169c53a1d37aa288771e03d7d28eb",
+  "Assets/Tests/Editor/race_italy_precision_tune_ui_coroutine_test.cs": "53ef24968a9b6e4ec3a9384b4f4a61730679a19b7de230c9340931b19562a215",
+  "Assets/Scripts/UI/DriverSkillCardChoiceUI.cs": "0e5d95dc57b643e698fce2b1889fb877d0a797d362967187b9d3191348cdf3cf",
+  "Assets/Tests/Editor/italy_precision_tune_production_ui_test.cs": "0ac51ef64524876f9be46773600de367fefbfacf19f170690b64e9c4f14b1b2b",
+  "Assets/Scripts/UI/HUDUI.cs": "383427485805a7255b51842f95a6bdb88d843bdd25b40a2fd0e4c35f08f43bd2",
+  "Assets/Scripts/Core/MVPGameManager.cs": "aeab421468562f7e58374775dab26f6e96bfa0c800d0f1e06455040450d766e3",
+  "Assets/Tests/Editor/RegressionModules.json": "975b1ec0e6799fa334322e82431017ecb068731d3fbcf174166587bbaea4d130"
+}

@@ -164,7 +164,8 @@ public class RaceSession
         bool feedbackStarted = skill.PassiveSkill == DriverPassiveSkillId.InformationSponge && skill.Feedback.BeginInput(this, player);
         bool strategyStarted = skill.Skill == DriverActiveSkillId.PerfectLap && skill.Strategy.BeginInput(this, player);
         bool rhythmStarted = skill.Skill == DriverActiveSkillId.PerfectRhythm && skill.Rhythm.BeginInput(this, player);
-        if (!skill.BeginDrivingInput()) return passiveStarted || strategyStarted || feedbackStarted || rhythmStarted;
+        bool precisionStarted = skill.Skill == DriverActiveSkillId.PrecisionCornering && skill.Precision.BeginInput(this, player);
+        if (!skill.BeginDrivingInput()) return passiveStarted || strategyStarted || feedbackStarted || rhythmStarted || precisionStarted;
         skill.Hunting.BeginInput(this, player, totalNodes, startFinishIndex);
         skill.Pursuit.BeginInput(this, player, totalNodes, startFinishIndex);
         skill.Charge.BeginInput(this, player, totalNodes, startFinishIndex);
@@ -193,6 +194,29 @@ public class RaceSession
             player.teamId != TeamId.UK || !GetModifiers(player).hasFishAndChips) return false;
         return player.techState.prepMeal.BeginInput(player.deck, globalTurn);
     }
+
+    /// <summary>Opens the participant's own post-draw tuning input, never a team-shared race flag.</summary>
+    public bool BeginItalyPrecisionTuneInput(PlayerState player, int globalTurn)
+    {
+        if (player?.techState == null || player.isAI || !Players.Contains(player) ||
+            RaceTurnRules.GetStartAction(player) != RaceTurnStartAction.SelectGear ||
+            !GetModifiers(player).hasCavallinoRampante) return false;
+        return player.techState.precisionTune.BeginInput(this, player, globalTurn);
+    }
+
+    /// <summary>Free IT L3B request; only formal card commitment can spend the race opportunity.</summary>
+    public bool TryPrepareItalyPrecisionTune(PlayerState player, IReadOnlyList<CardData> selected, CardData target,
+        int globalTurn, int requestVersion, bool inputAllowed, bool technologyEnabled,
+        out ItalyPrecisionTuneActivationPlan plan, out string reason, CardData driverSlowdownCard = null)
+        => ItalyPrecisionTuneActivationPlan.TryCreate(this, player, selected, target, globalTurn, requestVersion,
+            inputAllowed, technologyEnabled, out plan, out reason, driverSlowdownCard);
+
+    /// <summary>D05 free target API. The final exact speed-card group alone commits the race use.</summary>
+    public bool TryPrepareAscariPrecision(PlayerState player, IReadOnlyList<CardData> cards, CardData target,
+        int globalTurn, int requestVersion, bool inputAllowed, IReadOnlyList<TrackNode> nodes, int totalLaps,
+        out AscariPrecisionActivationPlan plan, out string reason, ItalyPrecisionTuneActivationPlan technologyPlan = null)
+        => AscariPrecisionActivationPlan.TryCreate(this, player, cards, target, globalTurn, requestVersion,
+            inputAllowed, nodes, totalLaps, out plan, out reason, technologyPlan);
 
     /// <summary>Consumes the recovery/pit skip after A1 has chosen that action; presentation stays in the coordinator.</summary>
     public bool ConsumeRecoverySkip(PlayerState player, int standardMinimumGear)
@@ -464,7 +488,7 @@ public class RaceSession
         return basePoolSize + m.durabilityBonus + m.EffectiveEngineCapacityBonus;
     }
 
-    /// <summary>有效失控淘汰阈值（基础 3 + 科技加成，IT L2 上限 4）。</summary>
+    /// <summary>有效失控淘汰阈值（基础 3 + 当前生效科技加成）。</summary>
     public int EffectiveSpinMax(PlayerState p)
     {
         return p.techState == null ? 3 : GetModifiers(p).EffectiveSpinCounterMax;

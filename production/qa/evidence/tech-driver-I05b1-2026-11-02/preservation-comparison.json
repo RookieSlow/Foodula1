@@ -1,0 +1,17 @@
+{
+  "baseline_original": "2026-11-02",
+  "recovery": "2026-11-03",
+  "protected_total": 44,
+  "unchanged_vs_original": 43,
+  "changed_vs_original": [
+    {
+      "path": "Assets/TmpFont/StreamingAssets/Fonts & Materials/Chinese/SourceHanSansTC-Medium-HQ.asset",
+      "before_20261102": "c44b368e107f8e08e35d9cc93b6e8be7c022273a1cb7bc1daca8317f45848d94",
+      "current": "5e16547ff4ef2b19cc3d4f31ae75527e5aee276fa9680db188675d77ee98cc26",
+      "recovery_20261103": "5e16547ff4ef2b19cc3d4f31ae75527e5aee276fa9680db188675d77ee98cc26",
+      "unchanged_since_recovery": true
+    }
+  ],
+  "unknown_change_retained": true,
+  "record_worker_did_not_restore_or_overwrite": true
+}

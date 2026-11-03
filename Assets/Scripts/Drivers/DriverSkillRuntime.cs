@@ -25,6 +25,7 @@ public sealed class DriverSkillRuntimeState
     public SchumacherStrategyRuntime Strategy { get; private set; } = new SchumacherStrategyRuntime();
     public VettelFeedbackRuntime Feedback { get; private set; } = new VettelFeedbackRuntime();
     public VettelRhythmRuntime Rhythm { get; private set; } = new VettelRhythmRuntime();
+    public AscariPrecisionRuntime Precision { get; private set; } = new AscariPrecisionRuntime();
 
     /// <summary>D03/D04 event passives use independent owner-input clocks.</summary>
     public bool UsesPassiveDrivingInputClock => PassiveSkill == DriverPassiveSkillId.EngineersTune || PassiveSkill == DriverPassiveSkillId.InformationSponge;
@@ -58,6 +59,7 @@ public sealed class DriverSkillRuntimeState
         copy.Strategy = Strategy.CreatePresentationCopy();
         copy.Feedback = Feedback.CreatePresentationCopy();
         copy.Rhythm = Rhythm.CreatePresentationCopy();
+        copy.Precision = Precision.CreatePresentationCopy();
         return copy;
     }
 
@@ -74,6 +76,7 @@ public sealed class DriverSkillRuntimeState
         Strategy = new SchumacherStrategyRuntime();
         Feedback = new VettelFeedbackRuntime();
         Rhythm = new VettelRhythmRuntime();
+        Precision = new AscariPrecisionRuntime();
         Skill = profile != null ? DriverSkillRules.GetSkill(profile.Id) : DriverActiveSkillId.None;
         PassiveSkill = profile != null ? DriverSkillRules.GetPassiveSkill(profile.Id) : DriverPassiveSkillId.None;
         Tier = DriverProgression.GetActiveTier(level);
@@ -100,6 +103,8 @@ public sealed class DriverSkillRuntimeState
 
     public bool TryActivate(DriverProfile profile, DriverSkillActivationContext context, out string reason)
     {
+        if (Skill == DriverActiveSkillId.PrecisionCornering)
+        { reason = "精密过弯需要已选普通速度牌目标与最终出牌计划"; return false; }
         if (Skill == DriverActiveSkillId.PerfectRhythm)
         { reason = "人车合拍需要当前固定来源费用计划"; return false; }
         if (Skill == DriverActiveSkillId.PerfectLap && Strategy.ManualPath)
@@ -141,6 +146,7 @@ public sealed class DriverSkillRuntimeState
         Strategy.BeginGlobalTurn();
         Feedback.BeginGlobalTurn();
         Rhythm.BeginGlobalTurn();
+        Precision.CloseInput();
         drivingInputStartedThisTurn = false;
         IsDrivingInputOpen = false;
         if (!UsesDrivingInputClock)
@@ -175,6 +181,7 @@ public sealed class DriverSkillRuntimeState
         Strategy.Interrupt();
         Feedback.Interrupt();
         Rhythm.Interrupt();
+        Precision.Interrupt();
         if (!UsesDrivingInputClock) return;
         IsDrivingInputOpen = false;
         drivingInputStartedThisTurn = true;

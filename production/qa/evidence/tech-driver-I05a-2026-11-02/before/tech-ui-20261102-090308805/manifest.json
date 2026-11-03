@@ -1,0 +1,115 @@
+{
+    "stage": "before",
+    "runtimeMvid": "25ad4092-697e-4d32-ba75-25feab6a198b",
+    "boundary": "Owned orthographic preview Canvas and production TechTreeUI/CareerTechTreeUI. Normal profile cache is temporarily seeded and restored: read-only tabs/description/back, no normal node unlock/toggle/persistence. Owned old normal columns are explicitly cleaned before tab callbacks because its production Refresh uses deferred Destroy. Career draft callbacks are memory-only. Not full MainMenu, storage, hardware or automatic focus/navigation acceptance.",
+    "records": [
+        {
+            "width": 1920,
+            "height": 1080,
+            "screen": 0,
+            "rp": 987654321,
+            "cost": 8000,
+            "visitedTeams": 7,
+            "description": "失控计数器上限+1，手牌上限+1，引擎容量+1。",
+            "label": "锁定  千层面复合单体壳\n<size=13>RP 8,000 · 失控计数器上限+1，手牌上限+1，引擎容量+1。</size>",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05a-2026-11-02\\before\\tech-ui-20261102-090308805\\1920x1080-normal.png",
+            "overlayBlocked": true,
+            "closed": true,
+            "sourceSnapshotUnchanged": false,
+            "normalProfilesUnchanged": true,
+            "targetOverflows": [
+                "锁定  千层面复合单体壳\n<size=13>RP 8,000 · 失控计数器上限+1，手牌上限+1，引擎容量+1。</size>"
+            ]
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "screen": 1,
+            "rp": 123456789,
+            "cost": 8000,
+            "visitedTeams": 0,
+            "description": "失控计数器上限+1，手牌上限+1，引擎容量+1。",
+            "label": "可研发  千层面复合单体壳\n<size=13>RP 8,000 · 失控计数器上限+1，手牌上限+1，引擎容量+1。</size>",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05a-2026-11-02\\before\\tech-ui-20261102-090308805\\1920x1080-career.png",
+            "overlayBlocked": true,
+            "closed": true,
+            "sourceSnapshotUnchanged": true,
+            "normalProfilesUnchanged": true,
+            "targetOverflows": [
+                "可研发  千层面复合单体壳\n<size=13>RP 8,000 · 失控计数器上限+1，手牌上限+1，引擎容量+1。</size>"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "screen": 0,
+            "rp": 987654321,
+            "cost": 8000,
+            "visitedTeams": 7,
+            "description": "失控计数器上限+1，手牌上限+1，引擎容量+1。",
+            "label": "锁定  千层面复合单体壳\n<size=13>RP 8,000 · 失控计数器上限+1，手牌上限+1，引擎容量+1。</size>",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05a-2026-11-02\\before\\tech-ui-20261102-090308805\\2560x1440-normal.png",
+            "overlayBlocked": true,
+            "closed": true,
+            "sourceSnapshotUnchanged": false,
+            "normalProfilesUnchanged": true,
+            "targetOverflows": [
+                "锁定  千层面复合单体壳\n<size=13>RP 8,000 · 失控计数器上限+1，手牌上限+1，引擎容量+1。</size>"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "screen": 1,
+            "rp": 123456789,
+            "cost": 8000,
+            "visitedTeams": 0,
+            "description": "失控计数器上限+1，手牌上限+1，引擎容量+1。",
+            "label": "可研发  千层面复合单体壳\n<size=13>RP 8,000 · 失控计数器上限+1，手牌上限+1，引擎容量+1。</size>",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05a-2026-11-02\\before\\tech-ui-20261102-090308805\\2560x1440-career.png",
+            "overlayBlocked": true,
+            "closed": true,
+            "sourceSnapshotUnchanged": true,
+            "normalProfilesUnchanged": true,
+            "targetOverflows": [
+                "可研发  千层面复合单体壳\n<size=13>RP 8,000 · 失控计数器上限+1，手牌上限+1，引擎容量+1。</size>"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "screen": 0,
+            "rp": 987654321,
+            "cost": 8000,
+            "visitedTeams": 7,
+            "description": "失控计数器上限+1，手牌上限+1，引擎容量+1。",
+            "label": "锁定  千层面复合单体壳\n<size=13>RP 8,000 · 失控计数器上限+1，手牌上限+1，引擎容量+1。</size>",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05a-2026-11-02\\before\\tech-ui-20261102-090308805\\1280x720-normal.png",
+            "overlayBlocked": true,
+            "closed": true,
+            "sourceSnapshotUnchanged": false,
+            "normalProfilesUnchanged": true,
+            "targetOverflows": [
+                "锁定  千层面复合单体壳\n<size=13>RP 8,000 · 失控计数器上限+1，手牌上限+1，引擎容量+1。</size>"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "screen": 1,
+            "rp": 123456789,
+            "cost": 8000,
+            "visitedTeams": 0,
+            "description": "失控计数器上限+1，手牌上限+1，引擎容量+1。",
+            "label": "可研发  千层面复合单体壳\n<size=13>RP 8,000 · 失控计数器上限+1，手牌上限+1，引擎容量+1。</size>",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05a-2026-11-02\\before\\tech-ui-20261102-090308805\\1280x720-career.png",
+            "overlayBlocked": true,
+            "closed": true,
+            "sourceSnapshotUnchanged": true,
+            "normalProfilesUnchanged": true,
+            "targetOverflows": [
+                "可研发  千层面复合单体壳\n<size=13>RP 8,000 · 失控计数器上限+1，手牌上限+1，引擎容量+1。</size>"
+            ]
+        }
+    ]
+}

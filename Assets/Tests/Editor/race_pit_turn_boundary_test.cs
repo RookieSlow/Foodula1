@@ -727,11 +727,14 @@ public class RacePitTurnBoundaryTests
             // Keep this a real human adapter test without touching PlayerPrefs.
             Invoke("SetupPlayerForRace", player, TeamId.UK, null);
             Assert.AreEqual(expected, player.techState.sunNeverSetsTarget);
-            int capacity = country == "IT" ? 7 : 6;
-            Assert.AreEqual(capacity, session.EffectiveHeatPoolSize(player, 6));
+            Assert.AreEqual(6, session.EffectiveHeatPoolSize(player, 6));
+            Assert.AreEqual(config.handSize + (country == "IT" ? 1 : 0),
+                session.EffectiveHandSize(player, config.handSize));
             int baseCapacity = TeamVehicleRules.GetBaseHeatPoolSize(TeamId.UK, config.heatPoolPerPlayer);
-            Assert.AreEqual(baseCapacity + (country == "IT" ? 1 : 0), HeatGaugeRules.Evaluate(player.deck).Capacity,
-                "The actual deck must be initialized after loaded-track technology binding.");
+            Assert.AreEqual(baseCapacity, HeatGaugeRules.Evaluate(player.deck).Capacity,
+                "The actual deck must be initialized after loaded-track technology binding without a Lasagna engine grant.");
+            Assert.AreEqual(session.EffectiveHandSize(player, config.handSize), player.deck.Hand.Count,
+                "Track-bound Lasagna changes the actual opening hand, not permanent heat capacity.");
         }
         finally
         {

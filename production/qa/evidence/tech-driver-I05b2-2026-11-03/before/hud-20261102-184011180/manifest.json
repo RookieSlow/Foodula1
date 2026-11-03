@@ -1,0 +1,89 @@
+{
+    "runtimeMvid": "4211272c-cdbe-4fdf-b5e1-40dfc72c57e7",
+    "stage": "before",
+    "kind": "Owned production HUD.Start, CardHandUI prefab and manager; true GraphicRaycaster/EventSystem on camera Canvas. Synthetic roster/track; no full RaceCanvas, physical input or storage acceptance.",
+    "frames": [
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 4,
+            "stage": "before",
+            "team": "IT",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05b2-2026-11-03\\before\\hud-20261102-184011180\\1920x1080-IT-ready.png",
+            "action": "当前生产程序集无精调入口",
+            "status": "G2 档（要求 2 张） | 本回合 1/2 张速度牌\n<color=#FFB347>结束出牌将触发引擎故障：缺 1 张 → +1 热量</color>\n待确认：1 张速度牌（速度总和 3）",
+            "overflows": [
+                "Status: G2 档（要求 2 张） | 本回合 1/2 张速度牌\n<color=#FFB347>结束出牌将触发引擎故障：缺 1 张 → +1 热量</color>\n待确认：1 张速度牌（速度总和 3）"
+            ]
+        },
+        {
+            "width": 1920,
+            "height": 1080,
+            "roster": 12,
+            "stage": "before",
+            "team": "UK",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05b2-2026-11-03\\before\\hud-20261102-184011180\\1920x1080-UK-ready.png",
+            "action": "当前生产程序集无精调入口",
+            "status": "G2 档（要求 2 张） | 本回合 1/2 张速度牌\n<color=#FFB347>结束出牌将触发引擎故障：缺 1 张 → +1 热量</color>\n待确认：1 张速度牌（速度总和 3）",
+            "overflows": [
+                "Status: G2 档（要求 2 张） | 本回合 1/2 张速度牌\n<color=#FFB347>结束出牌将触发引擎故障：缺 1 张 → +1 热量</color>\n待确认：1 张速度牌（速度总和 3）"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 4,
+            "stage": "before",
+            "team": "IT",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05b2-2026-11-03\\before\\hud-20261102-184011180\\2560x1440-IT-ready.png",
+            "action": "当前生产程序集无精调入口",
+            "status": "G2 档（要求 2 张） | 本回合 1/2 张速度牌\n<color=#FFB347>结束出牌将触发引擎故障：缺 1 张 → +1 热量</color>\n待确认：1 张速度牌（速度总和 3）",
+            "overflows": [
+                "HandTitle: 手牌区",
+                "DeckTableTitle: 牌桌",
+                "Status: G2 档（要求 2 张） | 本回合 1/2 张速度牌\n<color=#FFB347>结束出牌将触发引擎故障：缺 1 张 → +1 热量</color>\n待确认：1 张速度牌（速度总和 3）"
+            ]
+        },
+        {
+            "width": 2560,
+            "height": 1440,
+            "roster": 12,
+            "stage": "before",
+            "team": "UK",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05b2-2026-11-03\\before\\hud-20261102-184011180\\2560x1440-UK-ready.png",
+            "action": "当前生产程序集无精调入口",
+            "status": "G2 档（要求 2 张） | 本回合 1/2 张速度牌\n<color=#FFB347>结束出牌将触发引擎故障：缺 1 张 → +1 热量</color>\n待确认：1 张速度牌（速度总和 3）",
+            "overflows": [
+                "HandTitle: 手牌区",
+                "DeckTableTitle: 牌桌",
+                "Status: G2 档（要求 2 张） | 本回合 1/2 张速度牌\n<color=#FFB347>结束出牌将触发引擎故障：缺 1 张 → +1 热量</color>\n待确认：1 张速度牌（速度总和 3）"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 4,
+            "stage": "before",
+            "team": "IT",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05b2-2026-11-03\\before\\hud-20261102-184011180\\1280x720-IT-ready.png",
+            "action": "当前生产程序集无精调入口",
+            "status": "G2 档（要求 2 张） | 本回合 1/2 张速度牌\n<color=#FFB347>结束出牌将触发引擎故障：缺 1 张 → +1 热量</color>\n待确认：1 张速度牌（速度总和 3）",
+            "overflows": [
+                "Status: G2 档（要求 2 张） | 本回合 1/2 张速度牌\n<color=#FFB347>结束出牌将触发引擎故障：缺 1 张 → +1 热量</color>\n待确认：1 张速度牌（速度总和 3）"
+            ]
+        },
+        {
+            "width": 1280,
+            "height": 720,
+            "roster": 12,
+            "stage": "before",
+            "team": "UK",
+            "screenshot": "D:\\UnityProject\\Foodula1\\production\\qa\\evidence\\tech-driver-I05b2-2026-11-03\\before\\hud-20261102-184011180\\1280x720-UK-ready.png",
+            "action": "当前生产程序集无精调入口",
+            "status": "G2 档（要求 2 张） | 本回合 1/2 张速度牌\n<color=#FFB347>结束出牌将触发引擎故障：缺 1 张 → +1 热量</color>\n待确认：1 张速度牌（速度总和 3）",
+            "overflows": [
+                "Status: G2 档（要求 2 张） | 本回合 1/2 张速度牌\n<color=#FFB347>结束出牌将触发引擎故障：缺 1 张 → +1 热量</color>\n待确认：1 张速度牌（速度总和 3）"
+            ]
+        }
+    ]
+}

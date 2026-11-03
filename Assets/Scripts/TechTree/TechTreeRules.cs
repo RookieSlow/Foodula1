@@ -913,6 +913,7 @@ public static class TechTreeRules
         state.schwarzbierFuelLastLap = -1;
         state.grillSpezialUsed = false;
         state.germanBurst.ResetForRace();
+        state.precisionTune.ResetForRace();
         state.grillSpezialHeatPaidThisTurn = 0;
         state.brothSelection = BrothType.None;
         state.bankuruwaseActive = false;
@@ -934,6 +935,7 @@ public static class TechTreeRules
         if (state == null) return;
         state.prepMeal.CloseInput();
         state.germanBurst.CloseWindow();
+        state.precisionTune.CloseInput();
         state.grillSpezialHeatPaidThisTurn = 0;
         ResetDimSumCombo(state);
     }

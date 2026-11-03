@@ -1,0 +1,268 @@
+[
+  {
+    "name": "RaceMovementRulesTests.CardDriverSumPreservesLegacyOrderAndDoesNotConsumeState(\"de_sebastian_vettel\",False)",
+    "state": "Failed",
+    "message": "  人车合拍需要当前固定来源费用计划\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at RaceMovementRulesTests.CardDriverSumPreservesLegacyOrderAndDoesNotConsumeState (System.String driverId, System.Boolean crossedCorner) [0x0001c] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\race_movement_rules_test.cs:35\r\n",
+    "seconds": 0.0093745
+  },
+  {
+    "name": "RaceMovementRulesTests.CardDriverSumPreservesLegacyOrderAndDoesNotConsumeState(\"de_sebastian_vettel\",True)",
+    "state": "Failed",
+    "message": "  人车合拍需要当前固定来源费用计划\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at RaceMovementRulesTests.CardDriverSumPreservesLegacyOrderAndDoesNotConsumeState (System.String driverId, System.Boolean crossedCorner) [0x0001c] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\race_movement_rules_test.cs:35\r\n",
+    "seconds": 0.0006251
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1920,1080,0,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0539418
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1920,1080,0,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0366991
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1920,1080,1,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0348005
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1920,1080,1,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0310652
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1920,1080,2,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0292544
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1920,1080,2,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0301163
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1920,1080,3,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0376539
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1920,1080,3,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.032031
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1920,1080,6,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0339297
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1920,1080,6,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0311862
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1920,1080,7,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0328553
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1920,1080,7,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0309367
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(2560,1440,0,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0311551
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(2560,1440,0,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0298866
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(2560,1440,1,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0293775
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(2560,1440,1,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0293295
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(2560,1440,2,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0309522
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(2560,1440,2,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0312912
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(2560,1440,3,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0376713
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(2560,1440,3,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0328491
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(2560,1440,6,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0291084
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(2560,1440,6,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0346532
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(2560,1440,7,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0292522
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(2560,1440,7,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0353129
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1280,720,0,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0357514
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1280,720,0,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0301421
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1280,720,1,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.035228
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1280,720,1,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0317053
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1280,720,2,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0281996
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1280,720,2,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0285297
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1280,720,3,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0254274
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1280,720,3,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0241248
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1280,720,6,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0294678
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1280,720,6,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0317138
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1280,720,7,0)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0269972
+  },
+  {
+    "name": "VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask(1280,720,7,255)",
+    "state": "Failed",
+    "message": "  Driver must own its real raycast.\r\n  Expected: True\r\n  But was:  False\r\n",
+    "stackTrace": "at VettelRhythmProductionUiCapture.PointerClick (UnityEngine.EventSystems.EventSystem events, UnityEngine.UI.GraphicRaycaster raycaster, UnityEngine.UI.Button button) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:216\r\nat VettelRhythmProductionUiCapture.Exercise (System.Int32 width, System.Int32 height, System.Int32 fixture, System.Int32 mask, System.Boolean rewritten, System.String png) [0x009bb] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:129\r\nat VettelRhythmProductionUiTests.ActualSourceModalIsAtomicAndRetainsFocusAndMask (System.Int32 w, System.Int32 h, System.Int32 fixture, System.Int32 mask) [0x00000] in D:\\UnityProject\\Foodula1\\Assets\\Tests\\Editor\\vettel_rhythm_production_ui_test.cs:257\r\n",
+    "seconds": 0.0288658
+  }
+]

@@ -48,8 +48,10 @@ public static class RaceMovementRules
         int speedPerCardBonus = DriverSkillRules.GetSpeedPerCardBonus(player.driverSkill);
         int rawSpeedTotal = CardPlayRules.SumCommittedSpeedCardValues(player.playedSpeedCardsThisTurn) +
             speedPerCardBonus * player.playedSpeedCardsThisTurn.Count;
+        // Tuning is an independent delta after the original source modifications and ATTACK exclusion.
         int cornerSpeed = Math.Max(0, rawSpeedTotal -
-            CardPlayRules.GetHotpotCornerExclusion(player, speedPerCardBonus));
+            CardPlayRules.GetHotpotCornerExclusion(player, speedPerCardBonus) -
+            ItalyPrecisionTuneRules.GetCommittedReduction(player) - AscariPrecisionRules.GetCommittedReduction(player));
         return activeCue != null && activeCue.step == TutorialStepId.JpTorpedo && isTeachingLeader
             ? 0
             : cornerSpeed;
@@ -63,6 +65,16 @@ public static class RaceMovementRules
     {
         int speedPerCardBonus = DriverSkillRules.GetSpeedPerCardBonus(player.driverSkill);
         int bonus = CardPlayRules.GetHotpotMovementContribution(player, speedPerCardBonus);
+        int reduction = ItalyPrecisionTuneRules.GetCommittedReduction(player) + AscariPrecisionRules.GetCommittedReduction(player);
+        if (reduction > 0)
+        {
+            int unadjustedCorner = CardPlayRules.SumCommittedSpeedCardValues(player.playedSpeedCardsThisTurn) +
+                speedPerCardBonus * player.playedSpeedCardsThisTurn.Count -
+                CardPlayRules.GetHotpotCornerExclusion(player, speedPerCardBonus);
+            // With a lone ATTACK card corner speed is already zero. Preserve that floor,
+            // but do not let it erase the independent -1 from actual movement.
+            bonus -= Math.Max(0, reduction - Math.Max(0, unadjustedCorner));
+        }
         bonus += player.trickMoveBonusThisTurn;
         bonus += DriverSkillRules.GetMovementBonus(player.driverSkill, crossedCorner);
         bonus -= DriverSkillRules.GetGutterMovementPenalty(player.driverSkill);
@@ -81,6 +93,8 @@ public static class RaceMovementRules
             int value = CardPlayRules.GetCommittedSpeedCardValue(card);
             ledger.AddPlan($"速度牌 {++index}（{value}）", value, TurnMovementKind.Card);
         }
+        ledger.AddPlan("科技：精准调校", -ItalyPrecisionTuneRules.GetCommittedReduction(player), TurnMovementKind.Technology);
+        ledger.AddPlan("车手：精密过弯（原牌减速）", -AscariPrecisionRules.GetCommittedReduction(player), TurnMovementKind.Driver);
         string activeName = player.DriverProfile?.ActiveName ?? "车手主动技能";
         string passiveName = player.DriverProfile?.PassiveName ?? "车手被动技能";
         ledger.AddPlan($"车手：{activeName}（每张牌）",

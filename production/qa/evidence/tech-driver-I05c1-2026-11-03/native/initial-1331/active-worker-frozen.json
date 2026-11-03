@@ -1,0 +1,22 @@
+{
+  "Assets/Scripts/Drivers/AscariPrecisionRules.cs": "0f8aba421bbccbf809a7d59940e10141e945e03be7a02d4b774f7d35421e94c0",
+  "Assets/Scripts/Drivers/AscariPrecisionRuntime.cs": "c53acc24e77e1787affbc0e2427fd9169bcba52578514a69f103b4ccf94d5a3f",
+  "Assets/Scripts/Drivers/AscariPrecisionActivationPlan.cs": "d793081d32687fd59ae1dd477fd1815c1f52dcbbfe8cdea267a4da035dcaa509",
+  "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "f4e7e05dad2a905457f761658da601bd149e4a062d24cb8a7f83646cfa95e9bb",
+  "Assets/Scripts/Drivers/DriverSkillRules.cs": "e5e45af0b619055969aac214262127b6d95fe940ba02f844c6b735279817a2d9",
+  "Assets/Scripts/Core/RaceSession.cs": "593ba512e796bd5071ca1b04946aa8ebae54812e34fa8922088e668d2033bf2e",
+  "Assets/Scripts/Core/CardPlayRules.cs": "f13cee612cd5223161dcab7fb8f8eff5d7260288435a3ccb075bcd55cdd82ef0",
+  "Assets/Scripts/Core/RaceMovementRules.cs": "69504d287ae96f9c257795ea826d8ac0064531981fb854435ecc12fb31baf2bc",
+  "Assets/Scripts/Core/RaceTurnPreviewRules.cs": "d1c7adae72389c7ca024588906431dfad87582907930a04e0173478ce50f4194",
+  "Assets/Scripts/Core/RaceTurnCleanup.cs": "c0f3ac25e4b97a22c29aa13bc45ff12be57372f8fc88dbbf325b95358f4bada9",
+  "Assets/Scripts/Core/MVPGameManager.cs": "a44e50c170f4fc789cc15aa988c94daf62c4603151f96b16e10a7a9366300bd8",
+  "Assets/Tests/Editor/ascari_precision_test.cs": "13a9480002c986de68bf8905f42fc685c919acd672b77505e81dc165978ddc9c",
+  "Assets/Tests/Editor/driver_skill_rules_test.cs": "91bd542bbc3f77f457283963fb56e55f36e7fe1c632c2b77207d9cd382dff6a1",
+  "Assets/Tests/Editor/driver_skill_runtime_test.cs": "4e38e770eb71214a0dabd226f8e54bceb2c1175c6e5e4bc4f8b896ae33be117c",
+  "Assets/Tests/Editor/RegressionModules.json": "ca9f9615008c673ff37fab436c6395c07bdcb0d50b30cb9bdb49cf8757998743",
+  "Assets/Scripts/Drivers/AscariPrecisionRules.cs.meta": "933ab00a00923da6d6904bbb8d5a30f03c8f4c7b46fd5ad348952c89d37b7aca",
+  "Assets/Scripts/Drivers/AscariPrecisionRuntime.cs.meta": "e2a12e5269cd9963a004251f0c35ae74a40e8dfe386f17ad2cb2f38eddb20d45",
+  "Assets/Scripts/Drivers/AscariPrecisionActivationPlan.cs.meta": "854876ff16e5cc3b6c201da8b37abdb8d952e0f1277894a0815cf9bf01bab9d8",
+  "Assets/Tests/Editor/ascari_precision_test.cs.meta": "1a3653a9df2706e5bf4c59daefffa5d419b3d751329ca13455ae23c63719e6be",
+  "Assets/Tests/Editor/race_movement_rules_test.cs": "cda6be55523ae399d48fbefb0373a35db2749e0a3e41918ee8cd51d13861e55f"
+}

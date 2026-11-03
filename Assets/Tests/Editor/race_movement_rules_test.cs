@@ -32,24 +32,63 @@ public class RaceMovementRulesTests
         Assert.IsTrue(DriverCatalog.TryGet(driverId, out DriverProfile driver));
         var state = new DriverSkillRuntimeState();
         state.Initialize(driver, 7, true);
-        Assert.IsTrue(state.TryActivate(driver,
-            new DriverSkillActivationContext(true, 2, 3, 1, 10, 3), out string reason), reason);
-        var player = new PlayerState("movement", false, 9, 2)
+        var player = new PlayerState("movement", false, 9, 2) { driverSkill = state };
+        var context = new DriverSkillActivationContext(true, 2, 3, 1, 10, 3);
+        if (driverId == "de_sebastian_vettel")
         {
-            driverSkill = state, hotpotAttackAppliedThisTurn = true,
-            hotpotAttackCardValueThisTurn = 4, trickMoveBonusThisTurn = -2
-        };
+            var race = new RaceSession();
+            player.driverId = driverId; player.teamId = TeamId.DE;
+            player.deck.InitializeExactOrder(new[] { new CardData(CardType.Speed, 1) }, new HeatPool(6));
+            race.Players.Add(player); race.BeginTurn(player, 1); race.BeginDriverSkillInput(player, 60);
+            Assert.That(VettelRhythmActivationPlan.TryCreate(race, player, 1, 2, 1, context,
+                out var plan, out string planReason), Is.True, planReason);
+            Assert.That(plan.TryCommit(race, player, 1, 2, 1, context,
+                VettelNativeSource.BasicCruise, out planReason), Is.True, planReason);
+        }
+        else if (driverId == "it_alberto_ascari")
+        {
+            var race = new RaceSession(); player.driverId = driverId; player.teamId = TeamId.IT;
+            var four = new CardData(CardType.Speed, 4); var two = new CardData(CardType.Speed, 2);
+            var originals = new[] { four, two };
+            player.deck.InitializeExactOrder(originals, new HeatPool(6)); player.deck.DrawToHand(2);
+            race.Players.Add(player); race.BeginTurn(player, 1); race.BeginDriverSkillInput(player);
+            var nodes = new List<TrackNode>(); for (int i = 0; i < 20; i++) nodes.Add(new TrackNode(i, 99));
+            nodes[10] = new TrackNode(10, 5, "first", 1, false, true);
+            Assert.That(race.TryPrepareAscariPrecision(player, originals, four, 1, 0, true, nodes, 3,
+                out var plan, out string planReason), Is.True, planReason);
+            Assert.That(CardPlayRules.CommitSpeedCards(player, originals, 2, race, nodes.Count,
+                null, 1, 0, true, plan, 0, nodes, 3), Is.EqualTo(SpeedCardCommitResult.Success));
+            Assert.That(player.playedSpeedCardsThisTurn, Is.EqualTo(originals));
+            Assert.That(state.Precision.CommittedTarget, Is.SameAs(four));
+            Assert.That(four.value, Is.EqualTo(4)); Assert.That(two.value, Is.EqualTo(2));
+        }
+        else Assert.IsTrue(state.TryActivate(driver, context, out string reason), reason);
+        player.hotpotAttackAppliedThisTurn = true;
+        player.hotpotAttackCardValueThisTurn = 4;
+        player.trickMoveBonusThisTurn = -2;
         int expected = CardPlayRules.GetHotpotMovementContribution(player,
             DriverSkillRules.GetSpeedPerCardBonus(state));
         expected += player.trickMoveBonusThisTurn;
         expected += DriverSkillRules.GetMovementBonus(state, crossedCorner);
         expected -= DriverSkillRules.GetGutterMovementPenalty(state);
         expected += state.PassiveMovementBonusThisTurn;
+        if (driverId == "it_alberto_ascari")
+        {
+            Assert.That(AscariPrecisionRules.GetCommittedReduction(player), Is.EqualTo(1));
+            Assert.That(RaceMovementRules.ComputeCornerSpeed(player, null, false), Is.EqualTo(1),
+                "Ordinary6 minus ATTACK4 and independent original-card reduction1; shared values remain unchanged.");
+        }
         int uses = state.UsesRemaining, duration = state.ActiveTurnsRemaining;
+        int precisionVersion = state.Precision.Version;
+        CardData precisionTarget = state.Precision.CommittedTarget;
+        int rhythmVersion = state.Rhythm.Version;
         for (int i = 0; i < 2; i++)
             Assert.AreEqual(expected, RaceMovementRules.ComputeCardAndDriverMovementBonus(player, crossedCorner));
         Assert.AreEqual(uses, state.UsesRemaining);
         Assert.AreEqual(duration, state.ActiveTurnsRemaining);
+        Assert.AreEqual(rhythmVersion, state.Rhythm.Version);
+        Assert.AreEqual(precisionVersion, state.Precision.Version);
+        Assert.That(state.Precision.CommittedTarget, Is.SameAs(precisionTarget));
         Assert.IsTrue(state.ActivatedThisTurn);
         Assert.IsTrue(player.hotpotAttackAppliedThisTurn);
         Assert.AreEqual(4, player.hotpotAttackCardValueThisTurn);

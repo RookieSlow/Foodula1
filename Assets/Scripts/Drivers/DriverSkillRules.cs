@@ -215,7 +215,8 @@ public static class DriverSkillRules
     /// <summary>Only migrated UK skills advance on their owner's driving inputs.</summary>
     public static bool UsesDrivingInputClock(DriverActiveSkillId skill)
     {
-        return skill == DriverActiveSkillId.FinalLap || skill == DriverActiveSkillId.AngryCharge;
+        return skill == DriverActiveSkillId.FinalLap || skill == DriverActiveSkillId.AngryCharge ||
+            skill == DriverActiveSkillId.PrecisionCornering;
     }
 
     /// <summary>
@@ -319,15 +320,13 @@ public static class DriverSkillRules
 
     public static int GetCornerLimitBonus(DriverSkillRuntimeState state)
     {
-        return Active(state, DriverActiveSkillId.PrecisionCornering) && state.Tier >= 2 ? 1 : 0;
+        return 0; // D05 lowers one original card; it no longer raises ordinary corner limits.
     }
 
     public static int ReduceCornerHeat(DriverSkillRuntimeState state, int heat)
     {
         if (Active(state, DriverActiveSkillId.PerfectLap) && !state.Strategy.ManualPath) return 0;
-        int reduced = Active(state, DriverActiveSkillId.PrecisionCornering)
-            ? Math.Max(0, heat - 1)
-            : Math.Max(0, heat);
+        int reduced = Math.Max(0, heat); // D05 never discounts ordinary overspeed heat.
         if (state != null)
             reduced = Math.Max(0, reduced - state.ConsumePassiveCornerHeatReduction());
         return reduced;

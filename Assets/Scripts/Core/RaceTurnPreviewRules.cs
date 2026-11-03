@@ -26,7 +26,8 @@ public static class RaceTurnPreviewRules
         IReadOnlyList<CardData> selected, bool gearTrial, int requestedGear,
         Func<int, int, bool> crossesCorner = null, Func<PlayerState, bool, int, int> nigiriBonus = null,
         int totalCells = 0, Func<int, int, IEnumerable<int>> crossedCorners = null,
-        Func<int, int> cornerBaseLimit = null, IReadOnlyList<TrackNode> trackNodes = null)
+        Func<int, int> cornerBaseLimit = null, IReadOnlyList<TrackNode> trackNodes = null,
+        ItalyPrecisionTuneActivationPlan precisionTunePlan = null, AscariPrecisionActivationPlan ascariPlan = null)
     {
         if (player == null || player.deck == null || config == null) return null;
         var copy = new PlayerState(player.name, player.isAI, player.position, player.gear) {
@@ -45,10 +46,12 @@ public static class RaceTurnPreviewRules
             hotpotAttackCardValueThisTurn = player.hotpotAttackCardValueThisTurn,
             italyCornerExitBoostReady = player.italyCornerExitBoostReady
         };
+        copy.techState?.precisionTune.RebindPresentationCopy(session, player, copy);
         copy.driverSkill?.Tuning.RebindPresentationCopy(session, player, copy);
         copy.driverSkill?.Strategy.RebindPresentationCopy(session, player, copy);
         copy.driverSkill?.Feedback.RebindPresentationCopy(session, player, copy);
         copy.driverSkill?.Rhythm.RebindPresentationCopy(session, player, copy);
+        copy.driverSkill?.Precision.RebindPresentationCopy(session, player, copy);
         copy.playedSpeedCardsThisTurn.AddRange(player.playedSpeedCardsThisTurn);
         var result = new RaceTurnPreview { GearTrial = gearTrial, Team = player.teamId, Movement = copy.turnMovement };
         Func<int, HeatPaymentDestination, HeatPaymentSource, bool> payWithSource = (amount, destination, source) => {
@@ -134,13 +137,17 @@ public static class RaceTurnPreviewRules
                 room--;
             }
         }
+        if (!gearTrial && config.enableTechTree)
+            precisionTunePlan?.ApplyPresentation(session, player, copy, selected);
+        if (!gearTrial) ascariPlan?.ApplyPresentation(session, player, copy, selected, precisionTunePlan);
         result.CardCount = copy.playedSpeedCardsThisTurn.Count;
         result.MissingCards = copy.kantoOdenSkipThisTurn ? 0 : RaceRules.GetMissingSpeedCardCount(
             CardPlayRules.GetSpeedCardRequirement(copy).RequiredCardCount, result.CardCount);
         if (result.MissingCards > 0) pay(result.MissingCards, HeatPaymentDestination.Hand);
         copy.driverSkill?.Strategy.ValidateMovementInput(session, copy,
             CardPlayRules.GetSpeedCardRequirement(copy).RequiredCardCount);
-        result.CardSpeedTotal = CardPlayRules.SumCommittedSpeedCardValues(copy.playedSpeedCardsThisTurn);
+        result.CardSpeedTotal = Math.Max(0, CardPlayRules.SumCommittedSpeedCardValues(copy.playedSpeedCardsThisTurn) -
+            ItalyPrecisionTuneRules.GetCommittedReduction(copy) - AscariPrecisionRules.GetCommittedReduction(copy));
         copy.turnMovement.BeginBasePlan();
         bool rhythmCruise = false, rhythmExit = false;
         if (!RaceTurnRules.IsInactive(copy, null) && (result.CardCount > 0 || copy.trickMoveBonusThisTurn != 0 ||
@@ -219,6 +226,27 @@ public static class RaceTurnPreviewRules
         int baseEnd = player.position + copy.totalMovementThisTurn;
         bool baseReachesFinalLine = trackNodes != null && TrackRules.EndBeforeFinalFinish(trackNodes,
             player.position, baseEnd, config.totalLaps - player.lap) < baseEnd;
+        int ascari = result.CanPay && !baseReachesFinalLine && session != null && cornerBaseLimit != null
+            ? copy.driverSkill?.Precision.ConsumeSettledReward(session, copy, trackNodes,
+                player.position, player.lap, config.totalLaps, Math.Min(AscariPrecisionRules.GetCommittedBaseSpeed(copy), copy.totalMovementThisTurn),
+                id => session.EffectiveCornerLimit(copy, cornerBaseLimit(id))) ?? 0 : 0;
+        if (ascari > 0)
+        {
+            int end = TrackRules.EndBeforeFinalFinish(trackNodes, player.position,
+                baseEnd + ascari, config.totalLaps - player.lap);
+            if (end < baseEnd + ascari) ascari = Math.Max(0, end + 1 - baseEnd);
+            copy.turnMovement.AddPlan("车手：精密过弯（预计安全弯后）", ascari, TurnMovementKind.Driver);
+            copy.totalMovementThisTurn += ascari;
+            if (totalCells > 0) copy.position = (copy.position + ascari) % totalCells;
+            var extra = TrackRules.GetAdditionalApexCornersCrossed(trackNodes, player.position,
+                Math.Max(player.position + copy.cornerTotalThisTurn, baseEnd), baseEnd, end);
+            int beforeTail = result.HeatPaid;
+            RaceCornerResolver.Resolve(copy, 0, extra,
+                id => session.EffectiveCornerLimit(copy, cornerBaseLimit(id)), id => "弯道 " + id,
+                over => session.ResolveOverspeedHeatCost(copy, over),
+                (amount, reason) => payWithSource(amount, HeatPaymentDestination.Hand, HeatPaymentSource.OrdinaryCorner), _ => { });
+            result.CornerHeat += result.HeatPaid - beforeTail;
+        }
         int rhythm = result.CanPay && !baseReachesFinalLine && !RaceTurnRules.IsInactive(copy, null) && copy.totalMovementThisTurn > 0
             ? copy.driverSkill?.Rhythm.PreviewBonus(session, copy, rhythmCruise, rhythmExit) ?? 0 : 0;
         if (rhythm > 0)

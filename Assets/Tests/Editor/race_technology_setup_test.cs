@@ -569,7 +569,7 @@ public class RaceTechnologySetupTests
         Assert.AreEqual(permanentBefore, TechTreeProfileCodec.Encode(source));
     }
 
-    [TestCase("IT", 8, 8)] [TestCase("US", 7, 7)]
+    [TestCase("IT", 7, 8)] [TestCase("US", 7, 7)]
     [TestCase("GB", 7, 7)] [TestCase("FR", 7, 7)] [TestCase(null, 7, 7)]
     public void UkInitializationUsesCurrentTrackBeforeOpeningCapacityAndHand(
         string country, int expectedPool, int expectedHand)
@@ -581,6 +581,7 @@ public class RaceTechnologySetupTests
         Setup(player, TeamId.UK);
         Assert.AreEqual(expectedPool, player.deck.heatPool.remaining);
         Assert.AreEqual(expectedHand, player.deck.Hand.Count);
+        Assert.AreEqual(3, session.EffectiveSpinMax(player));
         Assert.AreEqual(TechTreeRules.ResolveSunNeverSetsTarget(country), player.techState.sunNeverSetsTarget);
     }
 

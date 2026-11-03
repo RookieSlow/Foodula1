@@ -100,7 +100,9 @@ public static class GearRequirementFeedbackRules
     public static string FormatSpeedCommitFailure(SpeedCardCommitResult result, int maxCards)
         => result == SpeedCardCommitResult.SpeedLimitReached
             ? $"速度牌已达上限：{maxCards} 张（本次选择未提交）"
-            : "出牌失败：手牌状态已变化";
+            : result == SpeedCardCommitResult.PrecisionTuneExpired
+                ? "精调选择已过期，本次选择未提交；请重新选择或取消精调"
+                : "出牌失败：手牌状态已变化";
 
     public static string FormatCommittedSpeedLog(string playerName, IReadOnlyList<CardData> cards)
         => $"{playerName} 确认 {cards.Count} 张速度牌（速度总和 {CardPlayRules.SumCommittedSpeedCardValues(cards)}）。";

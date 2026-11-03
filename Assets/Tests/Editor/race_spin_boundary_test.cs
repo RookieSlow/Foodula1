@@ -138,18 +138,21 @@ public class RaceSpinBoundaryIntegrationTests
         Assert.IsFalse(player.techState.dimSumPaidHeat);
     }
 
-    [TestCase(2, false)]
-    [TestCase(3, true)]
+    [TestCase(1, false)]
+    [TestCase(2, true)]
     public void ActualTechnologyCapIsUsedBeforeSpin(int before, bool eliminated)
     {
         var player = Player(TeamId.IT, false);
         session.TechDb = TechTreeDatabaseFactory.CreateDefault();
         player.techState = new TechTreeState(TeamId.IT, 0);
         player.techState.activeNodeIds.Add("it-l2-lasagna");
-        Assert.AreEqual(4, session.EffectiveSpinMax(player));
+        Assert.AreEqual(3, session.EffectiveSpinMax(player));
+        Assert.AreEqual(8, session.EffectiveHandSize(player, 7));
+        Assert.AreEqual(6, session.EffectiveHeatPoolSize(player, 6));
         player.spinCounter = before;
         manager.HandleSpin(player, 9, "overspeed");
         Assert.AreEqual(before + 1, player.spinCounter);
         Assert.AreEqual(eliminated, player.isBlown);
+        Assert.AreEqual(6, player.deck.heatPool.remaining + player.deck.CountPermanentHeatOutsideEngine());
     }
 }

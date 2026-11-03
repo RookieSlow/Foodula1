@@ -79,6 +79,10 @@ public static class VettelRhythmProductionUiCapture
             var hand = handHost.AddComponent<CardHandUI>(); hand.enabled = false;
             hand.playCardsButton = Button(scope.Root.transform, scope.Font, "Play cards", new Vector2(0, -250));
             typeof(HUDUI).GetMethod("Start", Private).Invoke(hud, null);
+            // This synchronous EditMode fixture explicitly starts owned behaviours:
+            // native Awake does not initialize the attached feedback's base scale here.
+            typeof(ButtonClickAnimation).GetMethod("Awake", Private).Invoke(
+                hud.driverSkillButton.GetComponent<ButtonClickAnimation>(), null);
             var eventHost = new GameObject("Owned modal EventSystem", typeof(EventSystem)); eventHost.transform.SetParent(scope.Root.transform, false);
             events = eventHost.GetComponent<EventSystem>(); typeof(EventSystem).GetMethod("OnEnable", Private).Invoke(events, null); EventSystem.current = events;
             var host = new GameObject("Owned inactive rhythm manager"); host.transform.SetParent(scope.Root.transform, false); host.SetActive(false);
@@ -118,6 +122,7 @@ public static class VettelRhythmProductionUiCapture
             if (fixture == 4 || fixture == 5)
             {
                 Assert.That(hud.driverSkillButton.interactable, Is.False);
+                if (fixture == 5) Assert.That(record.label, Does.Contain("3级解锁"));
                 manager.OnDriverSkillButtonClicked(); // A direct disabled command still cannot fall through to the legacy path.
                 Assert.That(player.driverSkill.IsActive, Is.False);
                 Assert.That(hud.IsReturnToMenuConfirmationVisible, Is.False);
@@ -205,6 +210,17 @@ public static class VettelRhythmProductionUiCapture
     }
     private static bool CanReceivePointer(EventSystem events, GraphicRaycaster raycaster, Button button)
     {
+        // Match CareerUiPointerTestScope.Click: newly created graphics have no live
+        // hit depth until the owned layer/canvas/text geometry has actually rendered.
+        foreach (Transform child in raycaster.GetComponentsInChildren<Transform>(true)) child.gameObject.layer = 5;
+        Canvas.ForceUpdateCanvases();
+        foreach (TMP_Text text in raycaster.GetComponentsInChildren<TMP_Text>()) text.ForceMeshUpdate();
+        Canvas.ForceUpdateCanvases();
+        Camera camera = raycaster.GetComponent<Canvas>().worldCamera;
+        RenderTexture previous = RenderTexture.active;
+        try { camera.Render(); }
+        finally { RenderTexture.active = previous; }
+        Assert.That(button.targetGraphic.depth, Is.GreaterThanOrEqualTo(0), button.name + " must render before hit testing.");
         Vector3[] corners = new Vector3[4]; button.GetComponent<RectTransform>().GetWorldCorners(corners);
         var canvas = raycaster.GetComponent<Canvas>();
         var data = new PointerEventData(events) { position = RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, (corners[0] + corners[2]) * 0.5f) };
@@ -214,10 +230,15 @@ public static class VettelRhythmProductionUiCapture
     private static void PointerClick(EventSystem events, GraphicRaycaster raycaster, Button button)
     {
         Assert.That(CanReceivePointer(events, raycaster, button), Is.True, button.name + " must own its real raycast.");
-        var data = new PointerEventData(events);
+        RectTransform rect = button.GetComponent<RectTransform>();
+        var data = new PointerEventData(events) { position = RectTransformUtility.WorldToScreenPoint(
+            raycaster.GetComponent<Canvas>().worldCamera, rect.TransformPoint(rect.rect.center)), button = PointerEventData.InputButton.Left };
+        Vector3 originalScale = button.transform.localScale;
+        Assert.That(originalScale.sqrMagnitude, Is.GreaterThan(0f), button.name + " must have a visible owned scale.");
         ExecuteEvents.Execute(button.gameObject, data, ExecuteEvents.pointerDownHandler);
         ExecuteEvents.Execute(button.gameObject, data, ExecuteEvents.pointerUpHandler);
         ExecuteEvents.Execute(button.gameObject, data, ExecuteEvents.pointerClickHandler);
+        Assert.That(button.transform.localScale, Is.EqualTo(originalScale), button.name + " must restore its scale after pointer release.");
     }
     private static void Render(CareerUiPointerTestScope scope, HUDUI hud, Record record)
     {

@@ -112,7 +112,6 @@ public class DriverSkillRuntimeTests
     }
 
     [TestCase("de_michael_schumacher")]
-    [TestCase("it_alberto_ascari")]
     [TestCase("it_tazio_nuvolari")]
     [TestCase("us_tony_stewart")]
     [TestCase("us_kyle_busch")]

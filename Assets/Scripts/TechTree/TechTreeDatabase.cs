@@ -378,13 +378,8 @@ public static class TechTreeDatabaseFactory
             nameEn: "Lasagna Monoscocca",
             tier: TechTreeTier.L2, teamId: TeamId.IT, index: 1, rpCost: 8000,
             prerequisites: new string[0], upgradesTo: "",
-            effects: new[]
-            {
-                new TechEffect(TechEffectType.SpinCounterMaxBonus, 1),
-                new TechEffect(TechEffectType.HandSizeBonus, 1),
-                new TechEffect(TechEffectType.EngineCapacityBonus, 1)
-            },
-            description: "失控计数器上限+1，手牌上限+1，引擎容量+1。"
+            effects: new[] { new TechEffect(TechEffectType.HandSizeBonus, 1) },
+            description: "手牌上限+1；永久引擎容量与失控淘汰阈值不变。"
         ));
 
         db.Add(new TechNodeDef(
@@ -394,7 +389,7 @@ public static class TechTreeDatabaseFactory
             tier: TechTreeTier.L3, teamId: TeamId.IT, index: 1, rpCost: 12000,
             prerequisites: new string[0], upgradesTo: "",
             effects: new[] { new TechEffect(TechEffectType.CavallinoRampante, 1) },
-            description: "冠军时RP收益×1.5（向上取整）。蒙扎主场+意大利车手：再×1.5。"
+            description: "冠军RP×1.5（向上取整）；蒙扎且意大利车手再×1.5。每场1次：精调已选普通速度≥2牌，贡献-1（最低1），移动/弯速同步降低；无额外RP，不与阿斯卡里同牌。"
         ));
     }
 

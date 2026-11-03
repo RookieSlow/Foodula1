@@ -58,3 +58,19 @@ production/qa/evidence/tech-driver-I04c3a-2026-11-02/verification/compile_and_pu
 production/qa/evidence/tech-driver-I04c3a-2026-11-02/verification/compile_and_pure64.py -text -whitespace
 production/qa/evidence/tech-driver-I04c3a-2026-11-02/verification/diff-before.patch -text -whitespace
 production/qa/evidence/tech-driver-I04c3a-2026-11-02/verification/standalone-rules-runtime-result.xml -text -whitespace
+
+# Preserve hashed raw I04c3b and I05 submission patch evidence byte-for-byte.
+production/qa/evidence/tech-driver-I04c3b-2026-11-02/diff-after.patch -text -whitespace
+production/qa/evidence/tech-driver-I04c3b-2026-11-02/native/diff-after.patch -text -whitespace
+production/qa/evidence/tech-driver-I04c3b-2026-11-02/native/diff-before.patch -text -whitespace
+production/qa/evidence/tech-driver-I05a-2026-11-02/diff-after.patch -text -whitespace
+production/qa/evidence/tech-driver-I05a-2026-11-02/native/diff-before.patch -text -whitespace
+production/qa/evidence/tech-driver-I05b1-2026-11-02/native/diff-before.patch -text -whitespace
+production/qa/evidence/tech-driver-I05b1-2026-11-02/native/recovery-20261103/diff-after.patch -text -whitespace
+production/qa/evidence/tech-driver-I05b1-2026-11-02/native/recovery-20261103/diff-before.patch -text -whitespace
+production/qa/evidence/tech-driver-I05b2-2026-11-03/native/diff-before.patch -text -whitespace
+production/qa/evidence/tech-driver-I05b2-2026-11-03/native/recovery-0730/diff-before.patch -text -whitespace
+production/qa/evidence/tech-driver-I05b2-2026-11-03/native/recovery-0730/diff-resume-1301.patch -text -whitespace
+production/qa/evidence/tech-driver-I05c1-2026-11-03/native/initial-1331/diff-before.patch -text -whitespace
+production/qa/evidence/tech-driver-I05c1-2026-11-03/native/recovery-1831/diff-after.patch -text -whitespace
+production/qa/evidence/tech-driver-I05c1-2026-11-03/native/recovery-1831/diff-resume.patch -text -whitespace

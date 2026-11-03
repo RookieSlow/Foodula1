@@ -1,0 +1,574 @@
+{
+  "reviewer": "i05b2_visual_close / ux-designer",
+  "reviewed_utc": "2026-11-03T05:05:59.426863+00:00",
+  "method": "Actually opened all 54 original PNG with tools.view_image; read both manifests and targeted production widget/HUD/CardHandUI/choice source. No Unity mutation, regeneration, source edit or native test execution by reviewer.",
+  "runtime_mvid": "395216e3-1c1e-45e6-91cc-eb8b744a75f5",
+  "accepted_for_bounded_I05b2_HUD": true,
+  "full_UI_acceptance": false,
+  "viewed_count": 54,
+  "viewed_main_count": 30,
+  "viewed_visibility_count": 24,
+  "viewed": [
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1920x1080-IT-ready.png",
+      "sha256": "3b0cbba6ba6a80e136f1b7923e3677dd6e927166722ba31756f16794c1511979",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1920x1080-IT-target.png",
+      "sha256": "a9bf28cecef8862cc30da8a29f1fe9cfe931a8ab0a35c735ae4f1d412be061d6",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1920x1080-IT-pending.png",
+      "sha256": "946138a9426f1132e03e04888124d64dcc0140c09cdb1194222527715b9c5148",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1920x1080-IT-confirm.png",
+      "sha256": "207405bf2a67c974977e3d51cbe1e9b5cd8764dfa4460cc3e1ff6704359ba01a",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1920x1080-IT-used.png",
+      "sha256": "74d9805d38ffa3108cc569b699e55823a079bc88cd3ca66f173990cda9548c21",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1920x1080-UK-ready.png",
+      "sha256": "c3acc667bc77ff873278678a73772c12a9279b84fbf33ef4e04390cb60d631c1",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1920x1080-UK-target.png",
+      "sha256": "ce15f102e01ce690b27944ce563abd00d9f8cefc338d15847fdb4fc91e051a9e",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1920x1080-UK-pending.png",
+      "sha256": "58968976cd803072f9463fb6f25d29697dbebf56b42958242234bd3e9b01747b",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1920x1080-UK-confirm.png",
+      "sha256": "d122dad99af11175e52a78ea6bd7bdddba24bcf1ae2ba98a52b831eeb1e94374",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1920x1080-UK-used.png",
+      "sha256": "57f54b4dedde9629e86aef66e558d7aa0c8923105cb62d0b4a4fd3e7c8b304a0",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/2560x1440-IT-ready.png",
+      "sha256": "6a82371790b43acd170bf94c931a294aed944e7848b34e9b7c8e22865af48cce",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/2560x1440-IT-target.png",
+      "sha256": "751c3a073b7be688d1412708475b6dfc02aed25fdc2a17a95697773466deba77",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/2560x1440-IT-pending.png",
+      "sha256": "b1817cb5b99fb9c975400f0503ca5f066d7f2762eb5994812dea16a6a476065b",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/2560x1440-IT-confirm.png",
+      "sha256": "00473b74f64173a0969dd07b492fba90c8cd6e9274b6c6b5c744679db038e3ab",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/2560x1440-IT-used.png",
+      "sha256": "27a1bb02a1d3e0f3a7506586594f370377f99575ec23c53d553812e594d97f99",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/2560x1440-UK-ready.png",
+      "sha256": "7dfb85ea23c8d87f855912cccc4176ac72fe9c769d9f66155674fc7aad81610a",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/2560x1440-UK-target.png",
+      "sha256": "a887a2297022df081f62d1995c757d88840a79d34ddcf1ef5092f83d4cd56cd4",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/2560x1440-UK-pending.png",
+      "sha256": "10b92bccd4e2c55a04f222b91d216e4bd74bee337117f513e8ce27b90f51cbcb",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/2560x1440-UK-confirm.png",
+      "sha256": "b0be9fb027adc82e95897e20e6133ec66f6d9ca584852cb2474c58b820c56751",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/2560x1440-UK-used.png",
+      "sha256": "29ba02e8c5f183717f1ad814c4895f831671c7d338985b54743d576015af39ef",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1280x720-IT-ready.png",
+      "sha256": "bca5a6afad281e1e6f2e6a61d7d158b6e3b632bab38d8c69c40c79f1ec1f804e",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1280x720-IT-target.png",
+      "sha256": "4fda2fe2b0c893bdaeffc3b18fd3ea1e2f19b1ee613435d1489d6d090cb5667e",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1280x720-IT-pending.png",
+      "sha256": "e7a68bd9aa1f725ef836451b942c737bfae5f7753bdd6006cb60f069ab993071",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1280x720-IT-confirm.png",
+      "sha256": "c24557d5095a23d7f42d547af48fa649778f3bce08475a363853de1ae6a02699",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1280x720-IT-used.png",
+      "sha256": "fccd202ea4cf3865d5deff73bc31f4d8d5f0bf82ea3cdd00866c21cf9f1bc73a",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "IT",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1280x720-UK-ready.png",
+      "sha256": "945108edcfb09e3afdb268ec6b36860a1783ac084f73ac2de12f5d7e613986af",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1280x720-UK-target.png",
+      "sha256": "31ab53a668c77d29c8baadba1ff90323c8b3bab90c5a634dac80604d29c9600e",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1280x720-UK-pending.png",
+      "sha256": "19837b5446ccb3ac0ea9d8af257ddcbd5a548376ca835276d36728f653bd24f9",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1280x720-UK-confirm.png",
+      "sha256": "2e678eec4f86b70644891ce70303e50eee9de3fe5e5650d726631abcac25eda2",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/hud-20261102-235123151/1280x720-UK-used.png",
+      "sha256": "fa6b1491f79227f1452ff47cf4b6c5dfce6fe4725572560ce0f9eeebcdd3fee2",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "UK",
+      "stage": "after"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1920x1080-UK-normal-disabled-or-hidden.png",
+      "sha256": "ab9a32516f62f1f8eea747ba784ed811aaee4cba4a0c254dbadddf18185bc351",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "UK",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1920x1080-DE-normal-disabled-or-hidden.png",
+      "sha256": "77028933af3b0d535f0f81952ea724ff7f29650a34de997757b4b637f71197c1",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "DE",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1920x1080-IT-normal-disabled-or-hidden.png",
+      "sha256": "a6722fdb51183dea72567771ff71eca659e52469ef01d24b20b40193d0906aee",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "IT",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1920x1080-US-normal-disabled-or-hidden.png",
+      "sha256": "4a96ab2a263018d31894bcef48fabd3a1d2c1e989368bf23dacd1cd50022c587",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "US",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1920x1080-CN-normal-disabled-or-hidden.png",
+      "sha256": "8f248c6e6272f76359f326d613b1371cf1e5fddfd268e3b47ae2770f75eb6e01",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "CN",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1920x1080-JP-normal-disabled-or-hidden.png",
+      "sha256": "73e5591b0ef4b402c44fdd9e9c529fec1f9fcbb3e1cc7f6e3dce97abe49d1d0e",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "JP",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1920x1080-IT-career-snapshot.png",
+      "sha256": "f6eff88c45ee8fd0b5d95f39804929150c9e3429538add82f7d3d4f68251da21",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "IT",
+      "stage": "after-owned-career-snapshot-not-launch"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1920x1080-UK-career-snapshot.png",
+      "sha256": "c3acc667bc77ff873278678a73772c12a9279b84fbf33ef4e04390cb60d631c1",
+      "size": [
+        1920,
+        1080
+      ],
+      "team": "UK",
+      "stage": "after-owned-career-snapshot-not-launch"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/2560x1440-UK-normal-disabled-or-hidden.png",
+      "sha256": "3e8ce53ffd2566c7ca39f57a6f5cb23dc1981343a5540de0068cbd63d417f858",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "UK",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/2560x1440-DE-normal-disabled-or-hidden.png",
+      "sha256": "72a1af2b853062b820f9ff41dedbea1d0a0b2b0e7c2ccfe8608cfbfdab955355",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "DE",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/2560x1440-IT-normal-disabled-or-hidden.png",
+      "sha256": "a63403c14a4304dba2ac7921e0f5c19da078b64a4530fa21d28005402923c50d",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "IT",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/2560x1440-US-normal-disabled-or-hidden.png",
+      "sha256": "b5ea685ad123b0c74665bb34544e2cf133272d034f403340eb4052be2b553c5d",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "US",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/2560x1440-CN-normal-disabled-or-hidden.png",
+      "sha256": "9706c5f24d606526a82719dcdbc7144ba8001e81e92f57ee8aa5e0849f700bf2",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "CN",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/2560x1440-JP-normal-disabled-or-hidden.png",
+      "sha256": "8486439a7b4672ea2f5692aac24bbbf693362e9e1dbe176db08e066bb57acdf2",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "JP",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/2560x1440-IT-career-snapshot.png",
+      "sha256": "115122849e1594b15d99cd7ff9789a43df6e264f76e2215303eba6e15bf99199",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "IT",
+      "stage": "after-owned-career-snapshot-not-launch"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/2560x1440-UK-career-snapshot.png",
+      "sha256": "7dfb85ea23c8d87f855912cccc4176ac72fe9c769d9f66155674fc7aad81610a",
+      "size": [
+        2560,
+        1440
+      ],
+      "team": "UK",
+      "stage": "after-owned-career-snapshot-not-launch"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1280x720-UK-normal-disabled-or-hidden.png",
+      "sha256": "3059c995c07acebe16c9fcdcfd7670155d89d79016b30f6fb73d1c27e26423ef",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "UK",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1280x720-DE-normal-disabled-or-hidden.png",
+      "sha256": "982698ac5a89ec34e958f686071908c3dae2b025003534e7acaffe309e75ad3f",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "DE",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1280x720-IT-normal-disabled-or-hidden.png",
+      "sha256": "400314827d543689f5619729c5e4efcf3dbfcb9daf5d62b3aa944d28d31525ce",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "IT",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1280x720-US-normal-disabled-or-hidden.png",
+      "sha256": "66bdf69625cc16ffc70818995a6a4d43c5dfe864271d2b81d165a15f8ccbbc11",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "US",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1280x720-CN-normal-disabled-or-hidden.png",
+      "sha256": "9c7893b06f93facebbf5b1f0017ebdeb3803e4002ae53d9ae33e62a9f0393f0e",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "CN",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1280x720-JP-normal-disabled-or-hidden.png",
+      "sha256": "90e0fa057244ca649b7350f3fbe75b64c41fea4180301f02f251450d830b90a9",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "JP",
+      "stage": "after-mode-owned-normal"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1280x720-IT-career-snapshot.png",
+      "sha256": "01f119c79bf8c5badead45bc32ce66fcc3bd9405823485e95151d412b1a336ea",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "IT",
+      "stage": "after-owned-career-snapshot-not-launch"
+    },
+    {
+      "path": "D:/UnityProject/Foodula1/production/qa/evidence/tech-driver-I05b2-2026-11-03/after/visibility-20261102-235125244/1280x720-UK-career-snapshot.png",
+      "sha256": "945108edcfb09e3afdb268ec6b36860a1783ac084f73ac2de12f5d7e613986af",
+      "size": [
+        1280,
+        720
+      ],
+      "team": "UK",
+      "stage": "after-owned-career-snapshot-not-launch"
+    }
+  ],
+  "findings": [
+    "All three sizes show IT tuning ready, target selection, pending cancel 3 to 2, merged CardAction confirm and used 0/1 states without new target-label or modal clipping.",
+    "UK borrowed IT tuning and owned preparatory meal occupy independent full-width short rows; both labels remain visible, ready/no-old-heat and used/window-closed reasons are text states rather than color alone.",
+    "Target/final panels state selected ordinary speed 3 to 2, no extra RP, prepare does not consume use, final card commit consumes once, cancellation consumes none. Back and commit buttons are separate and unobscured; dimming covers underlying UI.",
+    "Six-team visibility set shows tuning only for IT and eligible UK; DE/US/CN/JP show their existing actions without a stray tuning control. IT/UK owned career snapshot frames retain the tuning action at all sizes.",
+    "Long Chinese title, numeric RP and roster 2/4/6/12 appear within frame; actual card art and 3/2/1 values are visible. This is synthetic owned roster/track context, not full race mode acceptance."
+  ],
+  "nonblocking_existing_or_out_of_scope": [
+    "Existing G2 status first line is partly outside/above its brown status region in ready/visibility frames; related manifest overflows are retained. This review does not declare the old complete HUD or status region free of clipping.",
+    "Existing end-card button wraps missing-card penalty into two lines; some visibility manifests list this legacy label as overflowing. It is not the new tuning target/control.",
+    "1280x720 scales secondary HUD text very small. New tuning/modal text can be read in the original PNG, but physical-display comfort, visual acuity/accessibility minimum-size acceptance remain open.",
+    "Synthetic standings/weather/track area is mostly empty; no complete RaceCanvas composition or race readability acceptance."
+  ],
+  "not_verified": [
+    "Physical keyboard/mouse/gamepad or drag interaction; still screenshots cannot establish focus behavior, raycast blocking or cancellation correctness by themselves. The separate native UI tests must establish those tested paths.",
+    "Full career/normal/tutorial launch and progression; real profile writes, save compatibility, RP/XP persistence.",
+    "Tech-tree L3 node copy and three-size node-screen visuals; Ascari gameplay.",
+    "Screen reader, remapping and subjective 720p comfort."
+  ],
+  "manifest_target_overflow_count": 0,
+  "manifest_legacy_overflow_frames": 38
+}

@@ -1,0 +1,13 @@
+{
+  "source_current_and_snapshot_matched": 29,
+  "protected_matched_to_I05b2_baseline": 44,
+  "unrelated_matched_to_I05b2_baseline": 82,
+  "formal_documents_updated": 10,
+  "current_package": "I05",
+  "I05_status": "in_progress",
+  "L3_overall": false,
+  "Ascari": false,
+  "complete_modes": false,
+  "git_diff_check": "passed; line-ending warnings retained",
+  "card_drag_acceptance": false
+}

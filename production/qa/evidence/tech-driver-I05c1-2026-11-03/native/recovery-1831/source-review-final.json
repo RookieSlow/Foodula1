@@ -1,0 +1,55 @@
+{
+  "reviewer": "i05c1_review / unity-specialist",
+  "reviewed_utc": "2026-11-03T10:50:38.383974+00:00",
+  "method": "Read-only source review under code-review skill and ADR-002. Read current two migrated fixtures, initial diff-resume.patch and exact five native failure records. No Unity/test execution or Git command/source modification by reviewer.",
+  "verdict": "bounded source and old-fixture migration accepted; no remaining blocking findings",
+  "ADR_002": "Rules/runtime and manager adapters remain layered; no UI ownership of game resources; no new package/settings/scene lifecycle change.",
+  "production_findings": {
+    "original_card_and_atomic_commit": "Original instances and source-value snapshots retained. IT and D05 plans both validate before a single card-group removal; same-card conflict rejects in both directions, independent targets each apply one delta. No shared CardData.value or RP mutation.",
+    "lifecycle": "Free cancellation/stale failure does not spend; actual final card commitment spends once. Owner/input/version/session/init binding and cleanup invalidate pending intent without refunding committed uses during the race (spin/skip/terminal). Initialize reconstructs clean runtime and ordinary new-race uses on restart.",
+    "clock_guard_fixed": "AscariPrecisionRuntime.BeginInput now rejects null race/player, AI, disabled state and wrong active skill before opening scope/incrementing InputsStarted. Disabled/AI two new unit cases retain uses/deck and assert no target/scope/input count.",
+    "hotpot_fixed": "Ordinary card body movement is independent of ATTACK corner-speed exclusion. Source-first D05 and IT reductions each preserve -1 movement even at corner floor0. Only ordinary body movement establishes first-apex reach; Hotpot additional+1 and unsettled driver tail cannot be borrowed. Actual base distance is capped to that body; forecast uses copied state.",
+    "safety_and_tail": "Ordered first ordinary-base apex must be physically reached and current corner speed safe at effective limit; reward is one-shot. Tail newly crossed apexes retain ordinary payment/spin path. Old D05 limit+1 and generic heat-1 removed.",
+    "prediction": "New runtime copy/rebind and copied deck/tech state keep repeated projections from consuming real resources or uses.",
+    "player_UI_boundary": "D05 real target chooser and passive remain unimplemented/explicitly unaccepted in this API slice. UI implementation-progress text was removed from player label."
+  },
+  "old_fixture_migration": {
+    "failed_count": 5,
+    "failed_case_names": [
+      "DriverSkillRulesTests.ReactionHeatCostMatchesLegacyGateWithoutConsumingAnyDriverState(3)",
+      "DriverSkillRulesTests.ReactionHeatCostMatchesLegacyGateWithoutConsumingAnyDriverState(5)",
+      "DriverSkillRulesTests.ReactionHeatCostMatchesLegacyGateWithoutConsumingAnyDriverState(7)",
+      "RaceMovementRulesTests.CardDriverSumPreservesLegacyOrderAndDoesNotConsumeState(\"it_alberto_ascari\",False)",
+      "RaceMovementRulesTests.CardDriverSumPreservesLegacyOrderAndDoesNotConsumeState(\"it_alberto_ascari\",True)"
+    ],
+    "failure_cause": "All five expected legacy untargeted TryActivate=true for D05, now intentionally rejected by production target-plan contract.",
+    "reaction_3_cases": "Ascari levels3/5/7 now use owned RaceSession participant, original speed2, eligible first apex, real Prepare and CardPlayRules group commit. Pre/post-disabled reaction0 and active TrueSelf-only reaction1 assertions, repeated calls and uses/duration/ActivatedThisTurn checks remain; Precision.Version/Target nonconsumption assertions added.",
+    "movement_2_cases": "Ascari crossedCorner=false/true now use actual original4+2 group, target4, real owner input and eligible path. Original Hotpot4/signed trick-2/sum order, repeated read-only checks, uses/duration/rhythm version, position9/gear2 assertions remain. New exact corner1 and Precision.Target/Version/value assertions strengthen independent reduction and no mutation.",
+    "no_delete_skip_or_weaken": "No Test/TestCase skip, Assert.Ignore, deleted failed case or weakened reaction/order/value assertion introduced by these two final migrations. Expected signed bonus remains3: Hotpot5 plus trick-2; corner1 is ordinary6 minus ATTACK4 minus D05delta1.",
+    "sha256": {
+      "Assets/Tests/Editor/driver_skill_rules_test.cs": "91bd542bbc3f77f457283963fb56e55f36e7fe1c632c2b77207d9cd382dff6a1",
+      "Assets/Tests/Editor/race_movement_rules_test.cs": "cda6be55523ae399d48fbefb0373a35db2749e0a3e41918ee8cd51d13861e55f"
+    }
+  },
+  "reviewed_production_sha256": {
+    "Assets/Scripts/Drivers/AscariPrecisionRules.cs": "0f8aba421bbccbf809a7d59940e10141e945e03be7a02d4b774f7d35421e94c0",
+    "Assets/Scripts/Drivers/AscariPrecisionRuntime.cs": "c53acc24e77e1787affbc0e2427fd9169bcba52578514a69f103b4ccf94d5a3f",
+    "Assets/Scripts/Drivers/AscariPrecisionActivationPlan.cs": "d793081d32687fd59ae1dd477fd1815c1f52dcbbfe8cdea267a4da035dcaa509",
+    "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "f4e7e05dad2a905457f761658da601bd149e4a062d24cb8a7f83646cfa95e9bb",
+    "Assets/Scripts/Drivers/DriverSkillRules.cs": "e5e45af0b619055969aac214262127b6d95fe940ba02f844c6b735279817a2d9",
+    "Assets/Scripts/Core/CardPlayRules.cs": "f13cee612cd5223161dcab7fb8f8eff5d7260288435a3ccb075bcd55cdd82ef0",
+    "Assets/Scripts/Core/RaceMovementRules.cs": "69504d287ae96f9c257795ea826d8ac0064531981fb854435ecc12fb31baf2bc",
+    "Assets/Scripts/Core/RaceTurnPreviewRules.cs": "d1c7adae72389c7ca024588906431dfad87582907930a04e0173478ce50f4194",
+    "Assets/Scripts/Core/RaceSession.cs": "593ba512e796bd5071ca1b04946aa8ebae54812e34fa8922088e668d2033bf2e",
+    "Assets/Scripts/Core/RaceTurnCleanup.cs": "c0f3ac25e4b97a22c29aa13bc45ff12be57372f8fc88dbbf325b95358f4bada9",
+    "Assets/Scripts/Core/MVPGameManager.cs": "a44e50c170f4fc789cc15aa988c94daf62c4603151f96b16e10a7a9366300bd8"
+  },
+  "validation_boundary": "Review is source-only. Parent reported focused50/50 and ten actual GameLoops on production runtime ad6daf92; final module run on editor13f514c8 must be verified by parent. Do not use prior assemblies or review as executed test evidence.",
+  "not_accepted": [
+    "D05 target player UI",
+    "D05 passive",
+    "full normal/career modes and real save compatibility",
+    "physical input/dragging",
+    "full RaceCanvas visual acceptance"
+  ]
+}

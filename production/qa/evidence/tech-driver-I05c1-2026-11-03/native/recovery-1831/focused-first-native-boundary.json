@@ -1,0 +1,9 @@
+{
+  "current_failures_list": 3,
+  "current_summary": null,
+  "duration": "unavailable",
+  "acceptance": false,
+  "observed": "focused-first-native.json contains stale I05b2 RunFinished ended2026-11-03T05:11:10Z total6; NOT current48 native evidence",
+  "current_completed": 48,
+  "current_job": "4e8200909a2d49e2a9d1f3f77497bcf6"
+}
