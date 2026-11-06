@@ -359,3 +359,78 @@ public class ItalyPrecisionTuneProductionUiTests
         f.Manager.OnItalyPrecisionTuneButtonClicked();Assert.That(f.Hud.IsReturnToMenuConfirmationVisible,Is.False);
     }
 }
+
+/// <summary>Ascari D05 target selection, stale cancellation, and merged final confirmation on the owned HUD.</summary>
+public class AscariPrecisionProductionUiTests
+{
+    [TestCase(1920, 1080, 0)] [TestCase(2560, 1440, 0)] [TestCase(1280, 720, 0)]
+    [TestCase(1920, 1080, (int)InRaceConfirmationAction.All)]
+    [TestCase(2560, 1440, (int)InRaceConfirmationAction.All)]
+    [TestCase(1280, 720, (int)InRaceConfirmationAction.All)]
+    public void AscariTargetChoiceUsesRealButtonAndOneMergedCommit(int width, int height, int mask)
+    {
+        using var f = new ItalyPrecisionTuneProductionUiCapture.Context(width, height, TeamId.IT, 4, mask);
+        ReplaceWithReachableApex(f.Manager.trackManager);
+        f.Player.driverSkill.Initialize(f.Player.DriverProfile, 3, true);
+        Assert.That(f.Race.BeginDriverSkillInput(f.Player), Is.True, "BeginDriverSkillInput must open Ascari owner scope");
+        f.SelectFirst();
+        f.Hud.RefreshDriverSkill(f.Manager, f.Player);
+
+        Button action = f.Hud.driverSkillButton;
+        Assert.That(action.GetComponentInChildren<TMP_Text>().text, Does.Contain("选择目标"));
+        if (!action.IsInteractable())
+        {
+            string managerLabel = f.Manager.GetDriverSkillButtonLabel(f.Player, out bool managerInteractable);
+            Assert.Fail($"Ascari action button disabled: ui={action.IsInteractable()} manager={managerInteractable} label={managerLabel} selected={f.Cards[0].isSelected} hand={f.Player.deck.HandCount} skill={f.Player.driverSkill.Skill} tier={f.Player.driverSkill.Tier} enabled={f.Player.driverSkill.Enabled} open={f.Player.driverSkill.IsDrivingInputOpen}");
+        }
+        int uses = f.Player.driverSkill.UsesRemaining;
+        int rp = f.Player.techState.rpBalance;
+        int heat = f.Player.deck.heatPool.remaining;
+        CardData target = f.Cards[0].cardData;
+
+        f.Manager.OnDriverSkillButtonClicked();
+        Assert.That(f.Hud.IsReturnToMenuConfirmationVisible, Is.True, "Ascari target modal must open from the real driver button");
+        Assert.That(f.Hud.GetComponentInChildren<DriverSkillCardChoiceUI>(true).Selected, Is.SameAs(target));
+        Assert.That(f.Player.driverSkill.UsesRemaining, Is.EqualTo(uses));
+        Assert.That(f.Render("ascari-target").targetOverflows, Is.Empty);
+        f.Click(f.Hud.confirmReturnToMenuButton);
+        Assert.That(f.Manager.HasPendingAscariPrecision, Is.True, $"Ascari target choice must create an unpaid plan; status={f.Hud.statusText.text}");
+        Assert.That(f.Player.driverSkill.UsesRemaining, Is.EqualTo(uses));
+
+        Assert.That(f.Hand.TriggerActionShortcut(), Is.True, "Space action must route through merged precision commit");
+        Assert.That(f.Hud.IsReturnToMenuConfirmationVisible, Is.EqualTo(mask != 0), "Card confirmation switch must control the merged modal");
+        if (mask != 0)
+        {
+            f.Manager.OnSpeedCardSelectionChanged();
+            f.Click(f.Hud.confirmReturnToMenuButton);
+            Assert.That(f.Player.playedSpeedCardsThisTurn, Is.Empty);
+            Assert.That(f.Manager.HasPendingAscariPrecision, Is.False, "Stale final confirmation must cancel the Ascari plan");
+            Assert.That(f.Player.driverSkill.UsesRemaining, Is.EqualTo(uses));
+
+            Assert.That(f.Cards[0].isSelected, Is.True);
+            f.Manager.OnDriverSkillButtonClicked();
+            f.Click(f.Hud.confirmReturnToMenuButton);
+            Assert.That(f.Manager.HasPendingAscariPrecision, Is.True, "Reopened target must create a fresh plan");
+            Assert.That(f.Hand.TriggerActionShortcut(), Is.True, "Fresh plan must reopen final confirmation");
+            Assert.That(f.Hud.IsReturnToMenuConfirmationVisible, Is.True);
+            f.Click(f.Hud.confirmReturnToMenuButton);
+        }
+
+        Assert.That(f.Manager.HasPendingAscariPrecision, Is.False, "Successful ordinary card commit must close Ascari plan");
+        Assert.That(f.Player.driverSkill.UsesRemaining, Is.EqualTo(uses - 1));
+        Assert.That(f.Player.playedSpeedCardsThisTurn, Is.EqualTo(new[] { target }));
+        Assert.That(target.value, Is.EqualTo(3));
+        Assert.That(f.Player.techState.rpBalance, Is.EqualTo(rp));
+        Assert.That(f.Player.deck.heatPool.remaining, Is.EqualTo(heat));
+        Assert.That(f.Render("ascari-used").targetOverflows, Is.Empty);
+    }
+
+    private static void ReplaceWithReachableApex(TrackManager manager)
+    {
+        var nodes = new List<TrackNode>();
+        for (int i = 0; i < 20; i++) nodes.Add(new TrackNode(i, 99, isStartFinish: i == 0));
+        nodes[2] = new TrackNode(2, 5, "Ascari first apex", 9, false, true);
+        nodes[5] = new TrackNode(5, 3, "Ascari tail apex", 2, false, true);
+        typeof(TrackManager).GetField("nodes", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(manager, nodes);
+    }
+}

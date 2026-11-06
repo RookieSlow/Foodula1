@@ -94,6 +94,7 @@
         "RaceSessionBankuruwaseTests",
         "RaceTechnologySetupTests",
         "RaceTurnTechnologyCleanupTests",
+        "ChinaWarmCupTests",
         "TechTreeProfileCodecTests",
         "TechTreeProfileStoreTests",
         "TechTreeRulesTests",
@@ -134,7 +135,10 @@
         "VettelFeedbackTests",
         "VettelRhythmManagerTests",
         "VettelRhythmTests",
-        "AscariPrecisionTests"
+        "AscariPrecisionTests",
+        "BlueLuckTests",
+        "NuvolariSkillTests",
+        "MaAdaptationRuntimeTests"
       ]
     },
     {
@@ -264,7 +268,8 @@
         "VettelRhythmProductionUiTests",
         "ItalyL2ProductionUiTests",
         "ItalyPrecisionTuneProductionUiTests",
-        "ItalyL3NodeProductionUiTests"
+        "ItalyL3NodeProductionUiTests",
+        "AscariPrecisionProductionUiTests"
       ]
     },
     {

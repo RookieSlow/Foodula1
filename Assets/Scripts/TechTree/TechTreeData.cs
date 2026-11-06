@@ -74,7 +74,7 @@ public enum TechEffectType
 
     // ── US Unique ──
     DriveThru,             // L1: passing landmark → +1 extra move
-    SmokedBBQ,             // L2: within landmark range → heat-as-speed-2, no slipstream behind, engine+2
+    SmokedBBQ,             // L2 B: dual-landmark gated heat-as-speed-2, regional loan +1, no BBQ smoke blocker
     MotherRoad,            // L3: landmark prosperity/decline/revival system
 
     // ── CN Unique ──
@@ -85,7 +85,10 @@ public enum TechEffectType
     // ── JP Unique ──
     Nigiri,                // L1: exact speed=limit at corner → +2 extra move
     BrothSelection,        // L2: choose 1 of 4 passives at game start
-    Bankuruwase            // L3: last/second-last → 3-turn all-buffs + cool 1/turn
+    Bankuruwase,           // L3: last/second-last → 3-turn all-buffs + cool 1/turn
+
+    // Appended to preserve all previously serialized enum values.
+    WarmCup                // CN L2: declare Go payment, pay 1 engine heat to hand, +1 move
 }
 
 /// <summary>An effect instance attached to a tech node.</summary>
@@ -212,6 +215,7 @@ public struct TechModifiers
     public bool hasYinYangTea;
     public bool hasDimSumCombo;
     public bool hasSomersaultCloud;
+    public bool hasWarmCup;
 
     // ══ JP flags ══
     public bool hasNigiri;
@@ -255,6 +259,25 @@ public struct YinYangResult
     public static YinYangResult NoTrigger => new YinYangResult();
     public static YinYangResult Yin => new YinYangResult { triggered = true, isYin = true, extraMovement = 1 };
     public static YinYangResult Yang => new YinYangResult { triggered = true, isYang = true, heatToCool = 1 };
+}
+
+/// <summary>Result of resolving CN L2 温杯 at ordered turn cleanup.</summary>
+public struct ChinaWarmCupResult
+{
+    public bool triggered;
+    public int paidHeat;
+    public int extraMovement;
+
+    public static ChinaWarmCupResult NoTrigger => new ChinaWarmCupResult();
+    public static ChinaWarmCupResult Success(int paidHeat, int extraMovement)
+    {
+        return new ChinaWarmCupResult
+        {
+            triggered = paidHeat > 0,
+            paidHeat = paidHeat,
+            extraMovement = extraMovement
+        };
+    }
 }
 
 /// <summary>Result of resolving a Mother Road landmark pass (US L3).</summary>
@@ -388,6 +411,9 @@ public class TechTreeState
     /// <summary>CN L2: heat paid this turn (after speed).</summary>
     public bool dimSumPaidHeat;
 
+    /// <summary>CN L2: 温杯 declaration/payment gate, per racer and per input.</summary>
+    public WarmCupRuntime warmCup = new WarmCupRuntime();
+
     // ── UK L3 ──
     /// <summary>UK L3: which country's techs are being copied (null if not set).</summary>
     public TeamId? sunNeverSetsTarget;
@@ -401,6 +427,7 @@ public class TechTreeState
         copy.prepMeal = prepMeal.CreatePresentationCopy();
         copy.germanBurst = germanBurst.CreatePresentationCopy();
         copy.precisionTune = precisionTune.CreatePresentationCopy();
+        copy.warmCup = warmCup != null ? warmCup.CreatePresentationCopy() : new WarmCupRuntime();
         return copy;
     }
 

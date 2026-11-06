@@ -37,6 +37,9 @@ public static class RaceHeatPaymentExecution
             return new RaceHeatPaymentResult(drawn, false, false);
         }
 
+        if (source == HeatPaymentSource.OrdinaryCorner)
+            session?.RecordOrdinaryCornerPaymentSuccess(player, drawn);
+
         if (player.techState != null)
             TechTreeRules.TrackDimSumCombo(player.techState, false, false, true);
         return new RaceHeatPaymentResult(drawn, true, false);

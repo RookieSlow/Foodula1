@@ -30,6 +30,9 @@ public static class TechTreeRules
     /// <summary>US landmark BBQ zone radius (cells).</summary>
     public const int BBQ_ZONE_RADIUS = 5;
 
+    /// <summary>US Mother Road revival net engine recovery and movement cap.</summary>
+    public const int MOTHER_ROAD_NET_RETURN_CAP = 3;
+
     /// <summary>JP L3 Bankuruwase rotor duration (turns).</summary>
     public const int BANKURUWASE_DURATION = 3;
 
@@ -287,6 +290,7 @@ public static class TechTreeRules
             case TechEffectType.YinYangTea: modifiers.hasYinYangTea = true; return true;
             case TechEffectType.DimSumCombo: modifiers.hasDimSumCombo = true; return true;
             case TechEffectType.SomersaultCloud: modifiers.hasSomersaultCloud = true; return true;
+            case TechEffectType.WarmCup: modifiers.hasWarmCup = true; return true;
             case TechEffectType.Nigiri: modifiers.hasNigiri = true; return true;
             case TechEffectType.BrothSelection: modifiers.hasBrothSelection = true; return true;
             case TechEffectType.Bankuruwase: modifiers.hasBankuruwase = true; return true;
@@ -713,7 +717,7 @@ public static class TechTreeRules
         else
             state.landmark2UltUsed = true;
 
-        return heatCardsInHand; // Each heat → +1 move
+        return Math.Min(heatCardsInHand, MOTHER_ROAD_NET_RETURN_CAP); // Each net heat → +1 move
     }
 
     /// <summary>US L3: Repairs needed for revival based on total laps.</summary>
@@ -739,6 +743,19 @@ public static class TechTreeRules
             return YinYangResult.NoTrigger;
 
         return isGoMode ? YinYangResult.Yin : YinYangResult.Yang;
+    }
+
+    /// <summary>CN L2 温杯 is a declared, per-owner-input Go opportunity.</summary>
+    public static bool HasWarmCup(TechTreeState state, TechTreeDatabase db)
+        => HasEffect(state, db, TechEffectType.WarmCup);
+
+    public static bool CanDeclareWarmCup(TechTreeState state, TechTreeDatabase db,
+        bool isGoMode, int engineHeatRemaining, int globalTurn)
+    {
+        return HasWarmCup(state, db) && state?.warmCup != null &&
+            state.warmCup.IsOpen && state.warmCup.TurnId == globalTurn &&
+            !state.warmCup.Declared && !state.warmCup.UsedThisTurn &&
+            isGoMode && engineHeatRemaining >= 1;
     }
 
     /// <summary>
@@ -914,6 +931,8 @@ public static class TechTreeRules
         state.grillSpezialUsed = false;
         state.germanBurst.ResetForRace();
         state.precisionTune.ResetForRace();
+        if (state.warmCup == null) state.warmCup = new WarmCupRuntime();
+        state.warmCup.ResetForRace();
         state.grillSpezialHeatPaidThisTurn = 0;
         state.brothSelection = BrothType.None;
         state.bankuruwaseActive = false;
@@ -930,12 +949,14 @@ public static class TechTreeRules
     /// <summary>
     /// Reset legacy per-turn tracking and close declarations. RaceSession.BeginTurn also opens/deduplicates the DE clock.
     /// </summary>
-    public static void ResetPerTurnState(TechTreeState state)
+    public static void ResetPerTurnState(TechTreeState state, int globalTurn = -1)
     {
         if (state == null) return;
         state.prepMeal.CloseInput();
         state.germanBurst.CloseWindow();
         state.precisionTune.CloseInput();
+        if (state.warmCup == null) state.warmCup = new WarmCupRuntime();
+        state.warmCup.BeginTurn(globalTurn);
         state.grillSpezialHeatPaidThisTurn = 0;
         ResetDimSumCombo(state);
     }

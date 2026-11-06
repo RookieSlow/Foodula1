@@ -21,6 +21,7 @@ public class RaceDriverSkillActivationAdapterTests
         input = (RaceInputState)typeof(MVPGameManager).GetField("inputState", Private).GetValue(manager);
         phase = (RacePhaseState)typeof(MVPGameManager).GetField("phaseState", Private).GetValue(manager);
         player = new PlayerState("Tony", false, 0, 2);
+        player.deck.heatPool = new HeatPool(6);
         var session = new RaceSession();
         session.Players.Add(player);
         typeof(MVPGameManager).GetField("session", Private).SetValue(manager, session);
@@ -152,7 +153,7 @@ public class RaceDriverSkillActivationAdapterTests
         string blocked = manager.GetDriverSkillButtonLabel(player, out bool after);
 
         Assert.That(before, Is.True);
-        Assert.That(ready, Does.Contain("×"));
+        Assert.That(ready, Does.Contain("余1次"));
         Assert.That(after, Is.False);
         Assert.That(blocked, Does.Contain("仅可在档位确认前发动"));
     }
@@ -165,6 +166,24 @@ public class RaceDriverSkillActivationAdapterTests
         Assert.DoesNotThrow(() => manager.OnDriverSkillButtonClicked());
         Assert.That(manager.GetDriverSkillButtonLabel(null, out bool interactable), Is.EqualTo("车手技能"));
         Assert.That(interactable, Is.False);
+    }
+
+    [Test]
+    public void LifecycleExitClearsAscariBlueLuckOwnerInputWithoutTouchingRaceUse()
+    {
+        InitializeDriver("it_alberto_ascari", TeamId.IT, 4, true);
+        player.driverSkill.BeginGlobalTurn();
+        Assert.That(player.driverSkill.BeginDrivingInput(), Is.True);
+        player.driverSkill.BeginGlobalTurn();
+        Assert.That(player.driverSkill.BeginDrivingInput(), Is.True);
+        Assert.That(player.driverSkill.BlueLuckNoHeatTurns, Is.EqualTo(1));
+
+        int uses = player.driverSkill.UsesRemaining;
+        typeof(MVPGameManager).GetMethod("OnDisable", Private).Invoke(manager, null);
+
+        Assert.That(player.driverSkill.BlueLuckNoHeatTurns, Is.Zero);
+        Assert.That(player.driverSkill.IsPassiveCornerLimitBonusReady, Is.False);
+        Assert.That(player.driverSkill.UsesRemaining, Is.EqualTo(uses));
     }
 
     [TestCase(false, 0)]

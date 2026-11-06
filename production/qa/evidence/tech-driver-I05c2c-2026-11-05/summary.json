@@ -1,0 +1,41 @@
+{
+  "id": "I05c2c",
+  "date": "2026-11-05",
+  "scope": "Ascari Blue Luck interrupt cleanup and one-shot corner settlement",
+  "unity": {
+    "version": "2022.3.62f3c1",
+    "instance": "Foodula1@86b0192a4890cd9b",
+    "active_scene": "Assets/Scenes/MainMenu.unity",
+    "playing": false,
+    "compiling": false,
+    "console_errors": 0,
+    "console_warnings": 0
+  },
+  "tests": {
+    "BlueLuckTests": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0.0770654
+    },
+    "focused_existing": {
+      "total": 101,
+      "passed": 101,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0.1717774
+    }
+  },
+  "visual": {
+    "new_screenshots": 0,
+    "boundary": "Automatic passive; no new player layout or screenshot. Full RaceCanvas, hardware focus, all modes and storage remain unverified."
+  },
+  "git": {
+    "diff_check": "passed with existing LF/CRLF notices only",
+    "commit": false,
+    "push": false,
+    "reset_checkout_rebase": false,
+    "unrelated_dirty_files_preserved": true
+  }
+}

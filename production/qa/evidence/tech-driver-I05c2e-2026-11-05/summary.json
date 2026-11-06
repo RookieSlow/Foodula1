@@ -1,0 +1,62 @@
+{
+  "id": "I05c2e",
+  "local_date": "2026-11-05",
+  "status": "Italy_runtime_rebuild_cleanup_production_change_native_editmode_verified",
+  "recovery_date_local": "2026-11-06",
+  "scope": "单回合/重赛前置清理：生命周期退出不刷新旧HUD，重建入口取消IT L3B/阿斯卡里待提交计划并关闭本人输入时钟；不新增节点/ID/XP/次数。",
+  "production_files": [
+    "Assets/Scripts/Core/MVPGameManager.cs",
+    "Assets/Tests/Editor/race_ascari_precision_coroutine_test.cs"
+  ],
+  "production_change": "OnDisable/OnDestroy 调用 ClosePrepMealInputs(true)，跳过已失效HUD刷新；RebuildRaceRuntime 使用普通展示路径并在初始化前取消 IT L3B/阿斯卡里计划。",
+  "acceptance": {
+    "production_source_wired": true,
+    "script_validation_errors": 0,
+    "normal_turn_cadence_preserved": true,
+    "native_rebuild_case": true,
+    "complete_modes_and_save": false
+  },
+  "native_tests_executed": 237,
+  "native_attempts": [
+    {"mode":"PlayMode","test":"RaceGameLoopCoroutineTests.ItalyAndAscariPendingPlansAreInvalidatedBeforeRuntimeRebuild","job_id":"eed1c2099fa240b98080e06b1ac7e4e7","status":"failed_initialize","timeout_seconds":120,"total":0,"started":0},
+    {"mode":"PlayMode","test":"RaceGameLoopCoroutineTests.ItalyAndAscariPendingPlansAreInvalidatedBeforeRuntimeRebuild","job_id":"7270165d75c74930bbe9ad1a78e2dfe1","status":"failed_initialize","timeout_seconds":120,"total":0,"started":0},
+    {"mode":"EditMode","test":"AscariPrecisionTests + ItalyPrecisionTuneTests + RaceDriverSkillActivationAdapterTests + BlueLuckTests + RaceTurnCleanupTests + RaceTurnSkillCleanupTests + RaceTurnTechnologyCleanupTests + RaceSessionTest","job_id":"2866d7d02b1243d8946af305c7b36809","status":"failed_initialize","timeout_seconds":120,"total":0,"started":0},
+    {"mode":"PlayMode","test":"RaceGameLoopCoroutineTests.ItalyAndAscariPendingPlansAreInvalidatedBeforeRuntimeRebuild","job_id":"48799c5e97d64dc18b4ff70beadc1d9d","status":"failed_initialize","timeout_seconds":120,"total":0,"started":0},
+    {"mode":"EditMode","test":"RaceGameLoopCoroutineTests.ItalyAndAscariPendingPlansAreInvalidatedBeforeRuntimeRebuild","job_id":"a912567dda204b9681bd0c7ed1d3d07b","status":"passed","total":1,"passed":1,"failed":0,"skipped":0,"duration_seconds":1.7250048},
+    {"mode":"EditMode","test":"AscariPrecisionTests + ItalyPrecisionTuneTests + RaceDriverSkillActivationAdapterTests + BlueLuckTests + RaceTurnCleanupTests + RaceTurnSkillCleanupTests + RaceTurnTechnologyCleanupTests + RaceSessionTest","job_id":"daee4e1fdcb84062a6e39ce1bef9a18d","status":"passed","total":236,"passed":236,"failed":0,"skipped":0,"duration_seconds":1.2588058}
+  ],
+  "runner_resolution": "现有测试位于 Assets/Tests/Editor，属于 EditMode；UnityTest 表示协程语义而非 PlayMode 归属。PlayMode 无测试是预期程序集边界，当前阻塞通过正确的 EditMode 选择解除。",
+  "unity": {
+    "version":"2022.3.62f3c1",
+    "instance":"Foodula1@86b0192a4890cd9b",
+    "active_scene":"Assets/Scenes/MainMenu.unity",
+    "playing":false,
+    "compiling":false,
+    "direct_boundary":"MainMenu idle; not playing, paused, changing, compiling or importing; final resource readiness ready=true",
+    "console_after_compile":"0 error and 0 warning entries after successful current-assembly runs"
+  },
+  "visual": {"new_screenshots":0,"player_facing_layout_changed":false},
+  "unverified": [
+    "完整 RaceCanvas 与三尺寸交互",
+    "物理鼠标键盘焦点与硬件输入",
+    "完整普通/生涯模式与真实存档兼容",
+    "I13 跨系统长流程"
+  ],
+  "source_final_sha256": {
+    "Assets/Scripts/Core/MVPGameManager.cs":"581ebd6138e4c5d486ef39bb57a95cf74e85bf7ed41b7d5691d010756cf0fd29",
+    "Assets/Tests/Editor/race_ascari_precision_coroutine_test.cs":"c641e5808f647816cf902b6b088b840cb30ea97650a1ad14cc2e75cdfaea4629",
+    "Assets/Tests/Editor/race_driver_skill_activation_adapter_test.cs":"d7926ee532c5e22e36434087c29c7cd1311e97c546945d98898e9a1954e6562d",
+    "design/planning/tech-driver-rework-2026-10-22/progress.json":"d9bfabcb86a2e5645ef52b7f1f5983b448828096ed436e29f8d3b96b04dabd3f",
+    "design/planning/tech-driver-rework-2026-10-22/implementation-plan.json":"f927dd4457172dc237375e322bb6599b9005f49301e6cd188e0b8fd599f2a852"
+  },
+  "git": {
+    "diff_check":"passed with existing LF/CRLF notices only",
+    "status_lines":82,
+    "tracked_modified_entries":24,
+    "untracked_entries":58,
+    "diff_stat":"24 files changed, 1052 insertions(+), 103 deletions(-)",
+    "no_commit_push_reset_checkout_rebase_scene_save":true,
+    "unrelated_dirty_files_preserved":true
+  },
+  "next_slice":"I06：诺瓦预付容错与有限低引擎联动，验证普通罚热不被免除；完整模式/真实存档/硬件与跨系统长流程仍留I13。"
+}

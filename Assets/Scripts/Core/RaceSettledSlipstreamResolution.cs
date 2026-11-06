@@ -48,6 +48,11 @@ public static class RaceSettledSlipstreamResolution
             follower.driverSkill?.Hunting.PrepareNative(session, follower, resolvedChains[follower], totalNodes);
         }
 
+        // A pressure marker is valid for one target input only, whether the
+        // target accepted a follow or the nearest leader was unavailable.
+        foreach (PlayerState follower in turnOrder)
+            follower?.driverSkill?.Pressure.ExpireAfterSlipstreamResolution();
+
         // Complete every calculation before any bonus changes the movement
         // values used by same-cell tie-breaking.
         foreach (PlayerState follower in turnOrder)
@@ -57,6 +62,8 @@ public static class RaceSettledSlipstreamResolution
             int baseMovement = follower.totalMovementThisTurn;
             follower.totalMovementThisTurn += chain.TotalBonus;
             follower.turnMovement.AddPlan("尾流", chain.TotalBonus, TurnMovementKind.Other);
+            if (chain.UsedZhouEscort && chain.TotalBonus > 0)
+                follower.driverSkill?.ZhouEscort.CommitResolvedEscort();
             log?.Invoke(
                 $"[MOVE_PLAN_FINAL] {follower.name} position={follower.position} " +
                 $"base_total={baseMovement} tailwind_bonus={chain.TotalBonus} " +

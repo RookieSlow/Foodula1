@@ -1,0 +1,21 @@
+{
+  "name": "Foodula1.PlayModeTests",
+  "rootNamespace": "Foodula1.Tests.PlayMode",
+  "references": [
+    "Assembly-CSharp",
+    "UnityEngine.TestRunner"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -416,7 +416,7 @@ public static class TechTreeDatabaseFactory
             tier: TechTreeTier.L2, teamId: TeamId.US, index: 1, rpCost: 8000,
             prerequisites: new string[0], upgradesTo: "",
             effects: new[] { new TechEffect(TechEffectType.SmokedBBQ, 1) },
-            description: "位于地标±5格范围内时：热牌可视为速度2打出、身后赛车无尾流、引擎容量+2。"
+            description: "每圈连续穿越双地标门控：区域内热牌可视为速度2打出、占1个速度槽；区域借额+1，不施加BBQ烟幕。选牌封账后新热不回填。"
         ));
 
         db.Add(new TechNodeDef(
@@ -426,7 +426,7 @@ public static class TechTreeDatabaseFactory
             tier: TechTreeTier.L3, teamId: TeamId.US, index: 1, rpCost: 12000,
             prerequisites: new string[0], upgradesTo: "",
             effects: new[] { new TechEffect(TechEffectType.MotherRoad, 1) },
-            description: "地标追踪经过次数：繁荣(1-2次,冷却2)→衰败(3+,付热修复)→复兴(大招:手牌热→位移)。"
+            description: "按赛程进度开放维修：短/中/长实际付热修路1/2/3次；复兴终极每场1次，先清偿区域借额，净回引擎与位移均最多3。"
         ));
     }
 
@@ -458,12 +458,12 @@ public static class TechTreeDatabaseFactory
 
         db.Add(new TechNodeDef(
             id: "cn-l2-dim-sum-combo",
-            name: "促销！早茶拼盘送续杯",
-            nameEn: "Dim Sum Combo",
+            name: "温杯",
+            nameEn: "Warm Cup",
             tier: TechTreeTier.L2, teamId: TeamId.CN, index: 1, rpCost: 8000,
             prerequisites: new string[0], upgradesTo: "",
-            effects: new[] { new TechEffect(TechEffectType.DimSumCombo, 1) },
-            description: "按特技牌→速度牌→支付热量顺序出牌，额外触发一次阴阳茶效果。"
+            effects: new[] { new TechEffect(TechEffectType.WarmCup, 1) },
+            description: "Go 时声明温杯：普通移动、费用与冷却完成后支付 1 张永久引擎热到手牌并额外前进 1 格；每位车手每回合一次，预览/取消不扣费。保持 Recover 与双挡规则。"
         ));
 
         db.Add(new TechNodeDef(

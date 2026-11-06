@@ -1,0 +1,37 @@
+{
+  "id": "I05c2",
+  "date": "2026-11-05",
+  "scope": "Ascari real target selection, stale/cancel guards, same-card exclusion and one merged confirmation with Italy L3B precision tune",
+  "unity": {
+    "version": "2022.3.62f3c1",
+    "scene": "Assets/Scenes/MainMenu.unity",
+    "playing": false,
+    "compile": "clean after refresh_unity",
+    "console_entries": 0
+  },
+  "tests": {
+    "new_parameterized_ui": { "total": 6, "passed": 6, "failed": 0, "skipped": 0, "seconds": 0.3432048 },
+    "focused_regression": { "total": 71, "passed": 71, "failed": 0, "skipped": 0, "seconds": 1.853384 }
+  },
+  "resolutions": ["1920x1080", "2560x1440", "1280x720"],
+  "screenshots_saved": false,
+  "unverified": [
+    "Ascari passive BlueLuck",
+    "full modes and real save/storage",
+    "physical mouse/keyboard focus, hardware and full RaceCanvas",
+    "long-race acceptance"
+  ],
+  "source_sha256": {
+    "Assets/Scripts/Core/MVPGameManager.cs": "4dff33d9379fc6d7d2fb17da4bc914987f11de956827ac87da722f4ac7027fcc",
+    "Assets/Scripts/UI/HUDUI.cs": "1e039d5519b80990702c80ed877887a2b25e42d2434558864761450ab0323972",
+    "Assets/Scripts/UI/CardHandUI.cs": "48788d3d9257e1e722e00adf82c8c2f1a8d2c5955eb00887a7f1eccae5872d4f",
+    "Assets/Tests/Editor/italy_precision_tune_production_ui_test.cs": "5552a49b690df2c61d79dc273d86a185bbc050fec8bd6ac205fa80b86ae12fbc",
+    "Assets/Tests/Editor/RegressionModules.json": "2825dda10c5fd5d1ed574411494f8b07392330f09be1c210c48a44487afb3b0c"
+  },
+  "git": {
+    "committed": false,
+    "pushed": false,
+    "unrelated_dirty_files_preserved": true
+  },
+  "next_slice": "I05c2b: integrate Ascari passive BlueLuck production turn settlement and cleanup; keep I05 in progress and do not advance I06."
+}

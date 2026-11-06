@@ -20,17 +20,28 @@ public class RaceTurnTechnologyCleanupTests
 
     [TestCase(false)]
     [TestCase(true)]
-    public void ComboIsReadAfterFirstEffectAndSecondEffectReadsCurrentMode(bool finishOnFirst)
+    public void WarmCupRunsBeforeL1AndTerminalStateStopsLaterEffects(bool finishOnFirst)
     {
+        player.usesChinaGearSystem = true;
+        player.gear = ChinaGearShiftRules.GoGear;
+        player.deck.InitializeExactOrder(new[] { new CardData(CardType.Speed, 1) }, new HeatPool(2));
+        session.Players.Add(player);
+        session.BeginTurn(player, 1);
+        Assert.That(session.TryDeclareChinaWarmCup(player, true, 1), Is.True);
         var events = new List<string>();
         RaceTurnTechnologyCleanup.Execute(player, session, (p, result) =>
         {
             events.Add(!result.triggered ? "none" : result.isYin ? "yin" : "yang");
-            p.techState.dimSumPaidHeat = true;
-            p.gear = 1;
+        }, (p, result) =>
+        {
+            events.Add(result.triggered ? "warm" : "no-warm");
+            p.gear = ChinaGearShiftRules.RecoverGear;
             p.hasFinished = finishOnFirst;
-        }, p => events.Add("combo"), (p, count) => Assert.Fail("CN must not cool through Grill."));
-        CollectionAssert.AreEqual(new[] { "yin", "combo", finishOnFirst ? "none" : "yang" }, events);
+        }, p => Assert.Fail("The retired Dim Sum Combo must not be reported."),
+        (p, count) => Assert.Fail("CN must not cool through Grill."));
+        CollectionAssert.AreEqual(finishOnFirst
+            ? new[] { "warm", "none" }
+            : new[] { "warm", "yang" }, events);
     }
 
     [Test]
@@ -53,13 +64,13 @@ public class RaceTurnTechnologyCleanupTests
     }
 
     [Test]
-    public void ComboReportFailureStopsSecondEffect()
+    public void RetiredComboReportIsNotCalledForWarmCup()
     {
         player.techState.dimSumPaidHeat = true;
         int applications = 0;
-        Assert.Throws<InvalidOperationException>(() => RaceTurnTechnologyCleanup.Execute(player, session,
-            (p, r) => applications++, p => throw new InvalidOperationException("report failed"),
-            (p, n) => Assert.Fail("Must abort")));
+        Assert.DoesNotThrow(() => RaceTurnTechnologyCleanup.Execute(player, session,
+            (p, r) => applications++, p => throw new InvalidOperationException("retired report"),
+            (p, n) => Assert.Fail("Must not cool")));
         Assert.AreEqual(1, applications);
     }
 

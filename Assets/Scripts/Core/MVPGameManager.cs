@@ -77,6 +77,10 @@ public class MVPGameManager : MonoBehaviour
     private MansellChargeActivationPlan pendingMansellChargePlan;
     private SchumacherStrategyActivationPlan pendingSchumacherStrategyPlan;
     private VettelRhythmActivationPlan pendingVettelRhythmPlan;
+    private PlayerState pendingBuschPressureTarget;
+    private int pendingBuschPressureLap = -1;
+    private int pendingBuschPressurePosition = -1;
+    private int pendingBuschPressureVersion;
     private readonly Dictionary<PlayerState, VettelMovementFeedbackObservation> vettelMovementFeedback = new Dictionary<PlayerState, VettelMovementFeedbackObservation>();
     private UkPrepMealActivationPlan pendingPrepMealPlan;
     private int prepMealPlanVersion;
@@ -86,6 +90,8 @@ public class MVPGameManager : MonoBehaviour
     private AscariPrecisionActivationPlan pendingAscariPrecisionPlan;
     private int ascariPrecisionPlanVersion;
     private int italyPrecisionTunePlanVersion;
+    private CardData pendingZhouPreparationCard;
+    private int zhouPreparationPlanVersion;
     // Storage/display defaults stay at the coordinator boundary; startup/coroutine
     // regressions replace these dependencies without touching player profiles or resolution.
     private System.Action<TechTreeState> saveRaceTechState = TechTreeProfileStore.Save;
@@ -271,7 +277,7 @@ public class MVPGameManager : MonoBehaviour
     void OnDestroy()
     {
         CancelPrepMealPlan(true);
-        ClosePrepMealInputs();
+        ClosePrepMealInputs(true);
         CancelHunterSkillPlan(true);
         StopMovementAudio(true);
         presentationSkipState.End();
@@ -282,7 +288,7 @@ public class MVPGameManager : MonoBehaviour
     void OnDisable()
     {
         CancelPrepMealPlan(true);
-        ClosePrepMealInputs();
+        ClosePrepMealInputs(true);
         CancelHunterSkillPlan(true);
         StopMovementAudio(true);
     }
@@ -1777,6 +1783,12 @@ public class MVPGameManager : MonoBehaviour
                 }
                 else
                 {
+                    if (p.driverSkill?.Pressure.HasIncomingDecision == true)
+                    {
+                        RequestBuschIncomingPressureChoice(p);
+                        yield return new WaitWhile(() => p.driverSkill != null &&
+                            p.driverSkill.Pressure.HasIncomingDecision);
+                    }
                     phaseState.BeginCardSelection();
                     inputState.BeginCardSelection();
                     if (cardHandUI != null)
@@ -1811,9 +1823,13 @@ public class MVPGameManager : MonoBehaviour
                     }
 
                     yield return new WaitWhile(() => inputState.WaitingForCards);
+                    ResolveTrueSelfInputCost(p);
                     yield return WaitForTutorialNavigation();
                     raceCameraController?.FocusPlayerAfterCardPlay();
                 }
+
+                if (p.isAI)
+                    ResolveTrueSelfInputCost(p);
 
                 // AI 的特技阶段固定早于速度选牌；人类在每张速度牌确认时记录真实顺序。
                 if (p.isAI && p.techState != null && p.playedSpeedCardsThisTurn.Count > 0)
@@ -2043,7 +2059,8 @@ public class MVPGameManager : MonoBehaviour
         p.driverSkill?.Strategy.Interrupt();
         p.driverSkill?.Feedback.Interrupt();
         p.driverSkill?.Rhythm.Interrupt();
-                p.driverSkill?.Precision.Interrupt();
+        p.driverSkill?.Precision.Interrupt();
+        p.driverSkill?.Nuvolari.Interrupt();
         if (movementAudioPlayer == p || instantAudioPlayer == p) StopMovementAudio(true);
 
         int spinMax = session != null ? session.EffectiveSpinMax(p) : 3;
@@ -2138,6 +2155,12 @@ public class MVPGameManager : MonoBehaviour
             return false;
         }
 
+        int nuvolariRestored = source == HeatPaymentSource.OrdinaryCorner
+            ? p.driverSkill?.Nuvolari.ConsumeLastRestored() ?? 0
+            : 0;
+        if (nuvolariRestored > 0)
+            hudUI?.AppendLog($"{p.name} 不屈传奇：普通罚热结算后回收旧引擎热 ×{nuvolariRestored}。");
+
         if (!p.isAI && cardHandUI != null)
         {
             CardVisualZone target = destination == HeatPaymentDestination.Discard
@@ -2153,6 +2176,32 @@ public class MVPGameManager : MonoBehaviour
                 p.teamId, cost, drawn, destination, reason, TryAdvanceTutorialIfExpected);
         }
         return true;
+    }
+
+    /// <summary>True Self pays its fixed per-input heat after card selection; shortage ends the window without a spin.</summary>
+    private void ResolveTrueSelfInputCost(PlayerState p)
+    {
+        if (p?.driverSkill == null || p.driverSkill.Skill != DriverActiveSkillId.TrueSelf ||
+            !p.driverSkill.IsActive || p.driverSkill.TrueSelfInputPaymentResolved)
+            return;
+
+        RaceHeatPaymentResult payment = RaceHeatPaymentExecution.Pay(
+            p, session, 1, HeatPaymentDestination.Hand, HeatPaymentSource.Other);
+        if (payment.Sufficient)
+        {
+            p.driverSkill.ResolveTrueSelfInputPayment(true);
+            if (!p.isAI && cardHandUI != null)
+                cardHandUI.PlayHeatTransitions(payment.Drawn, CardVisualZone.Engine, CardVisualZone.Hand);
+            RefreshHumanHeatPresentation(p);
+            if (!p.isAI) AudioService.PlaySfx(AudioEventNames.HeatPay);
+            hudUI?.AppendLog($"{p.name} 真实自我：本次输入支付1永久热。");
+            raceLogWriter?.Append($"[TRUE_SELF] driver={p.driverId} input={p.driverSkill.DrivingInputsStarted} paid=1");
+            return;
+        }
+
+        p.driverSkill.ResolveTrueSelfInputPayment(false);
+        hudUI?.AppendLog($"{p.name} 真实自我：引擎热不足，本次窗口结束。");
+        raceLogWriter?.Append($"[TRUE_SELF] driver={p.driverId} input={p.driverSkill.DrivingInputsStarted} paid=0 window=ended");
     }
 
     // ====== 档位处理 ======
@@ -2202,11 +2251,42 @@ public class MVPGameManager : MonoBehaviour
         if (driverHeatCost > 0)
             TryPayHeat(p, driverHeatCost, p.positionAtTurnStart, "driver skill: true self");
 
-        if (cooldown > 0)
+        bool maCommitted = false;
+        HeatCoolingResult maCooling = default;
+        CardData maReservedHeat = null;
+        if (cooldown > 0 && session.TryCommitMaRecoverPreparation(
+            p, cooldown, out maCooling, out maReservedHeat))
+        {
+            maCommitted = true;
+            if (!p.isAI && maCooling.Total > 0 && cardHandUI != null)
+                cardHandUI.PlayHeatCoolingTransitions(maCooling);
+            if (maCooling.Total > 0)
+            {
+                RefreshHumanHeatPresentation(p);
+                if (!p.isAI) AudioService.PlaySfx(AudioEventNames.HeatCool);
+                if (!p.isAI)
+                    TutorialHeatFeedbackRules.ReportCooling(p, maCooling.Total, cooldown,
+                        TryAdvanceTutorialIfExpected);
+                hudUI?.AppendLog($"{p.name} 极限切换：真实 Recover 留置1张旧手永久热，冷却其余 {maCooling.Total} 张。");
+                raceLogWriter?.Append($"[MA_EXTREME_SWITCH] driver={p.driverId} reserved_old_hand=1 cooled={maCooling.Total} next_go={DriverSkillRules.GetMaNextGoMovementBonus(p.driverSkill.Tier)}");
+            }
+        }
+
+        if (cooldown > 0 && !maCommitted)
         {
             int removed = CoolHeatWithPresentation(p, cooldown);
             if (removed > 0 && hudUI != null)
                 hudUI.AppendLog($"{p.name} ({TeamGearRules.GetDisplayName(p.teamId, p.gear)}): cools {removed} Heat → engine.");
+        }
+
+        int zhouRecovered = session.ResolveZhouSteadyHeartAfterCooling(p);
+        if (zhouRecovered > 0)
+        {
+            if (!p.isAI && cardHandUI != null)
+                cardHandUI.PlayHeatTransitions(zhouRecovered, CardVisualZone.Hand, CardVisualZone.Engine);
+            RefreshHumanHeatPresentation(p);
+            hudUI?.AppendLog($"{p.name} 沉稳之心：普通冷却后回收旧永久热 {zhouRecovered} 张。");
+            raceLogWriter?.Append($"[ZHOU_STEADY_HEART] driver={p.driverId} recovered={zhouRecovered}");
         }
     }
 
@@ -2629,6 +2709,23 @@ public class MVPGameManager : MonoBehaviour
             int rawEnd = p.position + p.cornerTotalThisTurn;
             int lane = GetLane(p);
             bool crossedCorner = trackManager.GetUniqueCornersCrossed(p.position, rawEnd).Count > 0;
+
+            // Stewart L3 can recover one old hand heat only on this concrete
+            // safe-straight input. The runtime consumes the window regardless
+            // of whether an old permanent card was actually available.
+            if (p.driverSkill != null && p.driverSkill.TryConsumeTrackFuryRecovery(!crossedCorner))
+            {
+                int recovered = p.deck.RemoveOnePermanentHeatFromHand();
+                if (recovered > 0)
+                {
+                    if (!p.isAI && cardHandUI != null)
+                        cardHandUI.PlayHeatTransitions(recovered, CardVisualZone.Hand, CardVisualZone.Engine);
+                    RefreshHumanHeatPresentation(p);
+                    if (hudUI != null)
+                        hudUI.AppendLog($"{p.name} 赛道怒火：安全直道回收1张旧手永久热。");
+                    raceLogWriter?.Append($"[TRACK_FURY] driver={p.driverId} recovered=1 input={p.driverSkill.DrivingInputsStarted}");
+                }
+            }
 
             p.turnMovement.BeginBasePlan();
             string trickId = p.trickState?.trickPlayedThisTurnId;
@@ -3450,7 +3547,7 @@ public class MVPGameManager : MonoBehaviour
     private void ResolveCleanupTechnology(PlayerState p)
     {
         // RaceTurnCleanup gates this adapter after skill and temporary-card cleanup.
-        RaceTurnTechnologyCleanup.Execute(p, session, ApplyYinYang, ReportCleanupCombo, ApplyCleanupGrill);
+        RaceTurnTechnologyCleanup.Execute(p, session, ApplyYinYang, ApplyChinaWarmCup, ReportCleanupCombo, ApplyCleanupGrill);
     }
 
     private void ReportCleanupCombo(PlayerState p)
@@ -3506,6 +3603,17 @@ public class MVPGameManager : MonoBehaviour
             if (cooled > 0 && hudUI != null)
                 hudUI.AppendLog($"<color=cyan>{p.name} 阴阳茶(阳)：自动冷却 {cooled} 张热量牌。</color>");
         }
+    }
+
+    private void ApplyChinaWarmCup(PlayerState p, ChinaWarmCupResult result)
+    {
+        if (!result.triggered) return;
+        if (!p.isAI && cardHandUI != null)
+            cardHandUI.PlayHeatTransitions(result.paidHeat, CardVisualZone.Engine, CardVisualZone.Hand);
+        RefreshHumanHeatPresentation(p);
+        AdvanceInstantMovementWithSource(p, result.extraMovement, "科技：温杯", TurnMovementKind.Technology);
+        hudUI?.AppendLog($"<color=cyan>{p.name} 温杯：支付{result.paidHeat}张永久引擎热到手牌，额外前进{result.extraMovement}格。</color>");
+        raceLogWriter?.Append($"[WARM_CUP] driver={p.driverId} paid={result.paidHeat} move={result.extraMovement}");
     }
 
     /// <summary>
@@ -3925,12 +4033,15 @@ public class MVPGameManager : MonoBehaviour
     public bool HasPendingAscariPrecision => pendingAscariPrecisionPlan != null && !pendingAscariPrecisionPlan.IsClosed;
 
     /// <summary>Cancels only unpaid target intent; committed runtime use and original card stay untouched.</summary>
-    public void CancelAscariPrecisionPlan()
+    public void CancelAscariPrecisionPlan(bool suppressPresentation = false)
     {
         ascariPrecisionPlanVersion++;
         pendingAscariPrecisionPlan?.Cancel(); pendingAscariPrecisionPlan = null;
-        if (hudUI != null && hudUI.isActiveAndEnabled && Player != null && phaseState.CanAcceptCards(inputState))
+        if (!suppressPresentation && hudUI != null && hudUI.isActiveAndEnabled && Player != null && phaseState.CanAcceptCards(inputState))
+        {
             hudUI.RefreshTurnTelemetry(Player);
+            hudUI.RefreshDriverSkill(this, Player);
+        }
     }
 
     /// <summary>Prepares IT L3B from the already selected ordinary speed card; player selector UI is a later slice.</summary>
@@ -3949,6 +4060,86 @@ public class MVPGameManager : MonoBehaviour
 
     /// <summary>Whether the human has a free tuning target waiting for the ordinary final card commit.</summary>
     public bool HasPendingItalyPrecisionTune => pendingItalyPrecisionTunePlan != null && !pendingItalyPrecisionTunePlan.IsClosed;
+
+    /// <summary>Ascari's target selector is visible only to the owned driver during the card-input window.</summary>
+    public bool IsAscariPrecisionVisible(PlayerState player) => player != null && player == Player && !player.isAI &&
+        !IsTutorialActionInputBlocked && !IsTutorialMode && session != null &&
+        phaseState.CanAcceptCards(inputState) && player.driverSkill != null && player.driverSkill.Enabled &&
+        player.driverSkill.Skill == DriverActiveSkillId.PrecisionCornering;
+
+    private List<CardData> AscariPrecisionChoices()
+    {
+        var choices = new List<CardData>();
+        if (cardHandUI == null || Player == null) return choices;
+        List<CardData> selected = cardHandUI.GetSelectedPlayCards();
+        CardData technologyTarget = HasPendingItalyPrecisionTune ? pendingItalyPrecisionTunePlan.Target : null;
+        foreach (CardData card in selected)
+            if (AscariPrecisionRules.IsEligibleTarget(Player, selected, card, technologyTarget)) choices.Add(card);
+        return choices;
+    }
+
+    /// <summary>Routes Ascari through the real target chooser; choosing never spends the race use.</summary>
+    public bool TryRequestAscariPrecisionSelection()
+    {
+        PlayerState player = Player;
+        if (player?.driverSkill == null || player.driverSkill.Skill != DriverActiveSkillId.PrecisionCornering)
+            return false;
+        if (HasPendingAscariPrecision)
+        {
+            CancelAscariPrecisionPlan();
+            hudUI?.SetStatus("已取消精密过弯目标，次数未使用");
+            return true;
+        }
+        bool canPrepare = AscariPrecisionActivationPlan.CanPrepare(session, player,
+            IsAscariPrecisionVisible(player), out string reason);
+        List<CardData> choices = canPrepare ? AscariPrecisionChoices() : new List<CardData>();
+        if (!canPrepare || choices.Count == 0)
+        {
+            if (string.IsNullOrEmpty(reason)) reason = "请先选中贡献至少2的普通速度牌";
+            hudUI?.SetStatus(reason);
+            hudUI?.RefreshDriverSkill(this, player);
+            return true;
+        }
+        if (hudUI == null) return true;
+        hudUI.ShowAscariPrecisionChoice(choices, target =>
+        {
+            if (!TryPrepareAscariPrecision(target, out string targetReason)) hudUI?.SetStatus(targetReason);
+            else
+            {
+                int value = ItalyPrecisionTuneRules.GetSourceContribution(Player, target);
+                hudUI?.SetStatus($"精密过弯目标 {value}→{Mathf.Max(1, value - 1)}，余{Player.driverSkill.UsesRemaining}次；最终出牌才使用");
+            }
+            hudUI?.RefreshDriverSkill(this, Player);
+            hudUI?.RefreshTurnTelemetry(Player);
+        }, () => CancelAscariPrecisionPlan());
+        return true;
+    }
+
+    /// <summary>Compact label for the target-selection entry; no color-only state is used.</summary>
+    public string GetAscariPrecisionButtonLabel(PlayerState player, out bool interactable)
+    {
+        interactable = false;
+        int uses = player?.driverSkill?.UsesRemaining ?? 0;
+        if (HasPendingAscariPrecision)
+        {
+            interactable = IsAscariPrecisionVisible(player);
+            int value = ItalyPrecisionTuneRules.GetSourceContribution(player, pendingAscariPrecisionPlan.Target);
+            return $"精密过弯 待确认\n目标 {value}→{Mathf.Max(1, value - 1)} · 余{uses}次";
+        }
+        if (player?.driverSkill?.Precision.CommittedThisInput == true)
+            return $"精密过弯 已锁定\n余{uses}次";
+        bool allowed = AscariPrecisionActivationPlan.CanPrepare(session, player,
+            IsAscariPrecisionVisible(player), out string reason);
+        if (!allowed)
+        {
+            if (string.IsNullOrEmpty(reason)) reason = "当前不可用";
+            return $"精密过弯 ×{uses}\n{reason}";
+        }
+        if (AscariPrecisionChoices().Count == 0)
+            return $"精密过弯 ×{uses}\n先选贡献≥2的普通速度牌";
+        interactable = true;
+        return $"精密过弯 选择目标\n原牌减1 · 余{uses}次";
+    }
 
     /// <summary>Selected-card technology uses only the current mode's effective research state.</summary>
     public bool IsItalyPrecisionTuneVisible(PlayerState player) => player != null && player == Player && !player.isAI &&
@@ -4003,7 +4194,7 @@ public class MVPGameManager : MonoBehaviour
                 hudUI?.SetStatus($"精调 {value}→{value-1}，余1次未用；最终出牌才使用");
             }
             hudUI?.RefreshItalyPrecisionTune(this,Player); hudUI?.RefreshTurnTelemetry(Player);
-        }, CancelItalyPrecisionTunePlan);
+        }, () => CancelItalyPrecisionTunePlan());
     }
 
     /// <summary>Shown within the existing card-action confirmation, never a second skill confirmation.</summary>
@@ -4015,34 +4206,69 @@ public class MVPGameManager : MonoBehaviour
     }
 
     /// <summary>Retains the exact free target intent through the final modal; stale confirmation cannot fall back to ordinary play.</summary>
-    public void RequestItalyPrecisionTuneCardCommit()
+    public void RequestItalyPrecisionTuneCardCommit() => RequestPrecisionCardCommit();
+
+    /// <summary>Retains IT tuning and Ascari target intent through one final card-action modal.</summary>
+    public void RequestPrecisionCardCommit()
     {
-        ItalyPrecisionTuneActivationPlan plan = pendingItalyPrecisionTunePlan;
-        if (plan == null || hudUI == null || cardHandUI == null) return;
+        ItalyPrecisionTuneActivationPlan plan = HasPendingItalyPrecisionTune ? pendingItalyPrecisionTunePlan : null;
+        AscariPrecisionActivationPlan driverPlan = HasPendingAscariPrecision ? pendingAscariPrecisionPlan : null;
+        if ((plan == null && driverPlan == null) || hudUI == null || cardHandUI == null) return;
         int version = italyPrecisionTunePlanVersion;
-        AscariPrecisionActivationPlan driverPlan = pendingAscariPrecisionPlan;
         int driverVersion = ascariPrecisionPlanVersion;
         RaceSession race = session; PlayerState owner = Player;
-        hudUI.RequestItalyPrecisionTuneCommit(GetItalyPrecisionTuneCommitDescription(), () =>
+        string description = GetPrecisionCommitDescription(plan, driverPlan);
+        string title = plan != null && driverPlan != null ? "确认出牌 · 精调 + 精密过弯" :
+            driverPlan != null ? "确认出牌 · 精密过弯" : "确认出牌 · 精准调校";
+        string label = plan != null && driverPlan != null ? "出牌并合并发动" :
+            driverPlan != null ? "出牌并发动" : "出牌并精调";
+        hudUI.RequestItalyPrecisionTuneCommit(description, () =>
         {
-            bool valid = ReferenceEquals(pendingItalyPrecisionTunePlan,plan) && version == italyPrecisionTunePlanVersion &&
-                ReferenceEquals(pendingAscariPrecisionPlan,driverPlan) && driverVersion == ascariPrecisionPlanVersion &&
-                ReferenceEquals(session,race) && ReferenceEquals(Player,owner) &&
-                plan.Validate(session,owner,cardHandUI.GetSelectedPlayCards(),raceTurnNumber,version,
-                    phaseState.CanAcceptCards(inputState) && !IsTutorialActionInputBlocked,
-                    config != null && config.enableTechTree && tutorialScenario == null,out _,
-                    driverPlan?.Target ?? owner?.driverSkill?.Precision.CommittedTarget);
-            if (!valid) { if (ReferenceEquals(pendingItalyPrecisionTunePlan,plan)) CancelItalyPrecisionTunePlan(); hudUI?.SetStatus("精调计划已过期，未出牌；请重新选择"); return; }
+            bool valid = ReferenceEquals(session, race) && ReferenceEquals(Player, owner);
+            if (plan != null)
+                valid &= ReferenceEquals(pendingItalyPrecisionTunePlan, plan) && version == italyPrecisionTunePlanVersion &&
+                    plan.Validate(session, owner, cardHandUI.GetSelectedPlayCards(), raceTurnNumber, version,
+                        phaseState.CanAcceptCards(inputState) && !IsTutorialActionInputBlocked,
+                        config != null && config.enableTechTree && tutorialScenario == null, out _, driverPlan?.Target);
+            if (driverPlan != null)
+                valid &= ReferenceEquals(pendingAscariPrecisionPlan, driverPlan) && driverVersion == ascariPrecisionPlanVersion &&
+                    driverPlan.Validate(session, owner, cardHandUI.GetSelectedPlayCards(), raceTurnNumber, driverVersion,
+                        phaseState.CanAcceptCards(inputState) && !IsTutorialActionInputBlocked, trackManager?.Nodes,
+                        config != null ? config.totalLaps : 0, out _, plan);
+            if (!valid)
+            {
+                CancelItalyPrecisionTunePlan(); CancelAscariPrecisionPlan();
+                hudUI?.SetStatus("精调/精密过弯计划已过期，未出牌；请重新选择");
+                return;
+            }
             OnPlayCardsButtonClicked();
-        }, () => { if (ReferenceEquals(pendingItalyPrecisionTunePlan,plan)) CancelItalyPrecisionTunePlan(); });
+        }, () => { CancelItalyPrecisionTunePlan(); CancelAscariPrecisionPlan(); }, label, title);
     }
 
-    public void CancelItalyPrecisionTunePlan()
+    private string GetPrecisionCommitDescription(ItalyPrecisionTuneActivationPlan technologyPlan,
+        AscariPrecisionActivationPlan driverPlan)
+    {
+        var lines = new List<string>();
+        if (technologyPlan != null)
+        {
+            int value = ItalyPrecisionTuneRules.GetSourceContribution(Player, technologyPlan.Target);
+            lines.Add($"精准调校：普通速度 {value}→{Mathf.Max(1, value - 1)}；移动减1，弯速减1（最低0），无额外RP。");
+        }
+        if (driverPlan != null)
+        {
+            int value = ItalyPrecisionTuneRules.GetSourceContribution(Player, driverPlan.Target);
+            lines.Add($"精密过弯：普通速度 {value}→{Mathf.Max(1, value - 1)}；首个安全弯心后按等级结算尾段。");
+        }
+        lines.Add("最终普通速度牌一次提交；取消或计划过期不消耗次数、不扣资源。");
+        return string.Join("\n", lines);
+    }
+
+    public void CancelItalyPrecisionTunePlan(bool suppressPresentation = false)
     {
         italyPrecisionTunePlanVersion++;
         pendingItalyPrecisionTunePlan?.Cancel();
         pendingItalyPrecisionTunePlan = null;
-        if (hudUI != null && hudUI.isActiveAndEnabled)
+        if (!suppressPresentation && hudUI != null && hudUI.isActiveAndEnabled)
         {
             hudUI.RefreshItalyPrecisionTune(this, Player);
             if (Player != null && phaseState.CanAcceptCards(inputState)) hudUI.RefreshTurnTelemetry(Player);
@@ -4168,9 +4394,9 @@ public class MVPGameManager : MonoBehaviour
         else hudUI.CancelReturnToMenu();
     }
 
-    private void ClosePrepMealInputs()
+    private void ClosePrepMealInputs(bool fromLifecycle = false)
     {
-        CancelItalyPrecisionTunePlan(); CancelAscariPrecisionPlan();
+        CancelItalyPrecisionTunePlan(fromLifecycle); CancelAscariPrecisionPlan(fromLifecycle);
         vettelMovementFeedback.Clear();
         if (session?.Players == null) return;
         foreach (PlayerState player in session.Players)
@@ -4184,6 +4410,10 @@ public class MVPGameManager : MonoBehaviour
             player?.driverSkill?.Rhythm.Interrupt();
             player?.driverSkill?.Precision.Interrupt();
             player?.driverSkill?.Pursuit.Interrupt();
+            // Lifecycle exit must close the owner-input clock as well. This clears
+            // an unfinished Ascari Blue Luck sample without refunding any committed
+            // active use; normal turn cleanup preserves the cadence between turns.
+            player?.driverSkill?.InterruptDrivingInput();
             player?.driverSkill?.InterruptMansellChargeWindow();
             player?.driverSkill?.Hunting.CloseInput();
         }
@@ -4200,6 +4430,9 @@ public class MVPGameManager : MonoBehaviour
             AudioService.PlayUi(AudioEventNames.GearFailure);
             return;
         }
+        if (Player?.driverSkill?.Skill == DriverActiveSkillId.ExtremeSwitch &&
+            !session.IsRecoverMode(Player, gear))
+            Player.driverSkill.CancelMaPreparationDeclaration();
         if (!inputState.SelectGear(gear))
         {
             AudioService.PlayUi(AudioEventNames.GearFailure);
@@ -4218,8 +4451,12 @@ public class MVPGameManager : MonoBehaviour
         CancelItalyPrecisionTunePlan(); CancelAscariPrecisionPlan();
         if (IsTutorialActionInputBlocked) return;
         if (!phaseState.CanAcceptGear(inputState)) return;
-        if (Player?.driverSkill?.Strategy.SealGear(inputState.PendingGear) == false) return;
+        int confirmedGear = inputState.PendingGear;
+        if (Player?.driverSkill?.Strategy.SealGear(confirmedGear) == false) return;
         if (!inputState.ConfirmGear()) return;
+        if (Player?.driverSkill?.Skill == DriverActiveSkillId.ExtremeSwitch &&
+            !session.IsRecoverMode(Player, confirmedGear))
+            Player.driverSkill.CancelMaPreparationDeclaration();
         session?.SealGermanBurstDeclaration(Player);
         CancelHunterSkillPlan();
         SetGearControlsInteractable(false);
@@ -4444,9 +4681,157 @@ public class MVPGameManager : MonoBehaviour
         !IsTutorialActionInputBlocked && !IsTutorialMode && config != null && Player != null && !Player.isAI &&
         session != null && phaseState.CanAcceptGear(inputState);
 
+    /// <summary>Busch active entry: preview is free; the single heat payment and pressure marker commit together.</summary>
+    private bool TryRequestBuschPressureSelection()
+    {
+        PlayerState player = Player;
+        if (player?.driverSkill == null || player.driverSkill.Skill != DriverActiveSkillId.TauntingBow)
+            return false;
+        DriverSkillActivationContext context = BuildDriverSkillActivationContext(player);
+        if (!DriverSkillRules.CanActivate(player.DriverProfile, player.driverSkill, context, out string reason))
+        {
+            hudUI?.SetStatus($"<color=orange>{reason}</color>");
+            hudUI?.RefreshDriverSkill(this, player);
+            return true;
+        }
+        if (player.driverSkill.Pressure.CanArmOutgoing(player.lap) == false)
+        {
+            hudUI?.SetStatus("本圈近车压力已使用");
+            hudUI?.RefreshDriverSkill(this, player);
+            return true;
+        }
+        int range = 3;
+        PlayerState target = BuschPressureRuntime.FindNearestBehind(session, player,
+            trackManager != null ? trackManager.TotalNodes : 0, range, out int distance);
+        if (target == null)
+        {
+            hudUI?.SetStatus("身后 3 格内没有可施压目标");
+            hudUI?.RefreshDriverSkill(this, player);
+            return true;
+        }
+        if (hudUI == null)
+            return true;
+
+        pendingBuschPressureTarget = target;
+        pendingBuschPressureLap = player.lap;
+        pendingBuschPressurePosition = player.position;
+        pendingBuschPressureVersion = ++driverSkillPlanVersion;
+        string targetName = (target.name ?? target.DriverProfile?.ShortName ?? "目标")
+            .Replace("<", "＜").Replace(">", "＞");
+        string message = $"目标：{targetName} · 身后{distance}格\n" +
+            $"付1张永久引擎热到弃牌堆；本次纯直线+{(player.driverSkill.Tier >= 2 ? 3 : 2)}格\n" +
+            "目标下次本人输入可拒绝支付1张永久热；拒绝不会强制失控或改追更远目标";
+        hudUI.ShowDriverSkillContinuation("布什 · 挑衅弯弓", message,
+            CommitBuschPressureSelection, CancelBuschPressureSelection,
+            "支付1热并施压", "不额外弃速度牌");
+        return true;
+    }
+
+    private void CancelBuschPressureSelection()
+    {
+        pendingBuschPressureTarget = null;
+        pendingBuschPressureLap = -1;
+        pendingBuschPressurePosition = -1;
+        pendingBuschPressureVersion = 0;
+        hudUI?.RefreshDriverSkill(this, Player);
+    }
+
+    private void CommitBuschPressureSelection()
+    {
+        PlayerState player = Player;
+        PlayerState target = pendingBuschPressureTarget;
+        int version = pendingBuschPressureVersion;
+        pendingBuschPressureTarget = null;
+        pendingBuschPressureLap = -1;
+        pendingBuschPressurePosition = -1;
+        pendingBuschPressureVersion = 0;
+        if (player?.driverSkill == null || target == null || version == 0 ||
+            player.driverSkill.Skill != DriverActiveSkillId.TauntingBow ||
+            !ReferenceEquals(BuschPressureRuntime.FindNearestBehind(session, player,
+                trackManager != null ? trackManager.TotalNodes : 0, 3, out _), target) ||
+            !DriverSkillRules.CanActivate(player.DriverProfile, player.driverSkill,
+                BuildDriverSkillActivationContext(player), out string reason) ||
+            !player.driverSkill.Pressure.CanArmOutgoing(player.lap))
+        {
+            hudUI?.SetStatus("挑衅目标已变化，请重新选择");
+            hudUI?.RefreshDriverSkill(this, player);
+            return;
+        }
+
+        RaceHeatPaymentResult payment = RaceHeatPaymentExecution.Pay(
+            player, session, 1, HeatPaymentDestination.Discard, HeatPaymentSource.Other);
+        if (!payment.Sufficient)
+        {
+            hudUI?.SetStatus("缺少1张永久引擎热，未发动挑衅弯弓");
+            hudUI?.RefreshDriverSkill(this, player);
+            return;
+        }
+        if (!player.isAI && cardHandUI != null)
+            cardHandUI.PlayHeatTransitions(payment.Drawn, CardVisualZone.Engine, CardVisualZone.DiscardPile);
+        RefreshHumanHeatPresentation(player);
+        AudioService.PlaySfx(AudioEventNames.HeatPay);
+        player.driverSkill.CommitValidatedActivation();
+        player.driverSkill.Pressure.CommitActivePressure(player, target, player.lap);
+        PresentDriverSkillActivation(player);
+        hudUI?.AppendLog($"{player.name} 挑衅弯弓：付1永久热并锁定 {target.name} 的下次尾流选择。");
+    }
+
+    private void RequestBuschIncomingPressureChoice(PlayerState target)
+    {
+        if (target == null || target.driverSkill == null || !target.driverSkill.Pressure.HasIncomingDecision)
+            return;
+        PlayerState leader = target.driverSkill.Pressure.IncomingLeader;
+        if (leader == null || target.deck?.heatPool == null || target.deck.heatPool.remaining < 1)
+        {
+            target.driverSkill.Pressure.CommitIncomingDecision(false);
+            hudUI?.AppendLog($"{target.name} 无法支付布什压力，拒绝跟车。");
+            return;
+        }
+        if (hudUI == null)
+        {
+            target.driverSkill.Pressure.CommitIncomingDecision(false);
+            return;
+        }
+        string leaderName = (leader.name ?? leader.DriverProfile?.ShortName ?? "布什")
+            .Replace("<", "＜").Replace(">", "＞");
+        string message = $"{leaderName} 已在前方锁定你\n接受：付1张永久引擎热到手牌并允许本次合法尾流\n拒绝：本次不跟车，不强制失控，也不改追更远目标";
+        hudUI.ShowDriverSkillContinuation("布什压力 · 跟车选择", message,
+            () => CommitBuschIncomingPressure(target, true),
+            () => CommitBuschIncomingPressure(target, false),
+            "付1热并跟车", "拒绝跟车");
+    }
+
+    private void CommitBuschIncomingPressure(PlayerState target, bool accept)
+    {
+        if (target?.driverSkill == null || !target.driverSkill.Pressure.HasIncomingDecision)
+            return;
+        if (!accept)
+        {
+            target.driverSkill.Pressure.CommitIncomingDecision(false);
+            hudUI?.AppendLog($"{target.name} 拒绝布什压力，本次不跟车。");
+            return;
+        }
+        RaceHeatPaymentResult payment = RaceHeatPaymentExecution.Pay(
+            target, session, 1, HeatPaymentDestination.Hand, HeatPaymentSource.Other);
+        if (!payment.Sufficient)
+        {
+            target.driverSkill.Pressure.CommitIncomingDecision(false);
+            hudUI?.AppendLog($"{target.name} 热量不足，拒绝布什压力。");
+            return;
+        }
+        if (!target.isAI && cardHandUI != null)
+            cardHandUI.PlayHeatTransitions(payment.Drawn, CardVisualZone.Engine, CardVisualZone.Hand);
+        RefreshHumanHeatPresentation(target);
+        target.driverSkill.Pressure.CommitIncomingDecision(true);
+        hudUI?.AppendLog($"{target.name} 接受布什压力：付1永久热到手牌并允许跟车。");
+    }
+
     public void OnDriverSkillButtonClicked()
     {
-        if (TryRequestHunterSkillSelection() || TryRequestMansellChargeSelection() || TryRequestSchumacherStrategySelection() || TryRequestVettelRhythmSelection()) return;
+        if (TryRequestChinaWarmCupSelection() || TryRequestZhouPreparationSelection() ||
+            TryRequestHunterSkillSelection() || TryRequestMansellChargeSelection() || TryRequestSchumacherStrategySelection() ||
+            TryRequestVettelRhythmSelection() || TryRequestAscariPrecisionSelection() || TryRequestBuschPressureSelection() ||
+            TryRequestMaAdaptationSelection()) return;
         PlayerState player = Player;
         if (player == null || player.driverSkill == null) return;
 
@@ -4459,6 +4844,154 @@ public class MVPGameManager : MonoBehaviour
         }
 
         PresentDriverSkillActivation(player);
+    }
+
+    /// <summary>I10: declaration is free; the actual use is consumed only by a real Recover step.</summary>
+    public bool TryRequestMaAdaptationSelection()
+    {
+        PlayerState player = Player;
+        if (player?.driverSkill == null || player.driverSkill.Skill != DriverActiveSkillId.ExtremeSwitch)
+            return false;
+        int pendingGear = PendingGearForPresentation;
+        if (session == null || config == null || !session.CanDeclareMaPreparation(player, pendingGear,
+                config.gearOneCooldown, config.gearTwoCooldown))
+        {
+            hudUI?.SetStatus("极限切换：先选择可冷却的 Recover 档，并保留1张旧手永久热");
+            hudUI?.RefreshDriverSkill(this, player);
+            return true;
+        }
+        hudUI?.RequestInRaceAction(
+            InRaceConfirmationAction.DriverSkill,
+            "确认极限切换",
+            "本次真实 Recover 冷却留置 1 张旧手永久热；下一次合格 Go 移动+" +
+            DriverSkillRules.GetMaNextGoMovementBonus(player.driverSkill.Tier) +
+            "。确认前不扣次数、不移动热；下一输入非 Go 或未完成会失效。",
+            () =>
+            {
+                bool committed = session.TryDeclareMaPreparation(player, PendingGearForPresentation,
+                    config.gearOneCooldown, config.gearTwoCooldown);
+                hudUI?.SetStatus(committed ? "极限切换已声明：本次 Recover 留置旧热，下一合格 Go 兑现" :
+                    "极限切换声明已过期，请重新选择");
+                hudUI?.RefreshDriverSkill(this, player);
+            });
+        return true;
+    }
+
+    /// <summary>CN L2 free declaration; the fixed payment is deferred to turn cleanup.</summary>
+    public bool TryRequestChinaWarmCupSelection()
+    {
+        PlayerState player = Player;
+        if (player?.techState == null || config == null || !config.enableTechTree ||
+            player.teamId != TeamId.CN || !TechTreeRules.HasWarmCup(player.techState, session?.TechDb))
+            return false;
+
+        if (!session.CanDeclareChinaWarmCup(player, config.enableTechTree, raceTurnNumber))
+        {
+            if (player.techState.warmCup != null && player.techState.warmCup.Declared)
+                return false; // allow the same operation slot to fall through to Zhou's active.
+            hudUI?.SetStatus("温杯：仅可在 Go 档、引擎至少有 1 热且本回合未声明时使用");
+            hudUI?.RefreshDriverSkill(this, player);
+            return true;
+        }
+
+        hudUI?.RequestInRaceAction(
+            InRaceConfirmationAction.DriverSkill,
+            "确认温杯",
+            "普通移动、费用与冷却完成后，支付 1 张永久引擎热到手牌并额外前进 1 格。取消不扣费。",
+            () =>
+            {
+                if (!session.TryDeclareChinaWarmCup(player, config.enableTechTree, raceTurnNumber))
+                {
+                    hudUI?.SetStatus("温杯声明已过期或当前 Go 条件失效");
+                }
+                else
+                {
+                    hudUI?.AppendLog($"{player.name} 已声明温杯：收尾重验后支付1热并前进1格。");
+                }
+                hudUI?.RefreshDriverSkill(this, player);
+            });
+        return true;
+    }
+
+    /// <summary>CN active path: discard one ordinary speed and recover old hand heat atomically.</summary>
+    public bool TryRequestZhouPreparationSelection()
+    {
+        PlayerState player = Player;
+        if (player?.driverSkill == null || player.driverSkill.Skill != DriverActiveSkillId.ChinaSpeed)
+            return false;
+        if (player.driverSkill.Tier <= 0 || player.driverSkill.UsesRemaining <= 0 ||
+            !player.driverSkill.Enabled || !player.driverSkill.IsDrivingInputOpen ||
+            RaceTurnRules.GetStartAction(player) != RaceTurnStartAction.SelectGear)
+        {
+            hudUI?.SetStatus("稳守节奏：仅可在档位确认前、本人输入窗口内使用");
+            hudUI?.RefreshDriverSkill(this, player);
+            return true;
+        }
+
+        if (player.deck == null || player.deck.CountHandHeatRestorableToEngine() <= 0)
+        {
+            hudUI?.SetStatus("稳守节奏：需要至少1张旧永久手牌热");
+            hudUI?.RefreshDriverSkill(this, player);
+            return true;
+        }
+
+        var choices = new List<CardData>();
+        foreach (CardData card in player.deck.Hand)
+            if (card != null && card.IsSpeed && !card.isTemp && string.IsNullOrEmpty(card.trickId))
+                choices.Add(card);
+        if (choices.Count == 0)
+        {
+            hudUI?.SetStatus("稳守节奏：需要1张普通速度牌");
+            hudUI?.RefreshDriverSkill(this, player);
+            return true;
+        }
+
+        pendingZhouPreparationCard = null;
+        int version = ++zhouPreparationPlanVersion;
+        int cap = DriverSkillRules.GetZhouRecoveryCap(player.driverSkill.PassiveTier);
+        string message = $"弃1张普通速度牌，回收旧永久手牌热最多{cap}张\n" +
+            $"本次与后续本人输入获得受限护航；剩余{player.driverSkill.UsesRemaining}次\n" +
+            "仅可穿越冰糕或土屋烟幕，护航最多恢复1格；取消不扣费。";
+        hudUI?.ShowDriverSkillCardChoice(
+            "稳守节奏 · 准备",
+            message,
+            choices,
+            card => CommitZhouPreparationSelection(player, version, card),
+            () => CancelZhouPreparationSelection(version));
+        return true;
+    }
+
+    private void CommitZhouPreparationSelection(PlayerState player, int version, CardData card)
+    {
+        if (player == null || version != zhouPreparationPlanVersion || player != Player)
+            return;
+        pendingZhouPreparationCard = card;
+        int cap = DriverSkillRules.GetZhouRecoveryCap(player.driverSkill.PassiveTier);
+        if (!player.deck.TryCommitZhouPreparationCost(card, cap, out int recovered))
+        {
+            hudUI?.SetStatus("稳守节奏准备已失效：速度牌或旧永久热来源已变化");
+            hudUI?.RefreshDriverSkill(this, player);
+            pendingZhouPreparationCard = null;
+            return;
+        }
+        player.driverSkill.CommitZhouEscortActivation();
+        if (!player.isAI && cardHandUI != null)
+        {
+            cardHandUI.PlayCardTransitions(new[] { card }, CardVisualZone.Hand, CardVisualZone.DiscardPile, AudioEventNames.CardPlay);
+            cardHandUI.PlayHeatTransitions(recovered, CardVisualZone.Hand, CardVisualZone.Engine);
+        }
+        RefreshHumanHand(player);
+        RefreshHumanHeatPresentation(player);
+        hudUI?.AppendLog($"{player.name} 稳守节奏：弃1张速度牌，回收旧永久热{recovered}张；护航窗口已开启。");
+        hudUI?.RefreshDriverSkill(this, player);
+        pendingZhouPreparationCard = null;
+    }
+
+    private void CancelZhouPreparationSelection(int version)
+    {
+        if (version == zhouPreparationPlanVersion)
+            pendingZhouPreparationCard = null;
+        hudUI?.RefreshDriverSkill(this, Player);
     }
 
     /// <summary>D04 actual entry consumes this driver even on failure; it can never fall back to free legacy activation.</summary>
@@ -4656,6 +5189,8 @@ public class MVPGameManager : MonoBehaviour
     {
         CloseGermanFuelConfirmation(fromLifecycle);
         driverSkillPlanVersion++;
+        zhouPreparationPlanVersion++;
+        pendingZhouPreparationCard = null;
         if (pendingHunterSkillPlan == null && pendingMansellChargePlan == null && pendingSchumacherStrategyPlan == null && pendingVettelRhythmPlan == null) return;
         HunterSkillActivationPlan hunter = pendingHunterSkillPlan;
         MansellChargeActivationPlan mansell = pendingMansellChargePlan;
@@ -4695,6 +5230,53 @@ public class MVPGameManager : MonoBehaviour
     {
         interactable = false;
         if (player == null || player.driverSkill == null) return "车手技能";
+        if (player.teamId == TeamId.CN && player.techState != null && config != null && config.enableTechTree &&
+            TechTreeRules.HasWarmCup(player.techState, session?.TechDb) &&
+            player.techState.warmCup != null && player.techState.warmCup.Declared)
+        {
+            if (player.driverSkill.Skill == DriverActiveSkillId.ChinaSpeed)
+            {
+                interactable = player.driverSkill.Tier > 0 && player.driverSkill.UsesRemaining > 0 &&
+                    player.driverSkill.IsDrivingInputOpen;
+                return $"温杯 已声明 · 稳守节奏\n弃速度/回旧热 · 余{player.driverSkill.UsesRemaining}次";
+            }
+            return "温杯 已声明 · 收尾支付1热并前进1格";
+        }
+        if (player.driverSkill.Skill == DriverActiveSkillId.ChinaSpeed)
+        {
+            int uses = player.driverSkill.UsesRemaining;
+            if (player.techState != null && config != null && config.enableTechTree &&
+                TechTreeRules.HasWarmCup(player.techState, session?.TechDb) &&
+                session.CanDeclareChinaWarmCup(player, config.enableTechTree, raceTurnNumber))
+            {
+                interactable = true;
+                return $"温杯 Go支付1热→手牌+1\n再点稳守节奏 · 余{uses}次";
+            }
+            if (player.driverSkill.Tier <= 0)
+                return $"稳守节奏 车手3级解锁\n剩余{uses}次";
+            interactable = player.driverSkill.Enabled && player.driverSkill.IsDrivingInputOpen &&
+                player.driverSkill.UsesRemaining > 0 &&
+                player.deck != null && player.deck.CountHandHeatRestorableToEngine() > 0 &&
+                player.deck.CountSpeedInHand() > 0;
+            return interactable
+                ? $"稳守节奏 弃1速度/回旧热\n护航1格 · 余{uses}次"
+                : $"稳守节奏 需要普通速度+旧永久热\n余{uses}次";
+        }
+        if (player.driverSkill.Skill == DriverActiveSkillId.ExtremeSwitch)
+        {
+            int uses = player.driverSkill.UsesRemaining;
+            if (player.driverSkill.Tier <= 0)
+                return $"极限切换 车手3级解锁\n剩余{uses}次";
+            if (player.driverSkill.Ma.PreparationDeclared)
+                return $"极限切换 已声明 Recover留置\n下次Go +{DriverSkillRules.GetMaNextGoMovementBonus(player.driverSkill.Tier)} · 余{uses}次";
+            bool canPrepare = session != null && config != null &&
+                session.CanDeclareMaPreparation(player, PendingGearForPresentation,
+                    config.gearOneCooldown, config.gearTwoCooldown);
+            interactable = canPrepare;
+            return canPrepare
+                ? $"极限切换 Recover留置旧热→下次Go +{DriverSkillRules.GetMaNextGoMovementBonus(player.driverSkill.Tier)}\n余{uses}次"
+                : $"极限切换 需要Recover冷却+旧手永久热\n余{uses}次";
+        }
         if (player.driverSkill.Skill == DriverActiveSkillId.PerfectRhythm)
         {
             var rhythm = player.driverSkill.Rhythm;
@@ -4766,10 +5348,32 @@ public class MVPGameManager : MonoBehaviour
         }
         if (player.driverSkill.Skill == DriverActiveSkillId.PrecisionCornering)
         {
-            interactable = false;
-            string reason = player.driverSkill.Tier <= 0 ? "Lv3 解锁主动技能" :
-                player.driverSkill.UsesRemaining <= 0 ? "本场次数已用完" : "当前不可用";
-            return $"精密过弯 ×{player.driverSkill.UsesRemaining}\n{reason}";
+            return GetAscariPrecisionButtonLabel(player, out interactable);
+        }
+        if (player.driverSkill.Skill == DriverActiveSkillId.TrueSelf)
+        {
+            interactable = DriverSkillRules.CanActivate(player.DriverProfile, player.driverSkill,
+                BuildDriverSkillActivationContext(player), out string reason);
+            if (!interactable)
+                return $"{player.DriverProfile.ActiveName} {reason}";
+            int bonus = player.driverSkill.Tier >= 3 ? 3 : 2;
+            return $"{player.DriverProfile.ActiveName} 纯直线+{bonus}格\n每次本人输入付1热 · 余{player.driverSkill.UsesRemaining}次";
+        }
+        if (player.driverSkill.Skill == DriverActiveSkillId.TauntingBow)
+        {
+            DriverSkillActivationContext context = BuildDriverSkillActivationContext(player);
+            interactable = DriverSkillRules.CanActivate(player.DriverProfile, player.driverSkill, context, out string reason) &&
+                player.driverSkill.Pressure.CanArmOutgoing(player.lap) &&
+                BuschPressureRuntime.FindNearestBehind(session, player,
+                    trackManager != null ? trackManager.TotalNodes : 0, 3, out _) != null;
+            if (!interactable)
+            {
+                if (!DriverSkillRules.CanActivate(player.DriverProfile, player.driverSkill, context, out reason))
+                    return $"{player.DriverProfile.ActiveName} {reason}";
+                return $"{player.DriverProfile.ActiveName} 需要可施压近车目标";
+            }
+            int bonus = player.driverSkill.Tier >= 2 ? 3 : 2;
+            return $"{player.DriverProfile.ActiveName} 纯直线+{bonus}格 · 付1热\n锁1名近车压力 · 余{player.driverSkill.UsesRemaining}次";
         }
         return DriverSkillPresentationRules.GetButtonLabel(
             player.DriverProfile, player.driverSkill,
@@ -4783,7 +5387,9 @@ public class MVPGameManager : MonoBehaviour
             player == Player && phaseState.CanAcceptGear(inputState),
             config != null ? config.totalLaps : 0,
             session?.Players,
-            trackManager != null ? trackManager.TotalNodes : 0);
+            trackManager != null ? trackManager.TotalNodes : 0,
+            player?.spinCounter ?? 0,
+            session != null && player != null ? session.EffectiveSpinMax(player) : 3);
     }
 
     public void OnPlayCardsButtonClicked()
@@ -4968,6 +5574,7 @@ public class MVPGameManager : MonoBehaviour
                 if (hudUI != null)
                     hudUI.RefreshPlayerResources(player);
                 cardHandUI.HideAll();
+                session.ResolveMaSubmittedInput(player, completed: false);
                 return;
             }
             if (hudUI != null)
@@ -4989,6 +5596,10 @@ public class MVPGameManager : MonoBehaviour
                     $"consecutive:{player.chinaConsecutiveGearCount},required:{required},played:{speedCount}");
             }
         }
+
+        // Ma's next-Go reward and Recover->Go passive are both settled only
+        // after the ordinary card phase has actually completed.
+        session.ResolveMaSubmittedInput(player, completed: missing == 0);
 
         if (hudUI != null)
             hudUI.RefreshPlayerResources(player);

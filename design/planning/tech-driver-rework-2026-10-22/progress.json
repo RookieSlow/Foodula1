@@ -30,7 +30,7 @@
   ],
   "sources_opened": 24,
   "status": "implementation_in_progress",
-  "next_package": "I05c2：接阿斯卡里真实目标选择、取消/陈旧计划和科技精调同牌互斥的一次合并确认；随后接被动蓝色规程。I05仍进行中，不推进I06；完整模式/存档/硬件仍I13。",
+  "next_package": "I10：马青骅真实原生冷却留置与下一Go兑现；完整模式/真实存档/三尺寸交互/硬件与跨系统长流程仍留I13。",
   "implementation_authorized": true,
   "stages": [
     {
@@ -592,7 +592,7 @@
     "plan": "implementation-plan.json"
   },
   "implementation_plan": "implementation-plan.json",
-  "implementation_current_package": "I05",
+  "implementation_current_package": "I10",
   "implementation_setup": {
     "date": "2026-10-22",
     "status": "automation_active_and_handoff_recorded",
@@ -603,8 +603,43 @@
     "automation_prompt_sha256": "d3b28cfe0313d5ce25218f76ff10d56ec2253e5e79e3f4ad68ca157609971d2f",
     "baseline": "D:\\UnityProject\\Foodula1\\Library\\AutomationReview\\tech-driver-implementation-20261022-174531\\baseline.json"
   },
-  "implementation_last_package": "I05c1",
-  "implementation_next_slice": "I05c2：接阿斯卡里真实目标选择、取消/陈旧计划和科技精调同牌互斥的一次合并确认；随后接被动蓝色规程。I05仍进行中，不推进I06；完整模式/存档/硬件仍I13。",
+  "implementation_last_package": "I10a",
+  "implementation_active_slice": {
+    "id": "I10a",
+    "status": "Ma_extreme_switch_real_recover_reservation_production_wired_native_focused_passed_full_modes_pending",
+    "scope": "马青骅真实原生Recover冷却留置旧手永久热、下一合格Go兑现移动加成，以及AllRounder真实Recover→Go被动与中断清理。",
+    "native_tests_executed": 175,
+    "native_results": {
+      "editmode_ma_runtime": {"total": 3, "passed": 3, "failed": 0, "skipped": 0, "seconds": 0.078413, "job_id": "68b650e5560f4c6b8453abdfe346754e"},
+      "editmode_driver_card_heat_focus": {"total": 100, "passed": 100, "failed": 0, "skipped": 0, "seconds": 0.1705152, "job_id": "ed83bdc37fad498090d529dbf0fd1412"},
+      "editmode_ma_driver_cleanup_focus": {"total": 71, "passed": 71, "failed": 0, "skipped": 0, "seconds": 0.1875679, "job_id": "087061a37a2e4b649236bc85801a319f"},
+      "playmode_assembly_smoke": {"total": 1, "passed": 1, "failed": 0, "skipped": 0, "seconds": 0.0193393, "job_id": "6371db8c9d0a4818b8aaeba0b2409b62"}
+    },
+    "acceptance": {
+      "pure_rules_source_wired": true,
+      "production_wiring": true,
+      "native_focused_editmode": true,
+      "playmode_smoke": true,
+      "player_operable": false,
+      "three_size_visual": false,
+      "complete_modes_and_save": false
+    },
+    "unity": {
+      "version": "2022.3.62f3c1",
+      "instance": "Foodula1@86b0192a4890cd9b",
+      "active_scene": "Assets/Scenes/MainMenu.unity",
+      "playing": false,
+      "compiling": false,
+      "importing": false,
+      "console_errors": 0,
+      "console_warnings": 0
+    },
+    "visual": {"new_screenshots": 0, "player_facing_layout_changed": true},
+    "unverified": ["完整RaceCanvas三尺寸交互", "真实鼠标键盘焦点与拖动", "完整普通/生涯模式与真实存档兼容", "I13跨系统长流程"],
+    "evidence": "../../../production/qa/evidence/tech-driver-I10-2026-11-06/README.md",
+    "manual_next_action": "I11 JP 汤底选择A与R2全局三回合窗口；完整模式/真实存档/三尺寸交互/硬件与I13跨系统长流程仍待后续收口。"
+  },
+  "implementation_next_slice": "I11：JP汤底选择A与R2全局三回合窗口；完整模式/真实存档/三尺寸交互/硬件与跨系统长流程仍留I13。",
   "uk_hunting_cap_question": {
     "status": "answered_by_user",
     "source": "driver draft paragraph 102 and direct async user reply in this chat",
@@ -4107,6 +4142,653 @@
         "Assets/Tests/Editor/driver_skill_runtime_test.cs": "4e38e770eb71214a0dabd226f8e54bceb2c1175c6e5e4bc4f8b896ae33be117c",
         "Assets/Tests/Editor/race_movement_rules_test.cs": "cda6be55523ae399d48fbefb0373a35db2749e0a3e41918ee8cd51d13861e55f"
       }
+    },
+    {
+      "id": "I05c2",
+      "local_date": "2026-11-05",
+      "status": "Ascari_real_target_selection_and_merged_confirmation_bounded_verified_passive_pending",
+      "scope": "D05 阿斯卡里真实普通原牌目标选择、取消/陈旧计划保护，以及与 IT L3B 精调的同牌互斥和异牌一次合并确认。准备阶段不扣次、不改共享 CardData.value、不支付资源；IT 科技与车手入口在共享动作槽保持双入口。",
+      "acceptance": {
+        "production_player_entry_wired": true,
+        "controlled_player_operable": true,
+        "merged_confirmation_and_same_card_exclusion": true,
+        "three_size_HUD_verified": true,
+        "passive_BlueLuck": false,
+        "complete_modes_and_save": false
+      },
+      "native_tests_executed": 71,
+      "native_results": {
+        "total": 71,
+        "passed": 71,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 1.853384,
+        "new_parameterized_UI_cases": 6,
+        "new_parameterized_UI_seconds": 0.3432048
+      },
+      "unity": {
+        "version": "2022.3.62f3c1",
+        "active_scene": "Assets/Scenes/MainMenu.unity",
+        "playing": false,
+        "compile": "clean after refresh_unity",
+        "console": "0 entries after refresh"
+      },
+      "visual": {
+        "controlled_fixture": true,
+        "resolutions": ["1920x1080", "2560x1440", "1280x720"],
+        "screenshots_saved": false,
+        "boundary": "EditMode 受控 RaceCanvas/HUD 渲染与溢出断言已覆盖三尺寸；本包未保存 PNG，不外推完整 RaceCanvas、物理输入或 720p 主观舒适度。"
+      },
+      "unverified": [
+        "被动蓝色幸运规程",
+        "完整模式、真实存档/存储和硬件输入",
+        "物理鼠标键盘焦点、全 RaceCanvas 和长流程"
+      ],
+      "source_final_sha256": {
+        "Assets/Scripts/Core/MVPGameManager.cs": "4dff33d9379fc6d7d2fb17da4bc914987f11de956827ac87da722f4ac7027fcc",
+        "Assets/Scripts/UI/HUDUI.cs": "1e039d5519b80990702c80ed877887a2b25e42d2434558864761450ab0323972",
+        "Assets/Scripts/UI/CardHandUI.cs": "48788d3d9257e1e722e00adf82c8c2f1a8d2c5955eb00887a7f1eccae5872d4f",
+        "Assets/Tests/Editor/italy_precision_tune_production_ui_test.cs": "5552a49b690df2c61d79dc273d86a185bbc050fec8bd6ac205fa80b86ae12fbc",
+        "Assets/Tests/Editor/RegressionModules.json": "2825dda10c5fd5d1ed574411494f8b07392330f09be1c210c48a44487afb3b0c"
+      },
+      "git": {
+        "diff_check": "passed with existing LF/CRLF notices only",
+        "tracked_modified_entries": 21,
+        "untracked_entries": 55,
+        "diff_stat": "21 files changed, 537 insertions(+), 77 deletions(-)",
+        "no_commit_push_reset_checkout_scene_save": true,
+        "unrelated_dirty_files_preserved": true
+      },
+      "next_slice": "I05c2c：对阿斯卡里蓝色幸运的生产回合结算与清理做定向收口回归；I05继续进行，不推进I06，完整模式/存档/硬件仍I13。"
+    }
+    ,
+    {
+      "id": "I05c2b",
+      "local_date": "2026-11-05",
+      "status": "Ascari_BlueLuck_production_turn_settlement_and_cleanup_bounded_verified",
+      "scope": "D06 蓝色幸运按阿斯卡里本人合格驾驶输入计时；真实热支付经 RaceSession.TrackHeatPaid 进入被动样本；Lv2/Lv4/Lv6 无热阈值分别为3/2/2，触发消费弯道限速+1，Lv6 同回合额外冷却+1。保留 I05c2 目标选择、陈旧计划和合并确认，不推进 I06。",
+      "acceptance": {
+        "blue_luck_rules": true,
+        "blue_luck_runtime": true,
+        "blue_luck_actual_turn_settlement": true,
+        "blue_luck_heat_reset": true,
+        "blue_luck_preview_isolation": true,
+        "cleanup_regression": true,
+        "complete_modes_and_save": false
+      },
+      "native_tests_executed": 106,
+      "native_results": {
+        "blue_luck_total": 5,
+        "blue_luck_passed": 5,
+        "focused_existing_total": 101,
+        "focused_existing_passed": 101,
+        "failed": 0,
+        "skipped": 0,
+        "blue_luck_seconds": 0.0842922,
+        "focused_existing_seconds": 0.1705166
+      },
+      "unity": {
+        "version": "2022.3.62f3c1",
+        "instance": "Foodula1@86b0192a4890cd9b",
+        "active_scene": "Assets/Scenes/MainMenu.unity",
+        "playing": false,
+        "compiling": false,
+        "console_errors": 0,
+        "console_warnings": 0,
+        "ready_boundary": "read_console returned 0 error/warning entries after the final refresh; editor state resource was stale on the last poll and is not used as stronger ready evidence."
+      },
+      "source_final_sha256": {
+        "Assets/Scripts/Drivers/DriverSkillRules.cs": "3c033712f77de99786750413f5ff7a88977fff3cb938bfc07d7e266bde6b277d",
+        "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "22090aec0e007faa24235863f340b338eb6a29d3733b1068cf1a7d213adc2ede",
+        "Assets/Scripts/Core/RaceSession.cs": "f4b1af078bb3b619c72f93ea267bc78999d1231ce064d507ca0951fb7d1ff5b7",
+        "Assets/Tests/Editor/blue_luck_test.cs": "f3596d1dd0d2b98716020407d50c187728bc2ff98b9b224ad7ebd9b23794aba5",
+        "Assets/Tests/Editor/blue_luck_test.cs.meta": "b9bedf411a27f571838c04b4642afc607486854fda561c2d5ae57026f946d527",
+        "Assets/Tests/Editor/RegressionModules.json": "bcb180c3f72940f7ce149937bf9f1481ba4913969c44e4acc5040ef2c203d178"
+      },
+      "unverified": [
+        "完整 RaceCanvas、物理鼠标键盘焦点、全模式/真实存档、硬件输入",
+        "I13 跨系统长流程"
+      ],
+      "git": {
+        "diff_check": "passed with existing LF/CRLF notices only",
+        "tracked_modified_entries": 21,
+        "untracked_entries": 55,
+        "diff_stat": "21 files changed, 537 insertions(+), 77 deletions(-)",
+        "no_commit_push_reset_checkout_scene_save": true,
+        "unrelated_dirty_files_preserved": true
+      },
+      "evidence": "../../../production/qa/evidence/tech-driver-I05c2b-2026-11-05/README.md",
+      "next_slice": "I05c2d：对意大利阶段现有蓝色幸运、精密过弯与L3B入口做依赖前置审计；I05继续进行，不推进I06。"
+    },
+    {
+      "id": "I05c2c",
+      "local_date": "2026-11-05",
+      "status": "Ascari_BlueLuck_interrupt_cleanup_and_corner_settlement_bounded_verified",
+      "scope": "D06 中断本人输入时清理未完成热样本、连续无热计数和待触发状态；真实弯道结算只消费一次限速+1，预览不消费。保留 I05c2 目标选择、陈旧计划和合并确认，不推进 I06。",
+      "acceptance": {
+        "blue_luck_interrupt_cleanup": true,
+        "blue_luck_corner_settlement_once": true,
+        "blue_luck_preview_isolation": true,
+        "complete_modes_and_save": false
+      },
+      "native_tests_executed": 108,
+      "native_results": {
+        "blue_luck_total": 7,
+        "blue_luck_passed": 7,
+        "focused_existing_total": 101,
+        "focused_existing_passed": 101,
+        "failed": 0,
+        "skipped": 0,
+        "blue_luck_seconds": 0.0770654,
+        "focused_existing_seconds": 0.1717774
+      },
+      "unity": {
+        "version": "2022.3.62f3c1",
+        "instance": "Foodula1@86b0192a4890cd9b",
+        "active_scene": "Assets/Scenes/MainMenu.unity",
+        "playing": false,
+        "compiling": false,
+        "console_errors": 0,
+        "console_warnings": 0,
+        "ready_boundary": "editor/state was fresh and ready after refresh before tests; read_console returned 0 error/warning entries after both runs."
+      },
+      "source_final_sha256": {
+        "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "b413bb6a70f5b1f737b358ae8d43a6eb6d9a447890e9dae5a5a2c1b689ce3629",
+        "Assets/Tests/Editor/blue_luck_test.cs": "c530acdae2e0e41f0070a227cb0b165297604cedb0638491aafb7b206b10d684",
+        "Assets/Tests/Editor/blue_luck_test.cs.meta": "b9bedf411a27f571838c04b4642afc607486854fda561c2d5ae57026f946d527"
+      },
+      "git": {
+        "diff_check": "passed with existing LF/CRLF notices only",
+        "tracked_modified_entries": 21,
+        "untracked_entries": 56,
+        "diff_stat": "21 files changed, 639 insertions(+), 80 deletions(-)",
+        "no_commit_push_reset_checkout_scene_save": true,
+        "unrelated_dirty_files_preserved": true
+      },
+      "unverified": [
+        "完整 RaceCanvas、物理鼠标键盘焦点、全模式/真实存档、硬件输入",
+        "I13 跨系统长流程"
+      ],
+      "evidence": "../../../production/qa/evidence/tech-driver-I05c2c-2026-11-05/README.md",
+      "next_slice": "I05c2d：对意大利阶段现有蓝色幸运、精密过弯与L3B入口做依赖前置审计；I05继续进行，不推进I06。"
+    },
+    {
+      "id": "I05c2d",
+      "local_date": "2026-11-05",
+      "status": "Italy_dependency_lifecycle_exit_cleanup_bounded_verified",
+      "scope": "审计 IT L3B、阿斯卡里精密过弯与蓝色幸运依赖，并补齐 OnDisable/OnDestroy 生命周期退出时的本人输入时钟清理；不新增科技节点、车手ID、XP键、解锁等级或主动次数。",
+      "production_files": [
+        "Assets/Scripts/Core/MVPGameManager.cs",
+        "Assets/Tests/Editor/race_driver_skill_activation_adapter_test.cs"
+      ],
+      "acceptance": {
+        "italy_dependency_audit": true,
+        "ascari_lifecycle_exit_cleanup": true,
+        "blue_luck_lifecycle_reset": true,
+        "l3b_entry_preserved": true,
+        "complete_modes_and_save": false
+      },
+      "native_tests_executed": 236,
+      "native_results": {
+        "first_selection_total": 102,
+        "first_selection_passed": 102,
+        "second_selection_total": 134,
+        "second_selection_passed": 134,
+        "failed": 0,
+        "skipped": 0,
+        "first_selection_seconds": 0.3437354,
+        "second_selection_seconds": 0.1332634,
+        "total_seconds": 0.4769988
+      },
+      "unity": {
+        "version": "2022.3.62f3c1",
+        "instance": "Foodula1@86b0192a4890cd9b",
+        "active_scene": "Assets/Scenes/MainMenu.unity",
+        "playing": false,
+        "compiling": false,
+        "console_errors": 0,
+        "console_warnings": 0,
+        "ready_boundary": "Direct scene/playing/compiling fields idle; final editor/state resource stale and not used as stronger ready evidence. read_console after clear returned 0 error/warning entries."
+      },
+      "visual": {
+        "new_screenshots": 0,
+        "player_facing_layout_changed": false
+      },
+      "unverified": [
+        "完整 RaceCanvas",
+        "物理鼠标/键盘焦点与硬件输入",
+        "全部模式与真实存档兼容",
+        "I13 跨系统长流程"
+      ],
+      "source_final_sha256": {
+        "Assets/Scripts/Core/MVPGameManager.cs": "7e9f9c851df16b84907d90d5e73b876d1ad0ead8931fa354b8a93a91460f3df3",
+        "Assets/Tests/Editor/race_driver_skill_activation_adapter_test.cs": "d7926ee532c5e22e36434087c29c7cd1311e97c546945d98898e9a1954e6562d"
+      },
+      "git": {
+        "no_commit_push_reset_checkout_rebase_scene_save": true,
+        "preexisting_tracked_and_untracked_preserved": true
+      },
+      "evidence": "../../../production/qa/evidence/tech-driver-I05c2d-2026-11-05/README.md",
+      "next_slice": "I05c2e：继续 I05 意大利阶段组合的单回合/重赛清理前置回归；I05继续进行，不推进I06。"
+    },
+    {
+      "id": "I05c2e",
+      "local_date": "2026-11-05",
+      "status": "Italy_runtime_rebuild_cleanup_production_change_native_editmode_verified",
+      "recovery_date_local": "2026-11-06",
+      "scope": "单回合/重赛前置清理：生命周期退出不刷新旧HUD，重建入口取消IT L3B/阿斯卡里待提交计划并关闭本人输入时钟；不新增节点/ID/XP/次数。",
+      "production_files": [
+        "Assets/Scripts/Core/MVPGameManager.cs",
+        "Assets/Tests/Editor/race_ascari_precision_coroutine_test.cs"
+      ],
+      "production_change": "OnDisable/OnDestroy 调用 ClosePrepMealInputs(true)，跳过已失效HUD刷新；RebuildRaceRuntime 使用普通展示路径并在初始化前取消 IT L3B/阿斯卡里计划。",
+      "acceptance": {
+        "production_source_wired": true,
+        "script_validation_errors": 0,
+        "native_rebuild_case": true,
+        "normal_turn_cadence_preserved": true,
+        "complete_modes_and_save": false
+      },
+      "native_tests_executed": 237,
+      "native_attempts": [
+        {"mode":"PlayMode","test":"RaceGameLoopCoroutineTests.ItalyAndAscariPendingPlansAreInvalidatedBeforeRuntimeRebuild","job_id":"eed1c2099fa240b98080e06b1ac7e4e7","status":"failed_initialize","timeout_seconds":120,"total":0,"started":0},
+        {"mode":"PlayMode","test":"RaceGameLoopCoroutineTests.ItalyAndAscariPendingPlansAreInvalidatedBeforeRuntimeRebuild","job_id":"7270165d75c74930bbe9ad1a78e2dfe1","status":"failed_initialize","timeout_seconds":120,"total":0,"started":0},
+        {"mode":"EditMode","test":"AscariPrecisionTests + ItalyPrecisionTuneTests + RaceDriverSkillActivationAdapterTests + BlueLuckTests + RaceTurnCleanupTests + RaceTurnSkillCleanupTests + RaceTurnTechnologyCleanupTests + RaceSessionTest","job_id":"2866d7d02b1243d8946af305c7b36809","status":"failed_initialize","timeout_seconds":120,"total":0,"started":0},
+        {"mode":"PlayMode","test":"RaceGameLoopCoroutineTests.ItalyAndAscariPendingPlansAreInvalidatedBeforeRuntimeRebuild","job_id":"48799c5e97d64dc18b4ff70beadc1d9d","status":"failed_initialize","timeout_seconds":120,"total":0,"started":0},
+        {"mode":"EditMode","test":"RaceGameLoopCoroutineTests.ItalyAndAscariPendingPlansAreInvalidatedBeforeRuntimeRebuild","job_id":"a912567dda204b9681bd0c7ed1d3d07b","status":"passed","total":1,"passed":1,"failed":0,"skipped":0,"duration_seconds":1.7250048},
+        {"mode":"EditMode","test":"AscariPrecisionTests + ItalyPrecisionTuneTests + RaceDriverSkillActivationAdapterTests + BlueLuckTests + RaceTurnCleanupTests + RaceTurnSkillCleanupTests + RaceTurnTechnologyCleanupTests + RaceSessionTest","job_id":"daee4e1fdcb84062a6e39ce1bef9a18d","status":"passed","total":236,"passed":236,"failed":0,"skipped":0,"duration_seconds":1.2588058}
+      ],
+      "runner_resolution": "现有测试位于 Assets/Tests/Editor，属于 EditMode；UnityTest 表示协程语义而非 PlayMode 归属。PlayMode 无测试是预期程序集边界。",
+      "unity": {
+        "version": "2022.3.62f3c1",
+        "instance": "Foodula1@86b0192a4890cd9b",
+        "active_scene": "Assets/Scenes/MainMenu.unity",
+        "playing": false,
+        "compiling": false,
+        "direct_boundary": "MainMenu idle; not playing, paused, changing, compiling or importing; final resource readiness ready=true",
+        "console_after_compile": "0 error and 0 warning entries after successful current-assembly runs"
+      },
+      "visual": {"new_screenshots": 0, "player_facing_layout_changed": false},
+      "unverified": [
+        "完整 RaceCanvas 与三尺寸交互",
+        "物理鼠标键盘焦点与硬件输入",
+        "完整普通/生涯模式与真实存档兼容",
+        "I13 跨系统长流程"
+      ],
+      "source_final_sha256": {
+        "Assets/Scripts/Core/MVPGameManager.cs": "581ebd6138e4c5d486ef39bb57a95cf74e85bf7ed41b7d5691d010756cf0fd29",
+        "Assets/Tests/Editor/race_ascari_precision_coroutine_test.cs": "c641e5808f647816cf902b6b088b840cb30ea97650a1ad14cc2e75cdfaea4629"
+      },
+      "git": {
+        "diff_check": "passed with existing LF/CRLF notices only",
+        "no_commit_push_reset_checkout_rebase_scene_save": true,
+        "unrelated_dirty_files_preserved": true
+      },
+      "evidence": "../../../production/qa/evidence/tech-driver-I05c2e-2026-11-05/README.md",
+      "next_slice": "I06：诺瓦预付容错与有限低引擎联动，验证普通罚热不被免除；完整模式/真实存档/硬件与跨系统长流程仍留I13。"
+    },
+    {
+      "id": "I06a",
+      "local_date": "2026-11-06",
+      "status": "Nuvolari_sources_wired_playmode_smoke_and_editmode_focused_native_passed_full_modes_pending",
+      "scope": "诺瓦低引擎预付一次失控容错、只忽略首弯；普通罚热成功支付后回收旧永久手牌1/1/2，不免除费用。新增独立PlayMode烟测程序集。",
+      "production_files": [
+        "Assets/Scripts/Drivers/NuvolariRuntime.cs",
+        "Assets/Scripts/Drivers/DriverSkillRules.cs",
+        "Assets/Scripts/Drivers/DriverSkillRuntime.cs",
+        "Assets/Scripts/Core/RaceSession.cs",
+        "Assets/Scripts/Core/RaceHeatPaymentExecution.cs",
+        "Assets/Scripts/Core/MVPGameManager.cs",
+        "Assets/Scripts/Core/RaceTurnCleanup.cs",
+        "Assets/Scripts/Core/RaceTurnSkillCleanup.cs",
+        "Assets/Scripts/Core/RaceTurnPreviewRules.cs",
+        "Assets/Tests/Editor/nuvolari_skill_test.cs",
+        "Assets/Tests/PlayMode/Foodula1.PlayModeTests.asmdef",
+        "Assets/Tests/PlayMode/PlayModeAssemblySmokeTests.cs"
+      ],
+      "production_change": "完成诺瓦运行时、普通罚热成功支付后的旧永久热回收、低引擎预付旋转限制与终态清理；新增真实PlayMode测试程序集和运行时烟测。",
+      "acceptance": {
+        "pure_rules_source_wired": true,
+        "production_wiring": true,
+        "playmode_assembly_compiled": true,
+        "playmode_smoke_native_run_finished": true,
+        "nuvolari_editmode_focused_native_run_finished": true,
+        "complete_modes_and_save": false
+      },
+      "native_tests_executed": 7,
+      "native_attempts": [
+        {"mode":"PlayMode","test":"Foodula1.Tests.PlayMode.PlayModeAssemblySmokeTests.RuntimeTestAssemblyIsDiscoverable","job_id":"346d5a0f7e4a4c9d91f3eda22901dc8d","status":"passed","total":1,"passed":1,"failed":0,"skipped":0,"duration_seconds":0.0489397},
+        {"mode":"EditMode","test":"NuvolariSkillTests","job_id":"761ec97ec79049718ab1766a10c9511a","status":"passed","total":6,"passed":6,"failed":0,"skipped":0,"duration_seconds":0.0612661}
+      ],
+      "unity": {
+        "version": "2022.3.62f3c1",
+        "instance": "Foodula1@86b0192a4890cd9b",
+        "active_scene": "Assets/Scenes/MainMenu.unity",
+        "playing": false,
+        "compiling": false,
+        "importing": false,
+        "ready": true,
+        "console_after_compile": "no compile errors; native PlayMode smoke and Nuvolari EditMode focused runs completed with 0 console errors/warnings"
+      },
+      "visual": {
+        "new_screenshots": 0,
+        "player_facing_layout_changed": false
+      },
+      "unverified": [
+        "完整I06诺瓦跨模式组合",
+        "完整RaceCanvas三尺寸交互",
+        "完整普通/生涯模式与真实存档兼容",
+        "I13跨系统长流程"
+      ],
+      "source_final_sha256": {
+        "Assets/Scripts/Drivers/NuvolariRuntime.cs": "83f488fa94a5c2a4e93f10b2cf0e758a72859dff72dc30a5c6656ea0a0e36392",
+        "Assets/Scripts/Drivers/DriverSkillRules.cs": "efacf52d484fb6e4535f7d648700d243ed14814fbdbba125d0e7bb7a0b0d9eac",
+        "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "dc663be893ce94ac43224674bc472354e037569189635339f429513fc6371718",
+        "Assets/Scripts/Core/RaceSession.cs": "04a155f7cc5bfe1c00ea667ea5337b7e0e0dfe1e0fa11219b6ba4dab42adf00c",
+        "Assets/Scripts/Core/RaceHeatPaymentExecution.cs": "bc8336c2d9defcf4b0921263acc413835ca4ee9106d98c637cfbc69941de150e",
+        "Assets/Scripts/Core/MVPGameManager.cs": "05ec70e56dce1868374dc423cd2766ce99107a5a34b9bc173b91bb0b739be5a0",
+        "Assets/Scripts/Core/RaceTurnSkillCleanup.cs": "17850d4b0175ae6d73569949100985f5d39c236141bc644af8a732350ba61c49",
+        "Assets/Scripts/Core/RaceTurnCleanup.cs": "4206011cf23ce33942855c022924c3196d2d22be7d23bd1c3497c4affbe4f9c0",
+        "Assets/Scripts/Core/RaceTurnPreviewRules.cs": "d79c810441c3dce985176cf90beba886b5556ffe4eb3091f54782ce8d99ac4f4",
+        "Assets/Tests/Editor/nuvolari_skill_test.cs": "48377b0e8224c9b3c54a0188b32f7bac3f1a2a3c376fa4df86459345f03000ec",
+        "Assets/Tests/PlayMode/Foodula1.PlayModeTests.asmdef": "420dd613c7f58e84e9ba7c7ce97364a4defd1a1b93240d300fbed367c9145325",
+        "Assets/Tests/PlayMode/PlayModeAssemblySmokeTests.cs": "285e2465b8cfae2b4bc2c15654eb9c499e2f2b118bde4050a2ea0aea5b3fdd23"
+        ,"Assets/Scripts/Editor/EditorPlayBootstrapper.cs": "39d548b70e98fd326ac644b06845daaf7a457fbb34676006315843a0c7d1c0e3"
+        ,"ProjectSettings/ProjectSettings.asset": "fe12d27c5307ae3a6cb6db9001ae7aec53c8abbac57700de55ff9c6fbac91b10"
+      },
+      "git": {
+        "diff_check": "passed with existing LF/CRLF notices only",
+        "no_commit_push_reset_checkout_rebase_scene_save": true,
+        "unrelated_dirty_files_preserved": true
+      },
+      "evidence": "../../../production/qa/evidence/tech-driver-I06-2026-11-06/README.md",
+      "next_slice": "I07：接US BBQ B、维修进度A与净回上限；完整模式/真实存档/硬件与I13跨系统长流程仍留后续收口。"
+    },
+    {
+      "id": "I07a",
+      "local_date": "2026-11-06",
+      "status": "US_BBQ_B_and_MotherRoad_cap_production_wired_native_focused_passed_full_modes_pending",
+      "scope": "US BBQ B连续双地标门控、区域借额+1且无烟幕；母亲之路复兴先清偿借额，净回引擎与位移各封顶3，超出永久热保留在手牌。",
+      "production_files": [
+        "Assets/Scripts/TechTree/TechTreeRules.cs",
+        "Assets/Scripts/TechTree/TechTreeData.cs",
+        "Assets/Scripts/TechTree/RaceMotherRoadExecution.cs",
+        "Assets/Scripts/Core/RaceSession.cs",
+        "Assets/Scripts/TechTree/TechTreeDatabase.cs",
+        "Assets/Scripts/UI/CardHandUI.cs",
+        "Assets/Tests/Editor/race_session_test.cs",
+        "Assets/Tests/Editor/race_mother_road_execution_test.cs",
+        "Assets/Tests/Editor/tech_tree_rules_test.cs",
+        "design/gdd/foodula-1-tech-tree.md"
+      ],
+      "acceptance": {
+        "pure_rules_source_wired": true,
+        "production_wiring": true,
+        "native_focused_editmode": true,
+        "playmode_smoke": true,
+        "player_operable": false,
+        "three_size_visual": false,
+        "complete_modes_and_save": false
+      },
+      "native_tests_executed": 498,
+      "native_results": {
+        "editmode_race_session_bbq_mother_road_tech": {"total": 335, "passed": 335, "failed": 0, "skipped": 0, "seconds": 0.4234552},
+        "playmode_assembly_smoke": {"total": 1, "passed": 1, "failed": 0, "skipped": 0, "seconds": 0.0180639},
+        "editmode_lifecycle_adapter_setup_codec": {"total": 162, "passed": 162, "failed": 0, "skipped": 0, "seconds": 0.482971}
+      },
+      "unity": {
+        "version": "2022.3.62f3c1",
+        "instance": "Foodula1@86b0192a4890cd9b",
+        "active_scene": "Assets/Scenes/MainMenu.unity",
+        "playing": false,
+        "compiling": false,
+        "importing": false,
+        "console_errors": 0,
+        "console_warnings": 0
+      },
+      "visual": {"new_screenshots": 0, "player_facing_layout_changed": true},
+      "unverified": [
+        "完整RaceCanvas三尺寸交互",
+        "真实鼠标键盘焦点与拖动",
+        "完整普通/生涯模式与真实存档兼容",
+        "I13跨系统长流程"
+      ],
+      "source_final_sha256": {
+        "Assets/Scripts/TechTree/TechTreeRules.cs": "3203CF6D9C4A5C7AC47CBC1DDE6327E1E3DDC2D7340AACCB37E0B6AF9F8586F9",
+        "Assets/Scripts/TechTree/TechTreeData.cs": "9AE29785D64E170B8AE237D6DEEBD5C5A988C4FE0589A8177FBD51608D0A641F",
+        "Assets/Scripts/TechTree/RaceMotherRoadExecution.cs": "9743A99356C8FEB482C95F6D06C21404321413DAE090BA0C933E5EAA09714581",
+        "Assets/Scripts/Core/RaceSession.cs": "E3E75C9B0EFF9CFC6595911415809D2C29A69F58CC7310C04F7CF99BC7658DF6",
+        "Assets/Scripts/TechTree/TechTreeDatabase.cs": "150941FE6A416874A3F027E2085431B784A59D9172604934CB0740DA74447CE6",
+        "Assets/Scripts/UI/CardHandUI.cs": "125B1E8818274CD7D8911F18DFEA8B3A3C0969E725480D3BAE0B4632F9086C53",
+        "Assets/Tests/Editor/race_session_test.cs": "F78BEB89953BAD0F168A4567717640CE399FC1DBD4040FF40ABC066DB771DCE7",
+        "Assets/Tests/Editor/race_mother_road_execution_test.cs": "E890150A640B72329AD66E633FCB9A2C00D4061441A70CE7229A4A217BF62F35",
+        "Assets/Tests/Editor/tech_tree_rules_test.cs": "CA9C3348F73CC6110FF78275AF25A824C5F1013ED76CC1572526AFC65D2DDD54",
+        "design/gdd/foodula-1-tech-tree.md": "96DD0902CBC540E15FA50D4754B10E00903B794D112CAB3F96030BD81F436FC0"
+      },
+      "git": {
+        "diff_check": "passed with existing LF/CRLF notices only",
+        "no_commit_push_reset_checkout_rebase_scene_save": true,
+        "unrelated_dirty_files_preserved": true
+      },
+      "evidence": "../../../production/qa/evidence/tech-driver-I07-2026-11-06/README.md",
+      "next_slice": "I08：斯图尔特与布什有限窗口、实际跟车、付费与拒绝入口；完整模式/真实存档/硬件与I13跨系统长流程仍留后续收口。"
+    },
+    {
+      "id": "I08a",
+      "local_date": "2026-11-06",
+      "status": "Stewart_Busch_driver_windows_pressure_fee_production_wired_native_focused_passed_full_modes_pending",
+      "scope": "斯图尔特 Track Fury/True Self 与布什 Villain Aura/Taunting Bow 的本人输入窗口、实际超越、稳定最近目标、永久热费用和接受/拒绝跟车。",
+      "production_files": [
+        "Assets/Scripts/Drivers/TrackFuryRuntime.cs",
+        "Assets/Scripts/Drivers/BuschPressureRuntime.cs",
+        "Assets/Scripts/Drivers/DriverSkillRules.cs",
+        "Assets/Scripts/Drivers/DriverSkillRuntime.cs",
+        "Assets/Scripts/Core/CardDeck.cs",
+        "Assets/Scripts/Core/RaceSession.cs",
+        "Assets/Scripts/Core/RaceTurnSkillCleanup.cs",
+        "Assets/Scripts/Core/RaceSettledSlipstreamResolution.cs",
+        "Assets/Scripts/Core/MVPGameManager.cs",
+        "Assets/Tests/Editor/driver_skill_runtime_test.cs",
+        "Assets/Tests/Editor/race_driver_skill_activation_adapter_test.cs",
+        "Assets/Tests/Editor/final_sprint_turn_end_test.cs",
+        "Assets/Tests/Editor/RegressionModules.json",
+        "design/gdd/foodula-1-drivers.md"
+      ],
+      "acceptance": {
+        "pure_rules_source_wired": true,
+        "production_wiring": true,
+        "native_focused_editmode": true,
+        "playmode_smoke": true,
+        "player_operable": false,
+        "three_size_visual": false,
+        "complete_modes_and_save": false
+      },
+      "native_tests_executed": 253,
+      "native_attempts": [
+        {"mode":"EditMode","test":"DriverSkillRuntimeTests + DriverSkillRulesTests + RaceDriverSkillActivationAdapterTests + RaceTurnSkillCleanupTests + CardDeckTest + RaceSessionTest + DriverSkillPresentationRulesTests + DriverSkillRaceContextRulesTests","job_id":"318b1c5763264dcda32962c7324f9a73","status":"passed","total":252,"passed":252,"failed":0,"skipped":0,"duration_seconds":0.7412058},
+        {"mode":"PlayMode","test":"Foodula1.Tests.PlayMode.PlayModeAssemblySmokeTests.RuntimeTestAssemblyIsDiscoverable","job_id":"782473cd2be54c4698535b28939e1df2","status":"passed","total":1,"passed":1,"failed":0,"skipped":0,"duration_seconds":0.0116497}
+      ],
+      "unity": {
+        "version": "2022.3.62f3c1",
+        "instance": "Foodula1@86b0192a4890cd9b",
+        "active_scene": "Assets/Scenes/MainMenu.unity",
+        "playing": false,
+        "compiling": false,
+        "importing": false,
+        "console_errors": 0,
+        "console_warnings": 0
+      },
+      "visual": {"new_screenshots": 0, "player_facing_layout_changed": true},
+      "unverified": [
+        "完整 RaceCanvas 三尺寸交互",
+        "真实鼠标键盘焦点与拖动",
+        "完整普通/生涯模式与真实存档兼容",
+        "I13 跨系统长流程"
+      ],
+      "source_final_sha256": {
+        "Assets/Scripts/Drivers/TrackFuryRuntime.cs": "BE5629A348E9F56C586FCAAD52725A99D77F4C998239A6C0A1C587C7BB887224",
+        "Assets/Scripts/Drivers/BuschPressureRuntime.cs": "7D4D7ADC2A5E0C58069B240B9EDB8EF39AF401C43B65E0E7DD864C54FF0E2E81",
+        "Assets/Scripts/Drivers/DriverSkillRules.cs": "9F555D071F7EE74A513F5A2FA665FA8A33F8863B9FBE0A13D2DD88A42E4CA36B",
+        "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "30265C8A70F822DAC8CE2DA882452AAA06739E87DD9FF9F446C6BEB6C44951E9",
+        "Assets/Scripts/Core/CardDeck.cs": "DA2422695CD1DA97BB89E7C5713670E556110C02070FF6A0899290EE2AA04ED9",
+        "Assets/Scripts/Core/RaceSession.cs": "922CD2257B7E274094AD33D3007ACDF7C00298CF6F1FEC7F76BE198251C40266",
+        "Assets/Scripts/Core/RaceTurnSkillCleanup.cs": "AE6B4E21D5566CCB4A2E997FFA36C535E9E2E004944583F9E6DF9FE1C515F5AA",
+        "Assets/Scripts/Core/RaceSettledSlipstreamResolution.cs": "16FE4C68C5C853A3875B5EB5335459727842889FB2F662CBAAEA3A1864B223B0",
+        "Assets/Scripts/Core/MVPGameManager.cs": "2A5CFAECB8611AB8FD90DCAC6B22EFD0E55F85EC731B29DA1938BA681587C14E",
+        "Assets/Tests/Editor/driver_skill_runtime_test.cs": "64165A78C1C223DA690DC51F434D3D3A1057AE2B154F10563C62203BE532322A",
+        "Assets/Tests/Editor/race_driver_skill_activation_adapter_test.cs": "F8122DA9ABA9E0AA20D6D41342AE2F5E8403E3069A627C5AF89AD960BDCF8AA2",
+        "Assets/Tests/Editor/final_sprint_turn_end_test.cs": "E5431414F941F8C2A8E872F69BE2B167DE2771C71291B410FA591A0160EAA98D",
+        "Assets/Tests/Editor/RegressionModules.json": "766A1E0F373EC12198BE38028CA224C3864C912C9C5849A5C2023D9B6D8D9CCF",
+        "design/gdd/foodula-1-drivers.md": "1316A8994DD58F2749C0DA820AE42B30BD546C939CD7E65865FD9D5D5170DEEF"
+      },
+      "git": {
+        "diff_check": "passed with existing LF/CRLF notices only",
+        "no_commit_push_reset_checkout_rebase_scene_save": true,
+        "unrelated_dirty_files_preserved": true
+      },
+      "evidence": "../../../production/qa/evidence/tech-driver-I08-2026-11-06/README.md",
+      "next_slice": "I09：CN温杯与周冠宇旧热整备及一次护航；完整模式/真实存档/硬件与I13跨系统长流程仍待后续收口。"
+    },
+    {
+      "id": "I09a",
+      "local_date": "2026-11-06",
+      "status": "CN_warm_cup_zhou_old_heat_escort_production_wired_native_focused_passed_full_modes_pending",
+      "scope": "CN L2温杯与周冠宇沉稳之心/稳守节奏的本人输入时钟、旧永久手牌热整备、原生Go/Recover顺序及有限护航。",
+      "production_files": [
+        "Assets/Scripts/TechTree/TechTreeData.cs",
+        "Assets/Scripts/TechTree/WarmCupRuntime.cs",
+        "Assets/Scripts/TechTree/TechTreeRules.cs",
+        "Assets/Scripts/TechTree/TechTreeDatabase.cs",
+        "Assets/Scripts/Core/CardDeck.cs",
+        "Assets/Scripts/Core/RaceSession.cs",
+        "Assets/Scripts/Core/RaceTurnTechnologyCleanup.cs",
+        "Assets/Scripts/Core/RaceSettledSlipstreamResolution.cs",
+        "Assets/Scripts/Core/MVPGameManager.cs",
+        "Assets/Scripts/UI/HUDUI.cs",
+        "Assets/Scripts/Drivers/DriverData.cs",
+        "Assets/Scripts/Drivers/DriverSkillRules.cs",
+        "Assets/Scripts/Drivers/DriverSkillRuntime.cs",
+        "Assets/Scripts/Drivers/ZhouEscortRuntime.cs",
+        "Assets/Scripts/Drivers/ZhouSteadyHeartRuntime.cs",
+        "Assets/Tests/Editor/china_warm_cup_test.cs",
+        "Assets/Tests/Editor/RegressionModules.json",
+        "design/gdd/foodula-1-tech-tree.md",
+        "design/gdd/foodula-1-drivers.md"
+      ],
+      "acceptance": {
+        "pure_rules_source_wired": true,
+        "production_wiring": true,
+        "native_focused_editmode": true,
+        "playmode_smoke": true,
+        "player_operable": false,
+        "three_size_visual": false,
+        "complete_modes_and_save": false
+      },
+      "native_tests_executed": 507,
+      "native_results": {
+        "editmode_cn_tech_driver_focus": {"total": 494, "passed": 494, "failed": 0, "skipped": 0, "seconds": 2.7495901},
+        "editmode_module_catalog": {"total": 12, "passed": 12, "failed": 0, "skipped": 0, "seconds": 0.0834334},
+        "playmode_assembly_smoke": {"total": 1, "passed": 1, "failed": 0, "skipped": 0, "seconds": 0.0158642}
+      },
+      "unity": {
+        "version": "2022.3.62f3c1",
+        "instance": "Foodula1@86b0192a4890cd9b",
+        "active_scene": "Assets/Scenes/MainMenu.unity",
+        "playing": false,
+        "compiling": false,
+        "importing": false,
+        "console_errors": 0,
+        "console_warnings": 0,
+        "readiness_note": "mcpforunity editor/state remained stale_status while native Test Runner jobs completed; no console errors or warnings observed."
+      },
+      "visual": {"new_screenshots": 0, "player_facing_layout_changed": true},
+      "source_final_sha256": {
+        "Assets/Scripts/TechTree/TechTreeData.cs": "66765C29483CDEFBD57F53823AA683625FD3AADD12E4412C93F3B4E2504EA679",
+        "Assets/Scripts/TechTree/WarmCupRuntime.cs": "43C4DAE3806365F7EECE8276D77099C9454C3D718842A14B2B4BACEAD12808F6",
+        "Assets/Scripts/TechTree/TechTreeRules.cs": "720804EE3A6A83645191020D761AB4BE0447ABF92CEED624731D25E6D967884E",
+        "Assets/Scripts/TechTree/TechTreeDatabase.cs": "FCB4890266A8712E75CD92B39486489C9C392A313D20C6672667158981909C38",
+        "Assets/Scripts/Core/CardDeck.cs": "B01AC10B28F33AFCB2C11D34339DAAB6A81A392EB81673270CF0DBA942AE32B5",
+        "Assets/Scripts/Core/RaceSession.cs": "755A8FE71BFF86DFC91A331F739D2814BCF54317B5D814FA24258AD4EFBE17DF",
+        "Assets/Scripts/Core/RaceTurnTechnologyCleanup.cs": "C8A4DB423D7219F4F44002AB447489B6E7B8D12463A553D2FCCA0184C7595898",
+        "Assets/Scripts/Core/RaceSettledSlipstreamResolution.cs": "A933034998C25779FAC01AC6F1E44ACEDE43656AB0C215EDBE38C71038676593",
+        "Assets/Scripts/Core/MVPGameManager.cs": "4E3F2743F3526A92468019727C238ADB1541BB16A9FC7A8C16B4B72C1A507A5F",
+        "Assets/Scripts/UI/HUDUI.cs": "7388989EB1F1FC8A47A6386F781FE655197C837764F2EF16CA34D9E44CCAE783",
+        "Assets/Scripts/Drivers/DriverData.cs": "A26B0CD2E828448E655A71A2D46F87935F00F9599083E8EEF0EC7F1D76D98127",
+        "Assets/Scripts/Drivers/DriverSkillRules.cs": "6314A3236EDFB117FC3C1648CEC90A6EA82DF76891CCA2F276B0FC07BF40BC12",
+        "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "8E78CC1AF70646FA1E73A9AAF46194D3A6B7628F8950D63C52BBB54F0355166D",
+        "Assets/Scripts/Drivers/ZhouEscortRuntime.cs": "6D4F650DFDDE13D91D0B835160423AA6A1211AC65E53FE57DA0E8F15400EE8D4",
+        "Assets/Scripts/Drivers/ZhouSteadyHeartRuntime.cs": "A99F7C3EA3CE89F986E92356D9985F3E371AA8F7A517CA9984D7D7FC7269E8FF",
+        "Assets/Tests/Editor/china_warm_cup_test.cs": "DA4B04C5B5B3D1E264531276C3D084C17F88AC9C4EB479B945A4D8D371ACA8D0",
+        "Assets/Tests/Editor/RegressionModules.json": "264505EC4B96AE0BCD44D847F3475E22D1D17F1CF17EC283D7E5587C32FB2F76",
+        "design/gdd/foodula-1-tech-tree.md": "F58D18E83F87D0AC35F3B265BBCA5485E69D42B02931149BCA6C46B2C13403FA",
+        "design/gdd/foodula-1-drivers.md": "BD904B62EFB5FC47CF15A8846E2EFA6508420ED471C3D26504F80CE9FC669467"
+      },
+      "git": {
+        "diff_check": "passed with existing LF/CRLF notices only",
+        "no_commit_push_reset_checkout_rebase_scene_save": true,
+        "unrelated_dirty_files_preserved": true
+      },
+      "evidence": "../../../production/qa/evidence/tech-driver-I09-2026-11-06/README.md",
+      "next_slice": "I10：马青骅真实原生冷却留置与下一Go兑现；完整模式/真实存档/三尺寸交互/硬件与I13跨系统长流程仍待后续收口。"
+    },
+    {
+      "id": "I10a",
+      "local_date": "2026-11-06",
+      "status": "Ma_extreme_switch_real_recover_reservation_production_wired_native_focused_passed_full_modes_pending",
+      "scope": "马青骅真实原生Recover冷却留置旧手永久热、下一合格Go兑现移动加成，以及AllRounder真实Recover→Go被动与中断清理。",
+      "production_files": [
+        "Assets/Scripts/Drivers/MaAdaptationRuntime.cs",
+        "Assets/Scripts/Drivers/DriverSkillRuntime.cs",
+        "Assets/Scripts/Drivers/DriverSkillRules.cs",
+        "Assets/Scripts/Core/CardDeck.cs",
+        "Assets/Scripts/Core/RaceSession.cs",
+        "Assets/Scripts/Core/MVPGameManager.cs",
+        "Assets/Scripts/Core/RaceTurnSkillCleanup.cs",
+        "Assets/Scripts/Drivers/DriverData.cs",
+        "Assets/Scripts/UI/HUDUI.cs",
+        "Assets/Tests/Editor/driver_skill_runtime_test.cs",
+        "Assets/Tests/Editor/driver_skill_rules_test.cs",
+        "Assets/Tests/Editor/ma_adaptation_runtime_test.cs",
+        "Assets/Tests/Editor/RegressionModules.json",
+        "design/gdd/foodula-1-drivers.md"
+      ],
+      "acceptance": {
+        "pure_rules_source_wired": true,
+        "production_wiring": true,
+        "native_focused_editmode": true,
+        "playmode_smoke": true,
+        "player_operable": false,
+        "three_size_visual": false,
+        "complete_modes_and_save": false
+      },
+      "native_tests_executed": 175,
+      "native_results": {
+        "editmode_ma_runtime": {"total": 3, "passed": 3, "failed": 0, "skipped": 0, "seconds": 0.078413, "job_id": "68b650e5560f4c6b8453abdfe346754e"},
+        "editmode_driver_card_heat_focus": {"total": 100, "passed": 100, "failed": 0, "skipped": 0, "seconds": 0.1705152, "job_id": "ed83bdc37fad498090d529dbf0fd1412"},
+        "editmode_ma_driver_cleanup_focus": {"total": 71, "passed": 71, "failed": 0, "skipped": 0, "seconds": 0.1875679, "job_id": "087061a37a2e4b649236bc85801a319f"},
+        "playmode_assembly_smoke": {"total": 1, "passed": 1, "failed": 0, "skipped": 0, "seconds": 0.0193393, "job_id": "6371db8c9d0a4818b8aaeba0b2409b62"}
+      },
+      "unity": {
+        "version": "2022.3.62f3c1",
+        "instance": "Foodula1@86b0192a4890cd9b",
+        "active_scene": "Assets/Scenes/MainMenu.unity",
+        "playing": false,
+        "compiling": false,
+        "importing": false,
+        "console_errors": 0,
+        "console_warnings": 0,
+        "console_warning_note": "中途 MCP WebSocket 初始化提示已在最终 Console 读取中清零；无项目编译/运行警告。"
+      },
+      "visual": {"new_screenshots": 0, "player_facing_layout_changed": true},
+      "unverified": [
+        "PlayMode烟测需在后续安全收口包重跑",
+        "完整RaceCanvas三尺寸交互",
+        "真实鼠标键盘焦点与拖动",
+        "完整普通/生涯模式与真实存档兼容",
+        "I13跨系统长流程"
+      ],
+      "evidence": "../../../production/qa/evidence/tech-driver-I10-2026-11-06/README.md",
+      "next_slice": "I11：JP汤底选择A与R2全局三回合窗口；完整模式/真实存档/三尺寸交互/硬件与I13跨系统长流程仍待后续收口。"
     }
   ]
 }

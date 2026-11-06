@@ -42,6 +42,14 @@ public readonly struct DriverSkillActivationContext
 {
     public DriverSkillActivationContext(bool canAcceptInput, int lap, int totalLaps,
         int engineRemaining, int engineCapacity, int nearbyOpponentsBehind)
+        : this(canAcceptInput, lap, totalLaps, engineRemaining, engineCapacity,
+            nearbyOpponentsBehind, 0, 3)
+    {
+    }
+
+    public DriverSkillActivationContext(bool canAcceptInput, int lap, int totalLaps,
+        int engineRemaining, int engineCapacity, int nearbyOpponentsBehind,
+        int spinCounter, int spinMax)
     {
         CanAcceptInput = canAcceptInput;
         Lap = lap;
@@ -49,6 +57,8 @@ public readonly struct DriverSkillActivationContext
         EngineRemaining = engineRemaining;
         EngineCapacity = engineCapacity;
         NearbyOpponentsBehind = nearbyOpponentsBehind;
+        SpinCounter = spinCounter;
+        SpinMax = spinMax;
     }
 
     public bool CanAcceptInput { get; }
@@ -57,6 +67,8 @@ public readonly struct DriverSkillActivationContext
     public int EngineRemaining { get; }
     public int EngineCapacity { get; }
     public int NearbyOpponentsBehind { get; }
+    public int SpinCounter { get; }
+    public int SpinMax { get; }
 }
 
 /// <summary>Commands produced by the Final Sprint turn-end cost; existing flags are not cleared.</summary>
@@ -82,7 +94,8 @@ public static class DriverSkillRules
 {
     public static bool ShouldResolveFinalSprintCost(DriverSkillRuntimeState state)
     {
-        return state != null && state.ActivatedThisTurn && state.Skill == DriverActiveSkillId.FinalSprint;
+        return state != null && state.ActivatedThisTurn && state.Skill == DriverActiveSkillId.FinalSprint &&
+            state.Nuvolari.HasPrepaidSpin;
     }
 
     /// <summary>Preserves the existing effective spin cap and tier-three recovery exemption.</summary>
@@ -173,9 +186,14 @@ public static class DriverSkillRules
         switch (state.Skill)
         {
             case DriverActiveSkillId.FinalSprint:
-                if (!IsEngineAtCriticalHeat(context.EngineRemaining, context.EngineCapacity))
+                if (!IsNuvolariLowEngine(context.EngineRemaining))
                 {
-                    reason = "引擎热量达到 90% 后可用";
+                    reason = "引擎余量不超过2热时可用";
+                    return false;
+                }
+                if (context.SpinCounter + 1 >= Math.Max(1, context.SpinMax))
+                {
+                    reason = "需保留一次失控容错";
                     return false;
                 }
                 break;
@@ -183,6 +201,13 @@ public static class DriverSkillRules
                 if (context.NearbyOpponentsBehind < 1)
                 {
                     reason = "身后 3 格内需要至少 1 名对手";
+                    return false;
+                }
+                break;
+            case DriverActiveSkillId.TrueSelf:
+                if (context.EngineRemaining < 1)
+                {
+                    reason = "发动需至少 1 张永久引擎热";
                     return false;
                 }
                 break;
@@ -199,6 +224,33 @@ public static class DriverSkillRules
         return spent * 10 >= capacity * 9;
     }
 
+    /// <summary>D06 active gate: fixed two-heat reserve, not a capacity percentage.</summary>
+    public static bool IsNuvolariLowEngine(int remaining) => remaining <= 2;
+
+    public static int GetNuvolariPassiveEntryEngineMax(int tier)
+    {
+        int t = Math.Max(1, Math.Min(3, tier));
+        return t == 1 ? 2 : 3;
+    }
+
+    public static int GetNuvolariPassiveOldHandReturn(int tier)
+    {
+        int t = Math.Max(1, Math.Min(3, tier));
+        return t == 3 ? 2 : 1;
+    }
+
+    public static int GetNuvolariActiveIgnoredApexCount(int tier) => 1;
+
+    public static int GetZhouRecoveryCap(int tier) => tier >= 3 ? 2 : tier >= 1 ? 1 : 0;
+
+    public static int GetZhouEscortFutureInputCount(int tier) => tier >= 2 ? 2 : tier >= 1 ? 1 : 0;
+
+    public static int GetVillainAuraRange(int tier)
+    {
+        int t = Math.Max(1, Math.Min(3, tier));
+        return t + 1; // L1: 1-2, L2: 1-3, L3: 1-4
+    }
+
     public static int GetDurationTurns(DriverActiveSkillId skill, int tier)
     {
         int t = Math.Max(1, Math.Min(3, tier));
@@ -207,16 +259,20 @@ public static class DriverSkillRules
             case DriverActiveSkillId.PerfectRhythm: return t == 1 ? 1 : 2;
             case DriverActiveSkillId.TrueSelf: return t == 1 ? 2 : 3;
             case DriverActiveSkillId.ChinaSpeed: return t == 1 ? 2 : 3;
-            case DriverActiveSkillId.ExtremeSwitch: return t == 1 ? 3 : t == 2 ? 4 : int.MaxValue;
+            // Ma Qinghua no longer uses a duration-based gear discount.  The
+            // active is settled by the native Recover -> next Go handshake.
+            case DriverActiveSkillId.ExtremeSwitch: return 0;
             default: return 1;
         }
     }
 
-    /// <summary>Only migrated UK skills advance on their owner's driving inputs.</summary>
+    /// <summary>US migrated skills also advance on their owner's valid driving inputs.</summary>
     public static bool UsesDrivingInputClock(DriverActiveSkillId skill)
     {
         return skill == DriverActiveSkillId.FinalLap || skill == DriverActiveSkillId.AngryCharge ||
-            skill == DriverActiveSkillId.PrecisionCornering;
+            skill == DriverActiveSkillId.PrecisionCornering || skill == DriverActiveSkillId.TrueSelf ||
+            skill == DriverActiveSkillId.TauntingBow || skill == DriverActiveSkillId.ChinaSpeed ||
+            skill == DriverActiveSkillId.ExtremeSwitch;
     }
 
     /// <summary>
@@ -232,6 +288,19 @@ public static class DriverSkillRules
             case DriverPassiveSkillId.InformationSponge: return 0; // D04 now observes actual native sources, never a global draw cadence.
             default: return 0;
         }
+    }
+
+    /// <summary>D06 consecutive owner-input turns with no paid heat before the next-turn trigger.</summary>
+    public static int GetBlueLuckNoHeatTurnThreshold(int tier)
+    {
+        if (tier <= 0) return int.MaxValue;
+        return tier == 1 ? 3 : 2;
+    }
+
+    /// <summary>D06 tier-three trigger grants one additional cooling point on the trigger turn.</summary>
+    public static int GetPassiveCoolingBonus(DriverPassiveSkillId skill, int tier)
+    {
+        return skill == DriverPassiveSkillId.BlueLuck && tier >= 3 ? 1 : 0;
     }
 
     public static int GetPassiveHeatDiscount(DriverPassiveSkillId skill, int tier)
@@ -274,18 +343,32 @@ public static class DriverSkillRules
 
     public static int GetPassiveWeatherPenaltyReduction(DriverPassiveSkillId skill, int tier)
     {
-        return skill == DriverPassiveSkillId.SteadyHeart && tier > 0 ? 1 : 0;
+        // D09 no longer grants weather immunity; it prepares old-heat recovery.
+        return 0;
     }
 
     public static int GetPassiveCornerLimitBonus(DriverPassiveSkillId skill, int tier)
     {
-        return skill == DriverPassiveSkillId.AllRounder && tier > 0 ? 1 : 0;
+        return skill == DriverPassiveSkillId.BlueLuck && tier > 0 ? 1 : 0;
     }
 
     public static int GetPassiveCornerHeatReduction(DriverPassiveSkillId skill, int tier)
     {
-        return skill == DriverPassiveSkillId.AllRounder && tier >= 2 ? 1 : 0;
+        return 0;
     }
+
+    public static int GetMaPassiveConversionQuota(int tier)
+    {
+        if (tier <= 0) return 0;
+        return tier >= 3 ? 2 : 1;
+    }
+
+    public static int GetMaPassiveCornerLimitBonus(int tier) => tier > 0 ? 1 : 0;
+
+    public static int GetMaPassiveCornerHeatReduction(int tier) => tier >= 2 ? 1 : 0;
+
+    public static int GetMaNextGoMovementBonus(int tier)
+        => tier <= 1 ? 2 : 3;
 
     public static int GetSpeedPerCardBonus(DriverSkillRuntimeState state)
     {
@@ -294,6 +377,8 @@ public static class DriverSkillRules
 
     public static int GetMovementBonus(DriverSkillRuntimeState state, bool crossedCorner)
     {
+        if (state != null && state.Ma != null && state.Ma.MovementBonusThisInput > 0)
+            return state.Ma.MovementBonusThisInput;
         if (state != null && state.Skill == DriverActiveSkillId.PerfectLap && state.Strategy.ManualPath)
             return state.Strategy.MovementBonusThisInput;
         if (Active(state, DriverActiveSkillId.FinalLap)) return state.Tier >= 2 ? 3 : 2;
@@ -301,7 +386,8 @@ public static class DriverSkillRules
             return state.Charge.MovementBonusThisInput;
         if (Active(state, DriverActiveSkillId.AngryCharge)) return state.Tier >= 2 ? 2 : 1;
         if (Active(state, DriverActiveSkillId.FinalSprint)) return state.Tier >= 2 ? 3 : 2;
-        if (Active(state, DriverActiveSkillId.TrueSelf) && !crossedCorner) return state.Tier >= 3 ? 3 : 2;
+        if (Active(state, DriverActiveSkillId.TrueSelf) && !state.TrueSelfInputPaymentFailed && !crossedCorner)
+            return state.Tier >= 3 ? 3 : 2;
         if (Active(state, DriverActiveSkillId.TauntingBow) && !crossedCorner) return state.Tier >= 2 ? 3 : 2;
         return 0;
     }
@@ -309,7 +395,7 @@ public static class DriverSkillRules
     /// <summary>Reaction cost only; payment and cooling order remain owned by the race coordinator.</summary>
     public static int GetReactionHeatCost(DriverSkillRuntimeState state)
     {
-        return Active(state, DriverActiveSkillId.TrueSelf) ? 1 : 0;
+        return Active(state, DriverActiveSkillId.TrueSelf) && !state.TrueSelfInputPaymentResolved ? 1 : 0;
     }
 
     public static int GetOvertakeBonus(DriverSkillRuntimeState state, int overtakes)
@@ -328,7 +414,12 @@ public static class DriverSkillRules
         if (Active(state, DriverActiveSkillId.PerfectLap) && !state.Strategy.ManualPath) return 0;
         int reduced = Math.Max(0, heat); // D05 never discounts ordinary overspeed heat.
         if (state != null)
-            reduced = Math.Max(0, reduced - state.ConsumePassiveCornerHeatReduction());
+        {
+            int maReduction = state.ConsumeMaPassiveCornerHeatReduction();
+            reduced = Math.Max(0, reduced - maReduction);
+            if (maReduction == 0)
+                reduced = Math.Max(0, reduced - state.ConsumePassiveCornerHeatReduction());
+        }
         return reduced;
     }
 
@@ -339,10 +430,7 @@ public static class DriverSkillRules
 
     public static int ApplyGearHeatCost(DriverSkillRuntimeState state, int heatCost, bool isChinaAdditionalHeat)
     {
-        int cost = Math.Max(0, heatCost);
-        if (Active(state, DriverActiveSkillId.ExtremeSwitch))
-            return state.Tier >= 3 ? 0 : cost / 2;
-        return cost;
+        return Math.Max(0, heatCost);
     }
 
     public static int GetSlipstreamBonus(DriverSkillRuntimeState state)
@@ -354,18 +442,19 @@ public static class DriverSkillRules
 
     public static bool BlocksTrailingSlipstream(DriverSkillRuntimeState state)
     {
-        return Active(state, DriverActiveSkillId.TauntingBow) ||
-               Active(state, DriverActiveSkillId.SmokeScreen);
+        return Active(state, DriverActiveSkillId.SmokeScreen);
     }
 
     public static bool IsWeatherImmune(DriverSkillRuntimeState state)
     {
-        return Active(state, DriverActiveSkillId.ChinaSpeed);
+        // Zhou's old weather exemption was retired by D09.  Weather and
+        // ordinary slipstream blockers remain authoritative for ChinaSpeed.
+        return false;
     }
 
     public static int GetIgnoredCornerCount(DriverSkillRuntimeState state)
     {
-        if (Active(state, DriverActiveSkillId.FinalSprint)) return int.MaxValue;
+        if (Active(state, DriverActiveSkillId.FinalSprint)) return GetNuvolariActiveIgnoredApexCount(state.Tier);
         if (Active(state, DriverActiveSkillId.GutterRun)) return state.Tier >= 3 ? 2 : 1;
         return 0;
     }

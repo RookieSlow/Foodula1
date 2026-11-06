@@ -29,6 +29,7 @@ public static class RaceTurnCleanup
             player.driverSkill?.Strategy.Interrupt();
             player.driverSkill?.Feedback.Interrupt();
             player.driverSkill?.Rhythm.Interrupt();
+            player.driverSkill?.Nuvolari.Interrupt();
             throw;
         }
         finally
@@ -38,6 +39,7 @@ public static class RaceTurnCleanup
             player.driverSkill?.Strategy.CloseInput();
             player.driverSkill?.Feedback.CloseInput();
             player.driverSkill?.Rhythm.CloseInput();
+            player.driverSkill?.Nuvolari.CloseInput();
             player.driverSkill?.Precision.CloseInput();
         }
     }

@@ -113,10 +113,6 @@ public class DriverSkillRuntimeTests
 
     [TestCase("de_michael_schumacher")]
     [TestCase("it_tazio_nuvolari")]
-    [TestCase("us_tony_stewart")]
-    [TestCase("us_kyle_busch")]
-    [TestCase("cn_zhou_guanyu")]
-    [TestCase("cn_ma_qinghua")]
     [TestCase("jp_keiichi_tsuchiya")]
     [TestCase("jp_takumi_fujiwara")]
     public void UnmigratedDriverKeepsLegacyDurationAndIgnoresUkInputHooks(string id)
@@ -244,27 +240,31 @@ public class DriverSkillRuntimeTests
     }
 
     [Test]
-    public void ZhouAndMaPassivesAreSingleUsePerTurn()
+    public void ZhouInputClockAndMaPassivesAreSingleUsePerTurn()
     {
         DriverCatalog.TryGet("cn_zhou_guanyu", out DriverProfile zhouDriver);
         var zhou = new DriverSkillRuntimeState();
         zhou.Initialize(zhouDriver, 2, true);
         zhou.BeginTurn();
-        Assert.That(zhou.TryConsumePassiveWeatherProtection(), Is.True);
-        Assert.That(zhou.TryConsumePassiveWeatherProtection(), Is.False);
+        Assert.That(zhou.BeginDrivingInput(), Is.True);
+        Assert.That(zhou.IsDrivingInputOpen, Is.True);
+        Assert.That(zhou.BeginDrivingInput(), Is.False);
 
         DriverCatalog.TryGet("cn_ma_qinghua", out DriverProfile maDriver);
-        var maTierOne = new DriverSkillRuntimeState();
-        maTierOne.Initialize(maDriver, 2, true);
-        maTierOne.BeginTurn();
-        Assert.That(maTierOne.ConsumePassiveCornerLimitBonus(), Is.EqualTo(1));
-        Assert.That(maTierOne.ConsumePassiveCornerLimitBonus(), Is.Zero);
-        Assert.That(maTierOne.ConsumePassiveCornerHeatReduction(), Is.Zero);
-
-        var maTierTwo = new DriverSkillRuntimeState();
-        maTierTwo.Initialize(maDriver, 4, true);
-        maTierTwo.BeginTurn();
-        Assert.That(maTierTwo.ConsumePassiveCornerHeatReduction(), Is.EqualTo(1));
+        var ma = new DriverSkillRuntimeState();
+        ma.Initialize(maDriver, 4, true);
+        ma.BeginGlobalTurn();
+        Assert.That(ma.BeginDrivingInput(), Is.True);
+        Assert.That(ma.ConsumePassiveCornerLimitBonus(), Is.Zero,
+            "Ma's passive is gated by an actual Recover -> Go transition.");
+        ma.ResolveMaSubmittedInput(isGo: false, completed: true);
+        ma.BeginGlobalTurn();
+        Assert.That(ma.BeginDrivingInput(), Is.True);
+        ma.ResolveMaSubmittedInput(isGo: true, completed: true);
+        Assert.That(ma.IsMaPassiveApexReady, Is.True);
+        Assert.That(ma.ConsumeMaPassiveCornerLimitBonus(), Is.EqualTo(1));
+        Assert.That(ma.ConsumeMaPassiveCornerLimitBonus(), Is.Zero);
+        Assert.That(ma.ConsumeMaPassiveCornerHeatReduction(), Is.EqualTo(1));
     }
 
     [Test]
@@ -293,7 +293,7 @@ public class DriverSkillRuntimeTests
     }
 
     [Test]
-    public void ChinaSpeedBypassesWeatherSlipstreamSuppression()
+    public void ChinaSpeedRequiresTheNewEscortOverrideForBlockedSlipstream()
     {
         PlayerState follower = Player("cn_zhou_guanyu", TeamId.CN, 0, 5);
         PlayerState leader = Player("de_michael_schumacher", TeamId.DE, 1, 1);
@@ -303,7 +303,8 @@ public class DriverSkillRuntimeTests
         var session = new RaceSession { Weather = WeatherType.HeavyRain };
         session.Players.Add(follower);
         session.Players.Add(leader);
-        Assert.That(session.ComputeSlipstreamChain(follower, session.Players, 20).Triggered, Is.True);
+        Assert.That(session.ComputeSlipstreamChain(follower, session.Players, 20).Triggered, Is.False,
+            "The old weather-immunity shortcut is removed; escort is now a card/old-heat commitment.");
     }
 
     [Test]
@@ -318,6 +319,134 @@ public class DriverSkillRuntimeTests
         session.Players.Add(follower);
         session.Players.Add(leader);
         Assert.That(session.ComputeSlipstreamChain(follower, session.Players, 20).Triggered, Is.False);
+    }
+
+    [Test]
+    public void StewartTrackFuryArmsOnActualOvertakeAndConsumesOneOwnerInput()
+    {
+        DriverCatalog.TryGet("us_tony_stewart", out DriverProfile driver);
+        var state = new DriverSkillRuntimeState();
+        state.Initialize(driver, 7, true);
+
+        state.BeginGlobalTurn();
+        Assert.That(state.BeginDrivingInput(), Is.True);
+        state.ResolvePassiveTurnEnd(1, 0);
+
+        state.BeginGlobalTurn();
+        Assert.That(state.BeginDrivingInput(), Is.True);
+        Assert.That(state.PassiveMovementBonusThisTurn, Is.EqualTo(2), "L3 Track Fury is +2 after a real overtake.");
+
+        state.BeginGlobalTurn();
+        Assert.That(state.BeginDrivingInput(), Is.True);
+        Assert.That(state.PassiveMovementBonusThisTurn, Is.Zero, "The passive window is not deferred to a second input.");
+    }
+
+    [Test]
+    public void StewartTrackFuryL3RecoveryIsSafeStraightOnlyAndOncePerInput()
+    {
+        DriverCatalog.TryGet("us_tony_stewart", out DriverProfile driver);
+        var state = new DriverSkillRuntimeState();
+        state.Initialize(driver, 7, true);
+
+        state.BeginGlobalTurn();
+        state.BeginDrivingInput();
+        state.ResolvePassiveTurnEnd(1, 0);
+        state.BeginGlobalTurn();
+        state.BeginDrivingInput();
+
+        Assert.That(state.TryConsumeTrackFuryRecovery(true), Is.True);
+        Assert.That(state.TryConsumeTrackFuryRecovery(true), Is.False);
+
+        state.BeginGlobalTurn();
+        state.BeginDrivingInput();
+        state.ResolvePassiveTurnEnd(1, 1);
+        state.BeginGlobalTurn();
+        state.BeginDrivingInput();
+        Assert.That(state.TryConsumeTrackFuryRecovery(false), Is.False);
+        Assert.That(state.TryConsumeTrackFuryRecovery(true), Is.False, "A corner input consumes the L3 opportunity without deferring it.");
+    }
+
+    [Test]
+    public void StewartTrueSelfFixedFeeResolvesAfterCardSelectionWithoutSpinningOnShortage()
+    {
+        DriverCatalog.TryGet("us_tony_stewart", out DriverProfile driver);
+        var paid = new DriverSkillRuntimeState();
+        paid.Initialize(driver, 3, true);
+        paid.BeginGlobalTurn();
+        paid.BeginDrivingInput();
+        Assert.That(paid.TryActivate(driver,
+            new DriverSkillActivationContext(true, 0, 3, 1, 6, 0), out _), Is.True);
+        Assert.That(DriverSkillRules.GetMovementBonus(paid, false), Is.EqualTo(2));
+        paid.ResolveTrueSelfInputPayment(true);
+        Assert.That(DriverSkillRules.GetReactionHeatCost(paid), Is.Zero);
+
+        var exhausted = new DriverSkillRuntimeState();
+        exhausted.Initialize(driver, 3, true);
+        exhausted.BeginGlobalTurn();
+        exhausted.BeginDrivingInput();
+        Assert.That(exhausted.TryActivate(driver,
+            new DriverSkillActivationContext(true, 0, 3, 1, 6, 0), out _), Is.True);
+        exhausted.ResolveTrueSelfInputPayment(false);
+        Assert.That(exhausted.IsActive, Is.False);
+        Assert.That(DriverSkillRules.GetMovementBonus(exhausted, false), Is.Zero);
+    }
+
+    [Test]
+    public void BuschPressureUsesOneStableTargetAndRefusalBlocksOnlyThatFollow()
+    {
+        PlayerState owner = Player("us_kyle_busch", TeamId.US, 10, 7);
+        PlayerState target = Player("de_michael_schumacher", TeamId.DE, 8, 7);
+        var session = new RaceSession();
+        session.Players.Add(owner);
+        session.Players.Add(target);
+
+        Assert.That(owner.driverSkill.Pressure.CommitActivePressure(owner, target, 0), Is.True);
+        Assert.That(target.driverSkill.Pressure.BeginTargetInput(session, target), Is.True);
+        Assert.That(target.driverSkill.Pressure.HasIncomingDecision, Is.True);
+        Assert.That(target.driverSkill.Pressure.CommitIncomingDecision(false), Is.True);
+        Assert.That(target.driverSkill.Pressure.AllowsFollow(owner), Is.False);
+        Assert.That(owner.driverSkill.Pressure.CanArmOutgoing(0), Is.False);
+
+        target.position = 7;
+        Assert.That(owner.driverSkill.Pressure.CommitActivePressure(owner, target, 0), Is.False,
+            "A second pressure cannot redirect to another target in the same lap.");
+    }
+
+    [Test]
+    public void BuschVillainAuraArmsTheLockedFrontTargetOnlyAfterActualOvertake()
+    {
+        PlayerState owner = Player("us_kyle_busch", TeamId.US, 5, 7);
+        PlayerState target = Player("de_michael_schumacher", TeamId.DE, 7, 7);
+        var session = new RaceSession();
+        session.Players.Add(owner);
+        session.Players.Add(target);
+
+        owner.driverSkill.Pressure.BeginOwnerInput(session, owner, 20);
+        Assert.That(owner.driverSkill.Pressure.LockedFrontTarget, Is.SameAs(target));
+        Assert.That(owner.driverSkill.Pressure.ResolvePassiveActualOvertake(owner, 0, false), Is.False);
+        Assert.That(target.driverSkill.Pressure.HasIncomingMarker, Is.False);
+
+        owner.driverSkill.Pressure.BeginOwnerInput(session, owner, 20);
+        Assert.That(owner.driverSkill.Pressure.ResolvePassiveActualOvertake(owner, 0, true), Is.True);
+        Assert.That(target.driverSkill.Pressure.BeginTargetInput(session, target), Is.True);
+        Assert.That(target.driverSkill.Pressure.CommitIncomingDecision(true), Is.True);
+        Assert.That(target.driverSkill.Pressure.AllowsFollow(owner), Is.True);
+    }
+
+    [Test]
+    public void CardDeckTrackFuryRecoveryReturnsOnlyPermanentHandHeat()
+    {
+        var deck = new CardDeck();
+        deck.InitializeExactOrder(new[] { new CardData(CardType.Speed, 2) }, new HeatPool(3));
+        Assert.That(deck.DrawHeatFromPoolToHand(1), Is.EqualTo(1));
+        int before = deck.heatPool.remaining;
+        Assert.That(deck.RemoveOnePermanentHeatFromHand(), Is.EqualTo(1));
+        Assert.That(deck.heatPool.remaining, Is.EqualTo(before + 1));
+
+        var temporary = CardData.CreateTempHeat();
+        deck.AddCardsToHand(new[] { temporary });
+        Assert.That(deck.RemoveOnePermanentHeatFromHand(), Is.EqualTo(0));
+        Assert.That(deck.ContainsInHand(temporary), Is.True);
     }
 
     private static PlayerState Player(string driverId, TeamId team, int position, int level)

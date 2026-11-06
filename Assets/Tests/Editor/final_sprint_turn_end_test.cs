@@ -95,7 +95,12 @@ public class RaceTurnSkillCleanupTests
         Assert.That(DriverCatalog.TryGet(driverId, out DriverProfile driver), Is.True);
         player.driverSkill.Initialize(driver, 3, state != "disabled");
         if (state == "stale" || state == "other")
-            Assert.That(player.driverSkill.TryActivate(driver, CriticalEngine(), out _), Is.True);
+        {
+            DriverSkillActivationContext context = state == "other"
+                ? new DriverSkillActivationContext(true, 0, 3, 1, 6, 0)
+                : CriticalEngine();
+            Assert.That(player.driverSkill.TryActivate(driver, context, out _), Is.True);
+        }
         if (state == "stale") player.driverSkill.BeginTurn();
         if (state == "disabled")
             Assert.That(player.driverSkill.TryActivate(driver, CriticalEngine(), out _), Is.False);

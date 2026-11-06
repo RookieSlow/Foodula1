@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 无论 Editor 中打开了哪个场景，Play 模式始终从 MainMenu 启动。
@@ -11,6 +12,7 @@ public static class EditorPlayBootstrapper
     private const string MAIN_MENU_PATH = "Assets/Scenes/MainMenu.unity";
     private const string ENTRY_TIME_KEY = "Foodula1.Editor.PlayEntry.Start";
     public const string EntrySecondsKey = "Foodula1.Editor.PlayEntry.Seconds";
+    private static bool _testRunnerStartSceneBypassed;
 
     static EditorPlayBootstrapper()
     {
@@ -27,7 +29,18 @@ public static class EditorPlayBootstrapper
     private static void MeasurePlayEntry(PlayModeStateChange state)
     {
         if (state == PlayModeStateChange.ExitingEditMode)
+        {
+            // Unity Test Framework activates a generated InitTestScene before entering Play Mode.
+            // A global playModeStartScene would otherwise replace that bootstrap with MainMenu,
+            // leaving the Test Runner waiting forever without RunStarted/RunFinished callbacks.
+            var activeScenePath = SceneManager.GetActiveScene().path;
+            _testRunnerStartSceneBypassed = activeScenePath.StartsWith("Assets/InitTestScene", System.StringComparison.OrdinalIgnoreCase);
+            if (_testRunnerStartSceneBypassed)
+            {
+                EditorSceneManager.playModeStartScene = null;
+            }
             SessionState.SetString(ENTRY_TIME_KEY, System.DateTime.UtcNow.Ticks.ToString());
+        }
         else if (state == PlayModeStateChange.EnteredPlayMode &&
                  long.TryParse(SessionState.GetString(ENTRY_TIME_KEY, ""), out long started))
         {
@@ -37,6 +50,17 @@ public static class EditorPlayBootstrapper
                 (EditorSettings.enterPlayModeOptionsEnabled &&
                  (EditorSettings.enterPlayModeOptions & EnterPlayModeOptions.DisableDomainReload) != 0));
             SessionState.EraseString(ENTRY_TIME_KEY);
+        }
+        else if (state == PlayModeStateChange.EnteredEditMode && _testRunnerStartSceneBypassed)
+        {
+            // Restore the normal game entry point after the Test Runner exits so ordinary Play
+            // remains MainMenu-first without interfering with the next test bootstrap scene.
+            var mainMenuAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(MAIN_MENU_PATH);
+            if (mainMenuAsset != null)
+            {
+                EditorSceneManager.playModeStartScene = mainMenuAsset;
+            }
+            _testRunnerStartSceneBypassed = false;
         }
     }
 }

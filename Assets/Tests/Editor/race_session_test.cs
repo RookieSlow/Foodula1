@@ -34,13 +34,13 @@ public class RaceSessionTest
 
     // ===== Demo 科技状态 =====
 
-    [TestCase(TeamId.US, 3, true)]
-    [TestCase(TeamId.US, 4, false)]
-    [TestCase(TeamId.US, 24, true)]
-    [TestCase(TeamId.UK, 33, true)]
-    [TestCase(TeamId.UK, 34, false)]
-    [TestCase(TeamId.UK, 54, true)]
-    public void BBQSmokeUsesLeaderEndPositionAndCannotBeBypassed(TeamId leaderTeam, int start, bool blocked)
+    [TestCase(TeamId.US, 3)]
+    [TestCase(TeamId.US, 4)]
+    [TestCase(TeamId.US, 24)]
+    [TestCase(TeamId.UK, 33)]
+    [TestCase(TeamId.UK, 34)]
+    [TestCase(TeamId.UK, 54)]
+    public void BBQDoesNotBlockTrailingSlipstream(TeamId leaderTeam, int start)
     {
         var session = CreateSession();
         session.TeamVehicleBonusesEnabled = false;
@@ -54,8 +54,8 @@ public class RaceSessionTest
         leader.techState.sunNeverSetsTarget = TeamId.US;
         var settled = new Dictionary<PlayerState, int> { { follower, 2 }, { leader, 2 }, { distant, 2 } };
         var chain = session.ComputeSlipstreamChain(follower, session.Players, 60, settled);
-        Assert.AreEqual(!blocked, chain.Triggered);
-        if (blocked) Assert.AreEqual(0, chain.TotalBonus);
+        Assert.IsTrue(chain.Triggered);
+        Assert.AreEqual(2, chain.TotalBonus);
     }
 
     [TestCase(1, 3)]
@@ -339,9 +339,9 @@ public class RaceSessionTest
         zhou.driverSkill.BeginTurn();
         session.Weather = WeatherType.Rainy;
 
-        Assert.AreEqual(BASE_LIMIT, session.EffectiveCornerLimit(zhou, BASE_LIMIT));
+        Assert.AreEqual(BASE_LIMIT - 1, session.EffectiveCornerLimit(zhou, BASE_LIMIT));
         Assert.AreEqual(BASE_LIMIT - 1, session.EffectiveCornerLimit(zhou, BASE_LIMIT),
-            "Zhou's weather protection is consumed only once per turn.");
+            "Zhou's redesigned passive no longer grants a weather-immunity shortcut.");
 
         var ma = CreatePlayer(session, TeamId.CN);
         DriverCatalog.TryGet("cn_ma_qinghua", out DriverProfile maDriver);
@@ -1293,19 +1293,19 @@ public sealed class BBQEligibilityBoundaryTests
         Assert.IsFalse(session.HasSmokedBBQAtPosition(player, 0, 60));
     }
 
-    [TestCase(TeamId.US, 6, 0, false)]
-    [TestCase(TeamId.US, 6, -1, true)]
-    [TestCase(TeamId.US, 5, 0, true)]
-    [TestCase(TeamId.US, 5, 1, false)]
-    [TestCase(TeamId.US, 54, 0, false)]
-    [TestCase(TeamId.US, 54, 1, true)]
-    [TestCase(TeamId.UK, 6, 0, false)]
-    [TestCase(TeamId.UK, 6, -1, true)]
-    [TestCase(TeamId.UK, 5, 0, true)]
-    [TestCase(TeamId.UK, 5, 1, false)]
-    [TestCase(TeamId.UK, 54, 0, false)]
-    [TestCase(TeamId.UK, 54, 1, true)]
-    public void SmokeUsesCallerEndpointWithoutGivingLeaderBonus(TeamId owner, int start, int movement, bool blocked)
+    [TestCase(TeamId.US, 6, 0)]
+    [TestCase(TeamId.US, 6, -1)]
+    [TestCase(TeamId.US, 5, 0)]
+    [TestCase(TeamId.US, 5, 1)]
+    [TestCase(TeamId.US, 54, 0)]
+    [TestCase(TeamId.US, 54, 1)]
+    [TestCase(TeamId.UK, 6, 0)]
+    [TestCase(TeamId.UK, 6, -1)]
+    [TestCase(TeamId.UK, 5, 0)]
+    [TestCase(TeamId.UK, 5, 1)]
+    [TestCase(TeamId.UK, 54, 0)]
+    [TestCase(TeamId.UK, 54, 1)]
+    public void BBQUsesCallerEndpointWithoutBlockingSlipstream(TeamId owner, int start, int movement)
     {
         var session = new RaceSession(new SystemRandomSource(7));
         session.TeamVehicleBonusesEnabled = false;
@@ -1317,8 +1317,8 @@ public sealed class BBQEligibilityBoundaryTests
         session.Players.Add(leader);
         var planned = new Dictionary<PlayerState, int> { { leader, movement }, { follower, 0 } };
         SlipstreamChainResult result = session.ComputeSlipstreamChain(follower, session.Players, 60, planned);
-        Assert.AreEqual(!blocked, result.Triggered);
-        Assert.AreEqual(blocked ? 0 : 2, result.TotalBonus);
+        Assert.IsTrue(result.Triggered);
+        Assert.AreEqual(2, result.TotalBonus);
         Assert.IsFalse(session.ComputeSlipstreamChain(leader, session.Players, 60, planned).Triggered);
         Assert.AreEqual(start, leader.position);
         Assert.AreEqual(0, leader.totalMovementThisTurn);
@@ -1334,8 +1334,8 @@ public sealed class BBQEligibilityBoundaryTests
 
         session.SyncRegionalHeatCapacity(player, 60);
         session.SyncRegionalHeatCapacity(player, 60);
-        Assert.AreEqual(2, player.deck.RegionalCapacityBonus);
-        Assert.AreEqual(7, player.deck.heatPool.remaining);
+        Assert.AreEqual(1, player.deck.RegionalCapacityBonus);
+        Assert.AreEqual(6, player.deck.heatPool.remaining);
 
         player.position = 6;
         session.SyncRegionalHeatCapacity(player, 60);
@@ -1344,8 +1344,8 @@ public sealed class BBQEligibilityBoundaryTests
 
         player.position = 30;
         session.SyncRegionalHeatCapacity(player, 60);
-        Assert.AreEqual(2, player.deck.RegionalCapacityBonus);
-        Assert.AreEqual(7, player.deck.heatPool.remaining);
+        Assert.AreEqual(1, player.deck.RegionalCapacityBonus);
+        Assert.AreEqual(6, player.deck.heatPool.remaining);
 
         session.SyncRegionalHeatCapacity(player, 60, false);
         Assert.AreEqual(0, player.deck.RegionalCapacityBonus);

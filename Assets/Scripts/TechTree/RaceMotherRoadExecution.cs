@@ -47,11 +47,26 @@ public static class RaceMotherRoadExecution
                 if (converted > 0)
                 {
                     var heatCards = new List<CardData>();
+                    int permanentSelected = 0;
+                    int permanentToConsume = converted + player.deck.RegionalHeatPendingRetirement;
                     foreach (CardData card in player.deck.Hand)
-                        if (card.IsHeat) heatCards.Add(card);
+                    {
+                        if (card == null || !card.IsHeat) continue;
+                        if (card.isTemp)
+                        {
+                            // Temporary heat follows its existing lifecycle and is destroyed.
+                            heatCards.Add(card);
+                        }
+                        else if (permanentSelected < permanentToConsume)
+                        {
+                            heatCards.Add(card);
+                            permanentSelected++;
+                        }
+                    }
                     int returned = player.deck.ReturnHeatCardsToPool(heatCards);
                     advance(returned);
-                    appendLog?.Invoke($"<color=orange>{player.name} 母亲之路(复兴)！{returned} 张热量牌转为移动。</color>");
+                    int retired = permanentSelected - returned;
+                    appendLog?.Invoke($"<color=orange>{player.name} 母亲之路(复兴)！消耗 {heatCards.Count} 张热量牌（清偿借额 {retired}，净回 {returned}），转为 {returned} 格移动。</color>");
                 }
                 break;
             }

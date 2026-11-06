@@ -1,0 +1,55 @@
+{
+  "id": "I05c2b",
+  "local_date": "2026-11-05",
+  "scope": "Ascari Blue Luck production owner-input turn settlement, real heat tracking, trigger consumption and cleanup boundaries.",
+  "tests": {
+    "BlueLuckTests": {
+      "total": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 0.0842922
+    },
+    "focusedExisting": {
+      "fixtures": [
+        "DriverSkillRulesTests",
+        "DriverSkillRuntimeTests",
+        "AscariPrecisionTests",
+        "RaceTurnSkillCleanupTests"
+      ],
+      "total": 101,
+      "passed": 101,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 0.1705166
+    }
+  },
+  "unity": {
+    "version": "2022.3.62f3c1",
+    "instance": "Foodula1@86b0192a4890cd9b",
+    "activeScene": "Assets/Scenes/MainMenu.unity",
+    "playing": false,
+    "consoleErrorWarningCount": 0,
+    "stateResourceBoundary": "Last editor-state resource poll was stale; read_console and test completion are the authoritative checks recorded here."
+  },
+  "sourceSha256": {
+    "Assets/Scripts/Drivers/DriverSkillRules.cs": "3c033712f77de99786750413f5ff7a88977fff3cb938bfc07d7e266bde6b277d",
+    "Assets/Scripts/Drivers/DriverSkillRuntime.cs": "22090aec0e007faa24235863f340b338eb6a29d3733b1068cf1a7d213adc2ede",
+    "Assets/Scripts/Core/RaceSession.cs": "f4b1af078bb3b619c72f93ea267bc78999d1231ce064d507ca0951fb7d1ff5b7",
+    "Assets/Tests/Editor/blue_luck_test.cs": "f3596d1dd0d2b98716020407d50c187728bc2ff98b9b224ad7ebd9b23794aba5",
+    "Assets/Tests/Editor/blue_luck_test.cs.meta": "b9bedf411a27f571838c04b4642afc607486854fda561c2d5ae57026f946d527",
+    "Assets/Tests/Editor/RegressionModules.json": "bcb180c3f72940f7ce149937bf9f1481ba4913969c44e4acc5040ef2c203d178"
+  },
+  "unverified": [
+    "complete RaceCanvas, physical keyboard/mouse focus and hardware input",
+    "all race modes and real save compatibility",
+    "I13 cross-system long flow"
+  ],
+  "gitStatusSnapshot": {
+    "trackedModifiedEntries": 21,
+    "untrackedEntries": 55,
+    "diffStat": "21 files changed, 537 insertions(+), 77 deletions(-)",
+    "diffCheck": "passed with existing LF/CRLF notices only"
+  },
+  "gitBoundary": "No commit, push, reset, checkout, rebase, scene save, package install, or cleanup; unrelated dirty/untracked files and InitTestScene scenes preserved."
+}

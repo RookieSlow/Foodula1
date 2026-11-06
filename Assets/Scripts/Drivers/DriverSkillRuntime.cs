@@ -26,9 +26,17 @@ public sealed class DriverSkillRuntimeState
     public VettelFeedbackRuntime Feedback { get; private set; } = new VettelFeedbackRuntime();
     public VettelRhythmRuntime Rhythm { get; private set; } = new VettelRhythmRuntime();
     public AscariPrecisionRuntime Precision { get; private set; } = new AscariPrecisionRuntime();
+    public NuvolariRuntime Nuvolari { get; private set; } = new NuvolariRuntime();
+    public TrackFuryRuntime TrackFury { get; private set; } = new TrackFuryRuntime();
+    public BuschPressureRuntime Pressure { get; private set; } = new BuschPressureRuntime();
+    public ZhouEscortRuntime ZhouEscort { get; private set; } = new ZhouEscortRuntime();
+    public ZhouSteadyHeartRuntime ZhouSteadyHeart { get; private set; } = new ZhouSteadyHeartRuntime();
+    public MaAdaptationRuntime Ma { get; private set; } = new MaAdaptationRuntime();
 
     /// <summary>D03/D04 event passives use independent owner-input clocks.</summary>
-    public bool UsesPassiveDrivingInputClock => PassiveSkill == DriverPassiveSkillId.EngineersTune || PassiveSkill == DriverPassiveSkillId.InformationSponge;
+    public bool UsesPassiveDrivingInputClock => PassiveSkill == DriverPassiveSkillId.EngineersTune || PassiveSkill == DriverPassiveSkillId.InformationSponge ||
+        PassiveSkill == DriverPassiveSkillId.UnyieldingLegend || PassiveSkill == DriverPassiveSkillId.TrackFury ||
+        PassiveSkill == DriverPassiveSkillId.VillainAura || PassiveSkill == DriverPassiveSkillId.SteadyHeart;
 
     /// <summary>Migration is explicit so other drivers retain their existing clock.</summary>
     public bool UsesDrivingInputClock => DriverSkillRules.UsesDrivingInputClock(Skill);
@@ -46,7 +54,17 @@ public sealed class DriverSkillRuntimeState
     private bool passiveCornerHeatReductionReady;
     private bool passiveDeckLookaheadReady;
     private int passiveTurnNumber;
+    private int blueLuckNoHeatTurns;
+    private bool blueLuckHasTurnSample;
+    private int heatPaidThisTurn;
     private bool drivingInputStartedThisTurn;
+    private bool trueSelfHeatPaidThisInput;
+    private bool trueSelfInputPaymentFailed;
+
+    /// <summary>D06 current consecutive owner-input turns with no paid heat.</summary>
+    public int BlueLuckNoHeatTurns => blueLuckNoHeatTurns;
+    public bool TrueSelfInputPaymentResolved => trueSelfHeatPaidThisInput || trueSelfInputPaymentFailed;
+    public bool TrueSelfInputPaymentFailed => trueSelfInputPaymentFailed;
 
     /// <summary>Copies scalar runtime state, including private one-shot readiness flags.</summary>
     public DriverSkillRuntimeState CreatePresentationCopy()
@@ -60,6 +78,12 @@ public sealed class DriverSkillRuntimeState
         copy.Feedback = Feedback.CreatePresentationCopy();
         copy.Rhythm = Rhythm.CreatePresentationCopy();
         copy.Precision = Precision.CreatePresentationCopy();
+        copy.Nuvolari = Nuvolari.CreatePresentationCopy();
+        copy.TrackFury = TrackFury.CreatePresentationCopy();
+        copy.Pressure = Pressure.CreatePresentationCopy();
+        copy.ZhouEscort = ZhouEscort.CreatePresentationCopy();
+        copy.ZhouSteadyHeart = ZhouSteadyHeart.CreatePresentationCopy();
+        copy.Ma = Ma.CreatePresentationCopy();
         return copy;
     }
 
@@ -77,6 +101,12 @@ public sealed class DriverSkillRuntimeState
         Feedback = new VettelFeedbackRuntime();
         Rhythm = new VettelRhythmRuntime();
         Precision = new AscariPrecisionRuntime();
+        Nuvolari = new NuvolariRuntime();
+        TrackFury = new TrackFuryRuntime();
+        Pressure = new BuschPressureRuntime();
+        ZhouEscort = new ZhouEscortRuntime();
+        ZhouSteadyHeart = new ZhouSteadyHeartRuntime();
+        Ma = new MaAdaptationRuntime();
         Skill = profile != null ? DriverSkillRules.GetSkill(profile.Id) : DriverActiveSkillId.None;
         PassiveSkill = profile != null ? DriverSkillRules.GetPassiveSkill(profile.Id) : DriverPassiveSkillId.None;
         Tier = DriverProgression.GetActiveTier(level);
@@ -96,13 +126,20 @@ public sealed class DriverSkillRuntimeState
         passiveCornerHeatReductionReady = false;
         passiveDeckLookaheadReady = false;
         passiveTurnNumber = 0;
+        blueLuckNoHeatTurns = 0;
+        blueLuckHasTurnSample = false;
+        heatPaidThisTurn = 0;
         drivingInputStartedThisTurn = false;
+        trueSelfHeatPaidThisInput = false;
+        trueSelfInputPaymentFailed = false;
         DrivingInputsStarted = 0;
         IsDrivingInputOpen = false;
     }
 
     public bool TryActivate(DriverProfile profile, DriverSkillActivationContext context, out string reason)
     {
+        if (Skill == DriverActiveSkillId.ExtremeSwitch)
+        { reason = "极限切换必须在真实 Recover 冷却中声明"; return false; }
         if (Skill == DriverActiveSkillId.PrecisionCornering)
         { reason = "精密过弯需要已选普通速度牌目标与最终出牌计划"; return false; }
         if (Skill == DriverActiveSkillId.PerfectRhythm)
@@ -126,6 +163,17 @@ public sealed class DriverSkillRuntimeState
         ActiveTurnsRemaining = DriverSkillRules.GetDurationTurns(Skill, Tier);
         ActivatedThisTurn = true;
         IgnoredCornersThisTurn = 0;
+        if (Skill == DriverActiveSkillId.FinalSprint)
+            Nuvolari.CommitPrepaidSpin();
+    }
+
+    /// <summary>Commits Zhou's fixed preparation path without legacy weather immunity or duration.</summary>
+    internal void CommitZhouEscortActivation()
+    {
+        UsesRemaining = Math.Max(0, UsesRemaining - 1);
+        ActivatedThisTurn = true;
+        ActiveTurnsRemaining = 0;
+        ZhouEscort.ArmForCurrentAndFuture(Tier);
     }
 
     /// <summary>Continuation spends fixed heat in its plan, never another race use.</summary>
@@ -147,6 +195,10 @@ public sealed class DriverSkillRuntimeState
         Feedback.BeginGlobalTurn();
         Rhythm.BeginGlobalTurn();
         Precision.CloseInput();
+        Nuvolari.BeginGlobalTurn();
+        ZhouEscort.CloseCurrentInput();
+        ZhouSteadyHeart.CloseInput();
+        Ma.BeginGlobalTurn();
         drivingInputStartedThisTurn = false;
         IsDrivingInputOpen = false;
         if (!UsesDrivingInputClock)
@@ -168,6 +220,13 @@ public sealed class DriverSkillRuntimeState
         IsDrivingInputOpen = true;
         DrivingInputsStarted++;
         BeginTurn();
+        if (PassiveSkill == DriverPassiveSkillId.TrackFury)
+        {
+            TrackFury.BeginInput(PassiveTier);
+            PassiveMovementBonusThisTurn = TrackFury.MovementBonusThisInput;
+        }
+        if (Skill == DriverActiveSkillId.ExtremeSwitch)
+            Ma.BeginInput();
         return true;
     }
 
@@ -182,11 +241,30 @@ public sealed class DriverSkillRuntimeState
         Feedback.Interrupt();
         Rhythm.Interrupt();
         Precision.Interrupt();
+        Nuvolari.Interrupt();
+        TrackFury.InterruptInput();
+        Pressure.InterruptInput();
+        ZhouEscort.Interrupt();
+        ZhouSteadyHeart.CloseInput();
+        Ma.Interrupt();
+        ResetBlueLuckCadence();
         if (!UsesDrivingInputClock) return;
         IsDrivingInputOpen = false;
         drivingInputStartedThisTurn = true;
         ActiveTurnsRemaining = 0;
         ResetTurnEffects();
+    }
+
+    /// <summary>
+    /// Discards an incomplete Ascari owner-input sample when a pit, skip,
+    /// terminal state, or race exit interrupts the driving window.
+    /// </summary>
+    private void ResetBlueLuckCadence()
+    {
+        if (PassiveSkill != DriverPassiveSkillId.BlueLuck) return;
+        blueLuckNoHeatTurns = 0;
+        blueLuckHasTurnSample = false;
+        heatPaidThisTurn = 0;
     }
 
     /// <summary>Close paid Mansell state on coordinator exit without turning it back into a legacy activation.</summary>
@@ -202,6 +280,41 @@ public sealed class DriverSkillRuntimeState
         IgnoredCornersThisTurn = 0;
         PassiveMovementBonusThisTurn = 0;
         PassiveCoolingBonusThisTurn = 0;
+        trueSelfHeatPaidThisInput = false;
+        trueSelfInputPaymentFailed = false;
+    }
+
+    /// <summary>Feeds actual heat payment from the race coordinator into D06's owner-input sample.</summary>
+    public void RecordHeatPaid(int amount)
+    {
+        if (amount > 0) heatPaidThisTurn += amount;
+    }
+
+    public void RecordHeatPaid(int amount, bool isGoMode, bool ordinaryCorner)
+    {
+        RecordHeatPaid(amount);
+        if (amount > 0 && PassiveSkill == DriverPassiveSkillId.SteadyHeart)
+            ZhouSteadyHeart.RecordPaidHeat(amount, isGoMode, ordinaryCorner, PassiveTier);
+    }
+
+    public void RecordOrdinaryCornerHeatPaid(int amount, bool isGoMode)
+    {
+        if (amount > 0 && PassiveSkill == DriverPassiveSkillId.SteadyHeart)
+            ZhouSteadyHeart.RecordPaidHeat(amount, isGoMode, true, PassiveTier);
+    }
+
+    /// <summary>Records True Self's fixed per-input fee after card selection.</summary>
+    public void ResolveTrueSelfInputPayment(bool paid)
+    {
+        if (Skill != DriverActiveSkillId.TrueSelf || TrueSelfInputPaymentResolved)
+            return;
+        if (paid)
+            trueSelfHeatPaidThisInput = true;
+        else
+        {
+            trueSelfInputPaymentFailed = true;
+            ActiveTurnsRemaining = 0;
+        }
     }
 
     /// <summary>Advances one skill turn; UK production callers use BeginDrivingInput instead.</summary>
@@ -211,6 +324,16 @@ public sealed class DriverSkillRuntimeState
             ActiveTurnsRemaining = Math.Max(0, ActiveTurnsRemaining - 1);
         ResetTurnEffects();
         passiveTurnNumber++;
+
+        bool blueLuck = PassiveSkill == DriverPassiveSkillId.BlueLuck;
+        if (blueLuck)
+        {
+            if (blueLuckHasTurnSample)
+                blueLuckNoHeatTurns = heatPaidThisTurn > 0 ? 0 : blueLuckNoHeatTurns + 1;
+            else
+                blueLuckHasTurnSample = true;
+            heatPaidThisTurn = 0;
+        }
 
         if (!Enabled || PassiveTier <= 0)
             return;
@@ -230,10 +353,11 @@ public sealed class DriverSkillRuntimeState
 
         if (PassiveSkill == DriverPassiveSkillId.SteadyHeart)
             passiveWeatherProtectionReady = DriverSkillRules.GetPassiveWeatherPenaltyReduction(PassiveSkill, PassiveTier) > 0;
-        if (PassiveSkill == DriverPassiveSkillId.AllRounder)
+        if (blueLuck && blueLuckNoHeatTurns >= DriverSkillRules.GetBlueLuckNoHeatTurnThreshold(PassiveTier))
         {
-            passiveCornerLimitBonusReady = DriverSkillRules.GetPassiveCornerLimitBonus(PassiveSkill, PassiveTier) > 0;
-            passiveCornerHeatReductionReady = DriverSkillRules.GetPassiveCornerHeatReduction(PassiveSkill, PassiveTier) > 0;
+            passiveCornerLimitBonusReady = true;
+            PassiveCoolingBonusThisTurn = DriverSkillRules.GetPassiveCoolingBonus(PassiveSkill, PassiveTier);
+            blueLuckNoHeatTurns = 0;
         }
     }
 
@@ -265,6 +389,32 @@ public sealed class DriverSkillRuntimeState
         return DriverSkillRules.GetPassiveCornerHeatReduction(PassiveSkill, PassiveTier);
     }
 
+    public bool IsMaPassiveApexReady => Ma != null && Ma.PassiveApexReady;
+
+    public int ConsumeMaPassiveCornerLimitBonus()
+        => Ma?.ConsumePassiveCornerLimitBonus(PassiveTier) ?? 0;
+
+    public int ConsumeMaPassiveCornerHeatReduction()
+        => Ma?.ConsumePassiveCornerHeatReduction(PassiveTier) ?? 0;
+
+    public bool ResolveMaSubmittedInput(bool isGo, bool completed)
+        => Ma != null && Ma.ResolveSubmittedInput(PassiveTier, isGo, completed);
+
+    public bool TryDeclareMaPreparation()
+        => Skill == DriverActiveSkillId.ExtremeSwitch && Enabled && UsesRemaining > 0 && Ma != null && Ma.DeclarePreparation();
+
+    public void CancelMaPreparationDeclaration() => Ma?.CancelPreparationDeclaration();
+
+    internal bool CommitMaRecover(CardData reservedHeat)
+    {
+        if (Skill != DriverActiveSkillId.ExtremeSwitch || UsesRemaining <= 0 || Ma == null ||
+            !Ma.CommitRecover(reservedHeat)) return false;
+        UsesRemaining--;
+        return true;
+    }
+
+    public void OnNewLap() => Ma?.OnNewLap();
+
     public bool TryConsumePassiveDeckLookahead(out int lookahead)
     {
         lookahead = 0;
@@ -277,6 +427,19 @@ public sealed class DriverSkillRuntimeState
     /// <summary>Legacy overtake hook retained for callers; D02 pursuit now observes actual owner inputs.</summary>
     public void ResolvePassiveTurnEnd(int overtakes)
     {
+        ResolvePassiveTurnEnd(overtakes, -1);
+    }
+
+    /// <summary>Track Fury arms only from the coordinator's actual overtake count.</summary>
+    public void ResolvePassiveTurnEnd(int overtakes, int lap)
+    {
+        if (PassiveSkill == DriverPassiveSkillId.TrackFury && overtakes > 0)
+            TrackFury.ArmAfterOvertake(lap);
+    }
+
+    public bool TryConsumeTrackFuryRecovery(bool pureStraight)
+    {
+        return PassiveSkill == DriverPassiveSkillId.TrackFury && TrackFury.TryConsumeRecovery(pureStraight);
     }
 
     public bool TryConsumeCornerIgnore()

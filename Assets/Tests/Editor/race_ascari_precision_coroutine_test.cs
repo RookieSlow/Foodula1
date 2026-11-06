@@ -137,6 +137,52 @@ public partial class RaceGameLoopCoroutineTests
     }
 
     [UnityTest]
+    public IEnumerator ItalyAndAscariPendingPlansAreInvalidatedBeforeRuntimeRebuild()
+    {
+        CreateRace(TeamId.IT);
+        try
+        {
+            PlayerState human = ConfigureAscariNativeLoop(3, 2, true);
+            AddAscariNativeApex(3, 4, 1, "rebuild cleanup apex");
+            yield return BeginAscariNativeCards(2);
+
+            CardUI two = AscariNativeSpeed(2), four = AscariNativeSpeed(4);
+            CardData driverTarget = two.cardData, techTarget = four.cardData;
+            two.OnCardClicked(); four.OnCardClicked();
+            Assert.That(manager.TryPrepareItalyPrecisionTune(techTarget, out string reason), Is.True, reason);
+            Assert.That(manager.TryPrepareAscariPrecision(driverTarget, out reason), Is.True, reason);
+            Assert.That(manager.HasPendingItalyPrecisionTune && manager.HasPendingAscariPrecision, Is.True);
+
+            int uses = human.driverSkill.UsesRemaining;
+            int rp = human.techState.rpBalance;
+            int inputs = human.driverSkill.DrivingInputsStarted;
+            bool initialized = false, guideInitialized = false, loopStarted = false;
+            typeof(MVPGameManager).GetMethod("RebuildRaceRuntime", PrivateInstance).Invoke(manager, new object[]
+            {
+                new System.Action<AIController>(_ => { }),
+                new System.Action(() => initialized = true),
+                new System.Action(() => guideInitialized = true),
+                new System.Action(() => loopStarted = true)
+            });
+
+            Assert.That(initialized && guideInitialized && loopStarted, Is.True,
+                "Rebuild must retain the initialize/guide/loop boundary after clearing old plans.");
+            Assert.That(manager.HasPendingItalyPrecisionTune, Is.False);
+            Assert.That(manager.HasPendingAscariPrecision, Is.False);
+            Assert.That(human.driverSkill.IsDrivingInputOpen, Is.False);
+            Assert.That(human.driverSkill.UsesRemaining, Is.EqualTo(uses), "Uncommitted plans never spend the active use.");
+            Assert.That(human.techState.rpBalance, Is.EqualTo(rp), "Rebuild cleanup never debits RP.");
+            Assert.That(human.driverSkill.DrivingInputsStarted, Is.EqualTo(inputs), "Cleanup closes input without fabricating a new owner input.");
+            Assert.That(human.driverSkill.Precision.CommittedTarget, Is.Null);
+            Assert.That(human.techState.precisionTune.CommittedTarget, Is.Null);
+            Assert.That(driverTarget.value, Is.EqualTo(2));
+            Assert.That(techTarget.value, Is.EqualTo(4));
+            TestContext.WriteLine("Native I05c2e: runtime rebuild invalidates pending Ascari + IT L3B intents, closes owner input, preserves uses/RP/original CardData and keeps the initialize/guide/loop boundary.");
+        }
+        finally { DestroyRace(); }
+    }
+
+    [UnityTest]
     public IEnumerator AscariCannotBorrowUnsettledTailToReachFirstApexAndCommittedUseSurvivesOrdinarySpinCleanup()
     {
         CreateRace(TeamId.IT);

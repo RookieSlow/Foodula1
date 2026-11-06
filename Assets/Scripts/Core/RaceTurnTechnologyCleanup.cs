@@ -13,8 +13,23 @@ public static class RaceTurnTechnologyCleanup
         Action<PlayerState> reportCombo,
         Action<PlayerState, int> applyGrillCooldown)
     {
+        Execute(player, session, applyYinYang, null, reportCombo, applyGrillCooldown);
+    }
+
+    /// <summary>
+    /// Ordered technology settlement with CN 温杯 inserted after ordinary
+    /// movement/fees/cooling and before the original YinYang/combo effects.
+    /// The overload above keeps existing adapters and tests source-compatible.
+    /// </summary>
+    public static void Execute(PlayerState player, RaceSession session,
+        Action<PlayerState, YinYangResult> applyYinYang,
+        Action<PlayerState, ChinaWarmCupResult> applyWarmCup,
+        Action<PlayerState> reportCombo,
+        Action<PlayerState, int> applyGrillCooldown)
+    {
         try
         {
+            applyWarmCup?.Invoke(player, session.ResolveChinaWarmCup(player));
             applyYinYang(player, session.ResolveEndOfTurn(player));
             if (TechTreeRules.CheckDimSumCombo(player.techState, session.TechDb))
             {
@@ -28,6 +43,10 @@ public static class RaceTurnTechnologyCleanup
                 applyGrillCooldown(player, cooldown);
             }
         }
-        finally { player.techState?.germanBurst.CloseWindow(); }
+        finally
+        {
+            player.techState?.warmCup.CloseInput();
+            player.techState?.germanBurst.CloseWindow();
+        }
     }
 }

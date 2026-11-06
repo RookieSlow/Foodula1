@@ -118,7 +118,7 @@ public sealed class RaceMotherRoadExecutionTests
             }, calls.Add);
         Assert.That(calls, Is.EqualTo(new[]
         {
-            "move:2", "<color=orange>US 母亲之路(复兴)！2 张热量牌转为移动。</color>"
+            "move:2", "<color=orange>US 母亲之路(复兴)！消耗 3 张热量牌（清偿借额 0，净回 2），转为 2 格移动。</color>"
         }));
         Assert.That(player.techState.landmark2PassCount, Is.EqualTo(3));
     }
@@ -139,6 +139,24 @@ public sealed class RaceMotherRoadExecutionTests
         Assert.That(player.deck.heatPool.remaining, Is.EqualTo(1));
         Assert.That(player.deck.RegionalHeatPendingRetirement, Is.Zero);
         Assert.That(player.deck.CountHeatInHand(), Is.Zero);
+        Assert.That(player.techState.landmark1UltUsed, Is.True);
+    }
+
+    [Test]
+    public void RevivalCapsNetReturnAndLeavesExcessPermanentHeatInHand()
+    {
+        PlayerState player = Player(5);
+        player.techState.landmark1PassCount = 2;
+        player.techState.totalRepairs = 2;
+        Assert.That(player.deck.DrawHeatFromPoolToHand(5), Is.EqualTo(5));
+
+        int movement = -1;
+        RaceMotherRoadExecution.Execute(player, 0, 4,
+            _ => 0, _ => true, amount => movement = amount, null);
+
+        Assert.That(movement, Is.EqualTo(3));
+        Assert.That(player.deck.CountHeatInHand(), Is.EqualTo(2));
+        Assert.That(player.deck.heatPool.remaining, Is.EqualTo(3));
         Assert.That(player.techState.landmark1UltUsed, Is.True);
     }
 

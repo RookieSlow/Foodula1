@@ -515,17 +515,35 @@ public class HUDUI : MonoBehaviour
         italyPrecisionTuneChoicePending = driverSkillCardChoicePending;
     }
 
+    /// <summary>Ascari target selection uses the same modal row and leaves the final card commit authoritative.</summary>
+    public void ShowAscariPrecisionChoice(IReadOnlyList<CardData> choices,
+        UnityEngine.Events.UnityAction<CardData> selected, UnityEngine.Events.UnityAction cancel)
+    {
+        ShowRequiredCardChoice("选择精密过弯目标",
+            "只调已选普通速度牌；目标有效贡献至少2，不能与精调同牌。\n加入计划不耗次数，最终出牌时发动。",
+            choices, selected, cancel, InRaceConfirmationAction.CardAction, "加入精密过弯计划",
+            gameManager?.cardHandUI?.playCardsButton?.gameObject);
+        driverSkillCardChoice?.SetCardLabelFormatter(card =>
+        {
+            int value = ItalyPrecisionTuneRules.GetSourceContribution(gameManager?.Player, card);
+            return $"普通速度牌 {value}→{Mathf.Max(1, value - 1)}";
+        });
+        italyPrecisionTuneChoicePending = driverSkillCardChoicePending;
+    }
+
     /// <summary>One combined final card-action confirmation, honoring the existing switch and focus policy.</summary>
     public void RequestItalyPrecisionTuneCommit(string message, UnityEngine.Events.UnityAction commit,
-        UnityEngine.Events.UnityAction cancel)
+        UnityEngine.Events.UnityAction cancel, string confirmLabel = "出牌并精调",
+        string title = "确认出牌 · 精准调校")
     {
         if (commit == null || IsTelemetryDetailsOpen || IsReturnToMenuConfirmationVisible) return;
         if (!InRaceConfirmationRules.IsEnabled(GameSettingsRuntime.Current.inRaceConfirmationMask,InRaceConfirmationAction.CardAction))
         {
             commit.Invoke(); return;
         }
-        ShowRequiredCardChoice("确认出牌 · 精准调校",message,Array.Empty<CardData>(),_ => commit.Invoke(),cancel,
-            InRaceConfirmationAction.CardAction,"出牌并精调",gameManager?.cardHandUI?.playCardsButton?.gameObject,false);
+        ShowRequiredCardChoice(title, message, Array.Empty<CardData>(), _ => commit.Invoke(), cancel,
+            InRaceConfirmationAction.CardAction, confirmLabel,
+            gameManager?.cardHandUI?.playCardsButton?.gameObject, false);
         driverSkillCardChoice?.SetNoCardDescription("不额外弃牌 · 不支付RP\n随所选速度牌一次提交");
         italyPrecisionTuneChoicePending = driverSkillCardChoicePending;
     }
@@ -1241,10 +1259,13 @@ public class HUDUI : MonoBehaviour
         string label = gm != null ? gm.GetItalyPrecisionTuneButtonLabel(player,out available) : "精调 不可用";
         bool modal = IsReturnToMenuConfirmationVisible || IsTelemetryDetailsOpen ||
             (cornerLimitDetailsPanel != null && cornerLimitDetailsPanel.activeSelf);
-        bool share = UkPrepMealButton != null && UkPrepMealButton.gameObject.activeSelf;
-        Button source = share ? UkPrepMealButton : driverSkillButton;
+        bool shareWithUkPrep = UkPrepMealButton != null && UkPrepMealButton.gameObject.activeSelf;
+        bool shareWithAscari = !shareWithUkPrep && visible && player?.driverSkill?.Skill == DriverActiveSkillId.PrecisionCornering &&
+            gm.IsAscariPrecisionVisible(player);
+        bool share = shareWithUkPrep || shareWithAscari;
+        Button source = shareWithUkPrep ? UkPrepMealButton : driverSkillButton;
         string companion = string.Empty;
-        if (share)
+        if (shareWithUkPrep)
         {
             string original = gm.GetUkPrepMealButtonLabel(player,out bool prepAvailable);
             int remaining = player.techState.prepMeal.LastUsedLap == player.lap ? 0 : 1;
@@ -1252,6 +1273,10 @@ public class HUDUI : MonoBehaviour
                 original.Contains("本圈已用") ? "已用" : original.Contains("首次正式") ? "窗口已关" :
                 original.Contains("普通速度") ? "缺速度牌" : original.Contains("来源无效") ? "来源无效" : "输入已关";
             companion = $"预备餐 {remaining}/1 {reason}";
+        }
+        else if (shareWithAscari)
+        {
+            companion = gm.GetAscariPrecisionButtonLabel(player, out bool ascariAvailable);
         }
         italyPrecisionTuneAction.Refresh(source,visible,available && !modal && isActiveAndEnabled,label,companion,share,gm?.cardHandUI?.playCardsButton);
     }
@@ -1567,8 +1592,10 @@ public class HUDUI : MonoBehaviour
     private void OnDriverSkillClicked()
     {
         if (gameManager != null &&
-            (gameManager.TryRequestHunterSkillSelection() || gameManager.TryRequestMansellChargeSelection() ||
-               gameManager.TryRequestSchumacherStrategySelection() || gameManager.TryRequestVettelRhythmSelection())) return;
+            (gameManager.TryRequestChinaWarmCupSelection() || gameManager.TryRequestZhouPreparationSelection() ||
+               gameManager.TryRequestHunterSkillSelection() || gameManager.TryRequestMansellChargeSelection() ||
+               gameManager.TryRequestSchumacherStrategySelection() || gameManager.TryRequestVettelRhythmSelection() ||
+               gameManager.TryRequestMaAdaptationSelection())) return;
         RequestInRaceAction(
             InRaceConfirmationAction.DriverSkill,
             "确认发动技能",

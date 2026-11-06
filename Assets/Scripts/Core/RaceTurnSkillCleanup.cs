@@ -23,16 +23,21 @@ public static class RaceTurnSkillCleanup
                 player.isBlown = true;
             else if (cost.RequiresRecovery)
                 player.skipNextTurn = true;
+            player.driverSkill.Nuvolari.ConsumePrepaidSpin();
             reportFinalSprintCost?.Invoke(player, spinMax);
         }
 
         int overtakes = getPassiveOvertakes(player);
-        player.driverSkill?.ResolvePassiveTurnEnd(overtakes);
+        player.driverSkill?.ResolvePassiveTurnEnd(overtakes, player.lap);
+        if (player?.driverSkill?.PassiveSkill == DriverPassiveSkillId.VillainAura)
+            player.driverSkill.Pressure.ResolvePassiveActualOvertake(player, player.lap, overtakes > 0);
         player.driverSkill?.Hunting.CloseInput();
         if (player.pitStopScheduled) player.driverSkill?.Strategy.Interrupt();
         if (player.pitStopScheduled) player.driverSkill?.Feedback.Interrupt();
         if (player.pitStopScheduled) player.driverSkill?.Rhythm.Interrupt();
         if (player.pitStopScheduled) player.driverSkill?.Tuning.Interrupt();
+        if (player.pitStopScheduled) player.driverSkill?.Nuvolari.Interrupt();
+        if (player.pitStopScheduled) player.driverSkill?.Ma.Interrupt();
         else player.driverSkill?.Tuning.CloseInput();
         if (RaceTurnRules.IsTerminal(player) || RaceTurnRules.ShouldSkip(player))
             player.driverSkill?.InterruptDrivingInput();

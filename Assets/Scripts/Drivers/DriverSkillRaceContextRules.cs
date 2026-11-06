@@ -7,12 +7,22 @@ public static class DriverSkillRaceContextRules
         PlayerState player, bool canAcceptInput, int totalLaps,
         IReadOnlyList<PlayerState> participants, int totalNodes)
     {
+        return Build(player, canAcceptInput, totalLaps, participants, totalNodes,
+            0, 3);
+    }
+
+    public static DriverSkillActivationContext Build(
+        PlayerState player, bool canAcceptInput, int totalLaps,
+        IReadOnlyList<PlayerState> participants, int totalNodes,
+        int spinCounter, int spinMax)
+    {
         HeatGaugeState gauge = player?.deck != null
             ? HeatGaugeRules.Evaluate(player.deck, player.playedSpeedCardsThisTurn) : default;
         return new DriverSkillActivationContext(
             canAcceptInput, player != null ? player.lap : 0, totalLaps,
             gauge.EngineRemaining, gauge.Capacity,
-            CountNearbyOpponentsBehind(player, participants, totalNodes, 3));
+            CountNearbyOpponentsBehind(player, participants, totalNodes, 3),
+            spinCounter, spinMax);
     }
 
     public static int CountNearbyOpponentsBehind(

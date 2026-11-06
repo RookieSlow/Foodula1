@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -522,6 +523,37 @@ public class CardDeck
     }
 
     /// <summary>
+    /// Zhou's 稳守节奏 preparation: atomically discard one ordinary speed
+    /// card, then recover up to <paramref name="maxOldHeat"/> old permanent
+    /// hand heat.  No new heat is fabricated and the speed card is untouched
+    /// when the old-heat precondition is absent.
+    /// </summary>
+    public bool TryCommitZhouPreparationCost(CardData speedCost, int maxOldHeat, out int restored)
+    {
+        restored = 0;
+        if (heatPool == null || speedCost == null || maxOldHeat <= 0 ||
+            !speedCost.IsSpeed || speedCost.isTemp || !string.IsNullOrEmpty(speedCost.trickId) ||
+            drawPile.Contains(speedCost) || discardPile.Contains(speedCost) ||
+            CountHandHeatRestorableToEngine() <= 0)
+            return false;
+
+        int count = 0;
+        foreach (CardData card in hand)
+            if (ReferenceEquals(card, speedCost)) count++;
+        if (count != 1) return false;
+
+        hand.Remove(speedCost);
+        discardPile.Add(speedCost);
+        for (int i = 0; i < maxOldHeat; i++)
+        {
+            int net = RemoveOnePermanentHeatFromHand();
+            if (net <= 0) break;
+            restored += net;
+        }
+        return restored > 0;
+    }
+
+    /// <summary>
     /// 从该玩家的引擎牌库支付 count 张热量牌，放入弃牌堆。
     /// 这是显式的弃牌堆支付路径（例如中国队阴阳茶 Go）；它不参与普通抽牌。
     /// 返回实际抽到的数量（热量池不足时取走全部剩余）。
@@ -576,6 +608,20 @@ public class CardDeck
     public int RemoveHeatFromHand(int count)
     {
         return RemoveHeatFromPile(hand, count);
+    }
+
+    /// <summary>Track Fury recovery: remove exactly one old permanent heat from hand.</summary>
+    public int RemoveOnePermanentHeatFromHand()
+    {
+        if (heatPool == null) return 0;
+        for (int i = hand.Count - 1; i >= 0; i--)
+        {
+            CardData card = hand[i];
+            if (card == null || !card.IsHeat || card.isTemp) continue;
+            hand.RemoveAt(i);
+            return ReturnPermanentHeatToEngine() ? 1 : 0;
+        }
+        return 0;
     }
 
     /// <summary>Counts unique permanent payment instances still owned by this deck, not already cooled.</summary>
@@ -634,15 +680,36 @@ public class CardDeck
 
     /// <summary>Same hand/draw/discard priority as CoolHeat, returning actual source counts.</summary>
     public HeatCoolingResult CoolHeatWithSources(int count)
+        => CoolHeatWithSources(count, null);
+
+    /// <summary>
+    /// Native cooling traversal with exact runtime instances excluded. The
+    /// overload is used by Ma's Recover reservation so the reserved old hand
+    /// heat remains in hand while every other source keeps the normal order.
+    /// </summary>
+    public HeatCoolingResult CoolHeatWithSources(int count, IReadOnlyCollection<CardData> excluded)
     {
         if (count <= 0) return default;
-        int fromHand = RemoveHeatFromPile(hand, count);
-        int fromDraw = RemoveHeatFromPile(drawPile, count - fromHand);
-        int fromDiscard = RemoveHeatFromPile(discardPile, count - fromHand - fromDraw);
+        int fromHand = RemoveHeatFromPile(hand, count, excluded);
+        int fromDraw = RemoveHeatFromPile(drawPile, count - fromHand, excluded);
+        int fromDiscard = RemoveHeatFromPile(discardPile, count - fromHand - fromDraw, excluded);
         return new HeatCoolingResult(fromHand, fromDraw, fromDiscard);
     }
 
-    private int RemoveHeatFromPile(List<CardData> pile, int count)
+    /// <summary>Returns one old permanent hand heat without moving it.</summary>
+    public CardData FindOldPermanentHeatInHand()
+    {
+        for (int i = hand.Count - 1; i >= 0; i--)
+        {
+            CardData card = hand[i];
+            if (card != null && card.IsHeat && !card.isTemp)
+                return card;
+        }
+        return null;
+    }
+
+    private int RemoveHeatFromPile(List<CardData> pile, int count,
+        IReadOnlyCollection<CardData> excluded = null)
     {
         if (pile == null || count <= 0) return 0;
 
@@ -650,7 +717,7 @@ public class CardDeck
         for (int i = pile.Count - 1; i >= 0 && removed < count; i--)
         {
             CardData card = pile[i];
-            if (card == null || !card.IsHeat) continue;
+            if (card == null || !card.IsHeat || (excluded != null && excluded.Contains(card))) continue;
 
             pile.RemoveAt(i);
             if (!card.isTemp && heatPool != null)

@@ -32,7 +32,7 @@ public class TechTreeRulesTests
     [TestCase(TechEffectType.SmokedBBQ, "hasSmokedBBQ")]
     [TestCase(TechEffectType.MotherRoad, "hasMotherRoad")]
     [TestCase(TechEffectType.YinYangTea, "hasYinYangTea")]
-    [TestCase(TechEffectType.DimSumCombo, "hasDimSumCombo")]
+    [TestCase(TechEffectType.WarmCup, "hasWarmCup")]
     [TestCase(TechEffectType.SomersaultCloud, "hasSomersaultCloud")]
     [TestCase(TechEffectType.Nigiri, "hasNigiri")]
     [TestCase(TechEffectType.BrothSelection, "hasBrothSelection")]
@@ -169,7 +169,7 @@ public class TechTreeRulesTests
     [TestCase(TeamId.US, TechTreeTier.L3, "us-l3-mother-road", TechEffectType.MotherRoad, 12000, 1)]
     [TestCase(TeamId.CN, TechTreeTier.L1, "cn-l1-yin-yang-tea", TechEffectType.YinYangTea, 5000, 2)]
     [TestCase(TeamId.CN, TechTreeTier.L1, "cn-l1-fast-charge", TechEffectType.PitExitMoveBonus, 5000, 2)]
-    [TestCase(TeamId.CN, TechTreeTier.L2, "cn-l2-dim-sum-combo", TechEffectType.DimSumCombo, 8000, 1)]
+    [TestCase(TeamId.CN, TechTreeTier.L2, "cn-l2-dim-sum-combo", TechEffectType.WarmCup, 8000, 1)]
     [TestCase(TeamId.CN, TechTreeTier.L3, "cn-l3-somersault-cloud", TechEffectType.SomersaultCloud, 12000, 1)]
     [TestCase(TeamId.JP, TechTreeTier.L1, "jp-l1-nigiri", TechEffectType.Nigiri, 5000, 1)]
     [TestCase(TeamId.JP, TechTreeTier.L2, "jp-l2-broth-selection", TechEffectType.BrothSelection, 8000, 1)]
@@ -745,42 +745,34 @@ public class TechTreeRulesTests
     }
 
     [Test]
-    public void test_cn_l2_dim_sum_combo_sequence()
+    public void test_cn_l2_warm_cup_is_a_per_turn_deferred_declaration()
     {
         var cnState = new TechTreeState(TeamId.CN, TechTreeRules.DEMO_BUDGET);
         UnlockL2TierGate(cnState);
         TechTreeRules.UnlockNode(cnState, "cn-l2-dim-sum-combo", db);
         TechTreeRules.SelectActiveNodes(cnState, new[] { "cn-l2-dim-sum-combo" }, db);
 
-        // Step 1: Play trick
-        TechTreeRules.TrackDimSumCombo(cnState, playedTrick: true, playedSpeed: false, paidHeat: false);
-        Assert.That(TechTreeRules.CheckDimSumCombo(cnState, db), Is.False);
-
-        // Step 2: Play speed (after trick)
-        TechTreeRules.TrackDimSumCombo(cnState, playedTrick: false, playedSpeed: true, paidHeat: false);
-        Assert.That(TechTreeRules.CheckDimSumCombo(cnState, db), Is.False);
-
-        // Step 3: Pay heat (after trick + speed) — combo complete!
-        TechTreeRules.TrackDimSumCombo(cnState, playedTrick: false, playedSpeed: false, paidHeat: true);
-        Assert.That(TechTreeRules.CheckDimSumCombo(cnState, db), Is.True);
+        Assert.That(TechTreeRules.HasWarmCup(cnState, db), Is.True);
+        TechTreeRules.ResetPerTurnState(cnState, 3);
+        Assert.That(TechTreeRules.CanDeclareWarmCup(cnState, db, isGoMode: true, engineHeatRemaining: 1, globalTurn: 3), Is.True);
+        Assert.That(cnState.warmCup.TryDeclare(3), Is.True);
+        Assert.That(cnState.warmCup.TryConsume(3), Is.True);
+        Assert.That(cnState.warmCup.TryDeclare(3), Is.False, "One declaration per owner input.");
+        TechTreeRules.ResetPerTurnState(cnState, 4);
+        Assert.That(cnState.warmCup.TryDeclare(4), Is.True, "The next input gets a fresh opportunity.");
     }
 
     [Test]
-    public void test_cn_l2_dim_sum_combo_wrong_order()
+    public void test_cn_l2_warm_cup_rejects_non_go_and_empty_engine()
     {
         var cnState = new TechTreeState(TeamId.CN, TechTreeRules.DEMO_BUDGET);
         UnlockL2TierGate(cnState);
         TechTreeRules.UnlockNode(cnState, "cn-l2-dim-sum-combo", db);
         TechTreeRules.SelectActiveNodes(cnState, new[] { "cn-l2-dim-sum-combo" }, db);
 
-        // Play speed first — this breaks the sequence (trick must come first)
-        TechTreeRules.TrackDimSumCombo(cnState, playedTrick: false, playedSpeed: true, paidHeat: false);
-        // Then play trick — resets sequence (trick restarts)
-        TechTreeRules.TrackDimSumCombo(cnState, playedTrick: true, playedSpeed: false, paidHeat: false);
-        // Pay heat — but speed flag was cleared by the trick restart
-        TechTreeRules.TrackDimSumCombo(cnState, playedTrick: false, playedSpeed: false, paidHeat: true);
-
-        Assert.That(TechTreeRules.CheckDimSumCombo(cnState, db), Is.False);
+        TechTreeRules.ResetPerTurnState(cnState, 1);
+        Assert.That(TechTreeRules.CanDeclareWarmCup(cnState, db, isGoMode: false, engineHeatRemaining: 1, globalTurn: 1), Is.False);
+        Assert.That(TechTreeRules.CanDeclareWarmCup(cnState, db, isGoMode: true, engineHeatRemaining: 0, globalTurn: 1), Is.False);
     }
 
     [Test]
@@ -993,6 +985,19 @@ public class TechTreeRulesTests
         Assert.That(usState.totalRepairs, Is.Zero);
         Assert.That(usState.landmark1UltUsed, Is.False);
         Assert.That(usState.landmark2UltUsed, Is.False);
+    }
+
+    [Test]
+    public void test_us_mother_road_ultimate_caps_net_return_at_three()
+    {
+        var usState = new TechTreeState(TeamId.US);
+        usState.landmark1PassCount = 2;
+        usState.totalRepairs = 3;
+
+        Assert.That(TechTreeRules.ResolveMotherRoadPass(usState, 0, 6).ultimateAvailable, Is.True);
+        Assert.That(TechTreeRules.UseMotherRoadUltimate(
+            usState, 0, TechTreeRules.MOTHER_ROAD_NET_RETURN_CAP + 2), Is.EqualTo(3));
+        Assert.That(usState.landmark1UltUsed, Is.True);
     }
 
     [Test]

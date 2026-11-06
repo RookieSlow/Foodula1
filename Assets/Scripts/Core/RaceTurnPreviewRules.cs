@@ -52,6 +52,7 @@ public static class RaceTurnPreviewRules
         copy.driverSkill?.Feedback.RebindPresentationCopy(session, player, copy);
         copy.driverSkill?.Rhythm.RebindPresentationCopy(session, player, copy);
         copy.driverSkill?.Precision.RebindPresentationCopy(session, player, copy);
+        copy.driverSkill?.Nuvolari.RebindPresentationCopy(session, player, copy);
         copy.playedSpeedCardsThisTurn.AddRange(player.playedSpeedCardsThisTurn);
         var result = new RaceTurnPreview { GearTrial = gearTrial, Team = player.teamId, Movement = copy.turnMovement };
         Func<int, HeatPaymentDestination, HeatPaymentSource, bool> payWithSource = (amount, destination, source) => {

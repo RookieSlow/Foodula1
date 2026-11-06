@@ -13,6 +13,14 @@ public class DriverSkillRulesTests
             state.Initialize(driver, level, true);
             Assert.That(DriverSkillRules.GetReactionHeatCost(state), Is.Zero, driver.Id);
             if (driver.Id == "de_sebastian_vettel" || driver.Id == "it_alberto_ascari") state = Activate(driver.Id, level);
+            else if (driver.Id == "cn_ma_qinghua")
+            {
+                Assert.That(state.TryActivate(driver,
+                    new DriverSkillActivationContext(true, 2, 3, 1, 10, 3), out string maReason), Is.False);
+                Assert.That(maReason, Does.Contain("真实 Recover"));
+                Assert.That(state.ActivatedThisTurn, Is.False);
+                continue;
+            }
             else Assert.That(state.TryActivate(driver,
                 new DriverSkillActivationContext(true, 2, 3, 1, 10, 3), out string reason), Is.True, reason);
             int uses = state.UsesRemaining, turns = state.ActiveTurnsRemaining;
@@ -102,7 +110,9 @@ public class DriverSkillRulesTests
         Assert.That(vettel.Rhythm.RemainingInputs, Is.EqualTo(2));
 
         DriverSkillRuntimeState zhou = Activate("cn_zhou_guanyu", 5);
-        Assert.That(DriverSkillRules.IsWeatherImmune(zhou), Is.True);
+        Assert.That(DriverSkillRules.IsWeatherImmune(zhou), Is.False,
+            "D09 now uses actual Go/Recover heat preparation; it no longer bypasses weather suppression.");
+        Assert.That(DriverSkillRules.UsesDrivingInputClock(DriverActiveSkillId.ChinaSpeed), Is.True);
         Assert.That(zhou.ActiveTurnsRemaining, Is.EqualTo(3));
     }
 
@@ -131,11 +141,15 @@ public class DriverSkillRulesTests
             DriverPassiveSkillId.LionsHeart, 2), Is.Zero);
 
         Assert.That(DriverSkillRules.GetPassiveWeatherPenaltyReduction(
-            DriverPassiveSkillId.SteadyHeart, 1), Is.EqualTo(1));
+            DriverPassiveSkillId.SteadyHeart, 1), Is.EqualTo(0));
         Assert.That(DriverSkillRules.GetPassiveCornerLimitBonus(
-            DriverPassiveSkillId.AllRounder, 1), Is.EqualTo(1));
+            DriverPassiveSkillId.AllRounder, 1), Is.EqualTo(0));
         Assert.That(DriverSkillRules.GetPassiveCornerHeatReduction(
-            DriverPassiveSkillId.AllRounder, 2), Is.EqualTo(1));
+            DriverPassiveSkillId.AllRounder, 2), Is.EqualTo(0));
+        Assert.That(DriverSkillRules.GetMaPassiveConversionQuota(1), Is.EqualTo(1));
+        Assert.That(DriverSkillRules.GetMaPassiveConversionQuota(3), Is.EqualTo(2));
+        Assert.That(DriverSkillRules.GetMaNextGoMovementBonus(1), Is.EqualTo(2));
+        Assert.That(DriverSkillRules.GetMaNextGoMovementBonus(2), Is.EqualTo(3));
     }
 
     [Test]

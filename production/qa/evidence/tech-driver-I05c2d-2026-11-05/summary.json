@@ -1,0 +1,79 @@
+{
+  "id": "I05c2d",
+  "local_date": "2026-11-05",
+  "scope": "Italy dependency audit for Blue Luck, Ascari Precision and IT L3B plus lifecycle-exit cleanup; no new player-facing layout.",
+  "status": "Italy_dependency_lifecycle_exit_cleanup_bounded_verified",
+  "production_files": [
+    "Assets/Scripts/Core/MVPGameManager.cs",
+    "Assets/Tests/Editor/race_driver_skill_activation_adapter_test.cs"
+  ],
+  "production_change": "MVPGameManager.ClosePrepMealInputs now interrupts the owner driving-input clock on OnDisable/OnDestroy, clearing an unfinished Ascari Blue Luck sample without refunding committed active uses. Normal turn cleanup preserves cadence.",
+  "acceptance": {
+    "italy_dependency_audit": true,
+    "ascari_lifecycle_exit_cleanup": true,
+    "blue_luck_lifecycle_reset": true,
+    "l3b_entry_preserved": true,
+    "complete_modes_and_save": false
+  },
+  "native_tests": [
+    {
+      "selection": "BlueLuckTests + RaceDriverSkillActivationAdapterTests + AscariPrecisionTests + ItalyPrecisionTuneTests",
+      "total": 102,
+      "passed": 102,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0.3437354
+    },
+    {
+      "selection": "RaceTurnCleanupTests + RaceTurnSkillCleanupTests + RaceTurnTechnologyCleanupTests + RaceSessionTest",
+      "total": 134,
+      "passed": 134,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 0.1332634
+    }
+  ],
+  "native_total": {
+    "total": 236,
+    "passed": 236,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 0.4769988
+  },
+  "unity": {
+    "version": "2022.3.62f3c1",
+    "instance": "Foodula1@86b0192a4890cd9b",
+    "scene": "Assets/Scenes/MainMenu.unity",
+    "playing": false,
+    "compiling": false,
+    "console_errors": 0,
+    "console_warnings": 0,
+    "ready_boundary": "Direct scene/playing/compiling fields were idle; final editor/state resource was stale and is not used as stronger ready evidence. read_console after clear returned 0 error/warning entries."
+  },
+  "visual": {
+    "new_screenshots": 0,
+    "player_facing_layout_changed": false,
+    "boundary": "No new UI layout or visual acceptance in this lifecycle-only slice."
+  },
+  "unverified": [
+    "full RaceCanvas",
+    "physical mouse/keyboard focus and hardware input",
+    "all modes and real save compatibility",
+    "I13 cross-system long flow"
+  ],
+  "source_sha256": {
+    "Assets/Scripts/Core/MVPGameManager.cs": "7e9f9c851df16b84907d90d5e73b876d1ad0ead8931fa354b8a93a91460f3df3",
+    "Assets/Tests/Editor/race_driver_skill_activation_adapter_test.cs": "d7926ee532c5e22e36434087c29c7cd1311e97c546945d98898e9a1954e6562d",
+    "design/planning/tech-driver-rework-2026-10-22/progress.json": "27359c86eb01aaad190fdd1e1a225c49acf781c53c11e721908547812459dee1",
+    "design/planning/tech-driver-rework-2026-10-22/implementation-plan.json": "a82944161f201b7d3bbcf2b047b205f696eafedd7f8fe195a99139e9f9ffe7b4"
+  },
+  "git_boundary": "No commit/push/reset/checkout/rebase/scene save or cleanup; pre-existing tracked and untracked work preserved.",
+  "git_status": {
+    "status_lines": 79,
+    "tracked_modified": 22,
+    "untracked": 57,
+    "diff_check": "passed with existing LF/CRLF notices only",
+    "diff_stat": "22 tracked files changed, 811 insertions(+), 80 deletions(-)"
+  },
+  "next_slice": "I05c2e：继续 I05 意大利阶段组合的单回合/重赛清理前置回归，不推进 I06；完整模式/存档/硬件仍 I13。"
+}

@@ -1,5 +1,7 @@
 # Current Task List
 
+- [x] 2026-11-06 I10 有界接入：马青骅真实 Recover 冷却留置旧手永久热，下一合格 Go 兑现移动加成；旧通用激活入口拒绝绕过真实 Recover，AllRounder 真实 Recover→Go 后首弯被动与每圈配额接线，中断路径清理且不返还。原生焦点 RunFinished：3/3、100/100、71/71，另有 PlayMode 烟测 1/1，失败／跳过 0；总执行 175，耗时 0.078413s + 0.1705152s + 0.1875679s + 0.0193393s。无新截图；三尺寸交互、普通/生涯完整模式、存档与 I13 长流程留后续。见 [I10 证据](../../production/qa/evidence/tech-driver-I10-2026-11-06/README.md)。
+
 - 2026-10-13 Play Mode 等待优化：会话入口统一复位选择／模式请求／科技与设置缓存，UI 精灵缓存同样复位；启用仅 DisableDomainReload，保留场景重载。普通主菜单两次实测 3.762/1.700 秒，原正常域重载阶段 25.892 秒；最终定向 196/196，失败／跳过 0（含两项原生自由赛／生涯门控协程、教程反馈）。脚本变动后的编译重载未加速；完整默认比赛／教程和全量尚未运行。见 [入口优化验收](../../production/qa/evidence/play-entry-optimization-2026-10-13.md)。
 
 - 2026-10-13（原生验收结束 UTC 10-12 17:14）：已接入用户要求的选挡／选牌实时仪表。选挡使用当前手牌最高组合试算；选牌、取消、确认组牌、车手技能更新立即预估步数、缺牌费用、冷却与弯道热量，横条／侧边温度计区分实际与预计。最终 185/185（184 EditMode＋1 原生 UI），失败／跳过／不确定 0；六队两分辨率 56 图、252 条仪表文字溢出 0。独立预测状态不支付真实费用或消耗效果，未跑本轮全量／完整默认赛事；未提交／推送。见 [验收](../../production/qa/evidence/live-turn-telemetry-2026-10-13.md)。
@@ -1749,3 +1751,44 @@ I05b2 HUD有界接入已验；currentI05/parentin_progress，下一实际切片�
 I05c1主动规则/生产API/实际GameLoop与L3节点UI有界验收完成，I05仍in_progress。下一I05c2接D05真实目标入口、取消/失效和与科技精调的一次合并确认，再续被动蓝色规程；不提前标阿斯卡里完整或推进I06。
 
 最终模块4006/4006、65.7040933秒；另实际GameLoop10/10、20.8561775秒，失败/跳过0。见[I05c1证据](../../production/qa/evidence/tech-driver-I05c1-2026-11-03/README.md)。
+
+### 2026-11-05 I05c2：阿斯卡里目标选择与科技精调合并确认（已完成本包）
+
+已完成真实 HUD 目标选择、取消/陈旧计划拦截、同牌互斥和异牌一次合并确认；三尺寸受控 UI 6/6，聚焦回归 71/71，Unity Console 0 条。被动蓝色幸运尚未接入，完整模式/存档/硬件/全 RaceCanvas 仍未验收；下一有界包 I05c2b 接被动规程，I05 保持进行中且不推进 I06。证据：[I05c2记录](../../production/qa/evidence/tech-driver-I05c2-2026-11-05/README.md)。
+
+### 2026-11-05 I05c2b：蓝色幸运生产回合结算（已完成本包）
+
+阿斯卡里蓝色幸运已接入本人输入时钟、真实热支付记录、弯道限速消费和 Lv6 额外冷却；无热阈值为 Lv2=3、Lv4/Lv6=2，热支付立即打断连续样本。5/5 新被动案例与101/101既有 drivers/cleanup 聚焦案例通过，失败/跳过0，Unity Console 0条。当前未验收完整 RaceCanvas、物理焦点/硬件、完整模式与真实存档；I05保持进行中且不推进I06。下一有界包为 I05c2c 的意大利被动结算收口定向回归，不以旧截图或仅文案代替实际运行证据。详见[I05c2b记录](../../production/qa/evidence/tech-driver-I05c2b-2026-11-05/README.md)。
+
+### 2026-11-05 I05c2c：蓝色幸运清理与一次性弯道结算（已完成本包）
+
+已将 `InterruptDrivingInput` 的蓝色幸运未完成样本、连续计数和待触发标记清理接到进站/跳过/终态/退出边界；真实 `GetCornerLimitBreakdown(..., true)` 只消费一次弯道 +1，预览不消费。BlueLuckTests 7/7、既有 drivers/cleanup 101/101，失败/跳过0；Unity 2022.3.62f3c1、MainMenu未播放、Console 0条。完整 RaceCanvas、物理鼠标键盘、全模式/真实存档、硬件及 I13 长流程仍未验收。I05保持进行中且不推进I06；下一有界包保留为 I05c2d 前置审计，不把本包标成意大利整队或十二车手完成。证据：[I05c2c记录](../../production/qa/evidence/tech-driver-I05c2c-2026-11-05/README.md)。
+
+### 2026-11-05 I05c2d：意大利阶段退出生命周期边界（已完成本包）
+
+依赖审计确认 IT L3B、阿斯卡里主动/蓝色幸运生产接线保持有效；补齐 `MVPGameManager.ClosePrepMealInputs()` 在 `OnDisable`/`OnDestroy` 对本人输入时钟的中断，未完成蓝色幸运样本不会跨菜单/场景退出泄漏，已提交主动次数不退款，正常回合节奏不变。原生 Unity 聚焦回归 236/236，失败/跳过0，0.4769988秒；Console清理后0错误/0警告。无新UI布局或截图，完整 RaceCanvas、物理焦点/硬件、全模式/真实存档及I13长流程仍未验收。I05保持进行中且不推进I06；下一有界包为 I05c2e 的单回合/重赛清理前置回归。证据：[I05c2d记录](../../production/qa/evidence/tech-driver-I05c2d-2026-11-05/README.md)。
+
+### 2026-11-05 I05c2e：单回合/重赛清理前置（2026-11-06 已完成）
+
+重建入口已接 IT L3B/阿斯卡里待提交计划取消与输入时钟关闭；退出生命周期不刷新陈旧 HUD，普通重建保留原展示刷新。此前 PlayMode 初始化失败源于模式选择错误：现有测试在 `Assets/Tests/Editor`，应从 EditMode 运行。2026-11-06 新增重建案例 1/1 通过（1.7250048 秒），相关意大利/阿斯卡里与清理模块 236/236 通过（1.2588058 秒），失败/跳过 0；MainMenu 空闲、未播放/编译/导入、ready=true，Console 错误/警告 0。无新 UI/截图；完整 RaceCanvas、物理焦点/硬件、全模式/真实存档和 I13 长流程仍未验收。I05 有界范围完成，当前推进 I06 诺瓦切片。
+
+### 2026-11-06 I06a：诺瓦预付容错与 PlayMode 测试程序集接线（原生运行待手动启动）
+
+已接入诺瓦运行态与生产结算：IT 人类车手本人输入引擎不高于锁定阈值时，普通弯道罚热仍先照常支付，成功支付后最多回收输入开始时手牌中的旧永久热实例（等级 1/2/3 为 1/1/2）；部分支付、失控、临时热、新抽牌、弃牌不回收。主动低引擎改为剩余引擎 ≤2，提交时预付一次既有失控容错，仅忽略首个弯道；进站、跳过、终态、退出与重建清理输入态且不退还已提交次数/费用。预测复制只复制新集合，不修改共享 `CardData.value`。
+
+为修复 Test Runner PlayMode 页的“没有测试”提示，新增真实 `Assets/Tests/PlayMode/Foodula1.PlayModeTests.asmdef` 与 `PlayModeAssemblySmokeTests.cs`；Unity 已生成 `Library/ScriptAssemblies/Foodula1.PlayModeTests.dll`。原有 `Assets/Tests/Editor` 仍是 EditMode，不冒充 PlayMode。当前本轮原生 RunFinished 为 0/0/0/0，烟测等待用户手动点击运行；完整 RaceCanvas、模式/存档和 I13 长流程仍未验收。证据：[I06a记录](../../production/qa/evidence/tech-driver-I06-2026-11-06/README.md)。
+
+### 2026-11-06 I06b：Test Runner PlayMode 启动场景修复与原生验证
+
+定位到 PlayMode 作业初始化超时的实际原因：`EditorPlayBootstrapper` 的全局 `playModeStartScene=MainMenu` 会覆盖 Unity Test Framework 生成的 `InitTestScene*.unity`，导致测试未触发 `RunStarted`。现已在检测到测试启动场景时临时清空启动场景，退出后恢复 MainMenu；同时开启 `ProjectSettings/ProjectSettings.asset` 的 `playModeTestRunnerEnabled`。当前新程序集实际原生验证：PlayMode 烟测 `1/1` 通过（0 失败、0 跳过，0.0489397s），Nuvolari EditMode 聚焦 `6/6` 通过（0 失败、0 跳过，0.0612661s）。编辑器回到 MainMenu、未播放，Console 0 条错误/警告；完整 RaceCanvas、模式/存档和 I13 长流程仍未验收。证据：[I06a记录](../../production/qa/evidence/tech-driver-I06-2026-11-06/README.md)。
+### 2026-11-06 I07a：US BBQ B 与母亲之路复兴净回上限
+
+已把 US 锁定方案接入生产规则、运行态与文案：连续双地标门控后的区域热牌保持速度 2/普通速度槽，区域借额改为 +1，移除旧 BBQ 烟幕尾流阻断；选牌封账后不以新热回填。母亲之路复兴先清偿区域借额，净回引擎与位移均封顶 3，超出的永久热保留在手牌，临时热按既有生命周期销毁；原节点 ID、XP、费用、等级和主动次数不变。
+
+原生当前程序集验证：RaceSession/BBQ 边界、Mother Road 执行和 TechTreeRules 聚焦 **335/335**；PlayMode 程序集烟测 **1/1**；卡牌生命周期、BBQ 人类提交适配、科技准备与存档编解码聚焦 **162/162**，失败/跳过均为 0，总执行 498 项（聚焦集合有既有覆盖重叠，不直接累加累计唯一数）。最终 MainMenu 空闲、未播放/编译/导入，Console 清理复查 0 错误/0 警告；无新截图。三尺寸 RaceCanvas、真实鼠标键盘/焦点/拖动、完整普通/生涯模式、真实存档和 I13 长流程仍未验收。证据：[I07记录](../../production/qa/evidence/tech-driver-I07-2026-11-06/README.md)。下一有界包为 I08 斯图尔特与布什。
+
+### 2026-11-06 I08：斯图尔特与布什（有界完成）
+
+已接入斯图尔特 Track Fury/True Self 与布什 Villain Aura/Taunting Bow 的真实本人输入时钟、实际超越/最近目标锁定、一次性永久热费用、接受/拒绝跟车和生命周期清理。原生当前程序集 EditMode 聚焦 252/252、PlayMode 烟测 1/1，失败/跳过 0，Unity Console 0 错误/0 警告；重叠的 54/54 与 5/5 记录不重复计入唯一总数。无新三尺寸截图；玩家完整 RaceCanvas、硬件焦点、全模式/真实存档和 I13 长流程仍未验收。证据：[I08 记录](../../production/qa/evidence/tech-driver-I08-2026-11-06/README.md)。下一有界包为 I09 CN 温杯与周冠宇旧热整备。
+
+I09 已接入 CN L2 温杯（保留 `cn-l2-dim-sum-combo` 原 ID）与周冠宇沉稳之心/稳守节奏的旧热整备运行态：温杯只在 Go、本人输入和引擎有热时声明，按普通冷却后、L1 前一次性支付 1 热到手牌并额外 +1；周冠宇按真实 Go/合格弯道付热整备旧永久手牌热，L3 上限 2，主动牌费与冰果冻/土屋烟幕阻断尾流的一格护航保持本人输入窗口。当前程序集原生聚焦 EditMode 494/494、模块清单 12/12、PlayMode 程序集烟测 1/1，失败/跳过均为 0（分别 2.7495901s、0.0834334s、0.0158642s）；Unity Console 0 错误/0 警告。I09 的完整 RaceCanvas 三尺寸、真实鼠标键盘/拖动、普通/生涯存档及 I13 长流程仍未验收。证据：[I09记录](../../production/qa/evidence/tech-driver-I09-2026-11-06/README.md)。下一包为 I10 马青骅留置真实原生冷却机会。

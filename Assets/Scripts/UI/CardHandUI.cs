@@ -508,7 +508,7 @@ public class CardHandUI : MonoBehaviour
             return;
         gameManager.DismissTutorialInteractionCallout();
 
-        if (!isDiscardMode && gameManager.HasPendingItalyPrecisionTune && gameManager.hudUI != null)
+        if (!isDiscardMode && (gameManager.HasPendingItalyPrecisionTune || gameManager.HasPendingAscariPrecision) && gameManager.hudUI != null)
         {
             gameManager.RequestItalyPrecisionTuneCardCommit();
             return;
@@ -596,7 +596,7 @@ public class CardHandUI : MonoBehaviour
         // Keyboard play is already an explicit two-step gesture: select a card,
         // then press Space. Execute it immediately instead of opening the
         // pointer-oriented confirmation dialog and requiring a second Space.
-        if (gameManager.HasPendingItalyPrecisionTune) OnPlayClicked();
+        if (gameManager.HasPendingItalyPrecisionTune || gameManager.HasPendingAscariPrecision) OnPlayClicked();
         else gameManager.OnPlayCardsButtonClicked();
         return true;
     }
@@ -711,7 +711,7 @@ public class CardHandUI : MonoBehaviour
             ? gameManager.Session.TrickDb
             : null;
         selectedCardEffectText.text = card.cardData.IsHeat && CanSelectHeatCard(card.cardData)
-            ? "烟熏 BBQ：热量牌作为速度 2 打出，占 1 个速度牌槽；永久热量收尾入弃牌堆，限时热量收尾销毁。"
+            ? "烟熏 BBQ：连续穿越双地标门控；热量牌作为速度 2 打出，占 1 个速度牌槽；区域借额 +1，无烟幕。永久热量收尾入弃牌堆，限时热销毁。"
             : CardSelectionEffectRules.Format(card.cardData, database);
         displayedEffectCard = card;
         selectedCardEffectPanel.SetActive(true);

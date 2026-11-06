@@ -6,12 +6,14 @@ public readonly struct SlipstreamResult
 {
     public PlayerState Leader { get; }
     public int Bonus { get; }
+    public bool UsedZhouEscort { get; }
     public bool Triggered => Leader != null && Bonus > 0;
 
-    public SlipstreamResult(PlayerState leader, int bonus)
+    public SlipstreamResult(PlayerState leader, int bonus, bool usedZhouEscort = false)
     {
         Leader = leader;
         Bonus = bonus;
+        UsedZhouEscort = usedZhouEscort;
     }
 }
 
@@ -26,6 +28,15 @@ public readonly struct SlipstreamChainResult
     public IReadOnlyList<SlipstreamResult> Steps => steps ?? EmptySteps;
     public int TotalBonus { get; }
     public bool Triggered => Steps.Count > 0 && TotalBonus > 0;
+    public bool UsedZhouEscort
+    {
+        get
+        {
+            for (int i = 0; i < Steps.Count; i++)
+                if (Steps[i].UsedZhouEscort) return true;
+            return false;
+        }
+    }
 
     public SlipstreamChainResult(List<SlipstreamResult> resolvedSteps)
     {
@@ -142,7 +153,7 @@ public class RaceSession
         player.trickState?.ResetPerTurn();
         if (player.techState != null)
         {
-            TechTreeRules.ResetPerTurnState(player.techState);
+            TechTreeRules.ResetPerTurnState(player.techState, globalTurn);
             player.techState.germanBurst.BeginTurn(globalTurn);
         }
         if (player.trickState != null)
@@ -162,14 +173,72 @@ public class RaceSession
         }
         bool passiveStarted = skill.PassiveSkill == DriverPassiveSkillId.EngineersTune && skill.Tuning.BeginInput(this, player);
         bool feedbackStarted = skill.PassiveSkill == DriverPassiveSkillId.InformationSponge && skill.Feedback.BeginInput(this, player);
+        bool nuvolariStarted = skill.PassiveSkill == DriverPassiveSkillId.UnyieldingLegend && skill.Nuvolari.BeginInput(this, player);
         bool strategyStarted = skill.Skill == DriverActiveSkillId.PerfectLap && skill.Strategy.BeginInput(this, player);
         bool rhythmStarted = skill.Skill == DriverActiveSkillId.PerfectRhythm && skill.Rhythm.BeginInput(this, player);
         bool precisionStarted = skill.Skill == DriverActiveSkillId.PrecisionCornering && skill.Precision.BeginInput(this, player);
-        if (!skill.BeginDrivingInput()) return passiveStarted || strategyStarted || feedbackStarted || rhythmStarted || precisionStarted;
+        skill.ZhouEscort.BeginOwnerInput();
+        if (!skill.BeginDrivingInput())
+        {
+            bool zhouPassiveOnly = skill.PassiveSkill == DriverPassiveSkillId.SteadyHeart &&
+                skill.ZhouSteadyHeart.BeginInput(skill.PassiveTier);
+            return passiveStarted || strategyStarted || feedbackStarted || rhythmStarted || precisionStarted || nuvolariStarted || zhouPassiveOnly;
+        }
+        bool zhouStarted = skill.PassiveSkill == DriverPassiveSkillId.SteadyHeart &&
+            skill.ZhouSteadyHeart.BeginInput(skill.PassiveTier);
         skill.Hunting.BeginInput(this, player, totalNodes, startFinishIndex);
         skill.Pursuit.BeginInput(this, player, totalNodes, startFinishIndex);
         skill.Charge.BeginInput(this, player, totalNodes, startFinishIndex);
+        skill.Pressure.BeginTargetInput(this, player);
+        skill.Pressure.BeginOwnerInput(this, player, totalNodes);
         return true;
+    }
+
+    /// <summary>Ma Qinghua's free declaration; no use or card is consumed yet.</summary>
+    public bool CanDeclareMaPreparation(PlayerState player, int pendingGear, int gearOneCooldown,
+        int gearTwoCooldown)
+    {
+        if (player?.driverSkill == null || player.driverSkill.Skill != DriverActiveSkillId.ExtremeSwitch ||
+            !player.driverSkill.Enabled || player.driverSkill.UsesRemaining <= 0 ||
+            !player.driverSkill.IsDrivingInputOpen || player.deck == null ||
+            RaceTurnRules.GetStartAction(player) != RaceTurnStartAction.SelectGear ||
+            !IsRecoverMode(player, pendingGear)) return false;
+        int cooldown = ComputeReactionCooldown(player, gearOneCooldown, gearTwoCooldown, pendingGear);
+        return cooldown > 0 && player.deck.FindOldPermanentHeatInHand() != null;
+    }
+
+    public bool TryDeclareMaPreparation(PlayerState player, int pendingGear,
+        int gearOneCooldown, int gearTwoCooldown)
+    {
+        return CanDeclareMaPreparation(player, pendingGear, gearOneCooldown, gearTwoCooldown) &&
+            player.driverSkill.TryDeclareMaPreparation();
+    }
+
+    /// <summary>
+    /// Settles a real Recover cooling step. The reserved old hand heat remains
+    /// in hand; all other native cooling sources use their usual order.
+    /// </summary>
+    public bool TryCommitMaRecoverPreparation(PlayerState player, int nativeCooldown,
+        out HeatCoolingResult cooled, out CardData reservedHeat)
+    {
+        cooled = default;
+        reservedHeat = null;
+        if (player?.driverSkill == null || player.deck == null || nativeCooldown <= 0 ||
+            !IsRecoverMode(player) || !player.driverSkill.Ma.PreparationDeclared)
+            return false;
+        CardData oldHeat = player.deck.FindOldPermanentHeatInHand();
+        if (oldHeat == null) return false;
+        cooled = player.deck.CoolHeatWithSources(nativeCooldown, new[] { oldHeat });
+        if (!player.driverSkill.CommitMaRecover(oldHeat)) return false;
+        reservedHeat = oldHeat;
+        return true;
+    }
+
+    public bool ResolveMaSubmittedInput(PlayerState player, bool completed)
+    {
+        if (player?.driverSkill == null || player.driverSkill.Skill != DriverActiveSkillId.ExtremeSwitch)
+            return false;
+        return player.driverSkill.ResolveMaSubmittedInput(IsGoMode(player), completed);
     }
 
     /// <summary>D02 fixed-cost entry; I02d separately connects the human confirmation UI.</summary>
@@ -193,6 +262,57 @@ public class RaceSession
         if (player?.techState == null || RaceTurnRules.GetStartAction(player) != RaceTurnStartAction.SelectGear ||
             player.teamId != TeamId.UK || !GetModifiers(player).hasFishAndChips) return false;
         return player.techState.prepMeal.BeginInput(player.deck, globalTurn);
+    }
+
+    /// <summary>Free intent for CN L2 温杯; payment remains deferred to ordered cleanup.</summary>
+    public bool CanDeclareChinaWarmCup(PlayerState player, bool technologyEnabled, int globalTurn)
+    {
+        return technologyEnabled && player != null && player.teamId == TeamId.CN &&
+            player.techState != null && player.deck?.heatPool != null &&
+            Players.Contains(player) && RaceTurnRules.GetStartAction(player) == RaceTurnStartAction.SelectGear &&
+            TechTreeRules.CanDeclareWarmCup(player.techState, TechDb, IsGoMode(player),
+                player.deck.heatPool.remaining, globalTurn);
+    }
+
+    public bool TryDeclareChinaWarmCup(PlayerState player, bool technologyEnabled, int globalTurn)
+    {
+        return CanDeclareChinaWarmCup(player, technologyEnabled, globalTurn) &&
+            player.techState.warmCup.TryDeclare(globalTurn);
+    }
+
+    public bool CancelChinaWarmCup(PlayerState player, int globalTurn)
+    {
+        if (player?.techState?.warmCup == null) return false;
+        bool wasDeclared = player.techState.warmCup.Declared;
+        player.techState.warmCup.CancelDeclaration(globalTurn);
+        return wasDeclared && !player.techState.warmCup.Declared;
+    }
+
+    /// <summary>Commits the deferred CN L2 payment before YinYang/combo settlement.</summary>
+    public ChinaWarmCupResult ResolveChinaWarmCup(PlayerState player)
+    {
+        if (RaceTurnRules.IsTerminal(player) || player?.techState?.warmCup == null ||
+            player.deck?.heatPool == null || !TechTreeRules.HasWarmCup(player.techState, TechDb) ||
+            !IsGoMode(player) || !player.techState.warmCup.Declared ||
+            player.deck.heatPool.remaining < 1)
+            return ChinaWarmCupResult.NoTrigger;
+
+        int paid = player.deck.DrawHeatFromPool(1, HeatPaymentDestination.Hand,
+            player.heatPaidCardsThisTurn);
+        if (paid != 1) return ChinaWarmCupResult.NoTrigger;
+        TrackHeatPaid(player, paid);
+        if (!player.techState.warmCup.TryConsume(player.techState.warmCup.TurnId))
+            return ChinaWarmCupResult.NoTrigger;
+        return ChinaWarmCupResult.Success(1, 1);
+    }
+
+    /// <summary>Resolve Zhou's old permanent hand heat after ordinary reaction cooling.</summary>
+    public int ResolveZhouSteadyHeartAfterCooling(PlayerState player)
+    {
+        if (player?.driverSkill == null ||
+            player.driverSkill.PassiveSkill != DriverPassiveSkillId.SteadyHeart)
+            return 0;
+        return player.driverSkill.ZhouSteadyHeart.TryConsumeRecovery(player.deck);
     }
 
     /// <summary>Opens the participant's own post-draw tuning input, never a team-shared race flag.</summary>
@@ -294,9 +414,14 @@ public class RaceSession
     /// cooling stat; weather is applied after all positive sources.
     /// </summary>
     public int ComputeReactionCooldown(PlayerState player, int gearOneCooldown, int gearTwoCooldown)
+        => ComputeReactionCooldown(player, gearOneCooldown, gearTwoCooldown, player != null ? (int?)player.gear : null);
+
+    public int ComputeReactionCooldown(PlayerState player, int gearOneCooldown, int gearTwoCooldown, int? gearOverride)
     {
+        if (player == null) return 0;
+        int gear = gearOverride ?? player.gear;
         int cooldown = TeamGearRules.GetCooldown(
-            player.teamId, player.gear, player.chinaConsecutiveGearCount,
+            player.teamId, gear, player.chinaConsecutiveGearCount,
             gearOneCooldown, gearTwoCooldown);
 
         if (!TeamGearRules.IsChina(player.teamId) && TeamVehicleBonusesEnabled)
@@ -555,6 +680,13 @@ public class RaceSession
                 p.driverSkill.ConsumePassiveCornerLimitBonus();
         }
 
+        if (p?.driverSkill != null && p.driverSkill.IsMaPassiveApexReady)
+        {
+            driverModifier += DriverSkillRules.GetMaPassiveCornerLimitBonus(p.driverSkill.PassiveTier);
+            if (consumeDriverPassive)
+                p.driverSkill.ConsumeMaPassiveCornerLimitBonus();
+        }
+
         return new CornerLimitBreakdown(
             baseLimit,
             weatherModifier,
@@ -598,13 +730,25 @@ public class RaceSession
 
     /// <summary>D03 records only exact instances from a typed ordinary corner payment after all cost reductions.</summary>
     public void RecordOrdinaryCornerPayment(PlayerState player, int actuallyPaid)
-        => player?.driverSkill?.Tuning.RecordOrdinaryCornerPayment(this, player, actuallyPaid);
+    {
+        player?.driverSkill?.Tuning.RecordOrdinaryCornerPayment(this, player, actuallyPaid);
+        player?.driverSkill?.RecordOrdinaryCornerHeatPaid(actuallyPaid, IsGoMode(player));
+    }
+
+    /// <summary>
+    /// D06 observes only a fully settled ordinary-corner payment.  The regular
+    /// payment adapter calls this after its insufficiency check, so a partial
+    /// payment still enters the existing spin path and cannot be refunded.
+    /// </summary>
+    public int RecordOrdinaryCornerPaymentSuccess(PlayerState player, int actuallyPaid)
+        => player?.driverSkill?.Nuvolari.ResolveAfterOrdinaryCorner(this, player, actuallyPaid) ?? 0;
 
     /// <summary>新的一圈开始 — 重置每圈科技跟踪。</summary>
     public void OnNewLap(PlayerState p)
     {
         if (p.techState != null)
             TechTreeRules.ResetHeatReductionForLap(p.techState);
+        p?.driverSkill?.OnNewLap();
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -620,6 +764,14 @@ public class RaceSession
             : p.gear >= 3;
     }
 
+    public bool IsGoMode(PlayerState p, int gear)
+    {
+        if (p == null) return false;
+        return TeamGearRules.IsChina(p.teamId) && p.usesChinaGearSystem
+            ? ChinaGearShiftRules.IsGo(gear)
+            : gear >= 3;
+    }
+
     /// <summary>Recover 模式：低挡位冷却驾驶（冰糕前置）。</summary>
     public bool IsRecoverMode(PlayerState p)
     {
@@ -627,6 +779,14 @@ public class RaceSession
         return TeamGearRules.IsChina(p.teamId) && p.usesChinaGearSystem
             ? ChinaGearShiftRules.IsRecover(p.gear)
             : p.gear <= 2;
+    }
+
+    public bool IsRecoverMode(PlayerState p, int gear)
+    {
+        if (p == null) return false;
+        return TeamGearRules.IsChina(p.teamId) && p.usesChinaGearSystem
+            ? ChinaGearShiftRules.IsRecover(gear)
+            : gear <= 2;
     }
 
     /// <summary>
@@ -858,17 +1018,32 @@ public class RaceSession
                 break;
 
             // 冰糕阻断身后气流；不能越过最近车辆去吸更远的车。
-            if (TrickCardRules.IsIceJellyActive(leader.trickState) ||
-                DriverSkillRules.BlocksTrailingSlipstream(leader.driverSkill) ||
-                HasSmokedBBQAtPosition(leader,
-                    (leader.position + GetPlannedMovement(leader, plannedMovements)) % totalNodes, totalNodes))
+            // US L2 B removes the old BBQ smoke blocker; driver skill blockers remain active.
+            bool blockedByIceJelly = TrickCardRules.IsIceJellyActive(leader.trickState);
+            bool blockedByDriver = DriverSkillRules.BlocksTrailingSlipstream(leader.driverSkill);
+            bool usedZhouEscort = false;
+            if (blockedByIceJelly || blockedByDriver)
+            {
+                // Zhou's active only escorts through the two authored blockers,
+                // and its restored movement is capped at one base cell.
+                if (p.driverSkill?.ZhouEscort?.CanOverrideLeader(leader) != true)
+                    break;
+                usedZhouEscort = true;
+            }
+
+            // Busch pressure is a one-target decision. Refusal or lack of
+            // heat blocks this nearest leader; the chain never skips farther.
+            if (p.driverSkill?.Pressure.HasIncomingMarker == true &&
+                ReferenceEquals(p.driverSkill.Pressure.IncomingLeader, leader) &&
+                !p.driverSkill.Pressure.AllowsFollow(leader))
                 break;
 
             int bonus = GetSlipstreamMovementBonus(p);
+            if (usedZhouEscort) bonus = Math.Min(1, bonus);
             if (bonus <= 0)
                 break;
 
-            steps.Add(new SlipstreamResult(leader, bonus));
+            steps.Add(new SlipstreamResult(leader, bonus, usedZhouEscort));
             usedLeaders.Add(leader);
             mySim += bonus;
         }
@@ -1067,7 +1242,7 @@ public class RaceSession
     /// <summary>Regional engine heat granted by the active BBQ zone, never a global pool bonus.</summary>
     public int GetSmokedBBQEngineCapacityBonusAtPosition(PlayerState player, int position, int totalCells)
     {
-        return totalCells > 0 && HasSmokedBBQAtPosition(player, position, totalCells) ? 2 : 0;
+        return totalCells > 0 && HasSmokedBBQAtPosition(player, position, totalCells) ? 1 : 0;
     }
 
     /// <summary>Apply the current regional loan to the player's engine after a position change.</summary>
@@ -1128,6 +1303,8 @@ public class RaceSession
     /// <summary>记录本回合支付的热量（烤肉拼盘跟踪）。</summary>
     public void TrackHeatPaid(PlayerState p, int heatPaid)
     {
+        if (p?.driverSkill != null && heatPaid > 0)
+            p.driverSkill.RecordHeatPaid(heatPaid, IsGoMode(p), false);
         if (p?.techState != null && heatPaid > 0)
         {
             TechTreeRules.TrackGrillSpezialHeat(p.techState, heatPaid);
